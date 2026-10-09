@@ -209,7 +209,10 @@
     function lerGuardada(){ try { return localStorage.getItem(KEY) || ''; } catch (e) { return ''; } }
     function guardar(v){ try { if (v) localStorage.setItem(KEY, v); else localStorage.removeItem(KEY); } catch (e) {} }
     var hash = new URLSearchParams(location.hash.slice(1));
-    if (hash.get('chave')) { chave = hash.get('chave'); history.replaceState(null, '', location.pathname); }
+    // Link /vitinho: painel do barbeiro que abre sem chave
+    var semChave = (/^\/(vitinho)\/?$/.exec(location.pathname) || [])[1];
+    if (semChave) chave = 'aberto:' + semChave;
+    else if (hash.get('chave')) { chave = hash.get('chave'); history.replaceState(null, '', location.pathname); }
     else chave = lerGuardada();
 
     async function api(path, opts){
@@ -248,7 +251,8 @@
       try {
         eu = await api('/api/admin/check');
         aplicarPapel();
-        guardar(chave);
+        if (!semChave) guardar(chave);
+        $('sair').hidden = !!semChave;
         $('login').hidden = true; $('app').hidden = false;
         carregarReservas(); carregarPrecos();
       } catch (e) {

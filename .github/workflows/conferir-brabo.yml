@@ -31,6 +31,9 @@ jobs:
           grep -q 'Brabo Club' /tmp/body || { echo 'página sem o título'; falhou=1; }
           checa "painel do dono" 200 "$URL/dono"
           checa "painel do barbeiro" 200 "$URL/barbeiro"
+          checa "painel do Vitinho sem chave (página)" 200 "$URL/vitinho"
+          checa "painel do Vitinho sem chave (acesso)" 200 -H 'Authorization: Bearer aberto:vitinho' "$URL/api/admin/check"
+          checa "outro barbeiro sem chave continua barrado" 401 -H 'Authorization: Bearer aberto:rian' "$URL/api/admin/check"
           grep -q 'Painel' /tmp/body || falhou=1
           grep -q 'Painel do' /tmp/body || { echo 'painel sem o título'; falhou=1; }
           checa "preços" 200 "$URL/api/precos"

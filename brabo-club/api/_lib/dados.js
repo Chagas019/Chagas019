@@ -62,8 +62,15 @@ function igual(chave, veio) {
   return crypto.timingSafeEqual(a, b);
 }
 // Devolve { papel: 'dono' } ou { papel: 'barbeiro', barbeiro: 'vitinho' }, ou null se a chave não vale
+// Barbeiros cujo painel abre sem chave, pelo link /<nome> (escolha do dono)
+export const SEM_CHAVE = ['vitinho'];
+
 export function quem(request) {
   const veio = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
+  const aberto = /^aberto:([a-z]+)$/.exec(veio);
+  if (aberto && SEM_CHAVE.includes(aberto[1]) && BARBEIROS[aberto[1]]) {
+    return { papel: 'barbeiro', barbeiro: aberto[1], nome: BARBEIROS[aberto[1]].nome, semChave: true };
+  }
   if (igual(process.env.ADMIN_KEY || '', veio)) return { papel: 'dono' };
   for (const id of Object.keys(BARBEIROS)) {
     if (igual(process.env[`BARBEIRO_${id.toUpperCase()}_KEY`] || '', veio)) return { papel: 'barbeiro', barbeiro: id, nome: BARBEIROS[id].nome };
