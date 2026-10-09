@@ -71,16 +71,17 @@
   .twinkle:nth-child(3n){animation-duration:4.2s; animation-delay:-1s}
   .twinkle:nth-child(3n+1){animation-duration:2.6s; animation-delay:-2s}
   @keyframes twinkle{ 0%,100%{opacity:.25} 50%{opacity:1} }
-  .smoke{animation:smoke 9s ease-in-out infinite}
-  .smoke-2{animation:smoke 11s ease-in-out infinite reverse}
-  @keyframes smoke{ 0%,100%{transform:translateX(0)} 50%{transform:translateX(18px)} }
-  .glow{animation:glow 5s ease-in-out infinite}
-  @keyframes glow{ 0%,100%{opacity:.85} 50%{opacity:1} }
+  /* Blurred layers are static SVGs promoted to their own layers, so they are painted once;
+     only the cloud layer drifts, and it moves as a whole on the compositor. */
+  .sky-back, .sky-mid, .sky-front{will-change:transform}
+  .sky-front{animation:drift 12s ease-in-out infinite}
+  @keyframes drift{ 0%,100%{translate:0 0} 50%{translate:14px 0} }
+  .frame.off .sky-mid *, .frame.off .sky-front{animation-play-state:paused}
   .fly{animation:fly 9s linear infinite}
   .fly-2{animation:fly2 13s linear infinite -5s}
   @keyframes fly{ from{transform:translate(-120px,40px) rotate(0deg)} to{transform:translate(1900px,-60px) rotate(720deg)} }
   @keyframes fly2{ from{transform:translate(1900px,-20px) rotate(0deg)} to{transform:translate(-160px,50px) rotate(-540deg)} }
-  .float-a, .float-b, .float-c, .float-d, .glow{transform-box:fill-box; transform-origin:center}
+  .float-a, .float-b, .float-c, .float-d{transform-box:fill-box; transform-origin:center}
 
   /* ---------- Header ---------- */
   .bar{position:absolute; left:calc(50% - 495.5 * var(--u)); top:calc(7.5 * var(--u)); width:calc(983.5 * var(--u)); height:calc(36.2 * var(--u)); z-index:3}
@@ -539,7 +540,7 @@
 
   <!-- Barbershop artwork: black upper half; below, a spinning barber pole in front of
        amber smoke, floating scissors / razor / comb / brush, and wine-red clouds at the bottom. -->
-  <svg class="sky" aria-hidden="true" viewBox="0 0 1664 1248" preserveAspectRatio="xMidYMin slice" xmlns="http://www.w3.org/2000/svg">
+  <svg class="sky sky-back" aria-hidden="true" viewBox="0 0 1664 1248" preserveAspectRatio="xMidYMin slice" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <radialGradient id="g-amber" cx="50%" cy="50%" r="50%">
         <stop offset="0" stop-color="#f3b45a" stop-opacity=".95"/>
@@ -588,6 +589,18 @@
 
     <rect width="1664" height="1248" fill="#000"/>
 
+    <!-- amber barbershop smoke behind the pole -->
+    <g>
+      <ellipse cx="832" cy="860" rx="520" ry="300" fill="url(#g-amber)"/>
+    </g>
+    <g filter="url(#f-blur)" opacity=".75">
+      <path d="M640 980 C600 860 690 820 700 720 C760 800 740 880 790 900 C780 820 820 760 832 660 C860 760 880 820 870 900 C920 860 930 790 960 730 C990 840 1060 880 1020 990 Z" fill="#d68a36"/>
+      <path d="M520 1010 C540 930 600 920 610 850 C660 920 650 960 700 1000 Z" fill="#b8642a"/>
+      <path d="M1140 1010 C1120 930 1060 920 1050 850 C1000 920 1010 960 960 1000 Z" fill="#b8642a"/>
+    </g>
+
+  </svg>
+  <svg class="sky sky-mid" aria-hidden="true" viewBox="0 0 1664 1248" preserveAspectRatio="xMidYMin slice" xmlns="http://www.w3.org/2000/svg">
     <!-- stars / dust sparkles in the black band -->
     <g fill="#fff">
       <circle class="twinkle" cx="140" cy="120" r="1.4"/><circle class="twinkle" cx="310" cy="260" r="1.1"/>
@@ -598,16 +611,6 @@
       <circle class="twinkle" cx="230" cy="600" r="1.5"/><circle class="twinkle" cx="1460" cy="640" r="1.3"/>
       <circle class="twinkle" cx="700" cy="560" r="1"/><circle class="twinkle" cx="980" cy="590" r="1.1"/>
       <circle class="twinkle" cx="60" cy="700" r="1.2"/><circle class="twinkle" cx="1630" cy="760" r="1"/>
-    </g>
-
-    <!-- amber barbershop smoke behind the pole -->
-    <g class="glow">
-      <ellipse cx="832" cy="860" rx="520" ry="300" fill="url(#g-amber)"/>
-    </g>
-    <g class="smoke" filter="url(#f-blur)" opacity=".75">
-      <path d="M640 980 C600 860 690 820 700 720 C760 800 740 880 790 900 C780 820 820 760 832 660 C860 760 880 820 870 900 C920 860 930 790 960 730 C990 840 1060 880 1020 990 Z" fill="#d68a36"/>
-      <path d="M520 1010 C540 930 600 920 610 850 C660 920 650 960 700 1000 Z" fill="#b8642a"/>
-      <path d="M1140 1010 C1120 930 1060 920 1050 850 C1000 920 1010 960 960 1000 Z" fill="#b8642a"/>
     </g>
 
     <!-- barber pole -->
@@ -674,14 +677,16 @@
       <rect x="-6" y="-2.2" width="12" height="4.4" rx="2.2" fill="#000"/>
     </g></g>
 
+  </svg>
+  <svg class="sky sky-front" aria-hidden="true" viewBox="0 0 1664 1248" preserveAspectRatio="xMidYMin slice" xmlns="http://www.w3.org/2000/svg">
     <!-- wine-red cumulus clouds across the bottom -->
-    <g class="smoke-2" filter="url(#f-soft)">
+    <g filter="url(#f-soft)">
       <g fill="#3a0d18">
         <circle cx="80" cy="1060" r="150"/><circle cx="300" cy="1020" r="170"/><circle cx="560" cy="1080" r="160"/>
         <circle cx="1110" cy="1080" r="160"/><circle cx="1370" cy="1020" r="175"/><circle cx="1600" cy="1060" r="150"/>
       </g>
     </g>
-    <g class="smoke" filter="url(#f-soft)">
+    <g filter="url(#f-soft)">
       <g fill="#6b1a2d">
         <circle cx="-20" cy="1150" r="150"/><circle cx="200" cy="1120" r="140"/><circle cx="420" cy="1160" r="150"/>
         <circle cx="660" cy="1170" r="140"/><circle cx="900" cy="1180" r="150"/><circle cx="1140" cy="1160" r="140"/>
@@ -1439,7 +1444,11 @@
   }));
   bgQuad.frustumCulled = false; bgScene.add(bgQuad);
 
-  let W = 1, H = 1, DPR = 1, shown = 0;
+  let W = 1, H = 1, DPR = 1, shown = 0, bgDirty = true;
+  // Qualidade adaptável: começa leve em telas de toque e baixa sozinha se os quadros ficarem lentos
+  const coarse = matchMedia('(pointer: coarse)').matches || innerWidth < 768;
+  const LOOP = coarse ? 10 : 16;
+  let quality = coarse ? 0.75 : 1;
   const isMobile = () => W < 768 || W / H < 1;
 
   function drawText(){
@@ -1454,7 +1463,7 @@
     ctx.fillStyle = '#e9e9e9'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
     const cx = W * (mobile ? 0.5 : 0.505), cy = H * (mobile ? 0.45 : 0.468), gap = fs * 1.07, cap = fs * 0.7;
     lines.forEach((l, i) => ctx.fillText(l, cx, cy + cap / 2 + (i - 1) * gap));
-    tex.needsUpdate = true;
+    tex.needsUpdate = true; bgDirty = true;
   }
 
   // ---- Vidro: refração com dispersão cromática ----
@@ -1472,7 +1481,6 @@
     uniform float uRefractPower, uChromatic, uSaturation, uShininess, uDiffuseness, uFresnelPower, uBackside;
     uniform vec3 uLight; uniform vec2 uResolution; uniform sampler2D uTexture;
     varying vec3 vNormal; varying vec3 vEye;
-    const int LOOP = 16;
     vec3 sat(vec3 c, float a){ float l = dot(c, vec3(0.2125, 0.7154, 0.0721)); return mix(vec3(l), c, a); }
     float specular(vec3 light, float sh, float df, vec3 n, vec3 view){
       vec3 lv = normalize(-light); vec3 hv = normalize(view + lv);
@@ -1520,7 +1528,7 @@
   const res = new THREE.Vector2(1, 1);
   function glass(back){
     return new THREE.ShaderMaterial({
-      vertexShader: vert, fragmentShader: frag, side: back ? THREE.BackSide : THREE.FrontSide,
+      vertexShader: vert, fragmentShader: frag, side: back ? THREE.BackSide : THREE.FrontSide, defines: { LOOP },
       uniforms: {
         uIorR:{value:1.15}, uIorY:{value:1.16}, uIorG:{value:1.18}, uIorC:{value:1.22}, uIorB:{value:1.22}, uIorP:{value:1.22},
         uRefractPower:{value: back ? 0.22 : 0.30}, uChromatic:{value:0.5}, uSaturation:{value:1.08},
@@ -1565,7 +1573,7 @@
   }, undefined, () => useGeometry(new RoundedBoxGeometry(1, 1, 1, 8, 0.12)));
 
   function layout(){
-    W = section.clientWidth; H = section.clientHeight; DPR = Math.min(devicePixelRatio || 1, 2);
+    W = section.clientWidth; H = section.clientHeight; DPR = Math.max(0.6, Math.min(devicePixelRatio || 1, 2) * quality);
     renderer.setPixelRatio(DPR); renderer.setSize(W, H, false);
     camera.aspect = W / H; camera.updateProjectionMatrix();
     const bw = Math.round(W * DPR), bh = Math.round(H * DPR);
@@ -1636,12 +1644,21 @@
 
   // ---- Loop (só desenha quando a seção está na tela) ----
   let visible = false, last = performance.now();
-  new IntersectionObserver(es => { visible = es[0].isIntersecting; }, { rootMargin: '100px' }).observe(section);
+  let perfFrames = 0, perfTime = 0;
+  new IntersectionObserver(es => { visible = es[0].isIntersecting; perfFrames = -20; perfTime = 0; }).observe(section);
+  function watchPerf(ms){
+    if (ms > 250 || ++perfFrames <= 0) return;
+    perfTime += ms;
+    if (perfFrames < 45) return;
+    const avg = perfTime / perfFrames; perfFrames = 0; perfTime = 0;
+    if (avg > 21 && quality > 0.5) { quality = Math.max(0.5, quality - 0.15); layout(); }
+  }
 
   function frame(now){
     requestAnimationFrame(frame);
-    const dt = Math.min((now - last) / 1000, 0.05); last = now;
+    const raw = now - last, dt = Math.min(raw / 1000, 0.05); last = now;
     if (!visible) return;
+    watchPerf(raw);
     const f = dt * 60;
     if (!dragging) {
       if (remaining) {
@@ -1661,7 +1678,7 @@
       }
     }
     renderer.autoClear = true;
-    renderer.setRenderTarget(rtBack); renderer.render(bgScene, camera);
+    if (bgDirty) { renderer.setRenderTarget(rtBack); renderer.render(bgScene, camera); bgDirty = false; }
     renderer.setRenderTarget(rtFront); renderer.render(bgScene, camera);
     if (cube) { renderer.autoClear = false; cube.material = backMat; renderer.render(scene, camera); }
     renderer.autoClear = true;
@@ -1675,6 +1692,14 @@
   Promise.race([fontsReady, new Promise(r => setTimeout(r, 2500))]).then(() => { layout(); requestAnimationFrame(frame); });
 </script>
 
+<script>
+  // Pausa as animações da primeira tela quando ela sai da vista
+  (function(){
+    var f = document.getElementById('topo');
+    if (!('IntersectionObserver' in window)) return;
+    new IntersectionObserver(function(es){ f.classList.toggle('off', !es[0].isIntersecting); }).observe(f);
+  })();
+</script>
 <script>
   // Entrance animation
   (function(){
