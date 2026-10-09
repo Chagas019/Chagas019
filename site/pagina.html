@@ -117,6 +117,8 @@
   .ext-links a:hover { background: #e4e4e4; }
   .read-block h4 { margin: 0 0 4px; font-size: 13px; color: var(--red); }
   .read-block p { white-space: pre-wrap; }
+  .check { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--ink); min-height: 40px; cursor: pointer; }
+  .check input { width: 20px; height: 20px; accent-color: var(--red); }
   .import { display: grid; gap: 10px; padding: 14px; border-radius: 16px; background: var(--soft); }
   .import h3 { margin: 0; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--red); }
   .import ol { margin: 0; padding-left: 18px; font-size: 13px; color: #444; display: grid; gap: 2px; }
@@ -1160,12 +1162,12 @@ function importBox(kind) {
   return `<div class="import" id="imp">
     <h3>Trazer ${isLit ? "da liturgia" : "de um site"}</h3>
     <ol>
-      <li>Abra ${isLit ? "a liturgia de hoje" : "o “Santo do dia”, uma homilia ou mensagem"} no site.</li>
+      <li>Abra ${isLit ? "a liturgia de hoje" : "a liturgia de hoje (ou o santo do dia, uma homilia ou mensagem)"} no site.</li>
       <li>Selecione todo o texto da página, copie e cole abaixo.</li>
       <li>${sampleFn ? "Toque em “Preencher automaticamente” e confira os campos." : "Copie as informações para os campos abaixo."}</li>
     </ol>
     <div class="row">
-      <a class="btn-sm light" style="text-decoration:none" href="${isLit ? FONTES.cancaonova.url : "https://santo.cancaonova.com/"}" target="_blank" rel="noopener">Abrir Canção Nova</a>
+      <a class="btn-sm light" style="text-decoration:none" href="${FONTES.cancaonova.url}" target="_blank" rel="noopener">Abrir liturgia de hoje · Canção Nova</a>
       ${isLit ? `<a class="btn-sm light" style="text-decoration:none" href="${FONTES.cnbb.url}" target="_blank" rel="noopener">Abrir CNBB</a>` : ""}
     </div>
     <div class="field"><label for="imp-src">Texto copiado</label><textarea id="imp-src" placeholder="Cole aqui o texto da página"></textarea></div>
@@ -1184,7 +1186,7 @@ async function runImport(kind, onFill) {
 
 TEXTO:
 ${src.slice(0, 30000)}`
-    : `Abaixo está um texto copiado de um site católico, em português. Escolha UMA frase curta e inspiradora (até 200 caracteres) para "frase do dia", copiada EXATAMENTE como está no texto, e diga quem é o autor da frase segundo o próprio texto ("" se o texto não disser). Não invente nem edite a frase. Responda só com JSON: {"texto":"...","autor":"..."}
+    : `Abaixo está um texto copiado de um site católico, em português. Escolha UMA frase curta e inspiradora (até 200 caracteres) para "frase do dia", copiada EXATAMENTE como está no texto, e diga quem é o autor da frase segundo o próprio texto ("" se o texto não disser). Se o texto for a liturgia diária, prefira o refrão do salmo responsorial (autor: "Salmo responsorial") ou, se não houver, um versículo curto do Evangelho (autor: o Evangelho e a referência, como "Evangelho (Lc 11,15-26)"). Não invente nem edite a frase. Responda só com JSON: {"texto":"...","autor":"..."}
 
 TEXTO:
 ${src.slice(0, 30000)}`;
@@ -1346,6 +1348,7 @@ function openLiturgiaForm() {
       ${f("l-2", "Segunda leitura (domingos e solenidades)", "Deixe vazio nos dias de semana", lit.segunda || "")}
       ${f("l-e", "Evangelho", "Ex.: Lc 11,15-26", lit.evangelho || "")}
       ${f("l-t", "Texto ou reflexão (opcional)", "Cole aqui o texto do Evangelho ou uma reflexão curta", lit.texto || "", true)}
+      <label class="check"><input type="checkbox" id="l-fr" checked> Publicar também o refrão do salmo como frase do dia</label>
       <p class="note" id="l-note" role="status"></p>
       <button class="btn-red" type="submit">Publicar</button>
     </form></div>`, () => {
@@ -1358,7 +1361,12 @@ function openLiturgiaForm() {
       e.preventDefault();
       const d = { primeira: $("l-1").value.trim(), salmo: $("l-s").value.trim(), refrao: $("l-r").value.trim(), segunda: $("l-2").value.trim(), evangelho: $("l-e").value.trim(), texto: $("l-t").value.trim(), fonte: $("imp-fonte").value, criadoPor: myId, atualizadoEm: Date.now() };
       if (!d.primeira || !d.evangelho) { $("l-note").textContent = "Preencha pelo menos a primeira leitura e o Evangelho."; return; }
-      if (await writeOr(() => data.set("liturgia", TODAY, d), "Liturgia publicada")) modal.close();
+      if (!(await writeOr(() => data.set("liturgia", TODAY, d), "Liturgia publicada"))) return;
+      const jaTem = teamFrases.some(x => x.dia === TODAY && normTxt(x.texto) === normTxt(d.refrao));
+      if ($("l-fr").checked && d.refrao && !jaTem) {
+        await writeOr(() => data.add("frases", { texto: d.refrao.replace(/^R\.\s*/, ""), autor: d.salmo ? `Salmo responsorial (${d.salmo.split(" (R")[0]})` : "Salmo responsorial", dia: TODAY, fonte: d.fonte, criadoPor: myId, criadoEm: Date.now() }), "Liturgia e frase do dia publicadas");
+      }
+      modal.close();
     };
   });
 }

@@ -222,6 +222,11 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     await p.click("#imp-go"); await p.waitForTimeout(200);
     check(await p.inputValue("#l-1") === "Gl 3,7-14" && await p.inputValue("#l-e") === "Lc 11,15-26", "preenche referências encontradas");
     check(await p.inputValue("#l-2") === "", "descarta referência que não está no texto");
+    await p.fill("#l-r", "O Senhor se lembra sempre da Aliança.");
+    await p.click("#lit-form button[type=submit]"); await p.waitForTimeout(300);
+    check(/Aliança/.test(await p.textContent("#fr-box")) && /Salmo responsorial/.test(await p.textContent("#fr-box")), "publicar liturgia também publica o refrão como frase do dia");
+    await p.click("#litu-add"); await p.click("#lit-form button[type=submit]"); await p.waitForTimeout(300);
+    await p.click("#fr-all"); check((await p.$$("#modal .m-list .m-item")).length === 1, "republicar a liturgia não duplica a frase do dia");
     await p.context().close();
   }
 
