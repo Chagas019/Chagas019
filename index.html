@@ -80,7 +80,7 @@
       radial-gradient(60% 50% at 80% 10%, rgba(255,255,255,.18), transparent 70%),
       linear-gradient(180deg, var(--page-2), var(--page));
     padding-block: 28px 36px; padding-inline: 16px;
-    overflow-x: hidden;
+    overflow-x: clip; /* clip (e não hidden) para não quebrar os elementos fixos durante a rolagem */
   }
   /* arcos finos ao fundo, como na referência */
   body::before {
@@ -729,6 +729,54 @@
     .fw-btn { padding: 0 14px; }
     .fw-actions { gap: 6px; }
   }
+  /* ---------- São Carlo Acutis: cena guiada pela rolagem ---------- */
+  .cine { position: relative; height: 340vh; width: 100vw; margin: 56px 0 0 calc(50% - 50vw); }
+  .cine-sticky {
+    position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; color: #fff;
+    background: radial-gradient(60% 55% at 50% 48%, #2a0508 0%, #0b0204 55%, #050506 100%);
+  }
+  .cine-img { position: absolute; left: 0; top: 0; max-width: none; will-change: clip-path, width, height, left, top; }
+  .cine-ring { position: absolute; border-radius: 50%; border: 1px solid rgba(255,255,255,.55); pointer-events: none; }
+  .cine-halo {
+    position: absolute; border-radius: 50%; pointer-events: none; opacity: 0;
+    background: radial-gradient(closest-side, transparent 62%, rgba(255,64,64,.95) 70%, rgba(255,120,60,.55) 76%, rgba(200,16,46,.25) 86%, transparent 100%);
+    filter: blur(6px);
+  }
+  .cine-halo::after { content: ""; position: absolute; inset: 8%; border-radius: 50%; border: 2px solid rgba(255,200,170,.6); animation: haloPulse 2.6s ease-in-out infinite; }
+  @keyframes haloPulse { 50% { transform: scale(1.06); opacity: .35; } }
+  .cine-copy { position: absolute; left: clamp(20px, 6vw, 96px); top: 50%; transform: translateY(-50%); max-width: min(420px, 40vw); z-index: 4; }
+  .cine-copy h2 { font-size: clamp(34px, 5vw, 64px); font-weight: 300; letter-spacing: -.02em; line-height: 1.02; margin: 0 0 14px; text-shadow: 0 6px 30px rgba(0,0,0,.5); }
+  .cine-copy p { font-size: 16px; line-height: 1.5; color: rgba(255,255,255,.85); margin: 0; text-shadow: 0 2px 12px rgba(0,0,0,.6); }
+  .cine-copy .sec-label { color: rgba(255,255,255,.85); }
+  .cine-ic {
+    position: absolute; left: 0; top: 0; width: var(--ic, 64px); height: var(--ic, 64px); border-radius: 50%; z-index: 5;
+    display: grid; place-items: center; opacity: 0; transition: filter .2s;
+  }
+  .cine-ic img { width: 128%; height: 128%; pointer-events: none; animation: bob 3.2s ease-in-out infinite; animation-delay: var(--d, 0s); transition: transform .25s var(--ease); }
+  .cine-ic:hover img, .cine-ic:focus-visible img { transform: scale(1.18); }
+  .cine-ic:hover, .cine-ic:focus-visible { filter: drop-shadow(0 0 14px rgba(255,120,120,.75)); }
+  .cine-ic:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
+  @keyframes bob { 50% { translate: 0 -6px; } }
+  .cine-caption { position: absolute; left: 0; right: 0; text-align: center; z-index: 5; font-size: 13px; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.9); opacity: 0; pointer-events: none; }
+  .cine-quote { position: absolute; left: 50%; bottom: clamp(18px, 5vh, 56px); transform: translateX(-50%); width: min(720px, calc(100% - 40px)); margin: 0; text-align: center; z-index: 6; opacity: 0; }
+  .cine-quote blockquote { margin: 0 0 10px; font-size: clamp(18px, 2.4vw, 28px); font-weight: 300; line-height: 1.25; }
+  .cine-quote figcaption { font-size: 13px; color: rgba(255,255,255,.75); display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .cine-hint { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: rgba(255,255,255,.85); z-index: 6; text-shadow: 0 2px 10px rgba(0,0,0,.6); }
+  .cine-hint::after { content: ""; display: block; width: 1px; height: 34px; margin: 10px auto 0; background: linear-gradient(#fff, transparent); animation: hint 1.8s ease-in-out infinite; }
+  @keyframes hint { 50% { transform: translateY(6px); opacity: .4; } }
+  @media (max-width: 700px) {
+    .cine-copy { top: calc(24px + env(safe-area-inset-top, 0px)); transform: none; max-width: calc(100% - 40px); }
+    .cine-copy h2 { font-size: 38px; }
+    .cine-copy p { font-size: 15px; }
+    .cine-quote { bottom: 104px; }
+    .cine-hint { bottom: 108px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cine { height: auto; }
+    .cine-sticky { position: relative; height: 100svh; min-height: 640px; }
+    .cine-ic img, .cine-halo::after, .cine-hint::after { animation: none; }
+    .cine-hint { display: none; }
+  }
   /* ---------- Responsivo ----------
      celular (< 768px): menu em barra fixa embaixo, cards passam com o dedo
      tablet em pé (768–1100px, retrato): menu no topo, cards em grade
@@ -965,6 +1013,26 @@
       </div>
     </div>
   </div>
+
+  <section class="cine" id="carlo" aria-labelledby="cine-h">
+    <div class="cine-sticky">
+      <img class="cine-img" id="cine-img" src="midia/carlo-acutis-ilustracao.webp" alt="Ilustração de São Carlo Acutis, de óculos escuros e camisa vermelha, sobre fundo vermelho" width="900" height="1600">
+      <div class="cine-halo" id="cine-halo" aria-hidden="true"></div>
+      <div class="cine-ring" id="cine-ring" aria-hidden="true"></div>
+      <div class="cine-copy" id="cine-copy">
+        <div class="sec-label">[ O santo da internet ]</div>
+        <h2 id="cine-h">São Carlo Acutis</h2>
+        <p>Um jovem que usou a informática para levar as pessoas a Jesus. Canonizado em 2025, é o padroeiro de quem evangeliza na internet.</p>
+      </div>
+      <div id="cine-orbit" role="group" aria-label="Atalhos do site"></div>
+      <div class="cine-caption" id="cine-caption" aria-hidden="true">Toque num ícone</div>
+      <figure class="cine-quote" id="cine-quote">
+        <blockquote>“Todos nascem como originais, mas muitos morrem como fotocópias.”</blockquote>
+        <figcaption>São Carlo Acutis <button class="ghost-pill" id="cine-more">Conhecer a história ›</button></figcaption>
+      </figure>
+      <div class="cine-hint" id="cine-hint" aria-hidden="true">Role para baixo</div>
+    </div>
+  </section>
 
   <section class="sec" id="formacao" aria-labelledby="form-h">
     <div class="sec-label">[ Formação Pascom ]</div>
@@ -1504,7 +1572,7 @@ document.addEventListener("click", async e => {
   }
 });
 const DEEP = {
-  frase: () => openFraseWin(), liturgia: () => openLiturgia(), agenda: () => openAgenda(), escalas: () => openAgenda(), agendar: () => openEscalaForm(), frases: () => openFrasesEquipe(),
+  frase: () => openFraseWin(), carlo: () => scrollToSec("carlo")(), liturgia: () => openLiturgia(), agenda: () => openAgenda(), escalas: () => openAgenda(), agendar: () => openEscalaForm(), frases: () => openFrasesEquipe(),
   formacao: () => scrollToSec("formacao")(), linha: () => scrollToSec("linha")(), documentos: () => scrollToSec("documentos")(), glossario: () => scrollToSec("glossario")(), perguntas: () => scrollToSec("perguntas")(),
   galeria: () => openGallery(), participar: () => openJoin(), buscar: () => openSearch(),
 };
@@ -2509,9 +2577,11 @@ $("faq").innerHTML = FAQ.map(f => `<details><summary>${f.p}</summary><p>${f.r}</
 let rolando = false;
 function onScroll() {
   rolando = false;
+  if (typeof cineFrame === "function") cineFrame();
   const max = document.documentElement.scrollHeight - innerHeight;
   $("scroll-fill").style.width = (max > 0 ? scrollY / max * 100 : 0) + "%";
-  $("to-top").hidden = scrollY < 600;
+  const cr = $("carlo").getBoundingClientRect();
+  $("to-top").hidden = scrollY < 600 || (cr.top < innerHeight * .5 && cr.bottom > innerHeight * .5);
   if (!modal.open && !leitor.open) {
     const f = $("formacao").getBoundingClientRect().top;
     setNav(f < innerHeight * .5 ? "formacao" : "home");
@@ -2664,6 +2734,75 @@ $("play-quote").addEventListener("click", () => openFraseWin());
 $("play-quote").addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openFraseWin(); } });
 $("q-avatars").addEventListener("click", () => openFraseWin());
 
+
+/* ---------- São Carlo Acutis: cena guiada pela rolagem ---------- */
+const CINE_ICONS = [
+  { ico: "casa", nome: "Início", acao: () => scrollTo({ top: 0, behavior: "smooth" }) },
+  { ico: "balao", nome: "Frase do dia", acao: () => openFraseWin() },
+  { ico: "musica", nome: "Ouvir a frase", acao: () => { openFraseWin(); playQuote(); } },
+  { ico: "lampada", nome: "Formação", acao: () => scrollToSec("formacao")() },
+  { ico: "lupa", nome: "Buscar", acao: () => openSearch() },
+  { ico: "coracao", nome: "Frases favoritas", acao: () => { fwFiltro = "favoritas"; openFraseWin("all"); } },
+  { ico: "estrela", nome: "Santos", acao: () => openGallery() },
+  { ico: "seta", nome: "Agenda", acao: () => openAgenda() },
+  { ico: "joinha", nome: "Quero servir", acao: () => openJoin() },
+  { ico: "aviao", nome: "Compartilhar o site", acao: () => openModal(`<div class="m-plain">${closeBtn()}<h2>Compartilhar o site da Pascom</h2>
+      <p class="empty" style="margin:0">Envie para a equipe, a família e os amigos da paróquia.</p>
+      ${shareRow("Conheça o site da Pascom: escala das missas, liturgia do dia, formação e os santos da comunicação.", "")}</div>`) },
+];
+const cine = $("carlo"), cineImg = $("cine-img");
+const FACE_X = .59, FACE_Y = .655;
+const clamp01 = v => Math.max(0, Math.min(1, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+$("cine-orbit").innerHTML = CINE_ICONS.map((c, i) => `<button class="cine-ic" data-ci="${i}" aria-label="${c.nome}" style="--d:${(i * .37).toFixed(2)}s"><img src="icones/vidro/${c.ico}.png" alt=""></button>`).join("");
+const cineIcons = [...$("cine-orbit").children];
+$("cine-orbit").addEventListener("click", e => { const b = e.target.closest("[data-ci]"); if (b && b.style.pointerEvents !== "none") CINE_ICONS[+b.dataset.ci].acao(); });
+const legenda = t => { $("cine-caption").textContent = t; };
+cineIcons.forEach((b, i) => {
+  b.addEventListener("pointerenter", () => legenda(CINE_ICONS[i].nome));
+  b.addEventListener("focus", () => legenda(CINE_ICONS[i].nome));
+  b.addEventListener("pointerleave", () => legenda("Toque num ícone"));
+});
+$("cine-more").onclick = () => openSaint(byId("carlo"));
+function cineFrame() {
+  const r = cine.getBoundingClientRect(), vh = innerHeight, vw = innerWidth;
+  if (r.bottom < -50 || r.top > vh + 50) return;
+  const reduzido = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const total = r.height - vh;
+  const p = reduzido || total <= 0 ? 1 : clamp01(-r.top / total);
+  const S = Math.max(48, Math.min(76, Math.min(vw, vh) * .085));
+  const D = Math.min(vh * .42, vw * (vw < 700 ? .5 : .32));
+  const cx = vw / 2, cy = vh * (vw < 700 ? .48 : .44);
+  // 1) a ilustração se recolhe para dentro do círculo
+  const e1 = ease(clamp01((p - .1) / .4));
+  const h0 = Math.max(1.22 * vw * 16 / 9, 1.5 * vh), h1 = D * 2.35;
+  const h = lerp(h0, h1, e1), w = h * 9 / 16;
+  Object.assign(cineImg.style, { width: w + "px", height: h + "px", left: cx - FACE_X * w + "px", top: cy - FACE_Y * h + "px",
+    clipPath: `circle(${lerp(Math.hypot(vw, vh), D / 2, e1)}px at ${FACE_X * w}px ${FACE_Y * h}px)` });
+  Object.assign($("cine-ring").style, { width: D + "px", height: D + "px", left: cx - D / 2 + "px", top: cy - D / 2 + "px", opacity: .15 + .7 * clamp01((p - .3) / .2) });
+  const c1 = clamp01((p - .06) / .2);
+  Object.assign($("cine-copy").style, { opacity: 1 - c1, transform: vw < 700 ? `translateY(${-30 * c1}px)` : `translateY(calc(-50% - ${40 * c1}px))`, visibility: c1 >= 1 ? "hidden" : "visible" });
+  $("cine-hint").style.opacity = 1 - clamp01(p / .06);
+  // 2) os ícones de vidro entram em órbita
+  const e2 = ease(clamp01((p - .42) / .36)), R = D / 2 + S * .95, Rs = Math.hypot(vw, vh) * .7, rot = p * 140 * Math.PI / 180;
+  cineIcons.forEach((b, i) => {
+    const a = (i / cineIcons.length) * Math.PI * 2 + rot - Math.PI / 2, rad = lerp(Rs, R, e2);
+    b.style.setProperty("--ic", S + "px");
+    b.style.transform = `translate(${cx + Math.cos(a) * rad - S / 2}px, ${cy + Math.sin(a) * rad - S / 2}px)`;
+    b.style.opacity = e2;
+    b.style.pointerEvents = e2 > .7 ? "auto" : "none";
+    b.tabIndex = e2 > .7 ? 0 : -1;
+  });
+  Object.assign($("cine-caption").style, { top: cy + R + S * .8 + 14 + "px", opacity: e2 > .7 ? 1 : 0 });
+  // 3) o halo acende e a frase aparece
+  const e3 = clamp01((p - .76) / .16);
+  Object.assign($("cine-halo").style, { width: D * 1.7 + "px", height: D * 1.7 + "px", left: cx - D * .85 + "px", top: cy - D * .85 + "px", opacity: e3, transform: `scale(${lerp(.75, 1, ease(e3))})` });
+  Object.assign($("cine-quote").style, { opacity: e3, transform: `translate(-50%, ${20 * (1 - e3)}px)`, visibility: e3 > 0 ? "visible" : "hidden" });
+}
+addEventListener("resize", cineFrame);
+cineImg.addEventListener("load", cineFrame);
+
 /* ---------- Trilho de cards: filtro, setas, contagem ---------- */
 const rail = $("rail"), cards = [...rail.querySelectorAll(".card")];
 function applyFilter() {
@@ -2684,7 +2823,7 @@ $("yr").textContent = new Date().getFullYear();
 
 /* ---------- Início ---------- */
 renderHero(); renderPick(); renderMass(); setMassUI(false); renderQuote(); restartHero(); applyFilter(); renderEscalaCard();
-renderFormacao(); renderTimeline(); renderDocs(); onScroll();
+renderFormacao(); renderTimeline(); renderDocs(); onScroll(); cineFrame();
 renderLiturgia(); renderAgenda(); renderFrases(); applyTeam();
 startData().then(openFromHash);
 </script>

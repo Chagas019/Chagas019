@@ -6,7 +6,7 @@ const fs = require("fs"), os = require("os"), path = require("path"), { execSync
 const RAIZ = path.resolve(__dirname, "..");
 const TMP = fs.mkdtempSync(path.join(os.tmpdir(), "pascom-e2e-"));
 execSync(`bash scripts/montar-site.sh "${TMP}"`, { cwd: RAIZ, stdio: "ignore" });
-fs.cpSync(path.join(RAIZ, "icones"), path.join(TMP, "icones"), { recursive: true });
+for (const d of ["icones", "midia", "fotos"]) fs.cpSync(path.join(RAIZ, d), path.join(TMP, d), { recursive: true });
 const URL = "file://" + path.join(TMP, "index.html");
 
 let falhas = 0, ok = 0;
@@ -379,6 +379,41 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
       check(r.open && r.cabe && r.botoes, `janela da frase em ${w}px: abre pelo link, cabe na tela e os botões ficam visíveis`, JSON.stringify(r));
       await ctx.close();
     }
+  }
+
+  console.log("11. São Carlo Acutis: cena guiada pela rolagem");
+  {
+    for (const [w, h, mob] of [[1366, 850, 0], [390, 844, 1]]) {
+      const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: !!mob, isMobile: !!mob });
+      const p = await ctx.newPage(); const erros = []; p.on("pageerror", e => erros.push(e.message));
+      await p.goto(URL); await p.waitForTimeout(600);
+      const ini = await p.$eval("#carlo", e => e.getBoundingClientRect().top + scrollY), len = await p.$eval("#carlo", e => e.offsetHeight - innerHeight);
+      const estado = () => p.evaluate(() => ({ topo: document.querySelector(".cine-sticky").getBoundingClientRect().top, img: document.getElementById("cine-img").getBoundingClientRect().width,
+        copy: +getComputedStyle(document.getElementById("cine-copy")).opacity, ic: +getComputedStyle(document.querySelector(".cine-ic")).opacity, quote: +getComputedStyle(document.getElementById("cine-quote")).opacity }));
+      await p.evaluate(y => scrollTo(0, y), ini); await p.waitForTimeout(250); const a = await estado();
+      await p.evaluate(y => scrollTo(0, y), ini + len * .5); await p.waitForTimeout(250); const b = await estado();
+      await p.evaluate(y => scrollTo(0, y), ini + len); await p.waitForTimeout(250); const c = await estado();
+      check(Math.abs(b.topo) < 2 && Math.abs(c.topo) < 2, `${w}px: a cena fica presa na tela durante a rolagem`, JSON.stringify([b.topo, c.topo]));
+      check(a.copy > .9 && a.ic < .05 && c.copy < .05, `${w}px: título aparece no início e some ao rolar`);
+      check(c.img < a.img * .7, `${w}px: a ilustração se recolhe para o círculo`, JSON.stringify([a.img, c.img]));
+      check(c.ic > .95 && c.quote > .95, `${w}px: no fim, ícones em órbita e frase visível`);
+      const alvos = await p.$$eval(".cine-ic", bs => bs.map(b => { const r = b.getBoundingClientRect(); return r.left >= 0 && r.right <= innerWidth && r.top >= 0 && r.bottom <= innerHeight && r.width >= 44; }));
+      check(alvos.every(Boolean), `${w}px: os 10 ícones cabem na tela e têm tamanho de toque`, alvos.join(","));
+      await p.click('.cine-ic[aria-label="Frase do dia"]'); await p.waitForTimeout(200);
+      check(await p.evaluate(() => document.getElementById("fw").open), `${w}px: ícone do balão abre a frase do dia`);
+      await p.click("#fw-close");
+      await p.click('.cine-ic[aria-label="Agenda"]'); await p.waitForTimeout(150);
+      check(/Agenda da paróquia/.test(await p.textContent("#modal-body")), `${w}px: ícone da seta abre a agenda`);
+      await p.click("#modal [data-close]");
+      await p.click("#cine-more"); await p.waitForTimeout(150);
+      check(/São Carlo Acutis/.test(await p.textContent("#modal-body")), `${w}px: Conhecer a história abre o santo`);
+      await p.click("#modal [data-close]");
+      check(!erros.length, `${w}px: sem erros`, erros.join(" | "));
+      await ctx.close();
+    }
+    const q = await pagina(browser);
+    check(await q.$eval("#hero-slides .slide.on img", i => /carlo-acutis/.test(i.src)).catch(() => false), "foto de São Carlo aparece no card de destaque");
+    await q.context().close();
   }
 
   console.log("8. Celular, tablet e notebook (12 tamanhos de tela)");

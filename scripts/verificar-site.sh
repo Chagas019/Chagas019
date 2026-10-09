@@ -13,7 +13,7 @@ icones=$( { grep -o 'icones/[a-z0-9-]*\.webp' index.html | sed 's#icones/##; s#\
             grep -o 'ico("[a-z0-9-]*"' index.html | sed 's/ico("//; s/"//'
             grep -o 'ico: "[a-z0-9-]*"' index.html | sed 's/ico: "//; s/"//'; } | sort -u)
 for nome in $icones; do
-  [ -f "icones/$nome.webp" ] || falha "ícone usado mas ausente: icones/$nome.webp"
+  [ -f "icones/$nome.webp" ] || [ -f "icones/vidro/$nome.png" ] || falha "ícone usado mas ausente: icones/$nome.webp ou icones/vidro/$nome.png"
 done
 echo "Ícones conferidos: $(echo "$icones" | wc -w)"
 
@@ -34,7 +34,7 @@ desc=$(grep -o '<meta name="description" content="[^"]*"' index.html | sed 's/.*
 
 while IFS= read -r arq; do
   falha "arquivo grande demais (>5 MB): $arq"
-done < <(find index.html icones fotos social -type f -size +5M 2>/dev/null)
+done < <(find index.html icones fotos social midia -type f -size +5M 2>/dev/null)
 
 if [ "$erros" -gt 0 ]; then echo "Encontrei $erros problema(s)."; exit 1; fi
 echo "Tudo certo."
