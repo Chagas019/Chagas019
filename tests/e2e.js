@@ -273,7 +273,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     check(topo >= -5 && topo < 200, "menu Formação rola até a formação", String(topo));
     check(await p.getAttribute(".nav [data-action=formacao]", "aria-current") === "true", "menu marca Formação ao rolar");
     check((await p.$$("#modules .lesson[data-licao]")).length >= 20, "formação tem pelo menos 20 páginas", String((await p.$$("#modules .lesson[data-licao]")).length));
-    check(/0 de 25/.test(await p.textContent("#form-count")), "progresso começa em 0 de 25");
+    check(/0 de 37/.test(await p.textContent("#form-count")), "progresso começa em 0 de 37");
     await p.click("#form-go");
     check(await p.evaluate(() => document.getElementById("leitor").open) && /Por que um Concílio/.test(await p.textContent("#lt-body")), "Começar abre a primeira página");
     check(await p.isDisabled("#lt-prev"), "na primeira página, Anterior fica desativado");
@@ -285,9 +285,9 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     await p.click("#lt-read"); check(await p.getAttribute("#lt-read", "aria-pressed") === "false", "dá para desmarcar como lida");
     await p.click("#lt-read");
     await p.click("#lt-close"); await p.waitForTimeout(100);
-    check(/1 de 25/.test(await p.textContent("#form-count")) && /Continuar/.test(await p.textContent("#form-go")), "progresso e botão Continuar atualizam");
+    check(/1 de 37/.test(await p.textContent("#form-count")) && /Continuar/.test(await p.textContent("#form-go")), "progresso e botão Continuar atualizam");
     await p.reload(); await p.waitForTimeout(500);
-    check(/1 de 25/.test(await p.textContent("#form-count")), "progresso continua após recarregar");
+    check(/1 de 37/.test(await p.textContent("#form-count")), "progresso continua após recarregar");
     // teste do módulo
     await p.click('[data-quiz="0"]');
     await p.click("#quiz-form button[type=submit]");
@@ -304,7 +304,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     check(/dois jovens/.test(await p.textContent("#local-box")), "equipe salva a história da paróquia");
     await p.click("#lt-close");
     // linha do tempo
-    await p.click("#tl-next"); check(/1965/.test(await p.textContent("#tl-detail")), "seta da linha do tempo avança o ano");
+    await p.click("#tl-next"); check(/1964/.test(await p.textContent("#tl-detail")), "seta da linha do tempo avança o ano");
     await p.click('#tl-track [data-tl="0"]'); check(/1923/.test(await p.textContent("#tl-detail")), "tocar no ano mostra o fato");
     // documentos
     check((await p.$$("#docs-grid .doc")).length === 16, "mostra os 16 documentos");
