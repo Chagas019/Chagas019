@@ -1,0 +1,42 @@
+name: Conferir Brabo Club no ar
+
+# Confere o site da barbearia publicado na Vercel sem criar agendamentos.
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: Endereço do site
+        default: https://brabo-club.vercel.app
+
+permissions:
+  contents: read
+
+jobs:
+  conferir:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Páginas e API
+        env:
+          URL: ${{ inputs.url }}
+        run: |
+          set -u
+          falhou=0
+          checa() { # nome, esperado, comando curl...
+            nome="$1"; esperado="$2"; shift 2
+            code=$(curl -s -o /tmp/body -w '%{http_code}' "$@")
+            echo "== $nome -> $code (esperado $esperado)"; head -c 400 /tmp/body; echo
+            [ "$code" = "$esperado" ] || falhou=1
+          }
+          checa "site dos clientes" 200 "$URL/"
+          grep -q 'Brabo Club' /tmp/body || { echo 'página sem o título'; falhou=1; }
+          checa "painel do dono" 200 "$URL/dono"
+          grep -q 'Painel do' /tmp/body || { echo 'painel sem o título'; falhou=1; }
+          checa "preços" 200 "$URL/api/precos"
+          grep -q '"servicos"' /tmp/body || falhou=1
+          checa "horários ocupados" 200 "$URL/api/ocupados"
+          grep -q '"ocupados"' /tmp/body || falhou=1
+          checa "dono sem chave" 401 "$URL/api/admin/check"
+          checa "dono com chave errada" 401 -H 'Authorization: Bearer errada' "$URL/api/admin/reservas"
+          checa "agendamento com data passada (não grava nada)" 400 -X POST -H 'Content-Type: application/json' \
+            -d '{"barbeiro":"vitinho","servico":"corte","data":"2020-01-01","hora":"10:00","nome":"Teste","telefone":"19999999999"}' "$URL/api/agendar"
+          exit $falhou
