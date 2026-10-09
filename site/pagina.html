@@ -720,7 +720,7 @@
   .cine-quote { position: absolute; left: 50%; bottom: clamp(18px, 5vh, 56px); transform: translateX(-50%); width: min(720px, calc(100% - 40px)); margin: 0; text-align: center; z-index: 6; opacity: 0; }
   .cine-quote blockquote { margin: 0 0 10px; font-size: clamp(18px, 2.4vw, 28px); font-weight: 300; line-height: 1.25; }
   .cine-quote figcaption { font-size: 13px; color: rgba(255,255,255,.75); display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .cine-hint { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: rgba(255,255,255,.85); z-index: 6; text-shadow: 0 2px 10px rgba(0,0,0,.6); }
+  .cine-hint { pointer-events: none; position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: rgba(255,255,255,.85); z-index: 6; text-shadow: 0 2px 10px rgba(0,0,0,.6); }
   .cine-hint::after { content: ""; display: block; width: 1px; height: 34px; margin: 10px auto 0; background: linear-gradient(#fff, transparent); animation: hint 1.8s ease-in-out infinite; }
   @keyframes hint { 50% { transform: translateY(6px); opacity: .4; } }
   @media (max-width: 700px) {
@@ -735,6 +735,90 @@
     .cine-sticky { position: relative; height: 100svh; min-height: 640px; }
     .cine-ic img, .cine-halo::after, .cine-hint::after { animation: none; }
     .cine-hint { display: none; }
+  }
+  /* ---------- Transições futuristas ----------
+     Tudo parte de um estado visível: as animações só tocam por cima, e somem com "reduzir movimento". */
+  @keyframes holoIn {
+    0% { opacity: 0; clip-path: inset(49.5% 0 49.5% 0); filter: blur(4px) brightness(1.8) saturate(1.4); }
+    45% { opacity: 1; clip-path: inset(0 0 0 0); filter: blur(1px) brightness(1.25); }
+    100% { opacity: 1; clip-path: inset(0 0 0 0); filter: none; }
+  }
+  @keyframes scanSweep { from { transform: translateY(-10%); opacity: .9; } to { transform: translateY(110vh); opacity: 0; } }
+  dialog[open] { animation: holoIn .55s cubic-bezier(.2, .8, .2, 1) both; }
+  dialog[open]::after {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 120px; pointer-events: none; z-index: 20;
+    background: linear-gradient(180deg, transparent, rgba(255, 90, 110, .18) 70%, rgba(255, 160, 170, .55) 98%, transparent);
+    animation: scanSweep .9s .1s cubic-bezier(.4, 0, .2, 1) both;
+  }
+  dialog[open]::backdrop { animation: fadeBack .4s ease both; }
+  @keyframes fadeBack { from { opacity: 0; backdrop-filter: blur(0); } }
+
+  /* abertura da página: cantoneiras se desenham, linha de varredura no palco */
+  .corner { animation: cornerIn .8s .1s cubic-bezier(.2, .8, .2, 1) both; }
+  .corner.tl { --cx: -14px; --cy: -14px; } .corner.tr { --cx: 14px; --cy: -14px; } .corner.bl { --cx: -14px; --cy: 14px; } .corner.br { --cx: 14px; --cy: 14px; }
+  @keyframes cornerIn { from { transform: translate(var(--cx), var(--cy)); opacity: 0; } }
+  .stage::after {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; z-index: 30; pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(255, 120, 140, .9), #fff, rgba(255, 120, 140, .9), transparent);
+    box-shadow: 0 0 18px 4px rgba(255, 80, 100, .55);
+    animation: stageScan 1.4s .2s cubic-bezier(.5, 0, .2, 1) both;
+  }
+  @keyframes stageScan { 0% { transform: translateY(0); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(var(--stage-h, 700px)); opacity: 0; } }
+
+  /* seções revelam com varredura ao entrar na tela */
+  .fx-in { animation: secReveal .9s cubic-bezier(.2, .8, .2, 1) both; }
+  @keyframes secReveal {
+    0% { clip-path: inset(0 0 100% 0); filter: brightness(1.6); }
+    70% { clip-path: inset(0 0 0 0); filter: brightness(1.1); }
+    100% { clip-path: inset(0 0 0 0); filter: none; }
+  }
+  .sec.fx-in::before {
+    content: ""; position: absolute; left: 0; right: 0; height: 2px; top: 0; z-index: 3; pointer-events: none;
+    background: linear-gradient(90deg, transparent, #ff5a6e, #fff, #ff5a6e, transparent); box-shadow: 0 0 16px 3px rgba(255, 70, 90, .6);
+    animation: secLine .9s cubic-bezier(.2, .8, .2, 1) both;
+  }
+  @keyframes secLine { from { top: 0; opacity: 1; } 85% { opacity: 1; } to { top: 100%; opacity: 0; } }
+  .sec-label.decoding { font-variant-numeric: tabular-nums; color: #ff8a9b; }
+
+  /* cards: entrada em sequência e luz na borda */
+  .card.fx-card { animation: cardIn .6s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--i, 0) * 70ms); }
+  @keyframes cardIn { from { opacity: 0; transform: translateY(18px) scale(.97); filter: blur(4px) brightness(1.4); } }
+  @property --ang { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+  .card.text::before, .card.photo::before {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px; z-index: 6; pointer-events: none; opacity: 0;
+    background: conic-gradient(from var(--ang), transparent 0 70%, #ff5a6e 80%, #fff 85%, #6ad0ff 90%, transparent 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+    transition: opacity .3s;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .card { transition: transform .25s cubic-bezier(.2, .8, .2, 1); transform-style: preserve-3d; }
+    .card:hover { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-4px); }
+    .card.text:hover::before, .card.photo:hover::before { opacity: 1; animation: spinAng 2.4s linear infinite; }
+  }
+  @keyframes spinAng { to { --ang: 360deg; } }
+
+  /* troca do santo em destaque: interferência digital */
+  .media.glitch .slide.on { animation: glitchIn .55s steps(1, end) both; }
+  .media.glitch .slide.on .portrait { animation: rgbSplit .55s ease-out both; }
+  @keyframes glitchIn {
+    0% { clip-path: inset(10% 0 70% 0); transform: translateX(-8px); }
+    12% { clip-path: inset(55% 0 20% 0); transform: translateX(10px); }
+    24% { clip-path: inset(30% 0 45% 0); transform: translateX(-4px); }
+    36% { clip-path: inset(0 0 60% 0); transform: translateX(6px); }
+    48% { clip-path: inset(70% 0 0 0); transform: translateX(-3px); }
+    60%, 100% { clip-path: inset(0); transform: none; }
+  }
+  @keyframes rgbSplit { 0% { filter: drop-shadow(6px 0 0 rgba(0, 255, 255, .6)) drop-shadow(-6px 0 0 rgba(255, 0, 80, .6)) hue-rotate(40deg); } 100% { filter: none; } }
+
+  /* leitor e janela da frase: troca com desfoque */
+  .lt-body.fx-page { animation: pageIn .4s cubic-bezier(.2, .8, .2, 1) both; }
+  @keyframes pageIn { from { opacity: 0; transform: translateX(var(--pdx, 24px)); filter: blur(6px); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    dialog[open], dialog[open]::after, dialog[open]::backdrop, .corner, .stage::after, .fx-in, .sec.fx-in::before, .card.fx-card,
+    .media.glitch .slide.on, .media.glitch .slide.on .portrait, .lt-body.fx-page { animation: none !important; }
+    .stage::after, dialog[open]::after { display: none; }
+    .card:hover { transform: none !important; }
   }
   /* ---------- Responsivo ----------
      celular (< 768px): menu em barra fixa embaixo, cards passam com o dedo
@@ -2778,6 +2862,68 @@ $("rail-next").onclick = () => rail.scrollBy({ left: step(), behavior: "smooth" 
 const hoje = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 $("today-date").textContent = hoje.charAt(0).toUpperCase() + hoje.slice(1);
 $("yr").textContent = new Date().getFullYear();
+
+
+/* ---------- Transições futuristas ---------- */
+const semMovimento = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+// altura do palco para a linha de varredura da abertura
+document.querySelector(".stage").style.setProperty("--stage-h", document.querySelector(".stage").offsetHeight + "px");
+// rótulos "[ ... ]" se decodificam letra por letra
+function decodificar(el) {
+  if (semMovimento() || el.dataset.decoded) return;
+  el.dataset.decoded = "1";
+  const final = el.textContent, simbolos = "01<>/[]#%*+=ΛΣΞ";
+  el.setAttribute("aria-label", final); el.classList.add("decoding");
+  let quadro = 0;
+  const passo = () => {
+    quadro++;
+    const prontos = Math.floor(quadro / 2);
+    el.textContent = [...final].map((ch, i) => i < prontos || ch === " " ? ch : simbolos[(i * 7 + quadro) % simbolos.length]).join("");
+    if (prontos < final.length) requestAnimationFrame(passo); else { el.textContent = final; el.classList.remove("decoding"); el.removeAttribute("aria-label"); }
+  };
+  requestAnimationFrame(passo);
+}
+// seções revelam ao entrar na tela (já estão visíveis; a animação só toca uma vez)
+if ("IntersectionObserver" in window) {
+  const revela = new IntersectionObserver(entradas => entradas.forEach(en => {
+    if (!en.isIntersecting) return;
+    revela.unobserve(en.target);
+    if (semMovimento()) return;
+    en.target.classList.add("fx-in");
+    en.target.querySelectorAll(".sec-label").forEach(decodificar);
+  }), { threshold: .12 });
+  document.querySelectorAll(".sec").forEach(s => { if (s.getBoundingClientRect().top > innerHeight) revela.observe(s); });
+}
+// cards: inclinação 3D seguindo o mouse
+document.querySelectorAll(".rail .card").forEach(c => {
+  c.addEventListener("pointermove", e => {
+    if (e.pointerType !== "mouse" || semMovimento()) return;
+    const r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+    c.style.setProperty("--ry", (x * 8).toFixed(2) + "deg"); c.style.setProperty("--rx", (-y * 8).toFixed(2) + "deg");
+  });
+  c.addEventListener("pointerleave", () => { c.style.removeProperty("--ry"); c.style.removeProperty("--rx"); });
+});
+// cards entram em sequência quando o filtro muda
+function cardsEmSequencia() {
+  if (semMovimento()) return;
+  cards.filter(c => !c.hidden).forEach((c, i) => { c.classList.remove("fx-card"); void c.offsetWidth; c.style.setProperty("--i", i); c.classList.add("fx-card"); });
+}
+$("filtro").addEventListener("change", cardsEmSequencia);
+// santo em destaque troca com interferência digital
+const heroMedia = document.querySelector("#hero .media");
+const showHeroBase = showHero;
+showHero = function (i) {
+  const antes = heroI;
+  showHeroBase(i);
+  if (antes !== heroI && !semMovimento()) { heroMedia.classList.remove("glitch"); void heroMedia.offsetWidth; heroMedia.classList.add("glitch"); }
+};
+// páginas da formação trocam com desfoque
+const openLicaoBase = openLicao;
+openLicao = function (i) {
+  const dir = i < ltI ? -1 : 1;
+  openLicaoBase(i);
+  if (!semMovimento()) { const b = $("lt-body"); b.style.setProperty("--pdx", 24 * dir + "px"); b.classList.remove("fx-page"); void b.offsetWidth; b.classList.add("fx-page"); }
+};
 
 /* ---------- Início ---------- */
 renderHero(); renderPick(); renderMass(); setMassUI(false); renderQuote(); restartHero(); applyFilter(); renderEscalaCard();
