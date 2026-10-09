@@ -52,24 +52,30 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
   {
     const p = await pagina(browser);
     check((await p.$$("h1")).length === 1, "um único h1");
-    for (const a of ["search", "agenda", "liturgia", "gallery", "settings", "join"]) {
-      await p.click(`.side [data-action=${a}]`);
+    for (const [a, sel] of [["liturgia", ".nav"], ["agenda", ".nav"], ["gallery", ".nav"], ["frases", ".nav"], ["search", ".top-actions"], ["settings", ".top-actions"], ["join", ".top-actions"]]) {
+      await p.click(`${sel} [data-action=${a}]`);
       check(await aberto(p), `menu "${a}" abre o painel`);
-      check(await p.getAttribute(`.side [data-action=${a}]`, "aria-current") === "true", `menu "${a}" fica marcado`);
+      check(await p.getAttribute(`${sel} [data-action=${a}]`, "aria-current") === "true", `menu "${a}" fica marcado`);
       await p.keyboard.press("Escape"); await p.waitForTimeout(50);
       check(!(await aberto(p)), `Esc fecha "${a}"`);
     }
-    check(await p.getAttribute('.side [data-action=home]', "aria-current") === "true", "ao fechar, menu volta para Início");
+    check(await p.getAttribute('.nav [data-action=home]', "aria-current") === "true", "ao fechar, menu volta para Início");
     // destaque
     const nome1 = await p.textContent("#hero-name");
     await p.click("#hero-dots button >> nth=2");
     check(await p.textContent("#hero-name") !== nome1, "pontos do destaque trocam o santo");
     await p.click("#hero-open"); check(await aberto(p), "Ver história abre o santo"); await fechar(p);
-    // explorar
-    await p.click(".cat >> nth=2"); // Papas
-    check(/Papa|João Paulo/.test(await p.textContent("#hero-name")), "filtro Papas muda o destaque");
-    check((await p.$$("#hero-dots button")).length === 2, "filtro Papas mostra 2 santos");
-    await p.click(".cat >> nth=0");
+    // filtro e setas do trilho
+    check(await p.textContent("#count") === "8", "contagem mostra 8 cards");
+    await p.selectOption("#filtro", "santos");
+    check(await p.textContent("#count") === "2" && (await p.$$(".rail .card:not([hidden])")).length === 2, "filtro Santos mostra 2 cards");
+    await p.selectOption("#filtro", "missas");
+    check(await p.isVisible("#esc-card") && await p.isHidden("#liturgia-painel"), "filtro Missas mostra a escala e esconde a liturgia");
+    await p.selectOption("#filtro", "tudo");
+    const x0 = await p.$eval("#rail", r => r.scrollLeft);
+    await p.click("#rail-next"); await p.waitForTimeout(600);
+    check(await p.$eval("#rail", r => r.scrollLeft) > x0, "seta avança o trilho de cards");
+    await p.click("#rail-prev"); await p.waitForTimeout(600);
     // santo para você + favorito
     const pick1 = await p.textContent("#pick-name");
     await p.click("#pick-next"); check(await p.textContent("#pick-name") !== pick1, "seta troca o santo para você");
@@ -89,14 +95,14 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     await p.click("#q-cc");
     await p.click("#q-play"); check(await p.getAttribute("#q-play", "aria-label") === "Pausar", "player: play inicia");
     await p.click("#q-play");
-    await p.click(".play [data-action=quotes]"); check((await p.$$("#modal .quotes li")).length >= 13, "lista com todas as frases"); await fechar(p);
+    await p.click("#q-count"); check((await p.$$("#modal .quotes li")).length >= 13, "lista com todas as frases"); await fechar(p);
     // busca
-    await p.click(".side [data-action=search]"); await p.fill("#q", "clara");
+    await p.click(".top-actions [data-action=search]"); await p.fill("#q", "clara");
     check((await p.$$("#res .g-item")).length === 1, "busca por 'clara' acha 1 santo");
     await p.fill("#q", "xyzw"); check(/Nenhum santo/.test(await p.textContent("#res")), "busca sem resultado mostra aviso");
     await fechar(p);
     // configurações
-    await p.click(".side [data-action=settings]"); await p.click("#set-carousel");
+    await p.click(".top-actions [data-action=settings]"); await p.click("#set-carousel");
     check(await p.getAttribute("#set-carousel", "aria-checked") === "false", "configuração do carrossel desliga"); await fechar(p);
     check(p.erros.length === 0, "sem erros no console", p.erros.join(" | "));
     await p.context().close();
@@ -146,6 +152,34 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     await p.context().close();
   }
 
+  console.log("3b. Escala da missa (botão Agendar)");
+  {
+    const p = await pagina(browser);
+    check(/Nenhuma missa/.test(await p.textContent("#esc-card")), "sem escala, card mostra 'Nenhuma missa agendada'");
+    await p.click("#agendar"); check(/Agendar missa/.test(await p.textContent("#modal h2")), "Agendar abre o formulário de escala");
+    await p.fill("#s-h", ""); await p.click("#esc-form button[type=submit]");
+    check(/horário/.test(await p.textContent("#s-note")), "escala sem horário é recusada");
+    await p.fill("#s-h", "10:00"); await p.fill("#s-l", "Igreja matriz"); await p.fill("#s-p", "Pe. Marcos");
+    await p.fill("#s-foto", "Ana"); await p.fill("#s-transmissao", "João");
+    await p.click("#esc-form button[type=submit]"); await p.waitForTimeout(300);
+    check(/Missa dominical/.test(await p.textContent("#modal h2")), "após publicar, abre a escala");
+    check((await p.$$("#modal .vaga-chip")).length === 3, "funções vazias aparecem como vaga (3)");
+    check(/2 de 5 funções/.test(await p.textContent("#esc-card")), "card da escala mostra 2 de 5 funções");
+    await p.click('#modal [data-take="redes"] button'); await p.waitForTimeout(100);
+    check(/nome/.test(await p.textContent("#toast")), "assumir sem nome pede o nome");
+    await p.fill("#tk-redes", "Maria"); await p.click('#modal [data-take="redes"] button'); await p.waitForTimeout(300);
+    check(/Maria/.test(await p.textContent("#modal .esc-roles")) && (await p.$$("#modal .vaga-chip")).length === 2, "assumir vaga preenche a função");
+    check(/3 de 5 funções/.test(await p.textContent("#esc-card")), "card atualiza para 3 de 5 funções");
+    const wa = await p.$eval("#modal .share .wa", a => decodeURIComponent(a.href));
+    check(/Redes sociais: Maria/.test(wa) && /Coordenação: vaga/.test(wa), "WhatsApp leva a escala com as vagas");
+    await p.click("#esc-edit"); await p.fill("#s-coordenacao", "Pedro"); await p.click("#esc-form button[type=submit]"); await p.waitForTimeout(300);
+    check(/Pedro/.test(await p.textContent("#modal .esc-roles")), "editar escala salva a mudança");
+    await p.click("#modal [data-del]"); await p.click("#modal [data-del]"); await p.waitForTimeout(300);
+    check(/Nenhuma missa/.test(await p.textContent("#esc-card")), "excluir escala limpa o card");
+    check(p.erros.length === 0, "sem erros no console", p.erros.join(" | "));
+    await p.context().close();
+  }
+
   console.log("4. Login e permissões (simulando o Claude)");
   {
     const ed = await pagina(browser, { mock: mockClaude({ can: true }) }); await ed.waitForTimeout(400);
@@ -158,8 +192,10 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     const le = await pagina(browser, { mock: mockClaude({ can: false }) }); await le.waitForTimeout(400);
     check(await le.isHidden("#ev-add") && await le.isHidden("#fr-add") && await le.isHidden("#litu-add"), "leitor não vê botões de publicar");
     check(/Somente leitura/.test(await le.textContent("[data-mode]")), "leitor vê aviso de somente leitura");
-    await le.click(".side [data-action=agenda]");
-    check(!(await le.$("#m-ev-add")), "leitor não vê 'Novo evento' na agenda");
+    await le.click(".nav [data-action=agenda]");
+    check(!(await le.$("#m-ev-add")) && !(await le.$("#m-esc-add")), "leitor não vê 'Novo evento' nem 'Agendar missa'");
+    await le.click("#modal [data-close]"); await le.click("#agendar"); await le.waitForTimeout(100);
+    check(!(await le.$("#esc-form")) && /equipe/.test(await le.textContent("#toast")), "leitor que toca em Agendar vê a agenda e um aviso");
     await le.context().close();
 
     const sem = await pagina(browser, { mock: mockClaude({ can: null, id: null }) }); await sem.waitForTimeout(400);
@@ -190,7 +226,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
 
   console.log("6. Links diretos");
   {
-    for (const [hash, esperado] of [["#liturgia", /Liturgia de/], ["#agenda", /Agenda/], ["#frases", /Frases da equipe/], ["#galeria", /Santos da comunicação/], ["#participar", /Venha servir/], ["#santo-clara-de-assis", /Santa Clara/]]) {
+    for (const [hash, esperado] of [["#liturgia", /Liturgia de/], ["#agenda", /Agenda/], ["#frases", /Frases da equipe/], ["#galeria", /Santos da comunicação/], ["#participar", /Venha servir/], ["#santo-clara-de-assis", /Santa Clara/], ["#escalas", /Escala das missas/], ["#agendar", /Agendar missa/]]) {
       const p = await pagina(browser, { hash });
       check(await aberto(p) && esperado.test(await p.textContent("#modal-body")), `link ${hash} abre a parte certa`);
       await p.context().close();
@@ -201,23 +237,23 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
   {
     const p = await pagina(browser, { largura: 390 });
     check(await p.evaluate(() => document.documentElement.scrollWidth) <= 390, "sem rolagem lateral");
-    const nav = await p.$eval(".side", e => getComputedStyle(e).position);
+    const nav = await p.$eval(".mobile-nav", e => getComputedStyle(e).position);
     check(nav === "fixed", "menu vira barra fixa embaixo");
-    const navBottom = await p.$eval(".side", e => innerHeight - e.getBoundingClientRect().bottom);
+    const navBottom = await p.$eval(".mobile-nav", e => innerHeight - e.getBoundingClientRect().bottom);
     check(navBottom >= 0 && navBottom <= 40, "barra do menu fica no pé da tela", "distância do fundo: " + navBottom);
     await p.mouse.wheel(0, 1500); await p.waitForTimeout(200);
-    const navBottom2 = await p.$eval(".side", e => innerHeight - e.getBoundingClientRect().bottom);
+    const navBottom2 = await p.$eval(".mobile-nav", e => innerHeight - e.getBoundingClientRect().bottom);
     check(Math.abs(navBottom2 - navBottom) < 2, "barra do menu continua no lugar ao rolar a página");
-    for (const a of ["agenda", "liturgia", "gallery", "join"]) {
-      await p.click(`.side [data-action=${a}]`); check(await aberto(p), `celular: menu "${a}" abre`);
+    for (const a of ["agenda", "liturgia", "gallery", "frases", "join", "agendar"]) {
+      await p.click(a === "join" || a === "agendar" ? `.top-actions [data-action=${a}]` : `.mobile-nav [data-action=${a}]`); check(await aberto(p), `celular: menu "${a}" abre`);
       const sw = await p.evaluate(() => document.getElementById("modal").scrollWidth <= document.getElementById("modal").clientWidth + 1);
       check(sw, `celular: painel "${a}" sem rolagem lateral`);
       await fechar(p);
     }
     await p.click("#fav");
-    const [t, n] = await p.evaluate(() => [document.getElementById("toast").getBoundingClientRect(), document.querySelector(".side").getBoundingClientRect()].map(r => ({ top: r.top, bottom: r.bottom })));
+    const [t, n] = await p.evaluate(() => [document.getElementById("toast").getBoundingClientRect(), document.querySelector(".mobile-nav").getBoundingClientRect()].map(r => ({ top: r.top, bottom: r.bottom })));
     check(t.bottom <= n.top, "aviso (toast) não fica escondido atrás do menu", JSON.stringify({ t, n }));
-    const pequenos = await p.$$eval(".side button, .add, .ctl, .arrow, #fav, .btn-white, .btn-dark", els => els.filter(e => { const r = e.getBoundingClientRect(); return r.width && (r.width < 36 || r.height < 22); }).map(e => e.id || e.className));
+    const pequenos = await p.$$eval(".mobile-nav button, .top-actions button, .add, .ctl, .round, #fav, .ghost-pill", els => els.filter(e => { const r = e.getBoundingClientRect(); return r.width && (r.width < 36 || r.height < 22); }).map(e => e.id || e.className));
     check(pequenos.length === 0, "botões com tamanho tocável", pequenos.join(", "));
     check(p.erros.length === 0, "sem erros no console", p.erros.join(" | "));
     await p.context().close();
