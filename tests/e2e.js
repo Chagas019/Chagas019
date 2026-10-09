@@ -362,7 +362,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     check(dims[0] === 1080 && dims[1] === 1920, "imagem para stories em 1080×1920", dims.join("x"));
     await p.click('[data-fmt="post"]'); await p.waitForTimeout(500);
     check((await p.$eval("#fw-img", i => i.naturalHeight)) === 1350, "formato feed em 1080×1350");
-    const [dl] = await Promise.all([p.waitForEvent("download", { timeout: 5000 }).catch(() => null), p.click("#fw-save")]);
+    const [dl] = await Promise.all([p.waitForEvent("download", { timeout: 10000 }).catch(() => null), p.click("#fw-save")]);
     check(dl && /frase-do-dia-.*-feed\.png/.test(dl.suggestedFilename()), "baixar imagem gera o arquivo PNG", dl ? dl.suggestedFilename() : "sem download");
     await p.keyboard.press("Escape"); await p.waitForTimeout(100);
     if (await fwAberta()) await p.click("#fw-close");

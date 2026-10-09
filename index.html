@@ -2808,7 +2808,8 @@ function wrapLines(ctx, text, maxW) {
 }
 async function fwMakeImage() {
   const q = QUOTES[qI], W = 1080, H = fwFmt === "story" ? 1920 : 1350;
-  try { await Promise.all([document.fonts.load('300 72px "Hanken Grotesk"'), document.fonts.load('600 40px "Hanken Grotesk"'), document.fonts.load('800 80px "Cinzel"')]); } catch {}
+  // espera as fontes por no máximo 1,5 s; com internet lenta, desenha mesmo assim
+  try { await Promise.race([Promise.all([document.fonts.load('300 72px "Hanken Grotesk"'), document.fonts.load('600 40px "Hanken Grotesk"'), document.fonts.load('800 80px "Cinzel"')]), new Promise(r => setTimeout(r, 1500))]); } catch {}
   const c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
   const g = x.createRadialGradient(W * .25, H * .2, 50, W * .5, H * .5, H * .9);
   g.addColorStop(0, "#c8102e"); g.addColorStop(.45, "#5e0614"); g.addColorStop(1, "#0c0c0d");
