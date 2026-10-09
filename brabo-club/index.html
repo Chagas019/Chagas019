@@ -565,6 +565,7 @@
       <a href="#corta">Corta aí</a>
       <a href="#rota">Como chegar</a>
       <a href="#painel" data-admin hidden>Agenda</a>
+      <a href="#meus" data-open="meus">Meus horários</a>
       <a class="nav-cta" href="#agendar" data-open="agendar">Agendar</a>
     </nav>
     <button class="menu-btn" id="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu-sheet">
@@ -577,6 +578,7 @@
       <a href="#corta">Corta aí</a>
       <a href="#local">Onde fica</a>
       <a href="#rota">Como chegar</a>
+      <a href="#meus" data-open="meus">Meus horários</a>
       <a href="#painel" data-admin hidden>Quem agendou</a>
       <a class="btn solid" href="#agendar" data-open="agendar">Agendar horário</a>
     </nav>
@@ -1170,10 +1172,13 @@
     function open(name, opts){
       if (window.braboCloseMenu) window.braboCloseMenu();
       document.querySelectorAll('dialog.panel[open]').forEach(function(d){ d.close(); });
-      if (name === 'agendar' && opts) preset(opts);
+      var abaMeus = name === 'meus';
+      if (abaMeus) name = 'agendar';
+      if (name === 'agendar' && opts && !abaMeus) preset(opts);
       if (name === 'agendar' && apiMode) carregarOcupados();
       var dlg = $('dlg-' + name);
       if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
+      if (abaMeus) abrirMeus();
     }
     document.addEventListener('click', function(e){
       var t = e.target.closest && e.target.closest('[data-open]');
@@ -1301,20 +1306,24 @@
       $('mode-note').textContent = online
         ? 'O horário fica reservado na hora e some da lista para os outros clientes.'
         : 'O pedido abre no WhatsApp com todos os dados preenchidos. É só enviar para a barbearia confirmar.';
-      document.querySelector('[data-tab="meus"]').hidden = !online || apiMode;
+      document.querySelector('[data-tab="meus"]').hidden = !online;
       document.querySelector('[data-tab="agenda"]').hidden = !(db && isAdmin);
       var adm = !!(db && isAdmin);
       $('painel').hidden = !adm;
       document.querySelectorAll('[data-admin]').forEach(function(a){ a.hidden = !adm; });
       if (adm) renderPainel();
-      $('tabs').hidden = !(online && !apiMode) && !(db && isAdmin);
+      $('tabs').hidden = !online && !(db && isAdmin);
     }
 
     function showTab(name){
       document.querySelectorAll('#tabs [data-tab]').forEach(function(t){ t.setAttribute('aria-selected', t.getAttribute('data-tab') === name ? 'true' : 'false'); });
       document.querySelectorAll('[data-pane]').forEach(function(p){ p.hidden = p.getAttribute('data-pane') !== name; });
     }
-    $('tabs').addEventListener('click', function(e){ var t = e.target.closest('[data-tab]'); if (t) showTab(t.getAttribute('data-tab')); });
+    $('tabs').addEventListener('click', function(e){ var t = e.target.closest('[data-tab]'); if (!t) return; showTab(t.getAttribute('data-tab')); if (t.getAttribute('data-tab') === 'meus' && apiMode) renderMeusApi(); });
+    function abrirMeus(){
+      if (!online) { msg('Para ver seus horários, agende pelo site.', ''); return; }
+      showTab('meus'); if (apiMode) renderMeusApi();
+    }
 
     function whatsapp(){
       var b = byId(BARBEIROS, st.barbeiro), s = byId(SERVICOS, st.servico);
@@ -1379,13 +1388,61 @@
         var j = await r.json().catch(function(){ return {}; });
         if (r.status === 201) {
           taken[id] = true; st.hora = null; renderHours();
-          msg('Pronto! ' + bn + ' te espera ' + nomeDia(d) + ' às ' + h + '. Total: ' + brl(j.total || totalDe()) + '. Se precisar desmarcar, avise a barbearia.', 'ok');
+          if (j.codigo) guardarCodigo(j.id || id, j.codigo);
+          lembrarCliente();
+          msg('Pronto! ' + bn + ' te espera ' + nomeDia(d) + ' às ' + h + '. Total: ' + brl(j.total || totalDe()) + '. Seu horário está na aba "Meus horários".', 'ok');
         } else if (r.status === 409) {
           taken[id] = true; st.hora = null; renderHours(); msg(j.erro || 'Esse horário acabou de ser reservado. Escolha outro.', 'err');
         } else msg(j.erro || 'Algo deu errado. Tente de novo em instantes.', 'err');
       } catch (e) { msg('Sem conexão agora. Tente de novo em instantes.', 'err'); }
       finally { busy = false; renderSummary(); }
     }
+    // ---- Meus horários (site na Vercel): códigos das reservas ficam guardados neste aparelho ----
+    var MEUS_KEY = 'brabo_reservas', CLI_KEY = 'brabo_cliente';
+    function lerCodigos(){ try { var v = JSON.parse(localStorage.getItem(MEUS_KEY) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+    function salvarCodigos(v){ try { localStorage.setItem(MEUS_KEY, JSON.stringify(v.slice(-30))); } catch (e) {} }
+    function guardarCodigo(id, codigo){ var v = lerCodigos().filter(function(x){ return x.id !== id; }); v.push({id:id, codigo:codigo}); salvarCodigos(v); }
+    function lembrarCliente(){ try { localStorage.setItem(CLI_KEY, JSON.stringify({nome: $('f-nome').value.trim(), telefone: $('f-tel').value.trim()})); } catch (e) {} }
+    try { var cli = JSON.parse(localStorage.getItem(CLI_KEY) || 'null'); if (cli) { $('f-nome').value = cli.nome || ''; $('f-tel').value = cli.telefone || ''; } } catch (e) {}
+
+    async function renderMeusApi(){
+      var box = $('list-meus'), cods = lerCodigos();
+      box.textContent = '';
+      if (!cods.length) { box.appendChild(el('p', 'empty', 'Você ainda não agendou por este aparelho. Os horários que você marcar aqui aparecem nesta aba.')); return; }
+      box.appendChild(el('p', 'empty', 'Carregando seus horários…'));
+      try {
+        var r = await fetch('/api/meus', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({itens: cods})});
+        var j = await r.json();
+        if (!r.ok) throw new Error(j.erro || '');
+        if (j.esquecer && j.esquecer.length) salvarCodigos(cods.filter(function(x){ return j.esquecer.indexOf(x.id) < 0; }));
+        box.textContent = '';
+        if (!j.reservas.length) { box.appendChild(el('p', 'empty', 'Você não tem horários marcados. Se a barbearia desmarcou algum, ele some daqui.')); return; }
+        j.reservas.forEach(function(it){
+          var row = el('div', 'item'), info = el('div');
+          var b = byId(BARBEIROS, it.barbeiro), nomes = [it.servico].concat(it.extras || []).map(function(id){ var x = byId(SERVICOS, id); return x ? x.nome : id; });
+          info.appendChild(el('strong', null, nomeDia(it.data) + ' · ' + it.hora));
+          info.appendChild(el('small', null, nomes.join(' + ') + ' com ' + (b ? b.nome : it.barbeiro) + ' · ' + brl(Number(it.total) || 0)));
+          row.appendChild(info);
+          var c = el('button', null, 'Desmarcar'), t = null; c.type = 'button';
+          c.addEventListener('click', async function(){
+            if (!c.classList.contains('sure')) { c.classList.add('sure'); c.textContent = 'Confirmar?'; t = setTimeout(function(){ c.classList.remove('sure'); c.textContent = 'Desmarcar'; }, 3500); return; }
+            clearTimeout(t); c.disabled = true; c.textContent = 'Desmarcando…';
+            var cod = (lerCodigos().find(function(x){ return x.id === it.id; }) || {}).codigo;
+            try {
+              var rr = await fetch('/api/desmarcar', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({id: it.id, codigo: cod})});
+              var jj = await rr.json().catch(function(){ return {}; });
+              if (!rr.ok) throw new Error(jj.erro || 'Não foi possível desmarcar.');
+              salvarCodigos(lerCodigos().filter(function(x){ return x.id !== it.id; }));
+              delete taken[it.id]; renderHours(); renderMeusApi();
+            } catch (e) { c.disabled = false; c.classList.remove('sure'); c.textContent = 'Tentar de novo'; msg(e.message, 'err'); }
+          });
+          row.appendChild(c);
+          box.appendChild(row);
+        });
+        box.appendChild(el('p', 'note', 'Seus horários ficam guardados neste aparelho. Se agendou por outro celular, abra o site por ele.'));
+      } catch (e) { box.textContent = ''; box.appendChild(el('p', 'empty', 'Não foi possível carregar agora. Tente de novo em instantes.')); }
+    }
+
     async function carregarOcupados(){
       try {
         var r = await fetch('/api/ocupados', {cache:'no-store'});

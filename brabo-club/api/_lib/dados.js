@@ -155,7 +155,9 @@ export async function reservasFuturas() {
   const lista = (await listarReservas()).filter(r => r.data >= hoje);
   const docs = await Promise.all(lista.map(async r => {
     const d = await lerJSON(r.pathname).catch(() => null);
-    return d ? { id: r.id, ...d } : null;
+    if (!d) return null;
+    const { chaveHash, ...resto } = d;
+    return { id: r.id, ...resto };
   }));
   return docs.filter(Boolean).sort((a, b) => (a.data + a.hora).localeCompare(b.data + b.hora));
 }
@@ -173,6 +175,22 @@ export async function criarReserva(id, dados) {
     if (existe) return 'ocupado';
     throw e;
   }
+}
+
+// ---- o cliente vê e desmarca só as reservas que ele mesmo fez (código guardado no aparelho dele) ----
+export function novoCodigo() { return crypto.randomBytes(18).toString('base64url'); }
+export function hashCodigo(c) { return crypto.createHash('sha256').update(String(c)).digest('hex'); }
+function codigoConfere(reserva, codigo) {
+  if (!reserva || !reserva.chaveHash || !codigo) return false;
+  const a = Buffer.from(reserva.chaveHash, 'hex'), b = Buffer.from(hashCodigo(codigo), 'hex');
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+export async function reservaDoCliente(id, codigo) {
+  if (!RESERVA_RE.test(String(id))) return null;
+  const d = await lerJSON(`reservas/${id}.json`).catch(() => null);
+  if (!codigoConfere(d, codigo)) return null;
+  const { chaveHash, ...resto } = d;
+  return { id, ...resto };
 }
 
 export async function apagarReserva(id) {
