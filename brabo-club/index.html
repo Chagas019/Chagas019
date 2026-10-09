@@ -775,19 +775,19 @@
     </div>
     <div class="sig-grid">
       <article class="sig rv zoom" style="--d:.05s">
-        <div class="art-box"><div class="art" style="--c1:#8a3a12; --c2:#1d1310"><span class="art-tag">40 min</span><svg><use href="#i-scissors"/></svg></div></div>
-        <div class="sig-body"><h3>Corte</h3><p>Máquina e tesoura, com lavagem. Degradê, social ou do jeito que você pedir.</p>
-          <div class="sig-foot"><span class="price">R$ 40</span><a class="btn solid" href="#agendar" data-open="agendar" data-servico="corte">Agendar</a></div></div>
+        <div class="art-box"><div class="art" style="--c1:#8a3a12; --c2:#1d1310"><span class="art-tag" data-dur="corte">40 min</span><svg><use href="#i-scissors"/></svg></div></div>
+        <div class="sig-body"><h3 data-nome="corte">Corte</h3><p>Máquina e tesoura, com lavagem. Degradê, social ou do jeito que você pedir.</p>
+          <div class="sig-foot"><span class="price" data-preco="corte">R$ 40</span><a class="btn solid" href="#agendar" data-open="agendar" data-servico="corte">Agendar</a></div></div>
       </article>
       <article class="sig rv zoom" style="--d:.15s">
-        <div class="art-box"><div class="art" style="--c1:#7a1e2d; --c2:#1d1012"><span class="art-tag">1 h</span><svg><use href="#i-pole"/></svg></div></div>
-        <div class="sig-body"><h3>Corte + barba</h3><p>O combo completo, sem pressa: corte, barba modelada e acabamento.</p>
-          <div class="sig-foot"><span class="price">R$ 60</span><a class="btn solid" href="#agendar" data-open="agendar" data-servico="combo">Agendar</a></div></div>
+        <div class="art-box"><div class="art" style="--c1:#7a1e2d; --c2:#1d1012"><span class="art-tag" data-dur="combo">1 h</span><svg><use href="#i-pole"/></svg></div></div>
+        <div class="sig-body"><h3 data-nome="combo">Corte + barba</h3><p>O combo completo, sem pressa: corte, barba modelada e acabamento.</p>
+          <div class="sig-foot"><span class="price" data-preco="combo">R$ 60</span><a class="btn solid" href="#agendar" data-open="agendar" data-servico="combo">Agendar</a></div></div>
       </article>
       <article class="sig rv zoom" style="--d:.25s">
-        <div class="art-box"><div class="art" style="--c1:#6b4a1e; --c2:#18120d"><span class="art-tag">40 min</span><svg><use href="#i-razor"/></svg></div></div>
-        <div class="sig-body"><h3>Barba na navalha</h3><p>Com toalha quente, do jeito antigo. A especialidade da casa.</p>
-          <div class="sig-foot"><span class="price">R$ 40</span><a class="btn solid" href="#agendar" data-open="agendar" data-servico="navalha">Agendar</a></div></div>
+        <div class="art-box"><div class="art" style="--c1:#6b4a1e; --c2:#18120d"><span class="art-tag" data-dur="navalha">40 min</span><svg><use href="#i-razor"/></svg></div></div>
+        <div class="sig-body"><h3 data-nome="navalha">Barba na navalha</h3><p>Com toalha quente, do jeito antigo. A especialidade da casa.</p>
+          <div class="sig-foot"><span class="price" data-preco="navalha">R$ 40</span><a class="btn solid" href="#agendar" data-open="agendar" data-servico="navalha">Agendar</a></div></div>
       </article>
     </div>
     <div class="sig-more rv"><a class="link" href="#precos" data-open="precos">Ver tabela completa de valores →</a></div>
@@ -1068,6 +1068,7 @@
       <div class="step fields">
         <div class="field"><label for="f-nome">Seu nome</label><input id="f-nome" autocomplete="name" maxlength="60"></div>
         <div class="field"><label for="f-tel">WhatsApp</label><input id="f-tel" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="(00) 00000-0000"></div>
+        <input id="f-site" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true">
       </div>
       <div class="summary" id="summary"></div>
       <button class="btn solid confirm" type="button" id="confirm" disabled>Confirmar agendamento</button>
@@ -1118,15 +1119,19 @@
     function slotId(b, d, h){ return b + '_' + d + '_' + h.replace(':', ''); }
 
     // ---- Tabela de valores ----
-    var rows = $('price-rows');
-    SERVICOS.forEach(function(s){
-      var tr = el('tr'), td = el('td', null, s.nome);
-      td.appendChild(el('small', null, s.desc));
-      tr.appendChild(td);
-      tr.appendChild(el('td', 'dur', s.min >= 60 ? (s.min/60) + ' h' : s.min + ' min'));
-      tr.appendChild(el('td', 'val', brl(s.preco)));
-      rows.appendChild(tr);
-    });
+    function durTxt(min){ return min >= 60 ? (Math.floor(min / 60) + ' h' + (min % 60 ? ' ' + (min % 60) : '')) : min + ' min'; }
+    function renderTabela(){
+      var rows = $('price-rows'); rows.textContent = '';
+      SERVICOS.forEach(function(s){
+        var tr = el('tr'), td = el('td', null, s.nome);
+        td.appendChild(el('small', null, s.desc));
+        tr.appendChild(td);
+        tr.appendChild(el('td', 'dur', durTxt(s.min)));
+        tr.appendChild(el('td', 'val', brl(s.preco)));
+        rows.appendChild(tr);
+      });
+    }
+    renderTabela();
 
     // ---- Barbeiros ----
     var list = $('barber-list');
@@ -1151,6 +1156,7 @@
       if (window.braboCloseMenu) window.braboCloseMenu();
       document.querySelectorAll('dialog.panel[open]').forEach(function(d){ d.close(); });
       if (name === 'agendar' && opts) preset(opts);
+      if (name === 'agendar' && apiMode) carregarOcupados();
       var dlg = $('dlg-' + name);
       if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
     }
@@ -1165,11 +1171,16 @@
     // ---- Agendamento ----
     var BASE_IDS = ['corte','barba','combo','navalha'];
     var st = {barbeiro:null, servico:'corte', extras:[], data:null, hora:null};
+    var apiMode = false;
     var taken = {}, mine = null, all = [];
     var db = null, uid = null, online = false, isAdmin = false, busy = false;
 
     var sel = $('pick-servico');
-    SERVICOS.forEach(function(s){ if (BASE_IDS.indexOf(s.id) < 0) return; var o = el('option', null, s.nome + ' — ' + brl(s.preco)); o.value = s.id; sel.appendChild(o); });
+    function renderSelect(){
+      sel.textContent = '';
+      SERVICOS.forEach(function(s){ if (BASE_IDS.indexOf(s.id) < 0) return; var o = el('option', null, s.nome + ' — ' + brl(s.preco)); o.value = s.id; sel.appendChild(o); });
+      sel.value = st.servico;
+    }
     sel.addEventListener('change', function(){ st.servico = sel.value; renderSummary(); });
     $('f-nome').addEventListener('input', renderSummary);
     $('f-tel').addEventListener('input', renderSummary);
@@ -1205,6 +1216,7 @@
     }
 
     function render(){
+      if (!sel.options.length) renderSelect();
       sel.value = st.servico;
       var px = $('pick-extras'); px.textContent = '';
       SERVICOS.forEach(function(s){
@@ -1270,13 +1282,13 @@
       $('mode-note').textContent = online
         ? 'O horário fica reservado na hora e some da lista para os outros clientes.'
         : 'O pedido abre no WhatsApp com todos os dados preenchidos. É só enviar para a barbearia confirmar.';
-      document.querySelector('[data-tab="meus"]').hidden = !online;
+      document.querySelector('[data-tab="meus"]').hidden = !online || apiMode;
       document.querySelector('[data-tab="agenda"]').hidden = !(db && isAdmin);
       var adm = !!(db && isAdmin);
       $('painel').hidden = !adm;
       document.querySelectorAll('[data-admin]').forEach(function(a){ a.hidden = !adm; });
       if (adm) renderPainel();
-      $('tabs').hidden = !online && !(db && isAdmin);
+      $('tabs').hidden = !(online && !apiMode) && !(db && isAdmin);
     }
 
     function showTab(name){
@@ -1336,7 +1348,47 @@
       } finally { busy = false; renderSummary(); }
     }
 
-    $('confirm').addEventListener('click', function(){ if (online) reservar(); else whatsapp(); });
+    // Site na Vercel: reserva pela API do próprio site
+    async function reservarApi(){
+      var id = slotId(st.barbeiro, st.data, st.hora), bn = byId(BARBEIROS, st.barbeiro).nome, d = st.data, h = st.hora;
+      busy = true; renderSummary(); msg('Reservando…', '');
+      try {
+        var r = await fetch('/api/agendar', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({
+          barbeiro: st.barbeiro, servico: st.servico, extras: st.extras, data: d, hora: h,
+          nome: $('f-nome').value.trim(), telefone: $('f-tel').value.trim(), site: $('f-site').value
+        })});
+        var j = await r.json().catch(function(){ return {}; });
+        if (r.status === 201) {
+          taken[id] = true; st.hora = null; renderHours();
+          msg('Pronto! ' + bn + ' te espera ' + nomeDia(d) + ' às ' + h + '. Total: ' + brl(j.total || totalDe()) + '. Se precisar desmarcar, avise a barbearia.', 'ok');
+        } else if (r.status === 409) {
+          taken[id] = true; st.hora = null; renderHours(); msg(j.erro || 'Esse horário acabou de ser reservado. Escolha outro.', 'err');
+        } else msg(j.erro || 'Algo deu errado. Tente de novo em instantes.', 'err');
+      } catch (e) { msg('Sem conexão agora. Tente de novo em instantes.', 'err'); }
+      finally { busy = false; renderSummary(); }
+    }
+    async function carregarOcupados(){
+      try {
+        var r = await fetch('/api/ocupados', {cache:'no-store'});
+        if (!r.ok) return;
+        var j = await r.json(); taken = {};
+        (j.ocupados || []).forEach(function(id){ taken[id] = true; });
+        renderHours();
+      } catch (e) {}
+    }
+    function aplicarPrecos(lista){
+      SERVICOS.forEach(function(s){
+        var x = lista.find(function(v){ return v && v.id === s.id; });
+        if (x) { s.nome = x.nome; s.desc = x.desc; s.min = x.min; s.preco = x.preco; }
+      });
+      renderTabela(); renderSelect(); render();
+      document.querySelectorAll('[data-preco]').forEach(function(n){ var s = byId(SERVICOS, n.dataset.preco); if (s) n.textContent = brl(s.preco).replace(',00', ''); });
+      document.querySelectorAll('[data-nome]').forEach(function(n){ var s = byId(SERVICOS, n.dataset.nome); if (s) n.textContent = s.nome; });
+      document.querySelectorAll('[data-dur]').forEach(function(n){ var s = byId(SERVICOS, n.dataset.dur); if (s) n.textContent = durTxt(s.min); });
+      window.dispatchEvent(new CustomEvent('brabo:precos'));
+    }
+
+    $('confirm').addEventListener('click', function(){ if (apiMode) reservarApi(); else if (online) reservar(); else whatsapp(); });
 
     // Primeiro toque pede confirmação no próprio botão; o segundo cancela
     function cancelBtn(dono, id, body){
@@ -1451,8 +1503,23 @@
     render(); setMode();
     window.BRABO = {SERVICOS:SERVICOS, BARBEIROS:BARBEIROS, DIAS:DIAS, byId:byId, faixa:faixa, open:open};
 
-    // Capacidades da página publicada: reserva real com horários compartilhados.
+    // Hospedado na Vercel: preços e agenda vêm da API do próprio site
+    var apiPronta = (async function(){
+      if (!/^https?:$/.test(location.protocol)) return false;
+      try {
+        var r = await fetch('/api/precos', {cache:'no-store'});
+        var j = r.ok && /json/.test(r.headers.get('content-type') || '') ? await r.json() : null;
+        if (!j || !Array.isArray(j.servicos)) return false;
+        apiMode = true; online = true;
+        aplicarPrecos(j.servicos); setMode(); carregarOcupados();
+        setInterval(function(){ if (!document.hidden) carregarOcupados(); }, 60000);
+        return true;
+      } catch (e) { return false; }
+    })();
+
+    // Capacidades da página publicada no Claude: reserva real com horários compartilhados.
     (async function(){
+      if (await apiPronta) return;
       if (!window.claude || !window.claude.use) return;
       try {
         var u = await window.claude.use('user');
@@ -1550,7 +1617,7 @@
     var motion = document.documentElement.classList.contains('motion');
     var $ = function(id){ return document.getElementById(id); };
     function el(tag, cls, html){ var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
-    function brl(v){ return 'R$ ' + v; }
+    function brl(v){ return 'R$ ' + (v % 1 ? v.toFixed(2).replace('.', ',') : v); }
 
     // ---- Cabeçalho e menu do celular ----
     var head = $('head'), menuBtn = $('menu-btn');
@@ -1632,17 +1699,20 @@
     function svc(id){ return B.byId(B.SERVICOS, id); }
     function dur(min){ return min >= 60 ? (Math.floor(min / 60) + ' H' + (min % 60 ? ' ' + (min % 60) : '')) : min + ' MIN'; }
     var basesBox = $('bases'), extrasBox = $('extras');
+    function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+    function montarBuilder(){
+    basesBox.textContent = ''; extrasBox.textContent = '';
     BASES.forEach(function(b){
       var s = svc(b.id), btn = el('button', 'base');
       btn.type = 'button'; btn.dataset.id = b.id;
-      btn.innerHTML = '<span class="ring"><svg><use href="#' + b.ico + '"/></svg></span><b>' + s.nome + '</b><small>' + dur(s.min).toLowerCase() + ' · ' + brl(s.preco) + '</small>';
+      btn.innerHTML = '<span class="ring"><svg><use href="#' + b.ico + '"/></svg></span><b>' + esc(s.nome) + '</b><small>' + dur(s.min).toLowerCase() + ' · ' + brl(s.preco) + '</small>';
       btn.addEventListener('click', function(){ build.base = b.id; renderBuild(true); });
       basesBox.appendChild(btn);
     });
     EXTRAS.forEach(function(x){
       var s = svc(x.id), btn = el('button', 'extra');
       btn.type = 'button'; btn.dataset.id = x.id;
-      btn.innerHTML = '<span class="ico"><svg><use href="#' + x.ico + '"/></svg></span><span>' + s.nome + '</span><em>+' + brl(s.preco) + '</em>';
+      btn.innerHTML = '<span class="ico"><svg><use href="#' + x.ico + '"/></svg></span><span>' + esc(s.nome) + '</span><em>+' + brl(s.preco) + '</em>';
       btn.addEventListener('click', function(){
         var i = build.extras.indexOf(x.id);
         if (i >= 0) build.extras.splice(i, 1); else { build.extras.push(x.id); flyTo(btn.querySelector('.ico'), x.ico); }
@@ -1650,6 +1720,9 @@
       });
       extrasBox.appendChild(btn);
     });
+    }
+    montarBuilder();
+    addEventListener('brabo:precos', function(){ montarBuilder(); renderBuild(false); });
     function flyTo(from, ico){
       if (!motion || !from.animate) return;
       var a = from.getBoundingClientRect(), t = $('pv-art').getBoundingClientRect();

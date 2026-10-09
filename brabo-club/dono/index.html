@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Brabo Club — Painel do dono</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#14100e; --card:#2a221d; --card2:#211a16; --line:rgba(255,232,210,.10); --line2:rgba(255,232,210,.2);
+    --cream:#f1e6d8; --muted:rgba(241,230,216,.62); --dim:rgba(241,230,216,.4);
+    --orange:#ff6b1a; --orange2:#ff9348; --ok:#9fe0b2; --err:#ffa08c;
+    --serif:"Cormorant Garamond", "Times New Roman", serif;
+    --sans:"Inter", "Helvetica Neue", Arial, system-ui, sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0; background:var(--bg); color:var(--cream); font-family:var(--sans); -webkit-font-smoothing:antialiased}
+  [hidden]{display:none!important}
+  a{color:inherit}
+  button,input{font:inherit; color:inherit}
+  a:focus-visible, button:focus-visible, input:focus-visible{outline:2px solid var(--orange2); outline-offset:2px; border-radius:6px}
+  .wrap{max-width:1100px; margin:0 auto; padding:0 clamp(16px, 4vw, 40px)}
+  .kick{display:block; font:600 11px/1.4 var(--sans); letter-spacing:.22em; text-transform:uppercase; color:var(--orange)}
+  .kick i{font-style:normal; color:var(--dim)}
+  h1, h2{font-family:var(--serif); font-weight:600; letter-spacing:-.01em; margin:.2em 0 0}
+  h1{font-size:clamp(34px, 5vw, 54px); line-height:1.02}
+  h1 em, h2 em{font-style:italic; color:var(--orange2)}
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; height:42px; padding:0 18px; border-radius:8px; border:0; cursor:pointer; text-decoration:none;
+    font:600 11.5px var(--sans); letter-spacing:.14em; text-transform:uppercase; transition:background-color .2s, border-color .2s, box-shadow .2s}
+  .solid{background:var(--orange); color:#1a0d05} .solid:hover{background:var(--orange2)}
+  .ghost{background:transparent; color:var(--cream); border:1px solid var(--line2)} .ghost:hover{background:rgba(255,232,210,.06)}
+  .btn:disabled{opacity:.5; cursor:not-allowed}
+  .msg{min-height:20px; margin:10px 0 0; font-size:13.5px; line-height:1.5}
+  .msg.ok{color:var(--ok)} .msg.err{color:var(--err)}
+
+  /* login */
+  .login{min-height:100vh; min-height:100svh; display:grid; place-items:center; padding:24px}
+  .login-card{width:min(420px, 100%); padding:30px 26px; border:1px solid var(--line); border-radius:14px; background:var(--card)}
+  .login-card p{color:var(--muted); font-size:14px; line-height:1.6; margin:12px 0 18px}
+  .field{display:block}
+  .field span{display:block; font:600 10.5px var(--sans); letter-spacing:.18em; text-transform:uppercase; color:var(--muted); margin-bottom:8px}
+  .field input{width:100%; height:46px; padding:0 14px; border-radius:9px; border:1px solid var(--line2); background:rgba(0,0,0,.25); font-size:15px}
+  .login-card .btn{width:100%; margin-top:14px; height:48px}
+
+  /* app */
+  .top{position:sticky; top:0; z-index:5; background:rgba(20,16,14,.94); border-bottom:1px solid var(--line)}
+  .top-in{display:flex; align-items:center; justify-content:space-between; gap:12px; height:62px}
+  .logo{font:700 22px/1 var(--serif); letter-spacing:.06em; text-decoration:none}
+  .logo b{color:var(--orange)} .logo small{font:600 10px var(--sans); letter-spacing:.2em; text-transform:uppercase; color:var(--dim); margin-left:10px}
+  .top-actions{display:flex; gap:8px}
+  .top-actions .btn{height:36px; padding:0 12px; font-size:10.5px}
+  .head{padding:34px 0 10px}
+  .tabs{display:flex; gap:6px; margin:22px 0 8px; border-bottom:1px solid var(--line)}
+  .tabs button{height:44px; padding:0 16px; background:none; border:0; border-bottom:2px solid transparent; cursor:pointer; font:600 11px var(--sans); letter-spacing:.16em; text-transform:uppercase; color:var(--muted)}
+  .tabs button[aria-selected="true"]{color:var(--cream); border-bottom-color:var(--orange)}
+  section{padding:18px 0 60px}
+
+  .linkbox{display:flex; flex-wrap:wrap; align-items:center; gap:10px; padding:14px 16px; border:1px dashed var(--line2); border-radius:10px; margin:6px 0 20px; font-size:13.5px; color:var(--muted)}
+  .linkbox code{font:500 13px ui-monospace, Menlo, Consolas, monospace; color:var(--cream); word-break:break-all}
+  .linkbox .btn{height:32px; padding:0 12px; font-size:10px}
+
+  .stats{display:grid; grid-template-columns:repeat(4, 1fr); gap:10px}
+  .stats div{padding:14px 16px; border:1px solid var(--line); border-radius:10px; background:var(--card)}
+  .stats span{display:block; font:600 36px/1 var(--serif); color:var(--orange); font-variant-numeric:lining-nums tabular-nums}
+  .stats b{display:block; margin-top:6px; font:600 10px var(--sans); letter-spacing:.18em; text-transform:uppercase; color:var(--muted)}
+  .filters{display:flex; flex-wrap:wrap; align-items:center; gap:10px 22px; margin:20px 0 6px}
+  .group{display:flex; flex-wrap:wrap; gap:6px}
+  .group button{height:34px; padding:0 13px; border-radius:999px; border:1px solid var(--line2); background:transparent; cursor:pointer; font:600 10.5px var(--sans); letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
+  .group button[aria-pressed="true"]{background:var(--orange); border-color:var(--orange); color:#1a0d05}
+  .updated{margin-left:auto; font-size:12px; color:var(--dim)}
+  .day{margin:24px 0 10px; font:600 italic 25px var(--serif)}
+  .day small{margin-left:10px; font:600 10px var(--sans); font-style:normal; letter-spacing:.18em; text-transform:uppercase; color:var(--dim)}
+  .row{display:grid; grid-template-columns:66px minmax(0,1.3fr) minmax(0,1.5fr) 100px 84px auto; gap:14px; align-items:center;
+    padding:13px 15px; border:1px solid var(--line); border-radius:10px; background:var(--card); margin-bottom:8px}
+  .time{font:600 24px/1 var(--serif); color:var(--orange); font-variant-numeric:lining-nums tabular-nums}
+  .cli strong{display:block; font-size:14.5px}
+  .cli a{display:inline-block; margin-top:3px; font-size:12.5px; color:var(--orange2); text-decoration:none}
+  .cli a:hover{text-decoration:underline}
+  .svc{font-size:13px; line-height:1.45; color:rgba(241,230,216,.85)}
+  .barber{font:600 10.5px var(--sans); letter-spacing:.16em; text-transform:uppercase}
+  .total{font:600 18px var(--serif); text-align:right; font-variant-numeric:lining-nums tabular-nums}
+  .cancel{height:32px; padding:0 12px; border-radius:8px; border:1px solid rgba(255,160,140,.45); background:transparent; color:var(--err); cursor:pointer; font:600 10.5px var(--sans); letter-spacing:.1em; text-transform:uppercase}
+  .cancel:hover{background:rgba(255,160,140,.1)}
+  .cancel.sure{background:var(--err); color:#2a0d05}
+  .empty{margin:22px 0 0; padding:26px; border:1px dashed var(--line2); border-radius:10px; text-align:center; color:var(--muted); font-size:14px}
+
+  /* prices editor */
+  .ptable{width:100%; border-collapse:separate; border-spacing:0 8px}
+  .ptable th{text-align:left; font:600 10px var(--sans); letter-spacing:.18em; text-transform:uppercase; color:var(--muted); padding:0 8px}
+  .ptable td{background:var(--card); padding:10px 8px; vertical-align:middle}
+  .ptable td:first-child{border-radius:10px 0 0 10px; padding-left:14px}
+  .ptable td:last-child{border-radius:0 10px 10px 0; padding-right:14px}
+  .ptable input{width:100%; height:40px; padding:0 10px; border-radius:8px; border:1px solid var(--line2); background:rgba(0,0,0,.22); font-size:14px}
+  .ptable input:focus{border-color:var(--orange2)}
+  .ptable .num{width:96px}
+  .ptable .money{position:relative}
+  .ptable .money input{padding-left:34px}
+  .ptable .money::before{content:"R$"; position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:13px; color:var(--dim); pointer-events:none}
+  .ptable .tag{display:inline-block; margin-top:6px; font:600 9.5px var(--sans); letter-spacing:.16em; text-transform:uppercase; color:var(--dim)}
+  .ptable tr.changed td{background:#352a22}
+  .savebar{position:sticky; bottom:0; display:flex; flex-wrap:wrap; align-items:center; gap:12px; padding:14px 0; margin-top:10px; background:linear-gradient(to top, var(--bg) 70%, rgba(20,16,14,0))}
+  .savebar .msg{margin:0}
+
+  @media (max-width:860px){
+    .stats{grid-template-columns:1fr 1fr}
+    .row{grid-template-columns:60px 1fr auto; grid-template-areas:"t c x" "t s s" "t b v"}
+    .time{grid-area:t} .cli{grid-area:c} .svc{grid-area:s} .barber{grid-area:b} .total{grid-area:v} .row .cancel{grid-area:x}
+    .ptable thead{display:none}
+    .ptable, .ptable tbody, .ptable tr, .ptable td{display:block; width:100%}
+    .ptable tr{margin-bottom:10px; border-radius:10px; overflow:hidden}
+    .ptable td{border-radius:0!important; padding:6px 14px}
+    .ptable td:first-child{padding-top:14px} .ptable td:last-child{padding-bottom:14px}
+    .ptable td[data-l]::before{content:attr(data-l); display:block; font:600 9.5px var(--sans); letter-spacing:.16em; text-transform:uppercase; color:var(--dim); margin-bottom:5px}
+    .ptable .num{width:100%}
+    .top-actions .hide-sm{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- Entrada com a chave do dono -->
+<main class="login" id="login">
+  <form class="login-card" id="login-form">
+    <span class="kick">Brabo Club <i>// só para o dono</i></span>
+    <h1>Painel do <em>dono</em></h1>
+    <p>Aqui você vê quem agendou e muda a tabela de preços do site. Digite a chave de acesso que veio junto com este link.</p>
+    <label class="field"><span>Chave de acesso</span><input id="chave" type="password" autocomplete="current-password" required></label>
+    <button class="btn solid" type="submit" id="entrar">Entrar</button>
+    <p class="msg" id="login-msg" role="status"></p>
+  </form>
+</main>
+
+<div id="app" hidden>
+  <header class="top">
+    <div class="wrap top-in">
+      <a class="logo" href="/" target="_blank" rel="noopener">BRABO<b>.</b><small>Painel do dono</small></a>
+      <div class="top-actions">
+        <a class="btn ghost hide-sm" href="/" target="_blank" rel="noopener">Ver o site</a>
+        <button class="btn ghost" type="button" id="sair">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="head">
+      <span class="kick">Brabo Club <i>// R. Moscou, 240</i></span>
+      <h1>Bom te ver por <em>aqui.</em></h1>
+    </div>
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" aria-selected="true" data-tab="agenda">Agendamentos</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="precos">Tabela de preços</button>
+    </div>
+
+    <section data-pane="agenda">
+      <div class="linkbox">Link para os clientes: <code id="link-cliente"></code><button class="btn ghost" type="button" id="copiar-link">Copiar</button></div>
+      <div class="stats">
+        <div><span id="s-hoje">0</span><b>Hoje</b></div>
+        <div><span id="s-semana">0</span><b>Próximos 7 dias</b></div>
+        <div><span id="s-todos">0</span><b>Todos os marcados</b></div>
+        <div><span id="s-valor">R$ 0</span><b>Previsto no filtro</b></div>
+      </div>
+      <div class="filters">
+        <div class="group" id="f-periodo" role="group" aria-label="Período"></div>
+        <div class="group" id="f-barbeiro" role="group" aria-label="Barbeiro"></div>
+        <span class="updated" id="atualizado"></span>
+        <button class="btn ghost" type="button" id="recarregar" style="height:34px; padding:0 12px; font-size:10px">Atualizar</button>
+      </div>
+      <div id="lista" aria-live="polite"></div>
+    </section>
+
+    <section data-pane="precos" hidden>
+      <p style="color:var(--muted); font-size:14px; line-height:1.6; margin:4px 0 14px">Mude nomes, descrições, tempo e valores. Depois de salvar, o site dos clientes mostra os novos preços em até meio minuto, e os próximos agendamentos já usam os valores novos.</p>
+      <table class="ptable">
+        <thead><tr><th>Serviço</th><th>Descrição</th><th>Tempo (min)</th><th>Preço</th></tr></thead>
+        <tbody id="ptbody"></tbody>
+      </table>
+      <div class="savebar">
+        <button class="btn solid" type="button" id="salvar" disabled>Salvar preços</button>
+        <button class="btn ghost" type="button" id="desfazer" disabled>Desfazer mudanças</button>
+        <p class="msg" id="precos-msg" role="status"></p>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+  (function(){
+    var BARBEIROS = [{id:'vitinho', nome:'Vitinho'}, {id:'mycon', nome:'Mycon'}, {id:'rian', nome:'Rian'}];
+    var BASE_IDS = ['corte','barba','combo','navalha'];
+    var NOMES_DIA = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+    var KEY = 'brabo_chave';
+    var $ = function(id){ return document.getElementById(id); };
+    function el(tag, cls, text){ var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+    function brl(v){ v = Number(v) || 0; return 'R$ ' + (v % 1 ? v.toFixed(2).replace('.', ',') : v); }
+    function pad(n){ return (n < 10 ? '0' : '') + n; }
+    function hojeSP(){ return new Intl.DateTimeFormat('en-CA', {timeZone:'America/Sao_Paulo', year:'numeric', month:'2-digit', day:'2-digit'}).format(new Date()); }
+    function somaDias(iso, n){ var p = iso.split('-').map(Number); return new Date(Date.UTC(p[0], p[1]-1, p[2]+n)).toISOString().slice(0, 10); }
+    function diaSemana(iso){ var p = iso.split('-').map(Number); return new Date(Date.UTC(p[0], p[1]-1, p[2])).getUTCDay(); }
+
+    // ---- chave: vem no link (#chave=...) ou digitada; fica guardada só neste aparelho ----
+    var chave = '';
+    function lerGuardada(){ try { return localStorage.getItem(KEY) || ''; } catch (e) { return ''; } }
+    function guardar(v){ try { if (v) localStorage.setItem(KEY, v); else localStorage.removeItem(KEY); } catch (e) {} }
+    var hash = new URLSearchParams(location.hash.slice(1));
+    if (hash.get('chave')) { chave = hash.get('chave'); history.replaceState(null, '', location.pathname); }
+    else chave = lerGuardada();
+
+    async function api(path, opts){
+      opts = opts || {};
+      opts.headers = Object.assign({'Authorization': 'Bearer ' + chave}, opts.headers || {});
+      var r = await fetch(path, opts);
+      var j = await r.json().catch(function(){ return {}; });
+      if (r.status === 401) { sair('Chave inválida. Confira e tente de novo.'); throw new Error('401'); }
+      if (!r.ok) throw new Error(j.erro || 'Algo deu errado. Tente de novo.');
+      return j;
+    }
+
+    async function entrar(){
+      $('entrar').disabled = true; $('login-msg').className = 'msg'; $('login-msg').textContent = 'Conferindo…';
+      try {
+        await api('/api/admin/check');
+        guardar(chave);
+        $('login').hidden = true; $('app').hidden = false;
+        carregarReservas(); carregarPrecos();
+      } catch (e) {
+        if (e.message !== '401') { $('login-msg').className = 'msg err'; $('login-msg').textContent = 'Sem conexão agora. Tente de novo.'; }
+      } finally { $('entrar').disabled = false; }
+    }
+    function sair(m){
+      chave = ''; guardar('');
+      $('app').hidden = true; $('login').hidden = false;
+      $('chave').value = '';
+      $('login-msg').className = m ? 'msg err' : 'msg'; $('login-msg').textContent = m || '';
+    }
+    $('login-form').addEventListener('submit', function(e){ e.preventDefault(); chave = $('chave').value.trim(); if (chave) entrar(); });
+    $('sair').addEventListener('click', function(){ sair(''); });
+
+    // ---- abas ----
+    document.querySelectorAll('[data-tab]').forEach(function(t){
+      t.addEventListener('click', function(){
+        document.querySelectorAll('[data-tab]').forEach(function(x){ x.setAttribute('aria-selected', x === t ? 'true' : 'false'); });
+        document.querySelectorAll('[data-pane]').forEach(function(p){ p.hidden = p.dataset.pane !== t.dataset.tab; });
+      });
+    });
+
+    // ---- link dos clientes ----
+    var linkCliente = location.origin + '/';
+    $('link-cliente').textContent = linkCliente;
+    $('copiar-link').addEventListener('click', function(){
+      var b = this;
+      function ok(){ b.textContent = 'Copiado ✓'; setTimeout(function(){ b.textContent = 'Copiar'; }, 2000); }
+      if (navigator.clipboard) navigator.clipboard.writeText(linkCliente).then(ok, function(){});
+    });
+
+    // ---- agendamentos ----
+    var reservas = [], servicos = [], filtro = {periodo:'semana', barbeiro:'todos'};
+    function nomeServ(id){ var s = servicos.find(function(x){ return x.id === id; }); return s ? s.nome : id; }
+    async function carregarReservas(){
+      $('recarregar').disabled = true;
+      try {
+        var j = await api('/api/admin/reservas', {cache:'no-store'});
+        reservas = j.reservas || [];
+        $('atualizado').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+        renderReservas();
+      } catch (e) { if (e.message !== '401') $('atualizado').textContent = e.message; }
+      finally { $('recarregar').disabled = false; }
+    }
+    $('recarregar').addEventListener('click', carregarReservas);
+    setInterval(function(){ if (chave && !document.hidden && !$('app').hidden) carregarReservas(); }, 60000);
+
+    function botoes(boxId, opts, key){
+      var box = $(boxId); box.textContent = '';
+      opts.forEach(function(o){
+        var b = el('button', null, o[1]); b.type = 'button';
+        b.setAttribute('aria-pressed', filtro[key] === o[0] ? 'true' : 'false');
+        b.addEventListener('click', function(){ filtro[key] = o[0]; renderReservas(); });
+        box.appendChild(b);
+      });
+    }
+    function wa(tel){ var d = String(tel || '').replace(/\D/g, ''); if (!d) return null; if (d.length <= 11) d = '55' + d; return 'https://wa.me/' + d; }
+    function cancelBtn(id){
+      var c = el('button', 'cancel', 'Cancelar'), t = null; c.type = 'button';
+      c.addEventListener('click', async function(){
+        if (!c.classList.contains('sure')) { c.classList.add('sure'); c.textContent = 'Confirmar?'; t = setTimeout(function(){ c.classList.remove('sure'); c.textContent = 'Cancelar'; }, 3500); return; }
+        clearTimeout(t); c.disabled = true; c.textContent = 'Cancelando…';
+        try { await api('/api/admin/reservas?id=' + encodeURIComponent(id), {method:'DELETE'}); reservas = reservas.filter(function(r){ return r.id !== id; }); renderReservas(); }
+        catch (e) { c.disabled = false; c.classList.remove('sure'); c.textContent = 'Tente de novo'; }
+      });
+      return c;
+    }
+    function renderReservas(){
+      var hoje = hojeSP(), ate = somaDias(hoje, 6);
+      $('s-hoje').textContent = reservas.filter(function(r){ return r.data === hoje; }).length;
+      $('s-semana').textContent = reservas.filter(function(r){ return r.data <= ate; }).length;
+      $('s-todos').textContent = reservas.length;
+      botoes('f-periodo', [['hoje','Hoje'], ['semana','Próximos 7 dias'], ['todos','Todos']], 'periodo');
+      botoes('f-barbeiro', [['todos','Todos os barbeiros']].concat(BARBEIROS.map(function(b){ return [b.id, b.nome]; })), 'barbeiro');
+      var lista = reservas.filter(function(r){
+        if (filtro.periodo === 'hoje' && r.data !== hoje) return false;
+        if (filtro.periodo === 'semana' && r.data > ate) return false;
+        return filtro.barbeiro === 'todos' || r.barbeiro === filtro.barbeiro;
+      });
+      $('s-valor').textContent = brl(lista.reduce(function(a, r){ return a + (Number(r.total) || 0); }, 0));
+      var box = $('lista'); box.textContent = '';
+      if (!lista.length) { box.appendChild(el('p', 'empty', reservas.length ? 'Nenhum horário nesse filtro.' : 'Ninguém agendou ainda. Quando um cliente marcar pelo site, aparece aqui.')); return; }
+      var dia = null;
+      lista.forEach(function(r){
+        if (r.data !== dia) {
+          dia = r.data; var p = dia.split('-');
+          var h = el('h2', 'day', NOMES_DIA[diaSemana(dia)] + ', ' + p[2] + '/' + p[1]);
+          if (dia === hoje) h.appendChild(el('small', null, 'Hoje'));
+          box.appendChild(h);
+        }
+        var b = BARBEIROS.find(function(x){ return x.id === r.barbeiro; });
+        var row = el('div', 'row');
+        row.appendChild(el('span', 'time', r.hora));
+        var cli = el('div', 'cli'); cli.appendChild(el('strong', null, r.nome || 'Cliente'));
+        var link = wa(r.telefone);
+        if (link) { var a = el('a', null, (r.telefone || '') + ' · WhatsApp'); a.href = link; a.target = '_blank'; a.rel = 'noopener'; cli.appendChild(a); }
+        row.appendChild(cli);
+        row.appendChild(el('span', 'svc', [r.servico].concat(r.extras || []).map(nomeServ).join(' + ')));
+        row.appendChild(el('span', 'barber', b ? b.nome : r.barbeiro));
+        row.appendChild(el('span', 'total', brl(r.total)));
+        row.appendChild(cancelBtn(r.id));
+        box.appendChild(row);
+      });
+    }
+
+    // ---- tabela de preços ----
+    var original = [];
+    async function carregarPrecos(){
+      try {
+        var r = await fetch('/api/precos', {cache:'no-store'});
+        var j = await r.json();
+        servicos = j.servicos || [];
+        original = JSON.parse(JSON.stringify(servicos));
+        renderPrecos(); renderReservas();
+      } catch (e) { $('precos-msg').className = 'msg err'; $('precos-msg').textContent = 'Não foi possível carregar os preços.'; }
+    }
+    function input(type, value, attrs){
+      var i = el('input'); i.type = type; i.value = value;
+      Object.keys(attrs || {}).forEach(function(k){ i.setAttribute(k, attrs[k]); });
+      return i;
+    }
+    function renderPrecos(){
+      var tb = $('ptbody'); tb.textContent = '';
+      servicos.forEach(function(s, i){
+        var tr = el('tr'); tr.dataset.i = i;
+        var c1 = el('td'); c1.dataset.l = 'Serviço';
+        c1.appendChild(input('text', s.nome, {maxlength:'40', 'aria-label':'Nome do serviço', 'data-k':'nome'}));
+        c1.appendChild(el('span', 'tag', BASE_IDS.indexOf(s.id) >= 0 ? 'Serviço principal' : 'Adicional'));
+        var c2 = el('td'); c2.dataset.l = 'Descrição';
+        c2.appendChild(input('text', s.desc, {maxlength:'90', 'aria-label':'Descrição', 'data-k':'desc'}));
+        var c3 = el('td'); c3.dataset.l = 'Tempo (min)';
+        var m = input('number', s.min, {min:'5', max:'480', step:'5', inputmode:'numeric', 'aria-label':'Tempo em minutos', 'data-k':'min'}); m.className = 'num'; c3.appendChild(m);
+        var c4 = el('td'); c4.dataset.l = 'Preço';
+        var w = el('div', 'money'); var pv = input('number', s.preco, {min:'0', max:'5000', step:'0.01', inputmode:'decimal', 'aria-label':'Preço em reais', 'data-k':'preco'}); pv.className = 'num'; w.appendChild(pv); c4.appendChild(w);
+        [c1, c2, c3, c4].forEach(function(c){ tr.appendChild(c); });
+        tb.appendChild(tr);
+      });
+      marcar();
+    }
+    function lerTabela(){
+      return servicos.map(function(s, i){
+        var tr = document.querySelector('#ptbody tr[data-i="' + i + '"]'), o = {id: s.id};
+        tr.querySelectorAll('input[data-k]').forEach(function(inp){ o[inp.dataset.k] = (inp.dataset.k === 'min' || inp.dataset.k === 'preco') ? Number(inp.value) : inp.value.trim(); });
+        return o;
+      });
+    }
+    function marcar(){
+      var atual = lerTabela(), mudou = false;
+      atual.forEach(function(a, i){
+        var o = original[i], dif = a.nome !== o.nome || a.desc !== o.desc || a.min !== o.min || a.preco !== o.preco;
+        document.querySelector('#ptbody tr[data-i="' + i + '"]').classList.toggle('changed', dif);
+        if (dif) mudou = true;
+      });
+      $('salvar').disabled = !mudou; $('desfazer').disabled = !mudou;
+      if (mudou) { $('precos-msg').className = 'msg'; $('precos-msg').textContent = 'Há mudanças ainda não salvas.'; }
+    }
+    $('ptbody').addEventListener('input', marcar);
+    $('desfazer').addEventListener('click', function(){ servicos = JSON.parse(JSON.stringify(original)); renderPrecos(); $('precos-msg').textContent = ''; });
+    $('salvar').addEventListener('click', async function(){
+      var b = this; b.disabled = true; $('precos-msg').className = 'msg'; $('precos-msg').textContent = 'Salvando…';
+      try {
+        var j = await api('/api/admin/precos', {method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({servicos: lerTabela()})});
+        servicos = j.servicos; original = JSON.parse(JSON.stringify(servicos));
+        renderPrecos(); renderReservas();
+        $('precos-msg').className = 'msg ok'; $('precos-msg').textContent = 'Preços salvos. O site dos clientes atualiza em até meio minuto.';
+      } catch (e) {
+        if (e.message !== '401') { $('precos-msg').className = 'msg err'; $('precos-msg').textContent = e.message; b.disabled = false; }
+      }
+    });
+    window.addEventListener('beforeunload', function(e){ if (!$('salvar').disabled) { e.preventDefault(); e.returnValue = ''; } });
+
+    if (chave) entrar();
+  })();
+</script>
+</body>
+</html>
