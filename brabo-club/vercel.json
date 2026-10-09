@@ -50,7 +50,7 @@
   "rewrites": [
     {
       "source": "/barbeiro",
-      "destination": "/dono/index.html"
+      "destination": "/dono"
     }
   ]
 }
