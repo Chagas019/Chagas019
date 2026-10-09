@@ -404,6 +404,22 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
       check(c3.s[3] > .9 && /inset\(0(px|%)?[ )]/.test(c3.painel), `${w}px: o painel da frase cresce até ocupar a tela`, c3.painel);
       check(c4.s[4] > .9 && parseFloat(c4.fio) > .9, `${w}px: o desenho em linhas se completa`, c4.fio);
       check(c5.s[5] > .95 && [c0, c1, c2, c3, c4, c5].every(c => !c.lateral), `${w}px: marca no fim e sem rolagem lateral`);
+      const tipos = await p.$$eval(".obj", os => os.map(o => o.dataset.obj));
+      check(tipos.length >= 10 && ["camera", "agenda", "microfone", "celular", "megafone", "monitor"].every(n => tipos.includes(n)), `${w}px: objetos de comunicação na abertura`, tipos.join(","));
+      await em(4.5); const ob = await p.evaluate(() => [...document.querySelectorAll(".obj")].filter(o => +getComputedStyle(o).opacity > .3).map(o => o.dataset.obj));
+      check(ob.length >= 2, `${w}px: objetos atravessam a transição entre as cenas`, ob.join(","));
+      await em(3.12); const ag = await p.evaluate(() => [...document.querySelectorAll('.obj[data-obj="agenda"]')].some(o => +getComputedStyle(o).opacity > .9 && o.querySelector("svg")));
+      check(ag, `${w}px: a agenda aparece na cena “é a sua paróquia”`);
+      await em(0); const cam = await p.evaluate(() => { const o = document.querySelector('.obj[data-obj="camera"]'), r = o.getBoundingClientRect(); return +getComputedStyle(o).opacity > .9 && r.right > 0 && r.left < innerWidth; });
+      check(cam, `${w}px: a câmera aparece na primeira cena`);
+      await p.waitForTimeout(2700);
+      check(await p.evaluate(() => [...document.querySelectorAll(".t")].every(t => t.textContent === t.dataset.text) && !document.documentElement.classList.contains("anim")), `${w}px: rótulos decodificados e entrada encerrada`);
+      if (!mob) {
+        await p.click('.srail [data-cena="4"]'); await p.waitForTimeout(1500);
+        const s4 = await p.evaluate(() => +getComputedStyle(document.querySelector('.scene[data-s="4"]')).opacity);
+        check(s4 > .9 && await p.getAttribute('.srail [data-cena="4"]', "aria-current") === "true", `${w}px: índice lateral leva à cena e marca a ativa`, String(s4));
+      }
+      await em(5);
       await p.click("#show-servir"); await p.waitForTimeout(150);
       check(/Venha servir/.test(await p.textContent("#modal-body")), `${w}px: Quero servir abre a inscrição`);
       await p.click("#modal [data-close]");

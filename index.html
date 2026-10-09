@@ -755,7 +755,7 @@
 
   /* cena 5: uma só comunidade, desenho em linhas */
   .s4 { justify-content: center; }
-  .s4-copy { max-width: 360px; position: relative; z-index: 2; }
+  .s4-copy { max-width: 520px; position: relative; z-index: 2; }
   .s4-copy h3 { font-size: clamp(40px, 5.6vw, 92px); }
   .s4-copy p { font-size: 15px; line-height: 1.5; color: rgba(255, 255, 255, .8); margin: 14px 0 0; }
   .ring-ico { display: block; width: 44px; height: 44px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .85); box-shadow: inset 0 0 0 7px rgba(255, 255, 255, .15); margin-bottom: 18px; }
@@ -818,6 +818,69 @@
   @media (prefers-reduced-motion: reduce) {
     dialog[open], dialog[open]::backdrop, .sec.fx-in .sec-h2, .sec.fx-in .sec-label { animation: none !important; }
   }
+  /* ---------- Objetos de comunicação que atravessam as cenas ---------- */
+  .objs { position: absolute; inset: 0; z-index: 2; pointer-events: none; will-change: transform; }
+  .obj { position: absolute; left: 0; top: 0; width: var(--os, 120px); aspect-ratio: 1; opacity: 0; will-change: transform, opacity, filter; }
+  .obj img, .obj svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 18px 26px rgba(0, 0, 0, .55)) drop-shadow(0 0 22px rgba(255, 106, 31, .18)); }
+  .obj i { position: absolute; inset: 0; animation: boia 5s ease-in-out infinite; animation-delay: var(--od, 0s); }
+  @keyframes boia { 50% { transform: translateY(-8px) rotate(3deg); } }
+
+  /* ---------- Moldura com cantos chanfrados (inspirada na referência) ---------- */
+  .sframe { position: absolute; z-index: 6; pointer-events: none; left: 24px; right: 24px; top: calc(var(--top-h) + 12px); bottom: 24px; --fl: rgba(255, 255, 255, .14); --fc: 22px; }
+  .sframe i { position: absolute; background: var(--fl); }
+  .sframe .ft, .sframe .fb { left: var(--fc); right: var(--fc); height: 1px; }
+  .sframe .ft { top: 0; } .sframe .fb { bottom: 0; }
+  .sframe .fl, .sframe .fr { top: var(--fc); bottom: var(--fc); width: 1px; }
+  .sframe .fl { left: 0; } .sframe .fr { right: 0; }
+  .sframe b { position: absolute; width: var(--fc); height: var(--fc); }
+  .sframe .c1 { left: 0; top: 0; background: linear-gradient(to bottom right, transparent calc(50% - .65px), var(--fl) calc(50% - .65px), var(--fl) calc(50% + .65px), transparent calc(50% + .65px)); }
+  .sframe .c2 { right: 0; top: 0; background: linear-gradient(to bottom left, transparent calc(50% - .65px), var(--fl) calc(50% - .65px), var(--fl) calc(50% + .65px), transparent calc(50% + .65px)); }
+  .sframe .c3 { left: 0; bottom: 0; background: linear-gradient(to bottom left, transparent calc(50% - .65px), var(--fl) calc(50% - .65px), var(--fl) calc(50% + .65px), transparent calc(50% + .65px)); }
+  .sframe .c4 { right: 0; bottom: 0; background: linear-gradient(to bottom right, transparent calc(50% - .65px), var(--fl) calc(50% - .65px), var(--fl) calc(50% + .65px), transparent calc(50% + .65px)); }
+
+  /* ---------- Índice das cenas ---------- */
+  .srail { position: absolute; z-index: 7; left: 44px; top: 50%; transform: translateY(-50%); list-style: none; margin: 0; padding: 0; }
+  .srail button { position: relative; display: flex; align-items: center; min-height: 32px; min-width: 44px; font: 700 10.5px/1 var(--font-heavy); letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 240, 230, .34); transition: color .3s ease; }
+  .srail button:hover, .srail button[aria-current="true"] { color: #fff; }
+  .srail button[aria-current="true"]::before { content: ""; position: absolute; left: -14px; top: 50%; width: 6px; height: 7px; background: var(--accent); transform: translateY(-50%); }
+  @media (min-width: 1100px) { .scene { padding-left: 210px; } .mega { font-size: clamp(56px, 10.6vw, 200px); } .s2, .s5 { padding-left: clamp(20px, 5vw, 72px); } }
+  @media (max-width: 1099px) { .srail { display: none; } }
+  @media (max-width: 700px) { .sframe { left: 12px; right: 12px; bottom: 96px; --fc: 16px; } }
+
+  /* rótulos que se “decodificam”: a largura fica reservada para a linha não pular */
+  .t { display: inline-block; overflow: hidden; vertical-align: bottom; white-space: pre; text-align: left; }
+
+  /* títulos das cenas sobem por dentro de uma máscara */
+  .mrow { display: block; overflow: hidden; padding: .16em 0 .08em; margin: -.16em 0 -.08em; }
+  .mrise { display: block; will-change: transform; }
+
+  /* dica de rolagem no estilo da referência */
+  .show-hint { display: flex; align-items: center; gap: 10px; font: 700 10.5px var(--font-heavy); letter-spacing: .18em; }
+  .show-hint::after { display: none; }
+  .show-hint svg { width: 7px; height: 10px; fill: currentColor; animation: hint 1.8s ease-in-out infinite; }
+
+  /* ---------- Entrada ao abrir a página (uma vez) ---------- */
+  @keyframes drawX { from { transform: scaleX(0); } }
+  @keyframes drawY { from { transform: scaleY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } }
+  @keyframes maskUp { from { transform: translateY(112%); } }
+  @keyframes settle { from { opacity: 0; transform: translateY(8px); } }
+  .anim .sframe .ft { transform-origin: left; animation: drawX .5s cubic-bezier(.65, 0, .35, 1) .04s both; }
+  .anim .sframe .fl { transform-origin: top; animation: drawY .5s cubic-bezier(.65, 0, .35, 1) .04s both; }
+  .anim .sframe .fb { transform-origin: right; animation: drawX .5s cubic-bezier(.65, 0, .35, 1) .2s both; }
+  .anim .sframe .fr { transform-origin: bottom; animation: drawY .5s cubic-bezier(.65, 0, .35, 1) .2s both; }
+  .anim .sframe b { animation: fadeIn .3s linear .55s both; }
+  .anim .s0 .mrise { animation: maskUp .9s cubic-bezier(.16, 1, .3, 1) .42s both; }
+  .anim .s0 .show-sub { animation: settle .72s cubic-bezier(.22, .61, .36, 1) .7s both; }
+  .anim .s0 .show-cta { animation: settle .62s cubic-bezier(.22, .61, .36, 1) .86s both; }
+  .anim .srail { animation: fadeIn .45s linear .6s both; }
+  .anim .topbar { animation: settle .56s cubic-bezier(.22, .61, .36, 1) .2s both; }
+  @media (prefers-reduced-motion: reduce) {
+    .objs, .sframe, .srail { display: none; }
+    .obj i, .show-hint svg { animation: none; }
+  }
+  .t.solto { display: inline; white-space: normal; overflow: visible; }
+  .extrude .mrow { padding: .16em 14px 22px; margin: -.16em -14px -22px; }
   /* ---------- Responsivo ----------
      celular (< 768px): menu em barra fixa embaixo, cards passam com o dedo
      tablet em pé (768–1100px, retrato): menu no topo, cards em grade
@@ -881,6 +944,7 @@
 </style>
 </head>
 <body>
+<script>if (!matchMedia("(prefers-reduced-motion: reduce)").matches) { document.documentElement.classList.add("anim"); setTimeout(() => document.documentElement.classList.remove("anim"), 3200); }</script>
 <h1 class="sr">Comunica+Fé: Pastoral da Comunicação</h1>
 <div class="scroll-bar" aria-hidden="true"><span id="scroll-fill"></span></div>
 <noscript><p style="max-width:640px;margin:0 auto 16px;color:#fff">Comunica+Fé, Pastoral da Comunicação: escala das missas, liturgia do dia, agenda da paróquia, frase do dia e os santos padroeiros da comunicação. Ative o JavaScript para usar o site.</p></noscript>
@@ -946,7 +1010,7 @@
       </div>
       <div class="show-edge" id="show-edge" aria-hidden="true"></div>
       <div class="disc" id="disc" aria-hidden="true"><i></i></div>
-      <div class="show-hint" id="show-hint" aria-hidden="true">Role para baixo</div>
+      <div class="show-hint" id="show-hint" aria-hidden="true"><svg viewBox="0 0 5 7"><path d="M0 0H5L2.5 3Z"/><path d="M0 4H5L2.5 7Z"/></svg>ROLE PARA DESCOBRIR</div>
       <div class="show-count" id="show-count" aria-hidden="true"></div>
     </div>
   </section>
@@ -3072,6 +3136,178 @@ if ("IntersectionObserver" in window) {
 }
 const renderQuoteBase = renderQuote;
 renderQuote = function () { renderQuoteBase(); fraseAbertura(); };
+
+/* ---------- Rótulos que se “decodificam” (inspirado na página de referência) ----------
+   O texto se resolve da esquerda para a direita em 400 ms, com uma faixa de letras
+   sorteadas logo à frente. A largura de cada rótulo é reservada antes. */
+const LETRAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const rotulos = [];
+function rotulo(el) {
+  if (el.querySelector(".t")) return el.querySelector(".t");
+  const t = document.createElement("span"); t.className = "t";
+  t.textContent = el.textContent.trim(); el.textContent = ""; el.appendChild(t);
+  t.dataset.text = t.textContent; rotulos.push(t); return t;
+}
+function reservar() {
+  rotulos.forEach(t => { t.style.width = ""; });
+  const ws = rotulos.map(t => t.getBoundingClientRect().width);
+  rotulos.forEach((t, i) => { if (ws[i]) t.style.width = Math.ceil(ws[i] * 100) / 100 + "px"; });
+}
+function assentar(t) { cancelAnimationFrame(t._raf); clearTimeout(t._to); t.textContent = t.dataset.text; }
+function decodificar(t, dur = 400) {
+  if (!t) return;
+  assentar(t);
+  if (semMovimento()) return;
+  const txt = t.dataset.text, n = txt.length, t0 = performance.now(); let rolou = 0, sorte = [];
+  const sortear = () => { sorte = Array.from({ length: n }, () => LETRAS[Math.random() * 26 | 0]); };
+  sortear();
+  const passo = agora => {
+    const p = Math.min(1, (agora - t0) / dur), frente = p * n; let out = "";
+    if (agora - rolou > 45) { sortear(); rolou = agora; }
+    for (let i = 0; i < n; i++) { const c = txt[i]; if (i < frente) out += c; else if (i < frente + 3.6) out += c === " " ? " " : sorte[i]; else break; }
+    t.textContent = out;
+    if (p < 1) t._raf = requestAnimationFrame(passo); else assentar(t);
+  };
+  t._raf = requestAnimationFrame(passo);
+  t._to = setTimeout(() => assentar(t), dur + 500);
+}
+// menu do topo (computador), botões da abertura e rótulos das cenas
+document.querySelectorAll(".topbar .nav .pill").forEach(b => { const svg = b.querySelector("svg"); const t = document.createElement("span"); t.className = "t";
+  t.textContent = b.textContent.trim(); [...b.childNodes].forEach(n => { if (n.nodeType === 3) n.remove(); }); b.appendChild(t); t.dataset.text = t.textContent; rotulos.push(t); if (svg) b.prepend(svg); });
+show.querySelectorAll(".show-kicker, .scene .k").forEach(el => { const t = rotulo(el); if (el.classList.contains("show-kicker")) { t.classList.add("solto"); rotulos.splice(rotulos.indexOf(t), 1); } });
+document.querySelectorAll(".topbar .nav .pill, .show .btn-pill, .show .ghost-pill").forEach(b => {
+  const t = b.classList.contains("pill") ? b.querySelector(".t") : rotulo(b);
+  b.addEventListener("pointerenter", e => { if (e.pointerType === "mouse") decodificar(t); });
+});
+
+/* ---------- Índice das cenas ---------- */
+const NOMES_CENAS = ["Comunica+Fé", "Missão", "Fé", "Paróquia", "Comunidade", "Conectados"];
+const srail = document.createElement("ul"); srail.className = "srail"; srail.setAttribute("aria-label", "Cenas da abertura");
+srail.innerHTML = NOMES_CENAS.map((n, k) => `<li><button type="button" data-cena="${k}">${n}</button></li>`).join("");
+show.querySelector(".show-sticky").appendChild(srail);
+const railBtns = [...srail.querySelectorAll("button")];
+railBtns.forEach(b => { const t = rotulo(b); b.addEventListener("pointerenter", e => { if (e.pointerType === "mouse") decodificar(t); }); });
+srail.addEventListener("click", e => {
+  const b = e.target.closest("[data-cena]"); if (!b) return;
+  const total = show.offsetHeight - innerHeight, topo = show.getBoundingClientRect().top + scrollY;
+  scrollTo({ top: topo + total * (+b.dataset.cena + (+b.dataset.cena === 3 ? .12 : 0)) / (N_CENAS - 1), behavior: semMovimento() ? "auto" : "smooth" });
+});
+
+/* ---------- Moldura com cantos chanfrados ---------- */
+const sframe = document.createElement("div"); sframe.className = "sframe"; sframe.setAttribute("aria-hidden", "true");
+sframe.innerHTML = '<i class="ft"></i><i class="fb"></i><i class="fl"></i><i class="fr"></i><b class="c1"></b><b class="c2"></b><b class="c3"></b><b class="c4"></b>';
+show.querySelector(".show-sticky").appendChild(sframe);
+
+/* ---------- Títulos das cenas dentro de uma máscara ---------- */
+const mascaras = [...show.querySelectorAll(".mega, .big, .title-ai, .s4-copy h3, .extrude")].map(h => {
+  const row = document.createElement("span"), rise = document.createElement("span");
+  row.className = "mrow"; rise.className = "mrise";
+  [...h.childNodes].forEach(n => { if (!(n.nodeName === "SUP")) rise.appendChild(n); });
+  row.appendChild(rise); h.prepend(row);
+  return { rise, k: +h.closest(".scene").dataset.s };
+});
+
+/* ---------- Objetos de comunicação ----------
+   Câmera, microfone, celular, megafone, monitor, sino, agenda, relógio e livros flutuam
+   perto da sua cena e atravessam a tela nas transições: chegam pequenos e desfocados,
+   passam no tamanho certo e saem crescendo em direção a quem lê. */
+const AGENDA_SVG = `<svg viewBox="0 0 120 120" aria-hidden="true"><defs>
+  <linearGradient id="ag-c" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4a4a4e"/><stop offset=".45" stop-color="#151517"/><stop offset="1" stop-color="#050506"/></linearGradient>
+  <linearGradient id="ag-t" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a3d"/><stop offset="1" stop-color="#b8410e"/></linearGradient>
+  <linearGradient id="ag-a" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2a2a2d"/><stop offset=".5" stop-color="#bfbfc4"/><stop offset="1" stop-color="#2a2a2d"/></linearGradient></defs>
+  <g transform="rotate(-8 60 60)">
+  <rect x="14" y="20" width="92" height="86" rx="14" fill="url(#ag-c)"/>
+  <path d="M14 34a14 14 0 0 1 14-14h64a14 14 0 0 1 14 14v8H14z" fill="url(#ag-t)"/>
+  <rect x="34" y="11" width="7" height="20" rx="3.5" fill="url(#ag-a)"/><rect x="79" y="11" width="7" height="20" rx="3.5" fill="url(#ag-a)"/>
+  <g fill="#3a3a3e">${[0, 1, 2, 3].map(r => [0, 1, 2, 3, 4].map(c => `<rect x="${24 + c * 15}" y="${50 + r * 13}" width="10" height="8" rx="2"/>`).join("")).join("")}</g>
+  <rect x="54" y="63" width="10" height="8" rx="2" fill="#ff6a1f"/>
+  <path d="M20 26c10-6 40-8 60-6" stroke="rgba(255,255,255,.35)" stroke-width="2" fill="none" stroke-linecap="round"/></g></svg>`;
+const OBJETOS = [
+  { n: "camera", k: 0, x: .84, y: .3, s: 150 }, { n: "microfone", k: 0, x: .36, y: .8, s: 110 },
+  { n: "celular", k: 1, x: .34, y: .86, s: 120 }, { n: "megafone", k: 1, x: .9, y: .8, s: 130 },
+  { n: "monitor", k: 2, x: .16, y: .64, s: 160 }, { n: "sino", k: 2, x: .85, y: .36, s: 100 },
+  { n: "agenda", k: 3, x: .84, y: .24, s: 150 }, { n: "relogio", k: 3, x: .2, y: .26, s: 110 },
+  { n: "livros", k: 4, x: .44, y: .82, s: 120 }, { n: "camera", k: 4, x: .9, y: .16, s: 90 },
+  { n: "celular", k: 5, x: .14, y: .3, s: 110 }, { n: "microfone", k: 5, x: .86, y: .74, s: 120 },
+  { n: "agenda", k: 5, x: .84, y: .26, s: 110 }, { n: "megafone", k: 5, x: .16, y: .76, s: 110 },
+];
+const objs = document.createElement("div"); objs.className = "objs"; objs.setAttribute("aria-hidden", "true");
+objs.innerHTML = OBJETOS.map((o, i) => `<div class="obj" data-obj="${o.n}"><i style="--od:${(i * .43 % 3).toFixed(2)}s">${o.n === "agenda" ? AGENDA_SVG.replace(/ag-/g, `ag${i}-`) : `<img src="icones/objetos/${o.n}.png" alt="">`}</i></div>`).join("");
+show.querySelector(".show-sticky").insertBefore(objs, show.querySelector(".scene"));
+const objEls = [...objs.children];
+function objetosFrame(t, vw, vh) {
+  const estreito = vw < 700, fator = estreito ? .62 : Math.min(1.15, Math.max(.8, Math.min(vw, vh) / 800));
+  OBJETOS.forEach((o, i) => {
+    const el = objEls[i], z = t - o.k;            // < 0 chegando, > 0 saindo
+    if (z < -1.05 || z > 1.05) { el.style.opacity = 0; return; }
+    const s = o.s * fator, perto = Math.max(0, z), longe = Math.max(0, -z);
+    const esc = 1 + perto * 1.6 - longe * .55;
+    const x = (estreito ? .1 + (o.x - .1) * .8 : o.x) * vw + (o.x < .5 ? -1 : 1) * perto * vw * .28;
+    const y = o.y * vh - z * vh * .32;
+    el.style.setProperty("--os", s + "px");
+    el.style.opacity = clamp01(1 - (Math.abs(z) - .45) / .55).toFixed(3);
+    el.style.transform = `translate(${(x - s / 2).toFixed(1)}px, ${(y - s / 2).toFixed(1)}px) rotate(${(z * (o.x < .5 ? -24 : 24)).toFixed(1)}deg) scale(${esc.toFixed(3)})`;
+    el.style.filter = Math.abs(z) > .35 ? `blur(${((Math.abs(z) - .35) * 7).toFixed(1)}px)` : "none";
+  });
+}
+
+/* ---------- Cada quadro da abertura: máscara, índice e objetos ---------- */
+let cenaAtiva = -1;
+function abertura2(t, vw, vh) {
+  mascaras.forEach(m => {
+    const d = t - (m.k === 3 ? 3.12 : m.k);
+    const y = d < 0 ? clamp01((-d - .12) / .3) * 112 : -clamp01((d - .18) / .3) * 112;
+    m.rise.style.transform = m.k === 0 && t < .05 ? "" : `translateY(${y.toFixed(1)}%)`;
+  });
+  objetosFrame(t, vw, vh);
+  const ativa = Math.round(t);
+  if (ativa !== cenaAtiva) {
+    cenaAtiva = ativa;
+    railBtns.forEach((b, k) => b.setAttribute("aria-current", String(k === ativa)));
+    if (!document.documentElement.classList.contains("anim")) {
+      decodificar(railBtns[ativa]?.querySelector(".t"));
+      cenas[ativa]?.querySelectorAll(".k .t, .show-kicker .t").forEach(t => decodificar(t));
+    }
+  }
+}
+const showFrameBase = showFrame;
+showFrame = function () {
+  showFrameBase();
+  const r = show.getBoundingClientRect(), vh = innerHeight, vw = innerWidth;
+  if (semMovimento() || r.bottom < -50 || r.top > vh + 50) return;
+  const total = r.height - vh, p = total > 0 ? clamp01(-r.top / total) : 0;
+  abertura2(p * (N_CENAS - 1), vw, vh);
+};
+
+/* ---------- O cenário acompanha o mouse devagar ---------- */
+let mx = 0, my = 0, ax = 0, ay = 0, movendo = false;
+function seguir() {
+  ax += (mx - ax) * .045; ay += (my - ay) * .045;
+  const dx = -ax * innerWidth * .0156, dy = -ay * innerHeight * .015;
+  objs.style.transform = `translate3d(${(dx * 2.2).toFixed(2)}px, ${(dy * 2.2).toFixed(2)}px, 0)`;
+  $("show-glow").style.transform = `translate3d(${dx.toFixed(2)}px, ${dy.toFixed(2)}px, 0) scale(${(1 + .03 + .014 * Math.max(0, ay)).toFixed(4)})`;
+  disc.style.translate = `${(dx * 1.4).toFixed(2)}px ${(dy * 1.4).toFixed(2)}px`;
+  if (Math.abs(mx - ax) < .0004 && Math.abs(my - ay) < .0004) { movendo = false; return; }
+  requestAnimationFrame(seguir);
+}
+const acordar = () => { if (!movendo && !semMovimento()) { movendo = true; requestAnimationFrame(seguir); } };
+addEventListener("pointermove", e => { if (e.pointerType !== "mouse") return; mx = e.clientX / innerWidth * 2 - 1; my = e.clientY / innerHeight * 2 - 1; acordar(); }, { passive: true });
+document.addEventListener("pointerleave", () => { mx = 0; my = 0; acordar(); });
+
+/* ---------- Abertura da página: os rótulos se resolvem em sequência ---------- */
+function estreia() {
+  reservar();
+  if (semMovimento()) return;
+  const em = (els, t0, passo = 0) => els.forEach((t, i) => setTimeout(() => decodificar(t), t0 + i * passo));
+  em([...document.querySelectorAll(".topbar .nav .t")], 360, 45);
+  em([...show.querySelectorAll(".s0 .show-kicker .t")], 300);
+  em(railBtns.map(b => b.querySelector(".t")), 660, 55);
+  em([...show.querySelectorAll(".s0 .show-cta .t")], 900, 60);
+  setTimeout(() => document.documentElement.classList.remove("anim"), 2200);
+  setTimeout(() => rotulos.forEach(assentar), 2600);
+}
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(estreia); else addEventListener("load", estreia);
+let reservaT; addEventListener("resize", () => { clearTimeout(reservaT); reservaT = setTimeout(reservar, 160); });
 
 /* ---------- Início ---------- */
 renderHero(); renderPick(); renderMass(); setMassUI(false); renderQuote(); restartHero(); applyFilter(); renderEscalaCard();
