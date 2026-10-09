@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pascom — Pastoral da Comunicação</title>
+<meta name="description" content="Pastoral da Comunicação: evangelizar pela fotografia, pelo vídeo e pelas redes sociais. Descubra onde você pode servir.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0b0c;
+    --surface: #18181a;
+    --surface-2: #1f1f22;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.14);
+    --text: #f2f0ed;
+    --text-muted: #a3a09b;
+    --accent: #ff7a2f;
+    --accent-soft: #ffa774;
+    --accent-glow: rgba(255, 122, 47, 0.55);
+    --radius: 18px;
+    --ease: cubic-bezier(.2, .7, .2, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background:
+      radial-gradient(60rem 40rem at 85% -10%, rgba(255, 122, 47, 0.08), transparent 60%),
+      radial-gradient(50rem 40rem at -10% 60%, rgba(255, 122, 47, 0.05), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: "Manrope", system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a { color: inherit; }
+  img, svg { display: block; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+
+  .container { width: min(1120px, 100% - 32px); margin-inline: auto; }
+  .eyebrow {
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  h1, h2, h3 { font-weight: 400; letter-spacing: -0.02em; line-height: 1.15; }
+  .muted { color: var(--text-muted); }
+
+  /* ---------- Header ---------- */
+  header {
+    position: sticky; top: 0; z-index: 20;
+    backdrop-filter: blur(14px);
+    background: rgba(11, 11, 12, 0.72);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; text-decoration: none; letter-spacing: 0.02em; }
+  .brand-mark {
+    width: 30px; height: 30px; border-radius: 9px;
+    display: grid; place-items: center;
+    background: linear-gradient(145deg, #2a2a2e, #141416);
+    border: 1px solid var(--border-strong);
+    box-shadow: 0 0 18px rgba(255, 122, 47, 0.25);
+  }
+  .nav ul { display: flex; gap: 28px; list-style: none; }
+  .nav ul a { text-decoration: none; color: var(--text-muted); font-size: 0.92rem; transition: color .2s; }
+  .nav ul a:hover { color: var(--text); }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    min-height: 44px; padding: 0 20px;
+    border-radius: 10px; border: 0;
+    font: 600 0.92rem "Manrope", sans-serif;
+    text-decoration: none; cursor: pointer;
+    transition: transform .2s var(--ease), box-shadow .2s var(--ease), background .2s;
+  }
+  .btn-primary { background: var(--accent-soft); color: #1a0d05; }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 28px var(--accent-glow); }
+  .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border-strong); }
+  .btn-ghost:hover { border-color: var(--accent); }
+  .btn svg { transition: transform .2s var(--ease); }
+  .btn:hover svg { transform: translateX(3px); }
+
+  /* ---------- Card (glass, as in reference) ---------- */
+  .card {
+    position: relative;
+    background: linear-gradient(180deg, rgba(36, 36, 39, 0.92), rgba(22, 22, 24, 0.92));
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.06) inset,
+      0 30px 60px -20px rgba(0, 0, 0, 0.7);
+  }
+  .card.is-active {
+    border-color: rgba(255, 122, 47, 0.55);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.06) inset,
+      0 0 0 1px rgba(255, 122, 47, 0.15),
+      0 0 40px -6px rgba(255, 122, 47, 0.35),
+      0 30px 60px -20px rgba(0, 0, 0, 0.7);
+  }
+
+  /* ---------- Hero ---------- */
+  .hero { padding: 96px 0 72px; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center; }
+  .hero h1 { font-size: clamp(2.4rem, 5.5vw, 4.2rem); margin: 18px 0 20px; }
+  .hero h1 em { font-style: normal; color: var(--accent-soft); }
+  .hero p { font-size: 1.08rem; max-width: 34rem; }
+  .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
+  .hero-visual { aspect-ratio: 1 / 1; display: grid; place-items: center; }
+  .lens {
+    width: 78%; aspect-ratio: 1; border-radius: 50%;
+    background:
+      radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.22), transparent 18%),
+      radial-gradient(circle at 50% 50%, #0a0a0b 0 30%, #1d1d20 31% 42%, #0c0c0d 43% 58%, #26262a 59% 66%, #111113 67% 100%);
+    border: 1px solid var(--border-strong);
+    box-shadow:
+      0 0 0 10px #141416,
+      0 0 0 11px var(--border-strong),
+      0 0 80px -10px var(--accent-glow),
+      0 40px 80px -20px rgba(0, 0, 0, 0.8);
+    position: relative;
+  }
+  .lens::after {
+    content: ""; position: absolute; inset: 40%; border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, rgba(255, 167, 116, 0.9), rgba(255, 122, 47, 0.25) 45%, transparent 70%);
+    filter: blur(2px);
+  }
+
+  /* ---------- Section ---------- */
+  section { padding: 88px 0; }
+  .section-head { max-width: 40rem; margin-bottom: 48px; }
+  .section-head h2 { font-size: clamp(1.9rem, 3.6vw, 2.8rem); margin-top: 12px; }
+  .section-head p { margin-top: 14px; }
+
+  /* ---------- Flow (the 3 steps) ---------- */
+  .flow { position: relative; display: grid; grid-template-columns: repeat(12, 1fr); row-gap: 72px; }
+  .flow svg.wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+  .wires path { fill: none; stroke: var(--accent); stroke-width: 2; filter: drop-shadow(0 0 6px var(--accent-glow)); }
+  .wires circle { fill: var(--accent); filter: drop-shadow(0 0 8px var(--accent)); }
+
+  .step { padding: 32px; z-index: 1; }
+  .step h3 { font-size: clamp(1.6rem, 2.6vw, 2.2rem); margin-top: 14px; }
+  .step-1 { grid-column: 1 / span 6; overflow: hidden; }
+  .step-2 { grid-column: 6 / span 7; display: grid; grid-template-columns: 1fr 1.1fr; gap: 28px; align-items: center; }
+  .step-3 { grid-column: 1 / span 7; display: grid; grid-template-columns: 1fr 0.9fr; gap: 24px; overflow: hidden; }
+
+  .window-bar { display: flex; align-items: center; gap: 8px; margin: -12px -12px 28px; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .dot:nth-child(1) { background: #ff6159; } .dot:nth-child(2) { background: #ffbd2e; } .dot:nth-child(3) { background: #28c941; }
+  .url { flex: 1; height: 22px; margin-left: 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.05); }
+  .step-1 > :not(.blob) { position: relative; z-index: 1; }
+  .step-1 p { max-width: 62%; }
+  .step-1 hr { border: 0; border-top: 1px solid var(--border-strong); width: 60%; margin: 22px 0 18px; }
+  .step-1 .blob {
+    position: absolute; right: -40px; top: 70px; width: 170px; height: 210px;
+    border-radius: 60% 40% 55% 45%;
+    background: radial-gradient(circle at 30% 25%, #4a4a50, #18181b 55%, #0d0d0f);
+    transform: rotate(28deg);
+    box-shadow: inset -8px -10px 30px rgba(0, 0, 0, 0.7), inset 6px 6px 18px rgba(255, 255, 255, 0.08);
+    opacity: .9;
+  }
+
+  /* options */
+  .options { display: grid; gap: 12px; border: 0; }
+  .option {
+    position: relative; display: flex; align-items: center; gap: 14px;
+    min-height: 54px; padding: 0 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border-strong);
+    background: rgba(255, 255, 255, 0.02);
+    cursor: pointer;
+    transition: border-color .2s, background .2s, box-shadow .2s;
+  }
+  .option:hover { border-color: rgba(255, 122, 47, 0.4); }
+  .option input { position: absolute; opacity: 0; pointer-events: none; }
+  .radio {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 1.5px solid #6f6c68; display: grid; place-items: center; flex-shrink: 0;
+    transition: border-color .2s;
+  }
+  .radio::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); transform: scale(0); transition: transform .2s var(--ease); }
+  .option .label { flex: 1; font-weight: 500; }
+  .option svg { color: var(--text-muted); transition: color .2s; }
+  .option:has(input:checked) {
+    border-color: var(--accent);
+    background: rgba(255, 122, 47, 0.08);
+    box-shadow: 0 0 24px -6px var(--accent-glow);
+  }
+  .option:has(input:checked) .radio { border-color: var(--accent); }
+  .option:has(input:checked) .radio::after { transform: scale(1); }
+  .option:has(input:checked) svg { color: var(--accent-soft); }
+  .option:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  /* step 3 */
+  .step-3 p { margin: 16px 0 26px; font-size: 0.95rem; max-width: 22rem; }
+  .mission-visual { position: relative; display: grid; place-items: end center; min-height: 240px; }
+  .pedestal {
+    position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
+    width: 110%; height: 48px; border-radius: 50%;
+    background: radial-gradient(ellipse at center, #26262a, #121214 70%);
+    box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.06) inset;
+  }
+  .tools { position: relative; display: flex; align-items: flex-end; gap: 12px; padding-bottom: 18px; }
+  .tool {
+    display: grid; place-items: center; text-align: center;
+    border: 1px solid var(--border-strong);
+    background: linear-gradient(180deg, #2b2b2f, #141416);
+    box-shadow: inset 4px 0 12px rgba(255, 255, 255, 0.04), 0 18px 30px -10px rgba(0, 0, 0, 0.8);
+    font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; color: #cfccc7;
+    transition: transform .4s var(--ease), border-color .3s, box-shadow .3s;
+  }
+  .tool svg { margin-bottom: 6px; color: #8d8984; transition: color .3s; }
+  .tool-a { width: 64px; height: 150px; border-radius: 10px 10px 6px 6px; }
+  .tool-b { width: 70px; height: 175px; border-radius: 14px 14px 8px 8px; background: linear-gradient(180deg, #4a2a18, #24140b); }
+  .tool-c { width: 92px; height: 92px; border-radius: 12px; }
+  .tool.is-on { transform: translateY(-8px); border-color: rgba(255, 122, 47, 0.7); box-shadow: 0 0 30px -4px var(--accent-glow), 0 18px 30px -10px rgba(0, 0, 0, 0.8); }
+  .tool.is-on svg { color: var(--accent-soft); }
+
+  .swap { transition: opacity .25s var(--ease); }
+  .swap.is-fading { opacity: 0; }
+
+  /* ---------- Areas grid ---------- */
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .area { padding: 28px; transition: transform .25s var(--ease), border-color .25s; }
+  .area:hover { transform: translateY(-4px); border-color: rgba(255, 122, 47, 0.45); }
+  .icon-box {
+    width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center;
+    background: rgba(255, 122, 47, 0.1); color: var(--accent-soft);
+    border: 1px solid rgba(255, 122, 47, 0.3);
+    margin-bottom: 22px;
+  }
+  .area h3 { font-size: 1.3rem; margin-bottom: 10px; }
+  .area p { font-size: 0.94rem; }
+
+  /* ---------- Agenda ---------- */
+  .agenda { display: grid; gap: 12px; }
+  .event { display: grid; grid-template-columns: 90px 1fr auto; gap: 24px; align-items: center; padding: 20px 24px; }
+  .date { text-align: center; border-right: 1px solid var(--border-strong); padding-right: 20px; }
+  .date strong { display: block; font-size: 1.8rem; font-weight: 500; line-height: 1; }
+  .date span { font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+  .event h3 { font-size: 1.1rem; font-weight: 500; }
+  .event p { font-size: 0.9rem; }
+  .tag { font-size: 0.75rem; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border-strong); color: var(--text-muted); white-space: nowrap; }
+
+  /* ---------- CTA / contact ---------- */
+  .cta { padding: 56px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; }
+  .cta h2 { font-size: clamp(1.8rem, 3.4vw, 2.6rem); margin-top: 12px; }
+  form.contact { display: grid; gap: 14px; }
+  .field { display: grid; gap: 6px; }
+  .field label { font-size: 0.85rem; color: var(--text-muted); }
+  .field input, .field select {
+    min-height: 46px; padding: 0 14px; border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03); color: var(--text);
+    border: 1px solid var(--border-strong);
+    font: 400 1rem "Manrope", sans-serif;
+  }
+  .field select option { background: var(--surface); }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255, 122, 47, 0.2); }
+  .form-note { font-size: 0.85rem; min-height: 1.4em; color: var(--accent-soft); }
+
+  footer { border-top: 1px solid var(--border); padding: 36px 0 48px; color: var(--text-muted); font-size: 0.88rem; }
+  footer .container { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  footer nav { display: flex; gap: 20px; }
+  footer a { text-decoration: none; }
+  footer a:hover { color: var(--text); }
+
+  /* ---------- Reveal ---------- */
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+  .reveal.is-in { opacity: 1; transform: none; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; padding-top: 56px; }
+    .hero-visual { max-width: 320px; margin-inline: auto; width: 100%; }
+    .grid-3 { grid-template-columns: 1fr; }
+    .cta { grid-template-columns: 1fr; padding: 32px; }
+    .nav ul { display: none; }
+  }
+  @media (max-width: 760px) {
+    .flow { grid-template-columns: 1fr; row-gap: 48px; }
+    .flow svg.wires { display: none; }
+    .step-1, .step-2, .step-3 { grid-column: 1; }
+    .step-2, .step-3 { grid-template-columns: 1fr; }
+    .step { padding: 24px; }
+    .step-3 { overflow: visible; }
+    .step + .step::before {
+      content: ""; position: absolute; left: 50%; top: -49px; width: 2px; height: 48px;
+      background: var(--accent); box-shadow: 0 0 10px var(--accent-glow);
+    }
+    .event { grid-template-columns: 70px 1fr; }
+    .event .tag { display: none; }
+    section { padding: 64px 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+    .reveal { opacity: 1; transform: none; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <a class="brand" href="#inicio" aria-label="Pascom — início">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffa774" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M6 9h12"/></svg>
+      </span>
+      Pascom
+    </a>
+    <nav aria-label="Principal">
+      <ul>
+        <li><a href="#jornada">Participe</a></li>
+        <li><a href="#areas">Áreas</a></li>
+        <li><a href="#agenda">Agenda</a></li>
+        <li><a href="#contato">Contato</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-ghost" href="#contato">Quero servir</a>
+  </div>
+</header>
+
+<main id="inicio">
+  <div class="container hero">
+    <div class="reveal">
+      <span class="eyebrow">Pastoral da Comunicação</span>
+      <h1>Comunicar é <em>evangelizar</em>.</h1>
+      <p class="muted">Somos a equipe que leva a vida da paróquia para além das portas da igreja — com fotografia, vídeo, transmissões e redes sociais feitas com fé e cuidado.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#jornada">
+          Descubra seu lugar
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="btn btn-ghost" href="#areas">Conheça as áreas</a>
+      </div>
+    </div>
+    <div class="hero-visual reveal" aria-hidden="true"><div class="lens"></div></div>
+  </div>
+
+  <!-- ===== Jornada: os 3 passos da referência ===== -->
+  <section id="jornada">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Participe</span>
+        <h2>Três passos para servir na comunicação</h2>
+        <p class="muted">Responda e veja qual missão combina com você.</p>
+      </div>
+
+      <div class="flow" id="flow">
+        <svg class="wires" id="wires" aria-hidden="true"></svg>
+
+        <article class="card step step-1 reveal" id="s1">
+          <div class="window-bar" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url"></span></div>
+          <span class="eyebrow">Passo 1</span>
+          <h3>Conheça a Pascom</h3>
+          <hr>
+          <p class="muted">Qual dom você quer colocar a serviço da comunidade?</p>
+          <span class="blob" aria-hidden="true"></span>
+        </article>
+
+        <article class="card step step-2 is-active reveal" id="s2">
+          <div>
+            <span class="eyebrow">Passo 2</span>
+            <h3 id="area-q">Escolha sua área</h3>
+          </div>
+          <fieldset class="options" aria-labelledby="area-q">
+            <label class="option">
+              <input type="radio" name="area" value="foto" checked>
+              <span class="radio" aria-hidden="true"></span>
+              <span class="label">Fotografia</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+            </label>
+            <label class="option">
+              <input type="radio" name="area" value="video">
+              <span class="radio" aria-hidden="true"></span>
+              <span class="label">Vídeo e transmissão</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3"/></svg>
+            </label>
+            <label class="option">
+              <input type="radio" name="area" value="social">
+              <span class="radio" aria-hidden="true"></span>
+              <span class="label">Redes sociais</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>
+            </label>
+          </fieldset>
+        </article>
+
+        <article class="card step step-3 reveal" id="s3" aria-live="polite">
+          <div>
+            <span class="eyebrow">Passo 3</span>
+            <h3 class="swap" id="m-title">Sua missão: eternizar momentos</h3>
+            <p class="muted swap" id="m-text">Missas, batizados, festas e encontros. Você registra a história viva da comunidade com o olhar da fé.</p>
+            <a class="btn btn-primary" href="#contato" id="m-cta">
+              Quero participar
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+          <div class="mission-visual" aria-hidden="true">
+            <span class="pedestal"></span>
+            <div class="tools">
+              <div class="tool tool-a" data-area="foto">
+                <div><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Foto</div>
+              </div>
+              <div class="tool tool-b" data-area="video">
+                <div><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3"/></svg>Vídeo</div>
+              </div>
+              <div class="tool tool-c" data-area="social">
+                <div><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>Social</div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Áreas ===== -->
+  <section id="areas">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Áreas de atuação</span>
+        <h2>Cada talento tem lugar na missão</h2>
+      </div>
+      <div class="grid-3">
+        <article class="card area reveal">
+          <div class="icon-box" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
+          <h3>Fotografia</h3>
+          <p class="muted">Cobertura de missas, sacramentos e eventos, com tratamento e organização do acervo da paróquia.</p>
+        </article>
+        <article class="card area reveal">
+          <div class="icon-box" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3"/></svg></div>
+          <h3>Vídeo e transmissão</h3>
+          <p class="muted">Transmissões ao vivo das celebrações, edição de vídeos e produção de conteúdo para quem não pode estar presente.</p>
+        </article>
+        <article class="card area reveal">
+          <div class="icon-box" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></div>
+          <h3>Redes sociais</h3>
+          <p class="muted">Avisos, artes, textos e stories. Manter a comunidade informada e conectada todos os dias.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Agenda ===== -->
+  <section id="agenda">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Agenda</span>
+        <h2>Próximos encontros</h2>
+      </div>
+      <div class="agenda">
+        <article class="card event reveal">
+          <div class="date"><strong>12</strong><span>Out</span></div>
+          <div><h3>Reunião mensal da Pascom</h3><p class="muted">Sábado, 19h · Salão paroquial</p></div>
+          <span class="tag">Todos</span>
+        </article>
+        <article class="card event reveal">
+          <div class="date"><strong>19</strong><span>Out</span></div>
+          <div><h3>Oficina de fotografia com celular</h3><p class="muted">Sábado, 15h · Sala 2</p></div>
+          <span class="tag">Fotografia</span>
+        </article>
+        <article class="card event reveal">
+          <div class="date"><strong>26</strong><span>Out</span></div>
+          <div><h3>Treinamento de transmissão ao vivo</h3><p class="muted">Sábado, 16h · Igreja matriz</p></div>
+          <span class="tag">Vídeo</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Contato ===== -->
+  <section id="contato">
+    <div class="container">
+      <div class="card cta is-active reveal">
+        <div>
+          <span class="eyebrow">Faça parte</span>
+          <h2>Venha servir com a gente</h2>
+          <p class="muted" style="margin-top:14px">Não precisa ter experiência — só vontade de servir. A gente ensina o resto.</p>
+        </div>
+        <form class="contact" id="contact" novalidate>
+          <div class="field">
+            <label for="nome">Seu nome</label>
+            <input id="nome" name="nome" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="whats">WhatsApp</label>
+            <input id="whats" name="whats" type="tel" autocomplete="tel" inputmode="tel" placeholder="(00) 00000-0000" required>
+          </div>
+          <div class="field">
+            <label for="area-sel">Área de interesse</label>
+            <select id="area-sel" name="area">
+              <option value="foto">Fotografia</option>
+              <option value="video">Vídeo e transmissão</option>
+              <option value="social">Redes sociais</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" type="submit">
+            Enviar
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <p class="form-note" id="form-note" role="status"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <span>© <span id="year"></span> Pascom — Pastoral da Comunicação</span>
+    <nav aria-label="Rodapé">
+      <a href="#jornada">Participe</a>
+      <a href="#areas">Áreas</a>
+      <a href="#contato">Contato</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+  // ---- Missão personalizada (passo 3) ----
+  const missions = {
+    foto:   { title: "Sua missão: eternizar momentos", text: "Missas, batizados, festas e encontros. Você registra a história viva da comunidade com o olhar da fé." },
+    video:  { title: "Sua missão: levar a celebração a todos", text: "Transmissões ao vivo e vídeos que alcançam doentes, idosos e quem está longe de casa." },
+    social: { title: "Sua missão: conectar a comunidade", text: "Avisos, artes e mensagens que mantêm todos informados e próximos da vida da paróquia." },
+  };
+  const title = document.getElementById("m-title");
+  const text = document.getElementById("m-text");
+  const select = document.getElementById("area-sel");
+  const tools = document.querySelectorAll(".tool");
+
+  function setArea(area) {
+    [title, text].forEach(el => el.classList.add("is-fading"));
+    setTimeout(() => {
+      title.textContent = missions[area].title;
+      text.textContent = missions[area].text;
+      [title, text].forEach(el => el.classList.remove("is-fading"));
+    }, 180);
+    tools.forEach(t => t.classList.toggle("is-on", t.dataset.area === area));
+    select.value = area;
+    document.getElementById("s3").classList.add("is-active");
+  }
+  document.querySelectorAll('input[name="area"]').forEach(r =>
+    r.addEventListener("change", () => setArea(r.value)));
+  tools.forEach(t => t.classList.toggle("is-on", t.dataset.area === "foto"));
+
+  // ---- Linhas laranja conectando os cards ----
+  const flow = document.getElementById("flow");
+  const wires = document.getElementById("wires");
+  const s1 = document.getElementById("s1"), s2 = document.getElementById("s2"), s3 = document.getElementById("s3");
+
+  function drawWires() {
+    if (getComputedStyle(wires).display === "none") return;
+    const f = flow.getBoundingClientRect();
+    const r = el => { const b = el.getBoundingClientRect(); return { l: b.left - f.left, r: b.right - f.left, t: b.top - f.top, b: b.bottom - f.top, h: b.height }; };
+    const a = r(s1), b = r(s2), c = r(s3);
+    const rad = 18;
+    // card 1 (baixo) -> card 2 (esquerda)
+    const x1 = a.l + (a.r - a.l) * 0.55, y1 = a.b, y2 = b.t + b.h / 2, x2 = b.l;
+    // card 2 (baixo) -> card 3 (direita)
+    const x3 = b.l + (b.r - b.l) * 0.6, y3 = b.b, y4 = c.t + c.h / 2, x4 = c.r;
+    wires.innerHTML = `
+      <path d="M${x1} ${y1} V${y2 - rad} Q${x1} ${y2} ${x1 + rad} ${y2} H${x2}"/>
+      <path d="M${x3} ${y3} V${y4 - rad} Q${x3} ${y4} ${x3 - rad} ${y4} H${x4}"/>
+      ${[[x1, y1], [x2, y2], [x3, y3], [x4, y4]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5"/>`).join("")}`;
+  }
+  new ResizeObserver(drawWires).observe(flow);
+  window.addEventListener("resize", drawWires);
+
+  // ---- Animação de entrada ----
+  const io = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); }
+  }), { threshold: 0.12 });
+  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+  // redesenha as linhas quando os cards terminam de entrar
+  flow.addEventListener("transitionend", drawWires);
+
+  // ---- Formulário ----
+  document.getElementById("contact").addEventListener("submit", e => {
+    e.preventDefault();
+    const note = document.getElementById("form-note");
+    const nome = e.target.nome.value.trim(), whats = e.target.whats.value.trim();
+    if (!nome || !whats) { note.textContent = "Preencha seu nome e WhatsApp para continuar."; return; }
+    note.textContent = `Obrigado, ${nome.split(" ")[0]}! Entraremos em contato em breve.`;
+    e.target.reset();
+  });
+
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
