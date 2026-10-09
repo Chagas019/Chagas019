@@ -49,6 +49,7 @@
       radial-gradient(closest-side, transparent 98.8%, var(--page-line) 99.1%, transparent 100%) 120% 120% / 80vmax 80vmax no-repeat;
   }
   button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
+  [hidden] { display: none !important; }
   :focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
@@ -456,6 +457,170 @@
   .m-item.clickable:hover { background: #e6e6e6; }
   .sec-title { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--red); margin: 6px 0 0; }
 
+  /* ---------- Seções para rolar: formação, linha do tempo, documentos, glossário, perguntas ---------- */
+  .scroll-bar { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 40; pointer-events: none; }
+  .scroll-bar span { display: block; height: 100%; width: 0; background: var(--red); }
+  .sec {
+    position: relative; margin-top: 56px; color: #fff; padding: clamp(22px, 4vw, 44px);
+    background:
+      linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 100% 96px,
+      linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px) 0 0 / 96px 100%,
+      var(--stage);
+    box-shadow: 0 40px 90px -40px rgba(0,0,0,.7);
+    scroll-margin-top: 16px;
+  }
+  .sec-label { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--on-dark-muted); margin-bottom: 16px; }
+  .sec-h2 { font-size: clamp(30px, 4vw, 48px); font-weight: 300; letter-spacing: -.02em; line-height: 1.05; margin: 0 0 14px; text-wrap: balance; }
+  .lead { max-width: 60ch; font-size: 16px; line-height: 1.55; color: rgba(255,255,255,.82); margin: 0 0 20px; }
+  .round.dark { border-color: var(--line); }
+
+  /* formação */
+  .form-grid { display: grid; grid-template-columns: minmax(260px, .9fr) 1.4fr; gap: clamp(24px, 4vw, 48px); align-items: start; }
+  .form-intro { position: sticky; top: 24px; }
+  .progress-card { display: flex; align-items: center; gap: 18px; padding: 16px; border-radius: 20px; background: rgba(255,255,255,.05); border: 1px solid var(--line); margin-bottom: 16px; }
+  .ring { width: 92px; height: 92px; transform: rotate(-90deg); flex-shrink: 0; }
+  .ring circle { fill: none; stroke-width: 10; }
+  .ring-bg { stroke: rgba(255,255,255,.12); }
+  .ring-fg { stroke: var(--red); stroke-linecap: round; stroke-dasharray: 326.73; stroke-dashoffset: 326.73; transition: stroke-dashoffset .6s var(--ease); }
+  .progress-card b { display: block; font-size: 30px; font-weight: 400; font-variant-numeric: tabular-nums; }
+  .progress-card span { color: var(--on-dark-muted); font-size: 13px; }
+  .form-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .mini-note { font-size: 12px; color: var(--on-dark-muted); margin: 12px 0 0; }
+  .modules { display: grid; gap: 10px; }
+  .mod { border-radius: 20px; background: rgba(255,255,255,.04); border: 1px solid var(--line); }
+  .mod[open] { background: rgba(255,255,255,.06); }
+  .mod summary { list-style: none; cursor: pointer; padding: 18px 20px; display: grid; grid-template-columns: 1fr auto; gap: 2px 16px; align-items: center; }
+  .mod summary::-webkit-details-marker { display: none; }
+  .mod summary::after { content: ""; grid-column: 2; grid-row: 1 / span 3; width: 10px; height: 10px; border-right: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(45deg); transition: transform .2s var(--ease); justify-self: end; }
+  .mod[open] summary::after { transform: rotate(-135deg); }
+  .mod-n { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: #ff8a9b; }
+  .mod-t { font-size: 20px; font-weight: 400; }
+  .mod-d { font-size: 13px; color: var(--on-dark-muted); }
+  .mod-p { grid-column: 1; font-size: 12px; color: var(--on-dark-muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .mod-bar { grid-column: 1 / -1; height: 3px; border-radius: 2px; background: rgba(255,255,255,.1); margin-top: 8px; overflow: hidden; }
+  .mod-bar span { display: block; height: 100%; background: var(--red); }
+  .lessons { list-style: none; margin: 0; padding: 0 10px 12px; display: grid; gap: 4px; }
+  .lesson { width: 100%; display: grid; grid-template-columns: 24px 1fr auto; gap: 12px; align-items: center; min-height: 46px; padding: 8px 10px; border-radius: 12px; text-align: left; }
+  .lesson:hover { background: rgba(255,255,255,.07); }
+  .lesson .st { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.45); display: grid; place-items: center; font-size: 12px; }
+  .lesson.done .st { background: var(--red); border-color: var(--red); }
+  .lesson.done .st::after { content: ""; width: 6px; height: 10px; border-right: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(45deg) translate(-1px, -1px); }
+  .lesson .st.q { border-style: dashed; }
+  .lesson .lt-t { font-size: 15px; }
+  .lesson .lt-m { font-size: 12px; color: var(--on-dark-muted); white-space: nowrap; }
+
+  /* linha do tempo */
+  .tl { display: grid; gap: 18px; }
+  .tl-track { display: flex; gap: 8px; overflow-x: auto; padding: 6px 2px 10px; scrollbar-width: none; position: relative; }
+  .tl-track::-webkit-scrollbar { display: none; }
+  .tl-y { flex: 0 0 auto; min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); font-variant-numeric: tabular-nums; font-size: 14px; color: rgba(255,255,255,.85); transition: background .2s, color .2s; }
+  .tl-y:hover { background: rgba(255,255,255,.08); }
+  .tl-y[aria-selected="true"] { background: #fff; color: #111; border-color: #fff; }
+  .tl-detail { display: grid; grid-template-columns: auto 1fr; gap: 6px 28px; align-items: baseline; padding: 24px; border-radius: 22px; background: radial-gradient(80% 120% at 0% 0%, rgba(226,72,27,.35), transparent 60%), rgba(255,255,255,.04); border: 1px solid var(--line); min-height: 150px; }
+  .tl-ano { grid-row: 1 / span 2; font-size: clamp(48px, 8vw, 88px); font-weight: 300; line-height: .9; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .tl-detail h3 { margin: 0; font-size: 22px; font-weight: 400; }
+  .tl-detail p { margin: 0; color: rgba(255,255,255,.82); max-width: 60ch; line-height: 1.5; }
+  .tl-nav { display: flex; gap: 8px; justify-content: flex-end; }
+
+  /* documentos */
+  .chips-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .fchip { min-height: 38px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); font-size: 13px; color: rgba(255,255,255,.88); }
+  .fchip[aria-pressed="true"] { background: #fff; color: #111; border-color: #fff; }
+  .fchip small { opacity: .7; margin-left: 4px; font-variant-numeric: tabular-nums; }
+  .docs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+  .doc { text-align: left; padding: 16px; border-radius: 18px; border: 1px solid var(--line); background: rgba(255,255,255,.04); display: grid; gap: 6px; align-content: start; min-height: 120px; transition: background .2s, border-color .2s; }
+  .doc:hover { background: rgba(255,255,255,.08); }
+  .doc[aria-expanded="true"] { border-color: rgba(255,138,155,.6); background: rgba(200,16,46,.14); }
+  .doc .tag { font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: #ff8a9b; }
+  .doc b { font-size: 17px; font-weight: 500; font-style: italic; }
+  .doc .dt { font-size: 12px; color: var(--on-dark-muted); }
+  .doc .tema { font-size: 14px; line-height: 1.45; color: rgba(255,255,255,.9); }
+  .doc .tema[hidden] { display: none; }
+
+  /* glossário */
+  .glos-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  @media (max-width: 900px) { .glos-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .flip { position: relative; height: 180px; perspective: 900px; border-radius: 18px; text-align: left; }
+  .flip .in { position: absolute; inset: 0; transition: transform .5s var(--ease); transform-style: preserve-3d; }
+  .flip[aria-pressed="true"] .in { transform: rotateY(180deg); }
+  .flip .face { position: absolute; inset: 0; border-radius: 18px; padding: 18px; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid var(--line); }
+  .flip .front { background: rgba(255,255,255,.05); }
+  .flip .front b { font-size: 21px; font-weight: 400; }
+  .flip .front small { font-size: 12px; color: var(--on-dark-muted); }
+  .flip .back { background: #fff; color: #111; transform: rotateY(180deg); font-size: 14px; line-height: 1.45; justify-content: center; }
+
+  /* perguntas */
+  .faq { display: grid; gap: 8px; max-width: 820px; }
+  .faq details { border-radius: 16px; border: 1px solid var(--line); background: rgba(255,255,255,.04); }
+  .faq summary { cursor: pointer; padding: 16px 18px; font-size: 16px; list-style: none; display: flex; justify-content: space-between; gap: 12px; align-items: center; min-height: 52px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; font-size: 22px; line-height: 1; color: var(--on-dark-muted); }
+  .faq details[open] summary::after { content: "–"; }
+  .faq p { margin: 0; padding: 0 18px 16px; color: rgba(255,255,255,.82); line-height: 1.55; }
+
+  .to-top { position: fixed; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 35; width: 46px; height: 46px; border-radius: 50%; background: #fff; color: #111; display: grid; place-items: center; box-shadow: 0 12px 30px -8px rgba(0,0,0,.5); }
+  .to-top[hidden] { display: none; }
+
+  /* leitor da formação */
+  #leitor { width: min(840px, calc(100% - 32px)); height: min(92vh, 920px); max-height: none; padding: 0; overflow: hidden; }
+  #leitor[open] { display: flex; flex-direction: column; }
+  .lt-progress { height: 4px; background: #ececec; flex-shrink: 0; }
+  .lt-progress span { display: block; height: 100%; width: 0; background: var(--red); transition: width .3s var(--ease); }
+  .lt-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px 10px 26px; border-bottom: 1px solid #eee; flex-shrink: 0; }
+  .lt-head span { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .lt-head .m-close { position: static; background: var(--soft); color: var(--ink); }
+  .lt-body { flex: 1; overflow-y: auto; padding: 26px clamp(20px, 5vw, 56px) 40px; color: #222; font-size: 17px; line-height: 1.68; outline: none; }
+  .lt-body > * { max-width: 68ch; }
+  .lt-meta { font-size: 13px; color: var(--muted); margin: 0 0 6px; }
+  .lt-body h2 { font-size: clamp(26px, 3.4vw, 34px); font-weight: 400; letter-spacing: -.015em; line-height: 1.15; margin: 0 0 18px; color: #111; text-wrap: balance; }
+  .lt-body h4 { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--red); margin: 28px 0 6px; }
+  .lt-body p { margin: 0 0 14px; }
+  .lt-body ul, .lt-body ol { padding-left: 22px; margin: 0 0 14px; }
+  .lt-body li { margin-bottom: 6px; }
+  .lt-body blockquote { margin: 0 0 16px; padding: 14px 18px; border-left: 3px solid var(--red); background: var(--soft); border-radius: 0 12px 12px 0; font-style: italic; }
+  .lt-body .pergunta { padding: 14px 18px; border-radius: 14px; background: #fff4f5; border: 1px solid #f3c7cf; font-size: 16px; }
+  .lt-cta { margin-top: 28px; padding: 18px; border-radius: 16px; background: var(--soft); display: grid; gap: 10px; justify-items: start; }
+  .lt-cta p { margin: 0; }
+  .lt-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 18px; border-top: 1px solid #eee; flex-shrink: 0; }
+  .lt-foot .btn-red { padding: 0 20px; min-width: 120px; }
+  .lt-foot button:disabled { opacity: .4; cursor: default; }
+  .lt-read { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #cfcfcf; font-size: 14px; font-weight: 600; color: var(--ink); display: inline-flex; align-items: center; white-space: pre; }
+  .lt-read[aria-pressed="true"] { background: #1f7a4a; border-color: #1f7a4a; color: #fff; }
+  .local-box { padding: 16px 18px; border-radius: 14px; background: var(--soft); margin-top: 18px; }
+  .local-box h4 { margin-top: 0; }
+  .local-box textarea { width: 100%; min-height: 140px; border-radius: 12px; border: 1px solid #d6d6d6; padding: 10px 12px; font: inherit; font-size: 16px; margin: 8px 0; }
+  .quiz { display: grid; gap: 14px; }
+  .q { border: 1px solid #e3e3e3; border-radius: 16px; padding: 14px 16px; margin: 0; }
+  .q legend { float: left; width: 100%; font-weight: 600; padding: 0; margin-bottom: 6px; font-size: 16px; }
+  .q legend + * { clear: both; }
+  .q label { display: flex; gap: 10px; align-items: center; min-height: 40px; cursor: pointer; font-size: 16px; }
+  .q input { width: 18px; height: 18px; accent-color: var(--red); }
+  .q.ok { border-color: #1f7a4a; background: #f0faf4; }
+  .q.err { border-color: var(--red); background: #fff4f5; }
+  .q-fb { margin: 6px 0 0; font-size: 14px; }
+  .q-total { font-size: 16px; font-weight: 600; margin: 0; }
+
+  @media (max-width: 900px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .form-intro { position: static; }
+    .tl-detail { grid-template-columns: 1fr; }
+    .tl-ano { grid-row: auto; }
+  }
+  @media (max-width: 767px) {
+    .to-top { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+    .sec { margin-top: 32px; }
+  }
+  @media (max-width: 560px) {
+    #leitor { width: 100%; height: 100dvh; max-width: 100%; border-radius: 0; margin: 0; }
+    .lt-foot .lt-read span.long { display: none; }
+    .lt-foot .btn-red { min-width: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .flip .in { transform: none !important; }
+    .flip .back { transform: none; display: none; }
+    .flip[aria-pressed="true"] .back { display: flex; }
+    .flip[aria-pressed="true"] .front { display: none; }
+  }
   /* ---------- Responsivo ----------
      celular (< 768px): menu em barra fixa embaixo, cards passam com o dedo
      tablet em pé (768–1100px, retrato): menu no topo, cards em grade
@@ -521,6 +686,7 @@
 </style>
 
 <h1 class="sr">Pascom: Pastoral da Comunicação</h1>
+<div class="scroll-bar" aria-hidden="true"><span id="scroll-fill"></span></div>
 <noscript><p style="max-width:640px;margin:0 auto 16px;color:#fff">Pascom, Pastoral da Comunicação: escala das missas, liturgia do dia, agenda da paróquia, frase do dia e os santos padroeiros da comunicação. Ative o JavaScript para usar o site.</p></noscript>
 
 <div class="wrap">
@@ -538,7 +704,7 @@
           <button class="pill" data-nav data-action="liturgia">Liturgia</button>
           <button class="pill" data-nav data-action="agenda">Agenda</button>
           <button class="pill" data-nav data-action="gallery">Santos</button>
-          <button class="pill" data-nav data-action="frases">Frases</button>
+          <button class="pill" data-nav data-action="formacao">Formação</button>
         </nav>
         <div class="top-actions">
           <button class="btn-pill" id="agendar" data-action="agendar">
@@ -691,6 +857,59 @@
     </div>
   </div>
 
+  <section class="sec" id="formacao" aria-labelledby="form-h">
+    <div class="sec-label">[ Formação Pascom ]</div>
+    <div class="form-grid">
+      <div class="form-intro">
+        <h2 id="form-h" class="sec-h2">Formação para quem serve na comunicação</h2>
+        <p class="lead" id="form-lead"></p>
+        <div class="progress-card">
+          <svg class="ring" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" class="ring-bg"/><circle cx="60" cy="60" r="52" class="ring-fg" id="ring-fg"/></svg>
+          <div><b id="form-pct">0%</b><span id="form-count"></span></div>
+        </div>
+        <div class="form-actions"><button class="btn-pill" id="form-go">Começar a formação</button><button class="ghost-pill" id="form-reset" hidden>Recomeçar</button></div>
+        <p class="mini-note">Seu progresso fica salvo neste aparelho.</p>
+      </div>
+      <div class="modules" id="modules"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="linha" aria-labelledby="linha-h">
+    <div class="sec-label">[ Linha do tempo ]</div>
+    <h2 id="linha-h" class="sec-h2">Do Concílio à Pascom</h2>
+    <p class="lead">Toque num ano para ver o que aconteceu.</p>
+    <div class="tl">
+      <div class="tl-track" id="tl-track" role="tablist" aria-label="Anos"></div>
+      <div class="tl-detail" id="tl-detail" role="tabpanel" aria-live="polite"></div>
+      <div class="tl-nav">
+        <button class="round dark" id="tl-prev" aria-label="Ano anterior"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m15 6-6 6 6 6"/></svg></button>
+        <button class="round dark" id="tl-next" aria-label="Próximo ano"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="documentos" aria-labelledby="docs-h">
+    <div class="sec-label">[ Concílio Vaticano II ]</div>
+    <h2 id="docs-h" class="sec-h2">Os 16 documentos</h2>
+    <p class="lead">Toque num documento para ler o tema.</p>
+    <div class="chips-row" id="doc-filtros" role="group" aria-label="Filtrar documentos"></div>
+    <div class="docs-grid" id="docs-grid"></div>
+  </section>
+
+  <section class="sec" id="glossario" aria-labelledby="glos-h">
+    <div class="sec-label">[ Glossário ]</div>
+    <h2 id="glos-h" class="sec-h2">Palavras para entender</h2>
+    <p class="lead">Toque no cartão para ver o significado.</p>
+    <div class="glos-grid" id="glos-grid"></div>
+  </section>
+
+  <section class="sec" id="perguntas" aria-labelledby="faq-h">
+    <div class="sec-label">[ Perguntas frequentes ]</div>
+    <h2 id="faq-h" class="sec-h2">Quer servir na Pascom?</h2>
+    <div class="faq" id="faq"></div>
+    <button class="btn-pill" data-action="join" style="margin-top:22px">Quero servir</button>
+  </section>
+
   <footer class="colophon">
     <p>A Pascom anuncia o Evangelho com fotos, vídeos, transmissões e redes sociais. Toda semana a equipe monta a escala das missas, publica a liturgia do dia e mantém a agenda da paróquia em dia.</p>
     <p class="mid">comunicamos a fé<br>com imagens<br>e palavras</p>
@@ -703,10 +922,22 @@
   <button class="pill" data-nav data-action="liturgia"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M12 7v6M9.5 9.5h5"/></svg>Liturgia</button>
   <button class="pill" data-nav data-action="agenda"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Agenda</button>
   <button class="pill" data-nav data-action="gallery"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>Santos</button>
-  <button class="pill" data-nav data-action="frases"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>Frases</button>
+  <button class="pill" data-nav data-action="formacao"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg>Formação</button>
 </nav>
 
 <dialog id="modal"><div id="modal-body"></div></dialog>
+<dialog id="leitor" aria-labelledby="lt-title">
+  <div class="lt-progress" aria-hidden="true"><span id="lt-fill"></span></div>
+  <div class="lt-head"><span id="lt-mod"></span>
+    <button class="m-close" id="lt-close" aria-label="Fechar a formação"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <article class="lt-body" id="lt-body" tabindex="-1"></article>
+  <div class="lt-foot">
+    <button class="btn-line" id="lt-prev">‹ Anterior</button>
+    <button class="lt-read" id="lt-read" aria-pressed="false"></button>
+    <button class="btn-red" id="lt-next">Próxima ›</button>
+  </div>
+</dialog>
+<button class="to-top" id="to-top" aria-label="Voltar ao topo" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
@@ -1112,12 +1343,14 @@ document.addEventListener("click", async e => {
 });
 const DEEP = {
   liturgia: () => openLiturgia(), agenda: () => openAgenda(), escalas: () => openAgenda(), agendar: () => openEscalaForm(), frases: () => openFrasesEquipe(),
+  formacao: () => scrollToSec("formacao")(), linha: () => scrollToSec("linha")(), documentos: () => scrollToSec("documentos")(), glossario: () => scrollToSec("glossario")(), perguntas: () => scrollToSec("perguntas")(),
   galeria: () => openGallery(), participar: () => openJoin(), buscar: () => openSearch(),
 };
 function openFromHash() {
   const h = decodeURIComponent(location.hash.slice(1));
   if (!h) return;
   if (DEEP[h]) return DEEP[h]();
+  const lic = h.match(/^licao-(\d+)$/); if (lic) return openLicao(+lic[1] - 1);
   const s = SAINTS.find(x => "santo-" + slug(x.curto) === h || slug(x.nome) === h);
   if (s) openSaint(s);
 }
@@ -1471,6 +1704,7 @@ async function startData() {
   applyTeam();
   data.watch("agenda", rows => { agenda = rows; renderAgenda(); updateEventsJsonLd(); });
   data.watch("escalas", rows => { escalas = rows; renderEscalaCard(); updateEventsJsonLd(); });
+  data.watch("formacao", rows => { historiaLocal = rows.find(r => r.id === "historia") || null; if (leitor.open && $("local-box")) { $("local-box").outerHTML = historiaHTML(); wireHistoria(); } });
   data.watch("frases", rows => { teamFrases = rows; renderFrases(); });
   data.watch("liturgia", rows => { liturgias = Object.fromEntries(rows.map(r => [r.id, r])); renderLiturgia(); });
 }
@@ -1519,12 +1753,616 @@ function openJoin() {
 
 /* ---------- Navegação ---------- */
 function setNav(a) { document.querySelectorAll("[data-nav]").forEach(b => b.setAttribute("aria-current", b.dataset.action === a)); }
-const ACTIONS = { home: () => { window.scrollTo({ top: 0, behavior: "smooth" }); $("rail").scrollTo({ left: 0, behavior: "smooth" }); }, agendar: () => openEscalaForm(), frases: openFrasesEquipe, search: openSearch, agenda: openAgenda, gallery: openGallery, settings: openSettings, join: openJoin, quotes: openQuotes, liturgia: openLiturgia };
+const ACTIONS = { home: () => { window.scrollTo({ top: 0, behavior: "smooth" }); $("rail").scrollTo({ left: 0, behavior: "smooth" }); }, agendar: () => openEscalaForm(), frases: openFrasesEquipe, formacao: () => scrollToSec("formacao")(), search: openSearch, agenda: openAgenda, gallery: openGallery, settings: openSettings, join: openJoin, quotes: openQuotes, liturgia: openLiturgia };
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-action]"); if (!b) return;
   if (b.closest("[data-nav]") || b.hasAttribute("data-nav")) setNav(b.dataset.action);
   ACTIONS[b.dataset.action]();
 });
+
+/* ---------- Formação Pascom: conteúdo ----------
+   Conteúdo do curso, linha do tempo, documentos do Concílio, glossário e perguntas frequentes.
+   Datas e citações conferidas com os documentos oficiais; a história local fica a cargo da equipe. */
+const FORMACAO = [
+  {
+    id: "m1", titulo: "O Concílio Vaticano II", desc: "Por que João XXIII convocou o Concílio, como ele aconteceu e o que ensinou.",
+    licoes: [
+      { titulo: "Por que um Concílio?", min: 4, html: `
+<p>Em 25 de janeiro de 1959, menos de três meses depois de eleito, o Papa São João XXIII anunciou, na Basílica de São Paulo Fora dos Muros, em Roma, que convocaria um Concílio Ecumênico. A notícia surpreendeu até os cardeais que estavam com ele.</p>
+<p>Um concílio ecumênico é a reunião dos bispos do mundo inteiro, em comunhão com o Papa, para tratar da fé e da vida da Igreja. O anterior, o Vaticano I (1869–1870), tinha sido interrompido pela guerra. O Vaticano II foi o 21º concílio ecumênico da história.</p>
+<p>João XXIII resumiu o que queria numa palavra italiana: <em>aggiornamento</em>, “atualização”. Não se tratava de mudar a fé, e sim de encontrar caminhos para anunciá-la a um mundo que tinha mudado muito: duas guerras mundiais, rádio e televisão, a ida das famílias para as cidades, o fim dos impérios coloniais.</p>
+<p>No discurso de abertura, em 11 de outubro de 1962, ele distinguiu o conteúdo da fé, que a Igreja guarda, do modo de expressá-lo, que pode ser renovado. E pediu que a Igreja preferisse “usar mais o remédio da misericórdia do que o da severidade”.</p>
+<h4>Para a Pascom</h4>
+<p>O Concílio nasceu de uma pergunta que também é nossa: como falar de Jesus às pessoas de hoje, na linguagem que elas entendem?</p>
+<p class="pergunta">Para conversar na equipe: o que precisa de <em>aggiornamento</em> na comunicação da nossa paróquia?</p>` },
+      { titulo: "Como o Concílio aconteceu", min: 4, html: `
+<p>Depois do anúncio, vieram três anos de preparação: comissões, consultas aos bispos e às universidades católicas. Pela bula <em>Humanae Salutis</em>, de 25 de dezembro de 1961, o Papa convocou oficialmente o Concílio.</p>
+<p>Ele foi aberto em 11 de outubro de 1962, na Basílica de São Pedro, com mais de dois mil bispos de todos os continentes. Pela primeira vez, foram convidados observadores de outras igrejas cristãs. Leigos também passaram a acompanhar os trabalhos como ouvintes e, a partir de 1964, também mulheres.</p>
+<ul>
+<li><b>1ª sessão:</b> 11 de outubro a 8 de dezembro de 1962</li>
+<li><b>2ª sessão:</b> 29 de setembro a 4 de dezembro de 1963</li>
+<li><b>3ª sessão:</b> 14 de setembro a 21 de novembro de 1964</li>
+<li><b>4ª sessão:</b> 14 de setembro a 8 de dezembro de 1965</li>
+</ul>
+<p>João XXIII morreu em 3 de junho de 1963, entre a primeira e a segunda sessão. Seu sucessor, São Paulo VI, eleito em 21 de junho de 1963, decidiu continuar o Concílio e o encerrou em 8 de dezembro de 1965.</p>
+<p>Foi também o primeiro concílio acompanhado de perto pela imprensa, pelo rádio e pela televisão do mundo inteiro. Bispos brasileiros participaram ativamente, entre eles Dom Hélder Câmara, então bispo auxiliar do Rio de Janeiro.</p>
+<h4>Para a Pascom</h4>
+<p>Comunicar o que a Igreja vive faz parte da própria história do Concílio: o mundo inteiro acompanhou o que acontecia em Roma porque houve quem contasse.</p>` },
+      { titulo: "Os 16 documentos", min: 3, html: `
+<p>O Concílio aprovou 16 documentos, de três tipos:</p>
+<ul>
+<li><b>4 constituições</b>, os textos mais importantes, sobre a Igreja, a Revelação, a liturgia e a Igreja no mundo: <em>Sacrosanctum Concilium</em>, <em>Lumen Gentium</em>, <em>Dei Verbum</em> e <em>Gaudium et Spes</em>.</li>
+<li><b>9 decretos</b>, com orientações práticas para áreas da vida da Igreja, como a comunicação (<em>Inter Mirifica</em>), o ecumenismo, as missões, os bispos, os padres, os religiosos, a formação dos seminaristas, os leigos e as Igrejas orientais.</li>
+<li><b>3 declarações</b>, sobre a educação cristã, as religiões não cristãs e a liberdade religiosa.</li>
+</ul>
+<p>Os nomes em latim vêm das primeiras palavras de cada texto. <em>Gaudium et Spes</em>, por exemplo, começa com “As alegrias e as esperanças”.</p>
+<p>Mais abaixo, nesta página, a seção <b>Os 16 documentos</b> mostra cada um, com data e tema.</p>
+<h4>Para a Pascom</h4>
+<p>Quando citar o Concílio numa arte ou numa legenda, use o nome do documento e o número do parágrafo, por exemplo “<em>Gaudium et Spes</em>, 1”. Assim qualquer pessoa pode conferir.</p>` },
+      { titulo: "Sacrosanctum Concilium: a liturgia", min: 4, html: `
+<p>A constituição sobre a liturgia foi o primeiro documento aprovado, em 4 de dezembro de 1963. Ela afirma que a liturgia é “o cume para o qual se dirige a ação da Igreja e, ao mesmo tempo, a fonte de onde emana toda a sua força” (SC 10).</p>
+<p>O grande desejo do Concílio era que todos os fiéis participassem da celebração de forma “plena, consciente e ativa” (SC 14), e não como espectadores. Para isso, a constituição:</p>
+<ul>
+<li>permitiu o uso das línguas de cada povo, ao lado do latim (SC 36);</li>
+<li>pediu que a mesa da Palavra fosse preparada com mais abundância, com mais leituras da Bíblia (SC 51);</li>
+<li>pediu ritos mais simples e claros, que o povo pudesse compreender.</li>
+</ul>
+<p>Dessa reforma nasceu o Missal de São Paulo VI, promulgado em 1969, que é o que celebramos hoje.</p>
+<h4>Para a Pascom</h4>
+<p>A câmera e a transmissão estão a serviço da participação. Elas ajudam quem está doente ou longe a rezar com a comunidade, mas não substituem a presença. Por isso a Pascom trabalha com discrição: quem está na igreja precisa conseguir rezar sem se distrair com a equipe.</p>` },
+      { titulo: "Lumen Gentium: a Igreja, Povo de Deus", min: 4, html: `
+<p>A constituição dogmática sobre a Igreja foi aprovada em 21 de novembro de 1964. Ela começa apresentando a Igreja como “sinal e instrumento da íntima união com Deus e da unidade de todo o gênero humano” (LG 1).</p>
+<p>Três ideias marcaram profundamente a vida das paróquias:</p>
+<ul>
+<li><b>A Igreja é Povo de Deus</b> (capítulo II). Antes de falar das funções na Igreja, o texto fala do que todos têm em comum: o batismo. Todos os batizados participam do sacerdócio de Cristo (LG 10).</li>
+<li><b>Os leigos têm missão própria</b> (capítulo IV). Não são ajudantes do padre: são chamados a levar o Evangelho a todos os ambientes, inclusive à cultura e aos meios de comunicação.</li>
+<li><b>Todos são chamados à santidade</b> (capítulo V), em qualquer estado de vida.</li>
+</ul>
+<h4>Para a Pascom</h4>
+<p>Servir na comunicação é um jeito de viver o batismo. Quem fotografa a missa, edita um vídeo ou escreve um aviso está exercendo a missão de todo o Povo de Deus, e não fazendo um favor ao padre.</p>` },
+      { titulo: "Gaudium et Spes: a Igreja no mundo de hoje", min: 4, html: `
+<p>Último documento aprovado, em 7 de dezembro de 1965, a constituição pastoral sobre a Igreja no mundo de hoje começa assim:</p>
+<blockquote>“As alegrias e as esperanças, as tristezas e as angústias dos homens de hoje, sobretudo dos pobres e de todos os que sofrem, são também as alegrias e as esperanças, as tristezas e as angústias dos discípulos de Cristo.” (GS 1)</blockquote>
+<p>O texto pede que a Igreja saiba “perscrutar os sinais dos tempos e interpretá-los à luz do Evangelho” (GS 4). Em vez de olhar o mundo de longe, a Igreja se coloca dentro dele, em diálogo.</p>
+<p>A constituição trata da dignidade da pessoa, da família, da cultura, da economia, da política e da paz entre os povos.</p>
+<h4>Para a Pascom</h4>
+<p>Uma boa comunicação começa pela escuta. Antes de postar, pergunte: o que a nossa comunidade está vivendo? Quais são as alegrias e as dores do bairro? Uma Pascom atenta aos sinais dos tempos comunica o que toca a vida real das pessoas.</p>` },
+      { titulo: "Dei Verbum e o diálogo", min: 4, html: `
+<p>A constituição sobre a Revelação divina, aprovada em 18 de novembro de 1965, ensina que Deus se comunica com a humanidade e que essa comunicação chega até nós pela Sagrada Escritura e pela Tradição, interpretadas pelo Magistério.</p>
+<p>Ela pede que todos os fiéis tenham amplo acesso à Bíblia (DV 22) e lembra a frase de São Jerônimo: “ignorar as Escrituras é ignorar Cristo” (DV 25).</p>
+<p>Outros três documentos abriram a Igreja ao diálogo:</p>
+<ul>
+<li><b><em>Unitatis Redintegratio</em></b>, sobre o ecumenismo, a busca da unidade entre os cristãos;</li>
+<li><b><em>Nostra Aetate</em></b>, sobre as religiões não cristãs, que reconhece o que há de verdadeiro e santo nelas e reprova toda forma de antissemitismo;</li>
+<li><b><em>Dignitatis Humanae</em></b>, sobre a liberdade religiosa de toda pessoa.</li>
+</ul>
+<h4>Para a Pascom</h4>
+<p>Deus é o primeiro comunicador. Nas redes, a Pascom fala com pessoas de outras igrejas, de outras religiões e sem religião: o tom é sempre de respeito e de convite, nunca de ataque.</p>` },
+    ],
+    quiz: [
+      { p: "Qual palavra João XXIII usou para resumir o objetivo do Concílio?", op: ["Reforma", "Aggiornamento", "Restauração"], c: 1, exp: "Aggiornamento significa “atualização”: encontrar novas formas de anunciar a mesma fé." },
+      { p: "Quando o Concílio Vaticano II foi encerrado?", op: ["8 de dezembro de 1965", "11 de outubro de 1962", "25 de janeiro de 1959"], c: 0, exp: "Foi aberto em 11/10/1962 e encerrado por Paulo VI em 8/12/1965." },
+      { p: "Que documento pede a participação “plena, consciente e ativa” na liturgia?", op: ["Lumen Gentium", "Gaudium et Spes", "Sacrosanctum Concilium"], c: 2, exp: "Sacrosanctum Concilium, n. 14." },
+    ],
+  },
+  {
+    id: "m2", titulo: "A Igreja e a comunicação", desc: "Do decreto Inter Mirifica ao Papa Francisco: o que a Igreja ensina sobre comunicar.",
+    licoes: [
+      { titulo: "Inter Mirifica: o decreto da comunicação", min: 4, html: `
+<p>No mesmo dia da constituição sobre a liturgia, 4 de dezembro de 1963, o Concílio aprovou o decreto <em>Inter Mirifica</em>, sobre os meios de comunicação social. O nome vem das primeiras palavras: “entre as maravilhosas invenções da técnica”.</p>
+<p>Foi a primeira vez que um concílio ecumênico tratou da comunicação. O decreto ajudou a consagrar a expressão “comunicação social” e ensinou que:</p>
+<ul>
+<li>a Igreja tem o direito e o dever de usar os meios de comunicação para anunciar o Evangelho (IM 3);</li>
+<li>quem produz e quem recebe a comunicação tem responsabilidade moral: buscar a verdade, respeitar a dignidade das pessoas;</li>
+<li>é preciso formar os comunicadores, os sacerdotes e todos os fiéis para usar bem esses meios;</li>
+<li>deve haver, todos os anos, um dia dedicado à comunicação (IM 18) e um organismo da Santa Sé para o tema (IM 19).</li>
+</ul>
+<p>É um texto curto e, na época, considerado modesto. Mas abriu um caminho que a Igreja continuou percorrendo nas décadas seguintes.</p>
+<h4>Para a Pascom</h4>
+<p>A Pascom é herdeira direta desse decreto: comunicar a fé é missão, e ela exige formação.</p>` },
+      { titulo: "O Dia Mundial das Comunicações Sociais", min: 3, html: `
+<p>O <em>Inter Mirifica</em> pediu que, todos os anos, houvesse um dia para rezar, refletir e formar os fiéis sobre a comunicação. É o único dia mundial pedido pelo próprio Concílio.</p>
+<p>O primeiro Dia Mundial das Comunicações Sociais foi celebrado em 1967, com mensagem de São Paulo VI. Desde então, todo ano o Papa escreve uma mensagem sobre um tema de comunicação.</p>
+<ul>
+<li>A mensagem é publicada em 24 de janeiro, festa de São Francisco de Sales, padroeiro dos jornalistas.</li>
+<li>O dia é celebrado no domingo antes de Pentecostes, que no Brasil é a solenidade da Ascensão do Senhor.</li>
+</ul>
+<h4>Para a Pascom</h4>
+<p>Esse é o grande dia da Pascom. Algumas ideias: ler a mensagem do Papa na reunião da equipe, preparar uma oração dos fiéis pelos comunicadores, apresentar a Pascom à comunidade no fim da missa e convidar novos voluntários.</p>
+<p class="pergunta">Para conversar na equipe: qual foi o tema da mensagem do Papa deste ano e o que ele pede de nós?</p>` },
+      { titulo: "Communio et Progressio e Aetatis Novae", min: 4, html: `
+<p>Atendendo ao pedido do Concílio, a Santa Sé publicou duas instruções pastorais sobre a comunicação.</p>
+<p><b><em>Communio et Progressio</em> (1971)</b> apresenta a comunicação como caminho de comunhão entre as pessoas e de progresso da sociedade. Ela chama Jesus de “perfeito comunicador”: ele se fez um de nós, falou a língua do povo, usou parábolas tiradas da vida de todo dia e comunicou com a própria vida.</p>
+<p><b><em>Aetatis Novae</em> (1992)</b>, escrita vinte anos depois, reconhece que a comunicação deixou de ser só um conjunto de ferramentas e passou a ser um ambiente, uma cultura em que as pessoas vivem. E pede algo muito concreto: que cada diocese tenha um plano pastoral de comunicação.</p>
+<h4>Para a Pascom</h4>
+<p>O pedido de <em>Aetatis Novae</em> é o coração da Pascom: comunicação não é improviso. A equipe planeja, divide funções, forma voluntários e avalia o que fez.</p>` },
+      { titulo: "Do areópago ao continente digital", min: 4, html: `
+<p>Em 1990, na encíclica <em>Redemptoris Missio</em>, São João Paulo II escreveu que o mundo da comunicação é “o primeiro areópago dos tempos modernos” (RMi 37). O areópago era a praça de Atenas onde São Paulo anunciou Jesus aos gregos (At 17). Hoje, essa praça é a comunicação.</p>
+<p>Ele também lembrou que não basta usar os meios para difundir a mensagem cristã: é preciso entender a nova cultura criada por eles, com novas linguagens e novos comportamentos.</p>
+<p>Em 2002, o então Pontifício Conselho para as Comunicações Sociais publicou dois documentos: <em>A Igreja e a Internet</em> e <em>Ética na Internet</em>.</p>
+<p>Bento XVI falou do “continente digital” e dedicou várias mensagens às redes sociais, convidando os cristãos a estar nelas com autenticidade, como portas de verdade e de fé.</p>
+<h4>Para a Pascom</h4>
+<p>As redes da paróquia são um areópago: ali passam pessoas que talvez nunca entrem na igreja. Um bom post pode ser o primeiro anúncio para alguém.</p>` },
+      { titulo: "Francisco: a cultura do encontro", min: 4, html: `
+<p>O Papa Francisco insistiu numa comunicação que aproxima as pessoas. Na mensagem de 2014, chamou a internet de “dom de Deus” e pediu uma comunicação “a serviço de uma autêntica cultura do encontro”.</p>
+<p>Outros temas das suas mensagens marcaram a Pascom:</p>
+<ul>
+<li><b>“Vem e verás”</b> (2021): comunicar indo ao encontro das pessoas onde e como elas estão, gastando a sola dos sapatos;</li>
+<li><b>“Escutar com o ouvido do coração”</b> (2022): sem escuta não há comunicação verdadeira.</li>
+</ul>
+<p>Francisco também reorganizou a comunicação da Santa Sé: criou em 2015 a Secretaria para a Comunicação, que em 2018 passou a se chamar Dicastério para a Comunicação. Em 2023, esse dicastério publicou <em>Rumo a uma presença plena</em>, uma reflexão sobre como o cristão pode estar nas redes sociais.</p>
+<h4>Para a Pascom</h4>
+<p>Nas redes, a pergunta não é só “quantas curtidas tivemos?”, mas “quem encontramos?”. Responder um comentário com carinho também é evangelizar.</p>` },
+    ],
+    quiz: [
+      { p: "Em que ano foi celebrado o primeiro Dia Mundial das Comunicações Sociais?", op: ["1963", "1967", "1971"], c: 1, exp: "O decreto Inter Mirifica é de 1963; o primeiro Dia foi celebrado em 1967." },
+      { p: "Qual documento pede que cada diocese tenha um plano pastoral de comunicação?", op: ["Aetatis Novae", "Dei Verbum", "Redemptoris Missio"], c: 0, exp: "Aetatis Novae (1992)." },
+      { p: "Quem chamou a comunicação de “o primeiro areópago dos tempos modernos”?", op: ["João XXIII", "Paulo VI", "João Paulo II"], c: 2, exp: "São João Paulo II, na encíclica Redemptoris Missio (1990), n. 37." },
+    ],
+  },
+  {
+    id: "m3", titulo: "A Pascom no Brasil", desc: "Como a comunicação entrou na pastoral da América Latina e do Brasil, e o que é a Pascom hoje.",
+    licoes: [
+      { titulo: "América Latina: de Medellín a Aparecida", min: 4, html: `
+<p>Depois do Concílio, os bispos da América Latina e do Caribe se reuniram em grandes conferências gerais, organizadas pelo CELAM, para aplicar o Concílio à realidade do continente:</p>
+<ul>
+<li><b>Medellín</b> (Colômbia, 1968);</li>
+<li><b>Puebla</b> (México, 1979), que fez a opção preferencial pelos pobres e pelos jovens e dedicou uma seção à comunicação social;</li>
+<li><b>Santo Domingo</b> (República Dominicana, 1992), que falou da nova evangelização e da cultura;</li>
+<li><b>Aparecida</b> (Brasil, 2007), que chamou todos os batizados a serem discípulos missionários de Jesus Cristo e tratou também da pastoral da comunicação.</li>
+</ul>
+<p>Nessas conferências, a comunicação deixa de ser vista só como um meio e passa a ser parte do jeito de a Igreja viver e anunciar a fé no continente.</p>
+<h4>Para a Pascom</h4>
+<p>Aparecida fala de uma Igreja em estado permanente de missão. A Pascom ajuda a paróquia a sair: leva a vida da comunidade a quem não está dentro dela.</p>` },
+      { titulo: "A CNBB e a comunicação", min: 4, html: `
+<p>A Conferência Nacional dos Bispos do Brasil (CNBB) foi fundada em 1952 e, ao longo das décadas, tratou a comunicação como uma das dimensões da ação da Igreja no país.</p>
+<p>Um marco foi a <b>Campanha da Fraternidade de 1989</b>, com o tema “A fraternidade e a comunicação” e o lema “Comunicação para a verdade e a paz”. Durante a Quaresma, paróquias de todo o Brasil refletiram sobre o papel da comunicação na sociedade e na Igreja.</p>
+<p>Hoje a CNBB tem uma Comissão Episcopal Pastoral para a Comunicação, que articula a comunicação da Igreja no país, incentiva a formação de comunicadores e acompanha as Pascoms das dioceses.</p>
+<h4>Para a Pascom</h4>
+<p>A Pascom da paróquia não está sozinha: faz parte de uma rede que vai da diocese até a CNBB. Participar dos encontros e formações diocesanos é parte do serviço.</p>` },
+      { titulo: "O Diretório de Comunicação", min: 4, html: `
+<p>Em 2014, a CNBB aprovou o <b>Diretório de Comunicação da Igreja no Brasil</b>, publicado como Documento 99 da CNBB. É o texto de referência para a Pascom no país.</p>
+<p>Alguns pontos centrais:</p>
+<ul>
+<li>a comunicação é uma <b>dimensão de toda a ação da Igreja</b>, e não um setor isolado: a catequese, a liturgia e as pastorais sociais também comunicam;</li>
+<li>a Pascom existe para animar e articular essa dimensão em cada comunidade;</li>
+<li>o comunicador cristão precisa de <b>formação</b> técnica, ética, bíblica e espiritual;</li>
+<li>a comunicação da Igreja deve ser transparente, verdadeira e a serviço do diálogo com a sociedade.</li>
+</ul>
+<h4>Para a Pascom</h4>
+<p>Vale ter o Diretório na estante da equipe e estudar um capítulo por mês nas reuniões. É a melhor forma de entender o que a Igreja espera da Pascom.</p>` },
+      { titulo: "Como começou a Pascom", min: 4, html: `
+<p>A Pascom não tem uma data única de fundação. Ela foi nascendo aos poucos, como resposta a pedidos que a Igreja fazia desde o Concílio:</p>
+<ul>
+<li>o <em>Inter Mirifica</em> (1963) pediu formação e ação organizada na comunicação;</li>
+<li><em>Aetatis Novae</em> (1992) pediu planos pastorais de comunicação nas dioceses;</li>
+<li>as conferências latino-americanas e a CNBB passaram a tratar a comunicação como parte da pastoral.</li>
+</ul>
+<p>Nas últimas décadas do século XX, dioceses e paróquias brasileiras começaram a organizar equipes de comunicação, cuidando dos boletins, do mural, do rádio e da imprensa local. Com a internet e, depois, com as redes sociais, essas equipes se multiplicaram, e hoje há Pascom em grande parte das paróquias do país.</p>
+<p>A forma de cada Pascom varia: em algumas paróquias é uma equipe grande, com fotografia, vídeo e transmissão; em outras, são duas ou três pessoas cuidando dos avisos e das redes. O que as une é a missão.</p>
+<div class="historia-local" id="historia-local"></div>` },
+      { titulo: "O que é (e o que não é) a Pascom", min: 4, html: `
+<p>A Pascom, Pastoral da Comunicação, é a pastoral que anima e organiza a dimensão comunicativa da paróquia ou da diocese.</p>
+<p><b>A Pascom é:</b></p>
+<ul>
+<li>um serviço de evangelização, com espiritualidade e formação próprias;</li>
+<li>a ponte entre as pastorais: ajuda cada grupo a comunicar o que faz;</li>
+<li>cuidado com a comunicação interna (avisos, murais, folhetos) e externa (redes sociais, site, imprensa);</li>
+<li>memória da comunidade: as fotos e os registros de hoje são a história da paróquia amanhã.</li>
+</ul>
+<p><b>A Pascom não é:</b></p>
+<ul>
+<li>só “a equipe que tira foto”;</li>
+<li>um grupo de profissionais fechado: qualquer pessoa pode aprender e servir;</li>
+<li>dona da comunicação da paróquia: ela serve e articula, em comunhão com o pároco e o conselho pastoral.</li>
+</ul>
+<p class="pergunta">Para conversar na equipe: quais pastorais da paróquia ainda não aparecem na nossa comunicação?</p>` },
+      { titulo: "Como a Pascom se organiza", min: 4, html: `
+<p>A Pascom acompanha a organização da Igreja:</p>
+<ul>
+<li><b>Paroquial:</b> a equipe da paróquia e das comunidades, em comunhão com o pároco;</li>
+<li><b>Diocesana:</b> a coordenação da diocese, que forma e articula as Pascoms paroquiais;</li>
+<li><b>Regional e nacional:</b> a articulação nos regionais da CNBB e no país.</li>
+</ul>
+<p>Na paróquia, é comum dividir o serviço em frentes:</p>
+<ul>
+<li><b>Coordenação:</b> organiza as reuniões, a escala e a ligação com o pároco;</li>
+<li><b>Fotografia e vídeo:</b> registro das celebrações e eventos;</li>
+<li><b>Transmissão:</b> missas e eventos ao vivo;</li>
+<li><b>Redes sociais e texto:</b> posts, avisos, legendas e site;</li>
+<li><b>Som e projeção:</b> apoio técnico nas celebrações.</li>
+</ul>
+<p>Uma rotina simples ajuda muito: reunião mensal, escala publicada com antecedência, formação contínua e um momento de avaliação depois das grandes festas.</p>
+<h4>No nosso site</h4>
+<p>O botão <b>Agendar missa</b> monta a escala, e cada pessoa pode assumir uma vaga. A agenda e a liturgia do dia ficam no topo da página.</p>` },
+    ],
+    quiz: [
+      { p: "Qual Campanha da Fraternidade teve o lema “Comunicação para a verdade e a paz”?", op: ["CF 1989", "CF 2007", "CF 2014"], c: 0, exp: "A CF de 1989 teve o tema “A fraternidade e a comunicação”." },
+      { p: "O Diretório de Comunicação da Igreja no Brasil é qual documento da CNBB?", op: ["Documento 99", "Documento 105", "Documento 62"], c: 0, exp: "Documento 99 da CNBB, aprovado em 2014." },
+      { p: "Segundo o Diretório, a comunicação é:", op: ["um setor separado das outras pastorais", "uma dimensão de toda a ação da Igreja", "tarefa só de profissionais"], c: 1, exp: "Toda a ação da Igreja comunica; a Pascom anima e articula essa dimensão." },
+    ],
+  },
+  {
+    id: "m4", titulo: "Espiritualidade e ética do comunicador", desc: "Comunicar como Jesus, com verdade e cuidado com as pessoas.",
+    licoes: [
+      { titulo: "A espiritualidade do comunicador", min: 4, html: `
+<p>Antes de ser técnica, a comunicação cristã é espiritualidade. O modelo é Jesus, o “perfeito comunicador”.</p>
+<p>No caminho de Emaús (Lc 24,13-35), Jesus mostra como comunicar:</p>
+<ol>
+<li><b>Aproxima-se</b> e caminha junto com os discípulos tristes;</li>
+<li><b>Escuta</b> o que eles estão vivendo antes de falar;</li>
+<li><b>Explica</b> as Escrituras a partir da vida deles;</li>
+<li><b>Parte o pão</b>, e eles o reconhecem;</li>
+<li>Os discípulos <b>voltam correndo</b> para contar o que viram.</li>
+</ol>
+<p>Algumas atitudes do comunicador cristão:</p>
+<ul>
+<li>rezar antes de servir, mesmo que seja uma oração curta com a equipe;</li>
+<li>lembrar que o centro é Cristo e a comunidade, e não quem fotografa ou posta;</li>
+<li>servir com alegria também no trabalho que ninguém vê.</li>
+</ul>
+<p class="pergunta">Oração da equipe: “Senhor, faz de nós comunicadores da tua paz. Que nossos olhos vejam o que é bom, nossas mãos registrem a beleza da tua presença e nossas palavras levem esperança. Amém.”</p>` },
+      { titulo: "Ética: verdade, imagem e dados", min: 5, html: `
+<p>A comunicação da Igreja precisa ser a mais confiável da cidade. Alguns cuidados:</p>
+<h4>Verdade</h4>
+<ul>
+<li>Confira antes de compartilhar: data, horário, fonte. Notícia falsa não se espalha pelas redes da paróquia.</li>
+<li>Citações de santos e papas: só com a fonte. Muitas frases que circulam na internet não são deles.</li>
+</ul>
+<h4>Imagem das pessoas</h4>
+<ul>
+<li>A Constituição Federal (art. 5º, X) e o Código Civil (art. 20) protegem a imagem de cada pessoa.</li>
+<li>Crianças e adolescentes têm proteção especial pelo Estatuto da Criança e do Adolescente (Lei 8.069/1990). Para publicar fotos deles, peça autorização dos responsáveis. Na catequese, isso pode ser feito na ficha de inscrição.</li>
+<li>Nunca fotografe nem exponha pessoas em momentos de fragilidade, como velórios, atendimento social e confissões, sem consentimento claro.</li>
+</ul>
+<h4>Dados pessoais</h4>
+<ul>
+<li>A Lei Geral de Proteção de Dados (Lei 13.709/2018) também vale para a paróquia: listas de telefones, endereços e pedidos de oração com nomes devem ser guardados com cuidado e usados só para o fim combinado.</li>
+</ul>
+<p>Na dúvida, a regra é simples: trate a imagem e os dados dos outros como gostaria que tratassem os seus.</p>` },
+      { titulo: "Os padroeiros da comunicação", min: 4, html: `
+<ul>
+<li><b>São Francisco de Sales</b> (1567–1622): bispo de Genebra que escrevia folhetos e os passava por baixo das portas. Em 1923, o Papa Pio XI o declarou padroeiro dos jornalistas e escritores católicos. Festa: 24 de janeiro.</li>
+<li><b>Santa Clara de Assis</b> (1194–1253): doente, viu a missa de Natal projetada na parede do seu quarto. Em 1958, Pio XII a declarou padroeira da televisão. Festa: 11 de agosto.</li>
+<li><b>São Gabriel Arcanjo</b>: o mensageiro da Anunciação. Pio XII o declarou padroeiro das telecomunicações em 1951. Festa: 29 de setembro.</li>
+<li><b>São Maximiliano Kolbe</b> (1894–1941): fundou a revista <em>O Cavaleiro da Imaculada</em>, uma gráfica e uma rádio para evangelizar. Morreu em Auschwitz no lugar de um pai de família. Festa: 14 de agosto.</li>
+<li><b>São Carlo Acutis</b> (1991–2006): jovem italiano que usou a informática para divulgar os milagres eucarísticos. Canonizado em 7 de setembro de 2025. Festa: 12 de outubro.</li>
+</ul>
+<p>No topo da página, o card <b>Santo em destaque</b> e a <b>Galeria</b> trazem a história e as frases de cada um.</p>
+<h4>Para a Pascom</h4>
+<p>Escolham um padroeiro para a equipe e rezem pedindo sua intercessão no início das reuniões.</p>` },
+    ],
+    quiz: [
+      { p: "Para publicar a foto de uma criança da catequese, é preciso:", op: ["nada, se a foto for bonita", "autorização dos pais ou responsáveis", "apenas avisar a catequista"], c: 1, exp: "O ECA protege a imagem de crianças e adolescentes; peça autorização dos responsáveis." },
+      { p: "Qual lei trata da proteção de dados pessoais no Brasil?", op: ["Lei 8.069/1990", "Lei 13.709/2018", "Lei 9.610/1998"], c: 1, exp: "A LGPD é a Lei 13.709/2018." },
+      { p: "Quem é o padroeiro dos jornalistas e escritores católicos?", op: ["São Francisco de Sales", "São Gabriel Arcanjo", "São Carlo Acutis"], c: 0, exp: "Declarado por Pio XI em 1923." },
+    ],
+  },
+  {
+    id: "m5", titulo: "Mãos à obra", desc: "Fotografia, transmissão, redes sociais e a escala: o serviço na prática.",
+    licoes: [
+      { titulo: "Fotografia e vídeo na celebração", min: 4, html: `
+<p>Registrar a celebração é um serviço à memória da comunidade. O critério é sempre não atrapalhar a oração. Orientações comuns em muitas dioceses (siga sempre as normas da sua):</p>
+<ul>
+<li>Converse com o padre antes da missa sobre onde ficar e o que registrar.</li>
+<li>Não use flash, principalmente durante a consagração.</li>
+<li>Evite circular pelo presbitério; prefira posições fixas, nas laterais ou ao fundo.</li>
+<li>Os momentos mais importantes, como a consagração, pedem ainda mais discrição: muitas vezes é melhor não fotografar.</li>
+<li>Use roupas discretas e o celular no silencioso.</li>
+</ul>
+<h4>Dicas técnicas</h4>
+<ul>
+<li>Na igreja, a luz costuma ser baixa: aumente o ISO aos poucos e segure firme a câmera.</li>
+<li>Fotografe também a assembleia, os ministros e os detalhes: a comunidade é a protagonista.</li>
+<li>Depois, selecione poucas fotos boas e publique no mesmo dia, se possível.</li>
+<li>Guarde as fotos num acervo organizado por data e evento.</li>
+</ul>` },
+      { titulo: "Transmissão ao vivo", min: 4, html: `
+<p>A transmissão leva a celebração a doentes, idosos e a quem mora longe. Para que dê certo:</p>
+<ul>
+<li><b>Teste antes:</b> internet, áudio e enquadramento, pelo menos 30 minutos antes do início.</li>
+<li><b>Som é mais importante que imagem:</b> uma transmissão com imagem simples e som limpo é melhor do que o contrário. Se possível, pegue o áudio direto da mesa de som.</li>
+<li><b>Câmera fixa e estável:</b> um tripé e um bom enquadramento do altar e do ambão resolvem a maior parte das missas.</li>
+<li><b>Direitos autorais:</b> músicas tocadas antes ou depois da missa podem fazer a plataforma bloquear a transmissão; comece a transmitir na hora da celebração.</li>
+<li><b>Interaja com cuidado:</b> um membro da equipe pode cumprimentar quem está assistindo e receber intenções, sem transformar o chat em distração.</li>
+</ul>
+<p>Depois da transmissão, revise o título e a descrição do vídeo e indique o horário da homilia, para quem quiser rever.</p>` },
+      { titulo: "Redes sociais da paróquia", min: 5, html: `
+<p>As redes da paróquia são uma janela da comunidade. Algumas práticas que funcionam:</p>
+<ul>
+<li><b>Planeje:</b> monte um calendário mensal com missas, festas, pastorais e datas litúrgicas. Assim a equipe não vive só de urgência.</li>
+<li><b>Linguagem simples e acolhedora:</b> escreva para quem nunca entrou na igreja. Evite siglas e “igrejês”.</li>
+<li><b>Informação completa:</b> dia, horário, local e contato em todo aviso.</li>
+<li><b>Acessibilidade:</b> descreva as imagens, coloque legendas nos vídeos e use contraste suficiente nas artes.</li>
+<li><b>Responda com caridade:</b> comentários e mensagens são pessoas procurando a Igreja. Críticas se respondem com calma ou no privado.</li>
+<li><b>Cuide das senhas:</b> as contas pertencem à paróquia; guarde os acessos com a coordenação e troque as senhas quando a equipe mudar.</li>
+</ul>
+<p>Os números ajudam a avaliar, mas não são o objetivo. Um post com poucas curtidas que leva alguém à confissão vale mais do que um viral vazio.</p>` },
+      { titulo: "Servindo na escala", min: 3, html: `
+<p>A escala é o jeito de dividir o serviço com justiça e de garantir que nenhuma celebração fique sem cobertura.</p>
+<h4>No site</h4>
+<ol>
+<li>Toque em <b>Agenda</b> para ver as escalas das próximas missas.</li>
+<li>Abra uma escala e veja as funções. As que estão sem ninguém aparecem como <b>Vaga</b>.</li>
+<li>Digite seu nome e toque em <b>Assumir</b>. Pronto: sua função está registrada.</li>
+<li>Use o botão de <b>WhatsApp</b> para mandar a escala no grupo da equipe.</li>
+</ol>
+<h4>Antes de servir</h4>
+<ul>
+<li>Carregue as baterias e esvazie os cartões de memória na véspera.</li>
+<li>Chegue pelo menos 30 minutos antes.</li>
+<li>Se não puder ir, avise a coordenação o quanto antes, para outra pessoa assumir.</li>
+</ul>
+<p>Obrigado por servir! Ao terminar esta formação, faça o último teste e converse com a coordenação sobre a próxima escala.</p>` },
+    ],
+    quiz: [
+      { p: "Durante a consagração, o mais adequado é:", op: ["usar flash para a foto sair nítida", "máxima discrição, muitas vezes sem fotografar", "subir ao presbitério para um ângulo melhor"], c: 1, exp: "A oração vem antes do registro." },
+      { p: "Numa transmissão, o que mais importa?", op: ["Som limpo", "Muitas câmeras", "Filtros de imagem"], c: 0, exp: "Imagem simples com som limpo funciona; o contrário, não." },
+      { p: "As senhas das redes da paróquia devem ficar:", op: ["com quem criou a conta", "com a coordenação, e ser trocadas quando a equipe muda", "anotadas num post fixado"], c: 1, exp: "As contas pertencem à paróquia, não a uma pessoa." },
+    ],
+  },
+];
+
+const TIMELINE = [
+  { ano: 1923, titulo: "Padroeiro dos jornalistas", texto: "Pio XI declara São Francisco de Sales padroeiro dos jornalistas e escritores católicos." },
+  { ano: 1951, titulo: "Padroeiro das telecomunicações", texto: "Pio XII declara São Gabriel Arcanjo padroeiro das telecomunicações." },
+  { ano: 1952, titulo: "Nasce a CNBB", texto: "É fundada a Conferência Nacional dos Bispos do Brasil." },
+  { ano: 1958, titulo: "Padroeira da televisão", texto: "Pio XII declara Santa Clara de Assis padroeira da televisão." },
+  { ano: 1959, titulo: "Anúncio do Concílio", texto: "Em 25 de janeiro, São João XXIII anuncia que vai convocar um Concílio Ecumênico." },
+  { ano: 1962, titulo: "Abertura do Concílio", texto: "Em 11 de outubro, o Concílio Vaticano II é aberto na Basílica de São Pedro." },
+  { ano: 1963, titulo: "Inter Mirifica", texto: "Em 4 de dezembro, são aprovados os primeiros documentos: Sacrosanctum Concilium, sobre a liturgia, e Inter Mirifica, sobre a comunicação." },
+  { ano: 1965, titulo: "Encerramento", texto: "Em 8 de dezembro, São Paulo VI encerra o Concílio, que aprovou 16 documentos." },
+  { ano: 1967, titulo: "1º Dia Mundial das Comunicações", texto: "Celebrado pela primeira vez o dia pedido pelo Inter Mirifica, com mensagem de Paulo VI." },
+  { ano: 1968, titulo: "Medellín", texto: "Os bispos da América Latina aplicam o Concílio à realidade do continente." },
+  { ano: 1971, titulo: "Communio et Progressio", texto: "Instrução pastoral sobre a comunicação, que chama Jesus de “perfeito comunicador”." },
+  { ano: 1979, titulo: "Puebla", texto: "A conferência latino-americana faz a opção preferencial pelos pobres e pelos jovens e trata da comunicação social." },
+  { ano: 1989, titulo: "CF da comunicação", texto: "Campanha da Fraternidade: “A fraternidade e a comunicação”, com o lema “Comunicação para a verdade e a paz”." },
+  { ano: 1990, titulo: "O areópago moderno", texto: "Na Redemptoris Missio, João Paulo II chama a comunicação de “o primeiro areópago dos tempos modernos”." },
+  { ano: 1992, titulo: "Aetatis Novae", texto: "Instrução pastoral pede que cada diocese tenha um plano pastoral de comunicação." },
+  { ano: 2002, titulo: "Igreja e Internet", texto: "A Santa Sé publica A Igreja e a Internet e Ética na Internet." },
+  { ano: 2007, titulo: "Aparecida", texto: "Na conferência de Aparecida, os bispos chamam todos a serem discípulos missionários." },
+  { ano: 2014, titulo: "Diretório de Comunicação", texto: "A CNBB aprova o Diretório de Comunicação da Igreja no Brasil (Documento 99)." },
+  { ano: 2015, titulo: "Secretaria para a Comunicação", texto: "Francisco cria a Secretaria para a Comunicação, que em 2018 vira Dicastério para a Comunicação." },
+  { ano: 2023, titulo: "Rumo a uma presença plena", texto: "O Dicastério para a Comunicação publica uma reflexão sobre a presença cristã nas redes sociais." },
+  { ano: 2025, titulo: "São Carlo Acutis", texto: "Em 7 de setembro, o “santo da internet” é canonizado." },
+];
+
+const DOCS = [
+  { nome: "Sacrosanctum Concilium", tipo: "Constituição", data: "4 dez 1963", tema: "A sagrada liturgia: participação plena, consciente e ativa; línguas de cada povo; mais Bíblia nas celebrações." },
+  { nome: "Lumen Gentium", tipo: "Constituição", data: "21 nov 1964", tema: "A Igreja: mistério, Povo de Deus, missão dos leigos e chamado universal à santidade." },
+  { nome: "Dei Verbum", tipo: "Constituição", data: "18 nov 1965", tema: "A Revelação divina: Escritura e Tradição; acesso amplo à Bíblia para todos os fiéis." },
+  { nome: "Gaudium et Spes", tipo: "Constituição", data: "7 dez 1965", tema: "A Igreja no mundo de hoje: dignidade humana, família, cultura, economia e paz." },
+  { nome: "Inter Mirifica", tipo: "Decreto", data: "4 dez 1963", tema: "Os meios de comunicação social: dever de usá-los para evangelizar e Dia Mundial das Comunicações." },
+  { nome: "Orientalium Ecclesiarum", tipo: "Decreto", data: "21 nov 1964", tema: "As Igrejas católicas orientais e suas tradições." },
+  { nome: "Unitatis Redintegratio", tipo: "Decreto", data: "21 nov 1964", tema: "O ecumenismo: a busca da unidade entre os cristãos." },
+  { nome: "Christus Dominus", tipo: "Decreto", data: "28 out 1965", tema: "O múnus pastoral dos bispos." },
+  { nome: "Perfectae Caritatis", tipo: "Decreto", data: "28 out 1965", tema: "A renovação da vida religiosa." },
+  { nome: "Optatam Totius", tipo: "Decreto", data: "28 out 1965", tema: "A formação dos sacerdotes." },
+  { nome: "Apostolicam Actuositatem", tipo: "Decreto", data: "18 nov 1965", tema: "O apostolado dos leigos." },
+  { nome: "Ad Gentes", tipo: "Decreto", data: "7 dez 1965", tema: "A atividade missionária da Igreja." },
+  { nome: "Presbyterorum Ordinis", tipo: "Decreto", data: "7 dez 1965", tema: "O ministério e a vida dos presbíteros." },
+  { nome: "Gravissimum Educationis", tipo: "Declaração", data: "28 out 1965", tema: "A educação cristã." },
+  { nome: "Nostra Aetate", tipo: "Declaração", data: "28 out 1965", tema: "As relações da Igreja com as religiões não cristãs." },
+  { nome: "Dignitatis Humanae", tipo: "Declaração", data: "7 dez 1965", tema: "A liberdade religiosa." },
+];
+
+const GLOSSARIO = [
+  { t: "Concílio ecumênico", d: "Reunião dos bispos do mundo inteiro com o Papa para tratar da fé e da vida da Igreja. O Vaticano II foi o 21º." },
+  { t: "Aggiornamento", d: "“Atualização”, em italiano. A palavra de João XXIII para anunciar a mesma fé de um jeito que o mundo de hoje entenda." },
+  { t: "Constituição", d: "O tipo mais importante de documento do Concílio. São quatro: sobre a liturgia, a Igreja, a Revelação e a Igreja no mundo." },
+  { t: "Povo de Deus", d: "Imagem da Igreja em Lumen Gentium: todos os batizados, com igual dignidade, antes de qualquer função." },
+  { t: "Comunicação social", d: "Expressão consagrada pelo Inter Mirifica para os meios que alcançam a sociedade: imprensa, rádio, TV e, hoje, a internet." },
+  { t: "Pascom", d: "Pastoral da Comunicação: anima e organiza a dimensão comunicativa da paróquia ou da diocese." },
+  { t: "Dimensão comunicativa", d: "Toda a ação da Igreja comunica, da catequese à liturgia. A Pascom ajuda cada pastoral a comunicar bem." },
+  { t: "Cultura do encontro", d: "Expressão do Papa Francisco: comunicar para aproximar as pessoas, e não para dividir." },
+];
+
+const FAQ = [
+  { p: "Preciso saber fotografar ou editar vídeo para entrar na Pascom?", r: "Não. A Pascom forma seus voluntários. Basta vontade de servir; há funções para quem escreve, organiza, cuida do som ou recebe as pessoas." },
+  { p: "Quanto tempo o serviço exige?", r: "Depende da escala. Em geral, cada pessoa serve em algumas celebrações por mês e participa da reunião mensal da equipe." },
+  { p: "Posso usar meu próprio celular?", r: "Sim. Muitas Pascoms começam com celulares. O mais importante é ter cuidado com a luz, o som e a discrição durante a celebração." },
+  { p: "Posso postar fotos de crianças da catequese?", r: "Só com autorização dos pais ou responsáveis, como pede o Estatuto da Criança e do Adolescente. Na dúvida, não publique." },
+  { p: "Quem decide o que é publicado nas redes da paróquia?", r: "A coordenação da Pascom, em comunhão com o pároco. Avisos de outras pastorais passam pela Pascom para manter a informação correta e completa." },
+  { p: "Como faço para entrar na equipe?", r: "Toque em “Venha servir com a gente” ou no botão EU, no topo da página, e envie sua mensagem para a equipe." },
+];
+
+/* ---------- Formação: progresso, leitor e testes ---------- */
+const LICOES = FORMACAO.flatMap((m, mi) => m.licoes.map((l, li) => ({ ...l, m, mi, li })));
+LICOES.forEach((l, i) => { l.n = i; l.key = `${l.m.id}-${l.li}`; });
+let lidas = new Set(store.get("lidas", []));
+let quizRes = store.get("quiz", {});
+let historiaLocal = null;
+const openMods = new Set();
+const saveForm = () => { store.set("lidas", [...lidas]); store.set("quiz", quizRes); };
+const nextUnread = () => LICOES.find(l => !lidas.has(l.key));
+
+function renderFormacao() {
+  const total = LICOES.length, n = LICOES.filter(l => lidas.has(l.key)).length, prox = nextUnread();
+  $("form-lead").textContent = `${total} páginas em ${FORMACAO.length} módulos: o Concílio Vaticano II, a Igreja e a comunicação, a história da Pascom no Brasil, espiritualidade e ética, e o serviço na prática. Cada módulo termina com um teste rápido.`;
+  $("form-pct").textContent = Math.round(n / total * 100) + "%";
+  $("form-count").textContent = `${n} de ${total} páginas lidas`;
+  $("ring-fg").style.strokeDashoffset = 326.73 * (1 - n / total);
+  $("form-go").textContent = n === 0 ? "Começar a formação" : prox ? "Continuar de onde parei" : "Formação concluída · rever";
+  $("form-reset").hidden = n === 0 && !Object.keys(quizRes).length;
+  if (!openMods.size) openMods.add((prox || LICOES[0]).m.id);
+  $("modules").innerHTML = FORMACAO.map((m, mi) => {
+    const ls = LICOES.filter(l => l.mi === mi), feitas = ls.filter(l => lidas.has(l.key)).length, q = quizRes[m.id];
+    return `<details class="mod" data-mod="${m.id}"${openMods.has(m.id) ? " open" : ""}>
+      <summary><span class="mod-n">Módulo ${mi + 1}</span><span class="mod-t">${m.titulo}</span><span class="mod-d">${m.desc}</span>
+        <span class="mod-p">${feitas} de ${ls.length} páginas${q != null ? ` · teste: ${q} de ${m.quiz.length}` : ""}</span>
+        <span class="mod-bar" aria-hidden="true"><span style="width:${feitas / ls.length * 100}%"></span></span></summary>
+      <ol class="lessons">${ls.map(l => `<li><button class="lesson${lidas.has(l.key) ? " done" : ""}" data-licao="${l.n}"><span class="st" aria-hidden="true"></span><span class="lt-t">${l.titulo}${lidas.has(l.key) ? '<span class="sr"> (lida)</span>' : ""}</span><span class="lt-m">${l.min} min</span></button></li>`).join("")}
+        <li><button class="lesson" data-quiz="${mi}"><span class="st q" aria-hidden="true">?</span><span class="lt-t">Teste do módulo</span><span class="lt-m">${m.quiz.length} perguntas</span></button></li></ol>
+    </details>`;
+  }).join("");
+  $("modules").querySelectorAll("details").forEach(d => d.addEventListener("toggle", () => d.open ? openMods.add(d.dataset.mod) : openMods.delete(d.dataset.mod)));
+}
+
+const leitor = $("leitor");
+let ltI = 0, ltQuiz = null;
+function setReadBtn() {
+  const lida = lidas.has(LICOES[ltI].key);
+  $("lt-read").setAttribute("aria-pressed", lida);
+  $("lt-read").innerHTML = lida ? "✓ Lida" : "Marcar <span class='long'>como </span>lida";
+}
+function historiaHTML() {
+  const t = historiaLocal && historiaLocal.texto;
+  return `<div class="local-box" id="local-box"><h4>E na nossa paróquia?</h4>
+    ${t ? `<p style="white-space:pre-wrap">${esc(t)}</p>` : `<p>A equipe ainda não contou aqui como começou a Pascom da nossa paróquia: quem começou, em que ano, quais foram os primeiros serviços.</p>`}
+    ${canWrite ? `<button class="btn-line" id="hist-edit">${t ? "Editar a nossa história" : "Escrever a nossa história"}</button>` : ""}</div>`;
+}
+function wireHistoria() {
+  const b = $("hist-edit"); if (!b) return;
+  b.onclick = () => {
+    $("local-box").innerHTML = `<h4>E na nossa paróquia?</h4><label class="sr" for="hist-txt">História da Pascom da paróquia</label>
+      <textarea id="hist-txt" placeholder="Ex.: A Pascom da nossa paróquia começou em ... com ...">${esc(historiaLocal?.texto || "")}</textarea>
+      <button class="btn-red" id="hist-save" style="padding:0 18px">Salvar</button>`;
+    $("hist-save").onclick = async () => {
+      const texto = $("hist-txt").value.trim();
+      if (!texto) { $("hist-txt").focus(); return; }
+      if (await writeOr(() => data.set("formacao", "historia", { texto, criadoPor: myId, atualizadoEm: Date.now() }), "História salva")) {
+        historiaLocal = { texto }; $("local-box").outerHTML = historiaHTML(); wireHistoria();
+      }
+    };
+  };
+}
+function openLicao(i) {
+  ltQuiz = null;
+  ltI = Math.max(0, Math.min(LICOES.length - 1, i));
+  const l = LICOES[ltI], fimModulo = l.li === l.m.licoes.length - 1;
+  $("lt-mod").textContent = `Módulo ${l.mi + 1} · ${l.m.titulo}`;
+  $("lt-body").innerHTML = `<p class="lt-meta">Página ${ltI + 1} de ${LICOES.length} · ${l.min} min de leitura</p><h2 id="lt-title">${l.titulo}</h2>${l.html}
+    ${fimModulo ? `<div class="lt-cta"><p>Você chegou ao fim do módulo ${l.mi + 1}. Que tal conferir o que aprendeu?</p><button class="btn-red" style="padding:0 18px" data-quiz="${l.mi}">Fazer o teste do módulo</button></div>` : ""}`;
+  const hl = $("historia-local"); if (hl) { hl.outerHTML = historiaHTML(); wireHistoria(); }
+  $("lt-fill").style.width = ((ltI + 1) / LICOES.length * 100) + "%";
+  $("lt-prev").disabled = ltI === 0;
+  $("lt-next").textContent = ltI === LICOES.length - 1 ? "Concluir" : "Próxima ›";
+  $("lt-read").hidden = false; setReadBtn();
+  if (!leitor.open) leitor.showModal();
+  $("lt-body").scrollTop = 0; $("lt-body").focus({ preventScroll: true });
+}
+function openQuiz(mi) {
+  ltQuiz = mi;
+  const m = FORMACAO[mi];
+  $("lt-mod").textContent = `Módulo ${mi + 1} · Teste`;
+  $("lt-body").innerHTML = `<p class="lt-meta">Teste do módulo ${mi + 1} · ${m.quiz.length} perguntas</p><h2 id="lt-title">${m.titulo}</h2>
+    <form class="quiz" id="quiz-form" novalidate>${m.quiz.map((q, qi) => `<fieldset class="q" data-q="${qi}"><legend>${qi + 1}. ${q.p}</legend>
+      ${q.op.map((o, oi) => `<label><input type="radio" name="q${qi}" value="${oi}"> ${o}</label>`).join("")}<p class="q-fb" role="status"></p></fieldset>`).join("")}
+      <button class="btn-red" type="submit" style="justify-self:start;padding:0 20px">Conferir respostas</button>
+      <p class="q-total" id="q-total" role="status"></p></form>`;
+  $("lt-fill").style.width = (((LICOES.findIndex(l => l.mi === mi) + m.licoes.length) / LICOES.length) * 100) + "%";
+  $("lt-prev").disabled = false;
+  $("lt-next").textContent = mi === FORMACAO.length - 1 ? "Concluir" : "Próximo módulo ›";
+  $("lt-read").hidden = true;
+  if (!leitor.open) leitor.showModal();
+  $("lt-body").scrollTop = 0;
+  $("quiz-form").onsubmit = e => {
+    e.preventDefault();
+    const resp = m.quiz.map((q, qi) => { const r = e.target.querySelector(`input[name="q${qi}"]:checked`); return r ? +r.value : null; });
+    if (resp.includes(null)) { $("q-total").textContent = "Responda todas as perguntas antes de conferir."; return; }
+    let acertos = 0;
+    m.quiz.forEach((q, qi) => {
+      const fs = e.target.querySelector(`[data-q="${qi}"]`), ok = resp[qi] === q.c; if (ok) acertos++;
+      fs.className = "q " + (ok ? "ok" : "err");
+      fs.querySelector(".q-fb").textContent = (ok ? "Certo! " : `Resposta: ${q.op[q.c]}. `) + q.exp;
+    });
+    quizRes[m.id] = acertos; saveForm(); renderFormacao();
+    $("q-total").textContent = acertos === m.quiz.length ? `Você acertou tudo: ${acertos} de ${m.quiz.length}!` : `Você acertou ${acertos} de ${m.quiz.length}. Releia as páginas e tente de novo quando quiser.`;
+  };
+}
+function finishFormacao() {
+  leitor.close();
+  toast(nextUnread() ? "Continue quando quiser: seu progresso está salvo." : "Parabéns! Você concluiu a Formação Pascom.");
+}
+$("lt-read").onclick = () => {
+  const k = LICOES[ltI].key;
+  lidas.has(k) ? lidas.delete(k) : lidas.add(k);
+  saveForm(); setReadBtn(); renderFormacao();
+};
+$("lt-next").onclick = () => {
+  if (ltQuiz != null) { const fim = ltQuiz === FORMACAO.length - 1; return fim ? finishFormacao() : openLicao(LICOES.findIndex(l => l.mi === ltQuiz + 1)); }
+  lidas.add(LICOES[ltI].key); saveForm(); renderFormacao();
+  ltI === LICOES.length - 1 ? finishFormacao() : openLicao(ltI + 1);
+};
+$("lt-prev").onclick = () => {
+  if (ltQuiz != null) return openLicao(LICOES.findIndex(l => l.mi === ltQuiz) + FORMACAO[ltQuiz].licoes.length - 1);
+  openLicao(ltI - 1);
+};
+$("lt-close").onclick = () => leitor.close();
+leitor.addEventListener("click", e => { if (e.target === leitor) leitor.close(); });
+leitor.addEventListener("close", () => { renderFormacao(); if (location.hash.startsWith("#licao")) history.replaceState(null, "", location.pathname + location.search); });
+leitor.addEventListener("keydown", e => {
+  if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+  if (e.key === "ArrowRight" && ltQuiz == null) { e.preventDefault(); $("lt-next").click(); }
+  if (e.key === "ArrowLeft" && !$("lt-prev").disabled) { e.preventDefault(); $("lt-prev").click(); }
+});
+document.addEventListener("click", e => {
+  const l = e.target.closest("[data-licao]"); if (l) return openLicao(+l.dataset.licao);
+  const q = e.target.closest("[data-quiz]"); if (q) return openQuiz(+q.dataset.quiz);
+});
+$("form-go").onclick = () => openLicao((nextUnread() || LICOES[0]).n);
+$("form-reset").onclick = e => {
+  const b = e.currentTarget;
+  if (b.dataset.confirm !== "1") { b.dataset.confirm = "1"; b.textContent = "Confirmar: apagar progresso"; setTimeout(() => { b.dataset.confirm = ""; b.textContent = "Recomeçar"; }, 4000); return; }
+  lidas = new Set(); quizRes = {}; saveForm(); openMods.clear(); b.dataset.confirm = ""; b.textContent = "Recomeçar"; renderFormacao(); toast("Progresso da formação apagado");
+};
+
+/* ---------- Linha do tempo ---------- */
+let tlI = TIMELINE.findIndex(t => t.ano === 1963);
+function renderTimeline() {
+  $("tl-track").innerHTML = TIMELINE.map((t, i) => `<button class="tl-y" role="tab" id="tl-${t.ano}" aria-selected="${i === tlI}" aria-controls="tl-detail" data-tl="${i}">${t.ano}</button>`).join("");
+  showTL(tlI, false);
+}
+function showTL(i, rolar = true) {
+  tlI = (i + TIMELINE.length) % TIMELINE.length;
+  const t = TIMELINE[tlI];
+  $("tl-track").querySelectorAll(".tl-y").forEach((b, k) => { b.setAttribute("aria-selected", k === tlI); b.tabIndex = k === tlI ? 0 : -1; });
+  $("tl-detail").innerHTML = `<span class="tl-ano">${t.ano}</span><h3>${t.titulo}</h3><p>${t.texto}</p>`;
+  $("tl-detail").setAttribute("aria-labelledby", "tl-" + t.ano);
+  if (rolar) { const b = $("tl-track").children[tlI], tr = $("tl-track"); tr.scrollTo({ left: b.offsetLeft - tr.clientWidth / 2 + b.offsetWidth / 2, behavior: "smooth" }); }
+}
+$("tl-track").addEventListener("click", e => { const b = e.target.closest("[data-tl]"); if (b) showTL(+b.dataset.tl); });
+$("tl-track").addEventListener("keydown", e => {
+  if (e.key === "ArrowRight" || e.key === "ArrowLeft") { e.preventDefault(); showTL(tlI + (e.key === "ArrowRight" ? 1 : -1)); $("tl-track").children[tlI].focus(); }
+});
+$("tl-prev").onclick = () => showTL(tlI - 1);
+$("tl-next").onclick = () => showTL(tlI + 1);
+
+/* ---------- Os 16 documentos ---------- */
+let docFiltro = "Todos";
+function renderDocs() {
+  const tipos = [["Todos", "Todos"], ["Constituição", "Constituições"], ["Decreto", "Decretos"], ["Declaração", "Declarações"]];
+  $("doc-filtros").innerHTML = tipos.map(([k, nome]) => `<button class="fchip" aria-pressed="${docFiltro === k}" data-doc-f="${k}">${nome}<small>${k === "Todos" ? DOCS.length : DOCS.filter(d => d.tipo === k).length}</small></button>`).join("");
+  $("docs-grid").innerHTML = DOCS.filter(d => docFiltro === "Todos" || d.tipo === docFiltro).map((d, i) =>
+    `<button class="doc" aria-expanded="false" aria-controls="doc-t-${i}"><span class="tag">${d.tipo}</span><b>${d.nome}</b><span class="dt">${d.data}</span><span class="tema" id="doc-t-${i}" hidden>${d.tema}</span></button>`).join("");
+}
+$("doc-filtros").addEventListener("click", e => { const b = e.target.closest("[data-doc-f]"); if (b) { docFiltro = b.dataset.docF; renderDocs(); } });
+$("docs-grid").addEventListener("click", e => {
+  const b = e.target.closest(".doc"); if (!b) return;
+  const open = b.getAttribute("aria-expanded") !== "true";
+  b.setAttribute("aria-expanded", open); b.querySelector(".tema").hidden = !open;
+});
+
+/* ---------- Glossário e perguntas ---------- */
+$("glos-grid").innerHTML = GLOSSARIO.map(g => `<button class="flip" aria-pressed="false" aria-label="${g.t}: ${g.d}"><span class="in"><span class="face front"><b>${g.t}</b><small>Toque para ver</small></span><span class="face back">${g.d}</span></span></button>`).join("");
+$("glos-grid").addEventListener("click", e => { const b = e.target.closest(".flip"); if (b) b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") !== "true"); });
+$("faq").innerHTML = FAQ.map(f => `<details><summary>${f.p}</summary><p>${f.r}</p></details>`).join("");
+
+/* ---------- Rolagem: barra de progresso, voltar ao topo, menu ativo ---------- */
+let rolando = false;
+function onScroll() {
+  rolando = false;
+  const max = document.documentElement.scrollHeight - innerHeight;
+  $("scroll-fill").style.width = (max > 0 ? scrollY / max * 100 : 0) + "%";
+  $("to-top").hidden = scrollY < 600;
+  if (!modal.open && !leitor.open) {
+    const f = $("formacao").getBoundingClientRect().top;
+    setNav(f < innerHeight * .5 ? "formacao" : "home");
+  }
+}
+addEventListener("scroll", () => { if (!rolando) { rolando = true; requestAnimationFrame(onScroll); } }, { passive: true });
+$("to-top").onclick = () => scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+const scrollToSec = id => () => $(id).scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 
 /* ---------- Trilho de cards: filtro, setas, contagem ---------- */
 const rail = $("rail"), cards = [...rail.querySelectorAll(".card")];
@@ -1546,6 +2384,7 @@ $("yr").textContent = new Date().getFullYear();
 
 /* ---------- Início ---------- */
 renderHero(); renderPick(); renderMass(); setMassUI(false); renderQuote(); restartHero(); applyFilter(); renderEscalaCard();
+renderFormacao(); renderTimeline(); renderDocs(); onScroll();
 renderLiturgia(); renderAgenda(); renderFrases(); applyTeam();
 startData().then(openFromHash);
 </script>

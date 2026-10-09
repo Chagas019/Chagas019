@@ -52,7 +52,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
   {
     const p = await pagina(browser);
     check((await p.$$("h1")).length === 1, "um único h1");
-    for (const [a, sel] of [["liturgia", ".nav"], ["agenda", ".nav"], ["gallery", ".nav"], ["frases", ".nav"], ["search", ".top-actions"], ["settings", ".top-actions"], ["join", ".top-actions"]]) {
+    for (const [a, sel] of [["liturgia", ".nav"], ["agenda", ".nav"], ["gallery", ".nav"], ["search", ".top-actions"], ["settings", ".top-actions"], ["join", ".top-actions"]]) {
       await p.click(`${sel} [data-action=${a}]`);
       check(await aberto(p), `menu "${a}" abre o painel`);
       check(await p.getAttribute(`${sel} [data-action=${a}]`, "aria-current") === "true", `menu "${a}" fica marcado`);
@@ -250,7 +250,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     await p.mouse.wheel(0, 1500); await p.waitForTimeout(200);
     const navBottom2 = await p.$eval(".mobile-nav", e => innerHeight - e.getBoundingClientRect().bottom);
     check(Math.abs(navBottom2 - navBottom) < 2, "barra do menu continua no lugar ao rolar a página");
-    for (const a of ["agenda", "liturgia", "gallery", "frases", "join", "agendar"]) {
+    for (const a of ["agenda", "liturgia", "gallery", "join", "agendar"]) {
       await p.click(a === "join" || a === "agendar" ? `.top-actions [data-action=${a}]` : `.mobile-nav [data-action=${a}]`); check(await aberto(p), `celular: menu "${a}" abre`);
       const sw = await p.evaluate(() => document.getElementById("modal").scrollWidth <= document.getElementById("modal").clientWidth + 1);
       check(sw, `celular: painel "${a}" sem rolagem lateral`);
@@ -263,6 +263,68 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     check(pequenos.length === 0, "botões com tamanho tocável", pequenos.join(", "));
     check(p.erros.length === 0, "sem erros no console", p.erros.join(" | "));
     await p.context().close();
+  }
+
+  console.log("9. Formação e seções para rolar");
+  {
+    const p = await pagina(browser);
+    await p.click(".nav [data-action=formacao]"); await p.waitForTimeout(900);
+    const topo = await p.$eval("#formacao", e => e.getBoundingClientRect().top);
+    check(topo >= -5 && topo < 200, "menu Formação rola até a formação", String(topo));
+    check(await p.getAttribute(".nav [data-action=formacao]", "aria-current") === "true", "menu marca Formação ao rolar");
+    check((await p.$$("#modules .lesson[data-licao]")).length >= 20, "formação tem pelo menos 20 páginas", String((await p.$$("#modules .lesson[data-licao]")).length));
+    check(/0 de 25/.test(await p.textContent("#form-count")), "progresso começa em 0 de 25");
+    await p.click("#form-go");
+    check(await p.evaluate(() => document.getElementById("leitor").open) && /Por que um Concílio/.test(await p.textContent("#lt-body")), "Começar abre a primeira página");
+    check(await p.isDisabled("#lt-prev"), "na primeira página, Anterior fica desativado");
+    await p.click("#lt-next"); await p.waitForTimeout(100);
+    check(/Como o Concílio aconteceu/.test(await p.textContent("#lt-title")), "Próxima avança de página");
+    await p.keyboard.press("ArrowLeft"); await p.waitForTimeout(100);
+    check(/Por que um Concílio/.test(await p.textContent("#lt-title")), "seta do teclado volta a página");
+    check(await p.getAttribute("#lt-read", "aria-pressed") === "true", "página vista fica marcada como lida");
+    await p.click("#lt-read"); check(await p.getAttribute("#lt-read", "aria-pressed") === "false", "dá para desmarcar como lida");
+    await p.click("#lt-read");
+    await p.click("#lt-close"); await p.waitForTimeout(100);
+    check(/1 de 25/.test(await p.textContent("#form-count")) && /Continuar/.test(await p.textContent("#form-go")), "progresso e botão Continuar atualizam");
+    await p.reload(); await p.waitForTimeout(500);
+    check(/1 de 25/.test(await p.textContent("#form-count")), "progresso continua após recarregar");
+    // teste do módulo
+    await p.click('[data-quiz="0"]');
+    await p.click("#quiz-form button[type=submit]");
+    check(/Responda todas/.test(await p.textContent("#q-total")), "teste incompleto pede todas as respostas");
+    await p.check('input[name="q0"][value="1"]'); await p.check('input[name="q1"][value="0"]'); await p.check('input[name="q2"][value="0"]');
+    await p.click("#quiz-form button[type=submit]");
+    check(/2 de 3/.test(await p.textContent("#q-total")) && (await p.$$("#quiz-form .q.err")).length === 1, "teste corrige e mostra a resposta certa");
+    await p.click("#lt-close"); await p.waitForTimeout(100);
+    check(/teste: 2 de 3/.test(await p.textContent('[data-mod="m1"] .mod-p')), "nota do teste aparece no módulo");
+    // história local (modo local permite escrever)
+    await p.evaluate(() => openLicao(LICOES.findIndex(l => /Como começou a Pascom/.test(l.titulo))));
+    check(!!(await p.$("#local-box")), "página da história tem o espaço 'E na nossa paróquia?'");
+    await p.click("#hist-edit"); await p.fill("#hist-txt", "A Pascom da nossa paróquia começou com dois jovens e um celular."); await p.click("#hist-save"); await p.waitForTimeout(200);
+    check(/dois jovens/.test(await p.textContent("#local-box")), "equipe salva a história da paróquia");
+    await p.click("#lt-close");
+    // linha do tempo
+    await p.click("#tl-next"); check(/1965/.test(await p.textContent("#tl-detail")), "seta da linha do tempo avança o ano");
+    await p.click('#tl-track [data-tl="0"]'); check(/1923/.test(await p.textContent("#tl-detail")), "tocar no ano mostra o fato");
+    // documentos
+    check((await p.$$("#docs-grid .doc")).length === 16, "mostra os 16 documentos");
+    await p.click('[data-doc-f="Constituição"]'); check((await p.$$("#docs-grid .doc")).length === 4, "filtro Constituições mostra 4");
+    await p.click('[data-doc-f="Decreto"]'); check((await p.$$("#docs-grid .doc")).length === 9, "filtro Decretos mostra 9");
+    await p.click('[data-doc-f="Declaração"]'); check((await p.$$("#docs-grid .doc")).length === 3, "filtro Declarações mostra 3");
+    await p.click("#docs-grid .doc"); check(await p.isVisible("#docs-grid .doc .tema"), "tocar no documento mostra o tema");
+    // glossário e perguntas
+    await p.click("#glos-grid .flip"); check(await p.getAttribute("#glos-grid .flip", "aria-pressed") === "true", "cartão do glossário vira");
+    await p.click("#faq summary"); check(await p.evaluate(() => document.querySelector("#faq details").open), "pergunta frequente abre");
+    // rolagem
+    await p.evaluate(() => scrollTo(0, document.body.scrollHeight)); await p.waitForTimeout(300);
+    check(await p.isVisible("#to-top"), "botão voltar ao topo aparece ao rolar");
+    await p.click("#to-top"); await p.waitForTimeout(900);
+    check(await p.evaluate(() => scrollY) < 50, "voltar ao topo leva ao início");
+    check(p.erros.length === 0, "sem erros no console", p.erros.join(" | "));
+    await p.context().close();
+    const d = await pagina(browser, { hash: "#licao-7" });
+    check(/Dei Verbum/.test(await d.textContent("#lt-title")), "link #licao-7 abre a página 7");
+    await d.context().close();
   }
 
   console.log("8. Celular, tablet e notebook (12 tamanhos de tela)");
