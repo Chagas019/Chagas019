@@ -471,6 +471,45 @@
   .foot a{color:rgba(255,255,255,.8); text-decoration:none}
   .foot a:hover{color:#fff}
 
+  /* ---------- Futuristic scroll transition ---------- */
+  .rota{position:relative}
+  .warp{position:absolute; inset:0; z-index:6; pointer-events:none; overflow:hidden; display:none}
+  .js-warp .warp{display:block}
+  .warp-curtain{
+    position:absolute; inset:0; transform-origin:50% 100%; will-change:transform;
+    background:
+      repeating-linear-gradient(0deg, rgba(227,162,76,.07) 0 1px, transparent 1px 44px),
+      repeating-linear-gradient(90deg, rgba(227,162,76,.07) 0 1px, transparent 1px 44px),
+      #000;
+  }
+  .warp-scan{position:absolute; inset:0; will-change:transform}
+  .warp-line{
+    position:absolute; left:0; right:0; top:0; height:2px;
+    background:linear-gradient(90deg, transparent, #e3a24c 18%, #fff 50%, #4ad8ff 82%, transparent);
+    box-shadow:0 0 18px 2px rgba(227,162,76,.55), 0 0 42px 6px rgba(74,216,255,.25);
+  }
+  .warp-line::after{
+    content:""; position:absolute; left:0; right:0; bottom:2px; height:120px;
+    background:linear-gradient(to top, rgba(227,162,76,.16), rgba(227,162,76,0));
+  }
+  .warp-hud{
+    position:absolute; left:clamp(20px,6.95vw,120px); right:clamp(20px,6.95vw,120px); top:clamp(20px,4vh,36px);
+    display:flex; justify-content:space-between; gap:16px;
+    font:500 11px/1.4 ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace; letter-spacing:.18em; text-transform:uppercase;
+    color:#e3a24c; opacity:0;
+  }
+  .warp-hud b{font-weight:500; color:#4ad8ff}
+  .warp-on .warp-curtain{animation:warpCurtain .95s cubic-bezier(.77,0,.18,1) .12s both}
+  .warp-on .warp-scan{animation:warpScan .95s cubic-bezier(.77,0,.18,1) .12s both}
+  .warp-on .warp-hud{animation:warpHud 1.25s steps(1,end) both}
+  .warp-done .warp{display:none}
+  @keyframes warpCurtain{ from{transform:scaleY(1)} to{transform:scaleY(0)} }
+  @keyframes warpScan{ from{transform:translateY(0)} to{transform:translateY(100%)} }
+  @keyframes warpHud{ 0%{opacity:0} 8%{opacity:1} 14%{opacity:.3} 20%{opacity:1} 85%{opacity:1} 92%{opacity:.2} 100%{opacity:0} }
+
+  /* Glitch on headings while they decode */
+  .decoding{overflow:visible; text-shadow:-1.5px 0 rgba(74,216,255,.75), 1.5px 0 rgba(227,162,76,.75)}
+
   /* ---------- Responsive ---------- */
   @media (max-width:1023px){
     :root{ --u: calc(100vw/900); }
@@ -1397,6 +1436,108 @@
   })();
 </script>
 
+<script>
+  // Transição futurista ao rolar: varredura de laser, HUD e texto que se decodifica
+  (function(){
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Mesmo tipo de caractere no lugar de cada letra, para a largura do texto quase não mudar
+    var UP = 'ABCDEFGHKMNOPRSUVXZ', LOW = 'abcdeghknopqsuvxz', DIG = '0123456789';
+    function glyph(ch){
+      if (/[0-9]/.test(ch)) return DIG[(Math.random() * 10) | 0];
+      if (/[a-zà-ú]/.test(ch)) return LOW[(Math.random() * LOW.length) | 0];
+      if (/[A-ZÀ-Ú]/.test(ch)) return UP[(Math.random() * UP.length) | 0];
+      return ch;
+    }
+
+    // Troca cada letra por símbolos aleatórios até "assentar" no texto final, da esquerda para a direita
+    function decode(el, ms){
+      if (reduce || !el) return;
+      ms = ms || 900;
+      var nodes = [], walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      while (walk.nextNode()) if (walk.currentNode.nodeValue.trim()) nodes.push({n: walk.currentNode, t: walk.currentNode.nodeValue});
+      if (!nodes.length) return;
+      var total = nodes.reduce(function(a, x){ return a + x.t.length; }, 0);
+      if (el._decodeRaf) cancelAnimationFrame(el._decodeRaf);
+      el.classList.add('decoding');
+      el.style.height = el.offsetHeight + 'px';
+      var t0 = performance.now(), lastSwap = 0;
+      (function tick(now){
+        var k = Math.min(1, (now - t0) / ms);
+        if (now - lastSwap > 45 || k === 1) {
+          lastSwap = now;
+          var settled = Math.floor(k * total), idx = 0;
+          nodes.forEach(function(x){
+            var out = '';
+            for (var i = 0; i < x.t.length; i++, idx++) {
+              var ch = x.t[i];
+              out += idx < settled ? ch : glyph(ch);
+            }
+            x.n.nodeValue = out;
+          });
+        }
+        if (k < 1) el._decodeRaf = requestAnimationFrame(tick);
+        else { nodes.forEach(function(x){ x.n.nodeValue = x.t; }); el.classList.remove('decoding'); el.style.height = ''; el._decodeRaf = null; }
+      })(t0);
+    }
+    window.braboDecode = decode;
+    if (reduce) return;
+
+    document.documentElement.classList.add('js-warp');
+
+    function warp(section, label){
+      var w = document.createElement('div');
+      w.className = 'warp'; w.setAttribute('aria-hidden', 'true');
+      w.innerHTML = '<div class="warp-curtain"></div><div class="warp-scan"><div class="warp-line"></div></div>' +
+        '<div class="warp-hud"><span>' + label + '</span><span><b class="warp-pct">000</b>% // sinal</span></div>';
+      section.appendChild(w);
+      return w;
+    }
+    var targets = [
+      {el: document.getElementById('local'), label: '02 // Onde fica', decode: ['#dw-tagline']},
+      {el: document.getElementById('rota'),  label: '03 // Como chegar', decode: ['#t-rota', '.rota .kicker', '.rota-addr']}
+    ];
+    targets.forEach(function(t){ t.w = warp(t.el, t.label); });
+
+    function play(t){
+      if (t.played) return; t.played = true;
+      var sec = t.el, pct = t.w.querySelector('.warp-pct'), t0 = performance.now();
+      sec.classList.add('warp-on');
+      window.dispatchEvent(new CustomEvent('brabo:warp', {detail: sec.id}));
+      (function count(now){
+        var k = Math.min(1, Math.max(0, (now - t0 - 120) / 950));
+        pct.textContent = String(Math.round(k * 100)).padStart(3, '0');
+        if (k < 1) requestAnimationFrame(count);
+      })(t0);
+      setTimeout(function(){ t.decode.forEach(function(s){ decode(document.querySelector(s), 850); }); }, 380);
+      setTimeout(function(){ sec.classList.add('warp-done'); }, 1350);
+    }
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if (!e.isIntersecting) return;
+        targets.forEach(function(t){ if (t.el === e.target) play(t); });
+        io.unobserve(e.target);
+      });
+    }, {rootMargin: '0px 0px -35% 0px'});
+    targets.forEach(function(t){ io.observe(t.el); });
+
+    // Saída da primeira tela ligada à rolagem: conteúdo sobe e some, camadas em paralaxe
+    var frame = document.getElementById('topo'), screen = frame.querySelector('.screen'), bar = frame.querySelector('.bar');
+    var mid = frame.querySelector('.sky-mid'), front = frame.querySelector('.sky-front'), cue = frame.querySelector('.scroll-cue');
+    var ticking = false;
+    function apply(){
+      ticking = false;
+      var p = Math.min(1, Math.max(0, scrollY / (frame.offsetHeight || innerHeight)));
+      screen.style.transform = 'translateX(-50%) translate3d(0,' + (-p * 160).toFixed(1) + 'px,0) scale(' + (1 - p * .08).toFixed(4) + ')';
+      screen.style.opacity = Math.max(0, 1 - p * 1.6).toFixed(3);
+      bar.style.opacity = Math.max(0, 1 - p * 2).toFixed(3);
+      if (cue) cue.style.opacity = Math.max(0, 1 - p * 4).toFixed(3);
+      mid.style.transform = 'translateX(-50%) translate3d(0,' + (p * 90).toFixed(1) + 'px,0)';
+      front.style.transform = 'translateX(-50%) translate3d(0,' + (-p * 70).toFixed(1) + 'px,0) scale(' + (1 + p * .06).toFixed(4) + ')';
+    }
+    addEventListener('scroll', function(){ if (!ticking) { ticking = true; requestAnimationFrame(apply); } }, {passive: true});
+    apply();
+  })();
+</script>
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
@@ -1444,7 +1585,9 @@
   }));
   bgQuad.frustumCulled = false; bgScene.add(bgQuad);
 
-  let W = 1, H = 1, DPR = 1, shown = 0, bgDirty = true;
+  let W = 1, H = 1, DPR = 1, shown = 0, bgDirty = true, baseScale = 1, entryAt = 0;
+  // Entrada do cubo quando a seção é revelada: cresce girando rápido e desacelera
+  addEventListener('brabo:warp', e => { if (e.detail === 'local' && !reduce) entryAt = performance.now(); });
   // Qualidade adaptável: começa leve em telas de toque e baixa sozinha se os quadros ficarem lentos
   const coarse = matchMedia('(pointer: coarse)').matches || innerWidth < 768;
   const LOOP = coarse ? 10 : 16;
@@ -1584,7 +1727,7 @@
     const sx = mobile ? 0.5 : 0.517, sy = mobile ? 0.45 : 0.488;
     pivot.position.set((sx - 0.5) * visW, (0.5 - sy) * visH, 0);
     const px = Math.min(H * 0.44, W * (mobile ? 0.45 : 0.29));
-    pivot.scale.setScalar((px / H) * visH);
+    baseScale = (px / H) * visH; pivot.scale.setScalar(baseScale);
   }
 
   // ---- Arrastar, inércia, giro solto e troca de tela ----
@@ -1636,6 +1779,7 @@
       if (s.open) ctaEl.setAttribute('data-open', s.open); else ctaEl.removeAttribute('data-open');
       document.getElementById('dw-title').textContent = s.lines.join(' ');
       section.classList.remove('swap');
+      if (window.braboDecode) window.braboDecode(tagEl, 600);
     }, 350);
   }
   document.getElementById('dw-prev').addEventListener('click', () => go(current - 1, -1));
@@ -1660,6 +1804,12 @@
     if (!visible) return;
     watchPerf(raw);
     const f = dt * 60;
+    if (entryAt) {
+      const k = Math.min(1, (now - entryAt) / 1400), ease = 1 - Math.pow(1 - k, 3);
+      pivot.scale.setScalar(baseScale * (0.35 + 0.65 * ease));
+      if (!dragging) rotateWorld(0.16 * (1 - ease) * f, 0.05 * (1 - ease) * f);
+      if (k === 1) entryAt = 0;
+    }
     if (!dragging) {
       if (remaining) {
         const step = Math.abs(remaining) < 0.0005 ? remaining : remaining * Math.min(1, 0.09 * f);
