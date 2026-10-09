@@ -29,6 +29,8 @@
   }
   *,*::before,*::after{box-sizing:border-box}
   html{scroll-behavior:smooth; background:var(--bg)}
+  section[id]{scroll-margin-top:68px} /* o cabeçalho fixo não cobre o título ao ir pelo menu */
+  #topo{scroll-margin-top:0}
   body{margin:0; background:var(--bg); color:var(--cream); font-family:var(--sans); -webkit-font-smoothing:antialiased; overflow-x:hidden}
   img,svg{display:block}
   a{color:inherit}
@@ -78,7 +80,7 @@
     .sheet{display:block; position:fixed; top:68px; left:12px; right:12px; padding:10px; border-radius:14px; background:#1c1613; border:1px solid var(--line2);
       box-shadow:0 24px 60px rgba(0,0,0,.6); opacity:0; visibility:hidden; transform:translateY(-6px) scale(.98); transform-origin:50% 0;
       transition:opacity .3s ease, transform .45s var(--ease), visibility 0s linear .45s}
-    .head[data-open="true"] .sheet{opacity:1; visibility:visible; transform:none; transition:opacity .3s ease, transform .45s var(--ease)}
+    .head[data-menu="true"] .sheet{opacity:1; visibility:visible; transform:none; transition:opacity .3s ease, transform .45s var(--ease)}
     .sheet a{display:block; padding:13px 12px; border-radius:9px; text-decoration:none; font:600 12px var(--sans); letter-spacing:.16em; text-transform:uppercase}
     .sheet a:hover{background:rgba(255,232,210,.06)}
     .sheet .btn{display:flex; margin-top:6px; height:46px}
@@ -1224,12 +1226,13 @@
       if (name === 'agendar' && opts) preset(opts);
       if (name === 'agendar' && apiMode) carregarOcupados();
       var dlg = $('dlg-' + name);
+      if (!dlg) return;
       if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
       if (name === 'meus') abrirMeus();
     }
     document.addEventListener('click', function(e){
       var t = e.target.closest && e.target.closest('[data-open]');
-      if (t) { e.preventDefault(); open(t.getAttribute('data-open'), {barbeiro:t.getAttribute('data-barbeiro'), servico:t.getAttribute('data-servico')}); return; }
+      if (t && $('dlg-' + (t.getAttribute('data-open') === 'meus' ? 'meus' : t.getAttribute('data-open')))) { e.preventDefault(); open(t.getAttribute('data-open'), {barbeiro:t.getAttribute('data-barbeiro'), servico:t.getAttribute('data-servico')}); return; }
       var c = e.target.closest && e.target.closest('[data-close]');
       if (c) { c.closest('dialog').close(); return; }
       if (e.target.matches && e.target.matches('dialog.panel')) e.target.close();
@@ -1805,13 +1808,13 @@
     // ---- Cabeçalho e menu do celular ----
     var head = $('head'), menuBtn = $('menu-btn');
     function setMenu(open){
-      head.dataset.open = open ? 'true' : 'false';
+      head.dataset.menu = open ? 'true' : 'false';
       menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
       menuBtn.setAttribute('aria-label', open ? 'Fechar menu' : 'Menu');
     }
     window.braboCloseMenu = function(){ setMenu(false); };
     setMenu(false);
-    menuBtn.addEventListener('click', function(e){ e.stopPropagation(); setMenu(head.dataset.open !== 'true'); });
+    menuBtn.addEventListener('click', function(e){ e.stopPropagation(); setMenu(head.dataset.menu !== 'true'); });
     document.addEventListener('click', function(e){ if (!head.contains(e.target)) setMenu(false); });
     document.querySelectorAll('.sheet a').forEach(function(a){ a.addEventListener('click', function(){ setMenu(false); }); });
     document.addEventListener('keydown', function(e){ if (e.key === 'Escape') setMenu(false); });
