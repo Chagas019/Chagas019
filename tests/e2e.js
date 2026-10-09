@@ -59,6 +59,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
       await p.keyboard.press("Escape"); await p.waitForTimeout(50);
       check(!(await aberto(p)), `Esc fecha "${a}"`);
     }
+    await p.waitForFunction(() => document.querySelector('.nav [data-action=home]').getAttribute("aria-current") === "true", null, { timeout: 1000 }).catch(() => {});
     check(await p.getAttribute('.nav [data-action=home]', "aria-current") === "true", "ao fechar, menu volta para Início");
     // destaque
     const nome1 = await p.textContent("#hero-name");
@@ -257,6 +258,36 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     check(pequenos.length === 0, "botões com tamanho tocável", pequenos.join(", "));
     check(p.erros.length === 0, "sem erros no console", p.erros.join(" | "));
     await p.context().close();
+  }
+
+  console.log("8. Celular, tablet e notebook (12 tamanhos de tela)");
+  {
+    const TELAS = [["celular 360", 360, 740, 1], ["celular 390", 390, 844, 1], ["celular 430", 430, 932, 1], ["celular deitado", 844, 390, 1],
+      ["tablet 768", 768, 1024, 1], ["tablet 820", 820, 1180, 1], ["tablet deitado", 1024, 768, 1], ["tablet 1180", 1180, 820, 1],
+      ["notebook 1280", 1280, 800, 0], ["notebook 1366", 1366, 768, 0], ["notebook 1440", 1440, 900, 0], ["monitor 1920", 1920, 1080, 0]];
+    for (const [nome, w, h, toque] of TELAS) {
+      const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: !!toque, isMobile: !!toque && w < 700 });
+      const p = await ctx.newPage(); const erros = []; p.on("pageerror", e => erros.push(e.message));
+      await p.goto(URL); await p.waitForTimeout(500);
+      const r = await p.evaluate(() => {
+        const vis = e => { const s = getComputedStyle(e), b = e.getBoundingClientRect(); return s.display !== "none" && s.visibility !== "hidden" && b.width > 0 && b.height > 0; };
+        const cortados = [];
+        document.querySelectorAll(".card:not([hidden]) .body").forEach(bd => { const c = bd.getBoundingClientRect(); [...bd.children].forEach(ch => { if (vis(ch) && !ch.classList.contains("scroll") && ch.getBoundingClientRect().bottom > c.bottom + 1) cortados.push(ch.id || ch.className); }); });
+        document.querySelectorAll(".card h3,.card .title,.big-date,.chip,.topbar *,.subhead *").forEach(e => { if (vis(e) && e.scrollWidth > e.clientWidth + 1 && getComputedStyle(e).overflow === "visible") cortados.push(e.id || e.className); });
+        const pequenos = [...document.querySelectorAll("button,a,select,[role=switch]")].filter(vis).filter(e => { const b = e.getBoundingClientRect(); return (b.height < 32 || b.width < 32) && !e.closest(".dots") && !e.closest(".colophon"); }).map(e => e.id || e.className);
+        return { lateral: document.documentElement.scrollWidth > innerWidth, menus: [...document.querySelectorAll(".nav,.mobile-nav")].filter(vis).length,
+          cabecalho: document.querySelector(".topbar").getBoundingClientRect().height, cortados, pequenos };
+      });
+      check(!r.lateral, `${nome}: sem rolagem lateral`);
+      check(r.menus === 1, `${nome}: um único menu visível`, String(r.menus));
+      check(r.cabecalho <= 70, `${nome}: cabeçalho em uma linha`, Math.round(r.cabecalho) + "px");
+      check(!r.cortados.length, `${nome}: nada cortado nos cards`, r.cortados.join(", "));
+      check(!r.pequenos.length, `${nome}: botões com tamanho de toque`, r.pequenos.join(", "));
+      await p.click("#agendar"); await p.waitForTimeout(150);
+      check(await p.evaluate(() => { const d = document.getElementById("modal"), b = d.getBoundingClientRect(); return b.left >= 0 && b.right <= innerWidth && d.scrollWidth <= d.clientWidth + 1; }), `${nome}: formulário da escala cabe na tela`);
+      check(!erros.length, `${nome}: sem erros`, erros.join(" | "));
+      await ctx.close();
+    }
   }
 
   await browser.close();
