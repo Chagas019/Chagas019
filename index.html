@@ -150,6 +150,17 @@
   .ext-links a:hover { background: #e4e4e4; }
   .read-block h4 { margin: 0 0 4px; font-size: 13px; color: var(--red); }
   .read-block p { white-space: pre-wrap; }
+  .import { display: grid; gap: 10px; padding: 14px; border-radius: 16px; background: var(--soft); }
+  .import h3 { margin: 0; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--red); }
+  .import ol { margin: 0; padding-left: 18px; font-size: 13px; color: #444; display: grid; gap: 2px; }
+  .import .row { gap: 8px; flex-wrap: wrap; justify-content: flex-start; }
+  .import textarea { min-height: 70px; }
+  .import-status { font-size: 13px; margin: 0; color: #444; min-height: 1.2em; }
+  .import-status.ok { color: #1f7a4a; }
+  .import-status.err { color: var(--red); }
+  .src { font-size: 12px; color: var(--muted); }
+  .src a { color: inherit; }
+  .panel-dark .src { color: var(--on-dark-muted); }
 
   /* ---------- Sidebar ---------- */
   .side {
@@ -919,7 +930,69 @@ function openAgenda() {
    Dados compartilhados: agenda, frases e liturgia
    (no Claude: banco compartilhado; fora dele: só neste aparelho)
    ========================================================= */
-let backend = "local", canWrite = false, myId = null;
+let backend = "local", canWrite = false, myId = null, sampleFn = null;
+const FONTES = {
+  cancaonova: { nome: "Canção Nova", url: "https://liturgia.cancaonova.com/pb/" },
+  cnbb: { nome: "CNBB", url: "https://www.cnbb.org.br/liturgia-diaria/" },
+  outra: { nome: "Outra fonte", url: "" },
+};
+const fonteHTML = k => { const f = FONTES[k]; if (!f || k === "outra") return ""; return `Fonte: <a href="${f.url}" target="_blank" rel="noopener">${f.nome}</a>`; };
+const normTxt = t => String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[–—−]/g, "-").replace(/[“”«»"']/g, "").replace(/\s+/g, "");
+const inSource = (v, src) => !!v && normTxt(src).includes(normTxt(v));
+function importBox(kind) {
+  const isLit = kind === "lit";
+  return `<div class="import" id="imp">
+    <h3>Trazer ${isLit ? "da liturgia" : "de um site"}</h3>
+    <ol>
+      <li>Abra ${isLit ? "a liturgia de hoje" : "o “Santo do dia”, uma homilia ou mensagem"} no site.</li>
+      <li>Selecione todo o texto da página, copie e cole abaixo.</li>
+      <li>${sampleFn ? "Toque em “Preencher automaticamente” e confira os campos." : "Copie as informações para os campos abaixo."}</li>
+    </ol>
+    <div class="row">
+      <a class="btn-sm light" style="text-decoration:none" href="${isLit ? FONTES.cancaonova.url : "https://santo.cancaonova.com/"}" target="_blank" rel="noopener">Abrir Canção Nova</a>
+      ${isLit ? `<a class="btn-sm light" style="text-decoration:none" href="${FONTES.cnbb.url}" target="_blank" rel="noopener">Abrir CNBB</a>` : ""}
+    </div>
+    <div class="field"><label for="imp-src">Texto copiado</label><textarea id="imp-src" placeholder="Cole aqui o texto da página"></textarea></div>
+    <div class="field"><label for="imp-fonte">De onde veio</label><select id="imp-fonte">${Object.entries(FONTES).map(([k, f]) => `<option value="${k}">${f.nome}</option>`).join("")}</select></div>
+    ${sampleFn ? `<button type="button" class="btn-sm dark" id="imp-go" style="justify-self:start">Preencher automaticamente</button>` : ""}
+    <p class="import-status" id="imp-status" role="status"></p>
+  </div>`;
+}
+async function runImport(kind, onFill) {
+  const src = $("imp-src").value.trim(), st = $("imp-status"), btn = $("imp-go");
+  st.className = "import-status";
+  if (src.length < 40) { st.className = "import-status err"; st.textContent = "Cole o texto da página antes de preencher."; return; }
+  const prompt = kind === "lit"
+    ? `Abaixo está o texto copiado de uma página de liturgia diária católica, em português. Extraia somente as referências bíblicas e o refrão do salmo, copiando os caracteres EXATAMENTE como aparecem no texto. Não invente nem complete nada: use "" quando a informação não estiver no texto. Responda só com JSON neste formato:
+{"data":"sexta-feira, 9 de outubro de 2026","primeira":"Gl 3,7-14","salmo":"Sl 110(111),1-2.3-4.5-6 (R. 5b)","refrao":"O Senhor se lembra sempre da Aliança.","segunda":"","evangelho":"Lc 11,15-26"}
+
+TEXTO:
+${src.slice(0, 30000)}`
+    : `Abaixo está um texto copiado de um site católico, em português. Escolha UMA frase curta e inspiradora (até 200 caracteres) para "frase do dia", copiada EXATAMENTE como está no texto, e diga quem é o autor da frase segundo o próprio texto ("" se o texto não disser). Não invente nem edite a frase. Responda só com JSON: {"texto":"...","autor":"..."}
+
+TEXTO:
+${src.slice(0, 30000)}`;
+  btn.disabled = true; st.textContent = "Lendo o texto…";
+  try {
+    const r = await sampleFn.json(prompt, { modelTier: "quick" });
+    const out = {}, missing = [];
+    for (const [k, v] of Object.entries(r || {})) {
+      if (k === "data" || k === "autor") { out[k] = typeof v === "string" ? v : ""; continue; }
+      if (typeof v === "string" && v.trim()) { if (inSource(v, src)) out[k] = v.trim(); else missing.push(k); }
+    }
+    onFill(out);
+    const filled = Object.keys(out).filter(k => out[k] && k !== "data" && k !== "autor").length;
+    st.className = "import-status " + (filled ? "ok" : "err");
+    st.textContent = filled
+      ? `Preenchido. Confira antes de publicar.${out.data ? " Data no texto: " + out.data + "." : ""}${missing.length ? " Alguns itens não foram confirmados no texto e ficaram de fora." : ""}`
+      : "Não encontrei essas informações no texto colado. Confira se copiou a página certa.";
+  } catch (e) {
+    st.className = "import-status err";
+    if (["not_granted", "sampling_disabled", "not_declared", "capability_disabled", "capability_removed"].includes(e.code)) { sampleFn = null; btn.remove(); st.textContent = "O preenchimento automático não está disponível. Copie as informações para os campos."; }
+    else if (e.code === "rate_limited") st.textContent = "Muitas tentativas seguidas. Espere um pouco e tente de novo.";
+    else st.textContent = "Não consegui ler o texto agora. Tente de novo.";
+  } finally { if (btn.isConnected) btn.disabled = false; }
+}
 let agenda = [], teamFrases = [], liturgias = {};
 const LOCAL_KEY = c => "pascom:db:" + c;
 const localRead = c => store.get("db:" + c, {});
@@ -1029,14 +1102,14 @@ function renderLiturgia() {
   $("litu-season").innerHTML = `${L.festa ? `<span><b>${esc(L.festa)}</b></span>` : ""}<span><i class="dot" style="background:${hex}"></i>${nomeCor}</span><span>${L.tempo}${L.semana ? " · " + L.semana : ""}</span><span>Ano ${L.ciclo} · Ano ${L.par}</span>`;
   const lit = liturgias[TODAY];
   $("litu-body").innerHTML = lit
-    ? `<ul class="readings">${[["Primeira leitura", lit.primeira], ["Salmo", lit.salmo], ["Segunda leitura", lit.segunda], ["Evangelho", lit.evangelho]].filter(r => r[1]).map(([k, v]) => `<li><b>${k}</b><span>${esc(v)}</span></li>`).join("")}</ul>`
+    ? `<ul class="readings">${[["Primeira leitura", lit.primeira], ["Salmo", lit.salmo + (lit.refrao ? " — " + lit.refrao : "")], ["Segunda leitura", lit.segunda], ["Evangelho", lit.evangelho]].filter(r => r[1]).map(([k, v]) => `<li><b>${k}</b><span>${esc(v)}</span></li>`).join("")}</ul>${lit.fonte && lit.fonte !== "outra" ? `<div class="src" style="margin-top:8px">${fonteHTML(lit.fonte)}</div>` : ""}`
     : `<div class="empty-state">${ico("ampulheta", 40)}<span>${canWrite ? "As leituras de hoje ainda não foram publicadas. Toque em + para publicar." : "A equipe ainda não publicou as leituras de hoje. Veja nas fontes oficiais em “Ler a liturgia”."}</span></div>`;
 }
 function openLiturgia() {
   const L = liturgicalDay(new Date()), lit = liturgias[TODAY];
   openModal(`<div class="m-plain">${closeBtn()}<h2>Liturgia de ${esc(weekday(TODAY))}</h2>
     <div class="season">${L.festa ? `<span style="background:var(--soft)"><b>${esc(L.festa)}</b></span>` : ""}<span style="background:var(--soft)"><i class="dot" style="background:${COR[L.cor][1]}"></i>${COR[L.cor][0]}</span><span style="background:var(--soft)">${L.tempo}${L.semana ? " · " + L.semana : ""}</span></div>
-    ${lit ? [["Primeira leitura", lit.primeira], ["Salmo responsorial", lit.salmo], ["Segunda leitura", lit.segunda], ["Evangelho", lit.evangelho]].filter(r => r[1]).map(([k, v]) => `<div class="read-block"><h4>${k}</h4><p>${esc(v)}</p></div>`).join("") + (lit.texto ? `<div class="read-block"><h4>Texto e reflexão</h4><p>${esc(lit.texto)}</p></div>` : "")
+    ${lit ? [["Primeira leitura", lit.primeira], ["Salmo responsorial", lit.salmo + (lit.refrao ? "\nR. " + lit.refrao : "")], ["Segunda leitura", lit.segunda], ["Evangelho", lit.evangelho]].filter(r => r[1]).map(([k, v]) => `<div class="read-block"><h4>${k}</h4><p>${esc(v)}</p></div>`).join("") + (lit.texto ? `<div class="read-block"><h4>Texto e reflexão</h4><p>${esc(lit.texto)}</p></div>` : "") + (lit.fonte && lit.fonte !== "outra" ? `<div class="src">${fonteHTML(lit.fonte)}</div>` : "")
       : `<p class="empty" style="margin:0">As leituras de hoje ainda não foram publicadas pela equipe.</p>`}
     <div><h3 style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin:0 0 8px">Fontes oficiais</h3>${LINKS}</div>
     ${canWrite ? `<button class="btn-red" id="m-lit-edit">${lit ? "Editar leituras de hoje" : "Publicar leituras de hoje"}</button>` : ""}</div>`, () => {
@@ -1047,18 +1120,25 @@ function openLiturgiaForm() {
   const lit = liturgias[TODAY] || {};
   const f = (id, label, ph, v, area) => `<div class="field"><label for="${id}">${label}</label>${area ? `<textarea id="${id}" placeholder="${ph}">${esc(v)}</textarea>` : `<input id="${id}" placeholder="${ph}" value="${esc(v)}">`}</div>`;
   openModal(`<div class="m-plain">${closeBtn()}<h2>Leituras de hoje</h2>
+    ${importBox("lit")}
     <form class="join" id="lit-form" novalidate>
       ${f("l-1", "Primeira leitura", "Ex.: Gl 3,7-14", lit.primeira || "")}
       ${f("l-s", "Salmo", "Ex.: Sl 110(111)", lit.salmo || "")}
+      ${f("l-r", "Refrão do salmo", "Ex.: O Senhor se lembra sempre da Aliança.", lit.refrao || "")}
       ${f("l-2", "Segunda leitura (domingos e solenidades)", "Deixe vazio nos dias de semana", lit.segunda || "")}
       ${f("l-e", "Evangelho", "Ex.: Lc 11,15-26", lit.evangelho || "")}
       ${f("l-t", "Texto ou reflexão (opcional)", "Cole aqui o texto do Evangelho ou uma reflexão curta", lit.texto || "", true)}
       <p class="note" id="l-note" role="status"></p>
       <button class="btn-red" type="submit">Publicar</button>
     </form></div>`, () => {
+    if (lit.fonte) $("imp-fonte").value = lit.fonte;
+    $("imp-go") && ($("imp-go").onclick = () => runImport("lit", o => {
+      if (o.primeira) $("l-1").value = o.primeira; if (o.salmo) $("l-s").value = o.salmo; if (o.refrao) $("l-r").value = o.refrao;
+      if (o.segunda) $("l-2").value = o.segunda; if (o.evangelho) $("l-e").value = o.evangelho;
+    }));
     $("lit-form").onsubmit = async e => {
       e.preventDefault();
-      const d = { primeira: $("l-1").value.trim(), salmo: $("l-s").value.trim(), segunda: $("l-2").value.trim(), evangelho: $("l-e").value.trim(), texto: $("l-t").value.trim(), criadoPor: myId, atualizadoEm: Date.now() };
+      const d = { primeira: $("l-1").value.trim(), salmo: $("l-s").value.trim(), refrao: $("l-r").value.trim(), segunda: $("l-2").value.trim(), evangelho: $("l-e").value.trim(), texto: $("l-t").value.trim(), fonte: $("imp-fonte").value, criadoPor: myId, atualizadoEm: Date.now() };
       if (!d.primeira || !d.evangelho) { $("l-note").textContent = "Preencha pelo menos a primeira leitura e o Evangelho."; return; }
       if (await writeOr(() => data.set("liturgia", TODAY, d), "Liturgia publicada")) modal.close();
     };
@@ -1105,7 +1185,7 @@ function todaysFrase() { return sortedFrases().find(f => f.dia === TODAY) || nul
 function renderFrases() {
   const f = todaysFrase() || sortedFrases().find(x => x.dia <= TODAY);
   $("fr-box").innerHTML = f
-    ? `<blockquote class="team-q">${f.dia === TODAY ? `<span class="today">Hoje</span><br>` : ""}“${esc(f.texto)}”<cite>— ${esc(f.autor || "Pascom")}${f.dia !== TODAY ? " · " + esc(weekday(f.dia)) : ""}</cite></blockquote>`
+    ? `<blockquote class="team-q">${f.dia === TODAY ? `<span class="today">Hoje</span><br>` : ""}“${esc(f.texto)}”<cite>— ${esc(f.autor || "Pascom")}${f.dia !== TODAY ? " · " + esc(weekday(f.dia)) : ""}</cite>${f.fonte && f.fonte !== "outra" ? `<div class="src" style="margin-top:6px">${fonteHTML(f.fonte)}</div>` : ""}</blockquote>`
     : `<div class="empty-state">${ico("ampulheta", 40)}<span>${canWrite ? "Nenhuma frase publicada. Toque em + para publicar a frase de hoje." : "A equipe ainda não publicou a frase de hoje."}</span></div>`;
   // frases da equipe também entram no player
   const team = sortedFrases().filter(x => x.dia <= TODAY).map(x => ({ s: { nome: x.autor || "Pascom", curto: x.autor || "Pascom", ini: (x.autor || "Pascom").split(/\s+/).map(w => w[0]).join("").slice(0, 2).toUpperCase(), cor: "linear-gradient(160deg,#c8102e,#2b0606)", foto: "" }, f: x.texto, team: true }));
@@ -1115,6 +1195,7 @@ function renderFrases() {
 }
 function openFraseForm() {
   openModal(`<div class="m-plain">${closeBtn()}<h2>Publicar frase</h2>
+    ${importBox("frase")}
     <form class="join" id="fr-form" novalidate>
       <div class="field"><label for="f-t">Frase</label><textarea id="f-t" maxlength="400" placeholder="Escreva a frase exatamente como foi dita ou escrita"></textarea></div>
       <div class="two">
@@ -1124,9 +1205,10 @@ function openFraseForm() {
       <p class="note" id="f-note" role="status"></p>
       <button class="btn-red" type="submit">Publicar frase</button>
     </form></div>`, () => {
+    $("imp-go") && ($("imp-go").onclick = () => runImport("frase", o => { if (o.texto) $("f-t").value = o.texto; if (o.autor) $("f-a").value = o.autor; }));
     $("fr-form").onsubmit = async e => {
       e.preventDefault();
-      const d = { texto: $("f-t").value.trim().replace(/^["“]|["”]$/g, ""), autor: $("f-a").value.trim(), dia: $("f-d").value || TODAY, criadoPor: myId, criadoEm: Date.now() };
+      const d = { texto: $("f-t").value.trim().replace(/^["“]|["”]$/g, ""), autor: $("f-a").value.trim(), dia: $("f-d").value || TODAY, fonte: $("imp-src").value.trim() ? $("imp-fonte").value : "", criadoPor: myId, criadoEm: Date.now() };
       if (!d.texto) { $("f-note").textContent = "Escreva a frase antes de publicar."; return; }
       if (await writeOr(() => data.add("frases", d), "Frase publicada")) modal.close();
     };
@@ -1158,6 +1240,7 @@ async function startData() {
     myId = user ? await user.id() : null;
     const can = user ? await user.can("data.write") : null;
     canWrite = can === true || (can === null && !!myId);
+    sampleFn = await Promise.race([window.claude.use("sample"), new Promise(r => setTimeout(() => r(null), 4000))]).catch(() => null);
   } else canWrite = true;
   applyTeam();
   data.watch("agenda", rows => { agenda = rows; renderAgenda(); });
