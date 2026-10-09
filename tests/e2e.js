@@ -381,35 +381,41 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     }
   }
 
-  console.log("11. Núcleo holográfico: cena guiada pela rolagem");
+  console.log("11. Abertura no estilo da referência: cenas guiadas pela rolagem");
   {
     for (const [w, h, mob] of [[1366, 850, 0], [390, 844, 1]]) {
       const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: !!mob, isMobile: !!mob });
       const p = await ctx.newPage(); const erros = []; p.on("pageerror", e => erros.push(e.message));
       await p.goto(URL); await p.waitForTimeout(600);
-      const ini = await p.$eval("#nucleo", e => e.getBoundingClientRect().top + scrollY), len = await p.$eval("#nucleo", e => e.offsetHeight - innerHeight);
-      const estado = () => p.evaluate(() => ({ topo: document.querySelector(".cine-sticky").getBoundingClientRect().top, img: document.getElementById("core").getBoundingClientRect().width, sinal: document.getElementById("hud-sig").textContent,
-        copy: +getComputedStyle(document.getElementById("cine-copy")).opacity, ic: +getComputedStyle(document.querySelector(".cine-ic")).opacity, quote: +getComputedStyle(document.getElementById("cine-quote")).opacity }));
-      await p.evaluate(y => scrollTo(0, y), ini); await p.waitForTimeout(250); const a = await estado();
-      await p.evaluate(y => scrollTo(0, y), ini + len * .5); await p.waitForTimeout(250); const b = await estado();
-      await p.evaluate(y => scrollTo(0, y), ini + len); await p.waitForTimeout(250); const c = await estado();
-      check(Math.abs(b.topo) < 2 && Math.abs(c.topo) < 2, `${w}px: a cena fica presa na tela durante a rolagem`, JSON.stringify([b.topo, c.topo]));
-      check(a.copy > .9 && a.ic < .05 && c.copy < .05, `${w}px: título aparece no início e some ao rolar`);
-      check(c.img < a.img * .6, `${w}px: o núcleo vem de longe e se monta no centro`, JSON.stringify([a.img, c.img]));
-      check(a.sinal === "000%" && c.sinal === "100%", `${w}px: indicador de sinal sobe de 0 a 100%`, a.sinal + " → " + c.sinal);
-      check(await p.$("#cine-img") === null, `${w}px: a ilustração de São Carlo saiu da cena`);
-      check(c.ic > .95 && c.quote > .95, `${w}px: no fim, ícones em órbita e frase visível`);
-      const alvos = await p.$$eval(".cine-ic", bs => bs.map(b => { const r = b.getBoundingClientRect(); return r.left >= 0 && r.right <= innerWidth && r.top >= 0 && r.bottom <= innerHeight && r.width >= 44; }));
-      check(alvos.every(Boolean), `${w}px: os 10 ícones cabem na tela e têm tamanho de toque`, alvos.join(","));
-      await p.click('.cine-ic[aria-label="Frase do dia"]'); await p.waitForTimeout(200);
-      check(await p.evaluate(() => document.getElementById("fw").open), `${w}px: ícone do balão abre a frase do dia`);
+      check(await p.evaluate(() => !document.querySelector("#nucleo, .cine-ic, .warp, .portal, .cine-dust, .corner, .editorial")), `${w}px: núcleo holográfico, ícones de vidro e transições antigas saíram`);
+      const len = await p.$eval("#abertura", e => e.offsetHeight - innerHeight);
+      const em = async t => { await p.evaluate(y => scrollTo(0, y), len * t / 5); await p.waitForTimeout(220); return p.evaluate(() => {
+        const op = id => +getComputedStyle(document.querySelector(id)).opacity, d = document.getElementById("disc").getBoundingClientRect(), pn = document.getElementById("show-panel").getBoundingClientRect();
+        return { topo: document.querySelector(".show-sticky").getBoundingClientRect().top, s: [0, 1, 2, 3, 4, 5].map(i => op(`.scene[data-s="${i}"]`)), edge: op("#show-edge"),
+          disco: d.width, discoDentro: d.left >= -1 && d.right <= innerWidth + 1, painel: (() => { const c = getComputedStyle(document.getElementById("show-panel")).clipPath; return c; })(),
+          fio: getComputedStyle(document.querySelector("#show-wire circle")).strokeDasharray, conta: document.getElementById("show-count").textContent, lateral: document.documentElement.scrollWidth > innerWidth };
+      }); };
+      const c0 = await em(0), c1 = await em(1), c2 = await em(2), c3 = await em(3.3), c4 = await em(4), c5 = await em(5);
+      check([c1, c2, c3, c4, c5].every(c => Math.abs(c.topo) < 2), `${w}px: a cena fica presa na tela durante a rolagem`);
+      check(c0.s[0] > .95 && c0.s[1] < .05 && c1.s[1] > .95 && c1.s[0] < .05, `${w}px: as cenas se revezam ao rolar`, JSON.stringify([c0.s, c1.s]));
+      check(/01/.test(c0.conta) && /06/.test(c5.conta), `${w}px: contador de cenas vai de 01 a 06`, c0.conta + " → " + c5.conta);
+      check(c0.disco > 0 && c0.discoDentro && c1.disco > c0.disco, `${w}px: o disco aparece e cresce ao rolar`, JSON.stringify([c0.disco, c1.disco]));
+      check(c2.edge > .9 && c0.edge < .05, `${w}px: borda de luz colorida em “Movida pela fé”`);
+      check(c3.s[3] > .9 && /inset\(0(px|%)?[ )]/.test(c3.painel), `${w}px: o painel da frase cresce até ocupar a tela`, c3.painel);
+      check(c4.s[4] > .9 && parseFloat(c4.fio) > .9, `${w}px: o desenho em linhas se completa`, c4.fio);
+      check(c5.s[5] > .95 && [c0, c1, c2, c3, c4, c5].every(c => !c.lateral), `${w}px: marca no fim e sem rolagem lateral`);
+      await p.click("#show-servir"); await p.waitForTimeout(150);
+      check(/Venha servir/.test(await p.textContent("#modal-body")), `${w}px: Quero servir abre a inscrição`);
+      await p.click("#modal [data-close]");
+      await p.click("#show-share"); await p.waitForTimeout(150);
+      check(/Compartilhar o site/.test(await p.textContent("#modal-body")), `${w}px: Compartilhar o site abre o painel`);
+      await p.click("#modal [data-close]");
+      await p.click('.s5 [data-ir="hoje"]'); await p.waitForFunction(() => Math.abs(document.getElementById("hoje").getBoundingClientRect().top) < 80, null, { timeout: 3000 }).catch(() => {});
+      check(await p.evaluate(() => Math.abs(document.getElementById("hoje").getBoundingClientRect().top) < 80), `${w}px: “Ver o que tem hoje” leva aos cards do dia`);
+      await em(3.3);
+      await p.click("#show-frase"); await p.waitForTimeout(200);
+      check(await p.evaluate(() => document.getElementById("fw").open), `${w}px: painel abre a frase do dia`);
       await p.click("#fw-close");
-      await p.click('.cine-ic[aria-label="Agenda"]'); await p.waitForTimeout(150);
-      check(/Agenda da paróquia/.test(await p.textContent("#modal-body")), `${w}px: ícone da seta abre a agenda`);
-      await p.click("#modal [data-close]");
-      await p.click("#cine-more"); await p.waitForTimeout(150);
-      check(/Venha servir/.test(await p.textContent("#modal-body")), `${w}px: Quero servir na Comunica+Fé abre a inscrição`);
-      await p.click("#modal [data-close]");
       check(!erros.length, `${w}px: sem erros`, erros.join(" | "));
       await ctx.close();
     }
