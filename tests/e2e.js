@@ -381,21 +381,23 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     }
   }
 
-  console.log("11. São Carlo Acutis: cena guiada pela rolagem");
+  console.log("11. Núcleo holográfico: cena guiada pela rolagem");
   {
     for (const [w, h, mob] of [[1366, 850, 0], [390, 844, 1]]) {
       const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: !!mob, isMobile: !!mob });
       const p = await ctx.newPage(); const erros = []; p.on("pageerror", e => erros.push(e.message));
       await p.goto(URL); await p.waitForTimeout(600);
-      const ini = await p.$eval("#carlo", e => e.getBoundingClientRect().top + scrollY), len = await p.$eval("#carlo", e => e.offsetHeight - innerHeight);
-      const estado = () => p.evaluate(() => ({ topo: document.querySelector(".cine-sticky").getBoundingClientRect().top, img: document.getElementById("cine-img").getBoundingClientRect().width,
+      const ini = await p.$eval("#nucleo", e => e.getBoundingClientRect().top + scrollY), len = await p.$eval("#nucleo", e => e.offsetHeight - innerHeight);
+      const estado = () => p.evaluate(() => ({ topo: document.querySelector(".cine-sticky").getBoundingClientRect().top, img: document.getElementById("core").getBoundingClientRect().width, sinal: document.getElementById("hud-sig").textContent,
         copy: +getComputedStyle(document.getElementById("cine-copy")).opacity, ic: +getComputedStyle(document.querySelector(".cine-ic")).opacity, quote: +getComputedStyle(document.getElementById("cine-quote")).opacity }));
       await p.evaluate(y => scrollTo(0, y), ini); await p.waitForTimeout(250); const a = await estado();
       await p.evaluate(y => scrollTo(0, y), ini + len * .5); await p.waitForTimeout(250); const b = await estado();
       await p.evaluate(y => scrollTo(0, y), ini + len); await p.waitForTimeout(250); const c = await estado();
       check(Math.abs(b.topo) < 2 && Math.abs(c.topo) < 2, `${w}px: a cena fica presa na tela durante a rolagem`, JSON.stringify([b.topo, c.topo]));
       check(a.copy > .9 && a.ic < .05 && c.copy < .05, `${w}px: título aparece no início e some ao rolar`);
-      check(c.img < a.img * .7, `${w}px: a ilustração se recolhe para o círculo`, JSON.stringify([a.img, c.img]));
+      check(c.img < a.img * .6, `${w}px: o núcleo vem de longe e se monta no centro`, JSON.stringify([a.img, c.img]));
+      check(a.sinal === "000%" && c.sinal === "100%", `${w}px: indicador de sinal sobe de 0 a 100%`, a.sinal + " → " + c.sinal);
+      check(await p.$("#cine-img") === null, `${w}px: a ilustração de São Carlo saiu da cena`);
       check(c.ic > .95 && c.quote > .95, `${w}px: no fim, ícones em órbita e frase visível`);
       const alvos = await p.$$eval(".cine-ic", bs => bs.map(b => { const r = b.getBoundingClientRect(); return r.left >= 0 && r.right <= innerWidth && r.top >= 0 && r.bottom <= innerHeight && r.width >= 44; }));
       check(alvos.every(Boolean), `${w}px: os 10 ícones cabem na tela e têm tamanho de toque`, alvos.join(","));
@@ -406,7 +408,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
       check(/Agenda da paróquia/.test(await p.textContent("#modal-body")), `${w}px: ícone da seta abre a agenda`);
       await p.click("#modal [data-close]");
       await p.click("#cine-more"); await p.waitForTimeout(150);
-      check(/São Carlo Acutis/.test(await p.textContent("#modal-body")), `${w}px: Conhecer a história abre o santo`);
+      check(/Venha servir/.test(await p.textContent("#modal-body")), `${w}px: Quero servir na Pascom abre a inscrição`);
       await p.click("#modal [data-close]");
       check(!erros.length, `${w}px: sem erros`, erros.join(" | "));
       await ctx.close();

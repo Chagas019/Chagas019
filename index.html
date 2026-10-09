@@ -729,14 +729,12 @@
     .fw-btn { padding: 0 14px; }
     .fw-actions { gap: 6px; }
   }
-  /* ---------- São Carlo Acutis: cena guiada pela rolagem ---------- */
+  /* ---------- Núcleo holográfico: cena futurista guiada pela rolagem ---------- */
   .cine { position: relative; height: 340vh; width: 100vw; margin: 56px 0 0 calc(50% - 50vw); }
   .cine-sticky {
     position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; color: #fff;
     background: radial-gradient(60% 55% at 50% 48%, #2a0508 0%, #0b0204 55%, #050506 100%);
   }
-  .cine-img { position: absolute; left: 0; top: 0; max-width: none; will-change: clip-path, width, height, left, top; }
-  .cine-ring { position: absolute; border-radius: 50%; border: 1px solid rgba(255,255,255,.55); pointer-events: none; }
   .cine-halo {
     position: absolute; border-radius: 50%; pointer-events: none; opacity: 0;
     background: radial-gradient(closest-side, transparent 62%, rgba(255,64,64,.95) 70%, rgba(255,120,60,.55) 76%, rgba(200,16,46,.25) 86%, transparent 100%);
@@ -860,6 +858,38 @@
     .stage::after, dialog[open]::after { display: none; }
     .card:hover { transform: none !important; }
   }
+  /* núcleo holográfico */
+  .cine-grid {
+    position: absolute; left: -50%; right: -50%; bottom: -10%; height: 60%; z-index: 0; pointer-events: none;
+    background-image: linear-gradient(rgba(255, 90, 110, .45) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 90, 110, .35) 1px, transparent 1px);
+    background-size: 64px 64px; background-position: 0 var(--gy, 0px);
+    transform: perspective(520px) rotateX(64deg); transform-origin: 50% 100%;
+    -webkit-mask: linear-gradient(transparent, #000 45%); mask: linear-gradient(transparent, #000 45%);
+  }
+  .core { position: absolute; z-index: 2; border-radius: 50%; pointer-events: none; will-change: transform, opacity; }
+  .core-radar { position: absolute; inset: 7%; border-radius: 50%; background: conic-gradient(from 0deg, rgba(255, 70, 90, .5), rgba(255, 70, 90, 0) 22%, transparent 100%); animation: radar 3.2s linear infinite;
+    -webkit-mask: radial-gradient(closest-side, #000 98%, transparent 100%); mask: radial-gradient(closest-side, #000 98%, transparent 100%); }
+  @keyframes radar { to { transform: rotate(360deg); } }
+  .core-hud { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .core-hud g { transform-origin: 100px 100px; }
+  .hud-ticks { fill: none; stroke: rgba(255, 255, 255, .55); stroke-width: 3; stroke-dasharray: .6 4.47; }
+  .hud-thin { fill: none; stroke: rgba(255, 255, 255, .35); stroke-width: .6; }
+  .hud-accent { fill: none; stroke: #ff5a6e; stroke-width: 1.6; stroke-linecap: round; filter: drop-shadow(0 0 3px #ff5a6e); }
+  .hud-seg { fill: none; stroke: rgba(106, 208, 255, .7); stroke-width: 2.2; stroke-dasharray: 38 12 8 12; filter: drop-shadow(0 0 3px rgba(106, 208, 255, .8)); }
+  .hud-dots { fill: none; stroke: rgba(255, 255, 255, .6); stroke-width: 1.2; stroke-dasharray: .1 6.2; stroke-linecap: round; }
+  .core-cross { position: absolute; inset: 0; --solid: 1; }
+  .core-cross i { position: absolute; left: 50%; top: 50%; border-radius: 6px; border: 1.5px solid rgba(255, 220, 225, .85);
+    background: linear-gradient(135deg, rgba(255, 255, 255, calc(.75 * var(--solid))), rgba(255, 120, 140, calc(.35 * var(--solid))) 55%, rgba(106, 208, 255, calc(.4 * var(--solid))));
+    box-shadow: 0 0 calc(8px + 22px * var(--solid)) rgba(255, 80, 100, .75), inset 0 0 12px rgba(255, 255, 255, calc(.5 * var(--solid))); backdrop-filter: blur(6px); }
+  .core-cross .v { width: 13%; height: 46%; transform: translate(-50%, -54%); }
+  .core-cross .h { width: 36%; height: 11%; transform: translate(-50%, -150%); }
+  .hud-read { position: absolute; top: 50%; z-index: 4; display: grid; gap: 4px; font: 500 11px/1.3 ui-monospace, "SFMono-Regular", Menlo, monospace; letter-spacing: .18em; color: rgba(255, 255, 255, .6); opacity: 0; pointer-events: none; }
+  .hud-read b { color: #fff; font-weight: 600; font-size: 15px; letter-spacing: .12em; margin-bottom: 8px; font-variant-numeric: tabular-nums; }
+  .hud-read.left { left: clamp(20px, 8vw, 140px); } .hud-read.right { right: clamp(20px, 8vw, 140px); text-align: right; }
+  .hud-read::before { content: ""; display: block; width: 64px; height: 1px; background: linear-gradient(90deg, #ff5a6e, transparent); margin-bottom: 8px; }
+  .hud-read.right::before { margin-left: auto; background: linear-gradient(270deg, #ff5a6e, transparent); }
+  @media (max-width: 700px) { .hud-read { display: none; } .cine-grid { height: 45%; } }
+  @media (prefers-reduced-motion: reduce) { .core-radar { animation: none; } }
   /* ---------- Transições no estilo do vídeo de referência (ligadas à rolagem) ---------- */
   .sec, .stage-wrap { transform-origin: 50% 0; will-change: transform, opacity, filter; }
   .portal { position: absolute; right: clamp(16px, 4vw, 44px); top: clamp(16px, 3vw, 34px); width: clamp(84px, 11vw, 150px); aspect-ratio: 1; pointer-events: none; z-index: 2; }
@@ -1124,21 +1154,32 @@
     </div>
   </div>
 
-  <section class="cine" id="carlo" aria-labelledby="cine-h">
+  <section class="cine" id="nucleo" aria-labelledby="cine-h">
     <div class="cine-sticky">
-      <img class="cine-img" id="cine-img" src="midia/carlo-acutis-ilustracao.webp" alt="Ilustração de São Carlo Acutis, de óculos escuros e camisa vermelha, sobre fundo vermelho" width="900" height="1600">
+      <div class="cine-grid" id="cine-grid" aria-hidden="true"></div>
       <div class="cine-halo" id="cine-halo" aria-hidden="true"></div>
-      <div class="cine-ring" id="cine-ring" aria-hidden="true"></div>
-      <div class="cine-copy" id="cine-copy">
-        <div class="sec-label">[ O santo da internet ]</div>
-        <h2 id="cine-h">São Carlo Acutis</h2>
-        <p>Um jovem que usou a informática para levar as pessoas a Jesus. Canonizado em 2025, é o padroeiro de quem evangeliza na internet.</p>
+      <div class="core" id="core" aria-hidden="true">
+        <div class="core-radar"></div>
+        <svg class="core-hud" viewBox="0 0 200 200">
+          <g id="hud-a"><circle cx="100" cy="100" r="97" class="hud-ticks"/></g>
+          <g id="hud-b"><circle cx="100" cy="100" r="86" class="hud-thin"/><path d="M100 14 a86 86 0 0 1 74.5 43" class="hud-accent"/><path d="M100 186 a86 86 0 0 1 -74.5 -43" class="hud-accent"/></g>
+          <g id="hud-c"><circle cx="100" cy="100" r="73" class="hud-seg"/></g>
+          <g id="hud-d"><circle cx="100" cy="100" r="60" class="hud-dots"/></g>
+        </svg>
+        <div class="core-cross"><i class="v"></i><i class="h"></i></div>
       </div>
+      <div class="cine-copy" id="cine-copy">
+        <div class="sec-label">[ Pascom · conectados pela fé ]</div>
+        <h2 id="cine-h">Comunicar é evangelizar</h2>
+        <p>Role a página e veja a comunicação da paróquia ganhar vida. Cada ícone leva a uma parte do site.</p>
+      </div>
+      <div class="hud-read left" id="hud-left" aria-hidden="true"><span>SINAL</span><b id="hud-sig">000%</b><span>REDE</span><b>PASCOM</b></div>
+      <div class="hud-read right" id="hud-right" aria-hidden="true"><span>HOJE</span><b id="hud-date"></b><span>STATUS</span><b id="hud-status">CONECTANDO</b></div>
       <div id="cine-orbit" role="group" aria-label="Atalhos do site"></div>
       <div class="cine-caption" id="cine-caption" aria-hidden="true">Toque num ícone</div>
       <figure class="cine-quote" id="cine-quote">
-        <blockquote>“Todos nascem como originais, mas muitos morrem como fotocópias.”</blockquote>
-        <figcaption>São Carlo Acutis <button class="ghost-pill" id="cine-more">Conhecer a história ›</button></figcaption>
+        <blockquote>“Não tenhais medo de vos tornar cidadãos do ambiente digital.”</blockquote>
+        <figcaption>Papa Francisco <button class="ghost-pill" id="cine-more">Quero servir na Pascom ›</button></figcaption>
       </figure>
       <div class="cine-hint" id="cine-hint" aria-hidden="true">Role para baixo</div>
     </div>
@@ -1682,7 +1723,7 @@ document.addEventListener("click", async e => {
   }
 });
 const DEEP = {
-  frase: () => openFraseWin(), carlo: () => scrollToSec("carlo")(), liturgia: () => openLiturgia(), agenda: () => openAgenda(), escalas: () => openAgenda(), agendar: () => openEscalaForm(), frases: () => openFrasesEquipe(),
+  frase: () => openFraseWin(), nucleo: () => scrollToSec("nucleo")(), liturgia: () => openLiturgia(), agenda: () => openAgenda(), escalas: () => openAgenda(), agendar: () => openEscalaForm(), frases: () => openFrasesEquipe(),
   formacao: () => scrollToSec("formacao")(), linha: () => scrollToSec("linha")(), documentos: () => scrollToSec("documentos")(), glossario: () => scrollToSec("glossario")(), perguntas: () => scrollToSec("perguntas")(),
   galeria: () => openGallery(), participar: () => openJoin(), buscar: () => openSearch(),
 };
@@ -2691,7 +2732,7 @@ function onScroll() {
   if (typeof videoFx === "function") { videoFx(); warpFx(); }
   const max = document.documentElement.scrollHeight - innerHeight;
   $("scroll-fill").style.width = (max > 0 ? scrollY / max * 100 : 0) + "%";
-  const cr = $("carlo").getBoundingClientRect();
+  const cr = $("nucleo").getBoundingClientRect();
   $("to-top").hidden = scrollY < 600 || (cr.top < innerHeight * .5 && cr.bottom > innerHeight * .5);
   if (!modal.open && !leitor.open) {
     const f = $("formacao").getBoundingClientRect().top;
@@ -2846,7 +2887,7 @@ $("play-quote").addEventListener("keydown", e => { if (e.key === "Enter" || e.ke
 $("q-avatars").addEventListener("click", () => openFraseWin());
 
 
-/* ---------- São Carlo Acutis: cena guiada pela rolagem ---------- */
+/* ---------- Núcleo holográfico: cena futurista guiada pela rolagem ---------- */
 const CINE_ICONS = [
   { ico: "casa", nome: "Início", acao: () => scrollTo({ top: 0, behavior: "smooth" }) },
   { ico: "balao", nome: "Frase do dia", acao: () => openFraseWin() },
@@ -2861,8 +2902,7 @@ const CINE_ICONS = [
       <p class="empty" style="margin:0">Envie para a equipe, a família e os amigos da paróquia.</p>
       ${shareRow("Conheça o site da Pascom: escala das missas, liturgia do dia, formação e os santos da comunicação.", "")}</div>`) },
 ];
-const cine = $("carlo"), cineImg = $("cine-img");
-const FACE_X = .59, FACE_Y = .655;
+const cine = $("nucleo"), core = $("core");
 const clamp01 = v => Math.max(0, Math.min(1, v));
 const lerp = (a, b, t) => a + (b - a) * t;
 const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -2875,7 +2915,12 @@ cineIcons.forEach((b, i) => {
   b.addEventListener("focus", () => legenda(CINE_ICONS[i].nome));
   b.addEventListener("pointerleave", () => legenda("Toque num ícone"));
 });
-$("cine-more").onclick = () => openSaint(byId("carlo"));
+$("cine-more").onclick = () => openJoin();
+$("hud-date").textContent = new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }).replace("/", ".");
+const arcoCine = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+arcoCine.setAttribute("class", "cine-arc"); arcoCine.setAttribute("aria-hidden", "true"); arcoCine.setAttribute("viewBox", "0 0 100 100");
+arcoCine.innerHTML = `<circle cx="50" cy="50" r="49.5" stroke-dasharray="0 311" transform="rotate(-90 50 50)"/>`;
+document.querySelector(".cine-sticky").appendChild(arcoCine);
 function cineFrame() {
   const r = cine.getBoundingClientRect(), vh = innerHeight, vw = innerWidth;
   if (r.bottom < -50 || r.top > vh + 50) return;
@@ -2885,13 +2930,26 @@ function cineFrame() {
   const S = Math.max(48, Math.min(76, Math.min(vw, vh) * .085));
   const D = Math.min(vh * .42, vw * (vw < 700 ? .5 : .32));
   const cx = vw / 2, cy = vh * (vw < 700 ? .48 : .44);
-  // 1) a ilustração se recolhe para dentro do círculo
-  const e1 = ease(clamp01((p - .1) / .4));
-  const h0 = Math.max(1.22 * vw * 16 / 9, 1.5 * vh), h1 = D * 2.35;
-  const h = lerp(h0, h1, e1), w = h * 9 / 16;
-  Object.assign(cineImg.style, { width: w + "px", height: h + "px", left: cx - FACE_X * w + "px", top: cy - FACE_Y * h + "px",
-    clipPath: `circle(${lerp(Math.hypot(vw, vh), D / 2, e1)}px at ${FACE_X * w}px ${FACE_Y * h}px)` });
-  Object.assign($("cine-ring").style, { width: D + "px", height: D + "px", left: cx - D / 2 + "px", top: cy - D / 2 + "px", opacity: .15 + .7 * clamp01((p - .3) / .2) });
+  // 1) o núcleo se monta vindo de longe; os anéis giram em sentidos opostos
+  const e1 = ease(clamp01((p - .04) / .36));
+  Object.assign(core.style, { width: D + "px", height: D + "px", left: cx - D / 2 + "px", top: cy - D / 2 + "px",
+    opacity: lerp(.1, 1, e1), transform: `scale(${lerp(2.6, 1, e1)}) rotate(${lerp(-40, 0, e1)}deg)` });
+  $("hud-a").style.transform = `rotate(${p * 200}deg)`;
+  $("hud-b").style.transform = `rotate(${-p * 320}deg)`;
+  $("hud-c").style.transform = `rotate(${p * 140}deg) scale(${lerp(1.3, 1, e1)})`;
+  $("hud-d").style.transform = `rotate(${-p * 90}deg)`;
+  // a cruz aparece como contorno e se materializa
+  core.querySelector(".core-cross").style.setProperty("--solid", clamp01((p - .3) / .3).toFixed(3));
+  $("cine-grid").style.setProperty("--gy", (p * 900).toFixed(1) + "px");
+  $("cine-grid").style.opacity = lerp(.25, .9, e1);
+  const A = D * 1.16;
+  Object.assign(arcoCine.style, { width: A + "px", height: A + "px", left: cx - A / 2 + "px", top: cy - A / 2 + "px", transform: `rotate(${p * 220}deg)` });
+  arcoCine.firstChild.setAttribute("stroke-dasharray", `${(clamp01((p - .28) / .4) * 311).toFixed(1)} 311`);
+  // indicadores do HUD
+  const sinal = clamp01((p - .08) / .6);
+  $("hud-sig").textContent = String(Math.round(sinal * 100)).padStart(3, "0") + "%";
+  $("hud-status").textContent = sinal >= 1 ? "CONECTADO" : "CONECTANDO";
+  ["hud-left", "hud-right"].forEach(id => { $(id).style.opacity = clamp01((p - .26) / .12) * (1 - clamp01((p - .8) / .1)); });
   const c1 = clamp01((p - .06) / .2);
   Object.assign($("cine-copy").style, { opacity: 1 - c1, transform: vw < 700 ? `translateY(${-30 * c1}px)` : `translateY(calc(-50% - ${40 * c1}px))`, visibility: c1 >= 1 ? "hidden" : "visible" });
   $("cine-hint").style.opacity = 1 - clamp01(p / .06);
@@ -2905,14 +2963,15 @@ function cineFrame() {
     b.style.pointerEvents = e2 > .7 ? "auto" : "none";
     b.tabIndex = e2 > .7 ? 0 : -1;
   });
-  Object.assign($("cine-caption").style, { top: cy + R + S * .8 + 14 + "px", opacity: e2 > .7 ? 1 : 0 });
   // 3) o halo acende e a frase aparece
   const e3 = clamp01((p - .76) / .16);
+  Object.assign($("cine-caption").style, { top: cy + R + S * .8 + 14 + "px", opacity: e2 > .7 ? 1 - clamp01(e3 * 3) : 0 });
   Object.assign($("cine-halo").style, { width: D * 1.7 + "px", height: D * 1.7 + "px", left: cx - D * .85 + "px", top: cy - D * .85 + "px", opacity: e3, transform: `scale(${lerp(.75, 1, ease(e3))})` });
   Object.assign($("cine-quote").style, { opacity: e3, transform: `translate(-50%, ${20 * (1 - e3)}px)`, visibility: e3 > 0 ? "visible" : "hidden" });
+  if (!poeiraAtiva) desenhaPoeira();
 }
-addEventListener("resize", cineFrame);
-cineImg.addEventListener("load", cineFrame);
+addEventListener("resize", () => cineFrame());
+
 
 /* ---------- Trilho de cards: filtro, setas, contagem ---------- */
 const rail = $("rail"), cards = [...rail.querySelectorAll(".card")];
@@ -3049,7 +3108,7 @@ function warpFx() {
   [...warp.children].forEach((l, i) => { l.style.left = `${((scrollY * (.5 + i * .17) + i * 280) % (innerWidth * 1.8)) - innerWidth * .5}px`; });
   clearTimeout(warpTimer); warpTimer = setTimeout(() => { warp.style.opacity = 0; }, 140);
 }
-// cena de São Carlo: partículas flutuando
+// cena do núcleo: partículas flutuando
 const poeira = document.createElement("canvas"); poeira.className = "cine-dust"; poeira.setAttribute("aria-hidden", "true");
 document.querySelector(".cine-sticky").prepend(poeira);
 const grãos = Array.from({ length: 70 }, () => ({ x: Math.random(), y: Math.random(), r: Math.random() * 1.6 + .3, v: Math.random() * .00025 + .00008, a: Math.random() * .6 + .2 }));
@@ -3063,26 +3122,6 @@ function desenhaPoeira() {
     g.beginPath(); g.arc(p.x * w, p.y * h, p.r, 0, Math.PI * 2); g.fillStyle = `rgba(255,${180 + p.r * 30 | 0},${190},${p.a})`; g.fill(); });
   requestAnimationFrame(desenhaPoeira);
 }
-// cena de São Carlo: arco que se desenha em volta do anel
-const arcoCine = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-arcoCine.setAttribute("class", "cine-arc"); arcoCine.setAttribute("aria-hidden", "true"); arcoCine.setAttribute("viewBox", "0 0 100 100");
-arcoCine.innerHTML = `<circle cx="50" cy="50" r="49.5" stroke-dasharray="0 311" transform="rotate(-90 50 50)"/>`;
-document.querySelector(".cine-sticky").appendChild(arcoCine);
-const cineFrameBase = cineFrame;
-cineFrame = function () {
-  cineFrameBase();
-  const r = cine.getBoundingClientRect(), vh = innerHeight, vw = innerWidth;
-  if (r.bottom < -50 || r.top > vh + 50) return;
-  const total = r.height - vh, p = semMovimento() || total <= 0 ? 1 : clamp01(-r.top / total);
-  const D = Math.min(vh * .42, vw * (vw < 700 ? .5 : .32)), cx = vw / 2, cy = vh * (vw < 700 ? .48 : .44), A = D * 1.16;
-  Object.assign(arcoCine.style, { width: A + "px", height: A + "px", left: cx - A / 2 + "px", top: cy - A / 2 + "px", transform: `rotate(${p * 220}deg)` });
-  arcoCine.firstChild.setAttribute("stroke-dasharray", `${(clamp01((p - .28) / .4) * 311).toFixed(1)} 311`);
-  // contorno fantasma e materialização antes do halo
-  const fantasma = clamp01((p - .6) / .1) * (1 - clamp01((p - .74) / .08));
-  cineImg.style.filter = fantasma > 0 ? `grayscale(${fantasma}) contrast(${1 + fantasma * 1.6}) brightness(${1 + fantasma * .5}) drop-shadow(0 0 ${12 * fantasma}px rgba(255,140,160,.9))` : "";
-  cineImg.style.opacity = 1 - fantasma * .45;
-  if (!poeiraAtiva) desenhaPoeira();
-};
 
 /* ---------- Início ---------- */
 renderHero(); renderPick(); renderMass(); setMassUI(false); renderQuote(); restartHero(); applyFilter(); renderEscalaCard();
