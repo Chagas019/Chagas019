@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Monta o site para hospedagem a partir de site/pagina.html.
-# Uso: SITE_URL=https://pascom.exemplo.org/ bash scripts/montar-site.sh [pasta-de-saída]
+# Uso: SITE_URL=https://comunicafe.exemplo.org/ bash scripts/montar-site.sh [pasta-de-saída]
 #   SITE_URL (opcional): endereço público do site. Com ele saem o endereço canônico,
 #   a imagem de prévia com endereço completo, robots.txt e sitemap.xml.
 #   Sem pasta de saída, atualiza o index.html na raiz do repositório.
@@ -22,16 +22,16 @@ topo, corpo = src[:i], src[i:].strip()
 estilo = topo[topo.index("<style>"):]
 fontes = "\n".join(re.findall(r'<link [^>]*>', topo))
 
-TITULO = "Comunicação &amp; Conhecimento | Pascom: liturgia do dia, agenda e santos da comunicação"
+TITULO = "Comunica+Fé | Liturgia do dia, agenda e santos da comunicação"
 DESC = re.search(r'<meta name="description" content="([^"]*)">', topo).group(1)
-IMG = "social/pascom-1200x630.jpg"
+IMG = "social/comunicafe-1200x630.jpg"
 img_url = (site + IMG) if site else IMG
 icone = ("data:image/svg+xml," + "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23c8102e'/%3E"
          "%3Cpath d='M32 14v36M22 26h20' stroke='white' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E")
 
-org = {"@type": "Organization", "name": "Pascom", "alternateName": "Pastoral da Comunicação",
+org = {"@type": "Organization", "name": "Comunica+Fé", "alternateName": "Pastoral da Comunicação",
        "description": DESC, "logo": img_url}
-web = {"@type": "WebSite", "name": "Comunicação & Conhecimento", "alternateName": "Pascom", "description": DESC, "inLanguage": "pt-BR"}
+web = {"@type": "WebSite", "name": "Comunica+Fé", "description": DESC, "inLanguage": "pt-BR"}
 if site:
     org["url"] = site; web["url"] = site
 ld = json.dumps({"@context": "https://schema.org", "@graph": [org, web]}, ensure_ascii=False, indent=1)
@@ -47,14 +47,14 @@ meta = [
     *([f'<link rel="canonical" href="{site}">'] if site else []),
     '<meta property="og:type" content="website">',
     '<meta property="og:locale" content="pt_BR">',
-    '<meta property="og:site_name" content="Comunicação &amp; Conhecimento">',
+    '<meta property="og:site_name" content="Comunica+Fé">',
     f'<meta property="og:title" content="{TITULO}">',
     f'<meta property="og:description" content="{DESC}">',
     *([f'<meta property="og:url" content="{site}">'] if site else []),
     f'<meta property="og:image" content="{img_url}">',
     '<meta property="og:image:width" content="1200">',
     '<meta property="og:image:height" content="630">',
-    '<meta property="og:image:alt" content="Pascom, Pastoral da Comunicação: liturgia do dia, agenda e frase do dia">',
+    '<meta property="og:image:alt" content="Comunica+Fé, Pastoral da Comunicação: liturgia do dia, agenda e frase do dia">',
     '<meta name="twitter:card" content="summary_large_image">',
     f'<meta name="twitter:title" content="{TITULO}">',
     f'<meta name="twitter:description" content="{DESC}">',

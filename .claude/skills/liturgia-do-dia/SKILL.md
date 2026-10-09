@@ -1,9 +1,9 @@
 ---
 name: liturgia-do-dia
-description: Busca a liturgia diária na Canção Nova (https://liturgia.cancaonova.com/pb/) e publica no site da Pascom as referências das leituras e o refrão do salmo como frase do dia. Use quando pedirem para atualizar, buscar ou publicar a liturgia do dia ou a frase litúrgica do dia, e na tarefa diária agendada.
+description: Busca a liturgia diária na Canção Nova (https://liturgia.cancaonova.com/pb/) e publica no site da Comunica+Fé as referências das leituras e o refrão do salmo como frase do dia. Use quando pedirem para atualizar, buscar ou publicar a liturgia do dia ou a frase litúrgica do dia, e na tarefa diária agendada.
 ---
 
-# Liturgia do dia → site da Pascom
+# Liturgia do dia → site da Comunica+Fé
 
 Publica, no banco de dados do site (artifact https://claude.ai/artifact/UchkS7oWPJt5ATvTpoVzKn),
 as leituras do dia e o refrão do salmo como frase do dia, com a Canção Nova como fonte.
@@ -59,4 +59,4 @@ data, referências publicadas, a frase e a fonte — ou o motivo exato de não t
 
 Para rodar sozinho todo dia, crie uma Routine (create_trigger, nova sessão a cada disparo) com
 `CRON_TZ=America/Sao_Paulo 0 5 * * *` e o prompt: "Use a skill liturgia-do-dia para publicar a
-liturgia e a frase de hoje no site da Pascom." Só faça isso depois de uma execução manual bem-sucedida.
+liturgia e a frase de hoje no site da Comunica+Fé." Só faça isso depois de uma execução manual bem-sucedida.

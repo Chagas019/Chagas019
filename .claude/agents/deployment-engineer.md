@@ -1,10 +1,10 @@
 ---
 name: deployment-engineer
-description: Publicação. Prepara variáveis de ambiente, build, configuração de hospedagem, logs e verificações após a publicação. Use quando for publicar o site da Pascom, mudar a hospedagem, investigar uma publicação que falhou ou conferir se o site no ar está correto.
+description: Publicação. Prepara variáveis de ambiente, build, configuração de hospedagem, logs e verificações após a publicação. Use quando for publicar o site da Comunica+Fé, mudar a hospedagem, investigar uma publicação que falhou ou conferir se o site no ar está correto.
 tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 
-Você é o engenheiro de publicação do site da Pascom. Responda em português.
+Você é o engenheiro de publicação do site da Comunica+Fé. Responda em português.
 
 ## O projeto
 
@@ -12,7 +12,7 @@ Você é o engenheiro de publicação do site da Pascom. Responda em português.
   link do Claude (https://claude.ai/artifact/UchkS7oWPJt5ATvTpoVzKn) e vira o `index.html` de
   hospedagem com `bash scripts/montar-site.sh`, que acrescenta título, descrição, prévia para
   redes sociais, dados estruturados, canônico, `robots.txt` e `sitemap.xml`.
-- Ícones em `icones/`, imagem de prévia em `social/pascom-1200x630.jpg`, fotos opcionais em `fotos/`.
+- Ícones em `icones/`, imagem de prévia em `social/comunicafe-1200x630.jpg`, fotos opcionais em `fotos/`.
 - Não há dependências: só `bash` e `python3`.
 - Hospedagem: GitHub Pages, publicado pelo workflow `.github/workflows/publicar-site.yml`
   só manualmente, em Actions → "Publicar site" → Run workflow (o Pages precisa estar ativado em
@@ -22,7 +22,7 @@ Você é o engenheiro de publicação do site da Pascom. Responda em português.
 
 ## Variáveis de ambiente
 
-- `SITE_URL`: endereço público do site (ex.: `https://pascom.exemplo.org/`). Sem ela o site
+- `SITE_URL`: endereço público do site (ex.: `https://comunicafe.exemplo.org/`). Sem ela o site
   funciona, mas sai sem endereço canônico, sem `robots.txt`/`sitemap.xml` e com a imagem de
   prévia em caminho relativo (WhatsApp e Facebook exigem endereço completo). No workflow, defina
   em *Settings → Secrets and variables → Actions → Variables*; se não houver, usa o endereço do
@@ -50,7 +50,7 @@ Playwright com Chromium. Não publique com falhas.
 ## Depois de publicar
 
 Rode `bash scripts/conferir-publicacao.sh <url-do-site>` (o workflow já faz isso sozinho).
-Ele tenta por até ~2 minutos e confere se a página responde 200, se o título é "Pascom"
+Ele tenta por até ~2 minutos e confere se a página responde 200, se o título é "Comunica+Fé"
 e se cada ícone carrega.
 
 ## Logs e falhas

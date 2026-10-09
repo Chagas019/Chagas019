@@ -1,10 +1,10 @@
-// Testes de ponta a ponta do site da Pascom.
+// Testes de ponta a ponta do site da Comunica+Fé.
 // Uso: NODE_PATH=$(npm root -g) node tests/e2e.js   (precisa do Playwright com Chromium)
 const { chromium } = require("playwright");
 const fs = require("fs"), os = require("os"), path = require("path"), { execSync } = require("child_process");
 
 const RAIZ = path.resolve(__dirname, "..");
-const TMP = fs.mkdtempSync(path.join(os.tmpdir(), "pascom-e2e-"));
+const TMP = fs.mkdtempSync(path.join(os.tmpdir(), "comunicafe-e2e-"));
 execSync(`bash scripts/montar-site.sh "${TMP}"`, { cwd: RAIZ, stdio: "ignore" });
 for (const d of ["icones", "midia", "fotos"]) fs.cpSync(path.join(RAIZ, d), path.join(TMP, d), { recursive: true });
 const URL = "file://" + path.join(TMP, "index.html");
@@ -109,7 +109,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     await p.context().close();
   }
 
-  console.log("2. Cadastro (inscrição na Pascom)");
+  console.log("2. Cadastro (inscrição na Comunica+Fé)");
   {
     const p = await pagina(browser);
     await p.click(".follow");
@@ -298,9 +298,9 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     await p.click("#lt-close"); await p.waitForTimeout(100);
     check(/teste: 2 de 3/.test(await p.textContent('[data-mod="m1"] .mod-p')), "nota do teste aparece no módulo");
     // história local (modo local permite escrever)
-    await p.evaluate(() => openLicao(LICOES.findIndex(l => /Como começou a Pascom/.test(l.titulo))));
+    await p.evaluate(() => openLicao(LICOES.findIndex(l => /Como começou a Pastoral da Comunicação/.test(l.titulo))));
     check(!!(await p.$("#local-box")), "página da história tem o espaço 'E na nossa paróquia?'");
-    await p.click("#hist-edit"); await p.fill("#hist-txt", "A Pascom da nossa paróquia começou com dois jovens e um celular."); await p.click("#hist-save"); await p.waitForTimeout(200);
+    await p.click("#hist-edit"); await p.fill("#hist-txt", "A Comunica+Fé da nossa paróquia começou com dois jovens e um celular."); await p.click("#hist-save"); await p.waitForTimeout(200);
     check(/dois jovens/.test(await p.textContent("#local-box")), "equipe salva a história da paróquia");
     await p.click("#lt-close");
     // linha do tempo
@@ -408,7 +408,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
       check(/Agenda da paróquia/.test(await p.textContent("#modal-body")), `${w}px: ícone da seta abre a agenda`);
       await p.click("#modal [data-close]");
       await p.click("#cine-more"); await p.waitForTimeout(150);
-      check(/Venha servir/.test(await p.textContent("#modal-body")), `${w}px: Quero servir na Pascom abre a inscrição`);
+      check(/Venha servir/.test(await p.textContent("#modal-body")), `${w}px: Quero servir na Comunica+Fé abre a inscrição`);
       await p.click("#modal [data-close]");
       check(!erros.length, `${w}px: sem erros`, erros.join(" | "));
       await ctx.close();

@@ -13,7 +13,7 @@ done
 [ "$codigo" = "200" ] || { echo "ERRO: $url respondeu HTTP $codigo"; exit 1; }
 echo "Página no ar: $url (HTTP 200)"
 
-grep -q '<title>Comunicação &amp; Conhecimento</title>' /tmp/pagina.html || { echo "ERRO: título 'Comunicação & Conhecimento' não encontrado na página publicada"; exit 1; }
+grep -q '<title>Comunica+Fé</title>' /tmp/pagina.html || { echo "ERRO: título 'Comunica+Fé' não encontrado na página publicada"; exit 1; }
 echo "Título conferido."
 
 erros=0

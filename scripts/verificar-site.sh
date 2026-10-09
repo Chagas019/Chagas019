@@ -22,7 +22,7 @@ for tag in '<meta name="description"' 'property="og:title"' 'property="og:descri
   grep -q "$tag" index.html || falha "faltando no index.html: $tag"
 done
 [ "$(grep -o '<h1' index.html | wc -l)" -eq 1 ] || falha "a página deve ter exatamente um <h1>"
-[ -f social/pascom-1200x630.jpg ] || falha "imagem de prévia ausente: social/pascom-1200x630.jpg"
+[ -f social/comunicafe-1200x630.jpg ] || falha "imagem de prévia ausente: social/comunicafe-1200x630.jpg"
 python3 - <<'PY' || falha "dados estruturados (JSON-LD) inválidos"
 import json, re
 html = open("index.html", encoding="utf-8").read()
