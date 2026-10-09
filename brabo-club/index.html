@@ -374,6 +374,39 @@
   .foot b{color:var(--cream); font:700 16px var(--serif); letter-spacing:.06em}
   .foot a{color:var(--muted); text-decoration:none} .foot a:hover{color:var(--cream)}
 
+  /* ---------- Painel: quem agendou ---------- */
+  [hidden]{display:none!important}
+  .painel{background:#0f0b09}
+  .pn-stats{display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-top:28px}
+  .pn-stats div{padding:16px 18px; border:1px solid var(--line); border-radius:8px; background:var(--card)}
+  .pn-stats span{display:block; font:600 40px/1 var(--serif); color:var(--orange); font-variant-numeric:lining-nums tabular-nums}
+  .pn-stats b{display:block; margin-top:6px; font:600 10px var(--sans); letter-spacing:.18em; text-transform:uppercase; color:var(--muted)}
+  .pn-filters{display:flex; flex-wrap:wrap; gap:10px 24px; margin:26px 0 18px}
+  .pn-group{display:flex; flex-wrap:wrap; gap:6px}
+  .pn-group button{height:34px; padding:0 14px; border-radius:999px; border:1px solid var(--line2); background:transparent; cursor:pointer;
+    font:600 10.5px var(--sans); letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
+  .pn-group button[aria-pressed="true"]{background:var(--orange); border-color:var(--orange); color:#1a0d05}
+  .pn-day{margin:26px 0 10px; font:600 italic 26px var(--serif); color:var(--cream)}
+  .pn-day small{margin-left:10px; font:600 10px var(--sans); font-style:normal; letter-spacing:.18em; text-transform:uppercase; color:var(--dim)}
+  .pn-row{display:grid; grid-template-columns:70px minmax(0,1.3fr) minmax(0,1.5fr) 110px 90px auto; gap:14px; align-items:center;
+    padding:14px 16px; border:1px solid var(--line); border-radius:8px; background:var(--card); margin-bottom:8px}
+  .pn-time{font:600 24px/1 var(--serif); color:var(--orange); font-variant-numeric:lining-nums tabular-nums}
+  .pn-client strong{display:block; font-size:14.5px}
+  .pn-client a{display:inline-block; margin-top:3px; font-size:12.5px; color:var(--orange2); text-decoration:none}
+  .pn-client a:hover{text-decoration:underline}
+  .pn-svc{font-size:13px; line-height:1.45; color:rgba(241,230,216,.85)}
+  .pn-barber{font:600 10.5px var(--sans); letter-spacing:.16em; text-transform:uppercase}
+  .pn-total{font:600 18px var(--serif); text-align:right; font-variant-numeric:lining-nums tabular-nums}
+  .pn-row button, .item button{height:32px; padding:0 12px; border-radius:8px; border:1px solid rgba(255,154,138,.45); background:transparent; color:#ffa08c; cursor:pointer; font:600 10.5px var(--sans); letter-spacing:.12em; text-transform:uppercase}
+  .pn-row button:hover, .item button:hover{background:rgba(255,154,138,.1)}
+  .pn-row button.sure, .item button.sure{background:#ffa08c; color:#2a0d05}
+  .pn-empty{margin:24px 0 0; padding:26px; border:1px dashed var(--line2); border-radius:8px; text-align:center; color:var(--muted); font-size:14px}
+  @media (max-width:860px){
+    .pn-stats{grid-template-columns:1fr 1fr}
+    .pn-row{grid-template-columns:62px 1fr auto; grid-template-areas:"t c x" "t s s" "t b v"}
+    .pn-time{grid-area:t} .pn-client{grid-area:c} .pn-svc{grid-area:s} .pn-barber{grid-area:b} .pn-total{grid-area:v} .pn-row button{grid-area:x}
+  }
+
   /* ---------- Responsive ---------- */
   @media (max-width:960px){
     .sig-grid{grid-template-columns:1fr 1fr}
@@ -522,6 +555,7 @@
       <a href="#barbeiros">Barbeiros</a>
       <a href="#corta">Corta aí</a>
       <a href="#rota">Como chegar</a>
+      <a href="#painel" data-admin hidden>Agenda</a>
       <a class="nav-cta" href="#agendar" data-open="agendar">Agendar</a>
     </nav>
     <button class="menu-btn" id="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu-sheet">
@@ -534,6 +568,7 @@
       <a href="#corta">Corta aí</a>
       <a href="#local">Onde fica</a>
       <a href="#rota">Como chegar</a>
+      <a href="#painel" data-admin hidden>Quem agendou</a>
       <a class="btn solid" href="#agendar" data-open="agendar">Agendar horário</a>
     </nav>
   </div>
@@ -963,6 +998,26 @@
     </div>
   </div>
 </section>
+
+<!-- ===== Painel da barbearia: quem agendou (só aparece para quem pode editar a página) ===== -->
+<section class="sec painel" id="painel" hidden aria-labelledby="t-painel">
+  <div class="wrap">
+    <span class="kick">Só para a barbearia <i>// clientes não veem esta parte</i></span>
+    <h2 class="title" id="t-painel"><span class="slash">//</span><span class="num">08.</span> Quem <em>agendou</em></h2>
+    <div class="rule"></div>
+    <div class="pn-stats">
+      <div><span id="pn-hoje">0</span><b>Hoje</b></div>
+      <div><span id="pn-semana">0</span><b>Próximos 7 dias</b></div>
+      <div><span id="pn-todos">0</span><b>Todos os marcados</b></div>
+      <div><span id="pn-valor">R$ 0</span><b>Previsto no filtro</b></div>
+    </div>
+    <div class="pn-filters">
+      <div class="pn-group" id="pn-periodo" role="group" aria-label="Período"></div>
+      <div class="pn-group" id="pn-barbeiro" role="group" aria-label="Barbeiro"></div>
+    </div>
+    <div class="pn-list" id="pn-list" aria-live="polite"></div>
+  </div>
+</section>
 </main>
 
 <footer class="foot">
@@ -1217,6 +1272,10 @@
         : 'O pedido abre no WhatsApp com todos os dados preenchidos. É só enviar para a barbearia confirmar.';
       document.querySelector('[data-tab="meus"]').hidden = !online;
       document.querySelector('[data-tab="agenda"]').hidden = !(db && isAdmin);
+      var adm = !!(db && isAdmin);
+      $('painel').hidden = !adm;
+      document.querySelectorAll('[data-admin]').forEach(function(a){ a.hidden = !adm; });
+      if (adm) renderPainel();
       $('tabs').hidden = !online && !(db && isAdmin);
     }
 
@@ -1279,13 +1338,23 @@
 
     $('confirm').addEventListener('click', function(){ if (online) reservar(); else whatsapp(); });
 
-    async function cancelar(dono, id, body){
-      if (!confirm('Cancelar este horário?')) return;
-      try {
-        await db.doc('ocupados/' + id).delete();
-        await db.doc('agendamentos/' + dono).set(semReserva(body, id));
-        delete taken[id]; renderHours();
-      } catch (e) { alert('Não foi possível cancelar agora. Tente de novo.'); }
+    // Primeiro toque pede confirmação no próprio botão; o segundo cancela
+    function cancelBtn(dono, id, body){
+      var c = el('button', null, 'Cancelar'), timer = null; c.type = 'button';
+      c.addEventListener('click', async function(){
+        if (!c.classList.contains('sure')) {
+          c.classList.add('sure'); c.textContent = 'Confirmar?';
+          timer = setTimeout(function(){ c.classList.remove('sure'); c.textContent = 'Cancelar'; }, 3500);
+          return;
+        }
+        clearTimeout(timer); c.disabled = true; c.textContent = 'Cancelando…';
+        try {
+          await db.doc('ocupados/' + id).delete();
+          await db.doc('agendamentos/' + dono).set(semReserva(body, id));
+          delete taken[id]; renderHours();
+        } catch (e) { c.disabled = false; c.classList.remove('sure'); c.textContent = 'Tente de novo'; }
+      });
+      return c;
     }
 
     function itens(entries, admin){
@@ -1308,14 +1377,76 @@
         info.appendChild(el('small', null, (s ? s.nome : it.r.servico) + (ex.length ? ' + ' + ex.join(' + ') : '') + ' com ' + (b ? b.nome : it.r.barbeiro) +
           (admin ? ' · ' + (it.en.body.nome || 'Cliente') + ' · ' + (it.en.body.telefone || '') : '')));
         row.appendChild(info);
-        var c = el('button', null, 'Cancelar'); c.type = 'button';
-        c.addEventListener('click', function(){ cancelar(it.en.uid, it.id, it.en.body); });
-        row.appendChild(c);
+        row.appendChild(cancelBtn(it.en.uid, it.id, it.en.body));
         box.appendChild(row);
       });
     }
     function renderMine(){ renderList($('list-meus'), itens([{uid: uid, body: mine}]), false, 'Você ainda não tem horários marcados.'); }
-    function renderAll(){ renderList($('list-agenda'), itens(all), true, 'Nenhum horário marcado ainda.'); }
+    function renderAll(){ renderList($('list-agenda'), itens(all), true, 'Nenhum horário marcado ainda.'); renderPainel(); }
+
+    // ---- Painel da página: quem agendou ----
+    var NOMES_DIA = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+    var pn = {periodo:'semana', barbeiro:'todos'};
+    function pnButtons(boxId, opts, key){
+      var box = $(boxId); box.textContent = '';
+      opts.forEach(function(o){
+        var b = el('button', null, o[1]); b.type = 'button';
+        b.setAttribute('aria-pressed', pn[key] === o[0] ? 'true' : 'false');
+        b.addEventListener('click', function(){ pn[key] = o[0]; renderPainel(); });
+        box.appendChild(b);
+      });
+    }
+    function totalReserva(r){
+      if (r.total) return r.total;
+      return (r.extras || []).reduce(function(a, id){ var x = byId(SERVICOS, id); return a + (x ? x.preco : 0); }, (byId(SERVICOS, r.servico) || {preco:0}).preco);
+    }
+    function waLink(tel){
+      var d = String(tel || '').replace(/\D/g, '');
+      if (!d) return null;
+      if (d.length <= 11) d = '55' + d;
+      return 'https://wa.me/' + d;
+    }
+    function renderPainel(){
+      var sec = $('painel');
+      if (!sec || sec.hidden) return;
+      var hoje = iso(new Date()), lim = new Date(); lim.setDate(lim.getDate() + 6); var ate = iso(lim);
+      var todos = itens(all);
+      $('pn-hoje').textContent = todos.filter(function(it){ return it.r.data === hoje; }).length;
+      $('pn-semana').textContent = todos.filter(function(it){ return it.r.data <= ate; }).length;
+      $('pn-todos').textContent = todos.length;
+      pnButtons('pn-periodo', [['hoje','Hoje'], ['semana','Próximos 7 dias'], ['todos','Todos']], 'periodo');
+      pnButtons('pn-barbeiro', [['todos','Todos os barbeiros']].concat(BARBEIROS.map(function(b){ return [b.id, b.nome]; })), 'barbeiro');
+      var lista = todos.filter(function(it){
+        if (pn.periodo === 'hoje' && it.r.data !== hoje) return false;
+        if (pn.periodo === 'semana' && it.r.data > ate) return false;
+        return pn.barbeiro === 'todos' || it.r.barbeiro === pn.barbeiro;
+      });
+      $('pn-valor').textContent = brl(lista.reduce(function(a, it){ return a + totalReserva(it.r); }, 0)).replace(',00', '');
+      var box = $('pn-list'); box.textContent = '';
+      if (!lista.length) { box.appendChild(el('p', 'pn-empty', todos.length ? 'Nenhum horário nesse filtro.' : 'Ninguém agendou ainda. Quando um cliente marcar, ele aparece aqui na hora.')); return; }
+      var dia = null;
+      lista.forEach(function(it){
+        if (it.r.data !== dia) {
+          dia = it.r.data;
+          var dt = fromIso(dia), h = el('h3', 'pn-day', NOMES_DIA[dt.getDay()] + ', ' + pad(dt.getDate()) + '/' + pad(dt.getMonth() + 1));
+          if (dia === hoje) h.appendChild(el('small', null, 'Hoje'));
+          box.appendChild(h);
+        }
+        var b = byId(BARBEIROS, it.r.barbeiro), s = byId(SERVICOS, it.r.servico);
+        var ex = (it.r.extras || []).map(function(id){ var x = byId(SERVICOS, id); return x ? x.nome : id; });
+        var row = el('div', 'pn-row');
+        row.appendChild(el('span', 'pn-time', it.r.hora));
+        var cli = el('div', 'pn-client'); cli.appendChild(el('strong', null, it.en.body.nome || 'Cliente'));
+        var wa = waLink(it.en.body.telefone);
+        if (wa) { var a = el('a', null, (it.en.body.telefone || '') + ' · WhatsApp'); a.href = wa; a.target = '_blank'; a.rel = 'noopener'; cli.appendChild(a); }
+        row.appendChild(cli);
+        row.appendChild(el('span', 'pn-svc', (s ? s.nome : it.r.servico) + (ex.length ? ' + ' + ex.join(' + ') : '')));
+        row.appendChild(el('span', 'pn-barber', b ? b.nome : it.r.barbeiro));
+        row.appendChild(el('span', 'pn-total', brl(totalReserva(it.r)).replace(',00', '')));
+        row.appendChild(cancelBtn(it.en.uid, it.id, it.en.body));
+        box.appendChild(row);
+      });
+    }
 
     render(); setMode();
     window.BRABO = {SERVICOS:SERVICOS, BARBEIROS:BARBEIROS, DIAS:DIAS, byId:byId, faixa:faixa, open:open};
