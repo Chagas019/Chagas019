@@ -389,10 +389,10 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
       await p.goto(URL); await p.waitForTimeout(600);
       check(await p.evaluate(() => !document.querySelector("#nucleo, .cine-ic, .warp, .portal, .cine-dust, .corner, .editorial")), `${w}px: núcleo holográfico, ícones de vidro e transições antigas saíram`);
       const len = await p.$eval("#abertura", e => e.offsetHeight - innerHeight);
-      const em = async t => { await p.evaluate(y => scrollTo(0, y), len * t / 5); await p.waitForTimeout(220); return p.evaluate(() => {
+      const em = async t => { await p.evaluate(y => scrollTo(0, y), len * t / 5); await p.waitForTimeout(650); return p.evaluate(() => {
         const op = id => +getComputedStyle(document.querySelector(id)).opacity, d = document.getElementById("disc").getBoundingClientRect(), pn = document.getElementById("show-panel").getBoundingClientRect();
         return { topo: document.querySelector(".show-sticky").getBoundingClientRect().top, s: [0, 1, 2, 3, 4, 5].map(i => op(`.scene[data-s="${i}"]`)), edge: op("#show-edge"),
-          disco: d.width, discoDentro: d.left >= -1 && d.right <= innerWidth + 1, painel: (() => { const c = getComputedStyle(document.getElementById("show-panel")).clipPath; return c; })(),
+          disco: d.width, discoDentro: d.left >= -1 && d.right <= innerWidth + 1, painel: pn.width / innerWidth,
           fio: getComputedStyle(document.querySelector("#show-wire circle")).strokeDasharray, conta: document.getElementById("show-count").textContent, lateral: document.documentElement.scrollWidth > innerWidth };
       }); };
       const c0 = await em(0), c1 = await em(1), c2 = await em(2), c3 = await em(3.3), c4 = await em(4), c5 = await em(5);
@@ -401,7 +401,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
       check(/01/.test(c0.conta) && /06/.test(c5.conta), `${w}px: contador de cenas vai de 01 a 06`, c0.conta + " → " + c5.conta);
       check(c0.disco > 0 && c0.discoDentro && c1.disco > c0.disco, `${w}px: o disco aparece e cresce ao rolar`, JSON.stringify([c0.disco, c1.disco]));
       check(c2.edge > .9 && c0.edge < .05, `${w}px: borda de luz colorida em “Movida pela fé”`);
-      check(c3.s[3] > .9 && /inset\(0(px|%)?[ )]/.test(c3.painel), `${w}px: o painel da frase cresce até ocupar a tela`, c3.painel);
+      check(c3.s[3] > .9 && c3.painel > .97, `${w}px: o painel da frase cresce até ocupar a tela`, String(c3.painel));
       check(c4.s[4] > .9 && parseFloat(c4.fio) > .9, `${w}px: o desenho em linhas se completa`, c4.fio);
       check(c5.s[5] > .95 && [c0, c1, c2, c3, c4, c5].every(c => !c.lateral), `${w}px: marca no fim e sem rolagem lateral`);
       const tipos = await p.$$eval(".obj", os => os.map(o => o.dataset.obj));

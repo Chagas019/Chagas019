@@ -247,7 +247,7 @@
   .stage { position: relative; overflow: hidden; color: var(--on-dark); padding: calc(var(--top-h) + 10px) 0 34px;
     background: radial-gradient(50% 60% at 85% 0%, rgba(255, 106, 31, .16), transparent 70%); }
   .topbar { position: fixed; left: 0; right: 0; top: 0; z-index: 45; height: var(--top-h); display: grid; grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr);
-    align-items: center; gap: 16px; padding: 0 clamp(16px, 3vw, 40px); background: linear-gradient(rgba(10, 7, 6, .82), rgba(10, 7, 6, .55)); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    align-items: center; gap: 16px; padding: 0 clamp(16px, 3vw, 40px); background: rgba(10, 7, 6, .9);
     border-bottom: 1px solid rgba(255, 255, 255, .06); }
   .logo { min-height: 40px; display: inline-flex; align-items: center; justify-self: start; font-family: var(--font-heavy); font-weight: 900; font-stretch: 78%; font-size: 22px; letter-spacing: .01em; }
   .logo em { font-style: normal; color: var(--accent); }
@@ -432,7 +432,7 @@
 
   /* ---------- Seções para rolar: formação, linha do tempo, documentos, glossário, perguntas ---------- */
   .scroll-bar { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 50; pointer-events: none; }
-  .scroll-bar span { display: block; height: 100%; width: 0; background: var(--accent); }
+  .scroll-bar span { display: block; height: 100%; width: 100%; transform: scaleX(0); transform-origin: left; will-change: transform; background: var(--accent); }
   .sec {
     position: relative; margin-top: 56px; color: #fff; padding: clamp(22px, 4vw, 44px);
     background: radial-gradient(60% 50% at 100% 0%, rgba(255, 106, 31, .1), transparent 70%), var(--stage);
@@ -664,11 +664,12 @@
      acompanha a rolagem através de seis cenas. */
   .show { position: relative; height: 600vh; width: 100vw; margin-left: calc(50% - 50vw); }
   .show-sticky {
+    contain: paint;
     position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; color: #fff;
     background: radial-gradient(90% 70% at 18% 108%, rgba(255, 106, 31, .55), transparent 60%),
       radial-gradient(70% 60% at 100% 100%, rgba(140, 40, 10, .45), transparent 70%), var(--bg);
   }
-  .show-glow { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(40% 40% at var(--gx, 50%) var(--gy, 70%), rgba(255, 120, 40, .28), transparent 70%); }
+  .show-glow { position: absolute; left: 0; top: 0; width: var(--g, 900px); height: var(--g, 900px); pointer-events: none; will-change: transform; background: radial-gradient(closest-side, rgba(255, 120, 40, .3), rgba(255, 120, 40, .12) 45%, transparent); }
   .scene { position: absolute; inset: 0; padding: calc(var(--top-h) + 4vh) clamp(20px, 5vw, 72px) 6vh; display: flex; flex-direction: column; z-index: 3; will-change: opacity, transform; }
   .scene[data-off] { visibility: hidden; }
   .show-kicker, .scene .k { font: 700 12px/1.2 var(--font-body); letter-spacing: .26em; text-transform: uppercase; color: rgba(255, 255, 255, .78); margin: 0; }
@@ -697,20 +698,21 @@
   .show-edge { position: absolute; inset: 0; z-index: 6; pointer-events: none; opacity: 0; padding: 6px;
     background: conic-gradient(from var(--edge), #ff2d55, #ff9f0a, #ffd60a, #30d158, #64d2ff, #5e5ce6, #bf5af2, #ff2d55);
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
-    filter: blur(5px) saturate(1.3); animation: edgeSpin 4s linear infinite; }
+    filter: blur(5px) saturate(1.3); animation: edgeSpin 4s linear infinite paused; }
+  .show-edge.on { animation-play-state: running; }
   @keyframes edgeSpin { to { --edge: 360deg; } }
 
   /* cena 4: sempre perto, galeria e painel que cresce até a tela inteira */
   .s3 { justify-content: center; }
-  .kin { font-size: clamp(48px, 9vw, 150px); white-space: nowrap; position: relative; z-index: 4; pointer-events: none; text-shadow: var(--trail, none); }
+  .kin { font-size: clamp(48px, 9vw, 150px); white-space: nowrap; position: relative; z-index: 4; pointer-events: none; will-change: transform, opacity; }
   .strip { position: absolute; left: 0; top: 54%; pointer-events: none; display: flex; gap: 14px; will-change: transform; z-index: 1; }
   .strip .tile { position: relative; width: clamp(110px, 13vw, 190px); aspect-ratio: 3 / 4; border-radius: 6px; overflow: hidden; filter: sepia(.35) saturate(1.25); box-shadow: 0 20px 40px -14px rgba(0, 0, 0, .7); }
   .strip .tile .portrait { position: absolute; inset: 0; --mono: 34px; }
   .panel { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; padding: calc(var(--top-h) + 4vh) clamp(20px, 6vw, 96px) 8vh;
-    background: radial-gradient(70% 70% at 50% 40%, #ff7a2a, #d9480f 55%, #7a1d05); clip-path: inset(var(--pi, 50%) var(--pj, 50%) round 8px); }
+    background: radial-gradient(70% 70% at 50% 40%, #ff7a2a, #d9480f 55%, #7a1d05); border-radius: 8px; transform: scale(.2, .4); will-change: transform; }
   .panel blockquote { margin: 0; max-width: 20ch; text-align: center; font-family: var(--font-heavy); font-weight: 800; font-stretch: 80%; font-size: clamp(30px, 5vw, 76px); line-height: 1; letter-spacing: -.01em; }
   .panel cite { display: block; margin-top: 18px; font: 700 12px var(--font-body); letter-spacing: .24em; text-transform: uppercase; font-style: normal; text-align: center; }
-  .panel .panel-in { opacity: var(--po, 0); transform: translateY(calc((1 - var(--po, 0)) * 24px)); }
+  .panel .panel-in { opacity: 0; will-change: opacity, transform; }
 
   /* cena 5: uma só comunidade, desenho em linhas */
   .s4 { justify-content: center; }
@@ -730,7 +732,8 @@
 
   /* disco: o “objeto” que atravessa as cenas */
   .disc { position: absolute; left: 0; top: 0; z-index: 4; pointer-events: none; perspective: 900px; will-change: transform, opacity; }
-  .disc i { position: absolute; inset: 0; border-radius: 50%; transform: rotateX(var(--rx, 0deg)) rotateZ(var(--rz, 0deg));
+  .disc { transform-origin: 50% 50%; }
+  .disc i { position: absolute; inset: 0; border-radius: 50%; will-change: transform;
     background: radial-gradient(circle at 50% 50%, transparent 58%, rgba(0, 0, 0, .35) 60%, transparent 63%),
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .14 0 0 0 0 .03 0 0 0 1.1 -.35'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"),
       radial-gradient(circle at 38% 32%, #ffb070, #f07a2c 40%, #b8470f 75%, #6d2405);
@@ -760,7 +763,8 @@
     .show-sticky { position: relative; height: auto; }
     .scene { position: relative; min-height: 82svh; visibility: visible !important; opacity: 1 !important; transform: none !important; }
     .scene + .scene { border-top: 1px solid var(--line); }
-    .panel { position: relative; clip-path: none; margin-top: 24px; border-radius: 8px; --po: 1; }
+    .panel { position: relative; transform: none !important; margin-top: 24px; border-radius: 8px; }
+    .panel .panel-in { opacity: 1 !important; transform: none !important; }
     .wire { opacity: .8; }
     .disc, .show-hint, .show-count, .show-edge, .strip { display: none; }
   }
@@ -779,8 +783,10 @@
   }
   /* ---------- Objetos de comunicação que atravessam as cenas ---------- */
   .objs { position: absolute; inset: 0; z-index: 2; pointer-events: none; will-change: transform; }
-  .obj { position: absolute; left: 0; top: 0; width: var(--os, 120px); aspect-ratio: 1; opacity: 0; will-change: transform, opacity, filter; }
-  .obj img, .obj svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 18px 26px rgba(0, 0, 0, .55)) drop-shadow(0 0 22px rgba(255, 106, 31, .18)); }
+  .obj { position: absolute; left: 0; top: 0; width: var(--os, 120px); aspect-ratio: 1; opacity: 0; visibility: hidden; will-change: transform, opacity; }
+  .obj img, .obj svg { position: relative; width: 100%; height: 100%; display: block; }
+  .obj::before { content: ""; position: absolute; left: 8%; right: 8%; bottom: -10%; height: 26%; border-radius: 50%; background: radial-gradient(closest-side, rgba(0, 0, 0, .6), transparent); }
+  .obj::after { content: ""; position: absolute; inset: -12%; border-radius: 50%; z-index: -1; background: radial-gradient(closest-side, rgba(255, 106, 31, .16), transparent); }
   .obj i { position: absolute; inset: 0; animation: boia 5s ease-in-out infinite; animation-delay: var(--od, 0s); }
   @keyframes boia { 50% { transform: translateY(-8px) rotate(3deg); } }
 
@@ -2814,20 +2820,25 @@ $("glos-grid").addEventListener("click", e => { const b = e.target.closest(".fli
 $("faq").innerHTML = FAQ.map(f => `<details><summary>${f.p}</summary><p>${f.r}</p></details>`).join("");
 
 /* ---------- Rolagem: barra de progresso, voltar ao topo, menu ativo ---------- */
-let rolando = false;
-function onScroll() {
-  rolando = false;
-  if (typeof showFrame === "function") showFrame();
-  const max = document.documentElement.scrollHeight - innerHeight;
-  $("scroll-fill").style.width = (max > 0 ? scrollY / max * 100 : 0) + "%";
-  const ar = $("abertura").getBoundingClientRect();
-  $("to-top").hidden = ar.bottom > innerHeight * .5;
-  if (!modal.open && !leitor.open) {
-    const f = $("formacao").getBoundingClientRect().top;
-    setNav(f < innerHeight * .5 ? "formacao" : "home");
-  }
+let quadroPedido = false, rolou = true;
+function pedirQuadro() { if (!quadroPedido) { quadroPedido = true; requestAnimationFrame(quadro); } }
+function quadro(agora) {
+  quadroPedido = false;
+  if (rolou) { rolou = false; onScroll(); }
+  if (typeof showTick === "function" && showTick(agora)) pedirQuadro();
 }
-addEventListener("scroll", () => { if (!rolando) { rolando = true; requestAnimationFrame(onScroll); } }, { passive: true });
+function onScroll() {
+  // leituras primeiro…
+  const max = document.documentElement.scrollHeight - innerHeight;
+  const fimAbertura = $("abertura").getBoundingClientRect().bottom;
+  const f = $("formacao").getBoundingClientRect().top;
+  // …depois as escritas
+  $("scroll-fill").style.transform = `scaleX(${(max > 0 ? scrollY / max : 0).toFixed(4)})`;
+  const escondido = fimAbertura > innerHeight * .5;
+  if ($("to-top").hidden !== escondido) $("to-top").hidden = escondido;
+  if (!modal.open && !leitor.open) setNav(f < innerHeight * .5 ? "formacao" : "home");
+}
+addEventListener("scroll", () => { rolou = true; pedirQuadro(); }, { passive: true });
 $("to-top").onclick = () => scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 const scrollToSec = id => () => $(id).scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 
@@ -3021,62 +3032,95 @@ function fraseAbertura() {
   $("show-quote").textContent = `“${f}”`;
   $("show-cite").textContent = quem.nome;
 }
-function showFrame() {
-  const r = show.getBoundingClientRect(), vh = innerHeight, vw = innerWidth;
+// medidas lidas só quando a tela muda de tamanho (nada de ler o layout a cada quadro)
+const M = { vw: 0, vh: 0, topo: 0, total: 1, estreito: false, D: 1, G: 900 };
+function medir() {
+  M.vw = innerWidth; M.vh = innerHeight; M.estreito = M.vw < 700;
+  M.topo = show.getBoundingClientRect().top + scrollY;
+  M.total = Math.max(1, show.offsetHeight - M.vh);
+  const K = DISCO[M.estreito ? "estreito" : "largo"];
+  M.D = Math.max(...K.map(k => k.d)) * Math.min(M.vw, M.vh);    // o disco é desenhado uma vez no maior tamanho e só encolhe
+  disc.style.width = disc.style.height = M.D + "px";
+  disc.style.setProperty("--d", M.D + "px");
+  M.G = Math.round(Math.max(M.vw, M.vh) * .9);
+  $("show-glow").style.setProperty("--g", M.G + "px");
+  if (typeof medirObjetos === "function") medirObjetos();
+}
+const alvoT = () => clamp01((scrollY - M.topo) / M.total) * (N_CENAS - 1);
+let tAtual = null, tUltimo = 0, contaAtual = -1;
+// a cada quadro o ponto da animação persegue a rolagem com um amortecimento curto:
+// a rodinha do mouse anda aos saltos, mas a cena desliza
+function showTick(agora) {
+  const alvo = alvoT();
+  if (tAtual === null || semMovimento()) tAtual = alvo;
+  else {
+    const dt = Math.min(64, agora - (tUltimo || agora));
+    tAtual += (alvo - tAtual) * (1 - Math.exp(-dt / 95));
+    if (Math.abs(alvo - tAtual) < .0006) tAtual = alvo;
+  }
+  tUltimo = agora;
+  desenharAbertura(tAtual);
+  return tAtual !== alvo;
+}
+function desenharAbertura(t) {
+  const { vw, vh } = M;
   if (semMovimento()) {
     cenas.forEach(c => { c.style.opacity = ""; c.style.transform = ""; delete c.dataset.off; });
-    $("show-panel").style.removeProperty("--pi"); return;
+    return;
   }
-  if (r.bottom < -50 || r.top > vh + 50) return;
-  const total = r.height - vh, p = total > 0 ? clamp01(-r.top / total) : 0;
-  const t = p * (N_CENAS - 1), i = Math.min(N_CENAS - 2, Math.floor(t)), f = ease(t - i);
-  // cenas: cada uma aparece perto do seu ponto e sobe ao sair
+  if (t === desenharAbertura.ultimo) return;                       // nada mudou desde o último quadro
+  desenharAbertura.ultimo = t;
+  const p = t / (N_CENAS - 1), i = Math.min(N_CENAS - 2, Math.floor(t)), f = ease(t - i);
   cenas.forEach((c, k) => {
     const dist = t - (k === 3 ? 3.12 : k), o = clamp01(1 - (Math.abs(dist) - (k === 3 ? .3 : .28)) / .2);
     c.style.opacity = o.toFixed(3);
-    c.style.transform = `translateY(${(-dist * 70).toFixed(1)}px)`;
+    c.style.transform = `translate3d(0, ${(-dist * 70).toFixed(1)}px, 0)`;
     if (o <= .01) c.dataset.off = ""; else delete c.dataset.off;
   });
-  $("show-count").innerHTML = `<b>${String(Math.round(t) + 1).padStart(2, "0")}</b> / ${String(N_CENAS).padStart(2, "0")}`;
-  $("show-hint").style.opacity = 1 - clamp01(t / .3);
-  // disco
-  const K = DISCO[vw < 700 ? "estreito" : "largo"], a = K[i], b = K[i + 1], m = Math.min(vw, vh);
+  const conta = Math.round(t);
+  if (conta !== contaAtual) { contaAtual = conta; $("show-count").innerHTML = `<b>${String(conta + 1).padStart(2, "0")}</b> / ${String(N_CENAS).padStart(2, "0")}`; }
+  $("show-hint").style.opacity = (1 - clamp01(t / .3)).toFixed(3);
+  // disco: só posição, escala e giro
+  const K = DISCO[M.estreito ? "estreito" : "largo"], a = K[i], b = K[i + 1], m = Math.min(vw, vh);
   const d = lerp(a.d, b.d, f) * m, x = lerp(a.x, b.x, f) * vw, y = lerp(a.y, b.y, f) * vh;
-  Object.assign(disc.style, { width: d + "px", height: d + "px", opacity: lerp(a.o, b.o, f).toFixed(3),
-    transform: `translate(${(x - d / 2).toFixed(1)}px, ${(y - d / 2).toFixed(1)}px)` });
-  disc.style.setProperty("--d", d + "px");
-  disc.style.setProperty("--rx", lerp(a.rx, b.rx, f).toFixed(1) + "deg");
-  disc.style.setProperty("--rz", (lerp(a.rz, b.rz, f) + p * 120).toFixed(1) + "deg");
-  $("show-glow").style.setProperty("--gx", (x / vw * 100).toFixed(1) + "%");
-  $("show-glow").style.setProperty("--gy", (y / vh * 100).toFixed(1) + "%");
+  disc.style.opacity = lerp(a.o, b.o, f).toFixed(3);
+  disc.style.transform = `translate3d(${(x - M.D / 2).toFixed(1)}px, ${(y - M.D / 2).toFixed(1)}px, 0) scale(${(d / M.D).toFixed(4)})`;
+  disc.firstElementChild.style.transform = `rotateX(${lerp(a.rx, b.rx, f).toFixed(1)}deg) rotateZ(${(lerp(a.rz, b.rz, f) + p * 120).toFixed(1)}deg)`;
+  $("show-glow").style.transform = `translate3d(${(x - M.G / 2).toFixed(1)}px, ${(y - M.G / 2).toFixed(1)}px, 0)`;
   // cena 1: o título ganha ecos ao começar a rolar
-  const e0 = clamp01(t / .5);
-  $("show-h").style.setProperty("--echo", (e0 * 26).toFixed(1) + "px");
-  $("show-h").style.setProperty("--echo-o", (e0 * (1 - clamp01((t - .4) / .2))).toFixed(3));
-  // cena 3: borda de luz colorida
-  $("show-edge").style.opacity = clamp01(1 - (Math.abs(t - 2) - .15) / .3).toFixed(3);
-  // cena 4: o texto entra deslizando com rastro, a galeria corre e o painel cresce até ocupar a tela
-  const l3 = clamp01(t - 2.5), entra = clamp01(l3 / .35);
-  const resto = (1 - ease(entra)) * vw * .5;
-  $("show-kin").style.transform = `translateX(${resto.toFixed(1)}px)`;
-  $("show-kin").style.setProperty("--trail", resto > 2 ? [1, 2, 3, 4].map(n => `${(-resto * n * .08).toFixed(1)}px 0 0 rgba(255,255,255,${(.32 - n * .07).toFixed(2)})`).join(",") : "none");
-  $("show-strip").style.transform = `translateX(${lerp(vw * .9, -vw * .6, l3).toFixed(1)}px)`;
+  if (t < .8) {
+    const e0 = clamp01(t / .5);
+    $("show-h").style.setProperty("--echo", (e0 * 26).toFixed(1) + "px");
+    $("show-h").style.setProperty("--echo-o", (e0 * (1 - clamp01((t - .4) / .2))).toFixed(3));
+  }
+  // cena 3: borda de luz colorida (a animação só roda quando ela aparece)
+  const borda = clamp01(1 - (Math.abs(t - 2) - .15) / .3);
+  $("show-edge").style.opacity = borda.toFixed(3);
+  $("show-edge").classList.toggle("on", borda > 0);
+  // cena 4: o texto entra deslizando, a galeria corre e o painel cresce até ocupar a tela
+  const l3 = clamp01(t - 2.5), entra = clamp01(l3 / .35), resto = 1 - ease(entra);
   const g = ease(clamp01((l3 - .45) / .3));
-  $("show-kin").style.opacity = (1 - clamp01(g * 1.4)).toFixed(3);
-  $("show-panel").style.setProperty("--pi", lerp(vh < vw ? 30 : 34, 0, g).toFixed(2) + "%");
-  $("show-panel").style.setProperty("--pj", lerp(vw < 700 ? 30 : 40, 0, g).toFixed(2) + "%");
-  $("show-panel").style.setProperty("--po", clamp01((g - .7) / .3).toFixed(3));
-  $("show-panel").style.pointerEvents = g > .9 ? "auto" : "none";
-  // cena 5: as linhas se desenham e o desenho gira
+  Object.assign($("show-kin").style, { transform: `translate3d(${(resto * vw * .5).toFixed(1)}px, 0, 0) skewX(${(-resto * 14).toFixed(2)}deg)`, opacity: (1 - clamp01(g * 1.4)).toFixed(3) });
+  $("show-strip").style.transform = `translate3d(${lerp(vw * .9, -vw * .6, l3).toFixed(1)}px, 0, 0)`;
+  const painel = $("show-panel");
+  painel.style.transform = `scale(${lerp(M.estreito ? .4 : .2, 1, g).toFixed(4)}, ${lerp(vh < vw ? .4 : .32, 1, g).toFixed(4)})`;
+  painel.style.pointerEvents = g > .9 ? "auto" : "none";
+  const po = clamp01((g - .8) / .2);
+  Object.assign(painel.firstElementChild.style, { opacity: po.toFixed(3), transform: `translate3d(0, ${((1 - po) * 24).toFixed(1)}px, 0)` });
+  // cena 5: as linhas se desenham e o desenho gira (só recalcula enquanto desenha)
   const l4 = clamp01((t - 3.5) / .8);
-  linhas.forEach((el, k) => { const q = clamp01(l4 * 1.6 - k * .03); el.style.strokeDasharray = `${q.toFixed(3)} 1`; });
-  nos.forEach((n, k) => { n.style.opacity = clamp01(l4 * 2 - 1 - k * .02).toFixed(2); });
-  $("show-wire").style.transform = `${vw < 700 ? "translate(50%, -50%)" : "translateY(-50%)"} perspective(800px) rotateY(${(l4 * 40 - 20).toFixed(1)}deg) rotateZ(${(t * 18).toFixed(1)}deg)`;
+  if (l4 !== desenharAbertura.l4) {
+    desenharAbertura.l4 = l4;
+    linhas.forEach((el, k) => { el.style.strokeDasharray = `${clamp01(l4 * 1.6 - k * .03).toFixed(3)} 1`; });
+    nos.forEach((n, k) => { n.style.opacity = clamp01(l4 * 2 - 1 - k * .02).toFixed(2); });
+  }
+  if (t > 3 && t < 5) $("show-wire").style.transform = `${M.estreito ? "translate(50%, -50%)" : "translateY(-50%)"} perspective(800px) rotateY(${(l4 * 40 - 20).toFixed(1)}deg) rotateZ(${(t * 18).toFixed(1)}deg)`;
   // cena 6: a marca chega de perto
-  const l5 = clamp01((t - 4.5) / .5);
-  show.querySelector(".extrude").style.transform = `scale(${lerp(1.5, 1, ease(l5)).toFixed(3)})`;
+  show.querySelector(".extrude").style.transform = `scale(${lerp(1.5, 1, ease(clamp01((t - 4.5) / .5))).toFixed(3)})`;
+  if (typeof abertura2 === "function") abertura2(t, vw, vh);
 }
-addEventListener("resize", () => showFrame());
+function showFrame() { pedirQuadro(); }
+addEventListener("resize", () => { medir(); desenharAbertura.ultimo = null; pedirQuadro(); });
 show.addEventListener("click", e => { if (e.target.closest("[data-ir='hoje']")) $("hoje").scrollIntoView({ behavior: semMovimento() ? "auto" : "smooth" }); });
 $("show-servir").onclick = () => openJoin();
 $("show-frase").onclick = () => openFraseWin();
@@ -3193,19 +3237,22 @@ const objs = document.createElement("div"); objs.className = "objs"; objs.setAtt
 objs.innerHTML = OBJETOS.map((o, i) => `<div class="obj" data-obj="${o.n}"><i style="--od:${(i * .43 % 3).toFixed(2)}s">${o.n === "agenda" ? AGENDA_SVG.replace(/ag-/g, `ag${i}-`) : `<img src="icones/objetos/${o.n}.png" alt="">`}</i></div>`).join("");
 show.querySelector(".show-sticky").insertBefore(objs, show.querySelector(".scene"));
 const objEls = [...objs.children];
+let fatorObj = 1;
+function medirObjetos() {
+  fatorObj = M.estreito ? .62 : Math.min(1.15, Math.max(.8, Math.min(M.vw, M.vh) / 800));
+  OBJETOS.forEach((o, i) => objEls[i].style.setProperty("--os", o.s * fatorObj + "px"));
+}
 function objetosFrame(t, vw, vh) {
-  const estreito = vw < 700, fator = estreito ? .62 : Math.min(1.15, Math.max(.8, Math.min(vw, vh) / 800));
   OBJETOS.forEach((o, i) => {
     const el = objEls[i], z = t - o.k;            // < 0 chegando, > 0 saindo
-    if (z < -1.05 || z > 1.05) { el.style.opacity = 0; return; }
-    const s = o.s * fator, perto = Math.max(0, z), longe = Math.max(0, -z);
+    if (z < -1.05 || z > 1.05) { if (el._vis !== false) { el._vis = false; el.style.opacity = 0; el.style.visibility = "hidden"; } return; }
+    if (el._vis !== true) { el._vis = true; el.style.visibility = "visible"; }
+    const s = o.s * fatorObj, perto = Math.max(0, z), longe = Math.max(0, -z);
     const esc = 1 + perto * 1.6 - longe * .55;
-    const x = (estreito ? .1 + (o.x - .1) * .8 : o.x) * vw + (o.x < .5 ? -1 : 1) * perto * vw * .28;
+    const x = (M.estreito ? .1 + (o.x - .1) * .8 : o.x) * vw + (o.x < .5 ? -1 : 1) * perto * vw * .28;
     const y = o.y * vh - z * vh * .32;
-    el.style.setProperty("--os", s + "px");
     el.style.opacity = clamp01(1 - (Math.abs(z) - .45) / .55).toFixed(3);
-    el.style.transform = `translate(${(x - s / 2).toFixed(1)}px, ${(y - s / 2).toFixed(1)}px) rotate(${(z * (o.x < .5 ? -24 : 24)).toFixed(1)}deg) scale(${esc.toFixed(3)})`;
-    el.style.filter = Math.abs(z) > .35 ? `blur(${((Math.abs(z) - .35) * 7).toFixed(1)}px)` : "none";
+    el.style.transform = `translate3d(${(x - s / 2).toFixed(1)}px, ${(y - s / 2).toFixed(1)}px, 0) rotate(${(z * (o.x < .5 ? -24 : 24)).toFixed(1)}deg) scale(${esc.toFixed(3)})`;
   });
 }
 
@@ -3228,14 +3275,6 @@ function abertura2(t, vw, vh) {
     }
   }
 }
-const showFrameBase = showFrame;
-showFrame = function () {
-  showFrameBase();
-  const r = show.getBoundingClientRect(), vh = innerHeight, vw = innerWidth;
-  if (semMovimento() || r.bottom < -50 || r.top > vh + 50) return;
-  const total = r.height - vh, p = total > 0 ? clamp01(-r.top / total) : 0;
-  abertura2(p * (N_CENAS - 1), vw, vh);
-};
 
 /* ---------- O cenário acompanha o mouse devagar ---------- */
 let mx = 0, my = 0, ax = 0, ay = 0, movendo = false;
@@ -3243,7 +3282,7 @@ function seguir() {
   ax += (mx - ax) * .045; ay += (my - ay) * .045;
   const dx = -ax * innerWidth * .0156, dy = -ay * innerHeight * .015;
   objs.style.transform = `translate3d(${(dx * 2.2).toFixed(2)}px, ${(dy * 2.2).toFixed(2)}px, 0)`;
-  $("show-glow").style.transform = `translate3d(${dx.toFixed(2)}px, ${dy.toFixed(2)}px, 0) scale(${(1 + .03 + .014 * Math.max(0, ay)).toFixed(4)})`;
+  $("show-glow").style.translate = `${dx.toFixed(2)}px ${dy.toFixed(2)}px`;
   disc.style.translate = `${(dx * 1.4).toFixed(2)}px ${(dy * 1.4).toFixed(2)}px`;
   if (Math.abs(mx - ax) < .0004 && Math.abs(my - ay) < .0004) { movendo = false; return; }
   requestAnimationFrame(seguir);
@@ -3269,7 +3308,7 @@ let reservaT; addEventListener("resize", () => { clearTimeout(reservaT); reserva
 
 /* ---------- Início ---------- */
 renderHero(); renderPick(); renderMass(); setMassUI(false); renderQuote(); restartHero(); applyFilter(); renderEscalaCard();
-renderFormacao(); renderTimeline(); renderDocs(); onScroll(); showFrame();
+renderFormacao(); renderTimeline(); renderDocs(); medir(); onScroll(); showFrame();
 renderLiturgia(); renderAgenda(); renderFrases(); applyTeam();
 startData().then(openFromHash);
 </script>
