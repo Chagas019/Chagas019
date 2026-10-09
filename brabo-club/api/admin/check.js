@@ -1,6 +1,7 @@
-// Confere a chave do dono
-import { json, autorizado } from '../_lib/dados.js';
+// Confere a chave: diz se é o dono ou qual barbeiro
+import { json, quem } from '../_lib/dados.js';
 
 export async function GET(request) {
-  return autorizado(request) ? json({ ok: true }) : json({ erro: 'Chave inválida.' }, 401);
+  const q = quem(request);
+  return q ? json({ ok: true, ...q }) : json({ erro: 'Chave inválida.' }, 401);
 }

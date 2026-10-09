@@ -54,15 +54,23 @@ export function json(body, status = 200, cache = 'no-store') {
   });
 }
 
-// ---- acesso do dono: chave guardada na variável ADMIN_KEY ----
-export function autorizado(request) {
-  const chave = process.env.ADMIN_KEY || '';
-  const veio = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
+// ---- acesso: o dono usa ADMIN_KEY; cada barbeiro tem a sua chave (BARBEIRO_VITINHO_KEY, ...) ----
+function igual(chave, veio) {
   if (!chave || !veio) return false;
   const a = crypto.createHash('sha256').update(chave).digest();
   const b = crypto.createHash('sha256').update(veio).digest();
   return crypto.timingSafeEqual(a, b);
 }
+// Devolve { papel: 'dono' } ou { papel: 'barbeiro', barbeiro: 'vitinho' }, ou null se a chave não vale
+export function quem(request) {
+  const veio = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
+  if (igual(process.env.ADMIN_KEY || '', veio)) return { papel: 'dono' };
+  for (const id of Object.keys(BARBEIROS)) {
+    if (igual(process.env[`BARBEIRO_${id.toUpperCase()}_KEY`] || '', veio)) return { papel: 'barbeiro', barbeiro: id, nome: BARBEIROS[id].nome };
+  }
+  return null;
+}
+export function autorizado(request) { const q = quem(request); return !!q && q.papel === 'dono'; }
 
 // ---- blob ----
 async function lerJSON(pathname) {
@@ -120,6 +128,21 @@ export function validarPrecos(entrada) {
       precos[b] = v;
     }
     out.push({ id: s.id, nome, desc, min, precos, preco: Math.min(...Object.values(precos)) });
+  }
+  return { servicos: out };
+}
+
+// O barbeiro só muda a coluna dele; nome, descrição, tempo e os preços dos outros ficam como estão
+export function validarPrecosBarbeiro(entrada, atuais, barbeiro) {
+  if (!Array.isArray(entrada)) return { erro: 'Envie a lista de serviços.' };
+  const out = [];
+  for (const s of atuais) {
+    const x = entrada.find(v => v && v.id === s.id);
+    const bruto = x && x.precos ? x.precos[barbeiro] : undefined;
+    const v = Math.round(Number(bruto) * 100) / 100;
+    if (bruto === '' || bruto == null || !Number.isFinite(v) || v < 0 || v > 5000) return { erro: `Preço inválido em ${s.nome}.` };
+    const precos = { ...s.precos, [barbeiro]: v };
+    out.push({ id: s.id, nome: s.nome, desc: s.desc, min: s.min, precos, preco: Math.min(...Object.values(precos)) });
   }
   return { servicos: out };
 }

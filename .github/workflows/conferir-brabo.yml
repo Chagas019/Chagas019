@@ -30,6 +30,8 @@ jobs:
           checa "site dos clientes" 200 "$URL/"
           grep -q 'Brabo Club' /tmp/body || { echo 'página sem o título'; falhou=1; }
           checa "painel do dono" 200 "$URL/dono"
+          checa "painel do barbeiro" 200 "$URL/barbeiro"
+          grep -q 'Painel' /tmp/body || falhou=1
           grep -q 'Painel do' /tmp/body || { echo 'painel sem o título'; falhou=1; }
           checa "preços" 200 "$URL/api/precos"
           grep -q '"servicos"' /tmp/body || falhou=1

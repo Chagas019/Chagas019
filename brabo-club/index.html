@@ -249,6 +249,31 @@
   @media (max-width:520px){ .feat-prices{grid-template-columns:1fr} }
   .feat-hours small{font:600 10px var(--sans); letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-left:8px}
 
+  /* ---------- Agenda do dia ---------- */
+  .ag-sub{margin:14px 0 0; font-size:14px; line-height:1.6; color:var(--muted); max-width:560px}
+  .ag-days{display:flex; gap:8px; overflow-x:auto; padding:22px 0 6px; scrollbar-width:thin}
+  .ag-days button{flex:none; min-width:70px; padding:9px 12px; border-radius:10px; border:1px solid var(--line2); background:var(--card); cursor:pointer; text-align:center; color:var(--cream)}
+  .ag-days button b{display:block; font:600 10px var(--sans); letter-spacing:.16em; text-transform:uppercase; color:var(--muted)}
+  .ag-days button span{display:block; margin-top:3px; font:600 20px/1 var(--serif); font-variant-numeric:lining-nums tabular-nums}
+  .ag-days button[aria-pressed="true"]{background:var(--orange); border-color:var(--orange); color:#1a0d05}
+  .ag-days button[aria-pressed="true"] b{color:#1a0d05}
+  .ag-grid{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:14px; margin-top:16px}
+  .ag-col{padding:16px; border:1px solid var(--line); border-radius:10px; background:var(--card)}
+  .ag-col h3{display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin:0 0 12px; font:600 24px var(--serif)}
+  .ag-col h3 small{font:600 10px var(--sans); letter-spacing:.16em; text-transform:uppercase; color:var(--muted)}
+  .ag-slots{display:grid; grid-template-columns:repeat(3, 1fr); gap:6px}
+  .ag-slots button{height:44px; border-radius:8px; border:1px solid rgba(120,220,160,.35); background:rgba(120,220,160,.08); color:#bff0cf; cursor:pointer;
+    font:600 14px/1.1 var(--sans); font-variant-numeric:lining-nums tabular-nums; transition:background-color .2s, border-color .2s}
+  .ag-slots button:hover{background:rgba(120,220,160,.18); border-color:rgba(120,220,160,.6)}
+  .ag-slots button.oc{border-color:rgba(255,107,26,.35); background:rgba(255,107,26,.10); color:var(--orange2); cursor:not-allowed}
+  .ag-slots button.ps{border-color:var(--line); background:transparent; color:var(--dim); text-decoration:line-through; cursor:not-allowed}
+  .ag-slots button small{display:block; font:600 8.5px var(--sans); letter-spacing:.12em; text-transform:uppercase; opacity:.85}
+  .ag-folga{margin:6px 0 0; padding:18px; border:1px dashed var(--line2); border-radius:8px; text-align:center; color:var(--muted); font-size:13.5px}
+  .ag-legend{display:flex; flex-wrap:wrap; gap:18px; margin-top:16px; font-size:12.5px; color:var(--muted)}
+  .ag-legend i{display:inline-block; width:12px; height:12px; border-radius:4px; margin-right:7px; vertical-align:-1px}
+  .ag-legend .lv{background:rgba(120,220,160,.35)} .ag-legend .oc{background:rgba(255,107,26,.5)} .ag-legend .ps{border:1px solid var(--line2)}
+  @media (max-width:860px){ .ag-grid{grid-template-columns:1fr} }
+
   /* ---------- 04. Stats / ritual ---------- */
   .ritual{overflow:hidden; background:#0f0b09; padding-bottom:0}
   .stats{display:grid; grid-template-columns:repeat(4, 1fr); border-top:1px solid var(--line); border-bottom:1px solid var(--line)}
@@ -562,9 +587,10 @@
       <a href="#servicos">Serviços</a>
       <a href="#monte">Monte</a>
       <a href="#barbeiros">Barbeiros</a>
+      <a href="#agenda">Agenda</a>
       <a href="#corta">Corta aí</a>
       <a href="#rota">Como chegar</a>
-      <a href="#painel" data-admin hidden>Agenda</a>
+      <a href="#painel" data-admin hidden>Quem agendou</a>
       <a href="#meus" data-open="meus">Meus horários</a>
       <a class="nav-cta" href="#agendar" data-open="agendar">Agendar</a>
     </nav>
@@ -575,6 +601,7 @@
       <a href="#servicos">Serviços</a>
       <a href="#monte">Monte seu corte</a>
       <a href="#barbeiros">Barbeiros</a>
+      <a href="#agenda">Agenda do dia</a>
       <a href="#corta">Corta aí</a>
       <a href="#local">Onde fica</a>
       <a href="#rota">Como chegar</a>
@@ -847,6 +874,18 @@
       <div class="feat-prices rv" id="feat-prices" aria-label="Tabela de preços do barbeiro"></div>
       <a class="btn solid btn-o rv" href="#agendar" data-open="agendar" id="feat-book">Agendar</a>
     </div>
+  </div>
+</section>
+
+<!-- ===== Agenda do dia: horários livres e ocupados de cada barbeiro (sem dados de clientes) ===== -->
+<section class="sec grain" id="agenda">
+  <div class="wrap">
+    <span class="kick rv">Ao vivo <i>// horários de cada barbeiro</i></span>
+    <h2 class="title gl" data-text="Agenda do dia"><span class="slash">//</span> Agenda do <em>dia</em></h2>
+    <p class="ag-sub rv">Veja o que está livre e toque num horário para marcar. Nomes e telefones de clientes não aparecem aqui.</p>
+    <div class="ag-days rv" id="ag-days" role="group" aria-label="Escolher dia"></div>
+    <div class="ag-grid rv" id="ag-grid" aria-live="polite"></div>
+    <div class="ag-legend rv"><span><i class="lv"></i>Livre</span><span><i class="oc"></i>Ocupado</span><span><i class="ps"></i>Já passou</span></div>
   </div>
 </section>
 
@@ -1219,6 +1258,8 @@
 
     function preset(o){
       if (o.barbeiro) { st.barbeiro = o.barbeiro; st.data = null; st.hora = null; }
+      if (o.data) st.data = o.data;
+      if (o.hora) st.hora = o.hora;
       if (o.servico) { if (BASE_IDS.indexOf(o.servico) >= 0) st.servico = o.servico; else { st.extras = [o.servico]; } }
       if (o.extras) st.extras = o.extras.slice();
       showTab('novo'); msg('', ''); render();
@@ -1281,7 +1322,7 @@
     function renderHours(){
       var ph = $('pick-hora'); ph.textContent = '';
       var b = byId(BARBEIROS, st.barbeiro);
-      if (!b || !st.data) { ph.appendChild(el('p', 'empty', 'Escolha o dia para ver os horários.')); renderSummary(); return; }
+      if (!b || !st.data) { ph.appendChild(el('p', 'empty', 'Escolha o dia para ver os horários.')); renderSummary(); renderAgenda(); return; }
       var livres = 0;
       b.horas.forEach(function(h){
         var off = !!taken[slotId(b.id, st.data, h)] || horaPassou(st.data, h);
@@ -1290,7 +1331,58 @@
         ph.appendChild(chip(h, st.hora === h, function(){ st.hora = h; msg('', ''); renderHours(); }, off));
       });
       if (!livres) ph.appendChild(el('p', 'empty', 'Sem horários livres nesse dia. Tente outro.'));
-      renderSummary();
+      renderSummary(); renderAgenda();
+    }
+
+    // ---- Agenda do dia (pública): só livre / ocupado, nunca quem marcou ----
+    var agDia = null;
+    // Abre no primeiro dia que ainda tem horário pela frente (hoje à noite já mostra amanhã)
+    function primeiroDia(){
+      var d = new Date(); d.setHours(0, 0, 0, 0);
+      for (var i = 0; i < 7; i++) {
+        var id = iso(d), dow = d.getDay();
+        if (BARBEIROS.some(function(b){ return b.dias.indexOf(dow) >= 0 && b.horas.some(function(h){ return !horaPassou(id, h); }); })) return id;
+        d.setDate(d.getDate() + 1);
+      }
+      return iso(new Date());
+    }
+    function renderAgenda(){
+      var days = $('ag-days'), grid = $('ag-grid');
+      if (!days || !grid) return;
+      if (!agDia) agDia = primeiroDia();
+      days.textContent = '';
+      var d = new Date(); d.setHours(0, 0, 0, 0);
+      for (var i = 0; i < 7; i++) {
+        (function(dd, idx){
+          var id = iso(dd), b = el('button'); b.type = 'button';
+          b.appendChild(el('b', null, idx === 0 ? 'Hoje' : DIAS[dd.getDay()]));
+          b.appendChild(el('span', null, pad(dd.getDate()) + '/' + pad(dd.getMonth() + 1)));
+          b.setAttribute('aria-pressed', id === agDia ? 'true' : 'false');
+          b.addEventListener('click', function(){ agDia = id; renderAgenda(); });
+          days.appendChild(b);
+        })(new Date(d), i);
+        d.setDate(d.getDate() + 1);
+      }
+      grid.textContent = '';
+      var dow = fromIso(agDia).getDay();
+      BARBEIROS.forEach(function(b){
+        var col = el('div', 'ag-col'), h = el('h3', null, b.nome);
+        col.appendChild(h);
+        if (b.dias.indexOf(dow) < 0) { h.appendChild(el('small', null, 'Folga')); col.appendChild(el('p', 'ag-folga', b.nome + ' não atende nesse dia.')); grid.appendChild(col); return; }
+        var livres = 0, futuros = 0, slots = el('div', 'ag-slots');
+        b.horas.forEach(function(hh){
+          var oc = !!taken[slotId(b.id, agDia, hh)], ps = !oc && horaPassou(agDia, hh);
+          if (!horaPassou(agDia, hh)) futuros++;
+          var btn = el('button', oc ? 'oc' : (ps ? 'ps' : null), hh); btn.type = 'button';
+          if (oc) { btn.appendChild(el('small', null, 'Ocupado')); btn.setAttribute('aria-disabled', 'true'); btn.title = 'Horário ocupado'; }
+          else if (ps) { btn.setAttribute('aria-disabled', 'true'); btn.title = 'Horário já passou'; }
+          else { livres++; btn.title = 'Marcar ' + hh + ' com ' + b.nome; btn.addEventListener('click', function(){ open('agendar', {barbeiro: b.id, data: agDia, hora: hh}); }); }
+          slots.appendChild(btn);
+        });
+        h.appendChild(el('small', null, livres ? livres + (livres > 1 ? ' livres' : ' livre') : (futuros ? 'Lotado' : 'Encerrado')));
+        col.appendChild(slots);
+        grid.appendChild(col);
+      });
     }
 
     function renderSummary(){
