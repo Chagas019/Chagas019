@@ -1,8 +1,8 @@
 name: Publicar site
 
+# Publicação no GitHub Pages desativada por enquanto: o site é testado pelo link do Claude.
+# Para publicar aqui, ative Settings → Pages → GitHub Actions e rode este workflow manualmente.
 on:
-  push:
-    branches: [main, claude/instalar-ui-ux-pro-max-skill-k8hjsq]
   workflow_dispatch:
 
 permissions:
