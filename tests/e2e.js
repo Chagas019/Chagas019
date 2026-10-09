@@ -318,7 +318,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     // rolagem
     await p.evaluate(() => scrollTo(0, document.body.scrollHeight)); await p.waitForTimeout(300);
     check(await p.isVisible("#to-top"), "botão voltar ao topo aparece ao rolar");
-    await p.click("#to-top"); await p.waitForTimeout(900);
+    await p.click("#to-top"); await p.waitForFunction(() => scrollY < 50, null, { timeout: 3000 }).catch(() => {});
     check(await p.evaluate(() => scrollY) < 50, "voltar ao topo leva ao início");
     check(p.erros.length === 0, "sem erros no console", p.erros.join(" | "));
     await p.context().close();
