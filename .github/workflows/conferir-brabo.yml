@@ -39,4 +39,7 @@ jobs:
           checa "dono com chave errada" 401 -H 'Authorization: Bearer errada' "$URL/api/admin/reservas"
           checa "agendamento com data passada (não grava nada)" 400 -X POST -H 'Content-Type: application/json' \
             -d '{"barbeiro":"vitinho","servico":"corte","data":"2020-01-01","hora":"10:00","nome":"Teste","telefone":"19999999999"}' "$URL/api/agendar"
+          checa "meus horários sem códigos" 200 -X POST -H 'Content-Type: application/json' -d '{"itens":[]}' "$URL/api/meus"
+          checa "desmarcar com código errado (não apaga nada)" 404 -X POST -H 'Content-Type: application/json' \
+            -d '{"id":"vitinho_2020-01-01_1000","codigo":"errado"}' "$URL/api/desmarcar"
           exit $falhou
