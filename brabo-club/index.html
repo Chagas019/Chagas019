@@ -176,6 +176,7 @@
   .sig-body p{margin:8px 0 18px; font-size:13px; line-height:1.55; color:var(--muted); flex:1}
   .sig-foot{display:flex; align-items:center; justify-content:space-between}
   .price{font:600 22px var(--serif); color:var(--cream)}
+  .price .apartir{display:block; font:600 9.5px var(--sans); letter-spacing:.14em; text-transform:uppercase; color:var(--dim); margin-bottom:2px}
   .sig-foot .btn{height:34px; padding:0 14px; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase}
   .sig-more{text-align:center; margin-top:28px}
   .link{background:none; border:0; padding:0; cursor:pointer; font:600 11px var(--sans); letter-spacing:.18em; text-transform:uppercase; color:var(--orange); text-decoration:none}
@@ -197,6 +198,9 @@
   .base b{display:block; font:600 10px var(--sans); letter-spacing:.16em; text-transform:uppercase}
   .base small{display:block; margin-top:3px; font-size:11px; color:var(--muted)}
   .extras{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .pv-barbers{display:flex; flex-wrap:wrap; gap:8px}
+  .pv-barbers button{height:40px; padding:0 18px; border-radius:999px; border:1px solid var(--line2); background:var(--card); cursor:pointer; font:600 11px var(--sans); letter-spacing:.16em; text-transform:uppercase; color:var(--muted)}
+  .pv-barbers button[aria-pressed="true"]{background:var(--orange); border-color:var(--orange); color:#1a0d05; box-shadow:0 0 22px rgba(255,107,26,.3)}
   .extra{display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:8px; border:1px solid var(--line); background:var(--card); cursor:pointer; text-align:left;
     transition:border-color .25s ease, box-shadow .3s ease, background-color .25s ease}
   .extra:hover{border-color:var(--line2)}
@@ -238,6 +242,11 @@
   .wk i{font-style:normal; font:600 10px var(--sans); letter-spacing:.12em; text-transform:uppercase; padding:6px 9px; border-radius:6px; background:rgba(255,232,210,.05); color:var(--dim)}
   .wk i.on{background:rgba(255,107,26,.16); color:var(--orange2)}
   .feat-hours{margin:14px 0 22px; font:600 26px var(--serif)}
+  .feat-prices{display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:6px 22px; margin:0 0 22px; max-width:480px}
+  .feat-prices .fp{display:flex; justify-content:space-between; gap:10px; padding:7px 0; border-bottom:1px solid var(--line); font-size:13px; color:rgba(241,230,216,.85)}
+  .feat-prices .fp b{font:600 16px var(--serif); color:var(--orange2); font-variant-numeric:lining-nums tabular-nums}
+  .feat-prices .fp-t{grid-column:1 / -1; font:600 10px var(--sans); letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:2px}
+  @media (max-width:520px){ .feat-prices{grid-template-columns:1fr} }
   .feat-hours small{font:600 10px var(--sans); letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-left:8px}
 
   /* ---------- 04. Stats / ritual ---------- */
@@ -806,6 +815,8 @@
         <div class="bases rv" id="bases" style="--d:.08s"></div>
         <span class="step-l rv">Passo 2 <i>·</i> Adicionais</span>
         <div class="extras rv" id="extras" style="--d:.12s"></div>
+        <span class="step-l rv" style="margin-top:26px">Passo 3 <i>·</i> Com quem? <i>(cada barbeiro tem seu preço)</i></span>
+        <div class="pv-barbers rv" id="pv-barbers" style="--d:.16s"></div>
       </div>
       <div class="preview rv zoom" id="preview" style="--d:.15s">
         <div class="pv-art"><div class="art" id="pv-art"><svg id="pv-ico"><use href="#i-scissors"/></svg></div><div class="pv-big gl" id="pv-big" data-text="40 MIN">40 MIN</div></div>
@@ -831,6 +842,7 @@
       <p class="feat-p rv" id="feat-p"></p>
       <div class="wk rv" id="feat-days"></div>
       <p class="feat-hours rv" id="feat-hours"></p>
+      <div class="feat-prices rv" id="feat-prices" aria-label="Tabela de preços do barbeiro"></div>
       <a class="btn solid btn-o rv" href="#agendar" data-open="agendar" id="feat-book">Agendar</a>
     </div>
   </div>
@@ -1032,7 +1044,7 @@
   </div>
   <div class="panel-body">
     <table class="prices">
-      <thead><tr><th>Serviço</th><th class="dur">Tempo</th><th>Valor</th></tr></thead>
+      <thead><tr><th>Serviço</th><th class="dur">Tempo</th><th>Vitinho</th><th>Mycon</th><th>Rian</th></tr></thead>
       <tbody id="price-rows"></tbody>
     </table>
     <a class="btn solid confirm" style="margin-top:18px" href="#agendar" data-open="agendar">Agendar horário</a>
@@ -1117,6 +1129,9 @@
     function faixa(b){ return b.horas[0] + ' às ' + (parseInt(b.horas[b.horas.length-1], 10) + 1) + ':00'; }
     function byId(list, id){ for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i]; return null; }
     function slotId(b, d, h){ return b + '_' + d + '_' + h.replace(':', ''); }
+    // Preço do serviço com um barbeiro; sem barbeiro escolhido, o menor ("a partir de")
+    function precoDe(s, b){ return (b && s.precos && s.precos[b] != null) ? s.precos[b] : (s.precos ? Math.min.apply(null, Object.keys(s.precos).map(function(k){ return s.precos[k]; })) : s.preco); }
+    function variaPreco(s){ if (!s.precos) return false; var v = Object.keys(s.precos).map(function(k){ return s.precos[k]; }); return Math.min.apply(null, v) !== Math.max.apply(null, v); }
 
     // ---- Tabela de valores ----
     function durTxt(min){ return min >= 60 ? (Math.floor(min / 60) + ' h' + (min % 60 ? ' ' + (min % 60) : '')) : min + ' min'; }
@@ -1127,7 +1142,7 @@
         td.appendChild(el('small', null, s.desc));
         tr.appendChild(td);
         tr.appendChild(el('td', 'dur', durTxt(s.min)));
-        tr.appendChild(el('td', 'val', brl(s.preco)));
+        BARBEIROS.forEach(function(b){ tr.appendChild(el('td', 'val', brl(precoDe(s, b.id)).replace(',00', ''))); });
         rows.appendChild(tr);
       });
     }
@@ -1178,7 +1193,11 @@
     var sel = $('pick-servico');
     function renderSelect(){
       sel.textContent = '';
-      SERVICOS.forEach(function(s){ if (BASE_IDS.indexOf(s.id) < 0) return; var o = el('option', null, s.nome + ' — ' + brl(s.preco)); o.value = s.id; sel.appendChild(o); });
+      SERVICOS.forEach(function(s){
+        if (BASE_IDS.indexOf(s.id) < 0) return;
+        var pre = (!st.barbeiro && variaPreco(s)) ? 'a partir de ' : '';
+        var o = el('option', null, s.nome + ' — ' + pre + brl(precoDe(s, st.barbeiro))); o.value = s.id; sel.appendChild(o);
+      });
       sel.value = st.servico;
     }
     sel.addEventListener('change', function(){ st.servico = sel.value; renderSummary(); });
@@ -1216,13 +1235,13 @@
     }
 
     function render(){
-      if (!sel.options.length) renderSelect();
+      renderSelect();
       sel.value = st.servico;
       var px = $('pick-extras'); px.textContent = '';
       SERVICOS.forEach(function(s){
         if (BASE_IDS.indexOf(s.id) >= 0) return;
         var on = st.extras.indexOf(s.id) >= 0;
-        px.appendChild(chip(s.nome + ' +' + brl(s.preco).replace(',00', ''), on, function(){
+        px.appendChild(chip(s.nome + ' +' + brl(precoDe(s, st.barbeiro)).replace(',00', ''), on, function(){
           var i = st.extras.indexOf(s.id); if (i >= 0) st.extras.splice(i, 1); else st.extras.push(s.id); render();
         }));
       });
@@ -1273,7 +1292,7 @@
       $('confirm').disabled = !ok || busy;
     }
 
-    function totalDe(){ return st.extras.reduce(function(a, id){ return a + byId(SERVICOS, id).preco; }, byId(SERVICOS, st.servico).preco); }
+    function totalDe(){ return st.extras.reduce(function(a, id){ return a + precoDe(byId(SERVICOS, id), st.barbeiro); }, precoDe(byId(SERVICOS, st.servico), st.barbeiro)); }
 
     function msg(text, kind){ var m = $('msg'); m.textContent = text; m.className = 'msg' + (kind ? ' ' + kind : ''); }
 
@@ -1300,8 +1319,8 @@
     function whatsapp(){
       var b = byId(BARBEIROS, st.barbeiro), s = byId(SERVICOS, st.servico);
       var txt = 'Olá! Quero agendar no Brabo Club.\n' +
-        'Serviço: ' + s.nome + ' (' + brl(s.preco) + ')\n' +
-        (st.extras.length ? 'Adicionais: ' + st.extras.map(function(id){ var x = byId(SERVICOS, id); return x.nome + ' (' + brl(x.preco) + ')'; }).join(', ') + '\n' : '') +
+        'Serviço: ' + s.nome + ' (' + brl(precoDe(s, st.barbeiro)) + ')\n' +
+        (st.extras.length ? 'Adicionais: ' + st.extras.map(function(id){ var x = byId(SERVICOS, id); return x.nome + ' (' + brl(precoDe(x, st.barbeiro)) + ')'; }).join(', ') + '\n' : '') +
         'Total: ' + brl(totalDe()) + '\n' +
         'Barbeiro: ' + b.nome + '\n' +
         'Dia: ' + nomeDia(st.data) + '\n' +
@@ -1379,10 +1398,15 @@
     function aplicarPrecos(lista){
       SERVICOS.forEach(function(s){
         var x = lista.find(function(v){ return v && v.id === s.id; });
-        if (x) { s.nome = x.nome; s.desc = x.desc; s.min = x.min; s.preco = x.preco; }
+        if (x) { s.nome = x.nome; s.desc = x.desc; s.min = x.min; s.preco = x.preco; if (x.precos) s.precos = x.precos; }
       });
       renderTabela(); renderSelect(); render();
-      document.querySelectorAll('[data-preco]').forEach(function(n){ var s = byId(SERVICOS, n.dataset.preco); if (s) n.textContent = brl(s.preco).replace(',00', ''); });
+      document.querySelectorAll('[data-preco]').forEach(function(n){
+        var s = byId(SERVICOS, n.dataset.preco); if (!s) return;
+        n.textContent = '';
+        if (variaPreco(s)) n.appendChild(el('small', 'apartir', 'a partir de'));
+        n.appendChild(document.createTextNode(brl(precoDe(s, null)).replace(',00', '')));
+      });
       document.querySelectorAll('[data-nome]').forEach(function(n){ var s = byId(SERVICOS, n.dataset.nome); if (s) n.textContent = s.nome; });
       document.querySelectorAll('[data-dur]').forEach(function(n){ var s = byId(SERVICOS, n.dataset.dur); if (s) n.textContent = durTxt(s.min); });
       window.dispatchEvent(new CustomEvent('brabo:precos'));
@@ -1450,7 +1474,7 @@
     }
     function totalReserva(r){
       if (r.total) return r.total;
-      return (r.extras || []).reduce(function(a, id){ var x = byId(SERVICOS, id); return a + (x ? x.preco : 0); }, (byId(SERVICOS, r.servico) || {preco:0}).preco);
+      return (r.extras || []).reduce(function(a, id){ var x = byId(SERVICOS, id); return a + (x ? precoDe(x, r.barbeiro) : 0); }, precoDe(byId(SERVICOS, r.servico) || {preco:0}, r.barbeiro));
     }
     function waLink(tel){
       var d = String(tel || '').replace(/\D/g, '');
@@ -1501,7 +1525,7 @@
     }
 
     render(); setMode();
-    window.BRABO = {SERVICOS:SERVICOS, BARBEIROS:BARBEIROS, DIAS:DIAS, byId:byId, faixa:faixa, open:open};
+    window.BRABO = {SERVICOS:SERVICOS, BARBEIROS:BARBEIROS, DIAS:DIAS, byId:byId, faixa:faixa, open:open, precoDe:precoDe, variaPreco:variaPreco};
 
     // Hospedado na Vercel: preços e agenda vêm da API do próprio site
     var apiPronta = (async function(){
@@ -1695,24 +1719,30 @@
       {id:'pezinho', ico:'i-comb'}, {id:'sobrancelha', ico:'i-brow'},
       {id:'pigmentacao', ico:'i-drop'}, {id:'platinado', ico:'i-spark'}
     ];
-    var build = {base:'corte', extras:[]};
+    var build = {base:'corte', extras:[], barbeiro:'vitinho'};
     function svc(id){ return B.byId(B.SERVICOS, id); }
     function dur(min){ return min >= 60 ? (Math.floor(min / 60) + ' H' + (min % 60 ? ' ' + (min % 60) : '')) : min + ' MIN'; }
     var basesBox = $('bases'), extrasBox = $('extras');
     function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
     function montarBuilder(){
     basesBox.textContent = ''; extrasBox.textContent = '';
+    var pb = $('pv-barbers'); pb.textContent = '';
+    B.BARBEIROS.forEach(function(b){
+      var x = el('button'); x.type = 'button'; x.dataset.id = b.id; x.textContent = b.nome;
+      x.addEventListener('click', function(){ build.barbeiro = b.id; montarBuilder(); renderBuild(true); });
+      pb.appendChild(x);
+    });
     BASES.forEach(function(b){
       var s = svc(b.id), btn = el('button', 'base');
       btn.type = 'button'; btn.dataset.id = b.id;
-      btn.innerHTML = '<span class="ring"><svg><use href="#' + b.ico + '"/></svg></span><b>' + esc(s.nome) + '</b><small>' + dur(s.min).toLowerCase() + ' · ' + brl(s.preco) + '</small>';
+      btn.innerHTML = '<span class="ring"><svg><use href="#' + b.ico + '"/></svg></span><b>' + esc(s.nome) + '</b><small>' + dur(s.min).toLowerCase() + ' · ' + brl(B.precoDe(s, build.barbeiro)) + '</small>';
       btn.addEventListener('click', function(){ build.base = b.id; renderBuild(true); });
       basesBox.appendChild(btn);
     });
     EXTRAS.forEach(function(x){
       var s = svc(x.id), btn = el('button', 'extra');
       btn.type = 'button'; btn.dataset.id = x.id;
-      btn.innerHTML = '<span class="ico"><svg><use href="#' + x.ico + '"/></svg></span><span>' + esc(s.nome) + '</span><em>+' + brl(s.preco) + '</em>';
+      btn.innerHTML = '<span class="ico"><svg><use href="#' + x.ico + '"/></svg></span><span>' + esc(s.nome) + '</span><em>+' + brl(B.precoDe(s, build.barbeiro)) + '</em>';
       btn.addEventListener('click', function(){
         var i = build.extras.indexOf(x.id);
         if (i >= 0) build.extras.splice(i, 1); else { build.extras.push(x.id); flyTo(btn.querySelector('.ico'), x.ico); }
@@ -1737,13 +1767,15 @@
       ], {duration:720, easing:'cubic-bezier(.45,0,.2,1)'}).onfinish = function(){ f.remove(); };
     }
     function renderBuild(changed){
-      var base = svc(build.base), bdef = B.byId(BASES, build.base), min = base.min, total = base.preco;
+      var bb = build.barbeiro, base = svc(build.base), bdef = B.byId(BASES, build.base), min = base.min, total = B.precoDe(base, bb);
       basesBox.querySelectorAll('.base').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.id === build.base ? 'true' : 'false'); });
       extrasBox.querySelectorAll('.extra').forEach(function(b){ b.setAttribute('aria-pressed', build.extras.indexOf(b.dataset.id) >= 0 ? 'true' : 'false'); });
       var lines = $('pv-lines'); lines.innerHTML = '';
       function line(a, b){ var li = el('li'); li.appendChild(el('span', null, '')).textContent = a; li.appendChild(el('span', null, '')).textContent = b; lines.appendChild(li); }
-      line(base.nome + ' · ' + dur(base.min).toLowerCase(), brl(base.preco));
-      build.extras.forEach(function(id){ var s = svc(id); min += s.min; total += s.preco; line(s.nome, '+' + brl(s.preco)); });
+      line(base.nome + ' · ' + dur(base.min).toLowerCase(), brl(B.precoDe(base, bb)));
+      build.extras.forEach(function(id){ var s = svc(id), pr = B.precoDe(s, bb); min += s.min; total += pr; line(s.nome, '+' + brl(pr)); });
+      line('Barbeiro', B.byId(B.BARBEIROS, bb).nome);
+      $('pv-barbers').querySelectorAll('button').forEach(function(x){ x.setAttribute('aria-pressed', x.dataset.id === bb ? 'true' : 'false'); });
       $('pv-total').textContent = brl(total);
       var art = $('pv-art'); art.style.setProperty('--c1', bdef.c1); art.style.setProperty('--c2', bdef.c2);
       $('pv-ico').innerHTML = '<use href="#' + bdef.ico + '"/>';
@@ -1751,7 +1783,7 @@
       if (big.textContent !== txt) { big.textContent = txt; big.dataset.text = txt; if (changed && big.classList.contains('in')) replay(big); }
     }
     renderBuild(false);
-    $('pv-book').addEventListener('click', function(){ B.open('agendar', {servico: build.base, extras: build.extras.slice()}); });
+    $('pv-book').addEventListener('click', function(){ B.open('agendar', {servico: build.base, extras: build.extras.slice(), barbeiro: build.barbeiro}); });
 
     // ---- 03. Barbeiros em destaque ----
     var FEAT = {
@@ -1778,12 +1810,20 @@
       $('feat-hours').innerHTML = '';
       $('feat-hours').appendChild(document.createTextNode(B.faixa(b)));
       $('feat-hours').appendChild(el('small', null, 'Horário de atendimento'));
+      var fp = $('feat-prices'); fp.textContent = '';
+      fp.appendChild(el('span', 'fp-t', 'Tabela do ' + b.nome));
+      B.SERVICOS.forEach(function(sv){
+        var row = el('div', 'fp'); row.appendChild(el('span')).textContent = sv.nome;
+        row.appendChild(el('b')).textContent = brl(B.precoDe(sv, id));
+        fp.appendChild(row);
+      });
       var book = $('feat-book'); book.textContent = 'Agendar com ' + b.nome; book.dataset.barbeiro = id;
       var art = $('feat-art'); art.style.setProperty('--c1', f.c1); art.style.setProperty('--c2', f.c2);
       $('feat-ico').innerHTML = '<use href="#' + f.ico + '"/>';
       $('feat-mono').textContent = b.nome.charAt(0);
     }
     showBarber('vitinho', false);
+    addEventListener('brabo:precos', function(){ var c = cur; cur = null; showBarber(c, false); });
 
     // ---- 04. Números contando, com brasas subindo ----
     var nio = new IntersectionObserver(function(es){

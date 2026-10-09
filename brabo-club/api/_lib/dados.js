@@ -71,13 +71,34 @@ async function lerJSON(pathname) {
   return JSON.parse(await new Response(r.stream).text());
 }
 
+// Cada serviço tem um preço por barbeiro (precos.vitinho, precos.mycon, precos.rian).
+// "preco" é o menor deles, usado no site como "a partir de".
+const BARB_IDS = Object.keys(BARBEIROS);
+function completar(s, x) {
+  const base = x && Number.isFinite(Number(x.preco)) ? Number(x.preco) : s.preco;
+  const precos = {};
+  for (const b of BARB_IDS) {
+    const v = x && x.precos ? Number(x.precos[b]) : NaN;
+    precos[b] = Number.isFinite(v) ? v : base;
+  }
+  return {
+    id: s.id,
+    nome: x ? x.nome : s.nome,
+    desc: x ? x.desc : s.desc,
+    min: x ? x.min : s.min,
+    precos,
+    preco: Math.min(...Object.values(precos))
+  };
+}
+
 export async function lerPrecos() {
   const salvo = await lerJSON(PRECOS_PATH).catch(() => null);
   const lista = (salvo && Array.isArray(salvo.servicos)) ? salvo.servicos : [];
-  return SERVICOS_PADRAO.map(s => {
-    const x = lista.find(v => v && v.id === s.id);
-    return x ? { ...s, nome: x.nome, desc: x.desc, min: x.min, preco: x.preco } : { ...s };
-  });
+  return SERVICOS_PADRAO.map(s => completar(s, lista.find(v => v && v.id === s.id)));
+}
+
+export function precoDe(servico, barbeiro) {
+  return servico.precos && Number.isFinite(servico.precos[barbeiro]) ? servico.precos[barbeiro] : servico.preco;
 }
 
 export function validarPrecos(entrada) {
@@ -88,12 +109,17 @@ export function validarPrecos(entrada) {
     if (!x) return { erro: `Falta o serviço ${s.nome}.` };
     const nome = String(x.nome || '').trim().slice(0, 40);
     const desc = String(x.desc || '').trim().slice(0, 90);
-    const preco = Math.round(Number(x.preco) * 100) / 100;
     const min = Math.round(Number(x.min));
     if (nome.length < 2) return { erro: `Dê um nome para ${s.nome}.` };
-    if (!Number.isFinite(preco) || preco < 0 || preco > 5000) return { erro: `Preço inválido em ${nome}.` };
     if (!Number.isFinite(min) || min < 5 || min > 480) return { erro: `Tempo inválido em ${nome} (5 a 480 minutos).` };
-    out.push({ id: s.id, nome, desc, min, preco });
+    const precos = {};
+    for (const b of BARB_IDS) {
+      const bruto = x.precos ? x.precos[b] : x.preco;
+      const v = Math.round(Number(bruto) * 100) / 100;
+      if (bruto === '' || bruto == null || !Number.isFinite(v) || v < 0 || v > 5000) return { erro: `Preço inválido em ${nome} para ${BARBEIROS[b].nome}.` };
+      precos[b] = v;
+    }
+    out.push({ id: s.id, nome, desc, min, precos, preco: Math.min(...Object.values(precos)) });
   }
   return { servicos: out };
 }
@@ -177,7 +203,7 @@ export function validarPedido(p, precos) {
   const telefone = String(p.telefone || '').trim().slice(0, 20);
   const dig = telefone.replace(/\D/g, '');
   if (dig.length < 10 || dig.length > 13) return { erro: 'Digite um WhatsApp com DDD.' };
-  const preco = id => precos.find(s => s.id === id).preco;
+  const preco = id => precoDe(precos.find(s => s.id === id), p.barbeiro);
   const total = extras.reduce((a, id) => a + preco(id), preco(p.servico));
   const hhmm = hora.replace(':', '');
   return {

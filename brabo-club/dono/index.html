@@ -96,7 +96,8 @@
   .ptable td:last-child{border-radius:0 10px 10px 0; padding-right:14px}
   .ptable input{width:100%; height:40px; padding:0 10px; border-radius:8px; border:1px solid var(--line2); background:rgba(0,0,0,.22); font-size:14px}
   .ptable input:focus{border-color:var(--orange2)}
-  .ptable .num{width:96px}
+  .ptable .num{width:92px}
+  .ptable td:nth-child(2) input{min-width:150px}
   .ptable .money{position:relative}
   .ptable .money input{padding-left:34px}
   .ptable .money::before{content:"R$"; position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:13px; color:var(--dim); pointer-events:none}
@@ -173,14 +174,15 @@
     </section>
 
     <section data-pane="precos" hidden>
-      <p style="color:var(--muted); font-size:14px; line-height:1.6; margin:4px 0 14px">Mude nomes, descrições, tempo e valores. Depois de salvar, o site dos clientes mostra os novos preços em até meio minuto, e os próximos agendamentos já usam os valores novos.</p>
+      <p style="color:var(--muted); font-size:14px; line-height:1.6; margin:4px 0 14px">Cada barbeiro tem o seu preço. Mude nomes, descrições, tempo e valores. Depois de salvar, o site dos clientes mostra os novos preços em até meio minuto, e os próximos agendamentos já usam os valores novos.</p>
       <table class="ptable">
-        <thead><tr><th>Serviço</th><th>Descrição</th><th>Tempo (min)</th><th>Preço</th></tr></thead>
+        <thead><tr><th>Serviço</th><th>Descrição</th><th>Tempo (min)</th><th>Vitinho</th><th>Mycon</th><th>Rian</th></tr></thead>
         <tbody id="ptbody"></tbody>
       </table>
       <div class="savebar">
         <button class="btn solid" type="button" id="salvar" disabled>Salvar preços</button>
         <button class="btn ghost" type="button" id="desfazer" disabled>Desfazer mudanças</button>
+        <button class="btn ghost" type="button" id="igualar">Copiar preços do Vitinho para todos</button>
         <p class="msg" id="precos-msg" role="status"></p>
       </div>
     </section>
@@ -357,9 +359,14 @@
         c2.appendChild(input('text', s.desc, {maxlength:'90', 'aria-label':'Descrição', 'data-k':'desc'}));
         var c3 = el('td'); c3.dataset.l = 'Tempo (min)';
         var m = input('number', s.min, {min:'5', max:'480', step:'5', inputmode:'numeric', 'aria-label':'Tempo em minutos', 'data-k':'min'}); m.className = 'num'; c3.appendChild(m);
-        var c4 = el('td'); c4.dataset.l = 'Preço';
-        var w = el('div', 'money'); var pv = input('number', s.preco, {min:'0', max:'5000', step:'0.01', inputmode:'decimal', 'aria-label':'Preço em reais', 'data-k':'preco'}); pv.className = 'num'; w.appendChild(pv); c4.appendChild(w);
-        [c1, c2, c3, c4].forEach(function(c){ tr.appendChild(c); });
+        var cells = [c1, c2, c3];
+        BARBEIROS.forEach(function(b){
+          var c = el('td'); c.dataset.l = 'Preço com ' + b.nome;
+          var w = el('div', 'money');
+          var pv = input('number', (s.precos && s.precos[b.id] != null) ? s.precos[b.id] : s.preco, {min:'0', max:'5000', step:'0.01', inputmode:'decimal', 'aria-label':'Preço de ' + s.nome + ' com ' + b.nome, 'data-b':b.id});
+          pv.className = 'num'; w.appendChild(pv); c.appendChild(w); cells.push(c);
+        });
+        cells.forEach(function(c){ tr.appendChild(c); });
         tb.appendChild(tr);
       });
       marcar();
@@ -367,14 +374,17 @@
     function lerTabela(){
       return servicos.map(function(s, i){
         var tr = document.querySelector('#ptbody tr[data-i="' + i + '"]'), o = {id: s.id};
-        tr.querySelectorAll('input[data-k]').forEach(function(inp){ o[inp.dataset.k] = (inp.dataset.k === 'min' || inp.dataset.k === 'preco') ? Number(inp.value) : inp.value.trim(); });
+        tr.querySelectorAll('input[data-k]').forEach(function(inp){ o[inp.dataset.k] = inp.dataset.k === 'min' ? Number(inp.value) : inp.value.trim(); });
+        o.precos = {};
+        tr.querySelectorAll('input[data-b]').forEach(function(inp){ o.precos[inp.dataset.b] = inp.value === '' ? '' : Number(inp.value); });
         return o;
       });
     }
     function marcar(){
       var atual = lerTabela(), mudou = false;
       atual.forEach(function(a, i){
-        var o = original[i], dif = a.nome !== o.nome || a.desc !== o.desc || a.min !== o.min || a.preco !== o.preco;
+        var o = original[i], dif = a.nome !== o.nome || a.desc !== o.desc || a.min !== o.min ||
+          BARBEIROS.some(function(b){ return a.precos[b.id] !== ((o.precos && o.precos[b.id] != null) ? o.precos[b.id] : o.preco); });
         document.querySelector('#ptbody tr[data-i="' + i + '"]').classList.toggle('changed', dif);
         if (dif) mudou = true;
       });
@@ -382,6 +392,13 @@
       if (mudou) { $('precos-msg').className = 'msg'; $('precos-msg').textContent = 'Há mudanças ainda não salvas.'; }
     }
     $('ptbody').addEventListener('input', marcar);
+    $('igualar').addEventListener('click', function(){
+      document.querySelectorAll('#ptbody tr').forEach(function(tr){
+        var v = tr.querySelector('input[data-b="vitinho"]').value;
+        tr.querySelectorAll('input[data-b]').forEach(function(inp){ inp.value = v; });
+      });
+      marcar();
+    });
     $('desfazer').addEventListener('click', function(){ servicos = JSON.parse(JSON.stringify(original)); renderPrecos(); $('precos-msg').textContent = ''; });
     $('salvar').addEventListener('click', async function(){
       var b = this; b.disabled = true; $('precos-msg').className = 'msg'; $('precos-msg').textContent = 'Salvando…';
