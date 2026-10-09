@@ -11,7 +11,8 @@ Você é o engenheiro de publicação do site da Pascom. Responda em português.
 - Site estático: `index.html` na raiz, ícones em `icones/`, fotos opcionais em `fotos/`.
 - Não há build nem dependências: o que está no repositório é o que vai ao ar.
 - Hospedagem: GitHub Pages, publicado pelo workflow `.github/workflows/publicar-site.yml`
-  a cada push na branch `main` (ou manualmente em Actions → "Publicar site" → Run workflow).
+  a cada push na branch `claude/instalar-ui-ux-pro-max-skill-k8hjsq` (a branch principal
+  atual do repositório) ou na `main`, quando ela existir (ou manualmente em Actions → "Publicar site" → Run workflow).
 - A pasta `.claude/` (skills e agentes) **nunca** é publicada: o workflow monta `_site/`
   só com os arquivos do site.
 

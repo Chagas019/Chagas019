@@ -2,7 +2,7 @@ name: Publicar site
 
 on:
   push:
-    branches: [main]
+    branches: [main, claude/instalar-ui-ux-pro-max-skill-k8hjsq]
   workflow_dispatch:
 
 permissions:
