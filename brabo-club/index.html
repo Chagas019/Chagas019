@@ -1090,8 +1090,18 @@
       <p class="note" id="mode-note"></p>
     </section>
 
-    <section data-pane="meus" hidden><div class="list" id="list-meus"></div></section>
     <section data-pane="agenda" hidden><div class="list" id="list-agenda"></div></section>
+  </div>
+</dialog>
+
+<dialog class="panel" id="dlg-meus" aria-labelledby="t-meus">
+  <div class="panel-head">
+    <div><h2 id="t-meus">Meus horários</h2><p>Os horários que você marcou neste aparelho</p></div>
+    <button class="x" type="button" data-close aria-label="Fechar">×</button>
+  </div>
+  <div class="panel-body">
+    <div class="list" id="list-meus"></div>
+    <a class="btn solid confirm" style="margin-top:16px" href="#agendar" data-open="agendar">Marcar outro horário</a>
   </div>
 </dialog>
 
@@ -1172,13 +1182,11 @@
     function open(name, opts){
       if (window.braboCloseMenu) window.braboCloseMenu();
       document.querySelectorAll('dialog.panel[open]').forEach(function(d){ d.close(); });
-      var abaMeus = name === 'meus';
-      if (abaMeus) name = 'agendar';
-      if (name === 'agendar' && opts && !abaMeus) preset(opts);
+      if (name === 'agendar' && opts) preset(opts);
       if (name === 'agendar' && apiMode) carregarOcupados();
       var dlg = $('dlg-' + name);
       if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
-      if (abaMeus) abrirMeus();
+      if (name === 'meus') abrirMeus();
     }
     document.addEventListener('click', function(e){
       var t = e.target.closest && e.target.closest('[data-open]');
@@ -1312,7 +1320,7 @@
       $('painel').hidden = !adm;
       document.querySelectorAll('[data-admin]').forEach(function(a){ a.hidden = !adm; });
       if (adm) renderPainel();
-      $('tabs').hidden = !online && !(db && isAdmin);
+      $('tabs').hidden = true; // a janela de marcar horário mostra só o agendamento
     }
 
     function showTab(name){
@@ -1321,8 +1329,10 @@
     }
     $('tabs').addEventListener('click', function(e){ var t = e.target.closest('[data-tab]'); if (!t) return; showTab(t.getAttribute('data-tab')); if (t.getAttribute('data-tab') === 'meus' && apiMode) renderMeusApi(); });
     function abrirMeus(){
-      if (!online) { msg('Para ver seus horários, agende pelo site.', ''); return; }
-      showTab('meus'); if (apiMode) renderMeusApi();
+      if (apiMode) return renderMeusApi();
+      if (online && db) return renderMine();
+      var box = $('list-meus'); box.textContent = '';
+      box.appendChild(el('p', 'empty', 'Você ainda não agendou por este aparelho. Os horários que você marcar aparecem aqui.'));
     }
 
     function whatsapp(){
@@ -1390,7 +1400,7 @@
           taken[id] = true; st.hora = null; renderHours();
           if (j.codigo) guardarCodigo(j.id || id, j.codigo);
           lembrarCliente();
-          msg('Pronto! ' + bn + ' te espera ' + nomeDia(d) + ' às ' + h + '. Total: ' + brl(j.total || totalDe()) + '. Seu horário está na aba "Meus horários".', 'ok');
+          msg('Pronto! ' + bn + ' te espera ' + nomeDia(d) + ' às ' + h + '. Total: ' + brl(j.total || totalDe()) + '. Para ver depois, toque em "Meus horários" no menu.', 'ok');
         } else if (r.status === 409) {
           taken[id] = true; st.hora = null; renderHours(); msg(j.erro || 'Esse horário acabou de ser reservado. Escolha outro.', 'err');
         } else msg(j.erro || 'Algo deu errado. Tente de novo em instantes.', 'err');
