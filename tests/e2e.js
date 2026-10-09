@@ -1,0 +1,229 @@
+// Testes de ponta a ponta do site da Pascom.
+// Uso: NODE_PATH=$(npm root -g) node tests/e2e.js   (precisa do Playwright com Chromium)
+const { chromium } = require("playwright");
+const fs = require("fs"), os = require("os"), path = require("path"), { execSync } = require("child_process");
+
+const RAIZ = path.resolve(__dirname, "..");
+const TMP = fs.mkdtempSync(path.join(os.tmpdir(), "pascom-e2e-"));
+execSync(`bash scripts/montar-site.sh "${TMP}"`, { cwd: RAIZ, stdio: "ignore" });
+fs.cpSync(path.join(RAIZ, "icones"), path.join(TMP, "icones"), { recursive: true });
+const URL = "file://" + path.join(TMP, "index.html");
+
+let falhas = 0, ok = 0;
+const check = (cond, nome, extra = "") => { if (cond) ok++; else { falhas++; console.log("  ✗ " + nome + (extra ? " — " + extra : "")); } };
+
+// Simulação do ambiente do Claude: db (em memória), user e sample
+function mockClaude({ can, id = "u_teste", rejeitaEscrita = false, sample = null }) {
+  return `(() => {
+    const cols = {}, subs = {};
+    const emit = c => (subs[c] || []).forEach(cb => cb({ docs: Object.entries(cols[c] || {}).map(([id, d]) => ({ id, exists: true, data: () => d })) }));
+    const err = () => Promise.reject({ code: "invalid_argument", message: "sem permissão" });
+    const db = { collection: c => ({
+      onSnapshot(cb) { (subs[c] ||= []).push(cb); setTimeout(() => emit(c), 0); return () => {}; },
+      doc: id => ({
+        set: async d => { if (${rejeitaEscrita}) return err(); (cols[c] ||= {})[id] = d; emit(c); },
+        delete: async () => { if (${rejeitaEscrita}) return err(); delete (cols[c] || {})[id]; emit(c); },
+      }),
+    }) };
+    const user = { id: async () => ${JSON.stringify(id)}, can: async () => ${JSON.stringify(can)} };
+    const sample = ${sample ? `{ json: async () => (${sample}) }` : "null"};
+    window.claude = { use: async n => ({ db, user, sample })[n] ?? null };
+  })();`;
+}
+
+async function pagina(browser, { largura = 1280, mock = null, hash = "" } = {}) {
+  const ctx = await browser.newContext({ viewport: { width: largura, height: 900 } });
+  if (mock) await ctx.addInitScript(mock);
+  const p = await ctx.newPage();
+  p.erros = [];
+  p.on("pageerror", e => p.erros.push(e.message));
+  p.on("console", m => { if (m.type() === "error" && !/fotos\//.test(m.location().url) && !/ERR_FILE_NOT_FOUND/.test(m.text())) p.erros.push(m.text()); });
+  await p.goto(URL + hash);
+  await p.waitForTimeout(500);
+  return p;
+}
+const aberto = p => p.evaluate(() => document.getElementById("modal").open);
+const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-close]"); };
+
+(async () => {
+  const browser = await chromium.launch();
+
+  console.log("1. Navegação e botões (modo local, computador)");
+  {
+    const p = await pagina(browser);
+    check((await p.$$("h1")).length === 1, "um único h1");
+    for (const a of ["search", "agenda", "liturgia", "gallery", "settings", "join"]) {
+      await p.click(`.side [data-action=${a}]`);
+      check(await aberto(p), `menu "${a}" abre o painel`);
+      check(await p.getAttribute(`.side [data-action=${a}]`, "aria-current") === "true", `menu "${a}" fica marcado`);
+      await p.keyboard.press("Escape"); await p.waitForTimeout(50);
+      check(!(await aberto(p)), `Esc fecha "${a}"`);
+    }
+    check(await p.getAttribute('.side [data-action=home]', "aria-current") === "true", "ao fechar, menu volta para Início");
+    // destaque
+    const nome1 = await p.textContent("#hero-name");
+    await p.click("#hero-dots button >> nth=2");
+    check(await p.textContent("#hero-name") !== nome1, "pontos do destaque trocam o santo");
+    await p.click("#hero-open"); check(await aberto(p), "Ver história abre o santo"); await fechar(p);
+    // explorar
+    await p.click(".cat >> nth=2"); // Papas
+    check(/Papa|João Paulo/.test(await p.textContent("#hero-name")), "filtro Papas muda o destaque");
+    check((await p.$$("#hero-dots button")).length === 2, "filtro Papas mostra 2 santos");
+    await p.click(".cat >> nth=0");
+    // santo para você + favorito
+    const pick1 = await p.textContent("#pick-name");
+    await p.click("#pick-next"); check(await p.textContent("#pick-name") !== pick1, "seta troca o santo para você");
+    await p.click("#fav"); check(await p.getAttribute("#fav", "aria-checked") === "true", "favorito liga");
+    await p.reload(); await p.waitForTimeout(400); await p.click("#pick-next");
+    check(await p.getAttribute("#fav", "aria-checked") === "true", "favorito continua após recarregar");
+    // missa
+    await p.click("#mass-btn"); check(await p.textContent("#mass-lbl") === "Pausar", "missa: play vira Pausar");
+    await p.click("#mass-btn"); check(await p.textContent("#mass-lbl") === "Retomar", "missa: pausa volta para Retomar");
+    await p.evaluate(() => { massPos = MASS_TOTAL - 2; renderMass(); });
+    await p.click("#mass-btn"); await p.waitForTimeout(3500);
+    check(await p.textContent("#mass-lbl") !== "Pausar", "missa: ao chegar ao fim, para sozinha", await p.textContent("#mass-lbl"));
+    // player
+    const q1 = await p.textContent("#play-quote");
+    await p.click("#q-next"); check(await p.textContent("#play-quote") !== q1, "player: próxima frase");
+    await p.click("#q-cc"); check(await p.evaluate(() => document.getElementById("play-quote").hidden), "player: botão de texto esconde a frase");
+    await p.click("#q-cc");
+    await p.click("#q-play"); check(await p.getAttribute("#q-play", "aria-label") === "Pausar", "player: play inicia");
+    await p.click("#q-play");
+    await p.click(".play [data-action=quotes]"); check((await p.$$("#modal .quotes li")).length >= 13, "lista com todas as frases"); await fechar(p);
+    // busca
+    await p.click(".side [data-action=search]"); await p.fill("#q", "clara");
+    check((await p.$$("#res .g-item")).length === 1, "busca por 'clara' acha 1 santo");
+    await p.fill("#q", "xyzw"); check(/Nenhum santo/.test(await p.textContent("#res")), "busca sem resultado mostra aviso");
+    await fechar(p);
+    // configurações
+    await p.click(".side [data-action=settings]"); await p.click("#set-carousel");
+    check(await p.getAttribute("#set-carousel", "aria-checked") === "false", "configuração do carrossel desliga"); await fechar(p);
+    check(p.erros.length === 0, "sem erros no console", p.erros.join(" | "));
+    await p.context().close();
+  }
+
+  console.log("2. Cadastro (inscrição na Pascom)");
+  {
+    const p = await pagina(browser);
+    await p.click(".follow");
+    check(await aberto(p), "botão 'Venha servir' abre a inscrição");
+    await p.click("#join button[type=submit]");
+    check(/Preencha/.test(await p.textContent("#j-note")), "inscrição vazia mostra erro");
+    await p.fill("#j-nome", "Ana Souza"); await p.fill("#j-tel", "abc");
+    await p.click("#join button[type=submit]");
+    check(/WhatsApp|telefone|número/i.test(await p.textContent("#j-note")), "telefone inválido é recusado", await p.textContent("#j-note"));
+    await p.fill("#j-tel", "(11) 98765-4321"); await p.click("#join button[type=submit]");
+    const txt = await p.textContent("#modal-body");
+    check(/Ana/.test(txt), "inscrição válida confirma com o nome");
+    check(!/vai falar com você/.test(txt) || await p.$("#modal a[href*='wa.me']") !== null, "não promete contato sem enviar a inscrição a ninguém", txt.slice(0, 120));
+    await p.context().close();
+  }
+
+  console.log("3. Fluxos da equipe (modo local)");
+  {
+    const p = await pagina(browser);
+    check(!(await p.isHidden("#ev-add")), "modo local: botão de novo evento visível");
+    await p.click("#ev-add"); await p.click("#ev-form button[type=submit]");
+    check(/título/.test(await p.textContent("#e-note")), "evento sem título é recusado");
+    await p.fill("#e-t", '<img src=x onerror="window.__xss=1">Missa'); await p.fill("#e-h", "19:00"); await p.fill("#e-l", "Matriz");
+    await p.click("#ev-form button[type=submit]"); await p.waitForTimeout(200);
+    check((await p.$$("#ev-list .ev")).length === 1, "evento aparece no painel");
+    check(!(await p.evaluate(() => window.__xss)), "texto do evento não executa código (XSS)");
+    check((await p.$$("#modal .share .wa")).length === 1, "evento tem botão de WhatsApp");
+    await p.click("#modal [data-del]"); check(await p.textContent("#modal [data-del] span") === "Confirmar", "excluir pede confirmação");
+    await p.click("#modal [data-del]"); await p.waitForTimeout(200);
+    check((await p.$$("#ev-list .ev")).length === 0, "evento excluído some do painel");
+    await fechar(p);
+    await p.click("#fr-add"); await p.fill("#f-t", "Só o amor é criativo."); await p.fill("#f-a", "São Maximiliano Kolbe");
+    await p.click("#fr-form button[type=submit]"); await p.waitForTimeout(200);
+    check(/Só o amor é criativo/.test(await p.textContent("#fr-box")), "frase publicada aparece");
+    check(/Maximiliano/.test(await p.textContent("#play-sub")), "frase da equipe entra no player");
+    await p.click("#litu-add"); await p.click("#lit-form button[type=submit]");
+    check(/Preencha/.test(await p.textContent("#l-note")), "liturgia sem leituras é recusada");
+    await p.fill("#l-1", "Gl 3,7-14"); await p.fill("#l-e", "Lc 11,15-26"); await p.click("#lit-form button[type=submit]"); await p.waitForTimeout(200);
+    check(/Gl 3,7-14/.test(await p.textContent("#litu-body")), "liturgia publicada aparece");
+    check(p.erros.length === 0, "sem erros no console", p.erros.join(" | "));
+    await p.context().close();
+  }
+
+  console.log("4. Login e permissões (simulando o Claude)");
+  {
+    const ed = await pagina(browser, { mock: mockClaude({ can: true }) }); await ed.waitForTimeout(400);
+    check(!(await ed.isHidden("#ev-add")), "editor vê o botão de publicar");
+    check(/equipe e pode publicar/.test(await ed.textContent("[data-mode]")), "editor vê aviso de equipe");
+    await ed.click("#ev-add"); await ed.fill("#e-t", "Reunião"); await ed.click("#ev-form button[type=submit]"); await ed.waitForTimeout(200);
+    check((await ed.$$("#ev-list .ev")).length === 1, "editor publica evento no banco compartilhado");
+    await ed.context().close();
+
+    const le = await pagina(browser, { mock: mockClaude({ can: false }) }); await le.waitForTimeout(400);
+    check(await le.isHidden("#ev-add") && await le.isHidden("#fr-add") && await le.isHidden("#litu-add"), "leitor não vê botões de publicar");
+    check(/Somente leitura/.test(await le.textContent("[data-mode]")), "leitor vê aviso de somente leitura");
+    await le.click(".side [data-action=agenda]");
+    check(!(await le.$("#m-ev-add")), "leitor não vê 'Novo evento' na agenda");
+    await le.context().close();
+
+    const sem = await pagina(browser, { mock: mockClaude({ can: null, id: null }) }); await sem.waitForTimeout(400);
+    check(await sem.isHidden("#ev-add"), "visitante sem conta não vê botões de publicar");
+    await sem.context().close();
+
+    const neg = await pagina(browser, { mock: mockClaude({ can: null, rejeitaEscrita: true }) }); await neg.waitForTimeout(400);
+    await neg.click("#fr-add"); await neg.fill("#f-t", "Teste"); await neg.click("#fr-form button[type=submit]"); await neg.waitForTimeout(300);
+    check(/permissão/.test(await neg.textContent("#toast")), "escrita recusada avisa falta de permissão");
+    check(await neg.isHidden("#fr-add"), "após recusa, botões de publicar somem");
+    check(neg.erros.length === 0, "sem erros no console", neg.erros.join(" | "));
+    await neg.context().close();
+  }
+
+  console.log("5. Preenchimento automático (simulado)");
+  {
+    const p = await pagina(browser, { mock: mockClaude({ can: true, sample: '{ primeira: "Gl 3,7-14", salmo: "Sl 110(111)", evangelho: "Lc 11,15-26", segunda: "Rm 1,1", refrao: "" }' }) });
+    await p.waitForTimeout(400);
+    await p.click("#litu-add");
+    check(!!(await p.$("#imp-go")), "botão 'Preencher automaticamente' aparece");
+    await p.click("#imp-go"); check(/Cole o texto/.test(await p.textContent("#imp-status")), "sem texto colado, pede o texto");
+    await p.fill("#imp-src", "Primeira leitura (Gl 3,7-14) ... Salmo (Sl 110(111)) ... Evangelho (Lc 11,15-26) texto longo para teste");
+    await p.click("#imp-go"); await p.waitForTimeout(200);
+    check(await p.inputValue("#l-1") === "Gl 3,7-14" && await p.inputValue("#l-e") === "Lc 11,15-26", "preenche referências encontradas");
+    check(await p.inputValue("#l-2") === "", "descarta referência que não está no texto");
+    await p.context().close();
+  }
+
+  console.log("6. Links diretos");
+  {
+    for (const [hash, esperado] of [["#liturgia", /Liturgia de/], ["#agenda", /Agenda/], ["#frases", /Frases da equipe/], ["#galeria", /Santos da comunicação/], ["#participar", /Venha servir/], ["#santo-clara-de-assis", /Santa Clara/]]) {
+      const p = await pagina(browser, { hash });
+      check(await aberto(p) && esperado.test(await p.textContent("#modal-body")), `link ${hash} abre a parte certa`);
+      await p.context().close();
+    }
+  }
+
+  console.log("7. Celular (390 px)");
+  {
+    const p = await pagina(browser, { largura: 390 });
+    check(await p.evaluate(() => document.documentElement.scrollWidth) <= 390, "sem rolagem lateral");
+    const nav = await p.$eval(".side", e => getComputedStyle(e).position);
+    check(nav === "fixed", "menu vira barra fixa embaixo");
+    const navBottom = await p.$eval(".side", e => innerHeight - e.getBoundingClientRect().bottom);
+    check(navBottom >= 0 && navBottom <= 40, "barra do menu fica no pé da tela", "distância do fundo: " + navBottom);
+    await p.mouse.wheel(0, 1500); await p.waitForTimeout(200);
+    const navBottom2 = await p.$eval(".side", e => innerHeight - e.getBoundingClientRect().bottom);
+    check(Math.abs(navBottom2 - navBottom) < 2, "barra do menu continua no lugar ao rolar a página");
+    for (const a of ["agenda", "liturgia", "gallery", "join"]) {
+      await p.click(`.side [data-action=${a}]`); check(await aberto(p), `celular: menu "${a}" abre`);
+      const sw = await p.evaluate(() => document.getElementById("modal").scrollWidth <= document.getElementById("modal").clientWidth + 1);
+      check(sw, `celular: painel "${a}" sem rolagem lateral`);
+      await fechar(p);
+    }
+    await p.click("#fav");
+    const [t, n] = await p.evaluate(() => [document.getElementById("toast").getBoundingClientRect(), document.querySelector(".side").getBoundingClientRect()].map(r => ({ top: r.top, bottom: r.bottom })));
+    check(t.bottom <= n.top, "aviso (toast) não fica escondido atrás do menu", JSON.stringify({ t, n }));
+    const pequenos = await p.$$eval(".side button, .add, .ctl, .arrow, #fav, .btn-white, .btn-dark", els => els.filter(e => { const r = e.getBoundingClientRect(); return r.width && (r.width < 36 || r.height < 22); }).map(e => e.id || e.className));
+    check(pequenos.length === 0, "botões com tamanho tocável", pequenos.join(", "));
+    check(p.erros.length === 0, "sem erros no console", p.erros.join(" | "));
+    await p.context().close();
+  }
+
+  await browser.close();
+  console.log(`\nResultado: ${ok} ok, ${falhas} falha(s)`);
+  process.exit(falhas ? 1 : 0);
+})().catch(e => { console.error(e); process.exit(2); });

@@ -43,6 +43,10 @@ Rode `bash scripts/montar-site.sh` e depois `bash scripts/verificar-site.sh`. A 
 
 Só siga com a publicação se terminar com "Tudo certo".
 
+Depois rode os testes de ponta a ponta (navegação, inscrição, permissões, agenda, frases,
+liturgia, links diretos e celular): `NODE_PATH=$(npm root -g) node tests/e2e.js`. Precisa do
+Playwright com Chromium. Não publique com falhas.
+
 ## Depois de publicar
 
 Rode `bash scripts/conferir-publicacao.sh <url-do-site>` (o workflow já faz isso sozinho).

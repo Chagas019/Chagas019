@@ -200,6 +200,7 @@
   }
   .nav-btn:hover .tip, .nav-btn:focus-visible .tip { opacity: 1; }
   .side .spacer { flex: 1; }
+  .avatar[aria-current="true"] { border-color: var(--red); box-shadow: 0 0 0 3px rgba(200, 16, 46, .45); }
   .avatar {
     width: 38px; height: 38px; border-radius: 50%;
     background: linear-gradient(135deg, #f1f1f1, #9a9a9a);
@@ -452,7 +453,9 @@
   }
   @media (max-width: 680px) {
     body { padding-block: 16px 96px; }
-    .frame { padding: 6px; border-radius: 30px; }
+    /* backdrop-filter criaria um bloco de contenção e prenderia a barra "fixa" dentro da moldura */
+    .frame { padding: 6px; border-radius: 30px; backdrop-filter: none; }
+    .toast { bottom: calc(92px + env(safe-area-inset-bottom, 0px)); }
     .app { grid-template-columns: 1fr; grid-template-areas: "hero" "litu" "agen" "fras" "browse" "cont" "pick" "play"; padding: 8px; gap: 8px; }
     .two { grid-template-columns: 1fr; }
     .side {
@@ -539,7 +542,7 @@
           <div class="row">
             <button class="play-link" id="mass-btn" aria-pressed="false">
               <svg id="mass-ico" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg>
-              <span id="mass-lbl">Retomar</span>
+              <span id="mass-lbl">Assistir</span>
             </button>
             <span class="time" id="mass-time"></span>
           </div>
@@ -701,6 +704,8 @@ const CATS = [
   { id: "jovens", nome: "Jovens santos" },
   { id: "arcanjos", nome: "Arcanjos" },
 ];
+// Número de WhatsApp da Pascom para as inscrições, só dígitos com DDI e DDD (ex.: "5511987654321").
+const PASCOM_WHATSAPP = "";
 const AREAS = {
   celebracao: { nome: "Celebração", ico: "sino" },
   reuniao: { nome: "Reunião", ico: "estrela" },
@@ -817,17 +822,25 @@ function renderMass() {
   $("mass-bar").setAttribute("aria-valuenow", Math.round(pct));
   $("mass-time").textContent = `${fmt(massPos)} / ${fmt(MASS_TOTAL)} · faltam ${Math.ceil((MASS_TOTAL - massPos) / 60)} min`;
 }
-$("mass-btn").onclick = () => {
-  const on = !massTimer;
-  if (on) massTimer = setInterval(() => { massPos = Math.min(MASS_TOTAL, massPos + 1); renderMass(); if (massPos % 10 === 0) store.set("mass", massPos); }, 1000);
-  else { clearInterval(massTimer); massTimer = null; store.set("mass", massPos); }
+function setMassUI(on) {
   $("mass-btn").setAttribute("aria-pressed", on);
-  $("mass-lbl").textContent = on ? "Pausar" : "Retomar";
+  $("mass-lbl").textContent = on ? "Pausar" : massPos >= MASS_TOTAL ? "Assistir de novo" : massPos ? "Retomar" : "Assistir";
   $("mass-ico").innerHTML = on ? '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>' : '<path d="M6 4l14 8-14 8z"/>';
+}
+function stopMass() { clearInterval(massTimer); massTimer = null; store.set("mass", massPos); setMassUI(false); }
+$("mass-btn").onclick = () => {
+  if (massTimer) return stopMass();
+  if (massPos >= MASS_TOTAL) { massPos = 0; renderMass(); }
+  massTimer = setInterval(() => {
+    massPos = Math.min(MASS_TOTAL, massPos + 1); renderMass();
+    if (massPos >= MASS_TOTAL) { stopMass(); toast("A missa terminou"); }
+    else if (massPos % 10 === 0) store.set("mass", massPos);
+  }, 1000);
+  setMassUI(true);
 };
-function seekMass(e) { const r = $("mass-bar").getBoundingClientRect(); massPos = Math.round(Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * MASS_TOTAL); store.set("mass", massPos); renderMass(); }
+function seekMass(e) { const r = $("mass-bar").getBoundingClientRect(); massPos = Math.round(Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * MASS_TOTAL); store.set("mass", massPos); renderMass(); if (!massTimer) setMassUI(false); }
 $("mass-bar").addEventListener("click", seekMass);
-$("mass-bar").addEventListener("keydown", e => { if (e.key === "ArrowRight" || e.key === "ArrowLeft") { massPos = Math.max(0, Math.min(MASS_TOTAL, massPos + (e.key === "ArrowRight" ? 60 : -60))); renderMass(); e.preventDefault(); } });
+$("mass-bar").addEventListener("keydown", e => { if (e.key === "ArrowRight" || e.key === "ArrowLeft") { massPos = Math.max(0, Math.min(MASS_TOTAL, massPos + (e.key === "ArrowRight" ? 60 : -60))); renderMass(); if (!massTimer) setMassUI(false); e.preventDefault(); } });
 
 /* ---------- Frase do dia (player) ---------- */
 const SAINT_QUOTES = SAINTS.flatMap(s => s.frases.map(f => ({ s, f })));
@@ -949,7 +962,7 @@ function shareRow(texto, hash) {
 document.addEventListener("click", async e => {
   const b = e.target.closest("[data-copy]"); if (!b) return;
   const url = b.dataset.copy;
-  try { await navigator.clipboard.writeText(url); toast("Link copiado"); }
+  try { await navigator.clipboard.writeText(url); toast(/^https?:/.test(url) ? "Link copiado" : "Mensagem copiada"); }
   catch {
     if (b.nextElementSibling?.classList.contains("copy-fallback")) return;
     const i = document.createElement("input"); i.className = "copy-fallback"; i.readOnly = true; i.value = url;
@@ -1334,15 +1347,23 @@ function openJoin() {
     </form></div>`, () => {
     $("join").onsubmit = e => {
       e.preventDefault();
-      const nome = $("j-nome").value.trim(), tel = $("j-tel").value.trim();
+      const nome = $("j-nome").value.trim().replace(/\s+/g, " "), tel = $("j-tel").value.trim(), area = $("j-area").value;
+      const digitos = tel.replace(/\D/g, "").replace(/^55(?=\d{10,11}$)/, "");
       if (!nome || !tel) { $("j-note").textContent = "Preencha seu nome e WhatsApp para continuar."; return; }
-      $("join").innerHTML = `<p style="margin:0;font-size:16px">Obrigado, ${nome.split(" ")[0]}! A equipe da Pascom vai falar com você pelo WhatsApp.</p>`;
+      if (nome.replace(/[^\p{L}]/gu, "").length < 2) { $("j-note").textContent = "Escreva seu nome."; $("j-nome").focus(); return; }
+      if (!/^\d{10,11}$/.test(digitos)) { $("j-note").textContent = "Confira o número de WhatsApp: use o DDD e o número, por exemplo (11) 98765-4321."; $("j-tel").focus(); return; }
+      const fone = digitos.replace(/^(\d{2})(\d{4,5})(\d{4})$/, "($1) $2-$3");
+      const msg = `Olá! Quero participar da Pascom.\nNome: ${nome}\nWhatsApp: ${fone}\nÁrea de interesse: ${area}`;
+      const wa = PASCOM_WHATSAPP ? `https://wa.me/${PASCOM_WHATSAPP}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      $("join").innerHTML = `<p style="margin:0;font-size:16px">Quase lá, ${esc(nome.split(" ")[0])}! Falta enviar sua mensagem para a equipe da Pascom.</p>
+        <div class="share"><a class="wa" href="${wa}" target="_blank" rel="noopener">Enviar pelo WhatsApp</a><button type="button" data-copy="${esc(msg)}">Copiar mensagem</button></div>
+        <p class="empty" style="margin:0;font-size:13px">${PASCOM_WHATSAPP ? "A mensagem já vai para o WhatsApp da Pascom." : "Escolha o contato da equipe da Pascom no WhatsApp e envie."}</p>`;
     };
   });
 }
 
 /* ---------- Navegação ---------- */
-function setNav(a) { document.querySelectorAll(".nav-btn").forEach(b => b.setAttribute("aria-current", b.dataset.action === a)); }
+function setNav(a) { document.querySelectorAll(".side .nav-btn, .side .avatar").forEach(b => b.setAttribute("aria-current", b.dataset.action === a)); }
 const ACTIONS = { home: () => { window.scrollTo({ top: 0, behavior: "smooth" }); }, search: openSearch, agenda: openAgenda, gallery: openGallery, settings: openSettings, join: openJoin, quotes: openQuotes, liturgia: openLiturgia };
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-action]"); if (!b) return;
@@ -1350,7 +1371,7 @@ document.addEventListener("click", e => {
 });
 
 /* ---------- Início ---------- */
-renderCats(); renderHero(); renderPick(); renderMass(); renderQuote(); restartHero();
+renderCats(); renderHero(); renderPick(); renderMass(); setMassUI(false); renderQuote(); restartHero();
 renderLiturgia(); renderAgenda(); renderFrases(); applyTeam();
 startData().then(openFromHash);
 </script>
