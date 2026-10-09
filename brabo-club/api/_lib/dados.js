@@ -22,7 +22,7 @@ const HORAS_A = ['09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00', 
 const HORAS_B = ['10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
 export const BARBEIROS = {
   vitinho: { nome: 'Vitinho', dias: [2, 3, 4, 5, 6], horas: HORAS_A },
-  mycon:   { nome: 'Mycon',   dias: [1, 2, 3, 4, 5], horas: HORAS_B },
+  mycon:   { nome: 'Maicon',   dias: [1, 2, 3, 4, 5], horas: HORAS_B },
   rian:    { nome: 'Rian',    dias: [3, 4, 5, 6, 0], horas: HORAS_A }
 };
 
