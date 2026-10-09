@@ -91,13 +91,95 @@
   .brand svg{width:calc(26.9 * var(--u)); height:calc(16.6 * var(--u)); overflow:visible; display:block}
   .brand span{font-size:calc(17.5 * var(--u)); font-weight:550; font-variation-settings:'opsz' 22; letter-spacing:0; line-height:1}
 
-  .links{position:absolute; left:calc(353.8 * var(--u)); top:50%; transform:translateY(-50%); display:flex; gap:calc(25.2 * var(--u))}
-  .links a{
+  /* ---------- Nav with morphing dropdown ---------- */
+  .links{
+    position:absolute; left:calc(353.8 * var(--u)); top:0; height:100%;
+    display:flex; align-items:center; gap:calc(25.2 * var(--u));
+    --panel:rgba(16,14,15,.86); --line-dd:rgba(255,255,255,.08); --hover:rgba(255,255,255,.065);
+    --muted-dd:rgba(255,255,255,.60); --ease:cubic-bezier(.22,1,.36,1); --morph:.5s;
+  }
+  .links .trigger, .links .plain-link{
+    display:inline-flex; align-items:center; gap:calc(5 * var(--u)); padding:calc(8 * var(--u)) 0;
+    background:none; border:0; cursor:pointer; font-family:inherit;
     font-size:calc(11.9 * var(--u)); font-weight:450; font-variation-settings:'opsz' 15;
     letter-spacing:calc(-0.30 * var(--u)); color:var(--ink-nav); text-decoration:none; white-space:nowrap;
-    transition:color .18s ease;
+    transition:color .25s ease;
   }
-  .links a:hover{color:#fff}
+  .links .trigger:hover, .links .plain-link:hover, .links .trigger[aria-expanded="true"]{color:#fff}
+  .trigger svg{width:calc(7 * var(--u)); height:calc(4.4 * var(--u)); fill:none; stroke:currentColor; stroke-width:1.3; stroke-linecap:round; stroke-linejoin:round; transition:transform .35s var(--ease)}
+  .trigger[aria-expanded="true"] svg{transform:rotate(180deg)}
+
+  .dd{
+    --x:0px; --w:400px; --h:300px; --s:.97;
+    position:absolute; top:calc(100% + 12px); left:0; width:var(--w); height:var(--h);
+    transform:translateX(var(--x)) scale(var(--s)); transform-origin:50% 0;
+    opacity:0; pointer-events:none; border-radius:16px; background:var(--panel); border:1px solid var(--line-dd);
+    box-shadow:0 30px 70px -25px rgba(0,0,0,.65), 0 2px 10px rgba(0,0,0,.2);
+    -webkit-backdrop-filter:blur(22px) saturate(140%); backdrop-filter:blur(22px) saturate(140%); overflow:hidden;
+    transition:transform var(--morph) var(--ease), width var(--morph) var(--ease), height var(--morph) var(--ease), opacity .3s ease;
+    font-family:"InterVar","Inter","Helvetica Neue",Arial,system-ui,sans-serif; color:#fff; text-align:left;
+  }
+  .dd.open{--s:1; opacity:1; pointer-events:auto}
+  .dd.instant{transition:opacity .3s ease, transform var(--morph) var(--ease)}
+  .dd.instant.snap{transition:none}
+
+  .dpanel{
+    position:absolute; top:0; left:0; opacity:0; visibility:hidden; filter:blur(8px); transform:translateX(0);
+    transition:opacity .26s ease, transform var(--morph) var(--ease), filter .4s ease, visibility 0s linear var(--morph);
+  }
+  .dpanel[data-state="exit-left"]{transform:translateX(-56px)}
+  .dpanel[data-state="exit-right"]{transform:translateX(56px)}
+  .dpanel[data-state="active"]{
+    opacity:1; visibility:visible; filter:blur(0); transform:translateX(0);
+    transition:opacity .36s ease .06s, transform var(--morph) var(--ease), filter .45s ease .04s, visibility 0s;
+  }
+  .dpanel.snap{transition:none!important}
+
+  /* Serviços */
+  #p-servicos{width:620px; height:358px; display:grid; grid-template-columns:250px 1fr}
+  .d-list{display:flex; flex-direction:column; padding:8px; gap:2px}
+  .d-item{flex:1; display:flex; flex-direction:column; justify-content:center; padding:0 12px; border-radius:10px; text-decoration:none; color:#fff; transition:background .3s}
+  .d-item.is-active{background:var(--hover)}
+  .d-item strong{display:flex; justify-content:space-between; gap:8px; font-size:15px; font-weight:500; margin-bottom:4px}
+  .d-item em{font-style:normal; color:#e3a24c; font-variant-numeric:tabular-nums}
+  .d-item span{font-size:13px; line-height:1.42; color:var(--muted-dd)}
+  .d-all{padding:10px 12px 6px; font-size:13px; color:rgba(255,255,255,.8); text-decoration:none}
+  .d-all:hover{color:#fff}
+  .d-media{position:relative; overflow:hidden; border-radius:0 15px 15px 0}
+  .d-media::before{content:""; position:absolute; inset:0 auto 0 0; width:70px; z-index:2; background:linear-gradient(to right, rgba(16,14,15,.55), rgba(16,14,15,0))}
+  .d-slide{
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+    background:radial-gradient(120% 90% at 60% 30%, var(--c1) 0%, var(--c2) 70%, #0b0a0a 100%);
+    opacity:0; transform:scale(1.06); filter:blur(10px);
+    transition:opacity .6s ease, transform .9s var(--ease), filter .6s ease;
+  }
+  .d-slide.is-active{opacity:1; transform:scale(1); filter:blur(0); z-index:1}
+  .d-slide svg{width:92px; height:92px; fill:none; stroke:rgba(255,255,255,.92); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; margin-bottom:10px; filter:drop-shadow(0 6px 18px rgba(0,0,0,.35))}
+  .d-slide b{font-size:34px; font-weight:600; letter-spacing:-.5px; text-shadow:0 2px 16px rgba(0,0,0,.35)}
+  .d-slide small{font-size:13px; color:rgba(255,255,255,.75)}
+
+  /* Barbeiros */
+  #p-barbeiros{width:560px; height:250px; padding:7px; display:grid; grid-template-columns:repeat(3,1fr); gap:7px}
+  .card{
+    position:relative; overflow:hidden; border-radius:10px; display:flex; flex-direction:column; justify-content:flex-end;
+    padding:14px; isolation:isolate; text-decoration:none; color:#fff;
+  }
+  .card::before{content:""; position:absolute; inset:0; z-index:-2; background:radial-gradient(110% 80% at 70% 20%, var(--c1), var(--c2) 75%); transition:transform .9s var(--ease), filter .5s}
+  .card::after{content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(to top, rgba(8,11,13,.88) 0%, rgba(8,11,13,.35) 45%, rgba(8,11,13,0) 70%)}
+  .card:hover::before, .card:focus-visible::before{transform:scale(1.05); filter:brightness(1.08)}
+  .card i{position:absolute; top:6px; right:12px; font-style:normal; font-size:86px; font-weight:700; line-height:1; color:rgba(255,255,255,.16); z-index:-1}
+  .card strong{font-size:15.5px; font-weight:500; margin-bottom:5px}
+  .card span{font-size:12.5px; line-height:1.45; color:var(--muted-dd)}
+
+  /* Endereço */
+  #p-endereco{width:340px; height:318px; padding:8px; display:flex; flex-direction:column}
+  .mini-map{position:relative; height:160px; border-radius:10px; overflow:hidden; background:radial-gradient(circle at 50% 45%, #3a2a1a, #121011)}
+  .mini-map iframe{width:100%; height:100%; border:0; filter:grayscale(.2) contrast(1.05); pointer-events:none}
+  .addr-title{display:block; font-size:15px; font-weight:500; margin:12px 6px 3px}
+  .addr-sub{display:block; font-size:13px; color:var(--muted-dd); margin:0 6px}
+  .addr-actions{display:flex; gap:7px; margin:auto 0 0; padding:0 0 0}
+  .addr-actions .btn{flex:1; height:36px; font-size:13px; font-weight:500}
+
 
   .actions{position:absolute; right:0; top:0; display:flex; gap:calc(7.8 * var(--u))}
 
@@ -281,6 +363,17 @@
     .prices .dur{display:none}
   }
 
+  .map-box{position:relative; height:min(46vh, 360px); border-radius:12px; overflow:hidden; border:1px solid var(--line); background:radial-gradient(circle at 50% 45%, #3a2a1a, #121011)}
+  .map-fallback{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:var(--muted); font-size:13px}
+  .map-fallback svg{width:34px; height:34px; fill:none; stroke:#e3a24c; stroke-width:1.6}
+  .map-box iframe{position:relative; width:100%; height:100%; border:0}
+  .route-row{display:flex; gap:8px}
+  .route-input{flex:1; min-width:0; height:42px; padding:0 12px; border-radius:10px; border:1px solid var(--line); background:rgba(255,255,255,.05); color:#fff; font:inherit; font-size:15px}
+  .route-loc{flex:none; height:42px; padding:0 12px; font-size:13px; font-weight:500}
+  .route-links{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:16px}
+  .route-links .btn{height:40px; font-size:13px; font-weight:500}
+  @media (max-width:520px){ .route-row{flex-direction:column} .route-input{flex:none; width:100%} .route-loc{width:100%} }
+
   /* ---------- Responsive ---------- */
   @media (max-width:1023px){
     :root{ --u: calc(100vw/900); }
@@ -314,7 +407,7 @@
       --rise:     calc(10 * var(--u));
       --rise-lg:  calc(13 * var(--u));
     }
-    .intro .brand, .intro .links a, .intro .actions > .btn, .intro .actions > .menu,
+    .intro .brand, .intro .links > .trigger, .intro .links > .plain-link, .intro .actions > .btn, .intro .actions > .menu,
     .intro .pill, .intro .hero p, .intro .cta .btn{opacity:0}
     .intro .ln-i{transform:translate3d(0,115%,0)}
     .intro .brand, .intro .pill, .intro .hero p, .intro .ln-i, .intro .cta .btn{will-change:transform,opacity}
@@ -327,12 +420,12 @@
     @keyframes i-line{ from{transform:translate3d(0,115%,0)} to{transform:none} }
 
     .intro-play .brand{animation:i-rise-cy .62s var(--e-nav) 0s both}
-    .intro-play .links a{animation:i-rise .55s var(--e-nav) both}
-    .intro-play .links a:nth-child(1){animation-delay:.070s}
-    .intro-play .links a:nth-child(2){animation-delay:.115s}
-    .intro-play .links a:nth-child(3){animation-delay:.160s}
-    .intro-play .links a:nth-child(4){animation-delay:.205s}
-    .intro-play .links a:nth-child(5){animation-delay:.250s}
+    .intro-play .links > :not(.dd){animation:i-rise .55s var(--e-nav) both}
+    .intro-play .links > :nth-child(1){animation-delay:.070s}
+    .intro-play .links > :nth-child(2){animation-delay:.115s}
+    .intro-play .links > :nth-child(3){animation-delay:.160s}
+    .intro-play .links > :nth-child(4){animation-delay:.205s}
+    .intro-play .links > :nth-child(5){animation-delay:.250s}
     .intro-play .actions > .btn, .intro-play .actions > .menu{animation:i-rise .55s var(--e-nav) .215s both}
     .intro-play .actions > .ghost{animation:i-rise .55s var(--e-nav) .160s both}
     .intro-play .pill{animation:i-pill .62s var(--e-soft) .26s both}
@@ -520,10 +613,66 @@
       <span>Brabo Club</span>
     </a>
 
-    <nav class="links" aria-label="Principal">
-      <a href="#precos" data-open="precos">Preços</a>
-      <a href="#barbeiros" data-open="barbeiros">Barbeiros</a>
-      <a href="#agendar" data-open="agendar">Agendamento</a>
+    <nav class="links" id="nav" aria-label="Principal">
+      <button class="trigger" type="button" data-menu="servicos" aria-expanded="false">Serviços<svg viewBox="0 0 8 5" aria-hidden="true"><path d="M1 1l3 3 3-3"/></svg></button>
+      <button class="trigger" type="button" data-menu="barbeiros" aria-expanded="false">Barbeiros<svg viewBox="0 0 8 5" aria-hidden="true"><path d="M1 1l3 3 3-3"/></svg></button>
+      <button class="trigger" type="button" data-menu="endereco" aria-expanded="false">Endereço<svg viewBox="0 0 8 5" aria-hidden="true"><path d="M1 1l3 3 3-3"/></svg></button>
+      <a class="plain-link" id="plain-agendar" href="#agendar" data-open="agendar">Agendamento</a>
+
+      <div class="dd" id="dd">
+        <!-- Serviços -->
+        <div class="dpanel" id="p-servicos" data-panel="servicos">
+          <div class="d-list">
+            <a class="d-item is-active" href="#agendar" data-open="agendar" data-servico="corte" data-img="0"><strong>Corte <em>R$ 40</em></strong><span>Máquina e tesoura, com lavagem.</span></a>
+            <a class="d-item" href="#agendar" data-open="agendar" data-servico="barba" data-img="1"><strong>Barba <em>R$ 30</em></strong><span>Modelagem e acabamento caprichado.</span></a>
+            <a class="d-item" href="#agendar" data-open="agendar" data-servico="combo" data-img="2"><strong>Corte + barba <em>R$ 60</em></strong><span>O combo completo, sem pressa.</span></a>
+            <a class="d-item" href="#agendar" data-open="agendar" data-servico="navalha" data-img="3"><strong>Barba na navalha <em>R$ 40</em></strong><span>Com toalha quente, do jeito antigo.</span></a>
+            <a class="d-all" href="#precos" data-open="precos">Ver tabela completa →</a>
+          </div>
+          <div class="d-media" aria-hidden="true">
+            <div class="d-slide is-active" style="--c1:#e3a24c; --c2:#5a2a10">
+              <svg viewBox="0 0 64 64"><circle cx="16" cy="18" r="8"/><circle cx="16" cy="46" r="8"/><path d="M22 23 56 50M22 41 56 14"/></svg>
+              <b>R$ 40</b><small>40 min</small>
+            </div>
+            <div class="d-slide" style="--c1:#c8102e; --c2:#3a0d18">
+              <svg viewBox="0 0 64 64"><path d="M20 10h24v8c0 6-4 10-12 10s-12-4-12-10z"/><path d="M26 28v24M38 28v24M22 52h20"/></svg>
+              <b>R$ 30</b><small>30 min</small>
+            </div>
+            <div class="d-slide" style="--c1:#1d5fbf; --c2:#0d1a3a">
+              <svg viewBox="0 0 64 64"><rect x="24" y="6" width="16" height="52" rx="4"/><path d="M24 16l16 10M24 30l16 10M24 44l16 10"/></svg>
+              <b>R$ 60</b><small>1 h</small>
+            </div>
+            <div class="d-slide" style="--c1:#d9d4c7; --c2:#3b3a36">
+              <svg viewBox="0 0 64 64"><rect x="6" y="30" width="30" height="8" rx="4"/><path d="M36 30 58 26c3 0 4 3 3 5l-3 7H36z"/></svg>
+              <b>R$ 40</b><small>40 min</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barbeiros -->
+        <div class="dpanel" id="p-barbeiros" data-panel="barbeiros">
+          <a class="card" href="#agendar" data-open="agendar" data-barbeiro="vitinho" style="--c1:#e3a24c; --c2:#4a2410">
+            <i>V</i><strong>Vitinho</strong><span>Degradê e navalhado<br>Ter a Sáb · 9h às 19h</span>
+          </a>
+          <a class="card" href="#agendar" data-open="agendar" data-barbeiro="mycon" style="--c1:#c8102e; --c2:#2e0a12">
+            <i>M</i><strong>Mycon</strong><span>Barba e toalha quente<br>Seg a Sex · 10h às 20h</span>
+          </a>
+          <a class="card" href="#agendar" data-open="agendar" data-barbeiro="rian" style="--c1:#2f6fd6; --c2:#0b1530">
+            <i>R</i><strong>Rian</strong><span>Clássicos e platinado<br>Qua a Dom · 9h às 19h</span>
+          </a>
+        </div>
+
+        <!-- Endereço -->
+        <div class="dpanel" id="p-endereco" data-panel="endereco">
+          <div class="mini-map" aria-hidden="true"><iframe id="mini-map" title="Mapa" tabindex="-1" loading="lazy"></iframe></div>
+          <strong class="addr-title">R. Moscou, 240</strong>
+          <span class="addr-sub">Parque São Quirino, Campinas - SP, 13088-117</span>
+          <div class="addr-actions">
+            <a class="btn solid" href="#endereco" data-open="endereco">Ver mapa e rota</a>
+            <a class="btn ghost" id="dd-gmaps" target="_blank" rel="noopener">Abrir no Maps</a>
+          </div>
+        </div>
+      </div>
     </nav>
 
     <div class="actions">
@@ -536,6 +685,7 @@
         <a href="#precos" data-open="precos">Preços</a>
         <a href="#barbeiros" data-open="barbeiros">Barbeiros</a>
         <a href="#agendar" data-open="agendar">Agendamento</a>
+        <a href="#endereco" data-open="endereco">Endereço e rota</a>
         <a class="btn solid" href="#agendar" data-open="agendar">Agendar</a>
       </nav>
     </div>
@@ -922,6 +1072,166 @@
         }, function(){});
       } catch (e) { /* segue no modo WhatsApp */ }
     })();
+  })();
+</script>
+
+<dialog class="panel" id="dlg-endereco" aria-labelledby="t-endereco">
+  <div class="panel-head">
+    <div><h2 id="t-endereco">Como chegar</h2><p>R. Moscou, 240 - Parque São Quirino, Campinas - SP, 13088-117</p></div>
+    <button class="x" type="button" data-close aria-label="Fechar">×</button>
+  </div>
+  <div class="panel-body">
+    <div class="map-box">
+      <div class="map-fallback">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        <span>Brabo Club · R. Moscou, 240</span>
+      </div>
+      <iframe id="map-frame" title="Mapa e rota até o Brabo Club" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+
+    <div class="step" style="margin-top:16px">
+      <label for="route-from">Saindo de</label>
+      <div class="route-row">
+        <input id="route-from" class="route-input" placeholder="Seu endereço ou bairro" autocomplete="street-address">
+        <button class="btn ghost route-loc" type="button" id="route-loc">Minha localização</button>
+      </div>
+    </div>
+    <button class="btn solid confirm" type="button" id="route-go">Traçar rota</button>
+    <p class="msg" id="route-msg" role="status"></p>
+
+    <div class="route-links">
+      <a class="btn ghost" id="lnk-gmaps" target="_blank" rel="noopener">Google Maps</a>
+      <a class="btn ghost" id="lnk-waze" target="_blank" rel="noopener">Waze</a>
+      <a class="btn ghost" id="lnk-apple" target="_blank" rel="noopener">Apple Mapas</a>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  // Endereço, mapa e rota
+  (function(){
+    var ADDR = 'R. Moscou, 240 - Parque São Quirino, Campinas - SP, 13088-117';
+    var enc = encodeURIComponent(ADDR);
+    var $ = function(id){ return document.getElementById(id); };
+    var place = 'https://maps.google.com/maps?q=' + enc + '&z=16&output=embed';
+    var origin = '';
+
+    function links(){
+      var o = origin ? '&origin=' + encodeURIComponent(origin) : '';
+      $('lnk-gmaps').href = 'https://www.google.com/maps/dir/?api=1&destination=' + enc + o + '&travelmode=driving';
+      $('lnk-waze').href = 'https://waze.com/ul?q=' + enc + '&navigate=yes';
+      $('lnk-apple').href = 'https://maps.apple.com/?daddr=' + enc + (origin ? '&saddr=' + encodeURIComponent(origin) : '');
+    }
+    $('dd-gmaps').href = 'https://www.google.com/maps/search/?api=1&query=' + enc;
+    links();
+
+    // Carrega os mapas só quando forem abertos
+    var dlg = $('dlg-endereco'), frame = $('map-frame'), mini = $('mini-map');
+    new MutationObserver(function(){ if (dlg.open && !frame.src) frame.src = place; }).observe(dlg, {attributes:true, attributeFilter:['open']});
+    window.addEventListener('brabo:menu', function(e){ if (e.detail === 'endereco' && !mini.src) mini.src = place; });
+
+    function rota(from){
+      origin = from; links();
+      frame.src = 'https://maps.google.com/maps?saddr=' + encodeURIComponent(from) + '&daddr=' + enc + '&output=embed';
+      $('route-msg').className = 'msg ok';
+      $('route-msg').textContent = 'Rota traçada no mapa. Para seguir com navegação por voz, abra no Google Maps ou no Waze.';
+    }
+    $('route-go').addEventListener('click', function(){
+      var v = $('route-from').value.trim();
+      if (!v) { $('route-msg').className = 'msg err'; $('route-msg').textContent = 'Digite de onde você vai sair ou use sua localização.'; $('route-from').focus(); return; }
+      rota(v);
+    });
+    $('route-from').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('route-go').click(); });
+    $('route-loc').addEventListener('click', function(){
+      var m = $('route-msg');
+      if (!navigator.geolocation) { m.className = 'msg err'; m.textContent = 'Seu navegador não informa a localização. Digite o endereço de saída.'; return; }
+      m.className = 'msg'; m.textContent = 'Buscando sua localização…';
+      navigator.geolocation.getCurrentPosition(function(p){
+        var c = p.coords.latitude.toFixed(6) + ',' + p.coords.longitude.toFixed(6);
+        $('route-from').value = 'Minha localização';
+        rota(c);
+      }, function(){
+        m.className = 'msg err'; m.textContent = 'Não deu para pegar sua localização. Digite o endereço de saída.';
+      }, {enableHighAccuracy:true, timeout:10000});
+    });
+  })();
+
+  // Menu suspenso que muda de forma entre Serviços, Barbeiros e Endereço
+  (function(){
+    var nav = document.getElementById('nav'), dd = document.getElementById('dd'), header = document.querySelector('.bar');
+    var ORDER = ['servicos','barbeiros','endereco'], PAD = 20;
+    var triggers = nav.querySelectorAll('.trigger'), panels = dd.querySelectorAll('.dpanel');
+    var current = null, closeTimer = null;
+    function panel(id){ return document.getElementById('p-' + id); }
+    function trig(id){ return nav.querySelector('.trigger[data-menu="' + id + '"]'); }
+
+    function place(id){
+      var p = panel(id), w = p.offsetWidth, h = p.offsetHeight;
+      var tr = trig(id).getBoundingClientRect(), hr = header.getBoundingClientRect();
+      var x = tr.left - PAD;
+      x = Math.max(hr.left + 12, Math.min(x, hr.right - w - 12));
+      x -= (dd.offsetParent || header).getBoundingClientRect().left;
+      dd.style.setProperty('--x', x + 'px'); dd.style.setProperty('--w', w + 'px'); dd.style.setProperty('--h', h + 'px');
+    }
+    function open(id){
+      clearTimeout(closeTimer);
+      if (id === current) return;
+      var p = panel(id);
+      if (!current) {
+        dd.classList.add('instant', 'snap');
+        panels.forEach(function(x){ x.classList.add('snap'); x.removeAttribute('data-state'); });
+        place(id);
+        void dd.offsetWidth;
+        dd.classList.remove('snap'); panels.forEach(function(x){ x.classList.remove('snap'); });
+        dd.classList.add('open');
+        requestAnimationFrame(function(){ dd.classList.remove('instant'); });
+      } else {
+        var dir = ORDER.indexOf(id) > ORDER.indexOf(current) ? 1 : -1;
+        panel(current).setAttribute('data-state', dir > 0 ? 'exit-left' : 'exit-right');
+        p.classList.add('snap'); p.setAttribute('data-state', dir > 0 ? 'exit-right' : 'exit-left');
+        void p.offsetWidth;
+        p.classList.remove('snap');
+        place(id);
+      }
+      p.setAttribute('data-state', 'active');
+      triggers.forEach(function(t){ t.setAttribute('aria-expanded', t.getAttribute('data-menu') === id ? 'true' : 'false'); });
+      current = id;
+      window.dispatchEvent(new CustomEvent('brabo:menu', {detail:id}));
+    }
+    function close(){
+      clearTimeout(closeTimer);
+      dd.classList.remove('open');
+      if (current) panel(current).removeAttribute('data-state');
+      triggers.forEach(function(t){ t.setAttribute('aria-expanded', 'false'); });
+      current = null;
+    }
+    function scheduleClose(ms){ clearTimeout(closeTimer); closeTimer = setTimeout(close, ms == null ? 140 : ms); }
+
+    triggers.forEach(function(t){
+      var id = t.getAttribute('data-menu');
+      t.addEventListener('pointerenter', function(e){ if (e.pointerType === 'mouse') open(id); });
+      t.addEventListener('click', function(){ if (current === id) close(); else open(id); });
+    });
+    document.getElementById('plain-agendar').addEventListener('pointerenter', function(e){ if (e.pointerType === 'mouse') scheduleClose(60); });
+    nav.addEventListener('pointerenter', function(){ clearTimeout(closeTimer); });
+    nav.addEventListener('pointerleave', function(e){ if (e.pointerType === 'mouse') scheduleClose(); });
+    nav.addEventListener('focusout', function(e){ if (!nav.contains(e.relatedTarget)) scheduleClose(0); });
+    nav.addEventListener('click', function(e){ if (e.target.closest('[data-open]')) close(); });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && current) { var t = trig(current); close(); t.focus(); }
+    });
+    document.addEventListener('pointerdown', function(e){ if (current && !nav.contains(e.target)) close(); });
+    window.addEventListener('resize', function(){ if (current) place(current); });
+
+    var items = dd.querySelectorAll('.d-item'), slides = dd.querySelectorAll('.d-slide');
+    items.forEach(function(it){
+      function act(){
+        items.forEach(function(x){ x.classList.toggle('is-active', x === it); });
+        var n = +it.getAttribute('data-img');
+        slides.forEach(function(s, i){ s.classList.toggle('is-active', i === n); });
+      }
+      it.addEventListener('pointerenter', act); it.addEventListener('focus', act);
+    });
   })();
 </script>
 
