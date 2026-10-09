@@ -198,6 +198,89 @@
   .cta .ghost{width:calc(99.6 * var(--u))}
   .cta .solid{width:calc(96.4 * var(--u))}
 
+  /* ---------- Panels (preços, barbeiros, agendamento) ---------- */
+  .panel{
+    --amber:#e3a24c; --line:rgba(255,255,255,.12); --muted:rgba(255,255,255,.55);
+    width:min(620px, calc(100vw - 32px)); max-height:min(86vh, 860px); max-height:min(86dvh, 860px);
+    padding:0; border:1px solid var(--line); border-radius:18px;
+    background:rgba(16,14,15,.94); color:#fff; overflow:hidden;
+    box-shadow:0 30px 80px rgba(0,0,0,.6);
+    font-family:"InterVar","Inter","Helvetica Neue",Arial,system-ui,sans-serif;
+  }
+  .panel[open]{display:flex; flex-direction:column}
+  .panel::backdrop{background:rgba(0,0,0,.6); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px)}
+  .panel-head{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:20px 22px 14px; border-bottom:1px solid var(--line)}
+  .panel-head h2{margin:0; font-size:20px; font-weight:600; letter-spacing:-.3px}
+  .panel-head p{margin:4px 0 0; font-size:13px; color:var(--muted)}
+  .x{flex:none; width:34px; height:34px; border-radius:10px; border:1px solid var(--line); background:transparent; color:#fff; cursor:pointer; font-size:18px; line-height:1}
+  .x:hover{background:rgba(255,255,255,.08)}
+  .panel-body{padding:16px 22px 22px; overflow:auto}
+
+  .prices{width:100%; border-collapse:collapse; font-size:14px}
+  .prices th{text-align:left; font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); padding:0 0 8px}
+  .prices th:last-child, .prices td:last-child{text-align:right}
+  .prices td{padding:12px 0; border-top:1px solid var(--line); vertical-align:top}
+  .prices td small{display:block; color:var(--muted); font-size:12px; margin-top:2px}
+  .prices .val{font-weight:600; font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--amber)}
+  .prices .dur{color:var(--muted); white-space:nowrap; padding:12px 12px; font-variant-numeric:tabular-nums}
+
+  .barbers{display:grid; gap:10px}
+  .barber{display:flex; align-items:center; gap:14px; padding:14px; border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,.03)}
+  .avatar{flex:none; width:46px; height:46px; border-radius:50%; display:grid; place-items:center; font-weight:650; font-size:17px; color:#1a1208; background:linear-gradient(135deg,#f1cf86,#b8862f)}
+  .barber-info{flex:1; min-width:0}
+  .barber-info strong{display:block; font-size:16px}
+  .barber-info span{display:block; font-size:13px; color:var(--muted); margin-top:2px}
+  .days{display:flex; gap:4px; margin-top:8px; flex-wrap:wrap}
+  .days i{font-style:normal; font-size:11px; padding:3px 7px; border-radius:6px; background:rgba(255,255,255,.06); color:rgba(255,255,255,.35)}
+  .days i.on{background:rgba(227,162,76,.18); color:var(--amber)}
+  .barber .btn{flex:none; height:34px; padding:0 14px; font-size:13px; font-weight:500}
+
+  .tabs{display:flex; gap:6px; margin-bottom:14px}
+  .tabs[hidden]{display:none}
+  .tabs button{height:32px; padding:0 12px; border-radius:9px; border:1px solid var(--line); background:transparent; color:var(--muted); font:inherit; font-size:13px; cursor:pointer}
+  .tabs button[aria-selected="true"]{background:#fff; color:#000; border-color:#fff}
+  .step{margin:0 0 18px}
+  .step > label, .step > .lbl{display:block; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:8px}
+  .chips{display:flex; flex-wrap:wrap; gap:6px}
+  .chips button{
+    min-height:36px; padding:6px 12px; border-radius:10px; border:1px solid var(--line);
+    background:rgba(255,255,255,.04); color:#fff; font:inherit; font-size:13px; cursor:pointer;
+    font-variant-numeric:tabular-nums; transition:background-color .15s ease, border-color .15s ease;
+  }
+  .chips button:hover:not(:disabled){border-color:rgba(255,255,255,.35)}
+  .chips button[aria-pressed="true"]{background:var(--amber); border-color:var(--amber); color:#1a1208; font-weight:600}
+  .chips button:disabled{opacity:.3; text-decoration:line-through; cursor:not-allowed}
+  .chips .date b{display:block; font-size:11px; font-weight:500; opacity:.7; text-transform:capitalize}
+  .chips.barber-pick button{display:flex; align-items:center; gap:8px; padding:6px 12px 6px 6px}
+  .chips.barber-pick .avatar{width:26px; height:26px; font-size:12px}
+  select, .field input{
+    width:100%; height:42px; padding:0 12px; border-radius:10px; border:1px solid var(--line);
+    background:rgba(255,255,255,.05); color:#fff; font:inherit; font-size:15px;
+  }
+  select option{background:#161415; color:#fff}
+  .fields{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .field label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
+  .empty{font-size:13px; color:var(--muted); margin:0}
+  .summary{padding:12px 14px; border-radius:12px; background:rgba(227,162,76,.1); border:1px solid rgba(227,162,76,.3); font-size:14px; line-height:1.5; margin-bottom:12px}
+  .summary:empty{display:none}
+  .confirm{width:100%; height:46px; font-size:15px; font-weight:600}
+  .confirm:disabled{opacity:.4; cursor:not-allowed}
+  .note{font-size:12px; color:var(--muted); margin:10px 0 0; line-height:1.5}
+  .msg{font-size:14px; margin:10px 0 0; line-height:1.5}
+  .msg.ok{color:#8fd9a8} .msg.err{color:#ff9a8a}
+  .list{display:grid; gap:8px}
+  .item{display:flex; align-items:center; gap:12px; padding:12px 14px; border:1px solid var(--line); border-radius:12px; font-size:14px}
+  .item div{flex:1; min-width:0}
+  .item small{display:block; color:var(--muted); font-size:12px; margin-top:2px}
+  .item button{flex:none; height:32px; padding:0 12px; border-radius:9px; border:1px solid rgba(255,154,138,.4); background:transparent; color:#ff9a8a; font:inherit; font-size:12px; cursor:pointer}
+  .item button:hover{background:rgba(255,154,138,.1)}
+  @media (max-width:520px){
+    .fields{grid-template-columns:1fr}
+    .barber{flex-wrap:wrap}
+    .barber .btn{width:100%}
+    .prices .dur{display:none}
+  }
+
   /* ---------- Responsive ---------- */
   @media (max-width:1023px){
     :root{ --u: calc(100vw/900); }
@@ -438,33 +521,29 @@
     </a>
 
     <nav class="links" aria-label="Principal">
-      <a href="#sobre">Sobre</a>
-      <a href="#servicos">Serviços</a>
-      <a href="#precos">Preços</a>
-      <a href="#barbeiros">Barbeiros</a>
-      <a href="#contato">Contato</a>
+      <a href="#precos" data-open="precos">Preços</a>
+      <a href="#barbeiros" data-open="barbeiros">Barbeiros</a>
+      <a href="#agendar" data-open="agendar">Agendamento</a>
     </nav>
 
     <div class="actions">
-      <a class="btn ghost" href="#precos">Ver preços</a>
-      <a class="btn solid" href="#agendar">Agendar</a>
+      <a class="btn ghost" href="#precos" data-open="precos">Ver preços</a>
+      <a class="btn solid" href="#agendar" data-open="agendar">Agendar</a>
       <button class="menu" id="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu-sheet">
         <svg viewBox="0 0 20 14" fill="none" aria-hidden="true"><path d="M0 1h20M0 7h20M0 13h20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
       </button>
       <nav class="sheet" id="menu-sheet" aria-label="Menu">
-        <a href="#sobre">Sobre</a>
-        <a href="#servicos">Serviços</a>
-        <a href="#precos">Preços</a>
-        <a href="#barbeiros">Barbeiros</a>
-        <a href="#contato">Contato</a>
-        <a class="btn solid" href="#agendar">Agendar</a>
+        <a href="#precos" data-open="precos">Preços</a>
+        <a href="#barbeiros" data-open="barbeiros">Barbeiros</a>
+        <a href="#agendar" data-open="agendar">Agendamento</a>
+        <a class="btn solid" href="#agendar" data-open="agendar">Agendar</a>
       </nav>
     </div>
   </header>
 
   <div class="screen">
     <main class="hero">
-      <a class="pill" href="#novo">
+      <a class="pill" href="#agendar" data-open="agendar" data-servico="navalha">
         <span class="chip">Novo</span>
         <span class="pill-label">Barba na navalha</span>
         <svg viewBox="0 0 9.5 8" fill="none" aria-hidden="true"><path d="M0.7 4H8.8M5.6 0.75 8.85 4 5.6 7.25" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -478,12 +557,373 @@
       <p>Tudo o que você precisa para cortar, aparar e sair daqui do jeito que merece.</p>
 
       <div class="cta">
-        <a class="btn ghost" href="#servicos">Ver serviços</a>
-        <a class="btn solid" href="#agendar">Agendar</a>
+        <a class="btn ghost" href="#precos" data-open="precos">Ver serviços</a>
+        <a class="btn solid" href="#agendar" data-open="agendar">Agendar</a>
       </div>
     </main>
   </div>
 </div>
+
+<dialog class="panel" id="dlg-precos" aria-labelledby="t-precos">
+  <div class="panel-head">
+    <div><h2 id="t-precos">Tabela de valores</h2><p>Serviços do Brabo Club</p></div>
+    <button class="x" type="button" data-close aria-label="Fechar">×</button>
+  </div>
+  <div class="panel-body">
+    <table class="prices">
+      <thead><tr><th>Serviço</th><th class="dur">Tempo</th><th>Valor</th></tr></thead>
+      <tbody id="price-rows"></tbody>
+    </table>
+    <a class="btn solid confirm" style="margin-top:18px" href="#agendar" data-open="agendar">Agendar horário</a>
+  </div>
+</dialog>
+
+<dialog class="panel" id="dlg-barbeiros" aria-labelledby="t-barbeiros">
+  <div class="panel-head">
+    <div><h2 id="t-barbeiros">Barbeiros</h2><p>Dias e horários em que cada um atende</p></div>
+    <button class="x" type="button" data-close aria-label="Fechar">×</button>
+  </div>
+  <div class="panel-body"><div class="barbers" id="barber-list"></div></div>
+</dialog>
+
+<dialog class="panel" id="dlg-agendar" aria-labelledby="t-agendar">
+  <div class="panel-head">
+    <div><h2 id="t-agendar">Agendamento</h2><p>Escolha o barbeiro, o dia e o horário</p></div>
+    <button class="x" type="button" data-close aria-label="Fechar">×</button>
+  </div>
+  <div class="panel-body">
+    <div class="tabs" role="tablist" id="tabs">
+      <button type="button" role="tab" data-tab="novo" aria-selected="true">Agendar</button>
+      <button type="button" role="tab" data-tab="meus" aria-selected="false" hidden>Meus horários</button>
+      <button type="button" role="tab" data-tab="agenda" aria-selected="false" hidden>Agenda da barbearia</button>
+    </div>
+
+    <section data-pane="novo">
+      <div class="step"><span class="lbl">1. Barbeiro</span><div class="chips barber-pick" id="pick-barbeiro"></div></div>
+      <div class="step"><label for="pick-servico">2. Serviço</label><select id="pick-servico"></select></div>
+      <div class="step"><span class="lbl">3. Dia</span><div class="chips" id="pick-data"></div></div>
+      <div class="step"><span class="lbl">4. Horário</span><div class="chips" id="pick-hora"></div></div>
+      <div class="step fields">
+        <div class="field"><label for="f-nome">Seu nome</label><input id="f-nome" autocomplete="name" maxlength="60"></div>
+        <div class="field"><label for="f-tel">WhatsApp</label><input id="f-tel" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="(00) 00000-0000"></div>
+      </div>
+      <div class="summary" id="summary"></div>
+      <button class="btn solid confirm" type="button" id="confirm" disabled>Confirmar agendamento</button>
+      <p class="msg" id="msg" role="status"></p>
+      <p class="note" id="mode-note"></p>
+    </section>
+
+    <section data-pane="meus" hidden><div class="list" id="list-meus"></div></section>
+    <section data-pane="agenda" hidden><div class="list" id="list-agenda"></div></section>
+  </div>
+</dialog>
+
+<script>
+  // Preços, barbeiros e agendamento
+  (function(){
+    var WHATSAPP = ''; // número da barbearia com DDI e DDD, só dígitos (ex.: 5511999999999)
+
+    var SERVICOS = [
+      {id:'corte',    nome:'Corte',                        desc:'Máquina e tesoura, com lavagem',      min:40, preco:40},
+      {id:'barba',    nome:'Barba',                        desc:'Modelagem e acabamento',              min:30, preco:30},
+      {id:'combo',    nome:'Corte + barba',                desc:'O combo completo',                    min:60, preco:60},
+      {id:'navalha',  nome:'Barba na navalha',             desc:'Com toalha quente',                   min:40, preco:40},
+      {id:'pezinho',  nome:'Pezinho',                      desc:'Acabamento do contorno',              min:15, preco:15},
+      {id:'sobrancelha', nome:'Sobrancelha',               desc:'Na navalha ou na pinça',              min:15, preco:15},
+      {id:'pigmentacao', nome:'Pigmentação',               desc:'Barba ou cabelo',                     min:30, preco:30},
+      {id:'platinado',nome:'Platinado / luzes',            desc:'Descoloração completa',               min:120, preco:120}
+    ];
+    var HORAS_A = ['09:00','10:00','11:00','13:00','14:00','15:00','16:00','17:00','18:00'];
+    var HORAS_B = ['10:00','11:00','12:00','14:00','15:00','16:00','17:00','18:00','19:00'];
+    var BARBEIROS = [
+      {id:'vitinho', nome:'Vitinho', esp:'Degradê e cortes na navalha', dias:[2,3,4,5,6], horas:HORAS_A},
+      {id:'mycon',   nome:'Mycon',   esp:'Barba e toalha quente',       dias:[1,2,3,4,5], horas:HORAS_B},
+      {id:'rian',    nome:'Rian',    esp:'Cortes clássicos e platinado', dias:[3,4,5,6,0], horas:HORAS_A}
+    ];
+    var DIAS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+    var DIAS_AFRENTE = 14;
+
+    var $ = function(id){ return document.getElementById(id); };
+    function el(tag, cls, text){ var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+    function brl(v){ return 'R$ ' + v.toFixed(2).replace('.', ','); }
+    function pad(n){ return (n < 10 ? '0' : '') + n; }
+    function iso(d){ return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+    function fromIso(s){ var p = s.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+    function nomeDia(s){ var d = fromIso(s); return DIAS[d.getDay()] + ', ' + pad(d.getDate()) + '/' + pad(d.getMonth()+1); }
+    function faixa(b){ return b.horas[0] + ' às ' + (parseInt(b.horas[b.horas.length-1], 10) + 1) + ':00'; }
+    function byId(list, id){ for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i]; return null; }
+    function slotId(b, d, h){ return b + '_' + d + '_' + h.replace(':', ''); }
+
+    // ---- Tabela de valores ----
+    var rows = $('price-rows');
+    SERVICOS.forEach(function(s){
+      var tr = el('tr'), td = el('td', null, s.nome);
+      td.appendChild(el('small', null, s.desc));
+      tr.appendChild(td);
+      tr.appendChild(el('td', 'dur', s.min >= 60 ? (s.min/60) + ' h' : s.min + ' min'));
+      tr.appendChild(el('td', 'val', brl(s.preco)));
+      rows.appendChild(tr);
+    });
+
+    // ---- Barbeiros ----
+    var list = $('barber-list');
+    BARBEIROS.forEach(function(b){
+      var card = el('div', 'barber');
+      card.appendChild(el('div', 'avatar', b.nome.charAt(0)));
+      var info = el('div', 'barber-info');
+      info.appendChild(el('strong', null, b.nome));
+      info.appendChild(el('span', null, b.esp + ' · ' + faixa(b)));
+      var days = el('div', 'days');
+      [1,2,3,4,5,6,0].forEach(function(d){ days.appendChild(el('i', b.dias.indexOf(d) >= 0 ? 'on' : '', DIAS[d])); });
+      info.appendChild(days);
+      card.appendChild(info);
+      var a = el('a', 'btn solid', 'Agendar com ' + b.nome);
+      a.href = '#agendar'; a.setAttribute('data-open', 'agendar'); a.setAttribute('data-barbeiro', b.id);
+      card.appendChild(a);
+      list.appendChild(card);
+    });
+
+    // ---- Abrir / fechar painéis ----
+    var bar = document.querySelector('.bar'), menuBtn = $('menu-btn');
+    function open(name, opts){
+      bar.dataset.open = 'false'; menuBtn.setAttribute('aria-expanded', 'false'); menuBtn.setAttribute('aria-label', 'Menu');
+      document.querySelectorAll('dialog.panel[open]').forEach(function(d){ d.close(); });
+      if (name === 'agendar' && opts) preset(opts);
+      var dlg = $('dlg-' + name);
+      if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
+    }
+    document.addEventListener('click', function(e){
+      var t = e.target.closest && e.target.closest('[data-open]');
+      if (t) { e.preventDefault(); open(t.getAttribute('data-open'), {barbeiro:t.getAttribute('data-barbeiro'), servico:t.getAttribute('data-servico')}); return; }
+      var c = e.target.closest && e.target.closest('[data-close]');
+      if (c) { c.closest('dialog').close(); return; }
+      if (e.target.matches && e.target.matches('dialog.panel')) e.target.close();
+    });
+
+    // ---- Agendamento ----
+    var st = {barbeiro:null, servico:'corte', data:null, hora:null};
+    var taken = {}, mine = null, all = [];
+    var db = null, uid = null, online = false, isAdmin = false, busy = false;
+
+    var sel = $('pick-servico');
+    SERVICOS.forEach(function(s){ var o = el('option', null, s.nome + ' — ' + brl(s.preco)); o.value = s.id; sel.appendChild(o); });
+    sel.addEventListener('change', function(){ st.servico = sel.value; renderSummary(); });
+    $('f-nome').addEventListener('input', renderSummary);
+    $('f-tel').addEventListener('input', renderSummary);
+
+    function preset(o){
+      if (o.barbeiro) { st.barbeiro = o.barbeiro; st.data = null; st.hora = null; }
+      if (o.servico) { st.servico = o.servico; }
+      showTab('novo'); msg('', ''); render();
+    }
+
+    function chip(label, pressed, onClick, disabled){
+      var b = el('button'); b.type = 'button';
+      if (typeof label === 'string') b.textContent = label; else b.appendChild(label);
+      b.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+      if (disabled) b.disabled = true;
+      b.addEventListener('click', onClick);
+      return b;
+    }
+
+    function datasDe(b){
+      var out = [], d = new Date(); d.setHours(0,0,0,0);
+      for (var i = 0; i < DIAS_AFRENTE; i++) {
+        if (b.dias.indexOf(d.getDay()) >= 0) out.push(iso(d));
+        d.setDate(d.getDate() + 1);
+      }
+      return out;
+    }
+    function horaPassou(data, hora){
+      var now = new Date();
+      if (data !== iso(now)) return false;
+      return hora <= pad(now.getHours()) + ':' + pad(now.getMinutes());
+    }
+
+    function render(){
+      sel.value = st.servico;
+      var pb = $('pick-barbeiro'); pb.textContent = '';
+      BARBEIROS.forEach(function(b){
+        var f = document.createDocumentFragment();
+        f.appendChild(el('span', 'avatar', b.nome.charAt(0)));
+        f.appendChild(document.createTextNode(b.nome));
+        pb.appendChild(chip(f, st.barbeiro === b.id, function(){ st.barbeiro = b.id; st.data = null; st.hora = null; msg('', ''); render(); }));
+      });
+
+      var pd = $('pick-data'); pd.textContent = '';
+      var b = byId(BARBEIROS, st.barbeiro);
+      if (!b) pd.appendChild(el('p', 'empty', 'Escolha um barbeiro para ver os dias disponíveis.'));
+      else datasDe(b).forEach(function(d){
+        var dt = fromIso(d), f = el('span', 'date');
+        f.appendChild(el('b', null, DIAS[dt.getDay()]));
+        f.appendChild(document.createTextNode(pad(dt.getDate()) + '/' + pad(dt.getMonth()+1)));
+        pd.appendChild(chip(f, st.data === d, function(){ st.data = d; st.hora = null; msg('', ''); render(); }));
+      });
+      renderHours();
+    }
+
+    function renderHours(){
+      var ph = $('pick-hora'); ph.textContent = '';
+      var b = byId(BARBEIROS, st.barbeiro);
+      if (!b || !st.data) { ph.appendChild(el('p', 'empty', 'Escolha o dia para ver os horários.')); renderSummary(); return; }
+      var livres = 0;
+      b.horas.forEach(function(h){
+        var off = !!taken[slotId(b.id, st.data, h)] || horaPassou(st.data, h);
+        if (!off) livres++;
+        if (off && st.hora === h) st.hora = null;
+        ph.appendChild(chip(h, st.hora === h, function(){ st.hora = h; msg('', ''); renderHours(); }, off));
+      });
+      if (!livres) ph.appendChild(el('p', 'empty', 'Sem horários livres nesse dia. Tente outro.'));
+      renderSummary();
+    }
+
+    function renderSummary(){
+      var b = byId(BARBEIROS, st.barbeiro), s = byId(SERVICOS, st.servico), box = $('summary');
+      box.textContent = '';
+      if (b && st.data && st.hora) {
+        box.appendChild(el('strong', null, s.nome + ' com ' + b.nome));
+        box.appendChild(el('div', null, nomeDia(st.data) + ' às ' + st.hora + ' · ' + brl(s.preco)));
+      }
+      var ok = b && st.data && st.hora && $('f-nome').value.trim().length > 1 && $('f-tel').value.replace(/\D/g, '').length >= 10;
+      $('confirm').disabled = !ok || busy;
+    }
+
+    function msg(text, kind){ var m = $('msg'); m.textContent = text; m.className = 'msg' + (kind ? ' ' + kind : ''); }
+
+    function setMode(){
+      $('confirm').textContent = online ? 'Confirmar agendamento' : 'Enviar pelo WhatsApp';
+      $('mode-note').textContent = online
+        ? 'O horário fica reservado na hora e some da lista para os outros clientes.'
+        : 'O pedido abre no WhatsApp com todos os dados preenchidos. É só enviar para a barbearia confirmar.';
+      document.querySelector('[data-tab="meus"]').hidden = !online;
+      document.querySelector('[data-tab="agenda"]').hidden = !(db && isAdmin);
+      $('tabs').hidden = !online && !(db && isAdmin);
+    }
+
+    function showTab(name){
+      document.querySelectorAll('#tabs [data-tab]').forEach(function(t){ t.setAttribute('aria-selected', t.getAttribute('data-tab') === name ? 'true' : 'false'); });
+      document.querySelectorAll('[data-pane]').forEach(function(p){ p.hidden = p.getAttribute('data-pane') !== name; });
+    }
+    $('tabs').addEventListener('click', function(e){ var t = e.target.closest('[data-tab]'); if (t) showTab(t.getAttribute('data-tab')); });
+
+    function whatsapp(){
+      var b = byId(BARBEIROS, st.barbeiro), s = byId(SERVICOS, st.servico);
+      var txt = 'Olá! Quero agendar no Brabo Club.\n' +
+        'Serviço: ' + s.nome + ' (' + brl(s.preco) + ')\n' +
+        'Barbeiro: ' + b.nome + '\n' +
+        'Dia: ' + nomeDia(st.data) + '\n' +
+        'Horário: ' + st.hora + '\n' +
+        'Nome: ' + $('f-nome').value.trim() + '\n' +
+        'WhatsApp: ' + $('f-tel').value.trim();
+      var a = document.createElement('a');
+      a.href = 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(txt);
+      a.target = '_blank'; a.rel = 'noopener';
+      document.body.appendChild(a); a.click(); a.remove();
+      msg('Abrimos o WhatsApp com o seu pedido. Envie a mensagem para confirmar.', 'ok');
+    }
+
+    function semReserva(body, id){
+      var c = JSON.parse(JSON.stringify(body || {}));
+      if (c.reservas) delete c.reservas[id];
+      return c;
+    }
+
+    async function reservar(){
+      var b = st.barbeiro, d = st.data, h = st.hora, id = slotId(b, d, h);
+      var nome = $('f-nome').value.trim(), tel = $('f-tel').value.trim();
+      var ref = db.doc('ocupados/' + id);
+      busy = true; renderSummary(); msg('Reservando…', '');
+      try {
+        var lease = await ref.acquire({holder: uid, ttlMs: 8000});
+        if (!lease.acquired) throw {code: 'taken'};
+        var cur = await ref.get();
+        if (cur.exists && cur.data().uid && cur.data().uid !== uid) throw {code: 'taken'};
+        await ref.set({barbeiro: b, data: d, hora: h, uid: uid});
+        var meuRef = db.doc('agendamentos/' + uid);
+        var meu = await meuRef.get();
+        var body = meu.exists ? JSON.parse(JSON.stringify(meu.data())) : {};
+        body.nome = nome; body.telefone = tel; body.reservas = body.reservas || {};
+        body.reservas[id] = {barbeiro: b, servico: st.servico, data: d, hora: h, criado: new Date().toISOString()};
+        await meuRef.set(body);
+        taken[id] = true; st.hora = null;
+        msg('Pronto! ' + byId(BARBEIROS, b).nome + ' te espera ' + nomeDia(d) + ' às ' + h + '.', 'ok');
+        renderHours();
+      } catch (e) {
+        if (e && e.code === 'taken') { taken[id] = true; st.hora = null; renderHours(); msg('Esse horário acabou de ser reservado. Escolha outro.', 'err'); }
+        else if (e && (e.code === 'invalid_argument' || e.code === 'not_granted' || e.code === 'revoked')) { online = false; setMode(); msg('Não foi possível reservar por aqui. Envie o pedido pelo WhatsApp.', 'err'); }
+        else msg('Algo deu errado. Tente de novo em instantes.', 'err');
+      } finally { busy = false; renderSummary(); }
+    }
+
+    $('confirm').addEventListener('click', function(){ if (online) reservar(); else whatsapp(); });
+
+    async function cancelar(dono, id, body){
+      if (!confirm('Cancelar este horário?')) return;
+      try {
+        await db.doc('ocupados/' + id).delete();
+        await db.doc('agendamentos/' + dono).set(semReserva(body, id));
+        delete taken[id]; renderHours();
+      } catch (e) { alert('Não foi possível cancelar agora. Tente de novo.'); }
+    }
+
+    function itens(entries, admin){
+      var hoje = iso(new Date()), out = [];
+      entries.forEach(function(en){
+        var r = (en.body && en.body.reservas) || {};
+        Object.keys(r).forEach(function(id){ if (r[id].data >= hoje) out.push({id: id, r: r[id], en: en}); });
+      });
+      out.sort(function(a, b){ return (a.r.data + a.r.hora).localeCompare(b.r.data + b.r.hora); });
+      return out;
+    }
+    function renderList(box, items, admin, vazio){
+      box.textContent = '';
+      if (!items.length) { box.appendChild(el('p', 'empty', vazio)); return; }
+      items.forEach(function(it){
+        var row = el('div', 'item'), info = el('div');
+        var b = byId(BARBEIROS, it.r.barbeiro), s = byId(SERVICOS, it.r.servico);
+        info.appendChild(el('strong', null, nomeDia(it.r.data) + ' · ' + it.r.hora));
+        info.appendChild(el('small', null, (s ? s.nome : it.r.servico) + ' com ' + (b ? b.nome : it.r.barbeiro) +
+          (admin ? ' · ' + (it.en.body.nome || 'Cliente') + ' · ' + (it.en.body.telefone || '') : '')));
+        row.appendChild(info);
+        var c = el('button', null, 'Cancelar'); c.type = 'button';
+        c.addEventListener('click', function(){ cancelar(it.en.uid, it.id, it.en.body); });
+        row.appendChild(c);
+        box.appendChild(row);
+      });
+    }
+    function renderMine(){ renderList($('list-meus'), itens([{uid: uid, body: mine}]), false, 'Você ainda não tem horários marcados.'); }
+    function renderAll(){ renderList($('list-agenda'), itens(all), true, 'Nenhum horário marcado ainda.'); }
+
+    render(); setMode();
+
+    // Capacidades da página publicada: reserva real com horários compartilhados.
+    (async function(){
+      if (!window.claude || !window.claude.use) return;
+      try {
+        var u = await window.claude.use('user');
+        var d = await window.claude.use('db');
+        if (!u || !d) return;
+        uid = await u.id();
+        if (!uid) return;
+        var can = await u.can('data.write');
+        isAdmin = await u.canEdit();
+        db = d; online = can !== false;
+        setMode();
+        db.collection('ocupados').where('data', '>=', iso(new Date())).onSnapshot(function(snap){
+          taken = {}; snap.docs.forEach(function(x){ taken[x.id] = true; }); renderHours();
+        }, function(){});
+        if (online) db.doc('agendamentos/' + uid).onSnapshot(function(s){
+          mine = s.exists ? s.data() : null;
+          if (mine) { if (!$('f-nome').value) $('f-nome').value = mine.nome || ''; if (!$('f-tel').value) $('f-tel').value = mine.telefone || ''; }
+          renderMine(); renderSummary();
+        }, function(){});
+        if (isAdmin) db.collection('agendamentos').onSnapshot(function(s){
+          all = s.docs.map(function(x){ return {uid: x.id, body: x.data()}; }); renderAll();
+        }, function(){});
+      } catch (e) { /* segue no modo WhatsApp */ }
+    })();
+  })();
+</script>
 
 <script>
   // Entrance animation
