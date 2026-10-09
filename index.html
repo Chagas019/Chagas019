@@ -807,7 +807,6 @@
   @keyframes stageScan { 0% { transform: translateY(0); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(var(--stage-h, 700px)); opacity: 0; } }
 
   /* seções revelam com varredura ao entrar na tela */
-  .fx-in { animation: secReveal .9s cubic-bezier(.2, .8, .2, 1) both; }
   @keyframes secReveal {
     0% { clip-path: inset(0 0 100% 0); filter: brightness(1.6); }
     70% { clip-path: inset(0 0 0 0); filter: brightness(1.1); }
@@ -860,6 +859,33 @@
     .media.glitch .slide.on, .media.glitch .slide.on .portrait, .lt-body.fx-page { animation: none !important; }
     .stage::after, dialog[open]::after { display: none; }
     .card:hover { transform: none !important; }
+  }
+  /* ---------- Transições no estilo do vídeo de referência (ligadas à rolagem) ---------- */
+  .sec, .stage-wrap { transform-origin: 50% 0; will-change: transform, opacity, filter; }
+  .portal { position: absolute; right: clamp(16px, 4vw, 44px); top: clamp(16px, 3vw, 34px); width: clamp(84px, 11vw, 150px); aspect-ratio: 1; pointer-events: none; z-index: 2; }
+  .portal svg { width: 100%; height: 100%; overflow: visible; }
+  .portal .p-base { fill: none; stroke: rgba(255,255,255,.18); stroke-width: 1; }
+  .portal .p-arc { fill: none; stroke: #fff; stroke-width: 1.5; stroke-linecap: round; filter: drop-shadow(0 0 4px rgba(255,120,140,.9)); }
+  .portal .p-dot { fill: #ff5a6e; filter: drop-shadow(0 0 6px #ff5a6e); }
+  .portal::after { content: ""; position: absolute; inset: 0; border-radius: 50%; opacity: 0; pointer-events: none;
+    background: radial-gradient(closest-side, transparent 58%, rgba(255,70,90,.85) 70%, rgba(255,140,120,.35) 82%, transparent 100%); filter: blur(4px); }
+  .portal.bloom::after { animation: bloom 1.1s cubic-bezier(.2, .8, .2, 1) both; }
+  @keyframes bloom { 0% { opacity: 0; transform: scale(.6); } 35% { opacity: 1; } 100% { opacity: 0; transform: scale(1.9); } }
+  .sec-h2 { will-change: clip-path; }
+
+  /* riscos de luz na diagonal enquanto a página rola */
+  .warp { position: fixed; inset: 0; pointer-events: none; z-index: 25; overflow: hidden; opacity: 0; transition: opacity .35s ease; }
+  .warp i { position: absolute; height: 1.5px; width: 46vw; border-radius: 2px; transform: rotate(-24deg);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.85), rgba(255,110,130,.9), transparent); box-shadow: 0 0 10px rgba(255,90,110,.5); }
+
+  /* cena de São Carlo: arco que se desenha e partículas */
+  .cine-arc { position: absolute; pointer-events: none; z-index: 3; overflow: visible; }
+  .cine-arc circle { fill: none; stroke: #fff; stroke-width: 1.6; stroke-linecap: round; filter: drop-shadow(0 0 6px rgba(255,140,160,.9)); }
+  .cine-dust { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .warp, .cine-dust { display: none; }
+    .portal.bloom::after { animation: none; }
   }
   /* ---------- Responsivo ----------
      celular (< 768px): menu em barra fixa embaixo, cards passam com o dedo
@@ -2662,6 +2688,7 @@ let rolando = false;
 function onScroll() {
   rolando = false;
   if (typeof cineFrame === "function") cineFrame();
+  if (typeof videoFx === "function") { videoFx(); warpFx(); }
   const max = document.documentElement.scrollHeight - innerHeight;
   $("scroll-fill").style.width = (max > 0 ? scrollY / max * 100 : 0) + "%";
   const cr = $("carlo").getBoundingClientRect();
@@ -2967,9 +2994,99 @@ openLicao = function (i) {
   if (!semMovimento()) { const b = $("lt-body"); b.style.setProperty("--pdx", 24 * dir + "px"); b.classList.remove("fx-page"); void b.offsetWidth; b.classList.add("fx-page"); }
 };
 
+
+/* ---------- Transições no estilo do vídeo de referência (ligadas à rolagem) ---------- */
+const PORTAL_R = 46, PORTAL_C = 2 * Math.PI * PORTAL_R;
+const portalSVG = `<svg viewBox="0 0 100 100" aria-hidden="true"><circle class="p-base" cx="50" cy="50" r="${PORTAL_R}"/>
+  <circle class="p-arc" cx="50" cy="50" r="${PORTAL_R}" stroke-dasharray="0 ${PORTAL_C}" transform="rotate(-90 50 50)"/>
+  <circle class="p-dot" cx="50" cy="4" r="2.4"/></svg>`;
+const secoes = [...document.querySelectorAll(".sec")];
+secoes.forEach(s => { const d = document.createElement("div"); d.className = "portal"; d.setAttribute("aria-hidden", "true"); d.innerHTML = portalSVG; s.appendChild(d); });
+const palco = document.querySelector(".stage-wrap");
+const limpa = el => { el.style.transform = ""; el.style.opacity = ""; el.style.filter = ""; };
+function videoFx() {
+  const vh = innerHeight, parado = semMovimento();
+  // painel do topo recua para o fundo ao descer
+  const rp = palco.getBoundingClientRect(), xp = parado ? 0 : clamp01((vh * .35 - rp.bottom) / (vh * .6));
+  if (xp > 0) Object.assign(palco.style, { transform: `perspective(1600px) translateZ(${-260 * xp}px) rotateX(${7 * xp}deg)`, opacity: 1 - .6 * xp, filter: `blur(${3 * xp}px)` });
+  else limpa(palco);
+  secoes.forEach(s => {
+    const r = s.getBoundingClientRect();
+    if (r.bottom < -vh || r.top > vh * 2) return;
+    const e = parado ? 1 : clamp01((vh - r.top) / (vh * .55));          // entrada
+    const x = parado ? 0 : clamp01((vh * .3 - r.bottom) / (vh * .5));   // saída
+    if (e >= 1 && x <= 0) limpa(s);
+    else Object.assign(s.style, {
+      transform: `perspective(1600px) translate3d(0, ${(1 - e) * 70}px, ${-(1 - e) * 280 - x * 220}px) rotateX(${(1 - e) * 10 - x * 6}deg)`,
+      opacity: (.12 + .88 * ease(e)) * (1 - .65 * x), filter: `blur(${((1 - e) * 6 + x * 3).toFixed(2)}px)`,
+    });
+    // título: varrido da esquerda para a direita ao entrar; some para a direita ao sair
+    const h = s.querySelector(".sec-h2");
+    if (h) {
+      const t = parado ? 1 : clamp01((vh * .92 - r.top) / (vh * .38)), o = parado ? 0 : clamp01((vh * .45 - r.bottom) / (vh * .4));
+      h.style.clipPath = t >= 1 && o <= 0 ? "" : `inset(-10% ${((1 - t) * 100).toFixed(1)}% -10% ${(o * 100).toFixed(1)}%)`;
+    }
+    // anel com arco que se desenha; pulso de luz quando a seção chega inteira
+    const p = s.querySelector(".portal"), arc = p.querySelector(".p-arc"), dot = p.querySelector(".p-dot");
+    const a = clamp01((vh * .95 - r.top) / (vh * .6));
+    arc.setAttribute("stroke-dasharray", `${(a * PORTAL_C).toFixed(1)} ${PORTAL_C}`);
+    const ang = a * 360 - 90; dot.setAttribute("cx", (50 + PORTAL_R * Math.cos(ang * Math.PI / 180)).toFixed(2)); dot.setAttribute("cy", (50 + PORTAL_R * Math.sin(ang * Math.PI / 180)).toFixed(2));
+    p.style.transform = `rotate(${(scrollY * .04) % 360}deg)`;
+    if (a >= 1 && !p.dataset.bloomed && !parado) { p.dataset.bloomed = "1"; p.classList.add("bloom"); }
+    if (a < .2) { delete p.dataset.bloomed; p.classList.remove("bloom"); }
+  });
+}
+// riscos de luz enquanto a página rola
+const warp = document.createElement("div"); warp.className = "warp"; warp.setAttribute("aria-hidden", "true");
+warp.innerHTML = Array.from({ length: 6 }, (_, i) => `<i style="top:${10 + i * 15}%;animation-delay:${i * .1}s"></i>`).join("");
+document.body.appendChild(warp);
+let ultimoY = scrollY, ultimoT = performance.now(), warpTimer = null;
+function warpFx() {
+  if (semMovimento()) return;
+  const t = performance.now(), v = Math.abs(scrollY - ultimoY) / Math.max(16, t - ultimoT);
+  ultimoY = scrollY; ultimoT = t;
+  warp.style.opacity = Math.min(.9, v * .45).toFixed(2);
+  [...warp.children].forEach((l, i) => { l.style.left = `${((scrollY * (.5 + i * .17) + i * 280) % (innerWidth * 1.8)) - innerWidth * .5}px`; });
+  clearTimeout(warpTimer); warpTimer = setTimeout(() => { warp.style.opacity = 0; }, 140);
+}
+// cena de São Carlo: partículas flutuando
+const poeira = document.createElement("canvas"); poeira.className = "cine-dust"; poeira.setAttribute("aria-hidden", "true");
+document.querySelector(".cine-sticky").prepend(poeira);
+const grãos = Array.from({ length: 70 }, () => ({ x: Math.random(), y: Math.random(), r: Math.random() * 1.6 + .3, v: Math.random() * .00025 + .00008, a: Math.random() * .6 + .2 }));
+let poeiraAtiva = false;
+function desenhaPoeira() {
+  const rc = cine.getBoundingClientRect();
+  poeiraAtiva = rc.top < innerHeight && rc.bottom > 0 && !semMovimento();
+  if (!poeiraAtiva) return;
+  const w = poeira.width = poeira.clientWidth, h = poeira.height = poeira.clientHeight, g = poeira.getContext("2d");
+  grãos.forEach(p => { p.y -= p.v * 16; p.x += Math.sin((p.y + p.r) * 12) * .0003; if (p.y < -.02) { p.y = 1.02; p.x = Math.random(); }
+    g.beginPath(); g.arc(p.x * w, p.y * h, p.r, 0, Math.PI * 2); g.fillStyle = `rgba(255,${180 + p.r * 30 | 0},${190},${p.a})`; g.fill(); });
+  requestAnimationFrame(desenhaPoeira);
+}
+// cena de São Carlo: arco que se desenha em volta do anel
+const arcoCine = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+arcoCine.setAttribute("class", "cine-arc"); arcoCine.setAttribute("aria-hidden", "true"); arcoCine.setAttribute("viewBox", "0 0 100 100");
+arcoCine.innerHTML = `<circle cx="50" cy="50" r="49.5" stroke-dasharray="0 311" transform="rotate(-90 50 50)"/>`;
+document.querySelector(".cine-sticky").appendChild(arcoCine);
+const cineFrameBase = cineFrame;
+cineFrame = function () {
+  cineFrameBase();
+  const r = cine.getBoundingClientRect(), vh = innerHeight, vw = innerWidth;
+  if (r.bottom < -50 || r.top > vh + 50) return;
+  const total = r.height - vh, p = semMovimento() || total <= 0 ? 1 : clamp01(-r.top / total);
+  const D = Math.min(vh * .42, vw * (vw < 700 ? .5 : .32)), cx = vw / 2, cy = vh * (vw < 700 ? .48 : .44), A = D * 1.16;
+  Object.assign(arcoCine.style, { width: A + "px", height: A + "px", left: cx - A / 2 + "px", top: cy - A / 2 + "px", transform: `rotate(${p * 220}deg)` });
+  arcoCine.firstChild.setAttribute("stroke-dasharray", `${(clamp01((p - .28) / .4) * 311).toFixed(1)} 311`);
+  // contorno fantasma e materialização antes do halo
+  const fantasma = clamp01((p - .6) / .1) * (1 - clamp01((p - .74) / .08));
+  cineImg.style.filter = fantasma > 0 ? `grayscale(${fantasma}) contrast(${1 + fantasma * 1.6}) brightness(${1 + fantasma * .5}) drop-shadow(0 0 ${12 * fantasma}px rgba(255,140,160,.9))` : "";
+  cineImg.style.opacity = 1 - fantasma * .45;
+  if (!poeiraAtiva) desenhaPoeira();
+};
+
 /* ---------- Início ---------- */
 renderHero(); renderPick(); renderMass(); setMassUI(false); renderQuote(); restartHero(); applyFilter(); renderEscalaCard();
-renderFormacao(); renderTimeline(); renderDocs(); onScroll(); cineFrame();
+renderFormacao(); renderTimeline(); renderDocs(); onScroll(); cineFrame(); videoFx();
 renderLiturgia(); renderAgenda(); renderFrases(); applyTeam();
 startData().then(openFromHash);
 </script>
