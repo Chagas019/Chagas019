@@ -71,12 +71,85 @@
     padding: 12px;
     display: grid;
     grid-template-columns: 64px 1.15fr 1fr 0.85fr;
-    grid-template-rows: minmax(340px, auto) minmax(280px, auto);
+    grid-template-rows: minmax(340px, auto) minmax(280px, auto) auto;
     grid-template-areas:
       "side hero hero browse"
-      "side cont pick play";
+      "side cont pick play"
+      "side litu agen fras";
     gap: 12px;
   }
+
+  /* ---------- Ícones 3D ---------- */
+  .i3d { display: inline-grid; place-items: center; flex-shrink: 0; width: var(--s, 56px); height: var(--s, 56px); border-radius: calc(var(--s, 56px) * .28); background: #101010; overflow: hidden; }
+  .i3d img { width: 112%; height: 112%; object-fit: cover; display: block; }
+
+  /* ---------- Faixa da equipe (liturgia, agenda, frases) ---------- */
+  .litu { grid-area: litu; background: var(--soft); border-radius: var(--r-lg); padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .agen { grid-area: agen; }
+  .fras { grid-area: fras; }
+  .panel-dark { background: var(--ink-2); color: var(--on-dark); border-radius: var(--r-lg); padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .p-head { display: flex; align-items: center; gap: 12px; }
+  .p-head h2 { font-size: 17px; font-weight: 500; margin: 0; }
+  .p-head .sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
+  .panel-dark .p-head .sub { color: var(--on-dark-muted); }
+  .p-head .add { margin-left: auto; }
+  .add {
+    width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0;
+    background: var(--red); color: #fff; transition: transform .2s var(--ease), box-shadow .2s;
+  }
+  .add:hover { transform: rotate(90deg); box-shadow: 0 6px 18px -6px var(--red); }
+  .add[hidden] { display: none; }
+  .season { display: flex; flex-wrap: wrap; gap: 6px; }
+  .season span { font-size: 12px; padding: 6px 10px; border-radius: 999px; background: #fff; display: inline-flex; align-items: center; gap: 6px; }
+  .season .dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgba(0,0,0,.15); }
+  .readings { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+  .readings li { display: grid; grid-template-columns: 124px 1fr; gap: 10px; font-size: 13px; padding: 8px 10px; background: #fff; border-radius: 10px; }
+  .readings li b { font-weight: 600; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; align-self: center; }
+  .readings li span { min-width: 0; overflow-wrap: anywhere; }
+  .p-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
+  .btn-sm { min-height: 38px; padding: 0 14px; border-radius: 999px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-sm.dark { background: var(--ink); color: #fff; }
+  .btn-sm.light { background: #fff; color: var(--ink); }
+  .btn-sm.ghost { border: 1px solid #cfcfcf; }
+  .panel-dark .btn-sm.ghost { border-color: rgba(255,255,255,.25); color: #fff; }
+  .ev-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .ev { display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 14px; background: rgba(255,255,255,.05); min-width: 0; }
+  .ev .when { text-align: center; min-width: 44px; font-variant-numeric: tabular-nums; }
+  .ev .when b { display: block; font-size: 18px; font-weight: 600; line-height: 1; }
+  .ev .when small { font-size: 10px; text-transform: uppercase; color: #ff8a9b; letter-spacing: .1em; }
+  .ev .what { min-width: 0; flex: 1; }
+  .ev .what b { display: block; font-weight: 500; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ev .what small { color: var(--on-dark-muted); font-size: 12px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .empty-state { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 14px; background: rgba(255,255,255,.05); font-size: 13px; color: var(--on-dark-muted); }
+  .litu .empty-state { background: #fff; color: var(--muted); }
+  .team-q { margin: 0; padding: 12px 14px; border-radius: 14px; background: rgba(255,255,255,.05); font-size: 14px; line-height: 1.45; }
+  .team-q cite { display: block; font-style: normal; font-size: 12px; color: var(--on-dark-muted); margin-top: 6px; }
+  .team-q .today { display: inline-block; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--red); padding: 3px 8px; border-radius: 999px; margin-bottom: 6px; }
+  .mode { font-size: 11px; color: var(--on-dark-muted); }
+  .litu .mode { color: var(--muted); }
+
+  /* listas em modais */
+  .m-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .m-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 14px; background: var(--soft); min-width: 0; }
+  .m-item .what { flex: 1; min-width: 0; }
+  .m-item .what b { display: block; font-weight: 600; }
+  .m-item .what p, .m-item .what small { margin: 2px 0 0; color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+  .del { min-height: 36px; padding: 0 10px 0 4px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); flex-shrink: 0; }
+  .del:hover { background: #e2e2e2; color: var(--ink); }
+  .del.confirm { background: var(--red); color: #fff; padding: 0 12px; }
+  .field textarea { min-height: 90px; border-radius: 12px; border: 1px solid #d6d6d6; padding: 10px 12px; font: inherit; font-size: 16px; resize: vertical; color: var(--ink); background: #fff; }
+  .field textarea:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(200, 16, 46, .15); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .area-pick { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; border: 0; padding: 0; margin: 0; }
+  .area-pick label { display: flex; align-items: center; gap: 8px; padding: 6px; border-radius: 12px; border: 1px solid #dadada; cursor: pointer; font-size: 13px; }
+  .area-pick input { position: absolute; opacity: 0; pointer-events: none; }
+  .area-pick label:has(input:checked) { border-color: var(--red); background: rgba(200,16,46,.06); }
+  .area-pick label:has(input:focus-visible) { outline: 2px solid var(--red); outline-offset: 2px; }
+  .ext-links { display: flex; flex-wrap: wrap; gap: 8px; }
+  .ext-links a { font-size: 13px; color: var(--ink); background: var(--soft); padding: 8px 12px; border-radius: 999px; text-decoration: none; }
+  .ext-links a:hover { background: #e4e4e4; }
+  .read-block h4 { margin: 0 0 4px; font-size: 13px; color: var(--red); }
+  .read-block p { white-space: pre-wrap; }
 
   /* ---------- Sidebar ---------- */
   .side {
@@ -358,13 +431,16 @@
       grid-template-areas:
         "side hero hero"
         "side browse cont"
-        "side pick play";
+        "side pick play"
+        "side litu litu"
+        "side agen fras";
     }
   }
   @media (max-width: 680px) {
     body { padding-block: 16px 96px; }
     .frame { padding: 6px; border-radius: 30px; }
-    .app { grid-template-columns: 1fr; grid-template-areas: "hero" "browse" "cont" "pick" "play"; padding: 8px; gap: 8px; }
+    .app { grid-template-columns: 1fr; grid-template-areas: "hero" "litu" "agen" "fras" "browse" "cont" "pick" "play"; padding: 8px; gap: 8px; }
+    .two { grid-template-columns: 1fr; }
     .side {
       position: fixed; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
       flex-direction: row; padding: 8px 12px; border-radius: 999px; z-index: 30; width: max-content; max-width: calc(100% - 32px);
@@ -392,6 +468,7 @@
       <button class="nav-btn" aria-current="true" data-action="home" aria-label="Início"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3 3 10v10a1 1 0 0 0 1 1h5v-6h6v6h5a1 1 0 0 0 1-1V10z"/></svg><span class="tip">Início</span></button>
       <button class="nav-btn" data-action="search" aria-label="Buscar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><span class="tip">Buscar</span></button>
       <button class="nav-btn" data-action="agenda" aria-label="Agenda"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg><span class="tip">Agenda</span></button>
+      <button class="nav-btn" data-action="liturgia" aria-label="Liturgia do dia"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M12 7v6M9.5 9.5h5"/></svg><span class="tip">Liturgia</span></button>
       <button class="nav-btn" data-action="gallery" aria-label="Galeria dos santos"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg><span class="tip">Galeria</span></button>
       <hr>
       <span class="lbl">Ajustes</span>
@@ -509,6 +586,47 @@
         <div class="bar" aria-hidden="true"><span id="q-fill"></span></div>
       </div>
     </section>
+
+    <!-- Liturgia do dia -->
+    <section class="litu" id="litu" aria-labelledby="litu-h">
+      <div class="p-head">
+        <span class="i3d" style="--s:52px"><img src="icones/livros.webp" alt=""></span>
+        <div><h2 id="litu-h">Liturgia do dia</h2><div class="sub" id="litu-date"></div></div>
+        <button class="add" id="litu-add" data-team hidden aria-label="Publicar liturgia de hoje"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+      </div>
+      <div class="season" id="litu-season"></div>
+      <div id="litu-body"></div>
+      <div class="p-actions">
+        <button class="btn-sm dark" id="litu-read">Ler a liturgia</button>
+        <span class="mode" data-mode></span>
+      </div>
+    </section>
+
+    <!-- Agenda -->
+    <section class="panel-dark agen" aria-labelledby="agen-h">
+      <div class="p-head">
+        <span class="i3d" style="--s:52px"><img src="icones/relogio.webp" alt=""></span>
+        <div><h2 id="agen-h">Agenda</h2><div class="sub">Próximos compromissos da paróquia</div></div>
+        <button class="add" id="ev-add" data-team hidden aria-label="Novo evento"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+      </div>
+      <ul class="ev-list" id="ev-list"></ul>
+      <div class="p-actions">
+        <button class="btn-sm ghost" data-action="agenda">Ver agenda completa</button>
+      </div>
+    </section>
+
+    <!-- Frases da equipe -->
+    <section class="panel-dark fras" aria-labelledby="fras-h">
+      <div class="p-head">
+        <span class="i3d" style="--s:52px"><img src="icones/megafone.webp" alt=""></span>
+        <div><h2 id="fras-h">Frase do dia</h2><div class="sub">Publicada pela equipe</div></div>
+        <button class="add" id="fr-add" data-team hidden aria-label="Publicar frase"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+      </div>
+      <div id="fr-box"></div>
+      <div class="p-actions">
+        <button class="btn-sm ghost" id="fr-all">Todas as frases da equipe</button>
+      </div>
+    </section>
   </div>
 </div>
 
@@ -567,12 +685,20 @@ const CATS = [
   { id: "jovens", nome: "Jovens santos" },
   { id: "arcanjos", nome: "Arcanjos" },
 ];
-const EVENTS = [
-  ["12", "Out", "Festa de São Carlo Acutis", "Missa e exposição dos milagres eucarísticos · 19h"],
-  ["19", "Out", "Oficina de fotografia com celular", "Sábado, 15h · Salão paroquial"],
-  ["26", "Out", "Treinamento de transmissão ao vivo", "Sábado, 16h · Igreja matriz"],
-  ["09", "Nov", "Reunião mensal da Pascom", "Sábado, 19h · Sala 2"],
-];
+const AREAS = {
+  celebracao: { nome: "Celebração", ico: "sino" },
+  reuniao: { nome: "Reunião", ico: "estrela" },
+  foto: { nome: "Fotografia", ico: "camera" },
+  transmissao: { nome: "Transmissão", ico: "monitor" },
+  redes: { nome: "Redes sociais", ico: "celular" },
+  radio: { nome: "Rádio e podcast", ico: "microfone" },
+  formacao: { nome: "Formação", ico: "livros" },
+};
+const ico = (name, size = 44) => `<span class="i3d" style="--s:${size}px"><img src="icones/${name}.webp" alt=""></span>`;
+const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+const isoDay = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const TODAY = isoDay();
 const byId = id => SAINTS.find(s => s.id === id);
 const $ = id => document.getElementById(id);
 const store = {
@@ -585,11 +711,13 @@ function portrait(s) {
   const el = document.createElement("div");
   el.className = "portrait";
   el.style.setProperty("--p-bg", s.cor);
-  el.innerHTML = `<span class="mono" aria-hidden="true">${s.ini}</span>`;
-  const img = new Image();
-  img.alt = s.nome;
-  img.onload = () => el.appendChild(img);
-  img.src = s.foto;
+  el.innerHTML = `<span class="mono" aria-hidden="true">${esc(s.ini)}</span>`;
+  if (s.foto) {
+    const img = new Image();
+    img.alt = s.nome;
+    img.onload = () => el.appendChild(img);
+    img.src = s.foto;
+  }
   return el;
 }
 function fill(container, s) { container.replaceChildren(portrait(s)); }
@@ -686,7 +814,8 @@ $("mass-bar").addEventListener("click", seekMass);
 $("mass-bar").addEventListener("keydown", e => { if (e.key === "ArrowRight" || e.key === "ArrowLeft") { massPos = Math.max(0, Math.min(MASS_TOTAL, massPos + (e.key === "ArrowRight" ? 60 : -60))); renderMass(); e.preventDefault(); } });
 
 /* ---------- Frase do dia (player) ---------- */
-const QUOTES = SAINTS.flatMap(s => s.frases.map(f => ({ s, f })));
+const SAINT_QUOTES = SAINTS.flatMap(s => s.frases.map(f => ({ s, f })));
+let QUOTES = SAINT_QUOTES;
 let qI = (new Date().getDate()) % QUOTES.length, qPlaying = false, qTimer = null, qStart = 0, qDur = 0;
 let autoplay = store.get("autoplay", true);
 const synth = window.speechSynthesis;
@@ -771,9 +900,269 @@ function openSearch() {
   });
 }
 function openAgenda() {
-  openModal(`<div class="m-plain">${closeBtn()}<h2>Agenda da Pascom</h2>
-    <div class="events">${EVENTS.map(([d, m, t, p]) => `<div class="event"><div class="d"><b>${d}</b><span>${m}</span></div><div><b>${t}</b><p>${p}</p></div></div>`).join("")}</div>
-    <p class="empty" style="margin:0;font-size:13px">Datas de exemplo. A equipe atualiza a agenda a cada mês.</p></div>`);
+  const up = upcoming();
+  openModal(`<div class="m-plain">${closeBtn()}<h2>Agenda da paróquia</h2>
+    ${canWrite ? `<button class="btn-red" id="m-ev-add">Novo evento</button>` : ""}
+    ${up.length ? `<ul class="m-list">${up.map(e => `<li class="m-item">
+        <div class="ev" style="background:none;padding:0"><div class="when" style="color:var(--ink)"><b>${e.data.slice(8)}</b><small>${MESES[+e.data.slice(5, 7) - 1]}</small></div></div>
+        ${ico((AREAS[e.area] || AREAS.celebracao).ico, 40)}
+        <div class="what"><b>${esc(e.titulo)}</b><small>${esc(weekday(e.data))}${e.hora ? " · " + esc(e.hora) : ""}${e.local ? " · " + esc(e.local) : ""}</small>${e.desc ? `<p>${esc(e.desc)}</p>` : ""}</div>
+        ${canWrite ? delBtn("agenda", e.id) : ""}</li>`).join("")}</ul>`
+      : `<div class="m-item">${ico("ampulheta", 40)}<div class="what"><b>Nenhum evento marcado</b><small>${canWrite ? "Toque em “Novo evento” para publicar o primeiro." : "Quando a equipe publicar, os eventos aparecem aqui."}</small></div></div>`}
+    <p class="empty" style="margin:0;font-size:12px">${esc(modeText())}</p></div>`, () => {
+    $("m-ev-add") && ($("m-ev-add").onclick = openEventForm);
+    wireDeletes(openAgenda);
+  });
+}
+
+/* =========================================================
+   Dados compartilhados: agenda, frases e liturgia
+   (no Claude: banco compartilhado; fora dele: só neste aparelho)
+   ========================================================= */
+let backend = "local", canWrite = false, myId = null;
+let agenda = [], teamFrases = [], liturgias = {};
+const LOCAL_KEY = c => "pascom:db:" + c;
+const localRead = c => store.get("db:" + c, {});
+const local = {
+  listeners: {},
+  watch(c, cb) { (this.listeners[c] ||= []).push(cb); cb(Object.entries(localRead(c)).map(([id, d]) => ({ id, ...d }))); },
+  emit(c) { const rows = Object.entries(localRead(c)).map(([id, d]) => ({ id, ...d })); (this.listeners[c] || []).forEach(cb => cb(rows)); },
+  async set(c, id, d) { const all = localRead(c); all[id] = d; store.set("db:" + c, all); this.emit(c); },
+  async del(c, id) { const all = localRead(c); delete all[id]; store.set("db:" + c, all); this.emit(c); },
+};
+let db = null;
+const data = {
+  watch(c, cb) {
+    if (!db) return local.watch(c, cb);
+    db.collection(c).onSnapshot(s => cb(s.docs.map(d => ({ id: d.id, ...d.data() }))), e => { console.warn(c, e.code); });
+  },
+  async set(c, id, d) { if (!db) return local.set(c, id, d); await db.collection(c).doc(id).set(d); },
+  async add(c, d) { const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7); return this.set(c, id, d); },
+  async del(c, id) { if (!db) return local.del(c, id); await db.collection(c).doc(id).delete(); },
+};
+function modeText() {
+  if (backend === "db") return canWrite ? "Você faz parte da equipe e pode publicar." : "Somente leitura. Peça acesso de Colaborador à equipe da Pascom para publicar.";
+  return "Modo local: o que você publicar fica salvo só neste aparelho.";
+}
+async function writeOr(fn, okMsg) {
+  try { await fn(); okMsg && toast(okMsg); return true; }
+  catch (e) {
+    if (e && e.code === "invalid_argument" && backend === "db") { canWrite = false; applyTeam(); toast("Você não tem permissão para publicar aqui."); }
+    else if (e && e.code === "quota_exceeded") toast("O espaço de dados está cheio. Apague itens antigos.");
+    else toast("Não foi possível salvar. Tente de novo.");
+    return false;
+  }
+}
+function applyTeam() {
+  document.querySelectorAll("[data-team]").forEach(b => b.hidden = !canWrite);
+  document.querySelectorAll("[data-mode]").forEach(m => m.textContent = modeText());
+}
+const delBtn = (c, id) => `<button class="del" data-del="${c}/${esc(id)}" aria-label="Excluir">${ico("lixeira", 28)}<span>Excluir</span></button>`;
+function wireDeletes(reopen) {
+  mBody.querySelectorAll("[data-del]").forEach(b => b.onclick = async () => {
+    if (!b.classList.contains("confirm")) { b.classList.add("confirm"); b.querySelector("span").textContent = "Confirmar"; return; }
+    const [c, id] = b.dataset.del.split("/");
+    if (await writeOr(() => data.del(c, id), "Excluído")) setTimeout(reopen, 50);
+  });
+}
+
+/* ---------- Calendário litúrgico (calculado) ---------- */
+const DAY = 864e5;
+const mk = (y, m, d) => new Date(y, m - 1, d);
+const addD = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+const diffD = (a, b) => Math.round((a - b) / DAY);
+function easter(y) {
+  const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25),
+    g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4,
+    l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451), mo = Math.floor((h + l - 7 * m + 114) / 31);
+  return mk(y, mo, ((h + l - 7 * m + 114) % 31) + 1);
+}
+const advent1 = y => { const x = mk(y, 12, 25); return addD(x, -(x.getDay() || 7) - 21); };
+function baptism(y) { // Brasil: Epifania no domingo entre 2 e 8 de janeiro
+  let ep = mk(y, 1, 2); while (ep.getDay() !== 0) ep = addD(ep, 1);
+  return ep.getDate() >= 7 ? addD(ep, 1) : addD(ep, 7);
+}
+const COR = { verde: ["Verde", "#2e8b57"], roxo: ["Roxo", "#6b2c91"], branco: ["Branco", "#ffffff"], vermelho: ["Vermelho", "#c8102e"], rosa: ["Rosa", "#e58fb1"] };
+const ORD = n => n + "ª";
+const FESTAS = { // celebrações fixas exibidas no calendário
+  "01-01": ["Santa Maria, Mãe de Deus", "branco"], "01-24": ["São Francisco de Sales", "branco"], "03-19": ["São José", "branco"],
+  "06-29": ["São Pedro e São Paulo", "vermelho"], "08-11": ["Santa Clara de Assis", "branco"], "08-14": ["São Maximiliano Kolbe", "vermelho"],
+  "09-29": ["Santos Arcanjos Miguel, Gabriel e Rafael", "branco"], "10-12": ["Nossa Senhora Aparecida", "branco"],
+  "10-22": ["São João Paulo II", "branco"], "11-02": ["Fiéis Defuntos", "roxo"], "12-08": ["Imaculada Conceição", "branco"], "12-25": ["Natal do Senhor", "branco"],
+};
+function liturgicalDay(d) {
+  const y = d.getFullYear(), E = easter(y), adv = advent1(y), bap = baptism(y);
+  const litYearEnd = d >= adv ? y + 1 : y;
+  const ciclo = ["C", "A", "B"][litYearEnd % 3];
+  const par = litYearEnd % 2 === 0 ? "II" : "I";
+  const sunBefore = x => addD(x, -x.getDay());
+  let tempo, cor, semana = "";
+  const ash = addD(E, -46), palm = addD(E, -7), pent = addD(E, 49);
+  if (d >= adv) {
+    tempo = "Advento"; cor = "roxo";
+    const w = Math.floor(diffD(d, adv) / 7) + 1; semana = `semana ${w}`;
+    if (w === 3 && d.getDay() === 0) cor = "rosa";
+    if (d >= mk(y, 12, 25)) { tempo = "Tempo do Natal"; cor = "branco"; semana = ""; }
+  } else if (d <= bap) { tempo = "Tempo do Natal"; cor = "branco"; if (d.getTime() === bap.getTime()) semana = "Batismo do Senhor"; }
+  else if (d < ash) { tempo = "Tempo Comum"; cor = "verde"; let n = 1; for (let x = addD(bap, 1); x <= d; x = addD(x, 1)) if (x.getDay() === 0) n++; semana = `semana ${n}`; }
+  else if (d < palm) {
+    tempo = "Quaresma"; cor = "roxo";
+    const w = d < addD(ash, 4) ? 0 : Math.floor(diffD(d, addD(ash, 4)) / 7) + 1;
+    semana = w ? `semana ${w}` : (diffD(d, ash) === 0 ? "Quarta-feira de Cinzas" : "Depois das Cinzas");
+    if (w === 4 && d.getDay() === 0) cor = "rosa";
+  } else if (d < addD(E, -3)) { tempo = "Semana Santa"; cor = d.getTime() === palm.getTime() ? "vermelho" : "roxo"; }
+  else if (d < E) { tempo = "Tríduo Pascal"; cor = diffD(E, d) === 2 ? "vermelho" : "branco"; }
+  else if (d <= pent) { tempo = "Tempo Pascal"; cor = d.getTime() === pent.getTime() ? "vermelho" : "branco"; const w = Math.floor(diffD(d, E) / 7) + 1; semana = d.getTime() === pent.getTime() ? "Pentecostes" : `semana ${w}`; }
+  else { tempo = "Tempo Comum"; cor = "verde"; const ck = addD(adv, -7); semana = `semana ${34 - Math.floor(diffD(ck, sunBefore(d)) / 7)}`; }
+  const key = `${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  const festa = FESTAS[key] && !["Quaresma", "Semana Santa", "Tríduo Pascal"].includes(tempo) ? FESTAS[key] : null;
+  if (festa) cor = festa[1];
+  return { tempo, semana, cor, ciclo, par, festa: festa && festa[0] };
+}
+function weekday(iso) { const [y, m, d] = iso.split("-").map(Number); return mk(y, m, d).toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" }); }
+
+/* ---------- Liturgia: painel e modais ---------- */
+const LINKS = `<div class="ext-links"><a href="https://www.cnbb.org.br/liturgia-diaria/" target="_blank" rel="noopener">Liturgia diária · CNBB</a><a href="https://liturgia.cancaonova.com/pb/" target="_blank" rel="noopener">Liturgia · Canção Nova</a></div>`;
+function renderLiturgia() {
+  const L = liturgicalDay(new Date()), [nomeCor, hex] = COR[L.cor];
+  $("litu-date").textContent = weekday(TODAY);
+  $("litu-season").innerHTML = `${L.festa ? `<span><b>${esc(L.festa)}</b></span>` : ""}<span><i class="dot" style="background:${hex}"></i>${nomeCor}</span><span>${L.tempo}${L.semana ? " · " + L.semana : ""}</span><span>Ano ${L.ciclo} · Ano ${L.par}</span>`;
+  const lit = liturgias[TODAY];
+  $("litu-body").innerHTML = lit
+    ? `<ul class="readings">${[["Primeira leitura", lit.primeira], ["Salmo", lit.salmo], ["Segunda leitura", lit.segunda], ["Evangelho", lit.evangelho]].filter(r => r[1]).map(([k, v]) => `<li><b>${k}</b><span>${esc(v)}</span></li>`).join("")}</ul>`
+    : `<div class="empty-state">${ico("ampulheta", 40)}<span>${canWrite ? "As leituras de hoje ainda não foram publicadas. Toque em + para publicar." : "A equipe ainda não publicou as leituras de hoje. Veja nas fontes oficiais em “Ler a liturgia”."}</span></div>`;
+}
+function openLiturgia() {
+  const L = liturgicalDay(new Date()), lit = liturgias[TODAY];
+  openModal(`<div class="m-plain">${closeBtn()}<h2>Liturgia de ${esc(weekday(TODAY))}</h2>
+    <div class="season">${L.festa ? `<span style="background:var(--soft)"><b>${esc(L.festa)}</b></span>` : ""}<span style="background:var(--soft)"><i class="dot" style="background:${COR[L.cor][1]}"></i>${COR[L.cor][0]}</span><span style="background:var(--soft)">${L.tempo}${L.semana ? " · " + L.semana : ""}</span></div>
+    ${lit ? [["Primeira leitura", lit.primeira], ["Salmo responsorial", lit.salmo], ["Segunda leitura", lit.segunda], ["Evangelho", lit.evangelho]].filter(r => r[1]).map(([k, v]) => `<div class="read-block"><h4>${k}</h4><p>${esc(v)}</p></div>`).join("") + (lit.texto ? `<div class="read-block"><h4>Texto e reflexão</h4><p>${esc(lit.texto)}</p></div>` : "")
+      : `<p class="empty" style="margin:0">As leituras de hoje ainda não foram publicadas pela equipe.</p>`}
+    <div><h3 style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin:0 0 8px">Fontes oficiais</h3>${LINKS}</div>
+    ${canWrite ? `<button class="btn-red" id="m-lit-edit">${lit ? "Editar leituras de hoje" : "Publicar leituras de hoje"}</button>` : ""}</div>`, () => {
+    $("m-lit-edit") && ($("m-lit-edit").onclick = openLiturgiaForm);
+  });
+}
+function openLiturgiaForm() {
+  const lit = liturgias[TODAY] || {};
+  const f = (id, label, ph, v, area) => `<div class="field"><label for="${id}">${label}</label>${area ? `<textarea id="${id}" placeholder="${ph}">${esc(v)}</textarea>` : `<input id="${id}" placeholder="${ph}" value="${esc(v)}">`}</div>`;
+  openModal(`<div class="m-plain">${closeBtn()}<h2>Leituras de hoje</h2>
+    <form class="join" id="lit-form" novalidate>
+      ${f("l-1", "Primeira leitura", "Ex.: Gl 3,7-14", lit.primeira || "")}
+      ${f("l-s", "Salmo", "Ex.: Sl 110(111)", lit.salmo || "")}
+      ${f("l-2", "Segunda leitura (domingos e solenidades)", "Deixe vazio nos dias de semana", lit.segunda || "")}
+      ${f("l-e", "Evangelho", "Ex.: Lc 11,15-26", lit.evangelho || "")}
+      ${f("l-t", "Texto ou reflexão (opcional)", "Cole aqui o texto do Evangelho ou uma reflexão curta", lit.texto || "", true)}
+      <p class="note" id="l-note" role="status"></p>
+      <button class="btn-red" type="submit">Publicar</button>
+    </form></div>`, () => {
+    $("lit-form").onsubmit = async e => {
+      e.preventDefault();
+      const d = { primeira: $("l-1").value.trim(), salmo: $("l-s").value.trim(), segunda: $("l-2").value.trim(), evangelho: $("l-e").value.trim(), texto: $("l-t").value.trim(), criadoPor: myId, atualizadoEm: Date.now() };
+      if (!d.primeira || !d.evangelho) { $("l-note").textContent = "Preencha pelo menos a primeira leitura e o Evangelho."; return; }
+      if (await writeOr(() => data.set("liturgia", TODAY, d), "Liturgia publicada")) modal.close();
+    };
+  });
+}
+
+/* ---------- Agenda: painel e formulário ---------- */
+const upcoming = () => agenda.filter(e => e.data >= TODAY).sort((a, b) => (a.data + (a.hora || "")).localeCompare(b.data + (b.hora || "")));
+function renderAgenda() {
+  const up = upcoming().slice(0, 3);
+  $("ev-list").innerHTML = up.length ? up.map(e => `<li class="ev">
+      <div class="when"><b>${e.data.slice(8)}</b><small>${MESES[+e.data.slice(5, 7) - 1]}</small></div>
+      ${ico((AREAS[e.area] || AREAS.celebracao).ico, 40)}
+      <div class="what"><b>${esc(e.titulo)}</b><small>${e.hora ? esc(e.hora) + " · " : ""}${esc(e.local || (AREAS[e.area] || {}).nome || "")}</small></div></li>`).join("")
+    : `<li class="empty-state">${ico("ampulheta", 40)}<span>${canWrite ? "Nenhum evento marcado. Toque em + para publicar o primeiro." : "Nenhum evento marcado por enquanto."}</span></li>`;
+}
+function openEventForm() {
+  openModal(`<div class="m-plain">${closeBtn()}<h2>Novo evento</h2>
+    <form class="join" id="ev-form" novalidate>
+      <div class="field"><label for="e-t">Título</label><input id="e-t" placeholder="Ex.: Missa da festa da padroeira"></div>
+      <div class="two">
+        <div class="field"><label for="e-d">Data</label><input id="e-d" type="date" min="${TODAY}" value="${TODAY}"></div>
+        <div class="field"><label for="e-h">Horário</label><input id="e-h" type="time"></div>
+      </div>
+      <div class="field"><label for="e-l">Local</label><input id="e-l" placeholder="Ex.: Igreja matriz"></div>
+      <fieldset class="area-pick"><legend class="sr">Tipo</legend>${Object.entries(AREAS).map(([k, a], i) => `<label><input type="radio" name="e-a" value="${k}" ${i ? "" : "checked"}>${ico(a.ico, 32)}${a.nome}</label>`).join("")}</fieldset>
+      <div class="field"><label for="e-x">Detalhes (opcional)</label><textarea id="e-x" placeholder="Quem participa, o que levar, quem cobre a foto…"></textarea></div>
+      <p class="note" id="e-note" role="status"></p>
+      <button class="btn-red" type="submit">Publicar na agenda</button>
+    </form></div>`, () => {
+    $("ev-form").onsubmit = async e => {
+      e.preventDefault();
+      const d = { titulo: $("e-t").value.trim(), data: $("e-d").value, hora: $("e-h").value, local: $("e-l").value.trim(), area: (mBody.querySelector('[name="e-a"]:checked') || {}).value || "celebracao", desc: $("e-x").value.trim(), criadoPor: myId, criadoEm: Date.now() };
+      if (!d.titulo || !d.data) { $("e-note").textContent = "Preencha o título e a data."; return; }
+      if (d.data < TODAY) { $("e-note").textContent = "Escolha hoje ou uma data futura."; return; }
+      if (await writeOr(() => data.add("agenda", d), "Evento publicado")) openAgenda();
+    };
+  });
+}
+
+/* ---------- Frases da equipe ---------- */
+const sortedFrases = () => [...teamFrases].sort((a, b) => (b.dia || "").localeCompare(a.dia || "") || (b.criadoEm || 0) - (a.criadoEm || 0));
+function todaysFrase() { return sortedFrases().find(f => f.dia === TODAY) || null; }
+function renderFrases() {
+  const f = todaysFrase() || sortedFrases().find(x => x.dia <= TODAY);
+  $("fr-box").innerHTML = f
+    ? `<blockquote class="team-q">${f.dia === TODAY ? `<span class="today">Hoje</span><br>` : ""}“${esc(f.texto)}”<cite>— ${esc(f.autor || "Pascom")}${f.dia !== TODAY ? " · " + esc(weekday(f.dia)) : ""}</cite></blockquote>`
+    : `<div class="empty-state">${ico("ampulheta", 40)}<span>${canWrite ? "Nenhuma frase publicada. Toque em + para publicar a frase de hoje." : "A equipe ainda não publicou a frase de hoje."}</span></div>`;
+  // frases da equipe também entram no player
+  const team = sortedFrases().filter(x => x.dia <= TODAY).map(x => ({ s: { nome: x.autor || "Pascom", curto: x.autor || "Pascom", ini: (x.autor || "Pascom").split(/\s+/).map(w => w[0]).join("").slice(0, 2).toUpperCase(), cor: "linear-gradient(160deg,#c8102e,#2b0606)", foto: "" }, f: x.texto, team: true }));
+  const cur = QUOTES[qI];
+  QUOTES = [...team, ...SAINT_QUOTES];
+  if (!qPlaying) { qI = todaysFrase() ? 0 : Math.max(0, QUOTES.findIndex(q => q.f === (cur && cur.f))); renderQuote(); }
+}
+function openFraseForm() {
+  openModal(`<div class="m-plain">${closeBtn()}<h2>Publicar frase</h2>
+    <form class="join" id="fr-form" novalidate>
+      <div class="field"><label for="f-t">Frase</label><textarea id="f-t" maxlength="400" placeholder="Escreva a frase exatamente como foi dita ou escrita"></textarea></div>
+      <div class="two">
+        <div class="field"><label for="f-a">Autor</label><input id="f-a" list="f-autores" placeholder="Ex.: São Carlo Acutis"><datalist id="f-autores">${SAINTS.map(s => `<option value="${esc(s.nome)}">`).join("")}</datalist></div>
+        <div class="field"><label for="f-d">Dia</label><input id="f-d" type="date" value="${TODAY}"></div>
+      </div>
+      <p class="note" id="f-note" role="status"></p>
+      <button class="btn-red" type="submit">Publicar frase</button>
+    </form></div>`, () => {
+    $("fr-form").onsubmit = async e => {
+      e.preventDefault();
+      const d = { texto: $("f-t").value.trim().replace(/^["“]|["”]$/g, ""), autor: $("f-a").value.trim(), dia: $("f-d").value || TODAY, criadoPor: myId, criadoEm: Date.now() };
+      if (!d.texto) { $("f-note").textContent = "Escreva a frase antes de publicar."; return; }
+      if (await writeOr(() => data.add("frases", d), "Frase publicada")) modal.close();
+    };
+  });
+}
+function openFrasesEquipe() {
+  const all = sortedFrases();
+  openModal(`<div class="m-plain">${closeBtn()}<h2>Frases da equipe</h2>
+    ${canWrite ? `<button class="btn-red" id="m-fr-add">Publicar frase</button>` : ""}
+    ${all.length ? `<ul class="m-list">${all.map(f => `<li class="m-item">${ico("megafone", 40)}<div class="what"><b>“${esc(f.texto)}”</b><small>${esc(f.autor || "Pascom")} · ${esc(weekday(f.dia))}</small></div>${canWrite ? delBtn("frases", f.id) : ""}</li>`).join("")}</ul>`
+      : `<div class="m-item">${ico("ampulheta", 40)}<div class="what"><b>Nenhuma frase ainda</b><small>As frases publicadas pela equipe aparecem aqui e no player.</small></div></div>`}</div>`, () => {
+    $("m-fr-add") && ($("m-fr-add").onclick = openFraseForm);
+    wireDeletes(openFrasesEquipe);
+  });
+}
+$("litu-add").onclick = openLiturgiaForm;
+$("litu-read").onclick = openLiturgia;
+$("ev-add").onclick = openEventForm;
+$("fr-add").onclick = openFraseForm;
+$("fr-all").onclick = openFrasesEquipe;
+
+async function startData() {
+  const timeout = new Promise(r => setTimeout(() => r(null), 4000));
+  const hasClaude = !!(window.claude && window.claude.use);
+  db = hasClaude ? await Promise.race([window.claude.use("db"), timeout]).catch(() => null) : null;
+  if (db) {
+    backend = "db";
+    const user = await window.claude.use("user").catch(() => null);
+    myId = user ? await user.id() : null;
+    const can = user ? await user.can("data.write") : null;
+    canWrite = can === true || (can === null && !!myId);
+  } else canWrite = true;
+  applyTeam();
+  data.watch("agenda", rows => { agenda = rows; renderAgenda(); });
+  data.watch("frases", rows => { teamFrases = rows; renderFrases(); });
+  data.watch("liturgia", rows => { liturgias = Object.fromEntries(rows.map(r => [r.id, r])); renderLiturgia(); });
 }
 function openQuotes() {
   openModal(`<div class="m-plain">${closeBtn()}<h2>Todas as frases</h2>
@@ -812,7 +1201,7 @@ function openJoin() {
 
 /* ---------- Navegação ---------- */
 function setNav(a) { document.querySelectorAll(".nav-btn").forEach(b => b.setAttribute("aria-current", b.dataset.action === a)); }
-const ACTIONS = { home: () => { window.scrollTo({ top: 0, behavior: "smooth" }); }, search: openSearch, agenda: openAgenda, gallery: openGallery, settings: openSettings, join: openJoin, quotes: openQuotes };
+const ACTIONS = { home: () => { window.scrollTo({ top: 0, behavior: "smooth" }); }, search: openSearch, agenda: openAgenda, gallery: openGallery, settings: openSettings, join: openJoin, quotes: openQuotes, liturgia: openLiturgia };
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-action]"); if (!b) return;
   setNav(b.dataset.action); ACTIONS[b.dataset.action]();
@@ -820,6 +1209,8 @@ document.addEventListener("click", e => {
 
 /* ---------- Início ---------- */
 renderCats(); renderHero(); renderPick(); renderMass(); renderQuote(); restartHero();
+renderLiturgia(); renderAgenda(); renderFrases(); applyTeam();
+startData();
 </script>
 </body>
 </html>
