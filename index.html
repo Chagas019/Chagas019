@@ -662,6 +662,73 @@
     .flip[aria-pressed="true"] .back { display: flex; }
     .flip[aria-pressed="true"] .front { display: none; }
   }
+  /* ---------- Janela da frase do dia ---------- */
+  #fw { width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; border-radius: 0; padding: 0; background: #0b0b0c; color: #fff; overflow: hidden; color-scheme: dark; }
+  #fw[open] { display: grid; grid-template-rows: auto 1fr auto auto; }
+  #fw::backdrop { background: #000; }
+  .fw-bg { position: absolute; inset: 0; z-index: 0; --mono: min(52vw, 520px); }
+  .fw-bg .portrait { transition: opacity .5s var(--ease); }
+  .fw-bg .portrait .mono { opacity: .18; top: 45%; }
+  .fw-bg::after { content: ""; position: absolute; inset: 0; background: radial-gradient(70% 60% at 50% 40%, rgba(0,0,0,.15), rgba(0,0,0,.75) 70%), linear-gradient(180deg, rgba(0,0,0,.4), transparent 30%, rgba(0,0,0,.85)); }
+  .fw-top, .fw-stage, .fw-progress, .fw-actions { position: relative; z-index: 2; }
+  .fw-actions { z-index: 6; }
+  .fw-top { display: flex; align-items: center; gap: 14px; padding: calc(16px + env(safe-area-inset-top, 0px)) clamp(16px, 4vw, 40px) 8px; }
+  .fw-label { font-size: 11px; letter-spacing: .32em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 10px; }
+  .fw-label::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--red); box-shadow: 0 0 0 3px rgba(200,16,46,.3); }
+  .fw-count { font-size: 13px; color: var(--on-dark-muted); font-variant-numeric: tabular-nums; margin-left: auto; }
+  .fw-x { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.12); }
+  .fw-x:hover { background: rgba(255,255,255,.2); }
+  .fw-stage { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: clamp(8px, 3vw, 32px); padding: 0 clamp(12px, 4vw, 40px); touch-action: pan-y; user-select: none; }
+  .fw-arrow { width: 52px; height: 52px; border-radius: 50%; border: 1px solid rgba(255,255,255,.35); display: grid; place-items: center; }
+  .fw-arrow:hover { background: rgba(255,255,255,.1); }
+  .fw-quote { margin: 0 auto; max-width: 900px; width: 100%; display: grid; gap: 26px; transition: opacity .25s var(--ease), transform .25s var(--ease); }
+  .fw-quote.out { opacity: 0; transform: translateX(var(--dx, 0)); }
+  .fw-quote blockquote { margin: 0; font-size: clamp(26px, 4.6vw, 54px); font-weight: 300; line-height: 1.15; letter-spacing: -.015em; text-wrap: balance; }
+  .fw-quote figcaption { display: flex; align-items: center; gap: 14px; }
+  .fw-av { position: relative; width: 52px; height: 52px; border-radius: 50%; overflow: hidden; flex-shrink: 0; --mono: 17px; border: 2px solid rgba(255,255,255,.7); }
+  .fw-av .portrait::before, .fw-av .portrait::after { display: none; }
+  .fw-av .portrait .mono { top: 50%; }
+  .fw-quote b { display: block; font-size: 18px; font-weight: 500; }
+  .fw-quote small { display: block; font-size: 13px; color: var(--on-dark-muted); }
+  .fw-dots { display: flex; justify-content: center; gap: 4px; flex-wrap: wrap; padding: 0 20px; position: relative; z-index: 2; }
+  .fw-progress { height: 3px; margin: 18px clamp(16px, 4vw, 40px) 0; background: rgba(255,255,255,.18); border-radius: 2px; overflow: hidden; }
+  .fw-progress span { display: block; height: 100%; width: 0; background: #fff; }
+  .fw-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; padding: 16px clamp(12px, 4vw, 40px) calc(20px + env(safe-area-inset-bottom, 0px)); }
+  .fw-btn { min-height: 46px; padding: 0 18px; border-radius: 999px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18); display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; backdrop-filter: blur(8px); }
+  .fw-btn:hover { background: rgba(255,255,255,.2); }
+  .fw-btn.main { background: #fff; color: #111; border-color: #fff; }
+  .fw-btn[aria-pressed="true"] { background: var(--red); border-color: var(--red); color: #fff; }
+  .fw-btn[aria-expanded="true"] { background: #fff; color: #111; }
+  .fw-btn svg { flex-shrink: 0; }
+
+  .fw-sheet { position: absolute; z-index: 5; left: 50%; bottom: var(--fw-bar, 90px); transform: translateX(-50%); width: min(760px, calc(100% - 16px)); max-height: min(calc(100% - var(--fw-bar, 90px) - 70px), 680px); display: flex; flex-direction: column; background: #fff; color: var(--ink); color-scheme: light; border-radius: 24px; box-shadow: 0 -20px 60px rgba(0,0,0,.5); }
+  .fw-sheet[hidden] { display: none; }
+  .fw-sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px 10px 22px; }
+  .fw-sheet-head h3 { margin: 0; font-size: 18px; font-weight: 600; }
+  .fw-sheet-head .m-close { position: static; background: var(--soft); color: var(--ink); }
+  .fw-sheet-body { padding: 4px 22px 22px; overflow-y: auto; display: grid; gap: 14px; }
+  .fw-filters { display: flex; gap: 6px; flex-wrap: wrap; }
+  .fw-filters button { min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid #d6d6d6; font-size: 13px; color: var(--ink); }
+  .fw-filters button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .fw-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+  .fw-item { text-align: left; padding: 14px; border-radius: 16px; background: var(--soft); display: grid; gap: 8px; color: var(--ink); min-height: 96px; align-content: space-between; }
+  .fw-item:hover { background: #e4e4e4; }
+  .fw-item[aria-current="true"] { outline: 2px solid var(--red); }
+  .fw-item span { font-size: 15px; line-height: 1.35; }
+  .fw-item small { font-size: 12px; color: var(--muted); }
+  .fw-item small i { font-style: normal; color: var(--red); }
+  .fw-formats { display: flex; gap: 6px; }
+  .fw-preview { display: grid; place-items: center; background: var(--soft); border-radius: 16px; padding: 12px; }
+  .fw-preview img { max-height: 46vh; max-width: 100%; border-radius: 10px; box-shadow: 0 10px 30px -10px rgba(0,0,0,.4); }
+  .fw-note { font-size: 13px; color: var(--muted); margin: 0; }
+
+  @media (max-width: 640px) {
+    .fw-stage { grid-template-columns: 1fr; }
+    .fw-arrow { display: none; }
+    .fw-btn .lbl { display: none; }
+    .fw-btn { padding: 0 14px; }
+    .fw-actions { gap: 6px; }
+  }
   /* ---------- Responsivo ----------
      celular (< 768px): menu em barra fixa embaixo, cards passam com o dedo
      tablet em pé (768–1100px, retrato): menu no topo, cards em grade
@@ -786,7 +853,7 @@
             <div class="kick" id="play-sub"></div>
             <blockquote class="quote-big" id="play-quote" aria-live="polite"></blockquote>
             <div class="foot">
-              <button class="soft-pill" data-action="quotes" id="q-count">Frases</button>
+              <button class="soft-pill" data-action="quotes" id="q-count" aria-label="Abrir a frase do dia em tela cheia">Frases</button>
               <div class="mini-ctl">
                 <button class="ctl" id="q-prev" aria-label="Frase anterior"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11 6v12L3 12zM20 6v12l-8-6z"/></svg></button>
                 <button class="ctl big" id="q-play" aria-label="Ouvir frase"><svg id="q-ico" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l13 8-13 8z"/></svg></button>
@@ -979,6 +1046,54 @@
     <button class="btn-red" id="lt-next">Próxima ›</button>
   </div>
 </dialog>
+<dialog id="fw" aria-labelledby="fw-h">
+  <div class="fw-bg" id="fw-bg" aria-hidden="true"></div>
+  <div class="fw-top">
+    <span class="fw-label" id="fw-h">Frase do dia</span>
+    <span class="fw-count" id="fw-count"></span>
+    <button class="fw-x" id="fw-close" aria-label="Fechar a frase do dia"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+  <div class="fw-stage" id="fw-stage">
+    <button class="fw-arrow" id="fw-prev" aria-label="Frase anterior"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m15 6-6 6 6 6"/></svg></button>
+    <figure class="fw-quote" id="fw-quote">
+      <blockquote id="fw-text" aria-live="polite"></blockquote>
+      <figcaption><span class="fw-av" id="fw-av" aria-hidden="true"></span><span><b id="fw-author"></b><small id="fw-sub"></small></span></figcaption>
+    </figure>
+    <button class="fw-arrow" id="fw-next" aria-label="Próxima frase"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button>
+  </div>
+  <div class="fw-progress" aria-hidden="true"><span id="fw-fill"></span></div>
+  <div class="fw-actions">
+    <button class="fw-btn main" id="fw-play" aria-label="Ouvir a frase"><svg id="fw-play-ico" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l13 8-13 8z"/></svg><span class="lbl" id="fw-play-lbl">Ouvir</span></button>
+    <button class="fw-btn" id="fw-fav" aria-pressed="false" aria-label="Favoritar frase"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.5 2.9 4.5 6.7 4.5c2.2 0 3.6 1.2 5.3 3.1 1.7-1.9 3.1-3.1 5.3-3.1 3.8 0 5.8 4 4.3 7.3C19.5 16.4 12 21 12 21z"/></svg><span class="lbl">Favoritar</span></button>
+    <button class="fw-btn" data-sheet="share" aria-expanded="false" aria-label="Compartilhar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg><span class="lbl">Compartilhar</span></button>
+    <button class="fw-btn" data-sheet="img" aria-expanded="false" aria-label="Criar imagem"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg><span class="lbl">Criar imagem</span></button>
+    <button class="fw-btn" data-sheet="all" aria-expanded="false" aria-label="Todas as frases"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg><span class="lbl">Todas as frases</span></button>
+  </div>
+  <section class="fw-sheet" id="fw-sheet-all" aria-labelledby="fw-all-h" hidden>
+    <div class="fw-sheet-head"><h3 id="fw-all-h">Todas as frases</h3><button class="m-close" data-sheet-close aria-label="Fechar lista"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="fw-sheet-body">
+      <label class="sr" for="fw-q">Buscar frase</label>
+      <input class="search" id="fw-q" type="search" placeholder="Buscar por palavra ou autor" autocomplete="off">
+      <div class="fw-filters" id="fw-filters" role="group" aria-label="Filtrar frases"></div>
+      <div class="fw-list" id="fw-list"></div>
+    </div>
+  </section>
+  <section class="fw-sheet" id="fw-sheet-share" aria-labelledby="fw-share-h" hidden>
+    <div class="fw-sheet-head"><h3 id="fw-share-h">Compartilhar esta frase</h3><button class="m-close" data-sheet-close aria-label="Fechar compartilhar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="fw-sheet-body" id="fw-share-body"></div>
+  </section>
+  <section class="fw-sheet" id="fw-sheet-img" aria-labelledby="fw-img-h" hidden>
+    <div class="fw-sheet-head"><h3 id="fw-img-h">Imagem para status e stories</h3><button class="m-close" data-sheet-close aria-label="Fechar imagem"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="fw-sheet-body">
+      <div class="fw-filters fw-formats" role="group" aria-label="Formato da imagem">
+        <button data-fmt="story" aria-pressed="true">Status e stories (9:16)</button><button data-fmt="post" aria-pressed="false">Feed (4:5)</button>
+      </div>
+      <div class="fw-preview"><img id="fw-img" alt="Prévia da imagem com a frase do dia"></div>
+      <button class="btn-red" id="fw-save">Baixar imagem</button>
+      <p class="fw-note" id="fw-img-note">Se o download não começar, toque e segure a imagem para salvar.</p>
+    </div>
+  </section>
+</dialog>
 <button class="to-top" id="to-top" aria-label="Voltar ao topo" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
 <div class="toast" id="toast" role="status"></div>
 
@@ -1163,10 +1278,15 @@ function renderQuote() {
   const authors = [];
   for (let k = 0; authors.length < 3 && k < QUOTES.length; k++) { const a = QUOTES[(qI + k) % QUOTES.length].s; if (!authors.includes(a)) authors.push(a); }
   $("q-avatars").replaceChildren(...authors.map(a => { const d = document.createElement("span"); d.className = "av"; d.appendChild(portrait(a)); return d; }));
+  if (typeof fw !== "undefined" && fw.open) { $("fw-fill").style.width = "0%"; fwRender(); }
 }
 function setPlayIcon() {
   $("q-ico").innerHTML = qPlaying ? '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>' : '<path d="M7 4l13 8-13 8z"/>';
   $("q-play").setAttribute("aria-label", qPlaying ? "Pausar" : "Ouvir frase");
+  const fi = document.getElementById("fw-play-ico"); if (fi) {
+    fi.innerHTML = qPlaying ? '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>' : '<path d="M7 4l13 8-13 8z"/>';
+    $("fw-play-lbl").textContent = qPlaying ? "Pausar" : "Ouvir"; $("fw-play").setAttribute("aria-label", qPlaying ? "Pausar" : "Ouvir a frase");
+  }
 }
 function stopQuote() { qPlaying = false; clearInterval(qTimer); try { synth && synth.cancel(); } catch {} setPlayIcon(); }
 function playQuote() {
@@ -1179,7 +1299,7 @@ function playQuote() {
   } catch {}
   qTimer = setInterval(() => {
     const p = Math.min(1, (performance.now() - qStart) / qDur);
-    $("q-fill").style.width = p * 100 + "%";
+    $("q-fill").style.width = p * 100 + "%"; $("fw-fill").style.width = p * 100 + "%";
     if (p >= 1) { stopQuote(); if (autoplay) { qI = (qI + 1) % QUOTES.length; renderQuote(); setTimeout(playQuote, 600); } }
   }, 100);
 }
@@ -1384,7 +1504,7 @@ document.addEventListener("click", async e => {
   }
 });
 const DEEP = {
-  liturgia: () => openLiturgia(), agenda: () => openAgenda(), escalas: () => openAgenda(), agendar: () => openEscalaForm(), frases: () => openFrasesEquipe(),
+  frase: () => openFraseWin(), liturgia: () => openLiturgia(), agenda: () => openAgenda(), escalas: () => openAgenda(), agendar: () => openEscalaForm(), frases: () => openFrasesEquipe(),
   formacao: () => scrollToSec("formacao")(), linha: () => scrollToSec("linha")(), documentos: () => scrollToSec("documentos")(), glossario: () => scrollToSec("glossario")(), perguntas: () => scrollToSec("perguntas")(),
   galeria: () => openGallery(), participar: () => openJoin(), buscar: () => openSearch(),
 };
@@ -1734,6 +1854,7 @@ $("fr-all").onclick = openFrasesEquipe;
 async function startData() {
   const timeout = new Promise(r => setTimeout(() => r(null), 4000));
   const hasClaude = !!(window.claude && window.claude.use);
+  if (hasClaude) Promise.race([window.claude.use("downloads"), new Promise(r => setTimeout(() => r(null), 4000))]).then(d => { downloadsFn = d; }).catch(() => {});
   db = hasClaude ? await Promise.race([window.claude.use("db"), timeout]).catch(() => null) : null;
   if (db) {
     backend = "db";
@@ -1749,12 +1870,6 @@ async function startData() {
   data.watch("formacao", rows => { historiaLocal = rows.find(r => r.id === "historia") || null; if (leitor.open && $("local-box")) { $("local-box").outerHTML = historiaHTML(); wireHistoria(); } });
   data.watch("frases", rows => { teamFrases = rows; renderFrases(); });
   data.watch("liturgia", rows => { liturgias = Object.fromEntries(rows.map(r => [r.id, r])); renderLiturgia(); });
-}
-function openQuotes() {
-  openModal(`<div class="m-plain">${closeBtn()}<h2>Todas as frases</h2>
-    <ul class="quotes">${QUOTES.map((q, i) => `<li><button style="text-align:left;width:100%" data-q="${i}">“${q.f}”<small>${q.s.nome}</small></button></li>`).join("")}</ul></div>`, () => {
-    mBody.querySelectorAll("[data-q]").forEach(b => b.onclick = () => { qI = +b.dataset.q; renderQuote(); modal.close(); playQuote(); });
-  });
 }
 function openSettings() {
   const row = (id, label, on) => `<div class="set-row"><span>${label}</span><button class="switch" id="${id}" role="switch" aria-checked="${on}" aria-label="${label}"></button></div>`;
@@ -1795,7 +1910,7 @@ function openJoin() {
 
 /* ---------- Navegação ---------- */
 function setNav(a) { document.querySelectorAll("[data-nav]").forEach(b => b.setAttribute("aria-current", b.dataset.action === a)); }
-const ACTIONS = { home: () => { window.scrollTo({ top: 0, behavior: "smooth" }); $("rail").scrollTo({ left: 0, behavior: "smooth" }); }, agendar: () => openEscalaForm(), frases: openFrasesEquipe, formacao: () => scrollToSec("formacao")(), search: openSearch, agenda: openAgenda, gallery: openGallery, settings: openSettings, join: openJoin, quotes: openQuotes, liturgia: openLiturgia };
+const ACTIONS = { home: () => { window.scrollTo({ top: 0, behavior: "smooth" }); $("rail").scrollTo({ left: 0, behavior: "smooth" }); }, agendar: () => openEscalaForm(), frases: openFrasesEquipe, formacao: () => scrollToSec("formacao")(), search: openSearch, agenda: openAgenda, gallery: openGallery, settings: openSettings, join: openJoin, quotes: () => openFraseWin(), liturgia: openLiturgia };
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-action]"); if (!b) return;
   if (b.closest("[data-nav]") || b.hasAttribute("data-nav")) setNav(b.dataset.action);
@@ -2405,6 +2520,149 @@ function onScroll() {
 addEventListener("scroll", () => { if (!rolando) { rolando = true; requestAnimationFrame(onScroll); } }, { passive: true });
 $("to-top").onclick = () => scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 const scrollToSec = id => () => $(id).scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+
+
+/* ---------- Janela interativa da frase do dia ---------- */
+const fw = $("fw");
+let favQ = new Set(store.get("favQ", [])), fwFiltro = "todas", fwFmt = "story", fwImgBlob = null, downloadsFn = null;
+const qKey = q => q.f;
+function fwRender(dir = 0) {
+  if (!fw.open) return;
+  const q = QUOTES[qI], s = q.s;
+  const box = $("fw-quote");
+  const paint = () => {
+    $("fw-text").textContent = "“" + q.f + "”";
+    $("fw-author").textContent = s.nome;
+    $("fw-sub").textContent = q.team ? "Publicada pela equipe da Pascom" : (s.titulo || "");
+    $("fw-av").replaceChildren(portrait(s));
+    $("fw-bg").replaceChildren(portrait(s));
+    $("fw-count").textContent = `${qI + 1} de ${QUOTES.length}`;
+    const fav = favQ.has(qKey(q));
+    $("fw-fav").setAttribute("aria-pressed", fav);
+    $("fw-fav").setAttribute("aria-label", fav ? "Tirar dos favoritos" : "Favoritar frase");
+    $("fw-share-body").innerHTML = `${shareRow(`“${q.f}” — ${s.nome}`, "frase")}
+      <div class="share"><span class="lbl">Texto</span><button type="button" data-copy="${esc(`“${q.f}” — ${s.nome}`)}">Copiar a frase</button></div>`;
+    if (!$("fw-sheet-all").hidden) fwList();
+    if (!$("fw-sheet-img").hidden) fwMakeImage();
+    box.classList.remove("out");
+  };
+  if (dir && !matchMedia("(prefers-reduced-motion: reduce)").matches) { box.style.setProperty("--dx", dir * -30 + "px"); box.classList.add("out"); setTimeout(paint, 180); }
+  else paint();
+}
+function fwGo(d) { const was = qPlaying; stopQuote(); qI = (qI + d + QUOTES.length) % QUOTES.length; renderQuote(); fwRender(d); if (was) playQuote(); }
+const fwBar = () => fw.style.setProperty("--fw-bar", fw.querySelector(".fw-actions").offsetHeight + "px");
+addEventListener("resize", () => { if (fw.open) fwBar(); });
+function openFraseWin(sheet) {
+  if (modal.open) modal.close();
+  if (!fw.open) fw.showModal();
+  fwBar();
+  fwRender();
+  fwSheet(sheet || null);
+  if (!sheet) $("fw-next").focus({ preventScroll: true });
+}
+function fwSheet(nome) {
+  ["all", "share", "img"].forEach(n => { $("fw-sheet-" + n).hidden = n !== nome; });
+  fw.querySelectorAll("[data-sheet]").forEach(b => b.setAttribute("aria-expanded", b.dataset.sheet === nome));
+  if (nome === "all") { fwList(); setTimeout(() => $("fw-q").focus(), 30); }
+  if (nome === "img") fwMakeImage();
+  if (nome === "share") $("fw-sheet-share").querySelector("a,button:not([data-sheet-close])")?.focus();
+}
+function fwList() {
+  const tipos = [["todas", "Todas"], ["santos", "Santos e papas"], ["equipe", "Da equipe"], ["favoritas", "Favoritas"]];
+  $("fw-filters").innerHTML = tipos.map(([k, n]) => `<button aria-pressed="${fwFiltro === k}" data-fwf="${k}">${n}</button>`).join("");
+  const norm = t => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  const busca = norm($("fw-q").value.trim());
+  const itens = QUOTES.map((q, i) => ({ q, i })).filter(({ q }) =>
+    (fwFiltro === "todas" || (fwFiltro === "equipe" ? q.team : fwFiltro === "favoritas" ? favQ.has(qKey(q)) : !q.team)) &&
+    (!busca || norm(q.f + " " + q.s.nome).includes(busca)));
+  $("fw-list").innerHTML = itens.length ? itens.map(({ q, i }) => `<button class="fw-item" data-fwi="${i}" aria-current="${i === qI}"><span>“${esc(q.f)}”</span><small>${esc(q.s.nome)}${favQ.has(qKey(q)) ? " <i>♥</i>" : ""}</small></button>`).join("")
+    : `<p class="fw-note">${fwFiltro === "favoritas" && !busca ? "Você ainda não favoritou nenhuma frase. Toque no coração para guardar as que mais gostar." : "Nenhuma frase encontrada."}</p>`;
+}
+// imagem para compartilhar (canvas)
+function wrapLines(ctx, text, maxW) {
+  const words = text.split(/\s+/), lines = []; let line = "";
+  for (const w of words) { const t = line ? line + " " + w : w; if (ctx.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t; }
+  if (line) lines.push(line); return lines;
+}
+async function fwMakeImage() {
+  const q = QUOTES[qI], W = 1080, H = fwFmt === "story" ? 1920 : 1350;
+  try { await Promise.all([document.fonts.load('300 72px "Hanken Grotesk"'), document.fonts.load('600 40px "Hanken Grotesk"'), document.fonts.load('800 80px "Cinzel"')]); } catch {}
+  const c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
+  const g = x.createRadialGradient(W * .25, H * .2, 50, W * .5, H * .5, H * .9);
+  g.addColorStop(0, "#c8102e"); g.addColorStop(.45, "#5e0614"); g.addColorStop(1, "#0c0c0d");
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  x.strokeStyle = "rgba(255,225,170,.28)"; x.lineWidth = 3; x.beginPath(); x.arc(W * .18, H * .14, W * .55, 0, Math.PI * 2); x.stroke();
+  x.fillStyle = "rgba(255,255,255,.07)"; x.font = '800 420px "Cinzel", serif'; x.textAlign = "right"; x.fillText(q.s.ini || "", W - 40, H - 260);
+  x.textAlign = "left"; x.fillStyle = "#fff";
+  x.font = '600 30px "Hanken Grotesk", sans-serif'; x.globalAlpha = .85;
+  x.fillText("FRASE DO DIA", 96, 150); x.globalAlpha = 1;
+  let size = 82, lines;
+  do { x.font = `300 ${size}px "Hanken Grotesk", sans-serif`; lines = wrapLines(x, "“" + q.f + "”", W - 192); size -= 4; } while (lines.length * size * 1.18 > H * .5 && size > 40);
+  size += 4; const lh = size * 1.18, top = H * .5 - (lines.length * lh) / 2;
+  lines.forEach((l, i) => x.fillText(l, 96, top + i * lh + size));
+  const yA = top + lines.length * lh + 70;
+  x.fillStyle = "#fff"; x.fillRect(96, yA - 34, 60, 4);
+  x.font = '600 40px "Hanken Grotesk", sans-serif'; x.fillText(q.s.nome, 96, yA + 30);
+  x.font = '400 30px "Hanken Grotesk", sans-serif'; x.globalAlpha = .75;
+  x.fillText(q.team ? "Frase escolhida pela equipe da Pascom" : (q.s.titulo || ""), 96, yA + 78); x.globalAlpha = 1;
+  // assinatura
+  x.strokeStyle = "#fff"; x.lineWidth = 7; x.lineCap = "round";
+  x.beginPath(); x.moveTo(120, H - 190); x.lineTo(120, H - 110); x.moveTo(98, H - 166); x.lineTo(142, H - 166); x.stroke();
+  x.font = '600 34px "Hanken Grotesk", sans-serif'; x.fillText("PASCOM", 172, H - 150);
+  x.font = '400 26px "Hanken Grotesk", sans-serif'; x.globalAlpha = .75; x.fillText("Pastoral da Comunicação", 172, H - 112); x.globalAlpha = 1;
+  $("fw-img").src = c.toDataURL("image/png");
+  fwImgBlob = await new Promise(r => c.toBlob(r, "image/png"));
+}
+async function fwSave() {
+  if (!fwImgBlob) await fwMakeImage();
+  const nome = `frase-do-dia-${TODAY}-${fwFmt === "story" ? "stories" : "feed"}.png`;
+  if (downloadsFn) {
+    try { await downloadsFn.save({ filename: nome, data: fwImgBlob }); toast("Imagem salva"); }
+    catch (e) { if (e.code !== "declined") { $("fw-img-note").textContent = "Não foi possível baixar aqui. Toque e segure a imagem acima para salvar."; } }
+    return;
+  }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(fwImgBlob); a.download = nome;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  toast("Imagem baixada");
+}
+// eventos
+$("fw-close").onclick = () => fw.close();
+fw.addEventListener("close", () => { fwSheet(null); if (location.hash === "#frase") history.replaceState(null, "", location.pathname + location.search); });
+$("fw-prev").onclick = () => fwGo(-1);
+$("fw-next").onclick = () => fwGo(1);
+$("fw-play").onclick = () => qPlaying ? stopQuote() : playQuote();
+$("fw-fav").onclick = () => {
+  const k = qKey(QUOTES[qI]);
+  favQ.has(k) ? favQ.delete(k) : favQ.add(k); store.set("favQ", [...favQ]);
+  fwRender(); toast(favQ.has(k) ? "Frase guardada nos favoritos" : "Frase tirada dos favoritos");
+};
+fw.querySelectorAll("[data-sheet]").forEach(b => b.onclick = () => fwSheet(b.getAttribute("aria-expanded") === "true" ? null : b.dataset.sheet));
+fw.addEventListener("click", e => {
+  if (e.target.closest("[data-sheet-close]")) return fwSheet(null);
+  const f = e.target.closest("[data-fwf]"); if (f) { fwFiltro = f.dataset.fwf; return fwList(); }
+  const it = e.target.closest("[data-fwi]"); if (it) { const was = qPlaying; stopQuote(); qI = +it.dataset.fwi; renderQuote(); fwRender(); fwSheet(null); if (was) playQuote(); return; }
+  const fm = e.target.closest("[data-fmt]"); if (fm) { fwFmt = fm.dataset.fmt; fw.querySelectorAll("[data-fmt]").forEach(b => b.setAttribute("aria-pressed", b === fm)); fwMakeImage(); }
+});
+$("fw-q").addEventListener("input", fwList);
+$("fw-save").onclick = fwSave;
+fw.addEventListener("keydown", e => {
+  if (/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+  if (e.key === "ArrowRight") { e.preventDefault(); fwGo(1); }
+  if (e.key === "ArrowLeft") { e.preventDefault(); fwGo(-1); }
+  if (e.key === " " && e.target === fw) { e.preventDefault(); $("fw-play").click(); }
+});
+// arrastar no celular
+(() => { let x0 = null, y0 = 0; const st = $("fw-stage");
+  st.addEventListener("pointerdown", e => { x0 = e.clientX; y0 = e.clientY; });
+  st.addEventListener("pointerup", e => { if (x0 == null) return; const dx = e.clientX - x0, dy = e.clientY - y0; x0 = null; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) fwGo(dx < 0 ? 1 : -1); });
+  st.addEventListener("pointercancel", () => x0 = null);
+})();
+// abrir a partir do card
+$("play-quote").setAttribute("role", "button"); $("play-quote").tabIndex = 0;
+$("play-quote").setAttribute("aria-label", "Abrir a frase do dia");
+$("play-quote").addEventListener("click", () => openFraseWin());
+$("play-quote").addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openFraseWin(); } });
+$("q-avatars").addEventListener("click", () => openFraseWin());
 
 /* ---------- Trilho de cards: filtro, setas, contagem ---------- */
 const rail = $("rail"), cards = [...rail.querySelectorAll(".card")];

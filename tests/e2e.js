@@ -96,7 +96,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     await p.click("#q-cc");
     await p.click("#q-play"); check(await p.getAttribute("#q-play", "aria-label") === "Pausar", "player: play inicia");
     await p.click("#q-play");
-    await p.click("#q-count"); check((await p.$$("#modal .quotes li")).length >= 13, "lista com todas as frases"); await fechar(p);
+    await p.click("#q-count"); check(await p.evaluate(() => document.getElementById("fw").open), "contador abre a janela da frase"); await p.click("#fw-close");
     // busca
     await p.click(".top-actions [data-action=search]"); await p.fill("#q", "clara");
     check((await p.$$("#res .g-item")).length === 1, "busca por 'clara' acha 1 santo");
@@ -325,6 +325,60 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     const d = await pagina(browser, { hash: "#licao-7" });
     check(/Dei Verbum/.test(await d.textContent("#lt-title")), "link #licao-7 abre a página 7");
     await d.context().close();
+  }
+
+  console.log("10. Janela interativa da frase do dia");
+  {
+    const p = await pagina(browser);
+    const fwAberta = () => p.evaluate(() => document.getElementById("fw").open);
+    await p.click("#play-quote");
+    check(await fwAberta(), "tocar na frase abre a janela interativa");
+    const t1 = await p.textContent("#fw-text"), card1 = await p.textContent("#play-quote");
+    check(t1 === card1, "janela mostra a mesma frase do card");
+    await p.click("#fw-next"); await p.waitForTimeout(300);
+    const t2 = await p.textContent("#fw-text");
+    check(t2 !== t1 && t2 === await p.textContent("#play-quote"), "seta avança e o card acompanha");
+    await p.keyboard.press("ArrowLeft"); await p.waitForTimeout(300);
+    check(await p.textContent("#fw-text") === t1, "seta do teclado volta a frase");
+    const box = await p.$eval("#fw-stage", e => { const r = e.getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 }; });
+    await p.mouse.move(box.x + 120, box.y); await p.mouse.down(); await p.mouse.move(box.x - 120, box.y, { steps: 5 }); await p.mouse.up(); await p.waitForTimeout(300);
+    check(await p.textContent("#fw-text") === t2, "arrastar para o lado troca a frase");
+    await p.click("#fw-play"); check(await p.getAttribute("#fw-play", "aria-label") === "Pausar", "Ouvir inicia a leitura");
+    check(await p.getAttribute("#q-play", "aria-label") === "Pausar", "player do card acompanha a janela");
+    await p.click("#fw-play");
+    await p.click("#fw-fav"); check(await p.getAttribute("#fw-fav", "aria-pressed") === "true", "favoritar marca o coração");
+    await p.click('[data-sheet="all"]'); check(await p.isVisible("#fw-sheet-all"), "Todas as frases abre a lista");
+    check((await p.$$("#fw-list .fw-item")).length >= 13, "lista mostra todas as frases");
+    await p.click('[data-fwf="favoritas"]'); check((await p.$$("#fw-list .fw-item")).length === 1, "filtro Favoritas mostra a favorita");
+    await p.click('[data-fwf="todas"]'); await p.fill("#fw-q", "gentileza");
+    check((await p.$$("#fw-list .fw-item")).length === 1, "busca encontra a frase");
+    await p.click("#fw-list .fw-item"); await p.waitForTimeout(200);
+    check(/gentileza/.test(await p.textContent("#fw-text")) && await p.isHidden("#fw-sheet-all"), "escolher na lista mostra a frase e fecha a lista");
+    await p.click('[data-sheet="share"]');
+    const wa = await p.$eval("#fw-sheet-share .wa", a => decodeURIComponent(a.href));
+    check(/gentileza/.test(wa) && /Francisco de Sales/.test(wa), "compartilhar leva a frase e o autor ao WhatsApp");
+    await p.click('[data-sheet="img"]'); await p.waitForTimeout(600);
+    const dims = await p.$eval("#fw-img", i => [i.naturalWidth, i.naturalHeight]);
+    check(dims[0] === 1080 && dims[1] === 1920, "imagem para stories em 1080×1920", dims.join("x"));
+    await p.click('[data-fmt="post"]'); await p.waitForTimeout(500);
+    check((await p.$eval("#fw-img", i => i.naturalHeight)) === 1350, "formato feed em 1080×1350");
+    const [dl] = await Promise.all([p.waitForEvent("download", { timeout: 5000 }).catch(() => null), p.click("#fw-save")]);
+    check(dl && /frase-do-dia-.*-feed\.png/.test(dl.suggestedFilename()), "baixar imagem gera o arquivo PNG", dl ? dl.suggestedFilename() : "sem download");
+    await p.keyboard.press("Escape"); await p.waitForTimeout(100);
+    if (await fwAberta()) await p.click("#fw-close");
+    check(!(await fwAberta()), "Esc ou X fecham a janela");
+    await p.reload(); await p.waitForTimeout(500); await p.click("#q-count"); await p.click('[data-sheet="all"]'); await p.click('[data-fwf="favoritas"]');
+    check((await p.$$("#fw-list .fw-item")).length === 1, "favoritas continuam após recarregar");
+    check(p.erros.length === 0, "sem erros no console", p.erros.join(" | "));
+    await p.context().close();
+    for (const [w, h] of [[390, 844], [820, 1180]]) {
+      const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: true, isMobile: w < 700 });
+      const m = await ctx.newPage(); await m.goto(URL + "#frase"); await m.waitForTimeout(500);
+      const r = await m.evaluate(() => { const d = document.getElementById("fw"); const btns = [...d.querySelectorAll(".fw-actions button")].map(b => b.getBoundingClientRect());
+        return { open: d.open, cabe: d.scrollWidth <= innerWidth, botoes: btns.every(b => b.bottom <= innerHeight && b.height >= 44) }; });
+      check(r.open && r.cabe && r.botoes, `janela da frase em ${w}px: abre pelo link, cabe na tela e os botões ficam visíveis`, JSON.stringify(r));
+      await ctx.close();
+    }
   }
 
   console.log("8. Celular, tablet e notebook (12 tamanhos de tela)");
