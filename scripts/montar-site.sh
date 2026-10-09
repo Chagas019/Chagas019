@@ -22,7 +22,7 @@ topo, corpo = src[:i], src[i:].strip()
 estilo = topo[topo.index("<style>"):]
 fontes = "\n".join(re.findall(r'<link [^>]*>', topo))
 
-TITULO = "Pascom | Liturgia do dia, agenda e santos da comunicação"
+TITULO = "Comunicação &amp; Conhecimento | Pascom: liturgia do dia, agenda e santos da comunicação"
 DESC = re.search(r'<meta name="description" content="([^"]*)">', topo).group(1)
 IMG = "social/pascom-1200x630.jpg"
 img_url = (site + IMG) if site else IMG
@@ -31,7 +31,7 @@ icone = ("data:image/svg+xml," + "%3Csvg xmlns='http://www.w3.org/2000/svg' view
 
 org = {"@type": "Organization", "name": "Pascom", "alternateName": "Pastoral da Comunicação",
        "description": DESC, "logo": img_url}
-web = {"@type": "WebSite", "name": "Pascom", "description": DESC, "inLanguage": "pt-BR"}
+web = {"@type": "WebSite", "name": "Comunicação & Conhecimento", "alternateName": "Pascom", "description": DESC, "inLanguage": "pt-BR"}
 if site:
     org["url"] = site; web["url"] = site
 ld = json.dumps({"@context": "https://schema.org", "@graph": [org, web]}, ensure_ascii=False, indent=1)
@@ -47,7 +47,7 @@ meta = [
     *([f'<link rel="canonical" href="{site}">'] if site else []),
     '<meta property="og:type" content="website">',
     '<meta property="og:locale" content="pt_BR">',
-    '<meta property="og:site_name" content="Pascom">',
+    '<meta property="og:site_name" content="Comunicação &amp; Conhecimento">',
     f'<meta property="og:title" content="{TITULO}">',
     f'<meta property="og:description" content="{DESC}">',
     *([f'<meta property="og:url" content="{site}">'] if site else []),
