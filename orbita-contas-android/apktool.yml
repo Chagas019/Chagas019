@@ -1,0 +1,23 @@
+!!brut.androlib.meta.MetaInfo
+apkFileName: orbita-contas.apk
+compressionType: false
+doNotCompress:
+- resources.arsc
+- png
+isFrameworkApk: false
+packageInfo:
+  forcedPackageId: '127'
+  renameManifestPackage: null
+sdkInfo:
+  minSdkVersion: '21'
+  targetSdkVersion: '34'
+sharedLibrary: false
+sparseResources: false
+usesFramework:
+  ids:
+  - 1
+  tag: null
+version: 2.10.0
+versionInfo:
+  versionCode: '1'
+  versionName: '1.0'
