@@ -4,13 +4,13 @@ import { useRef } from "react";
 import { gsap, SplitText, useIsoLayoutEffect } from "@/lib/gsap";
 
 const frames = [
-  { src: "/media/luz-01.jpg", title: "Feixe", meta: "Estudo de luz · 2025", w: "lg:w-[46vw]", ratio: "aspect-[3/2]" },
-  { src: "/media/retrato-01.jpg", title: "Eclipse I", meta: "Retrato · 2025", w: "lg:w-[26vw]", ratio: "aspect-[4/5]" },
-  { src: "/media/editorial-01.jpg", title: "Colunas", meta: "Editorial · 2024", w: "lg:w-[40vw]", ratio: "aspect-[3/2]" },
-  { src: "/media/luz-02.jpg", title: "Prisma", meta: "Estudo de luz · 2024", w: "lg:w-[24vw]", ratio: "aspect-[3/4]" },
-  { src: "/media/campanha-01.jpg", title: "Horizonte", meta: "Campanha · 2025", w: "lg:w-[44vw]", ratio: "aspect-[3/2]" },
-  { src: "/media/editorial-02.jpg", title: "Ritmo", meta: "Editorial · 2023", w: "lg:w-[26vw]", ratio: "aspect-[3/4]" },
-  { src: "/media/luz-03.jpg", title: "Ruído", meta: "Estudo de luz · 2023", w: "lg:w-[42vw]", ratio: "aspect-[3/2]" },
+  { src: "/media/luz-01.webp", title: "Feixe", meta: "Estudo de luz · 2025", w: "lg:w-[46vw]", ratio: "aspect-[3/2]" },
+  { src: "/media/retrato-01.webp", title: "Eclipse I", meta: "Retrato · 2025", w: "lg:w-[26vw]", ratio: "aspect-[4/5]" },
+  { src: "/media/editorial-01.webp", title: "Colunas", meta: "Editorial · 2024", w: "lg:w-[40vw]", ratio: "aspect-[3/2]" },
+  { src: "/media/luz-02.webp", title: "Prisma", meta: "Estudo de luz · 2024", w: "lg:w-[24vw]", ratio: "aspect-[3/4]" },
+  { src: "/media/campanha-01.webp", title: "Horizonte", meta: "Campanha · 2025", w: "lg:w-[44vw]", ratio: "aspect-[3/2]" },
+  { src: "/media/editorial-02.webp", title: "Ritmo", meta: "Editorial · 2023", w: "lg:w-[26vw]", ratio: "aspect-[3/4]" },
+  { src: "/media/luz-03.webp", title: "Ruído", meta: "Estudo de luz · 2023", w: "lg:w-[42vw]", ratio: "aspect-[3/2]" },
 ];
 
 export default function Gallery() {

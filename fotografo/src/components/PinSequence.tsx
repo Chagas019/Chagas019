@@ -120,7 +120,7 @@ export default function PinSequence() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 data-cam
-                src="/media/retrato-02.jpg"
+                src="/media/retrato-02.webp"
                 alt="Retrato em contraluz da série Eclipse"
                 className="h-full w-full object-cover will-change-transform"
               />

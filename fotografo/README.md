@@ -19,6 +19,6 @@ npm run dev
 
 `public/media/` tem vídeo e imagens **provisórios**, gerados por código (o ambiente não tinha acesso a bancos de imagem). Troque pelas fotos reais mantendo os mesmos nomes de arquivo:
 
-`hero.mp4`, `hero-poster.jpg`, `retrato-01/02.jpg`, `editorial-01/02.jpg`, `campanha-01.jpg`, `luz-01/02/03.jpg`.
+`hero.mp4`, `hero-poster.webp`, `retrato-01/02.webp`, `editorial-01/02.webp`, `campanha-01.webp`, `luz-01/02/03.webp`.
 
 Nome, textos, e-mail e redes sociais também são exemplos.

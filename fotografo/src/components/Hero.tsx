@@ -110,7 +110,7 @@ export default function Hero() {
             data-video
             className="absolute inset-0 h-full w-full object-cover"
             src="/media/hero.mp4"
-            poster="/media/hero-poster.jpg"
+            poster="/media/hero-poster.webp"
             autoPlay
             muted
             loop
@@ -185,7 +185,7 @@ export default function Hero() {
               <div data-hero-fade className="js-hide flex gap-4 rounded-sm">
                 <div className="relative h-32 w-32 shrink-0 overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/media/retrato-01.jpg" alt="" className="h-full w-full object-cover" />
+                  <img src="/media/retrato-01.webp" alt="" className="h-full w-full object-cover" />
                 </div>
                 <div className="flex flex-col justify-center">
                   <p className="text-[13px] font-medium">Série Eclipse</p>

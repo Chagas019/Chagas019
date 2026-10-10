@@ -156,7 +156,7 @@ export default function Services() {
                 <div className="grid gap-8 lg:grid-cols-[1fr_1fr]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={["/media/retrato-01.jpg", "/media/editorial-01.jpg", "/media/campanha-01.jpg", "/media/luz-02.jpg"][i]}
+                    src={["/media/retrato-01.webp", "/media/editorial-01.webp", "/media/campanha-01.webp", "/media/luz-02.webp"][i]}
                     alt=""
                     className="aspect-[16/10] w-full object-cover"
                     loading="lazy"
