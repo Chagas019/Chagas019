@@ -109,7 +109,6 @@ export default function Hero() {
           <video
             data-video
             className="absolute inset-0 h-full w-full object-cover"
-            src="/media/hero.mp4"
             poster="/media/hero-poster.webp"
             autoPlay
             muted
@@ -117,7 +116,10 @@ export default function Hero() {
             playsInline
             preload="auto"
             aria-hidden
-          />
+          >
+            <source src="/media/hero.webm" type="video/webm" />
+            <source src="/media/hero.mp4" type="video/mp4" />
+          </video>
         </div>
         <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_0%_0%,rgba(255,77,10,0.55),transparent_55%)] mix-blend-screen" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-black/40" />
