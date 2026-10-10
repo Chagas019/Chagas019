@@ -1,0 +1,871 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Órbita Contas</title>
+<meta name="theme-color" content="#05070E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Órbita">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icon-180.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@500;600&family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+html,body{margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}[hidden]{display:none!important}
+
+/* Layout: one-column phone cockpit. Sticky HUD header with month dial, scrolling panels, fixed command dock with a central launch button. Deliberately single dark theme. */
+:root{
+  color-scheme: dark;
+  --void:#05070E; --hull:#0A1020; --hull-2:#0F1830; --grid:rgba(110,190,255,.055);
+  --line:rgba(125,200,255,.13); --line-strong:rgba(125,200,255,.30);
+  --ink:#E8F1FF; --dim:#8693AE; --faint:#566180;
+  --plasma:#46E3FF; --flux:#A084FF; --ok:#3EF0A8; --warn:#FFC960; --crit:#FF5272;
+  --glow-plasma:rgba(70,227,255,.35); --glow-flux:rgba(160,132,255,.28);
+  --f-display:"Chakra Petch", "Rajdhani", system-ui, sans-serif;
+  --f-body:"Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:16px;
+}
+html{background:var(--void)}
+body{background:var(--void);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+*{box-sizing:border-box}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+:focus-visible{outline:2px solid var(--plasma);outline-offset:2px;border-radius:8px}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+
+.bg{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(60% 38% at 90% -6%, var(--glow-flux), transparent 70%),
+    radial-gradient(55% 32% at -5% 8%, rgba(70,227,255,.16), transparent 70%),
+    linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 28px,
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 100%;
+  -webkit-mask-image:linear-gradient(#000 0%, rgba(0,0,0,.5) 40%, transparent 80%);
+          mask-image:linear-gradient(#000 0%, rgba(0,0,0,.5) 40%, transparent 80%)}
+.app{position:relative;z-index:1;max-width:520px;margin:0 auto;padding-inline:16px;padding-block:0 calc(110px + env(safe-area-inset-bottom,0px))}
+
+/* header */
+.hud{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;margin-inline:-16px;padding:14px 16px 12px;
+  background:linear-gradient(var(--void) 70%, rgba(5,7,14,0));display:grid;gap:12px}
+.hud-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:700;letter-spacing:.22em;font-size:15px}
+.brand svg{flex:none}
+.sync{display:inline-flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);
+  border:1px solid var(--line);border-radius:999px;padding:5px 10px}
+.sync i{width:7px;height:7px;border-radius:50%;background:var(--faint)}
+button.sync{cursor:pointer}
+.sync img{width:18px;height:18px;border-radius:50%;margin:-2px 0 -2px -4px}
+.acct{display:grid;gap:14px;margin-top:14px}
+.acct p{margin:0;color:var(--dim);font-size:14px;max-width:60ch}
+.who{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0}
+.who img{width:52px;height:52px;border-radius:50%;flex:none;box-shadow:0 0 0 2px var(--plasma),0 0 18px var(--glow-plasma)}
+.who div{min-width:0}
+.who b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who span{display:block;color:var(--dim);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gbtn{background:#fff;color:#1f1f1f;border:0;font-weight:600;min-height:50px}
+.gbtn svg{flex:none}
+.sync.on i{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.sync.local i{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.dial{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:12px;background:rgba(10,16,32,.7);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.dial button{width:46px;height:42px;display:grid;place-items:center;color:var(--plasma)}
+.dial-label{font-family:var(--f-display);font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:14px;text-align:center}
+.dial-label small{display:block;font-family:var(--f-body);letter-spacing:.04em;text-transform:none;font-weight:500;font-size:11px;color:var(--dim)}
+
+main{display:grid;gap:18px;padding-top:4px}
+.panel{position:relative;background:linear-gradient(180deg,var(--hull-2),var(--hull));border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.panel.cut{clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,22px 100%,0 calc(100% - 22px));border-radius:4px}
+.eyebrow{font-family:var(--f-display);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.eyebrow b{color:var(--plasma);font-weight:600}
+h2{font-family:var(--f-display);font-weight:600;font-size:17px;letter-spacing:.06em;margin:0;text-wrap:balance}
+
+/* reactor */
+.reactor{display:grid;grid-template-columns:132px minmax(0,1fr);gap:18px;align-items:center;margin-top:12px}
+.ring{position:relative;width:132px;height:132px}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .core{position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:2px}
+.ring .core small{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.ring .core strong{font-family:var(--f-mono);font-size:22px;font-weight:600}
+.ring .spin{position:absolute;inset:-6px;border-radius:50%;border:1px dashed var(--line-strong);animation:spin 40s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.saldo small{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.saldo .big{font-family:var(--f-mono);font-weight:600;font-size:clamp(20px,6.4vw,30px);line-height:1.1;margin:4px 0 10px;text-shadow:0 0 22px var(--glow-plasma);white-space:nowrap}
+.saldo .big.neg{color:var(--crit);text-shadow:0 0 22px rgba(255,82,114,.35)}
+.kv{display:grid;gap:6px;font-size:13px}
+.kv div{display:flex;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding-top:6px}
+.kv span{color:var(--dim);white-space:nowrap}
+.kv b{white-space:nowrap}
+#month-label{display:block}
+.up{color:var(--ok)} .down{color:var(--crit)} .soon{color:var(--warn)}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{border:1px solid var(--line);border-radius:12px;padding:12px;background:rgba(10,16,32,.6);min-width:0}
+.stat small{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);display:block}
+.stat b{display:block;font-family:var(--f-mono);font-weight:600;font-size:clamp(11px,3.3vw,14px);margin-top:4px;white-space:nowrap}
+
+/* bills */
+.list{display:grid;gap:10px;margin-top:12px}
+.bill{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:14px;background:rgba(10,16,32,.72);overflow:hidden;position:relative}
+.bill::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:0 3px 3px 0;background:var(--faint)}
+.bill.st-paga::before{background:var(--ok);box-shadow:0 0 10px var(--ok)}
+.bill.st-atrasada::before{background:var(--crit);box-shadow:0 0 10px var(--crit)}
+.bill.st-hoje::before,.bill.st-breve::before{background:var(--warn);box-shadow:0 0 10px var(--warn)}
+.bill.st-aberta::before{background:var(--plasma)}
+.bill-main{flex:1;min-width:0;display:flex;align-items:center;gap:12px;padding:12px 10px 12px 16px;text-align:left}
+.day{flex:none;width:46px;height:46px;border-radius:10px;border:1px solid var(--line-strong);display:grid;place-content:center;text-align:center;font-family:var(--f-mono);font-size:17px;font-weight:600;line-height:1}
+.day small{font-family:var(--f-display);font-size:9px;letter-spacing:.18em;color:var(--dim);margin-bottom:3px}
+.txt{flex:1;min-width:0}
+.txt b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta{display:block;font-size:12px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st-atrasada .meta em{color:var(--crit);font-style:normal}
+.st-hoje .meta em,.st-breve .meta em{color:var(--warn);font-style:normal}
+.st-paga .meta em{color:var(--ok);font-style:normal}
+.meta em{font-style:normal}
+.amt{flex:none;font-family:var(--f-mono);font-weight:600;font-size:14px}
+.st-paga .amt{color:var(--dim);text-decoration:line-through;text-decoration-color:var(--faint)}
+.pay{flex:none;width:56px;border-left:1px solid var(--line);display:grid;place-items:center;color:var(--faint);transition:background .2s,color .2s}
+.pay span{width:30px;height:30px;border-radius:50%;border:1.5px solid currentColor;display:grid;place-items:center}
+.pay[aria-pressed="true"]{color:var(--ok);background:rgba(62,240,168,.07)}
+.pay[aria-pressed="true"] span{background:var(--ok);color:var(--void);box-shadow:0 0 14px rgba(62,240,168,.55)}
+.pay:disabled{opacity:.5}
+.tag{display:inline-block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--flux);color:var(--flux);border-radius:4px;padding:0 4px;margin-left:6px;vertical-align:2px}
+
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding-inline:16px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13px;color:var(--dim)}
+.chip[aria-pressed="true"]{border-color:var(--plasma);color:var(--ink);background:rgba(70,227,255,.1);box-shadow:inset 0 0 12px rgba(70,227,255,.15)}
+.chip .num{margin-left:6px;font-size:11px;color:var(--plasma)}
+
+/* category bars */
+.bars{display:grid;gap:12px;margin-top:14px}
+.bar-row{display:grid;gap:6px}
+.bar-head{display:flex;justify-content:space-between;gap:10px;font-size:13px}
+.bar-head span{color:var(--dim)}
+.track{height:6px;border-radius:6px;background:rgba(125,200,255,.08);overflow:hidden}
+.fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--flux),var(--plasma));box-shadow:0 0 10px var(--glow-plasma)}
+
+/* extrato */
+.day-group{display:grid;gap:8px}
+.day-head{font-family:var(--f-display);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-top:6px}
+.tx{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:rgba(10,16,32,.72)}
+.tx .ico{flex:none;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;border:1px solid var(--line-strong)}
+.tx.in .ico{color:var(--ok);border-color:rgba(62,240,168,.4)}
+.tx.out .ico{color:var(--crit);border-color:rgba(255,82,114,.4)}
+.tx .amt.in{color:var(--ok)}
+
+.empty{text-align:center;padding:26px 18px;color:var(--dim);font-size:14px;border:1px dashed var(--line-strong);border-radius:14px}
+.hero-empty{display:grid;gap:14px;text-align:left}
+.hero-empty p{margin:0;color:var(--dim);max-width:60ch}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 18px;border-radius:12px;font-weight:600;border:1px solid var(--line-strong)}
+.btn.primary{background:linear-gradient(135deg,var(--plasma),var(--flux));color:var(--void);border:0;box-shadow:0 0 22px var(--glow-plasma)}
+.btn.danger{color:var(--crit);border-color:rgba(255,82,114,.45)}
+.btn.danger.armed{background:var(--crit);color:var(--void)}
+.btn.ghost{color:var(--dim)}
+.note{font-size:12px;color:var(--dim);display:flex;gap:8px;align-items:flex-start}
+.note.warn{color:var(--warn)}
+.link{color:var(--plasma);text-decoration:underline;text-underline-offset:3px}
+
+/* dock */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:10;padding:0 12px env(safe-area-inset-bottom,0px);
+  background:linear-gradient(rgba(5,7,14,0),var(--void) 35%)}
+.dock-inner{max-width:520px;margin:0 auto 10px;display:grid;grid-template-columns:1fr 1fr 76px 1fr;align-items:center;
+  border:1px solid var(--line-strong);border-radius:20px;background:rgba(11,17,34,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);height:66px}
+.tab{display:grid;justify-items:center;gap:3px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);height:100%;align-content:center}
+.tab[aria-current="page"]{color:var(--plasma);text-shadow:0 0 10px var(--glow-plasma)}
+.fab{justify-self:center;width:58px;height:58px;border-radius:18px;transform:translateY(-14px) rotate(45deg);
+  background:linear-gradient(135deg,var(--plasma),var(--flux));box-shadow:0 0 26px var(--glow-plasma),0 0 0 6px var(--void);display:grid;place-items:center;color:var(--void)}
+.fab svg{transform:rotate(-45deg)}
+
+/* sheet */
+.veil{position:fixed;inset:0;z-index:20;background:rgba(2,4,10,.72);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:100%;max-width:520px;max-height:92%;overflow-y:auto;background:linear-gradient(180deg,var(--hull-2),var(--hull));border:1px solid var(--line-strong);border-bottom:0;
+  border-radius:22px 22px 0 0;padding:10px 18px calc(22px + env(safe-area-inset-bottom,0px));animation:rise .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes rise{from{transform:translateY(40px);opacity:.4}}
+.grab{width:42px;height:4px;border-radius:4px;background:var(--line-strong);margin:0 auto 14px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:4px;border:1px solid var(--line);border-radius:12px;margin:12px 0 16px}
+.seg button{min-height:38px;border-radius:9px;font-size:13px;font-weight:600;color:var(--dim)}
+.seg button[aria-pressed="true"]{background:rgba(70,227,255,.14);color:var(--ink);box-shadow:inset 0 0 0 1px var(--plasma)}
+form{display:grid;gap:14px}
+.field{display:grid;gap:6px;min-width:0}
+.field label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.field input,.field select{width:100%;min-height:48px;border-radius:12px;border:1px solid var(--line-strong);background:var(--void);color:var(--ink);padding:0 14px;font:inherit;font-size:16px}
+.field input:focus,.field select:focus{outline:none;border-color:var(--plasma);box-shadow:0 0 0 3px rgba(70,227,255,.18)}
+.field input.money{font-family:var(--f-mono);font-size:22px;font-weight:600;min-height:56px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.check{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px}
+.check input{width:20px;height:20px;accent-color:var(--plasma)}
+.check small{display:block;color:var(--dim);font-size:12px}
+.err{color:var(--crit);font-size:13px;min-height:1em;margin:0}
+
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:30;max-width:calc(100% - 32px);
+  background:var(--hull-2);border:1px solid var(--plasma);color:var(--ink);padding:10px 16px;border-radius:12px;font-size:14px;box-shadow:0 0 22px var(--glow-plasma)}
+.loading{display:grid;place-items:center;gap:14px;padding:60px 0;color:var(--dim);font-size:13px;letter-spacing:.1em;text-transform:uppercase}
+.loading i{width:42px;height:42px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--plasma);animation:spin 1s linear infinite}
+
+@media (max-width:380px){
+  .reactor{grid-template-columns:1fr;justify-items:center;text-align:center}
+  .saldo{width:100%}
+  .stats{grid-template-columns:1fr 1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+
+<div class="bg" aria-hidden="true"></div>
+<div class="app">
+  <header class="hud">
+    <div class="hud-top">
+      <div class="brand">
+        <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="4.5" fill="#46E3FF"/><ellipse cx="13" cy="13" rx="11.5" ry="5" fill="none" stroke="#A084FF" stroke-width="1.4" transform="rotate(-28 13 13)"/></svg>
+        ÓRBITA
+      </div>
+      <button type="button" class="sync" id="sync" aria-label="Sua conta"><i></i><span id="sync-txt">Conectando</span></button>
+    </div>
+    <div class="dial">
+      <button type="button" id="prev" aria-label="Mês anterior"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button type="button" class="dial-label" id="month-label" style="width:auto;flex:1" aria-label="Voltar para o mês atual"></button>
+      <button type="button" id="next" aria-label="Próximo mês"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+  </header>
+  <main id="view"><div class="loading"><i></i>Ligando os sistemas</div></main>
+</div>
+
+<nav class="dock" aria-label="Navegação">
+  <div class="dock-inner">
+    <button class="tab" data-tab="painel" aria-current="page">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M12 12l4-4"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/></svg>Painel</button>
+    <button class="tab" data-tab="contas">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Contas</button>
+    <button class="fab" id="fab" aria-label="Adicionar"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg></button>
+    <button class="tab" data-tab="extrato">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg>Extrato</button>
+  </div>
+</nav>
+
+<div id="sheet-root"></div>
+<div id="toast-root"></div>
+
+<script src="firebase-config.js"></script>
+<script>
+(function(){
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const brl = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
+const fmt = v => brl.format(v || 0);
+const pad = n => String(n).padStart(2,'0');
+const monthKey = d => d.getFullYear() + '-' + pad(d.getMonth()+1);
+const dateKey = d => monthKey(d) + '-' + pad(d.getDate());
+const ym = m => m.split('-').map(Number);
+const shiftMonth = (m,k) => { const [y,mo] = ym(m); return monthKey(new Date(y, mo-1+k, 1)); };
+const daysIn = m => { const [y,mo] = ym(m); return new Date(y, mo, 0).getDate(); };
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const monthName = m => { const [y,mo] = ym(m); return cap(new Date(y, mo-1, 1).toLocaleDateString('pt-BR',{month:'long'})); };
+const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+function parseMoney(s){
+  s = String(s).trim().replace(/[R$\s]/g,'');
+  if (s.includes(',')) s = s.replace(/\./g,'').replace(',','.');
+  const v = parseFloat(s);
+  return isFinite(v) ? Math.round(v*100)/100 : NaN;
+}
+const CAT_SAIDA = ['Moradia','Casa','Alimentação','Transporte','Saúde','Educação','Lazer','Cartão','Outros'];
+const CAT_ENTRADA = ['Salário','Renda extra','Outros'];
+const LOCAL_KEY = 'orbita-contas-v1';
+
+const S = { mes: monthKey(new Date()), tab:'painel', filtro:'todas', contas:{}, lanc:{}, loaded:{contas:false,lanc:false}, mode:'loading', busy:new Set(), user:null, fbPronto:false, fbErro:false, appToken:null };
+let backend = null;
+let fb = null, unsubs = [], pendingToken = null;
+const FB_CONFIG = window.ORBITA_FIREBASE || null;
+const APP_LOGIN = new URLSearchParams(location.search).has('app-login');
+const ACCOUNT_KEY = 'orbita-conta-google';
+
+/* ---------- dados ---------- */
+function billsFor(m){
+  const t = new Date(); t.setHours(0,0,0,0);
+  const [y,mo] = ym(m);
+  return Object.entries(S.contas)
+    .filter(([,c]) => c.recorrente ? c.mes <= m : c.mes === m)
+    .map(([id,c]) => {
+      const dia = Math.min(c.dia || 1, daysIn(m));
+      const pago = !!(c.pagos && c.pagos[m]);
+      const diff = Math.round((new Date(y, mo-1, dia) - t) / 864e5);
+      const st = pago ? 'paga' : diff < 0 ? 'atrasada' : diff === 0 ? 'hoje' : diff <= 3 ? 'breve' : 'aberta';
+      return { ...c, id, dia, pago, diff, st };
+    })
+    .sort((a,b) => a.dia - b.dia || a.nome.localeCompare(b.nome));
+}
+function lancFor(m){
+  return Object.entries(S.lanc).map(([id,l]) => ({...l, id}))
+    .filter(l => (l.data || '').startsWith(m))
+    .sort((a,b) => b.data.localeCompare(a.data) || (b.criado||0) - (a.criado||0));
+}
+function summary(m){
+  const bills = billsFor(m), lanc = lancFor(m);
+  let entradas = 0, saidas = 0, pagas = 0, aPagar = 0; const cats = {};
+  for (const l of lanc){
+    if (l.tipo === 'entrada') entradas += l.valor;
+    else { saidas += l.valor; cats[l.categoria] = (cats[l.categoria]||0) + l.valor; }
+  }
+  for (const b of bills){
+    if (b.pago){ pagas += b.valor; cats[b.categoria] = (cats[b.categoria]||0) + b.valor; }
+    else aPagar += b.valor;
+  }
+  const gastos = saidas + pagas, saldo = entradas - gastos;
+  return { bills, lanc, entradas, saidas, pagas, aPagar, gastos, saldo, previsto: saldo - aPagar, cats };
+}
+const hasAny = () => Object.keys(S.contas).length || Object.keys(S.lanc).length;
+const hasExamples = () => [...Object.values(S.contas), ...Object.values(S.lanc)].some(x => x.exemplo);
+
+/* ---------- armazenamento ---------- */
+async function save(kind, id, data){
+  if (backend && backend.mode === 'nuvem' && backend.firestore){
+    // Firestore aplica a gravação na hora (também sem internet) e envia quando houver conexão
+    backend.col[kind].doc(id).set(data).catch(() => toast('Não foi possível salvar na nuvem. Entre de novo na sua conta.'));
+    return true;
+  }
+  if (backend && backend.mode === 'nuvem'){
+    try { await backend.col[kind].doc(id).set(data); return true; }
+    catch(e){
+      toast(e && e.code === 'quota_exceeded' ? 'Espaço cheio. Apague registros antigos para salvar novos.' : 'Não foi possível salvar. Verifique a conexão e tente de novo.');
+      return false;
+    }
+  }
+  S[kind][id] = data; persistLocal(); render(); return true;
+}
+async function remove(kind, id){
+  if (backend && backend.mode === 'nuvem' && backend.firestore){
+    backend.col[kind].doc(id).delete().catch(() => toast('Não foi possível apagar na nuvem. Entre de novo na sua conta.'));
+    return true;
+  }
+  if (backend && backend.mode === 'nuvem'){
+    try { await backend.col[kind].doc(id).delete(); return true; }
+    catch(e){ toast('Não foi possível apagar. Tente de novo.'); return false; }
+  }
+  delete S[kind][id]; persistLocal(); render(); return true;
+}
+function persistLocal(){ try { localStorage.setItem(LOCAL_KEY, JSON.stringify({contas:S.contas, lanc:S.lanc})); } catch(e){} }
+function loadLocal(){ try { const o = JSON.parse(localStorage.getItem(LOCAL_KEY) || 'null'); if (o){ S.contas = o.contas || {}; S.lanc = o.lanc || {}; } } catch(e){} }
+
+async function init(){
+  renderChrome();
+  let db = null, uid = null;
+  try {
+    if (window.claude && claude.use){
+      db = await claude.use('db');
+      const user = await claude.use('user');
+      uid = user ? await user.id() : null;
+    }
+  } catch(e){}
+  if (db && uid){
+    const root = db.doc('data/users/' + uid + '/carteira');
+    backend = { mode:'nuvem', col:{ contas: root.collection('contas'), lanc: root.collection('lancamentos') } };
+    S.mode = 'nuvem';
+    for (const kind of ['contas','lanc']){
+      backend.col[kind].onSnapshot(snap => {
+        const o = {}; snap.docs.forEach(d => { o[d.id] = d.data(); });
+        S[kind] = o; S.loaded[kind] = true; render();
+      }, err => {
+        S.loaded[kind] = true;
+        toast(err && err.code === 'revoked' ? 'Acesso aos dados encerrado nesta visualização.' : 'A sincronização parou. Recarregue a página.');
+        render();
+      });
+    }
+    render();
+    return;
+  }
+  let lembrouConta = false;
+  try { lembrouConta = !!localStorage.getItem(ACCOUNT_KEY); } catch(e){}
+  if (FB_CONFIG && (lembrouConta || APP_LOGIN)){
+    // espera o Firebase confirmar o login antes de mostrar a tela, para não piscar a tela vazia
+    render();
+    setTimeout(() => { if (S.mode === 'loading') useLocal(); }, 8000);
+  } else useLocal();
+  if (FB_CONFIG) startFirebase();
+}
+
+/* ---------- conta Google (Firebase) ---------- */
+function loadScript(src){
+  return new Promise((ok, fail) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = fail; document.head.appendChild(s); });
+}
+async function startFirebase(){
+  try {
+    for (const f of ['app','auth','firestore']) await loadScript('firebase/firebase-' + f + '-compat.js');
+    firebase.initializeApp(FB_CONFIG);
+    fb = { auth: firebase.auth(), db: firebase.firestore() };
+    try { await fb.db.enablePersistence({ synchronizeTabs: true }); } catch(e){}
+  } catch(e){
+    fb = null; S.fbErro = true;
+    if (S.mode === 'loading') useLocal(); else render();
+    return;
+  }
+  S.fbPronto = true;
+  fb.auth.onAuthStateChanged(u => { if (u) useCloud(u); else useLocal(); });
+  if (pendingToken){ const t = pendingToken; pendingToken = null; window.orbitaToken(t); }
+}
+function unsubAll(){ unsubs.forEach(u => { try { u(); } catch(e){} }); unsubs = []; }
+function rememberAccount(on){ try { on ? localStorage.setItem(ACCOUNT_KEY, '1') : localStorage.removeItem(ACCOUNT_KEY); } catch(e){} }
+
+async function useCloud(u){
+  const root = fb.db.collection('users').doc(u.uid);
+  const col = { contas: root.collection('contas'), lanc: root.collection('lancamentos') };
+  // leva para a nuvem o que estava guardado só neste aparelho
+  const local = [];
+  try {
+    const o = JSON.parse(localStorage.getItem(LOCAL_KEY) || 'null') || {};
+    for (const k of ['contas','lanc']) for (const [id, d] of Object.entries(o[k] || {})) local.push([k, id, d]);
+  } catch(e){}
+  if (local.length){
+    toast('Enviando para a nuvem os dados deste aparelho…');
+    try {
+      for (let i = 0; i < local.length; i += 400){
+        const batch = fb.db.batch();
+        local.slice(i, i + 400).forEach(([k, id, d]) => batch.set(col[k].doc(id), d));
+        await batch.commit();
+      }
+      try { localStorage.removeItem(LOCAL_KEY); } catch(e){}
+    } catch(e){ toast('Os dados deste aparelho não foram enviados. Eles continuam guardados aqui.'); }
+  }
+  unsubAll();
+  S.user = { nome: u.displayName || '', email: u.email || '', foto: u.photoURL || '' };
+  backend = { mode:'nuvem', firestore:true, col };
+  S.mode = 'nuvem'; S.contas = {}; S.lanc = {}; S.loaded = {contas:false, lanc:false};
+  rememberAccount(true);
+  for (const kind of ['contas','lanc']){
+    unsubs.push(col[kind].onSnapshot(snap => {
+      const o = {}; snap.docs.forEach(d => { o[d.id] = d.data(); });
+      S[kind] = o; S.loaded[kind] = true; render();
+    }, () => {
+      S.loaded[kind] = true; render();
+      toast('A sincronização parou. Saia e entre de novo na sua conta.');
+    }));
+  }
+  render();
+  if (sheet && sheet.tipo === 'conta-google') openAccount();
+}
+function useLocal(){
+  unsubAll();
+  S.user = null; rememberAccount(false);
+  backend = { mode:'local' }; S.mode = 'local';
+  S.contas = {}; S.lanc = {}; loadLocal(); S.loaded = {contas:true, lanc:true};
+  render();
+  if (sheet && sheet.tipo === 'conta-google') openAccount();
+}
+
+async function login(){
+  if (window.OrbitaApp && OrbitaApp.abrirNavegador){
+    if (!window.ORBITA_SITE){ toast('O login com Google ainda não foi ativado no app Android.'); return; }
+    OrbitaApp.abrirNavegador(window.ORBITA_SITE.replace(/\/$/, '') + '/?app-login=1');
+    toast('Entre com o Google no navegador e toque em "Voltar para o app".');
+    return;
+  }
+  if (!fb){ toast(S.fbErro ? 'Sem conexão com o Google. Verifique a internet e tente de novo.' : 'Carregando, tente de novo em instantes.'); return; }
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+  try {
+    await fb.auth.signInWithPopup(provider);
+    closeSheet(); toast('Conta conectada');
+  } catch(e){
+    const code = e && e.code;
+    if (code === 'auth/popup-blocked' || code === 'auth/operation-not-supported-in-this-environment') return fb.auth.signInWithRedirect(provider);
+    if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return;
+    toast(code === 'auth/unauthorized-domain' ? 'Este endereço não está autorizado no Firebase.' : 'Não foi possível entrar. Tente de novo.');
+  }
+}
+async function logout(){
+  if (!fb) return;
+  await fb.auth.signOut();
+  // apaga a cópia guardada neste aparelho, para a próxima pessoa não ver seus dados
+  try { await fb.db.terminate(); await fb.db.clearPersistence(); } catch(e){}
+  location.reload();
+}
+// chamado pelo app Android quando o login termina no navegador
+window.orbitaToken = async token => {
+  if (!fb){ pendingToken = token; return; }
+  try {
+    await fb.auth.signInWithCredential(firebase.auth.GoogleAuthProvider.credential(token));
+    closeSheet(); toast('Conta conectada');
+  } catch(e){ toast('Não foi possível entrar. Tente de novo.'); }
+};
+async function appLogin(){
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+  try {
+    const r = await fb.auth.signInWithPopup(provider);
+    S.appToken = r.credential && r.credential.idToken;
+    if (!S.appToken) toast('Não foi possível entrar. Tente de novo.');
+    render();
+  } catch(e){
+    if (e && (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request')) return;
+    toast('Não foi possível entrar. Tente de novo.');
+  }
+}
+const GOOGLE_G = '<svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
+function viewAppLogin(){
+  let h = '<section class="panel cut hero-empty"><div class="eyebrow"><span>App Android</span><b>Login</b></div>';
+  if (!FB_CONFIG) h += '<h2>Login ainda não ativado</h2><p>A configuração do Google ainda não foi colocada neste site.</p>';
+  else if (!S.fbPronto) h += '<h2>Conectando ao Google…</h2>' + (S.fbErro ? '<p>Sem conexão. Verifique a internet e recarregue a página.</p>' : '');
+  else if (S.appToken){
+    const href = 'intent://login?token=' + encodeURIComponent(S.appToken) + '#Intent;scheme=orbitacontas;package=com.orbita.contas;end';
+    h += '<h2>Pronto! Volte para o app</h2><p>Toque no botão abaixo para terminar o login no Órbita Contas.</p>' +
+      '<div class="btns"><a class="btn primary" style="text-decoration:none" href="' + esc(href) + '">Voltar para o app</a></div>';
+  } else h += '<h2>Entre com sua conta Google</h2><p>Depois de entrar, você volta para o app Órbita Contas e seus dados passam a ficar salvos na nuvem.</p>' +
+      '<div class="btns"><button class="btn gbtn" data-act="app-login">' + GOOGLE_G + 'Entrar com Google</button></div>';
+  return h + '</section>';
+}
+function openAccount(){
+  sheet = { tipo:'conta-google' };
+  let body;
+  if (!FB_CONFIG) body = '<h2>Seus dados ficam neste aparelho</h2><p>O login com Google ainda não foi ativado neste app. Por enquanto, use "Salvar backup" para guardar uma cópia dos seus dados.</p>';
+  else if (S.user) body =
+    '<div class="who">' + (S.user.foto ? '<img src="' + esc(S.user.foto) + '" alt="" referrerpolicy="no-referrer">' : '') +
+      '<div><b>' + esc(S.user.nome || 'Sua conta Google') + '</b><span>' + esc(S.user.email) + '</span></div></div>' +
+    '<p>Seus dados estão salvos na nuvem e aparecem em qualquer aparelho em que você entrar com esta conta, mesmo se trocar de celular.</p>' +
+    '<div class="btns"><button class="btn danger" data-act="logout">Sair da conta</button></div>';
+  else body =
+    '<h2>Entre com sua conta Google</h2>' +
+    '<p>Assim suas contas ficam salvas na nuvem e aparecem no celular e no computador. O que já está neste aparelho vai junto para a sua conta.</p>' +
+    '<div class="btns"><button class="btn gbtn" data-act="login" style="flex:1">' + GOOGLE_G + 'Entrar com Google</button></div>' +
+    (S.fbErro ? '<div class="note warn">Sem conexão com o Google agora. Verifique a internet.</div>' : '');
+  $('#sheet-root').innerHTML = '<div class="veil" id="veil"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="acct-title">' +
+    '<div class="grab"></div><div class="eyebrow"><span id="acct-title">Sua conta</span><button class="link" data-act="close" style="text-decoration:none;color:var(--dim)">Fechar</button></div>' +
+    '<div class="acct">' + body + '</div></div></div>';
+}
+
+/* ---------- render ---------- */
+function renderChrome(){
+  $('#month-label').innerHTML = esc(monthName(S.mes)) + ' <span class="num" style="color:var(--plasma)">' + ym(S.mes)[0] + '</span>' +
+    (S.mes === monthKey(new Date()) ? '<small>mês atual</small>' : '<small>toque para voltar ao mês atual</small>');
+  const sync = $('#sync');
+  sync.className = 'sync' + (S.mode === 'nuvem' ? ' on' : S.mode === 'local' ? ' local' : '');
+  const first = S.user && S.user.nome ? S.user.nome.split(' ')[0] : '';
+  $('#sync-txt').textContent = S.mode === 'nuvem' ? (first || 'Sincronizado') : S.mode === 'local' ? (FB_CONFIG ? 'Entrar' : 'Salvo no celular') : 'Conectando';
+  const old = sync.querySelector('img'); if (old) old.remove();
+  if (S.user && S.user.foto){ const img = document.createElement('img'); img.src = S.user.foto; img.alt = ''; img.referrerPolicy = 'no-referrer'; sync.insertBefore(img, sync.firstChild); }
+  document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-current', b.dataset.tab === S.tab ? 'page' : 'false'));
+}
+function render(){
+  renderChrome();
+  const v = $('#view');
+  if (APP_LOGIN){ v.innerHTML = viewAppLogin(); $('.dock').hidden = true; $('.dial').hidden = true; return; }
+  if (!S.loaded.contas || !S.loaded.lanc){ v.innerHTML = '<div class="loading"><i></i>Ligando os sistemas</div>'; return; }
+  if (!hasAny()){ v.innerHTML = viewEmpty(); return; }
+  v.innerHTML = (S.tab === 'contas' ? viewContas() : S.tab === 'extrato' ? viewExtrato() : viewPainel()) + footerNote();
+}
+function footerNote(){
+  let h = '';
+  if (hasExamples()) h += '<div class="note">Você está vendo dados de exemplo. <button class="link" data-act="clear-examples">Apagar exemplos</button></div>';
+  if (S.mode === 'local') h += backupBox();
+  return h;
+}
+function viewEmpty(){
+  return '<section class="panel cut hero-empty">' +
+    '<div class="eyebrow"><span>Sistema pronto</span><b>0 registros</b></div>' +
+    '<h2>Sua central financeira está vazia</h2>' +
+    '<p>Cadastre as contas que você paga todo mês (aluguel, luz, internet, cartão) e anote o que entra e o que sai. O painel mostra o saldo do mês, o que já foi pago e o que vence nos próximos dias.</p>' +
+    '<div class="btns"><button class="btn primary" data-act="new" data-tipo="conta">Cadastrar primeira conta</button>' +
+    '<button class="btn" data-act="seed">Ver com dados de exemplo</button></div>' +
+    (FB_CONFIG && !S.user
+      ? '<div class="btns"><button class="btn gbtn" data-act="login">' + GOOGLE_G + 'Entrar com Google</button></div>' +
+        '<div class="note">Entrando com o Google, seus dados ficam salvos na nuvem e aparecem em todos os seus aparelhos.</div>'
+      : S.user ? '<div class="note">Conectado como ' + esc(S.user.email) + '. Seus dados ficam salvos na nuvem.</div>'
+      : '<div class="note">Seus dados ficam salvos neste celular. Ninguém mais tem acesso.</div>') +
+    (S.user ? '' : '<div class="btns"><button class="btn ghost" data-act="import">Restaurar backup</button></div>') +
+    '</section>';
+}
+function statusText(b){
+  if (b.st === 'paga') return '<em>Paga</em>';
+  if (b.st === 'atrasada') return '<em>Atrasada há ' + (-b.diff) + (b.diff === -1 ? ' dia' : ' dias') + '</em>';
+  if (b.st === 'hoje') return '<em>Vence hoje</em>';
+  if (b.st === 'breve') return '<em>Vence em ' + b.diff + (b.diff === 1 ? ' dia' : ' dias') + '</em>';
+  return '<em>Vence ' + pad(b.dia) + '/' + pad(ym(S.mes)[1]) + '</em>';
+}
+function billRow(b){
+  return '<div class="bill st-' + b.st + '">' +
+    '<button class="bill-main" data-act="edit-conta" data-id="' + esc(b.id) + '">' +
+      '<span class="day"><small>DIA</small>' + pad(b.dia) + '</span>' +
+      '<span class="txt"><b>' + esc(b.nome) + (b.exemplo ? '<span class="tag">exemplo</span>' : '') + '</b>' +
+      '<span class="meta">' + statusText(b) + ' · ' + esc(b.categoria) + (b.recorrente ? ' · fixa' : '') + '</span></span>' +
+      '<span class="amt">' + fmt(b.valor) + '</span>' +
+    '</button>' +
+    '<button class="pay" data-act="toggle-pay" data-id="' + esc(b.id) + '" aria-pressed="' + b.pago + '" aria-label="' + (b.pago ? 'Desmarcar pagamento de ' : 'Marcar como paga: ') + esc(b.nome) + '"' + (S.busy.has(b.id) ? ' disabled' : '') + '>' +
+      '<span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></button>' +
+  '</div>';
+}
+function viewPainel(){
+  const s = summary(S.mes);
+  const pct = s.entradas > 0 ? Math.min(1, s.gastos / s.entradas) : (s.gastos > 0 ? 1 : 0);
+  const C = 2 * Math.PI * 62;
+  const col = pct < .7 ? 'var(--plasma)' : pct < .9 ? 'var(--warn)' : 'var(--crit)';
+  const pend = s.bills.filter(b => !b.pago);
+  const urgent = pend.filter(b => b.st !== 'aberta').length;
+  const cats = Object.entries(s.cats).sort((a,b) => b[1] - a[1]);
+  const max = cats.length ? cats[0][1] : 1;
+  return '<section class="panel cut">' +
+      '<div class="eyebrow"><span>Saldo do mês</span><b>' + (s.saldo >= 0 ? 'Estável' : 'No vermelho') + '</b></div>' +
+      '<div class="reactor">' +
+        '<div class="ring"><div class="spin"></div>' +
+          '<svg viewBox="0 0 150 150"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A084FF"/><stop offset="1" stop-color="#46E3FF"/></linearGradient></defs>' +
+          '<circle cx="75" cy="75" r="62" fill="none" stroke="rgba(125,200,255,.1)" stroke-width="10"/>' +
+          '<circle cx="75" cy="75" r="62" fill="none" stroke="' + (pct < .7 ? 'url(#g)' : col) + '" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + (C*pct).toFixed(1) + ' ' + C.toFixed(1) + '" style="filter:drop-shadow(0 0 6px ' + col + ')"/></svg>' +
+          '<div class="core"><small>Gasto</small><strong style="color:' + col + '">' + Math.round(pct*100) + '%</strong><small>da renda</small></div>' +
+        '</div>' +
+        '<div class="saldo"><small>Disponível agora</small><div class="big' + (s.saldo < 0 ? ' neg' : '') + '">' + fmt(s.saldo) + '</div>' +
+          '<div class="kv"><div><span>Entradas</span><b class="num up">' + fmt(s.entradas) + '</b></div>' +
+          '<div><span>Saídas</span><b class="num down">' + fmt(s.gastos) + '</b></div>' +
+          '<div><span>Após contas</span><b class="num' + (s.previsto < 0 ? ' down' : '') + '">' + fmt(s.previsto) + '</b></div></div></div>' +
+      '</div>' +
+    '</section>' +
+    '<div class="stats">' +
+      '<div class="stat"><small>A pagar</small><b class="soon">' + fmt(s.aPagar) + '</b></div>' +
+      '<div class="stat"><small>Pagas</small><b class="up">' + fmt(s.pagas) + '</b></div>' +
+      '<div class="stat"><small>Contas</small><b>' + (s.bills.length - pend.length) + '/' + s.bills.length + '</b></div>' +
+    '</div>' +
+    '<section class="panel">' +
+      '<div class="eyebrow"><span>Próximos vencimentos</span>' + (urgent ? '<b style="color:var(--warn)">' + urgent + ' em alerta</b>' : '') + '</div>' +
+      (pend.length ? '<div class="list">' + pend.slice(0,5).map(billRow).join('') + '</div>' +
+        (pend.length > 5 ? '<div style="margin-top:12px"><button class="link" data-tab-go="contas">Ver todas as ' + pend.length + ' contas pendentes</button></div>' : '')
+        : '<div class="empty" style="margin-top:12px">Nenhuma conta pendente em ' + esc(monthName(S.mes).toLowerCase()) + '. Tudo em dia.</div>') +
+    '</section>' +
+    '<section class="panel">' +
+      '<div class="eyebrow"><span>Para onde foi o dinheiro</span><b class="num">' + fmt(s.gastos) + '</b></div>' +
+      (cats.length ? '<div class="bars">' + cats.map(([c,v]) =>
+        '<div class="bar-row"><div class="bar-head"><span>' + esc(c) + '</span><b class="num">' + fmt(v) + '</b></div>' +
+        '<div class="track"><div class="fill" style="width:' + Math.max(3, v/max*100).toFixed(1) + '%"></div></div></div>').join('') + '</div>'
+        : '<div class="empty" style="margin-top:12px">Sem gastos registrados neste mês.</div>') +
+    '</section>';
+}
+function viewContas(){
+  const s = summary(S.mes);
+  const counts = { todas:s.bills.length, pendentes:s.bills.filter(b=>!b.pago).length, atrasadas:s.bills.filter(b=>b.st==='atrasada').length, pagas:s.bills.filter(b=>b.pago).length };
+  const f = { todas:()=>true, pendentes:b=>!b.pago, atrasadas:b=>b.st==='atrasada', pagas:b=>b.pago }[S.filtro];
+  const list = s.bills.filter(f);
+  const labels = { todas:'Todas', pendentes:'Pendentes', atrasadas:'Atrasadas', pagas:'Pagas' };
+  return '<div class="stats" style="grid-template-columns:1fr 1fr">' +
+      '<div class="stat"><small>Falta pagar</small><b class="soon">' + fmt(s.aPagar) + '</b></div>' +
+      '<div class="stat"><small>Já pago</small><b class="up">' + fmt(s.pagas) + '</b></div></div>' +
+    '<div class="chips" role="group" aria-label="Filtrar contas">' + Object.keys(labels).map(k =>
+      '<button class="chip" data-filtro="' + k + '" aria-pressed="' + (S.filtro === k) + '">' + labels[k] + '<span class="num">' + counts[k] + '</span></button>').join('') + '</div>' +
+    (list.length ? '<div class="list" style="margin-top:0">' + list.map(billRow).join('') + '</div>'
+      : '<div class="empty">' + (s.bills.length ? 'Nenhuma conta neste filtro.' : 'Nenhuma conta para ' + esc(monthName(S.mes).toLowerCase()) + '.') +
+        '<div style="margin-top:12px"><button class="btn primary" data-act="new" data-tipo="conta">Adicionar conta</button></div></div>');
+}
+function viewExtrato(){
+  const s = summary(S.mes);
+  const groups = {};
+  s.lanc.forEach(l => (groups[l.data] = groups[l.data] || []).push(l));
+  const paidBills = s.bills.filter(b => b.pago);
+  return '<div class="stats">' +
+      '<div class="stat"><small>Entrou</small><b class="up">' + fmt(s.entradas) + '</b></div>' +
+      '<div class="stat"><small>Saiu</small><b class="down">' + fmt(s.saidas) + '</b></div>' +
+      '<div class="stat"><small>Contas pagas</small><b>' + fmt(s.pagas) + '</b></div></div>' +
+    (s.lanc.length ? Object.keys(groups).map(d => {
+      const [y,mo,dd] = d.split('-').map(Number);
+      const label = new Date(y, mo-1, dd).toLocaleDateString('pt-BR',{weekday:'long', day:'2-digit', month:'short'});
+      return '<div class="day-group"><div class="day-head">' + esc(label) + '</div>' + groups[d].map(l => {
+        const inn = l.tipo === 'entrada';
+        return '<button class="tx ' + (inn ? 'in' : 'out') + '" data-act="edit-lanc" data-id="' + esc(l.id) + '">' +
+          '<span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="' + (inn ? 'M12 19V5M6 11l6-6 6 6' : 'M12 5v14M6 13l6 6 6-6') + '"/></svg></span>' +
+          '<span class="txt"><b>' + esc(l.descricao) + (l.exemplo ? '<span class="tag">exemplo</span>' : '') + '</b><span class="meta">' + esc(l.categoria) + '</span></span>' +
+          '<span class="amt' + (inn ? ' in' : '') + '">' + (inn ? '+ ' : '− ') + fmt(l.valor) + '</span></button>';
+      }).join('') + '</div>';
+    }).join('') : '<div class="empty">Nenhuma entrada ou saída anotada em ' + esc(monthName(S.mes).toLowerCase()) + '.' +
+        '<div class="btns" style="justify-content:center;margin-top:12px"><button class="btn" data-act="new" data-tipo="entrada">Anotar entrada</button><button class="btn" data-act="new" data-tipo="saida">Anotar saída</button></div></div>') +
+    (paidBills.length ? '<div class="note">As contas pagas (' + paidBills.length + ') aparecem na aba Contas e já entram no saldo.</div>' : '');
+}
+
+/* ---------- formulário ---------- */
+let sheet = null; // {tipo, kind, id}
+function openSheet(tipo, id){
+  const kind = tipo === 'conta' ? 'contas' : 'lanc';
+  const cur = id ? S[kind][id] : null;
+  sheet = { tipo, kind, id: id || null, armed:false };
+  const today = new Date();
+  const defDate = S.mes === monthKey(today) ? dateKey(today) : S.mes + '-01';
+  const cats = tipo === 'entrada' ? CAT_ENTRADA : CAT_SAIDA;
+  const titles = { conta:'Conta a pagar', saida:'Saída', entrada:'Entrada' };
+  const val = cur ? String(cur.valor.toFixed(2)).replace('.',',') : '';
+  let h = '<div class="veil" id="veil"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">' +
+    '<div class="grab"></div>' +
+    '<div class="eyebrow"><span id="sheet-title">' + (id ? 'Editar' : 'Novo registro') + '</span><button class="link" data-act="close" style="text-decoration:none;color:var(--dim)">Fechar</button></div>' +
+    (id ? '<h2 style="margin-top:10px">' + titles[tipo] + '</h2>' :
+      '<div class="seg" role="group" aria-label="Tipo de registro">' + Object.keys(titles).map(t =>
+        '<button type="button" data-seg="' + t + '" aria-pressed="' + (t === tipo) + '">' + titles[t] + '</button>').join('') + '</div>') +
+    '<form id="form" novalidate' + (id ? ' style="margin-top:16px"' : '') + '>' +
+    '<div class="field"><label for="f-valor">Valor (R$)</label><input id="f-valor" class="money" inputmode="decimal" autocomplete="off" placeholder="0,00" value="' + esc(val) + '"></div>' +
+    '<div class="field"><label for="f-nome">' + (tipo === 'conta' ? 'Nome da conta' : 'Descrição') + '</label><input id="f-nome" maxlength="60" autocomplete="off" placeholder="' + (tipo === 'conta' ? 'Ex.: Conta de luz' : tipo === 'entrada' ? 'Ex.: Salário' : 'Ex.: Mercado') + '" value="' + esc(cur ? (cur.nome || cur.descricao) : '') + '"></div>' +
+    '<div class="row2">' +
+      (tipo === 'conta'
+        ? '<div class="field"><label for="f-dia">Vence no dia</label><input id="f-dia" type="number" inputmode="numeric" min="1" max="31" value="' + (cur ? cur.dia : 10) + '"></div>'
+        : '<div class="field"><label for="f-data">Data</label><input id="f-data" type="date" value="' + esc(cur ? cur.data : defDate) + '"></div>') +
+      '<div class="field"><label for="f-cat">Categoria</label><select id="f-cat">' + cats.map(c =>
+        '<option' + ((cur ? cur.categoria : (tipo === 'conta' ? 'Casa' : cats[0])) === c ? ' selected' : '') + '>' + c + '</option>').join('') + '</select></div>' +
+    '</div>' +
+    (tipo === 'conta' ? '<label class="check" for="f-rec"><input id="f-rec" type="checkbox"' + (!cur || cur.recorrente ? ' checked' : '') + '><span>Repete todo mês<small>Aparece automaticamente nos meses seguintes</small></span></label>' : '') +
+    '<p class="err" id="f-err" role="alert"></p>' +
+    '<div class="btns"><button class="btn primary" type="submit" style="flex:1">' + (id ? 'Salvar alterações' : 'Adicionar') + '</button>' +
+    (id ? '<button class="btn danger" type="button" data-act="delete">Excluir</button>' : '') + '</div>' +
+    (id && tipo === 'conta' && cur.recorrente ? '<div class="note">Excluir uma conta fixa remove ela de todos os meses.</div>' : '') +
+    '</form></div></div>';
+  $('#sheet-root').innerHTML = h;
+  setTimeout(() => { const f = $('#f-valor'); if (f && !id) f.focus(); }, 60);
+}
+function closeSheet(){ sheet = null; $('#sheet-root').innerHTML = ''; }
+
+async function submitForm(){
+  const err = $('#f-err');
+  const valor = parseMoney($('#f-valor').value);
+  const nome = $('#f-nome').value.trim();
+  if (!(valor > 0)){ err.textContent = 'Digite um valor maior que zero, por exemplo 150,00.'; $('#f-valor').focus(); return; }
+  if (!nome){ err.textContent = 'Dê um nome para identificar o registro.'; $('#f-nome').focus(); return; }
+  const categoria = $('#f-cat').value;
+  const { tipo, kind } = sheet; const id = sheet.id || newId();
+  const cur = sheet.id ? S[kind][sheet.id] : null;
+  let data;
+  if (tipo === 'conta'){
+    const dia = parseInt($('#f-dia').value, 10);
+    if (!(dia >= 1 && dia <= 31)){ err.textContent = 'O dia de vencimento vai de 1 a 31.'; $('#f-dia').focus(); return; }
+    data = { nome, valor, dia, categoria, recorrente: $('#f-rec').checked, mes: cur ? cur.mes : S.mes, pagos: cur ? {...(cur.pagos||{})} : {}, criado: cur ? cur.criado : Date.now() };
+  } else {
+    const d = $('#f-data').value;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(d)){ err.textContent = 'Escolha a data.'; return; }
+    data = { tipo, descricao: nome, valor, data: d, categoria, criado: cur ? cur.criado : Date.now() };
+  }
+  const btn = document.querySelector('#form [type=submit]'); btn.disabled = true;
+  const ok = await save(kind, id, data);
+  if (ok){
+    closeSheet();
+    toast(tipo === 'conta' ? (cur ? 'Conta atualizada' : 'Conta adicionada') : (cur ? 'Registro atualizado' : (tipo === 'entrada' ? 'Entrada anotada' : 'Saída anotada')));
+    if (tipo !== 'conta' && !data.data.startsWith(S.mes)){ S.mes = data.data.slice(0,7); render(); }
+  } else btn.disabled = false;
+}
+
+async function togglePay(id){
+  const c = S.contas[id]; if (!c || S.busy.has(id)) return;
+  const pagos = {...(c.pagos || {})};
+  const now = !pagos[S.mes];
+  if (now) pagos[S.mes] = true; else delete pagos[S.mes];
+  S.busy.add(id); render();
+  const ok = await save('contas', id, {...c, pagos});
+  S.busy.delete(id); render();
+  if (ok) toast(now ? 'Conta marcada como paga' : 'Pagamento desmarcado');
+}
+
+async function seed(){
+  const m = S.mes, [y,mo] = ym(m);
+  const d = n => m + '-' + pad(Math.min(n, daysIn(m)));
+  const contas = [
+    ['Aluguel',1450,5,'Moradia',true,true], ['Academia',89.9,8,'Saúde',true,true], ['Conta de luz',189.4,12,'Casa',true,false],
+    ['Internet',99.9,15,'Casa',true,false], ['Fatura do cartão',1230.75,20,'Cartão',false,false], ['Plano de celular',54.99,25,'Casa',true,false]
+  ];
+  const lanc = [
+    ['entrada','Salário',4800,5,'Salário'], ['entrada','Trabalho extra',650,14,'Renda extra'],
+    ['saida','Mercado do mês',412.37,6,'Alimentação'], ['saida','Combustível',220,9,'Transporte'], ['saida','Farmácia',63.5,11,'Saúde']
+  ];
+  toast('Carregando exemplos…');
+  for (const [nome,valor,dia,categoria,recorrente,pago] of contas)
+    await save('contas', newId(), { nome, valor, dia, categoria, recorrente, mes:m, pagos: pago ? {[m]:true} : {}, criado:Date.now(), exemplo:true });
+  for (const [tipo,descricao,valor,dia,categoria] of lanc)
+    await save('lanc', newId(), { tipo, descricao, valor, data:d(dia), categoria, criado:Date.now(), exemplo:true });
+  toast('Exemplos carregados. Apague quando quiser usar os seus dados.');
+}
+async function clearExamples(){
+  for (const k of ['contas','lanc'])
+    for (const [id,x] of Object.entries(S[k])) if (x.exemplo) await remove(k, id);
+  toast('Exemplos apagados');
+}
+
+function backupBox(){
+  return '<section class="panel"><div class="eyebrow"><span>Backup</span><b>' + (Object.keys(S.contas).length + Object.keys(S.lanc).length) + ' registros</b></div>' +
+    '<p style="margin:10px 0 14px;color:var(--dim);font-size:13px">Seus dados ficam só neste celular. ' +
+      (FB_CONFIG ? 'Entre com sua conta Google para guardar tudo na nuvem, ou salve um backup de vez em quando.' : 'Salve um backup de vez em quando para não perder nada se limpar o navegador ou trocar de aparelho.') + '</p>' +
+    '<div class="btns">' + (FB_CONFIG ? '<button class="btn gbtn" data-act="login">' + GOOGLE_G + 'Entrar com Google</button>' : '') +
+    '<button class="btn" data-act="export">Salvar backup</button><button class="btn ghost" data-act="import">Restaurar backup</button></div></section>';
+}
+function exportBackup(){
+  if (window.OrbitaApp){
+    const json = JSON.stringify({app:'orbita-contas', versao:1, salvoEm:new Date().toISOString(), contas:S.contas, lanc:S.lanc}, null, 2);
+    const r = OrbitaApp.salvarBackup('orbita-backup-' + dateKey(new Date()) + '.json', json);
+    toast(r === 'downloads' ? 'Backup salvo na pasta Download' : 'Escolha onde guardar o backup');
+    return;
+  }
+  const blob = new Blob([JSON.stringify({app:'orbita-contas', versao:1, salvoEm:new Date().toISOString(), contas:S.contas, lanc:S.lanc}, null, 2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'orbita-backup-' + dateKey(new Date()) + '.json';
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  toast('Backup salvo nos seus arquivos');
+}
+function importBackup(){
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'application/json,.json';
+  inp.onchange = async () => {
+    try {
+      const o = JSON.parse(await inp.files[0].text());
+      if (o.app !== 'orbita-contas' || typeof o.contas !== 'object' || typeof o.lanc !== 'object') throw 0;
+      S.contas = o.contas || {}; S.lanc = o.lanc || {}; persistLocal(); render(); toast('Backup restaurado');
+    } catch(e){ toast('Esse arquivo não é um backup do Órbita.'); }
+  };
+  inp.click();
+}
+let toastT;
+function toast(msg){
+  clearTimeout(toastT);
+  $('#toast-root').innerHTML = '<div class="toast" role="status">' + esc(msg) + '</div>';
+  toastT = setTimeout(() => { $('#toast-root').innerHTML = ''; }, 2600);
+}
+
+/* ---------- eventos ---------- */
+document.addEventListener('click', async e => {
+  const t = e.target.closest('button, .veil'); if (!t) return;
+  if (t.id === 'veil'){ if (e.target === t) closeSheet(); return; }
+  if (t.id === 'sync'){ if (S.mode !== 'loading') openAccount(); return; }
+  if (t.dataset.tab){ S.tab = t.dataset.tab; render(); window.scrollTo(0,0); return; }
+  if (t.dataset.tabGo){ S.tab = t.dataset.tabGo; render(); window.scrollTo(0,0); return; }
+  if (t.dataset.filtro){ S.filtro = t.dataset.filtro; render(); return; }
+  if (t.dataset.seg){ openSheet(t.dataset.seg); return; }
+  if (t.id === 'fab'){ if (S.loaded.contas && S.loaded.lanc) openSheet(S.tab === 'extrato' ? 'saida' : 'conta'); return; }
+  if (t.id === 'prev'){ S.mes = shiftMonth(S.mes,-1); render(); return; }
+  if (t.id === 'next'){ S.mes = shiftMonth(S.mes,1); render(); return; }
+  if (t.id === 'month-label'){ S.mes = monthKey(new Date()); render(); return; }
+  const act = t.dataset.act;
+  if (act === 'new') openSheet(t.dataset.tipo);
+  else if (act === 'edit-conta') openSheet('conta', t.dataset.id);
+  else if (act === 'edit-lanc'){ const l = S.lanc[t.dataset.id]; if (l) openSheet(l.tipo, t.dataset.id); }
+  else if (act === 'toggle-pay') togglePay(t.dataset.id);
+  else if (act === 'close') closeSheet();
+  else if (act === 'login') login();
+  else if (act === 'logout'){ t.disabled = true; logout(); }
+  else if (act === 'app-login') appLogin();
+  else if (act === 'export') exportBackup();
+  else if (act === 'import') importBackup();
+  else if (act === 'seed'){ t.disabled = true; await seed(); }
+  else if (act === 'clear-examples'){ t.disabled = true; await clearExamples(); }
+  else if (act === 'delete' && sheet){
+    if (!sheet.armed){ sheet.armed = true; t.classList.add('armed'); t.textContent = 'Confirmar exclusão'; return; }
+    t.disabled = true;
+    const { kind, id } = sheet;
+    if (await remove(kind, id)){ closeSheet(); toast('Registro excluído'); } else t.disabled = false;
+  }
+});
+document.addEventListener('submit', e => { if (e.target.id === 'form'){ e.preventDefault(); submitForm(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && sheet) closeSheet(); });
+
+// botão voltar do Android: fecha o formulário ou volta para o Painel antes de sair do app
+window.orbitaBack = () => {
+  if (sheet){ closeSheet(); return true; }
+  if (S.tab !== 'painel'){ S.tab = 'painel'; render(); window.scrollTo(0,0); return true; }
+  return false;
+};
+init();
+if (!window.OrbitaApp && 'serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+})();
+</script>
+
+</body>
+</html>
