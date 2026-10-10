@@ -58,6 +58,17 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 .sync{display:inline-flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);
   border:1px solid var(--line);border-radius:999px;padding:5px 10px}
 .sync i{width:7px;height:7px;border-radius:50%;background:var(--faint)}
+button.sync{cursor:pointer}
+.sync img{width:18px;height:18px;border-radius:50%;margin:-2px 0 -2px -4px}
+.acct{display:grid;gap:14px;margin-top:14px}
+.acct p{margin:0;color:var(--dim);font-size:14px;max-width:60ch}
+.who{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0}
+.who img{width:52px;height:52px;border-radius:50%;flex:none;box-shadow:0 0 0 2px var(--plasma),0 0 18px var(--glow-plasma)}
+.who div{min-width:0}
+.who b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who span{display:block;color:var(--dim);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gbtn{background:#fff;color:#1f1f1f;border:0;font-weight:600;min-height:50px}
+.gbtn svg{flex:none}
 .sync.on i{background:var(--ok);box-shadow:0 0 8px var(--ok)}
 .sync.local i{background:var(--ok);box-shadow:0 0 8px var(--ok)}
 .dial{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:12px;background:rgba(10,16,32,.7);
@@ -218,7 +229,7 @@ form{display:grid;gap:14px}
         <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="4.5" fill="#46E3FF"/><ellipse cx="13" cy="13" rx="11.5" ry="5" fill="none" stroke="#A084FF" stroke-width="1.4" transform="rotate(-28 13 13)"/></svg>
         ÓRBITA
       </div>
-      <span class="sync" id="sync"><i></i><span id="sync-txt">Conectando</span></span>
+      <button type="button" class="sync" id="sync" aria-label="Sua conta"><i></i><span id="sync-txt">Conectando</span></button>
     </div>
     <div class="dial">
       <button type="button" id="prev" aria-label="Mês anterior"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 5l-7 7 7 7"/></svg></button>
@@ -244,6 +255,7 @@ form{display:grid;gap:14px}
 <div id="sheet-root"></div>
 <div id="toast-root"></div>
 
+<script src="firebase-config.js"></script>
 <script>
 (function(){
 const $ = s => document.querySelector(s);
@@ -269,8 +281,12 @@ const CAT_SAIDA = ['Moradia','Casa','Alimentação','Transporte','Saúde','Educa
 const CAT_ENTRADA = ['Salário','Renda extra','Outros'];
 const LOCAL_KEY = 'orbita-contas-v1';
 
-const S = { mes: monthKey(new Date()), tab:'painel', filtro:'todas', contas:{}, lanc:{}, loaded:{contas:false,lanc:false}, mode:'loading', busy:new Set() };
+const S = { mes: monthKey(new Date()), tab:'painel', filtro:'todas', contas:{}, lanc:{}, loaded:{contas:false,lanc:false}, mode:'loading', busy:new Set(), user:null, fbPronto:false, fbErro:false, appToken:null };
 let backend = null;
+let fb = null, unsubs = [], pendingToken = null;
+const FB_CONFIG = window.ORBITA_FIREBASE || null;
+const APP_LOGIN = new URLSearchParams(location.search).has('app-login');
+const ACCOUNT_KEY = 'orbita-conta-google';
 
 /* ---------- dados ---------- */
 function billsFor(m){
@@ -311,6 +327,11 @@ const hasExamples = () => [...Object.values(S.contas), ...Object.values(S.lanc)]
 
 /* ---------- armazenamento ---------- */
 async function save(kind, id, data){
+  if (backend && backend.mode === 'nuvem' && backend.firestore){
+    // Firestore aplica a gravação na hora (também sem internet) e envia quando houver conexão
+    backend.col[kind].doc(id).set(data).catch(() => toast('Não foi possível salvar na nuvem. Entre de novo na sua conta.'));
+    return true;
+  }
   if (backend && backend.mode === 'nuvem'){
     try { await backend.col[kind].doc(id).set(data); return true; }
     catch(e){
@@ -321,6 +342,10 @@ async function save(kind, id, data){
   S[kind][id] = data; persistLocal(); render(); return true;
 }
 async function remove(kind, id){
+  if (backend && backend.mode === 'nuvem' && backend.firestore){
+    backend.col[kind].doc(id).delete().catch(() => toast('Não foi possível apagar na nuvem. Entre de novo na sua conta.'));
+    return true;
+  }
   if (backend && backend.mode === 'nuvem'){
     try { await backend.col[kind].doc(id).delete(); return true; }
     catch(e){ toast('Não foi possível apagar. Tente de novo.'); return false; }
@@ -354,11 +379,165 @@ async function init(){
         render();
       });
     }
-  } else {
-    backend = { mode:'local' }; S.mode = 'local';
-    loadLocal(); S.loaded = {contas:true, lanc:true};
+    render();
+    return;
+  }
+  let lembrouConta = false;
+  try { lembrouConta = !!localStorage.getItem(ACCOUNT_KEY); } catch(e){}
+  if (FB_CONFIG && (lembrouConta || APP_LOGIN)){
+    // espera o Firebase confirmar o login antes de mostrar a tela, para não piscar a tela vazia
+    render();
+    setTimeout(() => { if (S.mode === 'loading') useLocal(); }, 8000);
+  } else useLocal();
+  if (FB_CONFIG) startFirebase();
+}
+
+/* ---------- conta Google (Firebase) ---------- */
+function loadScript(src){
+  return new Promise((ok, fail) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = fail; document.head.appendChild(s); });
+}
+async function startFirebase(){
+  try {
+    for (const f of ['app','auth','firestore']) await loadScript('firebase/firebase-' + f + '-compat.js');
+    firebase.initializeApp(FB_CONFIG);
+    fb = { auth: firebase.auth(), db: firebase.firestore() };
+    try { await fb.db.enablePersistence({ synchronizeTabs: true }); } catch(e){}
+  } catch(e){
+    fb = null; S.fbErro = true;
+    if (S.mode === 'loading') useLocal(); else render();
+    return;
+  }
+  S.fbPronto = true;
+  fb.auth.onAuthStateChanged(u => { if (u) useCloud(u); else useLocal(); });
+  if (pendingToken){ const t = pendingToken; pendingToken = null; window.orbitaToken(t); }
+}
+function unsubAll(){ unsubs.forEach(u => { try { u(); } catch(e){} }); unsubs = []; }
+function rememberAccount(on){ try { on ? localStorage.setItem(ACCOUNT_KEY, '1') : localStorage.removeItem(ACCOUNT_KEY); } catch(e){} }
+
+async function useCloud(u){
+  const root = fb.db.collection('users').doc(u.uid);
+  const col = { contas: root.collection('contas'), lanc: root.collection('lancamentos') };
+  // leva para a nuvem o que estava guardado só neste aparelho
+  const local = [];
+  try {
+    const o = JSON.parse(localStorage.getItem(LOCAL_KEY) || 'null') || {};
+    for (const k of ['contas','lanc']) for (const [id, d] of Object.entries(o[k] || {})) local.push([k, id, d]);
+  } catch(e){}
+  if (local.length){
+    toast('Enviando para a nuvem os dados deste aparelho…');
+    try {
+      for (let i = 0; i < local.length; i += 400){
+        const batch = fb.db.batch();
+        local.slice(i, i + 400).forEach(([k, id, d]) => batch.set(col[k].doc(id), d));
+        await batch.commit();
+      }
+      try { localStorage.removeItem(LOCAL_KEY); } catch(e){}
+    } catch(e){ toast('Os dados deste aparelho não foram enviados. Eles continuam guardados aqui.'); }
+  }
+  unsubAll();
+  S.user = { nome: u.displayName || '', email: u.email || '', foto: u.photoURL || '' };
+  backend = { mode:'nuvem', firestore:true, col };
+  S.mode = 'nuvem'; S.contas = {}; S.lanc = {}; S.loaded = {contas:false, lanc:false};
+  rememberAccount(true);
+  for (const kind of ['contas','lanc']){
+    unsubs.push(col[kind].onSnapshot(snap => {
+      const o = {}; snap.docs.forEach(d => { o[d.id] = d.data(); });
+      S[kind] = o; S.loaded[kind] = true; render();
+    }, () => {
+      S.loaded[kind] = true; render();
+      toast('A sincronização parou. Saia e entre de novo na sua conta.');
+    }));
   }
   render();
+  if (sheet && sheet.tipo === 'conta-google') openAccount();
+}
+function useLocal(){
+  unsubAll();
+  S.user = null; rememberAccount(false);
+  backend = { mode:'local' }; S.mode = 'local';
+  S.contas = {}; S.lanc = {}; loadLocal(); S.loaded = {contas:true, lanc:true};
+  render();
+  if (sheet && sheet.tipo === 'conta-google') openAccount();
+}
+
+async function login(){
+  if (window.OrbitaApp && OrbitaApp.abrirNavegador){
+    if (!window.ORBITA_SITE){ toast('O login com Google ainda não foi ativado no app Android.'); return; }
+    OrbitaApp.abrirNavegador(window.ORBITA_SITE.replace(/\/$/, '') + '/?app-login=1');
+    toast('Entre com o Google no navegador e toque em "Voltar para o app".');
+    return;
+  }
+  if (!fb){ toast(S.fbErro ? 'Sem conexão com o Google. Verifique a internet e tente de novo.' : 'Carregando, tente de novo em instantes.'); return; }
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+  try {
+    await fb.auth.signInWithPopup(provider);
+    closeSheet(); toast('Conta conectada');
+  } catch(e){
+    const code = e && e.code;
+    if (code === 'auth/popup-blocked' || code === 'auth/operation-not-supported-in-this-environment') return fb.auth.signInWithRedirect(provider);
+    if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return;
+    toast(code === 'auth/unauthorized-domain' ? 'Este endereço não está autorizado no Firebase.' : 'Não foi possível entrar. Tente de novo.');
+  }
+}
+async function logout(){
+  if (!fb) return;
+  await fb.auth.signOut();
+  // apaga a cópia guardada neste aparelho, para a próxima pessoa não ver seus dados
+  try { await fb.db.terminate(); await fb.db.clearPersistence(); } catch(e){}
+  location.reload();
+}
+// chamado pelo app Android quando o login termina no navegador
+window.orbitaToken = async token => {
+  if (!fb){ pendingToken = token; return; }
+  try {
+    await fb.auth.signInWithCredential(firebase.auth.GoogleAuthProvider.credential(token));
+    closeSheet(); toast('Conta conectada');
+  } catch(e){ toast('Não foi possível entrar. Tente de novo.'); }
+};
+async function appLogin(){
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+  try {
+    const r = await fb.auth.signInWithPopup(provider);
+    S.appToken = r.credential && r.credential.idToken;
+    if (!S.appToken) toast('Não foi possível entrar. Tente de novo.');
+    render();
+  } catch(e){
+    if (e && (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request')) return;
+    toast('Não foi possível entrar. Tente de novo.');
+  }
+}
+const GOOGLE_G = '<svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
+function viewAppLogin(){
+  let h = '<section class="panel cut hero-empty"><div class="eyebrow"><span>App Android</span><b>Login</b></div>';
+  if (!FB_CONFIG) h += '<h2>Login ainda não ativado</h2><p>A configuração do Google ainda não foi colocada neste site.</p>';
+  else if (!S.fbPronto) h += '<h2>Conectando ao Google…</h2>' + (S.fbErro ? '<p>Sem conexão. Verifique a internet e recarregue a página.</p>' : '');
+  else if (S.appToken){
+    const href = 'intent://login?token=' + encodeURIComponent(S.appToken) + '#Intent;scheme=orbitacontas;package=com.orbita.contas;end';
+    h += '<h2>Pronto! Volte para o app</h2><p>Toque no botão abaixo para terminar o login no Órbita Contas.</p>' +
+      '<div class="btns"><a class="btn primary" style="text-decoration:none" href="' + esc(href) + '">Voltar para o app</a></div>';
+  } else h += '<h2>Entre com sua conta Google</h2><p>Depois de entrar, você volta para o app Órbita Contas e seus dados passam a ficar salvos na nuvem.</p>' +
+      '<div class="btns"><button class="btn gbtn" data-act="app-login">' + GOOGLE_G + 'Entrar com Google</button></div>';
+  return h + '</section>';
+}
+function openAccount(){
+  sheet = { tipo:'conta-google' };
+  let body;
+  if (!FB_CONFIG) body = '<h2>Seus dados ficam neste aparelho</h2><p>O login com Google ainda não foi ativado neste app. Por enquanto, use "Salvar backup" para guardar uma cópia dos seus dados.</p>';
+  else if (S.user) body =
+    '<div class="who">' + (S.user.foto ? '<img src="' + esc(S.user.foto) + '" alt="" referrerpolicy="no-referrer">' : '') +
+      '<div><b>' + esc(S.user.nome || 'Sua conta Google') + '</b><span>' + esc(S.user.email) + '</span></div></div>' +
+    '<p>Seus dados estão salvos na nuvem e aparecem em qualquer aparelho em que você entrar com esta conta, mesmo se trocar de celular.</p>' +
+    '<div class="btns"><button class="btn danger" data-act="logout">Sair da conta</button></div>';
+  else body =
+    '<h2>Entre com sua conta Google</h2>' +
+    '<p>Assim suas contas ficam salvas na nuvem e aparecem no celular e no computador. O que já está neste aparelho vai junto para a sua conta.</p>' +
+    '<div class="btns"><button class="btn gbtn" data-act="login" style="flex:1">' + GOOGLE_G + 'Entrar com Google</button></div>' +
+    (S.fbErro ? '<div class="note warn">Sem conexão com o Google agora. Verifique a internet.</div>' : '');
+  $('#sheet-root').innerHTML = '<div class="veil" id="veil"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="acct-title">' +
+    '<div class="grab"></div><div class="eyebrow"><span id="acct-title">Sua conta</span><button class="link" data-act="close" style="text-decoration:none;color:var(--dim)">Fechar</button></div>' +
+    '<div class="acct">' + body + '</div></div></div>';
 }
 
 /* ---------- render ---------- */
@@ -367,12 +546,16 @@ function renderChrome(){
     (S.mes === monthKey(new Date()) ? '<small>mês atual</small>' : '<small>toque para voltar ao mês atual</small>');
   const sync = $('#sync');
   sync.className = 'sync' + (S.mode === 'nuvem' ? ' on' : S.mode === 'local' ? ' local' : '');
-  $('#sync-txt').textContent = S.mode === 'nuvem' ? 'Sincronizado' : S.mode === 'local' ? 'Salvo no celular' : 'Conectando';
+  const first = S.user && S.user.nome ? S.user.nome.split(' ')[0] : '';
+  $('#sync-txt').textContent = S.mode === 'nuvem' ? (first || 'Sincronizado') : S.mode === 'local' ? (FB_CONFIG ? 'Entrar' : 'Salvo no celular') : 'Conectando';
+  const old = sync.querySelector('img'); if (old) old.remove();
+  if (S.user && S.user.foto){ const img = document.createElement('img'); img.src = S.user.foto; img.alt = ''; img.referrerPolicy = 'no-referrer'; sync.insertBefore(img, sync.firstChild); }
   document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-current', b.dataset.tab === S.tab ? 'page' : 'false'));
 }
 function render(){
   renderChrome();
   const v = $('#view');
+  if (APP_LOGIN){ v.innerHTML = viewAppLogin(); $('.dock').hidden = true; $('.dial').hidden = true; return; }
   if (!S.loaded.contas || !S.loaded.lanc){ v.innerHTML = '<div class="loading"><i></i>Ligando os sistemas</div>'; return; }
   if (!hasAny()){ v.innerHTML = viewEmpty(); return; }
   v.innerHTML = (S.tab === 'contas' ? viewContas() : S.tab === 'extrato' ? viewExtrato() : viewPainel()) + footerNote();
@@ -390,8 +573,12 @@ function viewEmpty(){
     '<p>Cadastre as contas que você paga todo mês (aluguel, luz, internet, cartão) e anote o que entra e o que sai. O painel mostra o saldo do mês, o que já foi pago e o que vence nos próximos dias.</p>' +
     '<div class="btns"><button class="btn primary" data-act="new" data-tipo="conta">Cadastrar primeira conta</button>' +
     '<button class="btn" data-act="seed">Ver com dados de exemplo</button></div>' +
-    '<div class="note">Seus dados ficam salvos neste celular. Ninguém mais tem acesso.</div>' +
-    '<div class="btns"><button class="btn ghost" data-act="import">Restaurar backup</button></div>' +
+    (FB_CONFIG && !S.user
+      ? '<div class="btns"><button class="btn gbtn" data-act="login">' + GOOGLE_G + 'Entrar com Google</button></div>' +
+        '<div class="note">Entrando com o Google, seus dados ficam salvos na nuvem e aparecem em todos os seus aparelhos.</div>'
+      : S.user ? '<div class="note">Conectado como ' + esc(S.user.email) + '. Seus dados ficam salvos na nuvem.</div>'
+      : '<div class="note">Seus dados ficam salvos neste celular. Ninguém mais tem acesso.</div>') +
+    (S.user ? '' : '<div class="btns"><button class="btn ghost" data-act="import">Restaurar backup</button></div>') +
     '</section>';
 }
 function statusText(b){
@@ -598,10 +785,18 @@ async function clearExamples(){
 
 function backupBox(){
   return '<section class="panel"><div class="eyebrow"><span>Backup</span><b>' + (Object.keys(S.contas).length + Object.keys(S.lanc).length) + ' registros</b></div>' +
-    '<p style="margin:10px 0 14px;color:var(--dim);font-size:13px">Seus dados ficam só neste celular. Salve um backup de vez em quando para não perder nada se limpar o navegador ou trocar de aparelho.</p>' +
-    '<div class="btns"><button class="btn" data-act="export">Salvar backup</button><button class="btn ghost" data-act="import">Restaurar backup</button></div></section>';
+    '<p style="margin:10px 0 14px;color:var(--dim);font-size:13px">Seus dados ficam só neste celular. ' +
+      (FB_CONFIG ? 'Entre com sua conta Google para guardar tudo na nuvem, ou salve um backup de vez em quando.' : 'Salve um backup de vez em quando para não perder nada se limpar o navegador ou trocar de aparelho.') + '</p>' +
+    '<div class="btns">' + (FB_CONFIG ? '<button class="btn gbtn" data-act="login">' + GOOGLE_G + 'Entrar com Google</button>' : '') +
+    '<button class="btn" data-act="export">Salvar backup</button><button class="btn ghost" data-act="import">Restaurar backup</button></div></section>';
 }
 function exportBackup(){
+  if (window.OrbitaApp){
+    const json = JSON.stringify({app:'orbita-contas', versao:1, salvoEm:new Date().toISOString(), contas:S.contas, lanc:S.lanc}, null, 2);
+    const r = OrbitaApp.salvarBackup('orbita-backup-' + dateKey(new Date()) + '.json', json);
+    toast(r === 'downloads' ? 'Backup salvo na pasta Download' : 'Escolha onde guardar o backup');
+    return;
+  }
   const blob = new Blob([JSON.stringify({app:'orbita-contas', versao:1, salvoEm:new Date().toISOString(), contas:S.contas, lanc:S.lanc}, null, 2)], {type:'application/json'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'orbita-backup-' + dateKey(new Date()) + '.json';
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
@@ -629,6 +824,7 @@ function toast(msg){
 document.addEventListener('click', async e => {
   const t = e.target.closest('button, .veil'); if (!t) return;
   if (t.id === 'veil'){ if (e.target === t) closeSheet(); return; }
+  if (t.id === 'sync'){ if (S.mode !== 'loading') openAccount(); return; }
   if (t.dataset.tab){ S.tab = t.dataset.tab; render(); window.scrollTo(0,0); return; }
   if (t.dataset.tabGo){ S.tab = t.dataset.tabGo; render(); window.scrollTo(0,0); return; }
   if (t.dataset.filtro){ S.filtro = t.dataset.filtro; render(); return; }
@@ -643,6 +839,9 @@ document.addEventListener('click', async e => {
   else if (act === 'edit-lanc'){ const l = S.lanc[t.dataset.id]; if (l) openSheet(l.tipo, t.dataset.id); }
   else if (act === 'toggle-pay') togglePay(t.dataset.id);
   else if (act === 'close') closeSheet();
+  else if (act === 'login') login();
+  else if (act === 'logout'){ t.disabled = true; logout(); }
+  else if (act === 'app-login') appLogin();
   else if (act === 'export') exportBackup();
   else if (act === 'import') importBackup();
   else if (act === 'seed'){ t.disabled = true; await seed(); }
@@ -657,8 +856,14 @@ document.addEventListener('click', async e => {
 document.addEventListener('submit', e => { if (e.target.id === 'form'){ e.preventDefault(); submitForm(); } });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && sheet) closeSheet(); });
 
+// botão voltar do Android: fecha o formulário ou volta para o Painel antes de sair do app
+window.orbitaBack = () => {
+  if (sheet){ closeSheet(); return true; }
+  if (S.tab !== 'painel'){ S.tab = 'painel'; render(); window.scrollTo(0,0); return true; }
+  return false;
+};
 init();
-if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+if (!window.OrbitaApp && 'serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
 })();
 </script>
 

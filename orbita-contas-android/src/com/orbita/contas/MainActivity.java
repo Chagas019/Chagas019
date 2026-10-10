@@ -11,15 +11,24 @@ import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
+import org.json.JSONObject;
 import java.nio.charset.StandardCharsets;
 
 public class MainActivity extends Activity {
     private static final int PICK_FILE = 1;
+    /** Os arquivos do app sao servidos como https neste endereco, para o login e o banco do Google funcionarem. */
+    private static final String HOST = "appassets.androidplatform.net";
     private WebView web;
+    private boolean pageReady = false;
+    private String pendingToken = null;
     private ValueCallback<Uri[]> fileCallback;
 
     @Override
@@ -38,11 +47,32 @@ public class MainActivity extends Activity {
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest req) {
                 Uri u = req.getUrl();
                 String scheme = u.getScheme();
+                if (HOST.equals(u.getHost())) return false;
                 if ("http".equals(scheme) || "https".equals(scheme)) {
                     try { startActivity(new Intent(Intent.ACTION_VIEW, u)); } catch (Exception e) { }
                     return true;
                 }
                 return false;
+            }
+
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest req) {
+                Uri u = req.getUrl();
+                if (!HOST.equals(u.getHost())) return null;
+                String path = u.getPath() == null ? "" : u.getPath().replaceFirst("^/+", "");
+                if (path.isEmpty()) path = "index.html";
+                try {
+                    InputStream in = getAssets().open(path);
+                    return new WebResourceResponse(mimeOf(path), "UTF-8", in);
+                } catch (Exception e) {
+                    return new WebResourceResponse("text/plain", "UTF-8", 404, "Not Found", new HashMap<String, String>(), new ByteArrayInputStream(new byte[0]));
+                }
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                pageReady = true;
+                deliverToken();
             }
         });
         web.setWebChromeClient(new WebChromeClient() {
@@ -63,8 +93,44 @@ public class MainActivity extends Activity {
             }
         });
         if (state != null) web.restoreState(state);
-        else web.loadUrl("file:///android_asset/index.html");
+        else web.loadUrl("https://" + HOST + "/index.html");
         setContentView(web);
+        handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+    /** Recebe orbitacontas://login?token=... quando o login com Google termina no navegador. */
+    private void handleIntent(Intent intent) {
+        Uri d = intent == null ? null : intent.getData();
+        if (d == null || !"orbitacontas".equals(d.getScheme())) return;
+        String token = d.getQueryParameter("token");
+        if (token == null || token.isEmpty()) return;
+        pendingToken = token;
+        deliverToken();
+    }
+
+    private void deliverToken() {
+        if (!pageReady || pendingToken == null) return;
+        String js = "window.orbitaToken && window.orbitaToken(" + JSONObject.quote(pendingToken) + ")";
+        pendingToken = null;
+        web.evaluateJavascript(js, null);
+    }
+
+    private static String mimeOf(String path) {
+        String p = path.toLowerCase();
+        if (p.endsWith(".html")) return "text/html";
+        if (p.endsWith(".js")) return "application/javascript";
+        if (p.endsWith(".css")) return "text/css";
+        if (p.endsWith(".svg")) return "image/svg+xml";
+        if (p.endsWith(".png")) return "image/png";
+        if (p.endsWith(".json") || p.endsWith(".webmanifest")) return "application/json";
+        return "application/octet-stream";
     }
 
     @Override
@@ -94,6 +160,17 @@ public class MainActivity extends Activity {
     }
 
     private class Bridge {
+        /** Abre um endereco no navegador do celular (usado para o login com Google). */
+        @JavascriptInterface
+        public void abrirNavegador(final String url) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try { startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url))); } catch (Exception e) { }
+                }
+            });
+        }
+
         /** Grava o backup na pasta Downloads (Android 10+) ou abre o menu de compartilhar. Retorna "downloads" ou "share". */
         @JavascriptInterface
         public String salvarBackup(String nome, String conteudo) {
