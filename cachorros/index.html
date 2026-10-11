@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mundo Cão | Tudo sobre cachorros</title>
+<meta name="description" content="Raças, cuidados, alimentação, saúde, adestramento, curiosidades e ferramentas para quem ama cachorros.">
+<meta name="theme-color" content="#e8833a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23e8833a'/%3E%3Cellipse cx='32' cy='40' rx='12' ry='10' fill='white'/%3E%3Ccircle cx='18' cy='26' r='5' fill='white'/%3E%3Ccircle cx='27' cy='18' r='5' fill='white'/%3E%3Ccircle cx='37' cy='18' r='5' fill='white'/%3E%3Ccircle cx='46' cy='26' r='5' fill='white'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fffaf3; --bg2:#fff1e0; --card:#ffffff; --ink:#2b2118; --muted:#6f5f50;
+  --brand:#e8833a; --brand-d:#c4621d; --leaf:#3f8f6b; --sky:#3b7dd8; --line:#efdcc6;
+  --shadow:0 10px 30px -12px rgba(90,50,10,.25); --r:18px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1a1511; --bg2:#231c16; --card:#2a221b; --ink:#f6ece1; --muted:#c3b19f;
+    --brand:#f29a55; --brand-d:#f7b47f; --leaf:#6cc39b; --sky:#7fb0f0; --line:#3a2f25;
+    --shadow:0 10px 30px -12px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1a1511; --bg2:#231c16; --card:#2a221b; --ink:#f6ece1; --muted:#c3b19f;
+  --brand:#f29a55; --brand-d:#f7b47f; --leaf:#6cc39b; --sky:#7fb0f0; --line:#3a2f25;
+  --shadow:0 10px 30px -12px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 Nunito,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:var(--brand-d)}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;line-height:1.15;margin:0 0 .5em}
+h2{font-size:clamp(1.8rem,4vw,2.6rem)}
+h3{font-size:1.25rem}
+.wrap{max-width:1160px;margin:0 auto;padding:0 16px}
+section{padding:72px 0;scroll-margin-top:64px}
+section.alt{background:var(--bg2)}
+.kicker{display:inline-block;font-weight:800;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--brand-d);margin-bottom:8px}
+.lead{color:var(--muted);max-width:680px;margin:0 0 32px}
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:12px 22px;font:800 1rem Nunito,sans-serif;cursor:pointer;background:var(--brand);color:#fff;text-decoration:none;transition:transform .15s,background .15s}
+.btn:hover{background:var(--brand-d);transform:translateY(-2px)}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn.ghost:hover{border-color:var(--brand);background:transparent}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.grid{display:grid;gap:20px}
+:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+
+/* header */
+header.top{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:16px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font:800 1.3rem Fraunces,serif;color:var(--ink);text-decoration:none;white-space:nowrap}
+.logo svg{width:34px;height:34px}
+.menu{display:flex;gap:4px;margin-left:auto;list-style:none;padding:0}
+.menu a{display:block;padding:8px 12px;border-radius:10px;text-decoration:none;color:var(--ink);font-weight:700;font-size:.95rem}
+.menu a:hover{background:var(--bg2)}
+.icon-btn{background:var(--bg2);border:1px solid var(--line);color:var(--ink);width:40px;height:40px;border-radius:12px;cursor:pointer;font-size:1.1rem;flex:none}
+#menuToggle{display:none}
+@media (max-width:900px){
+  #menuToggle{display:block;margin-left:auto}
+  .menu{display:none;position:absolute;top:64px;left:0;right:0;flex-direction:column;background:var(--bg);border-bottom:1px solid var(--line);padding:8px 16px 16px}
+  .menu.open{display:flex}
+}
+
+/* hero */
+.hero{padding:56px 0 72px;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.hero h1{font-size:clamp(2.4rem,6vw,4.2rem);font-weight:800}
+.hero h1 em{font-style:normal;color:var(--brand)}
+.hero p{font-size:1.15rem;color:var(--muted);max-width:540px}
+.hero .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+.stats{display:flex;gap:28px;flex-wrap:wrap;margin-top:36px}
+.stats b{display:block;font:800 1.8rem Fraunces,serif;color:var(--brand-d)}
+.stats span{font-size:.9rem;color:var(--muted)}
+.photo-frame{position:relative;aspect-ratio:1;border-radius:46% 54% 42% 58%/52% 44% 56% 48%;overflow:hidden;background:linear-gradient(135deg,#ffcf9a,#f2a46a);box-shadow:var(--shadow)}
+.photo-frame img{width:100%;height:100%;object-fit:cover;transition:opacity .4s}
+.photo-frame .fallback{position:absolute;inset:0;display:grid;place-items:center}
+.photo-frame .fallback svg{width:70%}
+.photo-tools{display:flex;justify-content:center;gap:10px;margin-top:16px;flex-wrap:wrap}
+.paw-bg{position:absolute;opacity:.08;pointer-events:none}
+@media (max-width:820px){.hero-grid{grid-template-columns:1fr}.photo-frame{max-width:380px;margin:0 auto}}
+
+/* breeds */
+.toolbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+.search{flex:1 1 240px;padding:12px 16px;border-radius:999px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 14px;font:700 .9rem Nunito,sans-serif;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#fff}
+.breeds{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.breed{overflow:hidden;display:flex;flex-direction:column;cursor:pointer;transition:transform .2s;text-align:left;padding:0;font:inherit;color:inherit}
+.breed:hover{transform:translateY(-4px)}
+.breed .ph{aspect-ratio:4/3;background:var(--bg2);position:relative;overflow:hidden}
+.breed .ph img{width:100%;height:100%;object-fit:cover}
+.breed .ph .tag{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.6);color:#fff;font-size:.75rem;font-weight:800;padding:4px 10px;border-radius:999px}
+.breed .body{padding:16px 18px 18px}
+.breed .body p{margin:0;color:var(--muted);font-size:.95rem}
+.meters{display:grid;gap:6px;margin-top:12px;font-size:.8rem;color:var(--muted)}
+.meter{display:grid;grid-template-columns:90px 1fr;align-items:center;gap:8px}
+.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--brand);border-radius:99px}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px}
+
+/* modal */
+dialog{border:0;border-radius:22px;padding:0;max-width:640px;width:calc(100% - 32px);background:var(--card);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.4)}
+dialog::backdrop{background:rgba(20,10,0,.55);backdrop-filter:blur(3px)}
+dialog .ph{aspect-ratio:16/10;background:var(--bg2)}
+dialog .ph img{width:100%;height:100%;object-fit:cover}
+dialog .in{padding:22px 24px 26px}
+dialog .close{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.6);color:#fff;border:0;border-radius:50%;width:38px;height:38px;font-size:1.2rem;cursor:pointer}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:16px 0}
+.facts div{background:var(--bg2);border-radius:12px;padding:10px 12px;font-size:.85rem}
+.facts b{display:block;font-size:1rem}
+
+/* care */
+.care{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.care .card{padding:24px}
+.care .ico{font-size:2rem;width:56px;height:56px;display:grid;place-items:center;background:var(--bg2);border-radius:16px;margin-bottom:12px}
+.care ul{padding-left:20px;margin:8px 0 0;color:var(--muted)}
+.care li{margin:4px 0}
+
+/* tabs (life stages) */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.tab-panel{padding:28px}
+.tab-panel[hidden]{display:none}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+@media (max-width:760px){.two{grid-template-columns:1fr}}
+
+/* food table */
+.table-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;background:var(--card);min-width:520px}
+th,td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--line);font-size:.95rem}
+th{background:var(--bg2);font-weight:800}
+.ok{color:var(--leaf);font-weight:800}
+.no{color:#d64545;font-weight:800}
+.warn{color:#c08a00;font-weight:800}
+
+/* tools */
+.tools{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.tool{padding:24px}
+.field{display:grid;gap:6px;margin-bottom:14px}
+.field label{font-weight:800;font-size:.9rem}
+.field input,.field select{padding:10px 14px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+.result{margin-top:12px;padding:14px 16px;border-radius:14px;background:var(--bg2);min-height:52px}
+.result b{color:var(--brand-d);font-size:1.3rem}
+
+/* quiz */
+.quiz{padding:28px;max-width:760px}
+.q-opts{display:grid;gap:10px;margin:16px 0}
+.q-opt{text-align:left;padding:14px 18px;border-radius:14px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:700 1rem Nunito,sans-serif;cursor:pointer}
+.q-opt:hover{border-color:var(--brand)}
+.progress{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:18px}
+.progress i{display:block;height:100%;background:var(--leaf);transition:width .3s}
+.match{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center;margin:10px 0}
+.match img{width:120px;height:120px;object-fit:cover;border-radius:16px;background:var(--bg2)}
+
+/* facts carousel */
+.facts-strip{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.fact{padding:22px;position:relative}
+.fact .n{font:800 2.4rem Fraunces,serif;color:var(--brand);opacity:.35;position:absolute;top:10px;right:18px}
+
+/* checklist */
+.check{padding:24px}
+.check label{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px dashed var(--line);cursor:pointer}
+.check input{width:20px;height:20px;accent-color:var(--leaf);margin-top:3px;flex:none}
+.check input:checked+span{text-decoration:line-through;color:var(--muted)}
+
+/* faq */
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin-bottom:10px}
+summary{font-weight:800;cursor:pointer}
+details p{color:var(--muted);margin:10px 0 0}
+
+/* emergency */
+.alert{border-left:6px solid #d64545;padding:22px 24px}
+
+footer{padding:40px 0;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem;text-align:center}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="dog" viewBox="0 0 200 200">
+    <ellipse cx="100" cy="185" rx="60" ry="8" fill="#000" opacity=".12"/>
+    <path d="M45 70c-18 5-26 40-14 58 9 14 22 4 24-12l6-38z" fill="#8a4b20"/>
+    <path d="M155 70c18 5 26 40 14 58-9 14-22 4-24-12l-6-38z" fill="#8a4b20"/>
+    <ellipse cx="100" cy="95" rx="55" ry="52" fill="#d98a4a"/>
+    <ellipse cx="100" cy="125" rx="34" ry="28" fill="#f6dcc0"/>
+    <circle cx="78" cy="88" r="8" fill="#2b2118"/><circle cx="122" cy="88" r="8" fill="#2b2118"/>
+    <circle cx="81" cy="85" r="2.5" fill="#fff"/><circle cx="125" cy="85" r="2.5" fill="#fff"/>
+    <ellipse cx="100" cy="112" rx="13" ry="9" fill="#2b2118"/>
+    <path d="M100 121v10M100 131c-6 6-14 5-17 0M100 131c6 6 14 5 17 0" stroke="#2b2118" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M94 140c0 12 12 12 12 0z" fill="#e8687a"/>
+  </symbol>
+  <symbol id="paw" viewBox="0 0 64 64"><ellipse cx="32" cy="42" rx="13" ry="11"/><circle cx="16" cy="27" r="6"/><circle cx="26" cy="17" r="6"/><circle cx="38" cy="17" r="6"/><circle cx="48" cy="27" r="6"/></symbol>
+</svg>
+
+<header class="top">
+  <nav class="wrap nav" aria-label="Principal">
+    <a class="logo" href="#inicio"><svg><use href="#dog"/></svg>Mundo Cão</a>
+    <button class="icon-btn" id="menuToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu">☰</button>
+    <ul class="menu" id="menu">
+      <li><a href="#racas">Raças</a></li>
+      <li><a href="#cuidados">Cuidados</a></li>
+      <li><a href="#fases">Fases da vida</a></li>
+      <li><a href="#alimentacao">Alimentação</a></li>
+      <li><a href="#ferramentas">Ferramentas</a></li>
+      <li><a href="#quiz">Quiz</a></li>
+      <li><a href="#curiosidades">Curiosidades</a></li>
+      <li><a href="#faq">Dúvidas</a></li>
+    </ul>
+    <button class="icon-btn" id="themeBtn" aria-label="Alternar tema claro/escuro">🌙</button>
+  </nav>
+</header>
+
+<main>
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="kicker">O melhor amigo do ser humano</span>
+      <h1>Tudo sobre <em>cachorros</em>, em um só lugar.</h1>
+      <p>Raças, saúde, alimentação, adestramento, curiosidades e ferramentas para você cuidar melhor do seu cão ou encontrar o companheiro ideal.</p>
+      <div class="actions">
+        <a class="btn" href="#quiz">🐾 Descubra sua raça ideal</a>
+        <a class="btn ghost" href="#racas">Ver raças</a>
+      </div>
+      <div class="stats">
+        <div><b>+340</b><span>raças reconhecidas (FCI)</span></div>
+        <div><b>15 mil</b><span>anos de amizade</span></div>
+        <div><b>~300 mi</b><span>de receptores olfativos</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="photo-frame" id="heroFrame">
+        <div class="fallback"><svg viewBox="0 0 200 200"><use href="#dog"/></svg></div>
+        <img id="heroImg" alt="Foto aleatória de um cachorro" style="opacity:0">
+      </div>
+      <div class="photo-tools">
+        <button class="btn ghost" id="newDog">🔄 Outro cachorro</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RAÇAS -->
+<section class="alt" id="racas">
+  <div class="wrap">
+    <span class="kicker">Raças</span>
+    <h2>Conheça as raças</h2>
+    <p class="lead">Clique em uma raça para ver a ficha completa. Use a busca e os filtros para achar a que combina com sua rotina.</p>
+    <div class="toolbar">
+      <input class="search" id="breedSearch" type="search" placeholder="Buscar raça… (ex.: golden, pequeno, guarda)" aria-label="Buscar raça">
+      <div class="chips" id="sizeChips" role="group" aria-label="Filtrar por porte">
+        <button class="chip" data-size="all" aria-pressed="true">Todos</button>
+        <button class="chip" data-size="Pequeno" aria-pressed="false">Pequeno</button>
+        <button class="chip" data-size="Médio" aria-pressed="false">Médio</button>
+        <button class="chip" data-size="Grande" aria-pressed="false">Grande</button>
+        <button class="chip" data-apt="1" aria-pressed="false">🏢 Bom p/ apartamento</button>
+      </div>
+    </div>
+    <div class="grid breeds" id="breedGrid"></div>
+  </div>
+</section>
+
+<dialog id="breedModal" aria-labelledby="mTitle">
+  <button class="close" id="mClose" aria-label="Fechar">✕</button>
+  <div class="ph"><img id="mImg" alt=""></div>
+  <div class="in">
+    <span class="kicker" id="mOrigin"></span>
+    <h3 id="mTitle" style="font-size:1.8rem"></h3>
+    <p id="mDesc" style="color:var(--muted);margin:0"></p>
+    <div class="facts" id="mFacts"></div>
+    <div class="meters" id="mMeters"></div>
+    <p id="mTip" style="margin:16px 0 0"></p>
+  </div>
+</dialog>
+
+<!-- CUIDADOS -->
+<section id="cuidados">
+  <div class="wrap">
+    <span class="kicker">Cuidados essenciais</span>
+    <h2>Como cuidar bem do seu cão</h2>
+    <p class="lead">O básico bem feito resolve a maior parte dos problemas. Veja os pilares de uma vida longa e feliz.</p>
+    <div class="grid care">
+      <div class="card reveal"><div class="ico">🩺</div><h3>Saúde e veterinário</h3>
+        <ul><li>Consulta de rotina 1× por ano (2× para idosos).</li><li>Vacinas V8/V10 e antirrábica em dia.</li><li>Vermífugo a cada 3–6 meses, conforme orientação.</li><li>Antipulgas e carrapaticida contínuos — previnem a doença do carrapato.</li><li>Castração reduz riscos de tumores e fugas.</li></ul></div>
+      <div class="card reveal"><div class="ico">🏃</div><h3>Exercício</h3>
+        <ul><li>Raças de energia alta: 1–2 h de atividade por dia.</li><li>Raças calmas: 30–45 min de passeio já ajudam.</li><li>Evite asfalto quente: teste com o dorso da mão por 7 s.</li><li>Braquicefálicos (pug, bulldog) sofrem no calor — passeie cedo ou à noite.</li></ul></div>
+      <div class="card reveal"><div class="ico">🧠</div><h3>Mente ativa</h3>
+        <ul><li>Brinquedos recheáveis e tapetes de farejar cansam tanto quanto correr.</li><li>5 minutos de treino por dia fortalecem o vínculo.</li><li>Tédio vira destruição: ofereça desafios.</li><li>Deixe o cão cheirar no passeio — é a “leitura do jornal” dele.</li></ul></div>
+      <div class="card reveal"><div class="ico">🛁</div><h3>Higiene</h3>
+        <ul><li>Banho a cada 15–30 dias, com shampoo próprio para cães.</li><li>Escove os dentes 3× por semana (pasta veterinária, nunca a humana).</li><li>Corte as unhas quando estalarem no chão.</li><li>Seque bem as orelhas para evitar otite.</li></ul></div>
+      <div class="card reveal"><div class="ico">🎓</div><h3>Adestramento positivo</h3>
+        <ul><li>Recompense o comportamento certo na hora (até 2 s).</li><li>Sessões curtas, de 5 a 10 minutos.</li><li>Comece por: senta, deita, fica, vem e solta.</li><li>Punição física gera medo e piora a agressividade.</li></ul></div>
+      <div class="card reveal"><div class="ico">❤️</div><h3>Bem-estar emocional</h3>
+        <ul><li>Rotina previsível reduz ansiedade.</li><li>Sinais de estresse: lamber os lábios, bocejar, rabo entre as pernas.</li><li>Ensine o cão a ficar sozinho aos poucos.</li><li>Fogos: lugar escondido, música e nada de forçar contato.</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- FASES -->
+<section class="alt" id="fases">
+  <div class="wrap">
+    <span class="kicker">Fases da vida</span>
+    <h2>Do filhote ao idoso</h2>
+    <p class="lead">Cada fase tem necessidades diferentes. Escolha uma para ver o que priorizar.</p>
+    <div class="tabs" role="tablist">
+      <button class="chip" role="tab" aria-selected="true" aria-pressed="true" data-tab="filhote">🍼 Filhote (0–1 ano)</button>
+      <button class="chip" role="tab" aria-selected="false" aria-pressed="false" data-tab="adulto">🐕 Adulto (1–7 anos)</button>
+      <button class="chip" role="tab" aria-selected="false" aria-pressed="false" data-tab="idoso">🦮 Idoso (7+ anos)</button>
+    </div>
+    <div class="card tab-panel" id="tab-filhote" role="tabpanel">
+      <div class="two">
+        <div><h3>Prioridades</h3><ul>
+          <li><b>Vacinação:</b> começa entre 6 e 8 semanas; 3 a 4 doses da polivalente + antirrábica.</li>
+          <li><b>Socialização:</b> a janela vai até ~14 semanas — apresente pessoas, sons e superfícies de forma positiva.</li>
+          <li><b>Alimentação:</b> ração para filhotes, 3–4 refeições por dia.</li>
+          <li><b>Mordidas:</b> normais na troca de dentes (4–6 meses); ofereça mordedores.</li></ul></div>
+        <div><h3>Calendário sugerido</h3><ul>
+          <li>45 dias — 1ª dose V8/V10 + vermífugo</li>
+          <li>66 dias — 2ª dose</li>
+          <li>87 dias — 3ª dose (+ 4ª dose conforme o veterinário)</li>
+          <li>~4 meses — antirrábica</li>
+          <li>Passeios na rua só depois de o veterinário liberar</li></ul>
+          <p style="color:var(--muted);font-size:.9rem">Datas variam: siga sempre o protocolo do seu veterinário.</p></div>
+      </div>
+    </div>
+    <div class="card tab-panel" id="tab-adulto" role="tabpanel" hidden>
+      <div class="two">
+        <div><h3>Prioridades</h3><ul>
+          <li>Manter o peso ideal: você deve sentir as costelas sem vê-las.</li>
+          <li>Reforço anual das vacinas.</li>
+          <li>Exercício diário compatível com a raça.</li>
+          <li>Higiene dental para evitar tártaro e doença periodontal.</li></ul></div>
+        <div><h3>Fique de olho</h3><ul>
+          <li>Coceira constante → alergias ou pulgas.</li>
+          <li>Cabeça balançando → otite.</li>
+          <li>Mancar após exercício → articulações.</li>
+          <li>Mudança súbita de apetite ou de sede → consulta.</li></ul></div>
+      </div>
+    </div>
+    <div class="card tab-panel" id="tab-idoso" role="tabpanel" hidden>
+      <div class="two">
+        <div><h3>Prioridades</h3><ul>
+          <li>Check-up com exames de sangue a cada 6 meses.</li>
+          <li>Ração sênior: menos calorias, mais suporte articular.</li>
+          <li>Passeios mais curtos e frequentes.</li>
+          <li>Tapetes antiderrapantes e rampas em casa.</li></ul></div>
+        <div><h3>Sinais comuns</h3><ul>
+          <li>Rigidez ao levantar → artrose (tem tratamento!).</li>
+          <li>Olhos azulados → esclerose do cristalino ou catarata.</li>
+          <li>Desorientação à noite → disfunção cognitiva.</li>
+          <li>Caroços novos → sempre mostre ao veterinário.</li></ul></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALIMENTAÇÃO -->
+<section id="alimentacao">
+  <div class="wrap">
+    <span class="kicker">Alimentação</span>
+    <h2>Pode ou não pode?</h2>
+    <p class="lead">Muita comida humana é tóxica para cães. Pesquise na tabela antes de dividir o seu lanche.</p>
+    <div class="toolbar"><input class="search" id="foodSearch" type="search" placeholder="Pesquisar alimento… (ex.: uva, banana)" aria-label="Pesquisar alimento"></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Alimento</th><th>Pode?</th><th>Observação</th></tr></thead>
+        <tbody id="foodBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- FERRAMENTAS -->
+<section class="alt" id="ferramentas">
+  <div class="wrap">
+    <span class="kicker">Ferramentas</span>
+    <h2>Calculadoras para tutores</h2>
+    <p class="lead">Estimativas rápidas para o dia a dia. Elas não substituem a orientação do veterinário.</p>
+    <div class="grid tools">
+      <div class="card tool">
+        <h3>🎂 Idade em anos humanos</h3>
+        <div class="field"><label for="ageY">Idade do cão (anos)</label><input id="ageY" type="number" min="0" max="30" step="0.5" value="3"></div>
+        <div class="field"><label for="ageSize">Porte</label>
+          <select id="ageSize"><option value="p">Pequeno (até 10 kg)</option><option value="m" selected>Médio (10–25 kg)</option><option value="g">Grande (25 kg+)</option></select></div>
+        <div class="result" id="ageOut" aria-live="polite"></div>
+      </div>
+      <div class="card tool">
+        <h3>🥣 Quanto de ração por dia?</h3>
+        <div class="field"><label for="foodKg">Peso do cão (kg)</label><input id="foodKg" type="number" min="0.5" max="100" step="0.5" value="10"></div>
+        <div class="field"><label for="foodAct">Fase/atividade</label>
+          <select id="foodAct"><option value="3">Filhote (até 4 meses)</option><option value="2">Filhote (4–12 meses)</option><option value="1.6" selected>Adulto castrado</option><option value="1.8">Adulto não castrado</option><option value="2.5">Adulto muito ativo</option><option value="1.2">Precisa perder peso</option><option value="1.4">Idoso</option></select></div>
+        <div class="field"><label for="foodKcal">Calorias da ração (kcal/kg)</label><input id="foodKcal" type="number" min="2500" max="5000" step="50" value="3700"></div>
+        <div class="result" id="foodOut" aria-live="polite"></div>
+      </div>
+      <div class="card tool">
+        <h3>💧 Água por dia</h3>
+        <div class="field"><label for="waterKg">Peso do cão (kg)</label><input id="waterKg" type="number" min="0.5" max="100" step="0.5" value="10"></div>
+        <div class="field"><label for="waterHot">Clima</label><select id="waterHot"><option value="1">Ameno</option><option value="1.3">Quente / muito exercício</option></select></div>
+        <div class="result" id="waterOut" aria-live="polite"></div>
+      </div>
+      <div class="card tool">
+        <h3>🏷️ Gerador de nomes</h3>
+        <div class="field"><label for="nameSex">Para</label><select id="nameSex"><option value="m">Macho</option><option value="f">Fêmea</option><option value="u">Tanto faz</option></select></div>
+        <div class="field"><label for="nameStyle">Estilo</label><select id="nameStyle"><option value="comida">Comidinhas</option><option value="humano">Nome de gente</option><option value="classico">Clássicos</option><option value="geek">Geek / pop</option></select></div>
+        <button class="btn" id="nameBtn">Sortear nome</button>
+        <div class="result" id="nameOut" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="wrap">
+    <span class="kicker">Quiz</span>
+    <h2>Qual raça combina com você?</h2>
+    <p class="lead">Responda 6 perguntas rápidas e veja as raças mais compatíveis com sua rotina. E lembre: adotar um vira-lata caramelo é sempre uma ótima resposta!</p>
+    <div class="card quiz" id="quizBox"></div>
+  </div>
+</section>
+
+<!-- CURIOSIDADES -->
+<section class="alt" id="curiosidades">
+  <div class="wrap">
+    <span class="kicker">Curiosidades</span>
+    <h2>Você sabia?</h2>
+    <p class="lead">Fatos surpreendentes sobre o nariz, a mente e a história dos cães.</p>
+    <div class="grid facts-strip" id="factGrid"></div>
+  </div>
+</section>
+
+<!-- ADOÇÃO / CHECKLIST -->
+<section id="adocao">
+  <div class="wrap two">
+    <div>
+      <span class="kicker">Adoção responsável</span>
+      <h2>Adote, não compre.</h2>
+      <p class="lead">Milhões de cães esperam por um lar no Brasil. Os vira-latas (SRD) costumam ser saudáveis, inteligentes e muito gratos. Antes de adotar, confira se você está pronto:</p>
+      <div class="card check" id="checklist"></div>
+      <p id="checkMsg" style="font-weight:800;margin-top:14px" aria-live="polite"></p>
+    </div>
+    <div>
+      <span class="kicker">Enxoval</span>
+      <h2>O que comprar</h2>
+      <div class="card check" id="shopping"></div>
+    </div>
+  </div>
+</section>
+
+<!-- EMERGÊNCIA -->
+<section class="alt" id="emergencia">
+  <div class="wrap">
+    <div class="card alert">
+      <h3>🚨 Quando correr para o veterinário</h3>
+      <div class="two" style="margin-top:12px">
+        <ul style="margin:0">
+          <li>Barriga inchada e tentativas de vomitar sem sucesso (torção gástrica)</li>
+          <li>Dificuldade para respirar ou gengiva roxa/branca</li>
+          <li>Convulsões</li>
+          <li>Ingestão de chocolate, uva, xilitol, veneno ou remédio humano</li>
+        </ul>
+        <ul style="margin:0">
+          <li>Sangramento que não para</li>
+          <li>Vômito ou diarreia com sangue</li>
+          <li>Não urina há mais de 24 h</li>
+          <li>Atropelamento ou queda, mesmo que pareça bem</li>
+        </ul>
+      </div>
+      <p style="margin:14px 0 0;color:var(--muted)">Nunca dê remédio humano (paracetamol, ibuprofeno, dipirona sem prescrição) ao seu cão.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap" style="max-width:860px">
+    <span class="kicker">Dúvidas frequentes</span>
+    <h2>Perguntas e respostas</h2>
+    <details><summary>Por que meu cachorro come grama?</summary><p>É comum e geralmente inofensivo: pode ser tédio, busca por fibras ou leve desconforto estomacal. Se vier acompanhado de vômitos frequentes, procure o veterinário.</p></details>
+    <details><summary>Cachorro pode comer ovo?</summary><p>Sim, cozido e sem tempero. É uma boa fonte de proteína, mas deve ser um petisco eventual, não a base da dieta.</p></details>
+    <details><summary>Com quantos meses o filhote pode passear na rua?</summary><p>Normalmente depois de completar o protocolo de vacinas, por volta de 3 a 4 meses. Até lá, socialize em ambientes seguros e no colo.</p></details>
+    <details><summary>Por que ele lambe tanto as patas?</summary><p>Pode ser alergia, fungo, dor ou ansiedade. Lamber sem parar, com vermelhidão ou pelo manchado, merece consulta.</p></details>
+    <details><summary>Quantas vezes por dia devo alimentar?</summary><p>Filhotes: 3–4 vezes. Adultos: 2 vezes. Dividir a ração reduz o risco de torção gástrica em raças grandes.</p></details>
+    <details><summary>Cachorro sente culpa?</summary><p>A “cara de culpado” é, na verdade, um sinal de apaziguamento: o cão reage ao seu tom de voz e postura, não à lembrança do que fez.</p></details>
+    <details><summary>Por que o focinho é úmido?</summary><p>A umidade ajuda a capturar partículas de cheiro. Focinho seco nem sempre indica febre — o termômetro é que diz.</p></details>
+    <details><summary>Cachorros veem em preto e branco?</summary><p>Não! Eles enxergam tons de azul e amarelo, mas têm dificuldade com vermelho e verde. Por isso a bolinha vermelha some na grama.</p></details>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <svg width="28" height="28" fill="var(--brand)" aria-hidden="true"><use href="#paw"/></svg>
+    <p>Mundo Cão · feito com amor por quem ama cachorros. As informações são educativas e não substituem a consulta veterinária.</p>
+    <p>Fotos dos cães: <a href="https://dog.ceo/dog-api/" rel="noopener" target="_blank">Dog CEO API</a> (Stanford Dogs Dataset).</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+"use strict";
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const store = {
+  get(k){ try { return localStorage.getItem(k); } catch { return null; } },
+  set(k,v){ try { localStorage.setItem(k,v); } catch {} }
+};
+const FALLBACK = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 150"><rect width="200" height="150" fill="#ffd8b0"/><g transform="translate(55 10) scale(.65)"><ellipse cx="100" cy="95" rx="55" ry="52" fill="#d98a4a"/><path d="M45 70c-18 5-26 40-14 58 9 14 22 4 24-12l6-38zM155 70c18 5 26 40 14 58-9 14-22 4-24-12l-6-38z" fill="#8a4b20"/><ellipse cx="100" cy="125" rx="34" ry="28" fill="#f6dcc0"/><circle cx="78" cy="88" r="8" fill="#2b2118"/><circle cx="122" cy="88" r="8" fill="#2b2118"/><ellipse cx="100" cy="112" rx="13" ry="9" fill="#2b2118"/></g></svg>');
+
+/* ---------- tema ---------- */
+const themeBtn = $("#themeBtn");
+const applyTheme = t => {
+  if (t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme;
+  const dark = t ? t === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  themeBtn.textContent = dark ? "☀️" : "🌙";
+};
+applyTheme(store.get("mc-theme"));
+themeBtn.addEventListener("click", () => {
+  const cur = document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const next = cur === "dark" ? "light" : "dark";
+  store.set("mc-theme", next); applyTheme(next);
+});
+
+/* ---------- menu mobile ---------- */
+const menu = $("#menu"), menuToggle = $("#menuToggle");
+menuToggle.addEventListener("click", () => {
+  const open = menu.classList.toggle("open");
+  menuToggle.setAttribute("aria-expanded", open);
+});
+$$("#menu a").forEach(a => a.addEventListener("click", () => { menu.classList.remove("open"); menuToggle.setAttribute("aria-expanded", false); }));
+
+/* ---------- fotos (Dog CEO API) ---------- */
+const photoCache = {};
+async function dogPhoto(slug){
+  const url = slug ? `https://dog.ceo/api/breed/${slug}/images/random` : "https://dog.ceo/api/breeds/image/random";
+  try {
+    const r = await fetch(url);
+    const j = await r.json();
+    if (j.status === "success") return j.message;
+  } catch {}
+  return null;
+}
+async function breedPhoto(slug){
+  if (!(slug in photoCache)) photoCache[slug] = dogPhoto(slug);
+  return (await photoCache[slug]) || FALLBACK;
+}
+const heroImg = $("#heroImg");
+async function newHeroDog(){
+  heroImg.style.opacity = 0;
+  const src = await dogPhoto();
+  if (!src) return;
+  heroImg.onload = () => { heroImg.style.opacity = 1; };
+  heroImg.src = src;
+}
+$("#newDog").addEventListener("click", newHeroDog);
+newHeroDog();
+
+/* ---------- raças ---------- */
+// energia, treino, pelo (queda), crianças: 1–5
+const BREEDS = [
+  {n:"Vira-lata caramelo (SRD)",slug:"mix",o:"Brasil 🇧🇷",s:"Médio",apt:1,peso:"10–25 kg",vida:"13–16 anos",e:3,t:4,p:3,c:5,tags:"srd adoção brasil esperto",d:"Patrimônio nacional não oficial. Resistente, esperto e leal, o SRD é a prova de que amor não tem pedigree.",tip:"Adote em ONGs e abrigos: o cão vem vacinado e castrado na maioria das vezes."},
+  {n:"Labrador Retriever",slug:"labrador",o:"Canadá",s:"Grande",apt:0,peso:"25–36 kg",vida:"10–12 anos",e:5,t:5,p:4,c:5,tags:"família guia água comilão",d:"Simpático, brincalhão e apaixonado por água. Um dos cães-guia mais usados no mundo.",tip:"Tem tendência à obesidade — controle os petiscos."},
+  {n:"Golden Retriever",slug:"retriever/golden",o:"Escócia",s:"Grande",apt:0,peso:"25–34 kg",vida:"10–12 anos",e:4,t:5,p:5,c:5,tags:"família terapia dócil",d:"Gentil e paciente, é famoso como cão de terapia e companheiro de crianças.",tip:"Escove 3× por semana: a queda de pelo é intensa."},
+  {n:"Pastor-Alemão",slug:"germanshepherd",o:"Alemanha",s:"Grande",apt:0,peso:"22–40 kg",vida:"9–13 anos",e:5,t:5,p:5,c:4,tags:"guarda polícia inteligente",d:"Corajoso e versátil, trabalha com polícia, resgate e pastoreio.",tip:"Precisa de trabalho mental diário, senão fica ansioso."},
+  {n:"Border Collie",slug:"collie/border",o:"Reino Unido",s:"Médio",apt:0,peso:"14–20 kg",vida:"12–15 anos",e:5,t:5,p:3,c:4,tags:"inteligente pastoreio agility",d:"Considerado o cão mais inteligente do mundo. Aprende comandos em poucas repetições.",tip:"Sem atividade física e mental intensas, inventa problemas."},
+  {n:"Bulldog Francês",slug:"bulldog/french",o:"França",s:"Pequeno",apt:1,peso:"8–14 kg",vida:"10–12 anos",e:2,t:3,p:2,c:4,tags:"apartamento braquicefálico calmo",d:"Orelhas de morcego e personalidade de palhaço. Ótimo para apartamento.",tip:"Braquicefálico: sofre muito com calor e exercício intenso."},
+  {n:"Shih Tzu",slug:"shihtzu",o:"Tibete/China",s:"Pequeno",apt:1,peso:"4–7 kg",vida:"10–16 anos",e:2,t:3,p:1,c:4,tags:"apartamento companhia tosa",d:"Nascido para ser companhia. Afetuoso e tranquilo, um dos favoritos dos brasileiros.",tip:"Limpe os olhos diariamente e mantenha a tosa em dia."},
+  {n:"Poodle",slug:"poodle/standard",o:"Alemanha/França",s:"Médio",apt:1,peso:"3–30 kg (varia)",vida:"12–15 anos",e:4,t:5,p:1,c:5,tags:"hipoalergênico inteligente toy",d:"Inteligentíssimo e com pelo que quase não cai. Existe nos tamanhos toy, miniatura, médio e gigante.",tip:"Ótima escolha para quem tem alergia leve."},
+  {n:"Beagle",slug:"beagle",o:"Inglaterra",s:"Médio",apt:1,peso:"9–11 kg",vida:"12–15 anos",e:4,t:2,p:3,c:5,tags:"farejador família teimoso uivo",d:"Faro aguçado e alegria contagiante. Segue o nariz para qualquer lugar.",tip:"Use guia sempre: se sentir um cheiro, não volta ao ser chamado."},
+  {n:"Rottweiler",slug:"rottweiler",o:"Alemanha",s:"Grande",apt:0,peso:"35–60 kg",vida:"9–10 anos",e:3,t:4,p:3,c:3,tags:"guarda forte leal",d:"Confiante e protetor, é muito carinhoso com a família quando bem socializado.",tip:"Socialização desde filhote é obrigatória."},
+  {n:"Dachshund (Salsicha)",slug:"dachshund",o:"Alemanha",s:"Pequeno",apt:1,peso:"7–15 kg",vida:"12–16 anos",e:3,t:3,p:2,c:3,tags:"salsicha linguiça corajoso",d:"Corpo comprido, coragem gigante. Criado para caçar texugos em tocas.",tip:"Evite escadas e saltos: a coluna é sensível."},
+  {n:"Husky Siberiano",slug:"husky",o:"Sibéria (Rússia)",s:"Grande",apt:0,peso:"16–27 kg",vida:"12–14 anos",e:5,t:2,p:5,c:4,tags:"neve olhos azuis uivo fujão",d:"Olhos marcantes e muita energia. Uiva em vez de latir e adora correr.",tip:"Não é ideal para calor intenso. E é mestre em fugas."},
+  {n:"Pug",slug:"pug",o:"China",s:"Pequeno",apt:1,peso:"6–8 kg",vida:"12–15 anos",e:2,t:2,p:4,c:5,tags:"apartamento braquicefálico engraçado",d:"Carinha amassada e personalidade divertida. Adora seguir o tutor pela casa.",tip:"Limpe as dobrinhas do rosto para evitar dermatite."},
+  {n:"Yorkshire Terrier",slug:"terrier/yorkshire",o:"Inglaterra",s:"Pequeno",apt:1,peso:"2–3 kg",vida:"13–16 anos",e:4,t:3,p:1,c:3,tags:"apartamento pequeno corajoso",d:"Pequeno no tamanho, enorme na personalidade. Valente e alerta.",tip:"Cuidado com quedas do colo e do sofá."},
+  {n:"Pinscher Miniatura",slug:"pinscher/miniature",o:"Alemanha",s:"Pequeno",apt:1,peso:"4–6 kg",vida:"12–16 anos",e:4,t:3,p:1,c:2,tags:"alarme pequeno energia",d:"Alarme natural da casa: atento, ágil e cheio de energia.",tip:"Sente frio: uma roupinha ajuda no inverno."},
+  {n:"Chihuahua",slug:"chihuahua",o:"México",s:"Pequeno",apt:1,peso:"1,5–3 kg",vida:"14–17 anos",e:3,t:3,p:2,c:2,tags:"menor do mundo apartamento",d:"A menor raça do mundo, com coração de leão e apego enorme ao tutor.",tip:"Não é a melhor opção para crianças muito pequenas."},
+  {n:"Boxer",slug:"boxer",o:"Alemanha",s:"Grande",apt:0,peso:"25–32 kg",vida:"10–12 anos",e:5,t:4,p:2,c:5,tags:"família brincalhão guarda",d:"Eterno filhote: brincalhão, protetor e ótimo com crianças.",tip:"Gasta muita energia — reserve tempo para brincadeiras."},
+  {n:"Dálmata",slug:"dalmatian",o:"Croácia",s:"Grande",apt:0,peso:"20–32 kg",vida:"11–13 anos",e:5,t:4,p:4,c:4,tags:"pintas bombeiro corredor",d:"Nasce totalmente branco; as pintas aparecem com o tempo. Ótimo parceiro de corrida.",tip:"Beba bastante água: a raça tem tendência a cálculos urinários."},
+  {n:"Maltês",slug:"maltese",o:"Mediterrâneo",s:"Pequeno",apt:1,peso:"2–4 kg",vida:"12–15 anos",e:2,t:3,p:1,c:3,tags:"branco apartamento hipoalergênico",d:"Pelagem branca e sedosa, temperamento doce. Companhia perfeita para apartamento.",tip:"Escovação diária evita nós."},
+  {n:"Spitz Alemão (Lulu)",slug:"pomeranian",o:"Alemanha",s:"Pequeno",apt:1,peso:"2–3,5 kg",vida:"12–16 anos",e:3,t:3,p:4,c:3,tags:"lulu da pomerânia peludo",d:"Bolinha de pelos extrovertida e muito apegada ao tutor.",tip:"Nunca tose rente: o subpelo protege do calor e do frio."},
+  {n:"Cocker Spaniel",slug:"spaniel/cocker",o:"Inglaterra",s:"Médio",apt:1,peso:"12–15 kg",vida:"12–15 anos",e:3,t:4,p:3,c:5,tags:"orelhas família doce",d:"Orelhas longas e olhar meigo. Alegre e afetuoso com toda a família.",tip:"Limpe as orelhas toda semana: são propensas a otite."},
+  {n:"Akita",slug:"akita",o:"Japão",s:"Grande",apt:0,peso:"32–59 kg",vida:"10–13 anos",e:3,t:2,p:5,c:2,tags:"hachiko guarda independente",d:"Raça do famoso Hachiko. Leal, digno e reservado com estranhos.",tip:"Exige tutor experiente e socialização cuidadosa."},
+  {n:"Shiba Inu",slug:"shiba",o:"Japão",s:"Médio",apt:1,peso:"8–11 kg",vida:"13–16 anos",e:3,t:2,p:4,c:3,tags:"doge meme independente limpo",d:"O cão do meme “doge”. Limpo como um gato e bastante independente.",tip:"Teimoso: treino com muita paciência e petiscos."},
+  {n:"Pit Bull",slug:"pitbull",o:"Estados Unidos",s:"Médio",apt:0,peso:"14–27 kg",vida:"12–14 anos",e:5,t:4,p:2,c:4,tags:"forte atlético carinhoso",d:"Atlético e muito afetuoso com pessoas. A má fama vem de criação irresponsável, não da raça.",tip:"Socialize com outros cães desde cedo e use guia sempre."}
+];
+const grid = $("#breedGrid");
+let fSize = "all", fApt = false, fText = "";
+const meter = (label, v) => `<div class="meter"><span>${label}</span><div class="bar"><i style="width:${v*20}%"></i></div></div>`;
+const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+
+function renderBreeds(){
+  const q = norm(fText.trim());
+  const list = BREEDS.filter(b =>
+    (fSize === "all" || b.s === fSize) && (!fApt || b.apt) &&
+    (!q || norm(`${b.n} ${b.tags} ${b.s} ${b.o}`).includes(q)));
+  grid.innerHTML = list.length ? list.map(b => `
+    <button class="card breed" data-i="${BREEDS.indexOf(b)}" aria-label="Ver ficha: ${esc(b.n)}">
+      <div class="ph"><img loading="lazy" alt="${esc(b.n)}" data-slug="${b.slug}" src="${FALLBACK}"><span class="tag">${b.s}</span></div>
+      <div class="body"><h3>${esc(b.n)}</h3><p>${esc(b.d)}</p>
+        <div class="meters">${meter("Energia", b.e)}${meter("Crianças", b.c)}</div></div>
+    </button>`).join("") : `<p class="empty">Nenhuma raça encontrada. Que tal um vira-lata? 🐶</p>`;
+  $$("img[data-slug]", grid).forEach(async img => { img.src = await breedPhoto(img.dataset.slug); });
+}
+$("#breedSearch").addEventListener("input", e => { fText = e.target.value; renderBreeds(); });
+$$("#sizeChips .chip").forEach(c => c.addEventListener("click", () => {
+  if (c.dataset.apt) { fApt = !fApt; c.setAttribute("aria-pressed", fApt); }
+  else { fSize = c.dataset.size; $$("#sizeChips [data-size]").forEach(x => x.setAttribute("aria-pressed", x === c)); }
+  renderBreeds();
+}));
+renderBreeds();
+
+const modal = $("#breedModal");
+async function openBreed(b){
+  $("#mTitle").textContent = b.n;
+  $("#mOrigin").textContent = "Origem: " + b.o;
+  $("#mDesc").textContent = b.d;
+  $("#mFacts").innerHTML = [["Porte", b.s], ["Peso", b.peso], ["Expectativa", b.vida], ["Apartamento", b.apt ? "Sim ✅" : "Melhor com espaço"]]
+    .map(([k, v]) => `<div>${k}<b>${esc(v)}</b></div>`).join("");
+  $("#mMeters").innerHTML = meter("Energia", b.e) + meter("Treinabilidade", b.t) + meter("Queda de pelo", b.p) + meter("Com crianças", b.c);
+  $("#mTip").innerHTML = "💡 <b>Dica:</b> " + esc(b.tip);
+  const img = $("#mImg"); img.alt = b.n; img.src = await breedPhoto(b.slug);
+  if (!modal.open) modal.showModal();
+}
+grid.addEventListener("click", e => { const card = e.target.closest(".breed"); if (card) openBreed(BREEDS[card.dataset.i]); });
+$("#mClose").addEventListener("click", () => modal.close());
+modal.addEventListener("click", e => { if (e.target === modal) modal.close(); });
+
+/* ---------- abas das fases ---------- */
+$$('[role="tab"]').forEach(t => t.addEventListener("click", () => {
+  $$('[role="tab"]').forEach(x => { const on = x === t; x.setAttribute("aria-selected", on); x.setAttribute("aria-pressed", on); $("#tab-" + x.dataset.tab).hidden = !on; });
+}));
+
+/* ---------- alimentos ---------- */
+const FOODS = [
+  ["Chocolate","no","Teobromina: causa vômitos, arritmia e convulsões. Quanto mais amargo, pior."],
+  ["Uva e uva-passa","no","Podem causar insuficiência renal aguda, mesmo em pouca quantidade."],
+  ["Cebola e alho","no","Destroem as hemácias (anemia), crus, cozidos ou em pó."],
+  ["Xilitol (adoçante)","no","Presente em chicletes e doces diet: hipoglicemia grave e lesão no fígado."],
+  ["Abacate","no","A persina e o caroço são perigosos; risco de obstrução."],
+  ["Macadâmia","no","Fraqueza, tremores e febre."],
+  ["Café e cafeína","no","Agitação, taquicardia e tremores."],
+  ["Álcool","no","Intoxicação grave, mesmo em pequenas doses."],
+  ["Ossos cozidos","no","Lascam e podem perfurar o intestino."],
+  ["Massa crua com fermento","no","Fermenta no estômago e produz álcool."],
+  ["Leite","warn","Muitos cães têm intolerância à lactose: diarreia."],
+  ["Queijo","warn","Em pequenas quantidades, como petisco ocasional."],
+  ["Amendoim / pasta de amendoim","warn","Só sem sal, sem açúcar e SEM xilitol."],
+  ["Banana","ok","Rica em potássio. Ofereça em rodelas, com moderação."],
+  ["Maçã (sem sementes)","ok","Ótimo petisco crocante. Retire as sementes e o miolo."],
+  ["Melancia (sem sementes)","ok","Hidratante, perfeita para o verão."],
+  ["Cenoura","ok","Crua ou cozida: baixa caloria e ajuda na limpeza dos dentes."],
+  ["Abóbora cozida","ok","Rica em fibras, ajuda o intestino."],
+  ["Batata-doce cozida","ok","Boa fonte de energia, sem tempero."],
+  ["Frango cozido","ok","Sem pele, sem osso e sem tempero."],
+  ["Ovo cozido","ok","Proteína de qualidade, como petisco."],
+  ["Arroz branco","ok","Leve, útil em dietas para o estômago sensível."],
+  ["Morango","ok","Antioxidante; ofereça poucos."],
+  ["Pipoca","warn","Só a estourada, sem sal e sem manteiga, e sem os piruás."]
+];
+const LABEL = {ok:"✅ Pode", no:"❌ Não", warn:"⚠️ Com cuidado"};
+function renderFoods(q = ""){
+  q = norm(q.trim());
+  const rows = FOODS.filter(f => !q || norm(f[0]).includes(q));
+  $("#foodBody").innerHTML = rows.length ? rows.map(([a, s, o]) => `<tr><td><b>${esc(a)}</b></td><td class="${s}">${LABEL[s]}</td><td>${esc(o)}</td></tr>`).join("")
+    : `<tr><td colspan="3">Não está na lista. Na dúvida, pergunte ao veterinário antes de oferecer.</td></tr>`;
+}
+$("#foodSearch").addEventListener("input", e => renderFoods(e.target.value));
+renderFoods();
+
+/* ---------- calculadoras ---------- */
+const fmt = (n, d = 0) => n.toLocaleString("pt-BR", {maximumFractionDigits: d});
+function calcAge(){
+  const y = Math.max(0, +$("#ageY").value || 0), sz = $("#ageSize").value;
+  let h;
+  if (y <= 1) h = y * 15;
+  else if (y <= 2) h = 15 + (y - 1) * 9;
+  else h = 24 + (y - 2) * ({p:4, m:5, g:7}[sz]);
+  const fase = y < 1 ? "filhote" : y < 2 ? "jovem" : y < ({p:10, m:8, g:6}[sz]) ? "adulto" : "idoso";
+  $("#ageOut").innerHTML = `Equivale a cerca de <b>${fmt(h)} anos</b> humanos.<br><small>Fase: ${fase}.</small>`;
+}
+function calcFood(){
+  const kg = +$("#foodKg").value || 0, f = +$("#foodAct").value, kcal = +$("#foodKcal").value || 3700;
+  if (kg <= 0) { $("#foodOut").textContent = "Informe o peso."; return; }
+  const rer = 70 * Math.pow(kg, 0.75), mer = rer * f, g = mer / kcal * 1000;
+  $("#foodOut").innerHTML = `Cerca de <b>${fmt(g)} g/dia</b> (${fmt(mer)} kcal).<br><small>Divida em ${f >= 2 ? "3–4" : "2"} refeições. Confira também a tabela da embalagem.</small>`;
+}
+function calcWater(){
+  const kg = +$("#waterKg").value || 0, f = +$("#waterHot").value;
+  const ml = kg * 60 * f;
+  $("#waterOut").innerHTML = `Por volta de <b>${fmt(ml / 1000, 1)} L/dia</b>.<br><small>Deixe água fresca sempre à vontade.</small>`;
+}
+["#ageY","#ageSize"].forEach(s => $(s).addEventListener("input", calcAge));
+["#foodKg","#foodAct","#foodKcal"].forEach(s => $(s).addEventListener("input", calcFood));
+["#waterKg","#waterHot"].forEach(s => $(s).addEventListener("input", calcWater));
+calcAge(); calcFood(); calcWater();
+
+const NAMES = {
+  comida:{m:["Paçoca","Torresmo","Biscoito","Feijão","Pudim","Churros","Amendoim","Brigadeiro"],f:["Pipoca","Paçoquinha","Jujuba","Cocada","Canjica","Pitanga","Mandioca","Amora"]},
+  humano:{m:["Jorge","Cláudio","Valdir","Roberto","Sérgio","Marcos","Osvaldo","Juca"],f:["Marlene","Cida","Neusa","Bete","Sueli","Dona Maria","Rose","Lurdes"]},
+  classico:{m:["Thor","Rex","Bob","Max","Toby","Fred","Billy","Zeus"],f:["Mel","Luna","Nina","Lola","Bela","Kiara","Meg","Pandora"]},
+  geek:{m:["Yoda","Frodo","Thanos","Pikachu","Goku","Chewie","Loki","Groot"],f:["Leia","Arya","Mística","Hermione","Eleven","Peach","Zelda","Tempestade"]}
+};
+let lastName = "";
+$("#nameBtn").addEventListener("click", () => {
+  const st = NAMES[$("#nameStyle").value], sx = $("#nameSex").value;
+  const pool = sx === "u" ? [...st.m, ...st.f] : st[sx];
+  let n; do { n = pool[Math.floor(Math.random() * pool.length)]; } while (n === lastName && pool.length > 1);
+  lastName = n;
+  $("#nameOut").innerHTML = `Que tal <b>${esc(n)}</b>? 🐾`;
+});
+
+/* ---------- quiz ---------- */
+const QUIZ = [
+  {q:"Onde você mora?", a:[["Apartamento pequeno",{apt:3}],["Apartamento grande ou casa sem quintal",{apt:1}],["Casa com quintal",{apt:-1,big:2}]]},
+  {q:"Quanto tempo de exercício você pode oferecer por dia?", a:[["Até 30 minutos",{e:-2}],["Entre 30 minutos e 1 hora",{e:0}],["Mais de 1 hora, adoro correr!",{e:3}]]},
+  {q:"Tem crianças em casa?", a:[["Sim, pequenas",{c:3}],["Sim, maiores",{c:1}],["Não",{}]]},
+  {q:"Como você lida com pelos pela casa?", a:[["Não suporto / tenho alergia",{p:-3}],["Um pouco tudo bem",{p:-1}],["Não ligo, aspirador é meu amigo",{p:1}]]},
+  {q:"Qual sua experiência com cães?", a:[["É meu primeiro cão",{t:2}],["Já tive alguns",{t:0}],["Muita, gosto de desafios",{t:-1,big:1}]]},
+  {q:"O que você mais quer num cachorro?", a:[["Companhia no sofá",{e:-1,small:2}],["Parceiro de aventuras",{e:2}],["Proteção da casa",{guard:3,big:1}],["Um cão para a família toda",{c:2}]]}
+];
+let qi = 0, pref = {};
+const box = $("#quizBox");
+function renderQ(){
+  if (qi >= QUIZ.length) return showResult();
+  const it = QUIZ[qi];
+  box.innerHTML = `<div class="progress"><i style="width:${qi / QUIZ.length * 100}%"></i></div>
+    <small style="color:var(--muted)">Pergunta ${qi + 1} de ${QUIZ.length}</small>
+    <h3 style="margin-top:6px">${esc(it.q)}</h3>
+    <div class="q-opts">${it.a.map((a, i) => `<button class="q-opt" data-i="${i}">${esc(a[0])}</button>`).join("")}</div>`;
+  $$(".q-opt", box).forEach(b => b.addEventListener("click", () => {
+    const w = it.a[b.dataset.i][1];
+    for (const k in w) pref[k] = (pref[k] || 0) + w[k];
+    qi++; renderQ();
+  }));
+}
+function score(b){
+  const p = pref; let s = 0;
+  s += (p.apt || 0) * (b.apt ? 1 : -1.2);
+  s += (p.e || 0) * (b.e - 3);
+  s += (p.c || 0) * (b.c - 3);
+  s += (p.p || 0) * (b.p - 3);
+  s += (p.t || 0) * (b.t - 3);
+  s += (p.big || 0) * (b.s === "Grande" ? 1 : -0.5);
+  s += (p.small || 0) * (b.s === "Pequeno" ? 1 : 0);
+  s += (p.guard || 0) * (/guarda/.test(b.tags) ? 1.5 : 0);
+  return s;
+}
+function showResult(){
+  const ranked = BREEDS.filter(b => b.slug !== "mix").map(b => ({b, s: score(b)})).sort((x, y) => y.s - x.s).slice(0, 3);
+  box.innerHTML = `<div class="progress"><i style="width:100%"></i></div><h3>Suas raças mais compatíveis 🎉</h3>
+    ${ranked.map((r, i) => `<div class="match"><img alt="${esc(r.b.n)}" data-slug="${r.b.slug}" src="${FALLBACK}">
+      <div><b>${i + 1}. ${esc(r.b.n)}</b><p style="margin:4px 0 0;color:var(--muted)">${esc(r.b.d)}</p></div></div>`).join("")}
+    <p>🧡 E não esqueça: um <b>vira-lata</b> adotado pode combinar com qualquer perfil!</p>
+    <button class="btn" id="quizAgain">Refazer quiz</button>`;
+  $$("img[data-slug]", box).forEach(async img => { img.src = await breedPhoto(img.dataset.slug); });
+  $("#quizAgain").addEventListener("click", () => { qi = 0; pref = {}; renderQ(); });
+}
+renderQ();
+
+/* ---------- curiosidades ---------- */
+const FACTS = [
+  "O olfato do cão é de 10 mil a 100 mil vezes mais sensível que o nosso.",
+  "Cada focinho tem um padrão único, como uma impressão digital.",
+  "Cães entendem, em média, cerca de 165 palavras — os mais espertos, mais de 250.",
+  "Eles suam pelas almofadinhas das patas e se refrescam ofegando.",
+  "O Basenji, da África, praticamente não late: ele “canta” (yodel).",
+  "Cães conseguem farejar algumas doenças, como câncer, diabetes e até covid-19.",
+  "Quando você olha nos olhos do seu cão, ambos liberam ocitocina, o hormônio do amor.",
+  "A domesticação começou há pelo menos 15 mil anos, a partir de lobos.",
+  "Cães ouvem sons até 45 mil Hz; nós, só até cerca de 20 mil Hz.",
+  "Abanar o rabo para a direita costuma indicar emoção positiva; para a esquerda, desconforto.",
+  "Laika, uma vira-lata de Moscou, foi o primeiro animal a orbitar a Terra, em 1957.",
+  "Os filhotes nascem surdos e cegos; os olhos se abrem por volta de 2 semanas."
+];
+$("#factGrid").innerHTML = FACTS.map((f, i) => `<div class="card fact reveal"><span class="n">${String(i + 1).padStart(2, "0")}</span><p style="margin:0;padding-right:44px">${esc(f)}</p></div>`).join("");
+
+/* ---------- checklists ---------- */
+function checklist(el, key, items, onChange){
+  let saved = {};
+  try { saved = JSON.parse(store.get(key) || "{}"); } catch {}
+  el.innerHTML = items.map((t, i) => `<label><input type="checkbox" data-i="${i}" ${saved[i] ? "checked" : ""}><span>${esc(t)}</span></label>`).join("");
+  const update = () => {
+    const st = {}; $$("input", el).forEach(c => { if (c.checked) st[c.dataset.i] = 1; });
+    store.set(key, JSON.stringify(st));
+    onChange && onChange(Object.keys(st).length, items.length);
+  };
+  el.addEventListener("change", update); update();
+}
+checklist($("#checklist"), "mc-adocao", [
+  "Tenho tempo para passeios e atenção todos os dias.",
+  "Cabe no meu orçamento: ração, vacinas, veterinário e imprevistos.",
+  "Todos em casa concordam com a adoção.",
+  "Meu imóvel permite animais (e é seguro: telas, portões).",
+  "Sei quem cuida dele quando eu viajar.",
+  "Estou pronto para um compromisso de 10 a 15 anos."
+], (n, t) => {
+  $("#checkMsg").textContent = n === t ? "🎉 Você está pronto! Procure uma ONG ou abrigo perto de você." : `${n} de ${t} itens confirmados.`;
+});
+checklist($("#shopping"), "mc-enxoval", [
+  "Comedouro e bebedouro (inox ou cerâmica)",
+  "Ração de qualidade adequada à idade e ao porte",
+  "Caminha e manta",
+  "Coleira com plaquinha de identificação + guia",
+  "Peitoral (melhor para passeios)",
+  "Tapete higiênico ou área para necessidades",
+  "Brinquedos: mordedor, bolinha e brinquedo recheável",
+  "Escova, cortador de unhas e escova de dentes",
+  "Antipulgas/carrapaticida e vermífugo",
+  "Caixa de transporte",
+  "Petiscos para o adestramento",
+  "Saquinhos para recolher as fezes"
+]);
+
+/* ---------- animação ao rolar ---------- */
+const io = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), {threshold: .12}) : null;
+$$(".reveal").forEach(el => io ? io.observe(el) : el.classList.add("in"));
+})();
+</script>
+</body>
+</html>
