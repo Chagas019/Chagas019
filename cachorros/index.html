@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600&family=Manrope:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
 <style>
 :root{
   /* Painéis escuros arredondados sobre fundo laranja desfocado; linhas finas, maiúsculas largas, asterisco como marca */
@@ -255,7 +256,7 @@ footer .wrap{background:var(--panel);border:1px solid var(--line);border-radius:
 .fx-on .fx.in{animation:rise .9s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--d,0) * 70ms)}
 @keyframes rise{0%{opacity:0;transform:translateY(28px);filter:blur(10px)}100%{opacity:1;transform:none;filter:none}}
 .fx-on section>.wrap.fx.in{animation-name:panel}
-@keyframes panel{0%{opacity:0;transform:scale(.96);clip-path:inset(6% 6% 6% 6% round 28px)}100%{opacity:1;transform:none;clip-path:inset(0 0 0 0 round 28px)}}
+@keyframes panel{0%{opacity:0;transform:perspective(1200px) rotateX(10deg) translateY(40px) scale(.96);clip-path:inset(6% 6% 6% 6% round 28px)}100%{opacity:1;transform:none;clip-path:inset(0 0 0 0 round 28px)}}
 section{position:relative}
 section::after{content:"";position:absolute;left:8%;right:8%;top:10px;height:1px;background:linear-gradient(90deg,transparent,var(--brand),transparent);opacity:0;pointer-events:none}
 section.scan::after{animation:sweep 1.4s ease-out}
@@ -322,6 +323,49 @@ h2.glitch::after{color:#7fe8ff;transform:translate(3px,0);clip-path:inset(55% 0 
 .did b{font:300 1.6rem var(--fd);color:var(--ink)}
 .did span{color:var(--muted);font-size:.82rem}
 @media (max-width:520px){.did div{border-right:0;border-bottom:1px solid var(--line)}.did div:last-child{border-bottom:0}}
+
+/* ===== 3D / AR ===== */
+.ar-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+@media (max-width:860px){.ar-grid{grid-template-columns:1fr}}
+.ar-stage{position:relative;min-width:0}
+model-viewer{display:block;width:100%;height:auto;aspect-ratio:1;max-width:100%;border-radius:24px;border:1px solid var(--line);
+  background:radial-gradient(70% 60% at 50% 40%,rgba(255,106,31,.35),rgba(122,42,8,.25) 50%,#121213 80%);--poster-color:transparent;--progress-bar-height:0}
+.ar-progress{position:absolute;left:24px;right:24px;bottom:18px;height:1px;background:var(--line);overflow:hidden}
+.ar-progress i{display:block;height:100%;width:0;background:var(--brand);box-shadow:0 0 10px var(--brand);transition:width .2s}
+.ar-btn{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);white-space:nowrap}
+.hot{width:26px;height:26px;border-radius:50%;border:1px solid #fff;background:rgba(255,106,31,.85);color:#fff;font:700 15px/1 var(--fb);cursor:pointer;box-shadow:0 0 0 0 rgba(255,106,31,.7);animation:ping 2s infinite;padding:0}
+.hot[data-visible]{opacity:1}.hot:not([data-visible]){opacity:.25}
+.hot.on{background:#fff;color:var(--brand)}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(255,106,31,.7)}100%{box-shadow:0 0 0 14px rgba(255,106,31,0)}}
+.hot-info{margin:14px 0 0;min-height:3em;padding:12px 16px;border:1px solid var(--line);border-radius:14px;color:var(--muted);font-size:.92rem}
+.hot-info b{color:var(--brand)}
+.hud{position:absolute;inset:0;bottom:auto;aspect-ratio:1;pointer-events:none}
+.hud i{position:absolute;width:22px;height:22px;border-color:var(--brand);border-style:solid;border-width:0}
+.hud i:nth-child(1){top:12px;left:12px;border-top-width:2px;border-left-width:2px;border-top-left-radius:10px}
+.hud i:nth-child(2){top:12px;right:12px;border-top-width:2px;border-right-width:2px;border-top-right-radius:10px}
+.hud i:nth-child(3){bottom:12px;left:12px;border-bottom-width:2px;border-left-width:2px;border-bottom-left-radius:10px}
+.hud i:nth-child(4){bottom:12px;right:12px;border-bottom-width:2px;border-right-width:2px;border-bottom-right-radius:10px}
+.hud span{position:absolute;top:18px;font:600 .6rem var(--fb);letter-spacing:.2em;color:var(--muted)}
+.hud-l{left:44px}.hud-r{right:44px;color:var(--brand)!important}
+.holo{position:absolute;inset:0;bottom:auto;aspect-ratio:1;border-radius:24px;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(255,138,74,.16) 0 2px,transparent 2px 6px);mix-blend-mode:screen;opacity:0}
+.ar-stage.boot .holo{animation:holoIn 1.6s ease-out}
+.ar-stage.boot model-viewer{animation:materialize 1.6s cubic-bezier(.2,.8,.2,1)}
+@keyframes holoIn{0%{opacity:1;clip-path:inset(0 0 100% 0)}50%{opacity:1;clip-path:inset(0 0 0 0)}100%{opacity:0}}
+@keyframes materialize{0%{clip-path:inset(0 0 100% 0 round 24px);filter:brightness(2) saturate(0) blur(6px)}60%{clip-path:inset(0 0 0 0 round 24px);filter:brightness(1.3) saturate(.6)}100%{filter:none}}
+.ar-stage.swap model-viewer{animation:swap .6s ease}
+@keyframes swap{0%{filter:none}30%{filter:brightness(1.8) hue-rotate(40deg)}100%{filter:none}}
+.ctl-label{font:600 .66rem var(--fb);letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin:22px 0 10px}
+.swatches{display:flex;gap:10px;flex-wrap:wrap}
+.sw{width:40px;height:40px;border-radius:50%;border:2px solid var(--line);cursor:pointer;background:linear-gradient(135deg,var(--a) 50%,var(--b) 50%);transition:transform .2s,border-color .2s}
+.sw:hover{transform:scale(1.1)}
+.sw[aria-pressed="true"]{border-color:var(--brand);box-shadow:0 0 0 3px rgba(255,106,31,.3)}
+.ctl-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.ar-note{color:var(--muted);font-size:.85rem;margin:18px 0 0;padding-left:12px;border-left:2px solid var(--brand)}
+/* onda ao clicar */
+.shock{position:fixed;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;border:1px solid var(--brand);pointer-events:none;z-index:300;animation:shock .7s ease-out forwards}
+@keyframes shock{to{transform:scale(9);opacity:0}}
+@media (prefers-reduced-motion:reduce){.hot,.ar-stage.boot .holo,.ar-stage.boot model-viewer,.ar-stage.swap model-viewer,.shock{animation:none}}
 </style>
 </head>
 <body>
@@ -347,6 +391,7 @@ h2.glitch::after{color:#7fe8ff;transform:translate(3px,0);clip-path:inset(55% 0 
     <a class="logo" href="#inicio"><svg><use href="#dog"/></svg>Mund<span class="ast">✱</span> Cão</a>
     <button class="icon-btn" id="menuToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu">☰</button>
     <ul class="menu" id="menu">
+      <li><a href="#ar">3D / AR</a></li>
       <li><a href="#racas">Raças</a></li>
       <li><a href="#cuidados">Cuidados</a></li>
       <li><a href="#fases">Fases da vida</a></li>
@@ -370,7 +415,7 @@ h2.glitch::after{color:#7fe8ff;transform:translate(3px,0);clip-path:inset(55% 0 
       <p>Raças, saúde, alimentação, adestramento, curiosidades e ferramentas para você cuidar melhor do seu cão ou encontrar o companheiro ideal.</p>
       <div class="actions">
         <a class="btn" href="#quiz">🐾 Descubra sua raça ideal</a>
-        <a class="btn ghost" href="#racas">Ver raças</a>
+        <a class="btn ghost" href="#ar">✱ Cão em 3D e AR</a>
       </div>
       <div class="stats">
         <div><b>+340</b><span>raças reconhecidas (FCI)</span></div>
@@ -386,6 +431,56 @@ h2.glitch::after{color:#7fe8ff;transform:translate(3px,0);clip-path:inset(55% 0 
       <div class="photo-tools">
         <button class="btn ghost" id="newDog">🔄 Outro cachorro</button>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3D / REALIDADE AUMENTADA -->
+<section id="ar">
+  <div class="wrap ar-grid">
+    <div class="ar-stage" id="arStage">
+      <model-viewer id="dog3d" src="modelos/cachorro.glb" alt="Cachorro em 3D que você pode girar e ver em realidade aumentada"
+        ar ar-modes="webxr scene-viewer quick-look" ar-scale="auto" ar-placement="floor"
+        camera-controls touch-action="pan-y" autoplay animation-name="Feliz" animation-crossfade-duration="350"
+        shadow-intensity="1.1" shadow-softness=".8" exposure="1.05" environment-image="neutral"
+        camera-orbit="30deg 72deg 105%" min-camera-orbit="auto 20deg auto" max-camera-orbit="auto 95deg 300%"
+        auto-rotate auto-rotate-delay="2500" rotation-per-second="20deg" interaction-prompt="auto">
+        <button slot="ar-button" class="btn ar-btn" id="arBtn">✱ Ver no seu espaço</button>
+        <div slot="progress-bar" class="ar-progress"><i id="arProg"></i></div>
+        <button class="hot" slot="hotspot-nariz" data-position="0 0.585 0.55" data-normal="0 0 1" data-info="Nariz: até 300 milhões de receptores de cheiro. O nosso tem uns 6 milhões.">+</button>
+        <button class="hot" slot="hotspot-orelha" data-position="0.15 0.66 0.3" data-normal="1 0 0" data-info="Orelhas: escutam sons de até 45 mil Hz e se movem com 18 músculos.">+</button>
+        <button class="hot" slot="hotspot-rabo" data-position="0 0.66 -0.5" data-normal="0 0 -1" data-info="Rabo: abanar mais para a direita costuma indicar alegria.">+</button>
+        <button class="hot" slot="hotspot-coleira" data-position="0 0.37 0.31" data-normal="0 0 1" data-info="Coleira: plaquinha com nome e telefone ajuda muito se ele fugir.">+</button>
+      </model-viewer>
+      <div class="hud" aria-hidden="true"><i></i><i></i><i></i><i></i><span class="hud-l">MODELO 3D · ✱</span><span class="hud-r" id="hudAnim">ANIM: FELIZ</span></div>
+      <div class="holo" aria-hidden="true"></div>
+      <p class="hot-info" id="hotInfo" aria-live="polite">Toque nos pontos <b>+</b> para explorar.</p>
+    </div>
+    <div class="ar-side">
+      <span class="kicker">Realidade aumentada</span>
+      <h2>Seu cão em 3D</h2>
+      <p class="lead">Gire com o dedo ou o mouse, aproxime e troque a pelagem. No celular, toque em <b>Ver no seu espaço</b> para colocar o cachorro na sua sala pela câmera.</p>
+      <div class="ctl-label">Animação</div>
+      <div class="chips" id="animChips" role="group" aria-label="Animação do cachorro">
+        <button class="chip" data-anim="Feliz" aria-pressed="true">Feliz</button>
+        <button class="chip" data-anim="Pular" aria-pressed="false">Pular</button>
+        <button class="chip" data-anim="Curioso" aria-pressed="false">Curioso</button>
+        <button class="chip" data-anim="Correr" aria-pressed="false">Correr</button>
+      </div>
+      <div class="ctl-label">Pelagem</div>
+      <div class="swatches" id="coatSwatches" role="group" aria-label="Cor da pelagem">
+        <button class="sw" aria-pressed="true" title="Caramelo" data-c="#d98a4a,#8a4b20,#f6dcc0" style="--a:#d98a4a;--b:#8a4b20"></button>
+        <button class="sw" aria-pressed="false" title="Golden" data-c="#e7b260,#c08436,#f7e2bc" style="--a:#e7b260;--b:#c08436"></button>
+        <button class="sw" aria-pressed="false" title="Preto e fogo" data-c="#2a2421,#1b1715,#b06a2c" style="--a:#2a2421;--b:#b06a2c"></button>
+        <button class="sw" aria-pressed="false" title="Husky" data-c="#8a8f99,#4a4e57,#f4f4f6" style="--a:#8a8f99;--b:#f4f4f6"></button>
+        <button class="sw" aria-pressed="false" title="Branco" data-c="#f4f1ec,#d9cfc3,#ffffff" style="--a:#f4f1ec;--b:#d9cfc3"></button>
+        <button class="sw" aria-pressed="false" title="Chocolate" data-c="#6b3a1e,#40210f,#a8683c" style="--a:#6b3a1e;--b:#40210f"></button>
+      </div>
+      <div class="ctl-row">
+        <button class="btn ghost" id="spinBtn">⟳ Girar: ligado</button>
+        <button class="btn ghost" id="resetCam">Centralizar</button>
+      </div>
+      <p class="ar-note" id="arNote">Realidade aumentada funciona no celular: Android com Chrome (ARCore) ou iPhone com Safari. No computador, você pode girar e animar o modelo aqui.</p>
     </div>
   </div>
 </section>
@@ -1174,6 +1269,48 @@ $$(".reveal").forEach(el => io ? io.observe(el) : el.classList.add("in"));
   // cards de raça entram em cascata ao filtrar
   new MutationObserver(() => document.querySelectorAll("#breedGrid .breed").forEach((c, i) => { c.style.setProperty("--d", Math.min(i, 12)); c.classList.add("enter"); }))
     .observe(document.getElementById("breedGrid"), {childList: true});
+})();
+
+/* ---------- 3D / AR ---------- */
+(() => {
+  const mv = document.getElementById("dog3d"), stage = document.getElementById("arStage");
+  const info = document.getElementById("hotInfo"), hud = document.getElementById("hudAnim");
+  const flash = cls => { stage.classList.remove(cls); void stage.offsetWidth; stage.classList.add(cls); };
+  let current = "Feliz";
+  mv.addEventListener("progress", e => { const pr = document.getElementById("arProg"); pr.style.width = (e.detail.totalProgress * 100) + "%"; pr.parentElement.style.opacity = e.detail.totalProgress >= 1 ? 0 : 1; });
+  mv.addEventListener("load", () => {
+    flash("boot");
+    if (!mv.canActivateAR) document.getElementById("arNote").innerHTML = "Para ver em <b>realidade aumentada</b>, abra <b>mundo-cao.vercel.app</b> no celular (Android com Chrome ou iPhone com Safari) e toque em “Ver no seu espaço”.";
+  });
+  mv.addEventListener("error", () => { info.textContent = "Não foi possível carregar o modelo 3D. Recarregue a página."; });
+  const play = name => {
+    current = name; mv.animationName = name; hud.textContent = "ANIM: " + name.toUpperCase();
+    mv.play(name === "Pular" ? {repetitions: 2} : undefined);
+    document.querySelectorAll("#animChips .chip").forEach(c => c.setAttribute("aria-pressed", c.dataset.anim === name));
+  };
+  mv.addEventListener("finished", () => { if (current === "Pular") play("Feliz"); });
+  document.getElementById("animChips").addEventListener("click", e => { const c = e.target.closest("[data-anim]"); if (c) { play(c.dataset.anim); flash("swap"); } });
+  document.getElementById("coatSwatches").addEventListener("click", e => {
+    const b = e.target.closest(".sw"); if (!b || !mv.model) return;
+    const [fur, ear, snout] = b.dataset.c.split(",");
+    const set = (n, hex) => { const m = mv.model.materials.find(m => m.name === n); if (m) m.pbrMetallicRoughness.setBaseColorFactor(hex); };
+    set("Pelo", fur); set("Orelhas", ear); set("Focinho", snout);
+    document.querySelectorAll("#coatSwatches .sw").forEach(x => x.setAttribute("aria-pressed", x === b));
+    flash("swap");
+  });
+  const spin = document.getElementById("spinBtn");
+  spin.addEventListener("click", () => { mv.autoRotate = !mv.autoRotate; spin.textContent = "⟳ Girar: " + (mv.autoRotate ? "ligado" : "desligado"); });
+  document.getElementById("resetCam").addEventListener("click", () => { mv.cameraOrbit = "30deg 72deg 105%"; mv.cameraTarget = "auto auto auto"; mv.fieldOfView = "auto"; });
+  mv.querySelectorAll(".hot").forEach(h => h.addEventListener("click", () => {
+    mv.querySelectorAll(".hot").forEach(x => x.classList.toggle("on", x === h));
+    const [t, ...rest] = h.dataset.info.split(":");
+    info.innerHTML = `<b>${t}:</b>${rest.join(":")}`;
+  }));
+  // onda ao clicar em qualquer lugar
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.addEventListener("pointerdown", e => {
+    const d = document.createElement("div"); d.className = "shock"; d.style.left = e.clientX + "px"; d.style.top = e.clientY + "px";
+    document.body.appendChild(d); setTimeout(() => d.remove(), 750);
+  });
 })();
 </script>
 </body>
