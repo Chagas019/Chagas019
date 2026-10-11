@@ -230,6 +230,37 @@ dialog .close{background:rgba(7,11,26,.85);border:1px solid var(--brand);color:v
 a{color:var(--brand)}
 footer{border-top:1px solid var(--line)}
 @media (prefers-reduced-motion:reduce){.photo-frame::before,.photo-frame::after,.photo-frame .fallback::after{animation:none}}
+
+/* ===== transições futuristas ===== */
+#boot{position:fixed;inset:0;z-index:999;display:grid;place-items:center;background:var(--bg);transition:opacity .5s,visibility .5s}
+#boot.off{opacity:0;visibility:hidden}
+#boot .bx{width:min(320px,80vw);font:700 .75rem var(--fd);letter-spacing:.3em;color:var(--brand);text-align:center}
+#boot .bb{height:2px;margin-top:14px;background:var(--line);overflow:hidden}
+#boot .bb i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brand),var(--violet));box-shadow:0 0 12px var(--brand);animation:bootbar 1s cubic-bezier(.7,0,.3,1) forwards}
+@keyframes bootbar{to{width:100%}}
+.fx-on .fx{opacity:0}
+.fx-on .fx.in{animation:holo .8s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--d,0) * 70ms)}
+@keyframes holo{0%{opacity:0;transform:translateY(24px) scale(.98);filter:blur(8px) hue-rotate(60deg);clip-path:inset(0 0 100% 0)}
+  60%{opacity:1;filter:blur(0) hue-rotate(0)}100%{opacity:1;transform:none;filter:none;clip-path:inset(0 0 0 0)}}
+section{position:relative}
+section::after{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--brand),var(--violet),transparent);box-shadow:0 0 16px var(--brand);opacity:0;pointer-events:none}
+section.scan::after{animation:sweep 1.2s ease-out}
+@keyframes sweep{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(60vh)}}
+#warp{position:fixed;inset:0;z-index:90;pointer-events:none;opacity:0;background:repeating-linear-gradient(0deg,transparent 0 22px,rgba(34,228,255,.35) 22px 23px),radial-gradient(circle,transparent 30%,rgba(7,11,26,.85));}
+#warp.go{animation:warp .7s ease-out}
+@keyframes warp{0%{opacity:0;transform:scaleY(1)}25%{opacity:1;transform:scaleY(1.8)}100%{opacity:0;transform:scaleY(.4)}}
+dialog[open]{animation:dlg .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes dlg{0%{opacity:0;transform:perspective(900px) rotateX(18deg) scale(.9);clip-path:inset(48% 0 48% 0);box-shadow:0 0 0 rgba(34,228,255,0)}
+  50%{clip-path:inset(0 0 0 0);opacity:1}100%{transform:none;box-shadow:0 0 50px rgba(34,228,255,.35)}}
+.tilt{transform-style:preserve-3d;will-change:transform}
+.tilt::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),rgba(34,228,255,.18),transparent 60%);opacity:0;transition:opacity .3s;z-index:2}
+.tilt:hover::before{opacity:1}
+.breed,.tool{position:relative}
+.q-opt,.chip,.btn{position:relative;overflow:hidden}
+.q-opt::after,.btn::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:left .5s}
+.q-opt:hover::after,.btn:hover::after{left:130%}
+.quiz>*{animation:holo .5s cubic-bezier(.2,.8,.2,1) both}
+@media (prefers-reduced-motion:reduce){.fx-on .fx{opacity:1}.fx-on .fx.in,.quiz>*,dialog[open]{animation:none}#boot,#warp,section::after{display:none}}
 </style>
 </head>
 <body>
@@ -873,6 +904,77 @@ checklist($("#shopping"), "mc-enxoval", [
 /* ---------- animação ao rolar ---------- */
 const io = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), {threshold: .12}) : null;
 $$(".reveal").forEach(el => io ? io.observe(el) : el.classList.add("in"));
+})();
+
+/* ---------- transições futuristas ---------- */
+(() => {
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce || !("IntersectionObserver" in window)) return;
+  // inicialização
+  const boot = document.createElement("div");
+  boot.id = "boot";
+  boot.innerHTML = '<div class="bx">INICIALIZANDO MUNDO CÃO<div class="bb"><i></i></div></div>';
+  document.body.appendChild(boot);
+  setTimeout(() => { boot.classList.add("off"); setTimeout(() => boot.remove(), 600); }, 1150);
+
+  // revelar elementos com efeito holográfico
+  document.documentElement.classList.add("fx-on");
+  const sel = "section h2, section .lead, .hero .kicker, .hero h1, .hero p, .hero .actions, .stats, .photo-frame, .card, details, .table-wrap, .toolbar, .tabs";
+  const parents = new Map();
+  document.querySelectorAll(sel).forEach(el => {
+    const p = el.parentElement, i = parents.get(p) || 0;
+    parents.set(p, i + 1);
+    el.style.setProperty("--d", Math.min(i, 8));
+    el.classList.add("fx");
+  });
+  const show = el => el.classList.add("in");
+  const io2 = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { show(e.target); io2.unobserve(e.target); } }), {threshold: .08, rootMargin: "0px 0px -5% 0px"});
+  const watch = root => root.querySelectorAll(".fx:not(.in)").forEach(el => io2.observe(el));
+  watch(document);
+  // cards criados depois (busca, filtros)
+  new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => {
+    if (n.nodeType === 1 && n.matches(".card")) { n.classList.add("fx", "in"); }
+  }))).observe(document.getElementById("breedGrid"), {childList: true});
+
+  // linha de varredura ao entrar numa seção
+  const io3 = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.remove("scan"); void e.target.offsetWidth; e.target.classList.add("scan"); }
+  }), {threshold: .25});
+  document.querySelectorAll("section").forEach(s => io3.observe(s));
+
+  // efeito "salto" ao navegar pelo menu
+  const warp = document.createElement("div");
+  warp.id = "warp";
+  document.body.appendChild(warp);
+  document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener("click", () => {
+    warp.classList.remove("go"); void warp.offsetWidth; warp.classList.add("go");
+  }));
+
+  // inclinação 3D nos cards
+  if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    document.addEventListener("pointermove", e => {
+      const c = e.target.closest(".breed, .tool, .care .card, .fact");
+      document.querySelectorAll(".tilt").forEach(t => { if (t !== c) { t.style.transform = ""; t.classList.remove("tilt"); } });
+      if (!c) return;
+      const r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+      c.classList.add("tilt");
+      c.style.setProperty("--mx", x * 100 + "%"); c.style.setProperty("--my", y * 100 + "%");
+      c.style.transform = `perspective(800px) rotateY(${(x - .5) * 10}deg) rotateX(${(.5 - y) * 10}deg) translateY(-4px)`;
+    });
+  }
+
+  // títulos se "decodificam" ao aparecer
+  const glyphs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&@<>/";
+  const decode = h => {
+    const final = h.textContent; let f = 0;
+    const t = setInterval(() => {
+      h.textContent = [...final].map((ch, i) => ch === " " || i < f ? ch : glyphs[Math.random() * glyphs.length | 0]).join("");
+      f += Math.max(1, final.length / 18);
+      if (f >= final.length) { clearInterval(t); h.textContent = final; }
+    }, 35);
+  };
+  const io4 = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { decode(e.target); io4.unobserve(e.target); } }), {threshold: .6});
+  document.querySelectorAll("section h2").forEach(h => io4.observe(h));
 })();
 </script>
 </body>
