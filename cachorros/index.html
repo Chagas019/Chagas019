@@ -273,6 +273,37 @@ dialog[open]{animation:dlg .55s cubic-bezier(.2,.8,.2,1)}
 @keyframes breathe{50%{transform:scale(1.02) rotate(-1deg)}}
 .quiz>*{animation:rise .5s cubic-bezier(.2,.8,.2,1) both}
 @media (prefers-reduced-motion:reduce){.fx-on .fx{opacity:1}.fx-on .fx.in,.quiz>*,dialog[open],.photo-frame{animation:none}#boot,#warp,section::after{display:none}}
+
+/* ===== transições v2 ===== */
+.photo-frame.loaded .fallback{display:none}
+@property --ang{syntax:"<angle>";initial-value:0deg;inherits:false}
+.fx-on .photo-frame.fx.in{animation:rise .9s cubic-bezier(.2,.8,.2,1) both,breathe 6s ease-in-out .9s infinite}
+#fxCanvas{position:fixed;inset:0;z-index:-1;pointer-events:none}
+#progress{position:fixed;top:0;left:0;height:2px;width:100%;z-index:100;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--brand),#fff);box-shadow:0 0 12px var(--brand)}
+#cursor{position:fixed;left:0;top:0;width:34px;height:34px;margin:-17px 0 0 -17px;border:1px solid rgba(255,138,74,.8);border-radius:50%;pointer-events:none;z-index:200;transition:width .25s,height .25s,margin .25s,background .25s,opacity .3s;mix-blend-mode:screen;opacity:0}
+#cursor.on{opacity:1}
+#cursor.big{width:64px;height:64px;margin:-32px 0 0 -32px;background:rgba(255,106,31,.12)}
+#cursor::after{content:"✱";position:absolute;inset:0;display:grid;place-items:center;color:var(--brand);font-size:12px}
+.card::after{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;pointer-events:none;
+  background:conic-gradient(from var(--ang),transparent 0 70%,var(--brand) 85%,#fff 90%,transparent 95%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .3s}
+.card{position:relative}
+.card:hover::after{opacity:1;animation:orbit 2.4s linear infinite}
+@keyframes orbit{to{--ang:360deg}}
+section>.wrap::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.06) 50%,transparent 60%) no-repeat;background-size:250% 100%;background-position:150% 0}
+section>.wrap{position:relative}
+section>.wrap.in::before{animation:sheen 1.6s .2s ease-out}
+@keyframes sheen{to{background-position:-50% 0}}
+.stats b{font-variant-numeric:tabular-nums}
+.btn{transition:transform .2s cubic-bezier(.2,.8,.2,1),background .2s,color .2s}
+h2.glitch{position:relative}
+h2.glitch::before,h2.glitch::after{content:attr(data-t);position:absolute;inset:0;pointer-events:none}
+h2.glitch::before{color:var(--brand);transform:translate(-3px,0);clip-path:inset(0 0 55% 0);animation:gl 0.5s steps(2) 2}
+h2.glitch::after{color:#7fe8ff;transform:translate(3px,0);clip-path:inset(55% 0 0 0);animation:gl 0.5s steps(2) reverse 2}
+@keyframes gl{0%{clip-path:inset(10% 0 60% 0)}50%{clip-path:inset(60% 0 5% 0)}100%{clip-path:inset(30% 0 40% 0);opacity:0}}
+.breed.enter{animation:rise .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--d,0) * 45ms)}
+@media (prefers-reduced-motion:reduce){#fxCanvas,#cursor,.card::after,section>.wrap::before,h2.glitch::before,h2.glitch::after{display:none}.breed.enter,.fx-on .photo-frame.fx.in{animation:none}}
+@media (hover:none){#cursor{display:none}}
 </style>
 </head>
 <body>
@@ -607,7 +638,6 @@ const store = {
   get(k){ try { return localStorage.getItem(k); } catch { return null; } },
   set(k,v){ try { localStorage.setItem(k,v); } catch {} }
 };
-const FALLBACK = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 150"><rect width="200" height="150" fill="#1a1a1b"/><g transform="translate(55 10) scale(.65)"><ellipse cx="100" cy="95" rx="55" ry="52" fill="#d98a4a"/><path d="M45 70c-18 5-26 40-14 58 9 14 22 4 24-12l6-38zM155 70c18 5 26 40 14 58-9 14-22 4-24-12l-6-38z" fill="#8a4b20"/><ellipse cx="100" cy="125" rx="34" ry="28" fill="#f6dcc0"/><circle cx="78" cy="88" r="8" fill="#2b2118"/><circle cx="122" cy="88" r="8" fill="#2b2118"/><ellipse cx="100" cy="112" rx="13" ry="9" fill="#2b2118"/></g></svg>');
 
 /* ---------- tema ---------- */
 const themeBtn = $("#themeBtn");
@@ -631,27 +661,58 @@ menuToggle.addEventListener("click", () => {
 });
 $$("#menu a").forEach(a => a.addEventListener("click", () => { menu.classList.remove("open"); menuToggle.setAttribute("aria-expanded", false); }));
 
-/* ---------- fotos (Dog CEO API) ---------- */
+/* ---------- fotos (Dog CEO API, com desenhos de reserva) ---------- */
+// Cores de pelagem: [pelo, orelha, focinho, mancha?]
+const COATS = {
+  "mix":["#d58a3f","#9a5520","#f3d3ae"], "labrador":["#e7c27d","#c99a4e","#f6e4c2"], "retriever/golden":["#e0a24f","#b8742a","#f5d8a6"],
+  "germanshepherd":["#b8793a","#2b2118","#d9a36a"], "collie/border":["#262322","#1a1817","#f4efe9",1], "bulldog/french":["#e9d8c2","#c9a98a","#f8efe4",1],
+  "shihtzu":["#f1e6d8","#a3784e","#fff8f0",1], "poodle/standard":["#f2ede6","#dcd3c7","#fffaf3"], "beagle":["#c4823e","#3a2a1e","#f8f1e6",1],
+  "rottweiler":["#2a2421","#1b1715","#b06a2c"], "dachshund":["#8f4a1c","#5e2e10","#c27a3e"], "husky":["#8a8f99","#4a4e57","#f4f4f6",1],
+  "pug":["#e2c79e","#2b2421","#3a302a"], "terrier/yorkshire":["#a8794a","#3c3a3c","#d8b07a"], "pinscher/miniature":["#2a211c","#1b1512","#a85a24"],
+  "chihuahua":["#e8c08e","#d09a5e","#f8e6cc"], "boxer":["#c27a3a","#8e5222","#f6efe6",1], "dalmatian":["#f6f3ee","#2b2421","#fbf9f6",1],
+  "maltese":["#faf7f2","#ebe3d8","#fffdf9"], "pomeranian":["#eb9a4a","#c9762e","#f9d9b0"], "spaniel/cocker":["#b8642e","#7e3c16","#e2a46c"],
+  "akita":["#d68a46","#b06a2c","#f7ebdc",1], "shiba":["#d9823a","#b3622a","#f7ebdc",1], "pitbull":["#8f8a86","#6a6560","#f2eee9",1]
+};
+const PALETTE = Object.values(COATS);
+function dogArt(c, clear){
+  const [fur, ear, snout, spot] = c;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 150"><defs><radialGradient id="g" cx=".5" cy=".45" r=".7"><stop offset="0" stop-color="#3a1c0c"/><stop offset="1" stop-color="#161617"/></radialGradient></defs>${clear ? "" : `<rect width="200" height="150" fill="url(#g)"/>`}<g transform="translate(35 2) scale(.65)"><path d="M45 70c-18 5-26 40-14 58 9 14 22 4 24-12l6-38zM155 70c18 5 26 40 14 58-9 14-22 4-24-12l-6-38z" fill="${ear}"/><ellipse cx="100" cy="95" rx="55" ry="52" fill="${fur}"/>${spot ? `<ellipse cx="122" cy="82" rx="20" ry="17" fill="${ear}" opacity=".85"/>` : ""}<ellipse cx="100" cy="125" rx="34" ry="28" fill="${snout}"/><circle cx="78" cy="88" r="8" fill="#1a1412"/><circle cx="122" cy="88" r="8" fill="#1a1412"/><circle cx="81" cy="85" r="2.5" fill="#fff"/><circle cx="125" cy="85" r="2.5" fill="#fff"/><ellipse cx="100" cy="112" rx="13" ry="9" fill="#1a1412"/><path d="M100 121v8M100 129c-6 6-14 5-17 0M100 129c6 6 14 5 17 0" stroke="#1a1412" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M94 137c0 12 12 12 12 0z" fill="#ff7a8a"/></g></svg>`;
+  return "data:image/svg+xml," + encodeURIComponent(svg);
+}
+const artFor = slug => dogArt(COATS[slug] || PALETTE[0]);
 const photoCache = {};
+let online = true;
 async function dogPhoto(slug){
+  if (!online) return null;
   const url = slug ? `https://dog.ceo/api/breed/${slug}/images/random` : "https://dog.ceo/api/breeds/image/random";
   try {
-    const r = await fetch(url);
+    const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 6000);
+    const r = await fetch(url, {signal: ctl.signal});
+    clearTimeout(t);
     const j = await r.json();
     if (j.status === "success") return j.message;
-  } catch {}
+  } catch { online = false; }
   return null;
 }
 async function breedPhoto(slug){
   if (!(slug in photoCache)) photoCache[slug] = dogPhoto(slug);
-  return (await photoCache[slug]) || FALLBACK;
+  return (await photoCache[slug]) || artFor(slug);
 }
+// Se a foto não carregar, mostra o desenho da raça
+document.addEventListener("error", e => {
+  const img = e.target;
+  if (img.tagName === "IMG" && !img.src.startsWith("data:")) img.src = artFor(img.dataset.slug);
+}, true);
 const heroImg = $("#heroImg");
+let heroArt = -1;
 async function newHeroDog(){
+  const btn = $("#newDog");
+  btn.disabled = true;
   heroImg.style.opacity = 0;
-  const src = await dogPhoto();
-  if (!src) return;
-  heroImg.onload = () => { heroImg.style.opacity = 1; };
+  let src = await dogPhoto();
+  if (!src) { heroArt = (heroArt + 1 + Math.floor(Math.random() * (PALETTE.length - 1))) % PALETTE.length; src = dogArt(PALETTE[heroArt], true); }
+  heroImg.onload = () => { heroImg.style.opacity = 1; btn.disabled = false; $("#heroFrame").classList.add("loaded"); };
+  heroImg.onerror = () => { btn.disabled = false; };
   heroImg.src = src;
 }
 $("#newDog").addEventListener("click", newHeroDog);
@@ -697,7 +758,7 @@ function renderBreeds(){
     (!q || norm(`${b.n} ${b.tags} ${b.s} ${b.o}`).includes(q)));
   grid.innerHTML = list.length ? list.map(b => `
     <button class="card breed" data-i="${BREEDS.indexOf(b)}" aria-label="Ver ficha: ${esc(b.n)}">
-      <div class="ph"><img loading="lazy" alt="${esc(b.n)}" data-slug="${b.slug}" src="${FALLBACK}"><span class="tag">${b.s}</span></div>
+      <div class="ph"><img loading="lazy" alt="${esc(b.n)}" data-slug="${b.slug}" src="${artFor(b.slug)}"><span class="tag">${b.s}</span></div>
       <div class="body"><h3>${esc(b.n)}</h3><p>${esc(b.d)}</p>
         <div class="meters">${meter("Energia", b.e)}${meter("Crianças", b.c)}</div></div>
     </button>`).join("") : `<p class="empty">Nenhuma raça encontrada. Que tal um vira-lata? 🐶</p>`;
@@ -720,7 +781,7 @@ async function openBreed(b){
     .map(([k, v]) => `<div>${k}<b>${esc(v)}</b></div>`).join("");
   $("#mMeters").innerHTML = meter("Energia", b.e) + meter("Treinabilidade", b.t) + meter("Queda de pelo", b.p) + meter("Com crianças", b.c);
   $("#mTip").innerHTML = "💡 <b>Dica:</b> " + esc(b.tip);
-  const img = $("#mImg"); img.alt = b.n; img.src = await breedPhoto(b.slug);
+  const img = $("#mImg"); img.alt = b.n; img.dataset.slug = b.slug; img.src = artFor(b.slug); img.src = await breedPhoto(b.slug);
   if (!modal.open) modal.showModal();
 }
 grid.addEventListener("click", e => { const card = e.target.closest(".breed"); if (card) openBreed(BREEDS[card.dataset.i]); });
@@ -850,7 +911,7 @@ function score(b){
 function showResult(){
   const ranked = BREEDS.filter(b => b.slug !== "mix").map(b => ({b, s: score(b)})).sort((x, y) => y.s - x.s).slice(0, 3);
   box.innerHTML = `<div class="progress"><i style="width:100%"></i></div><h3>Suas raças mais compatíveis 🎉</h3>
-    ${ranked.map((r, i) => `<div class="match"><img alt="${esc(r.b.n)}" data-slug="${r.b.slug}" src="${FALLBACK}">
+    ${ranked.map((r, i) => `<div class="match"><img alt="${esc(r.b.n)}" data-slug="${r.b.slug}" src="${artFor(r.b.slug)}">
       <div><b>${i + 1}. ${esc(r.b.n)}</b><p style="margin:4px 0 0;color:var(--muted)">${esc(r.b.d)}</p></div></div>`).join("")}
     <p>🧡 E não esqueça: um <b>vira-lata</b> adotado pode combinar com qualquer perfil!</p>
     <button class="btn" id="quizAgain">Refazer quiz</button>`;
@@ -987,6 +1048,78 @@ $$(".reveal").forEach(el => io ? io.observe(el) : el.classList.add("in"));
   };
   const io4 = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { decode(e.target); io4.unobserve(e.target); } }), {threshold: .6});
   document.querySelectorAll("section h2").forEach(h => io4.observe(h));
+})();
+
+/* ---------- transições v2 ---------- */
+(() => {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const $ = s => document.querySelector(s);
+  // partículas laranja flutuando no fundo
+  const cv = document.createElement("canvas"); cv.id = "fxCanvas"; document.body.prepend(cv);
+  const ctx = cv.getContext("2d"); let W, H, dpr, pts = [], mx = -999, my = -999;
+  const size = () => { dpr = Math.min(devicePixelRatio || 1, 2); W = cv.width = innerWidth * dpr; H = cv.height = innerHeight * dpr; cv.style.width = innerWidth + "px"; cv.style.height = innerHeight + "px"; };
+  size(); addEventListener("resize", size);
+  const N = innerWidth < 700 ? 34 : 70;
+  for (let i = 0; i < N; i++) pts.push({x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .25 * dpr, vy: (-.15 - Math.random() * .35) * dpr, r: (Math.random() * 1.6 + .4) * dpr});
+  let run = true; document.addEventListener("visibilitychange", () => { run = !document.hidden; if (run) requestAnimationFrame(tick); });
+  function tick(){
+    if (!run) return;
+    ctx.clearRect(0, 0, W, H);
+    for (const p of pts) {
+      const dx = p.x - mx, dy = p.y - my, d = Math.hypot(dx, dy);
+      if (d < 120 * dpr) { p.x += dx / d * 1.2; p.y += dy / d * 1.2; }
+      p.x += p.vx; p.y += p.vy;
+      if (p.y < -10) { p.y = H + 10; p.x = Math.random() * W; }
+      if (p.x < -10) p.x = W + 10; if (p.x > W + 10) p.x = -10;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283);
+      ctx.fillStyle = "rgba(255,190,140,.55)"; ctx.fill();
+    }
+    for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
+      const a = pts[i], b = pts[j], d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (d < 90 * dpr) { ctx.strokeStyle = `rgba(255,150,90,${.18 * (1 - d / (90 * dpr))})`; ctx.lineWidth = dpr * .6; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  // barra de progresso da rolagem
+  const bar = document.createElement("div"); bar.id = "progress"; document.body.appendChild(bar);
+  const onScroll = () => { const h = document.documentElement.scrollHeight - innerHeight; bar.style.transform = `scaleX(${h > 0 ? scrollY / h : 0})`; };
+  addEventListener("scroll", onScroll, {passive: true}); onScroll();
+
+  // cursor com anel e ímã nos botões
+  if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    const cur = document.createElement("div"); cur.id = "cursor"; document.body.appendChild(cur);
+    let cx = 0, cy = 0, tx = 0, ty = 0;
+    addEventListener("pointermove", e => {
+      tx = e.clientX; ty = e.clientY; mx = e.clientX * dpr; my = e.clientY * dpr; cur.classList.add("on");
+      cur.classList.toggle("big", !!e.target.closest("a, button, summary, input, select, label"));
+      const m = e.target.closest(".btn");
+      document.querySelectorAll(".btn.mag").forEach(b => { if (b !== m) { b.style.transform = ""; b.classList.remove("mag"); } });
+      if (m) { const r = m.getBoundingClientRect(); m.classList.add("mag"); m.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * .25}px,${(e.clientY - r.top - r.height / 2) * .35}px)`; }
+    });
+    document.addEventListener("pointerleave", () => cur.classList.remove("on"));
+    (function loop(){ cx += (tx - cx) * .2; cy += (ty - cy) * .2; cur.style.transform = `translate(${cx}px,${cy}px)`; requestAnimationFrame(loop); })();
+  }
+
+  // números do topo contam até o valor
+  document.querySelectorAll(".stats b").forEach(b => {
+    const txt = b.textContent, m = txt.match(/(\d+)/); if (!m) return;
+    const end = +m[1], pre = txt.slice(0, m.index), post = txt.slice(m.index + m[1].length), t0 = performance.now() + 900;
+    const step = now => { const k = Math.min(1, Math.max(0, (now - t0) / 1400)), e = 1 - Math.pow(1 - k, 3); b.textContent = pre + Math.round(end * e) + post; if (k < 1) requestAnimationFrame(step); };
+    b.textContent = pre + "0" + post; requestAnimationFrame(step);
+  });
+
+  // falha holográfica nos títulos ao aparecer
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return; const h = e.target; io.unobserve(h);
+    setTimeout(() => { h.dataset.t = h.textContent; h.classList.add("glitch"); setTimeout(() => h.classList.remove("glitch"), 1100); }, 700);
+  }), {threshold: .6});
+  document.querySelectorAll("section h2").forEach(h => io.observe(h));
+
+  // cards de raça entram em cascata ao filtrar
+  new MutationObserver(() => document.querySelectorAll("#breedGrid .breed").forEach((c, i) => { c.style.setProperty("--d", Math.min(i, 12)); c.classList.add("enter"); }))
+    .observe(document.getElementById("breedGrid"), {childList: true});
 })();
 </script>
 </body>
