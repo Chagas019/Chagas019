@@ -304,6 +304,24 @@ h2.glitch::after{color:#7fe8ff;transform:translate(3px,0);clip-path:inset(55% 0 
 .breed.enter{animation:rise .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--d,0) * 45ms)}
 @media (prefers-reduced-motion:reduce){#fxCanvas,#cursor,.card::after,section>.wrap::before,h2.glitch::before,h2.glitch::after{display:none}.breed.enter,.fx-on .photo-frame.fx.in{animation:none}}
 @media (hover:none){#cursor{display:none}}
+
+/* ===== grupos e "ver mais" ===== */
+.more{display:flex;justify-content:center;margin-top:24px}
+.groups{margin-top:56px;padding-top:40px;border-top:1px solid var(--line)}
+.groups-title{font-weight:400;text-transform:uppercase;font-size:clamp(1.4rem,3.6vw,2.4rem);margin-bottom:.4em}
+.group-grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+@media (max-width:520px){.group-grid{grid-template-columns:1fr 1fr;gap:10px}.group{padding:14px}.group h4{font-size:.78rem}.group p{font-size:.8rem}}
+.group{padding:18px 18px 16px;display:flex;flex-direction:column;gap:6px}
+.group b{font:300 1.8rem var(--fd);color:var(--brand);line-height:1}
+.group h4{margin:0;font:500 .9rem var(--fd);line-height:1.3}
+.group p{margin:0;color:var(--muted);font-size:.88rem;line-height:1.45}
+.group small{margin-top:auto;padding-top:8px;border-top:1px solid var(--line);color:var(--ink);font-size:.75rem;letter-spacing:.04em}
+.did{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0;margin-top:28px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.did div{padding:18px 20px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
+.did div:last-child{border-right:0}
+.did b{font:300 1.6rem var(--fd);color:var(--ink)}
+.did span{color:var(--muted);font-size:.82rem}
+@media (max-width:520px){.did div{border-right:0;border-bottom:1px solid var(--line)}.did div:last-child{border-bottom:0}}
 </style>
 </head>
 <body>
@@ -389,6 +407,31 @@ h2.glitch::after{color:#7fe8ff;transform:translate(3px,0);clip-path:inset(55% 0 
       </div>
     </div>
     <div class="grid breeds" id="breedGrid"></div>
+    <div class="more"><button class="btn ghost" id="moreBreeds" hidden></button></div>
+
+    <div class="groups">
+      <span class="kicker">Grupos de raças</span>
+      <h3 class="groups-title">Os 10 grupos da FCI</h3>
+      <p class="lead">A Federação Cinológica Internacional organiza as raças pela função para a qual foram criadas. Saber o grupo ajuda a entender a energia e o comportamento do cão.</p>
+      <div class="grid group-grid">
+        <div class="card group"><b>1</b><h4>Pastores e boiadeiros</h4><p>Conduzem rebanhos. Inteligentes e muito ativos.</p><small>Pastor-Alemão, Border Collie</small></div>
+        <div class="card group"><b>2</b><h4>Pinscher, Schnauzer, Molossos e Boiadeiros suíços</h4><p>Guarda e trabalho pesado. Fortes e protetores.</p><small>Rottweiler, Boxer, Pinscher</small></div>
+        <div class="card group"><b>3</b><h4>Terriers</h4><p>Caçavam roedores em tocas. Corajosos e teimosos.</p><small>Yorkshire, Staffordshire</small></div>
+        <div class="card group"><b>4</b><h4>Dachshunds</h4><p>Grupo próprio, com 3 tamanhos e 3 tipos de pelo.</p><small>Salsicha</small></div>
+        <div class="card group"><b>5</b><h4>Spitz e tipo primitivo</h4><p>Próximos dos lobos. Independentes e resistentes ao frio.</p><small>Husky, Akita, Shiba, Lulu</small></div>
+        <div class="card group"><b>6</b><h4>Sabujos e farejadores</h4><p>Seguem rastros pelo cheiro por quilômetros.</p><small>Beagle, Dálmata</small></div>
+        <div class="card group"><b>7</b><h4>Cães de aponte</h4><p>Ficam imóveis apontando a caça para o caçador.</p><small>Pointer, Weimaraner</small></div>
+        <div class="card group"><b>8</b><h4>Retrievers, levantadores e de água</h4><p>Buscam a caça, adoram água e são ótimos com famílias.</p><small>Labrador, Golden, Cocker</small></div>
+        <div class="card group"><b>9</b><h4>Companhia</h4><p>Criados para estar perto das pessoas.</p><small>Shih Tzu, Pug, Poodle, Maltês, Buldogue Francês</small></div>
+        <div class="card group"><b>10</b><h4>Lebréis (galgos)</h4><p>Caçam pela visão. Os mais rápidos: até 70 km/h.</p><small>Greyhound, Whippet</small></div>
+      </div>
+      <div class="did">
+        <div><b>~1 em cada 2</b><span>lares brasileiros tem pelo menos um cão (IBGE)</span></div>
+        <div><b>SRD</b><span>é o “tipo” de cão mais comum no Brasil</span></div>
+        <div><b>9,6 cm</b><span>de altura tem Milly, chihuahua recordista de menor cão do mundo</span></div>
+        <div><b>1,11 m</b><span>tinha Zeus, o dogue alemão mais alto já registrado</span></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -751,12 +794,23 @@ let fSize = "all", fApt = false, fText = "";
 const meter = (label, v) => `<div class="meter"><span>${label}</span><div class="bar"><i style="width:${v*20}%"></i></div></div>`;
 const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
+const PAGE = 6;
+let showAll = false;
+const moreBtn = $("#moreBreeds");
+moreBtn.addEventListener("click", () => {
+  showAll = !showAll; renderBreeds();
+  if (!showAll) document.getElementById("racas").scrollIntoView();
+});
 function renderBreeds(){
   const q = norm(fText.trim());
   const list = BREEDS.filter(b =>
     (fSize === "all" || b.s === fSize) && (!fApt || b.apt) &&
     (!q || norm(`${b.n} ${b.tags} ${b.s} ${b.o}`).includes(q)));
-  grid.innerHTML = list.length ? list.map(b => `
+  const total = list.length;
+  const shown = showAll ? list : list.slice(0, PAGE);
+  moreBtn.hidden = total <= PAGE;
+  moreBtn.textContent = showAll ? "Mostrar menos" : `Ver mais ${total - PAGE} raças`;
+  grid.innerHTML = shown.length ? shown.map(b => `
     <button class="card breed" data-i="${BREEDS.indexOf(b)}" aria-label="Ver ficha: ${esc(b.n)}">
       <div class="ph"><img loading="lazy" alt="${esc(b.n)}" data-slug="${b.slug}" src="${artFor(b.slug)}"><span class="tag">${b.s}</span></div>
       <div class="body"><h3>${esc(b.n)}</h3><p>${esc(b.d)}</p>
@@ -764,11 +818,11 @@ function renderBreeds(){
     </button>`).join("") : `<p class="empty">Nenhuma raça encontrada. Que tal um vira-lata? 🐶</p>`;
   $$("img[data-slug]", grid).forEach(async img => { img.src = await breedPhoto(img.dataset.slug); });
 }
-$("#breedSearch").addEventListener("input", e => { fText = e.target.value; renderBreeds(); });
+$("#breedSearch").addEventListener("input", e => { fText = e.target.value; showAll = false; renderBreeds(); });
 $$("#sizeChips .chip").forEach(c => c.addEventListener("click", () => {
   if (c.dataset.apt) { fApt = !fApt; c.setAttribute("aria-pressed", fApt); }
   else { fSize = c.dataset.size; $$("#sizeChips [data-size]").forEach(x => x.setAttribute("aria-pressed", x === c)); }
-  renderBreeds();
+  showAll = false; renderBreeds();
 }));
 renderBreeds();
 
@@ -992,7 +1046,7 @@ $$(".reveal").forEach(el => io ? io.observe(el) : el.classList.add("in"));
 
   // revelar elementos com efeito holográfico
   document.documentElement.classList.add("fx-on");
-  const sel = "section > .wrap, section h2, section .lead, .hero .kicker, .hero h1, .hero p, .hero .actions, .stats, .photo-frame, .card, details, .table-wrap, .toolbar, .tabs";
+  const sel = "section > .wrap, section h2, section .lead, .groups-title, .did, .hero .kicker, .hero h1, .hero p, .hero .actions, .stats, .photo-frame, .card, details, .table-wrap, .toolbar, .tabs";
   const parents = new Map();
   document.querySelectorAll(sel).forEach(el => {
     const p = el.parentElement, i = parents.get(p) || 0;
@@ -1001,7 +1055,7 @@ $$(".reveal").forEach(el => io ? io.observe(el) : el.classList.add("in"));
     el.classList.add("fx");
   });
   const show = el => el.classList.add("in");
-  const io2 = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { show(e.target); io2.unobserve(e.target); } }), {threshold: .08, rootMargin: "0px 0px -5% 0px"});
+  const io2 = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { show(e.target); io2.unobserve(e.target); } }), {threshold: 0, rootMargin: "0px 0px -5% 0px"});
   const watch = root => root.querySelectorAll(".fx:not(.in)").forEach(el => io2.observe(el));
   watch(document);
   // cards criados depois (busca, filtros)
