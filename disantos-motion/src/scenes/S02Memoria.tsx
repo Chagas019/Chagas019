@@ -2,6 +2,7 @@ import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { Backdrop, Grain, Vignette } from "../components/Backdrop";
 import { LightBeam } from "../components/LightBeam";
 import { Particles } from "../components/Particles";
+import { GlassWave } from "../components/Glass";
 import { ProductPlate } from "../components/ProductPlate";
 import { BRAND } from "../config/brand";
 import { rise } from "../lib/motion";
@@ -25,6 +26,7 @@ export const S02Memoria: React.FC = () => {
       <ProductPlate slot="macroEstampa" scale={zoom} translateX={parallaxX} focus="50% 44%" blur={focus * 9} dim={dim} />
       <LightBeam progress={rise(frame, 34, 60)} color={BRAND.colors.ivory} intensity={0.32} width={240} angle={-24} />
       <Particles count={28} seed={23} color={BRAND.colors.gold} speed={0.8} />
+      <GlassWave label="Narração" top={1400} start={18} />
       <Vignette strength={0.6} />
       <Grain opacity={0.07} />
     </AbsoluteFill>

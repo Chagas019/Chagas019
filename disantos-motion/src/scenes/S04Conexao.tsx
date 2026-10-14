@@ -5,6 +5,7 @@ import { Particles } from "../components/Particles";
 import { ProductPlate, pickSlot } from "../components/ProductPlate";
 import { KineticText } from "../components/KineticText";
 import { LightLeak } from "../components/Transitions";
+import { GlassCard } from "../components/Glass";
 import { BRAND } from "../config/brand";
 import { rise } from "../lib/motion";
 import { HEIGHT } from "../config/timeline";
@@ -35,6 +36,8 @@ export const S04Conexao: React.FC = () => {
       <div style={{ position: "absolute", left: 0, right: 0, top: 330, textAlign: "center", fontFamily: BRAND.fonts.display, fontStyle: "italic", fontSize: 70, color: BRAND.colors.ivory }}>
         <KineticText text="Vestir a fé com memória." start={64} stagger={1.1} duration={26} />
       </div>
+      <GlassCard x={70} y={560} rotate={-5} title="Fé" sub="Atravessa gerações" start={22} phase={0} />
+      <GlassCard x={710} y={640} rotate={4} title="Memória" sub="Viva em cada um" start={32} phase={2} />
       <LightLeak frame={frame} at={6} dir={-1} />
       <Particles count={30} seed={41} color={BRAND.colors.ivory} speed={0.7} />
       <div
