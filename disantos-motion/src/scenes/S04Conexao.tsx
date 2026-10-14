@@ -34,7 +34,7 @@ export const S04Conexao: React.FC = () => {
       />
       <LightBeam progress={rise(frame, 10, 110)} color={BRAND.colors.gold} intensity={0.22} width={300} angle={-12} />
       <div style={{ position: "absolute", left: 0, right: 0, top: 330, textAlign: "center", fontFamily: BRAND.fonts.display, fontStyle: "italic", fontSize: 70, color: BRAND.colors.ivory }}>
-        <KineticText text="Vestir a fé com memória." start={64} stagger={1.1} duration={26} />
+        <KineticText text="Vestir a fé com memória." start={40} stagger={1.1} duration={26} />
       </div>
       {/* Camada 3D: os cards inclinam em perspectiva e se endireitam, como no exemplo de referência */}
       <AbsoluteFill

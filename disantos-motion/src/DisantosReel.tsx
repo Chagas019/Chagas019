@@ -7,7 +7,7 @@ import { S04Conexao } from "./scenes/S04Conexao";
 import { S05Assinatura } from "./scenes/S05Assinatura";
 import { MusicMix } from "./audio/MusicMix";
 import { FlashCut, LightLeak, SweepLine } from "./components/Transitions";
-import { ChapterBar } from "./components/Chapters";
+import { FilmFrame } from "./components/Chapters";
 import { useCurrentFrame } from "remotion";
 import { CUTS } from "./config/timeline";
 import { SCENES, TOTAL_FRAMES } from "./config/timeline";
@@ -34,7 +34,7 @@ const CutFlashes: React.FC = () => {
       {CUTS.map((c) => (
         <SweepLine key={`s-${c}`} frame={frame} at={c} />
       ))}
-      <ChapterBar />
+      <FilmFrame />
     </>
   );
 };

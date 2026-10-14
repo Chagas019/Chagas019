@@ -62,9 +62,9 @@ export const S01Despertar: React.FC = () => {
             color: BRAND.colors.ivory,
           }}
         >
-          <KineticText text="Algumas histórias" start={34} stagger={1.1} duration={28} />
+          <KineticText text="Algumas histórias" start={18} stagger={1.1} duration={28} />
           <br />
-          <KineticText text="nunca deixam de viver." start={60} stagger={1.1} duration={28} />
+          <KineticText text="nunca deixam de viver." start={36} stagger={1.1} duration={28} />
         </div>
       </AbsoluteFill>
       <Particles count={34} seed={11} speed={0.6} />

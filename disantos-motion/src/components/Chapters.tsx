@@ -7,49 +7,41 @@ import { rise } from "../lib/motion";
 export const CHAPTERS = ["Despertar", "Memória", "Identidade", "Conexão", "Assinatura"] as const;
 const STARTS = [SCENES.despertar.from, SCENES.memoria.from, SCENES.identidade.from, SCENES.conexao.from, SCENES.assinatura.from];
 
-// Barra de progresso com o capítulo atual. Fica no alto, dentro da área segura do Reels.
-export const ChapterBar: React.FC = () => {
+// Moldura de filme: cantos finos dourados e rótulo vertical com o capítulo atual.
+// Substitui a barra de progresso, que lembrava os Stories do Instagram.
+export const FilmFrame: React.FC = () => {
   const frame = useCurrentFrame();
   let idx = 0;
   STARTS.forEach((s, i) => {
     if (frame >= s) idx = i;
   });
-  const since = frame - STARTS[idx];
-  const p = rise(since, 0, 22);
+  const p = rise(frame - STARTS[idx], 0, 24);
+  const corner = (pos: React.CSSProperties) => (
+    <div style={{ position: "absolute", width: 64, height: 64, border: `2px solid ${BRAND.colors.goldDim}`, ...pos }} />
+  );
   return (
-    <div style={{ position: "absolute", top: 170, left: 90, right: 90, fontFamily: BRAND.fonts.text, pointerEvents: "none" }}>
-      <div style={{ display: "flex", gap: 10 }}>
-        {CHAPTERS.map((_, i) => {
-          const done = i < idx;
-          const active = i === idx;
-          return (
-            <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: "rgba(243,238,227,0.2)", overflow: "hidden" }}>
-              <div
-                style={{
-                  height: "100%",
-                  width: done ? "100%" : active ? `${p * 100}%` : "0%",
-                  background: BRAND.colors.gold,
-                }}
-              />
-            </div>
-          );
-        })}
-      </div>
+    <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+      {corner({ top: 56, left: 56, borderRight: "none", borderBottom: "none" })}
+      {corner({ top: 56, right: 56, borderLeft: "none", borderBottom: "none" })}
+      {corner({ bottom: 56, left: 56, borderRight: "none", borderTop: "none" })}
+      {corner({ bottom: 56, right: 56, borderLeft: "none", borderTop: "none" })}
       <div
         style={{
-          marginTop: 18,
-          display: "flex",
-          justifyContent: "space-between",
-          fontSize: 24,
-          letterSpacing: "0.28em",
+          position: "absolute",
+          left: 56 - 200 + 16,
+          top: 960 - 16,
+          width: 400,
+          transform: "rotate(-90deg)",
+          textAlign: "center",
+          fontFamily: BRAND.fonts.text,
+          fontSize: 22,
+          letterSpacing: "0.34em",
           textTransform: "uppercase",
           color: BRAND.colors.ivoryDim,
+          opacity: p,
         }}
       >
-        <span style={{ opacity: p, transform: `translateY(${(1 - p) * 12}px)` }}>
-          {String(idx + 1).padStart(2, "0")} · {CHAPTERS[idx]}
-        </span>
-        <span>{BRAND.name}</span>
+        {String(idx + 1).padStart(2, "0")} · {CHAPTERS[idx]}
       </div>
     </div>
   );
