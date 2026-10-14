@@ -1,0 +1,36 @@
+/* Design Tokens - Auto-generated */
+/* Do not edit directly - modify tokens.json instead */
+
+/* === PRIMITIVES === */
+:root {
+  --primitive-color-primary-50: #E7E8EB;
+  --primitive-color-primary-100: #CED2D6;
+  --primitive-color-primary-200: #9DA4AE;
+  --primitive-color-primary-300: #6D7785;
+  --primitive-color-primary-400: #3C495D;
+  --primitive-color-primary-500: #0B1C34;
+  --primitive-color-primary-600: #09182C;
+  --primitive-color-primary-700: #081424;
+  --primitive-color-primary-800: #060F1D;
+  --primitive-color-primary-900: #040B15;
+  --primitive-color-secondary-50: #6E9FE0;
+  --primitive-color-secondary-100: #6E9FE0;
+  --primitive-color-secondary-200: #E9DBC4;
+  --primitive-color-secondary-300: #DFCAA6;
+  --primitive-color-secondary-400: #D4B889;
+  --primitive-color-secondary-500: #C9A66B;
+  --primitive-color-secondary-600: #AB8D5B;
+  --primitive-color-secondary-700: #8D744B;
+  --primitive-color-secondary-800: #6F5B3B;
+  --primitive-color-secondary-900: #50422B;
+}
+
+/* === SEMANTIC === */
+:root {
+
+}
+
+/* === COMPONENTS === */
+:root {
+
+}

@@ -35,7 +35,7 @@ export const FabricPlate: React.FC<{ label: string; showLabel?: boolean }> = ({ 
           fontSize: 26,
           letterSpacing: "0.24em",
           textTransform: "uppercase",
-          color: BRAND.colors.goldDim,
+          color: BRAND.colors.gold,
         }}
       >
         {label}
