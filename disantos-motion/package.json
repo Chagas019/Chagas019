@@ -1,0 +1,27 @@
+{
+  "name": "disantos-brand-motion",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DISANTOS — campanha cinematográfica vertical 1080x1920 (Remotion + React)",
+  "scripts": {
+    "start": "remotion studio",
+    "render": "node scripts/verificar-assets.mjs && remotion render DisantosReel out/disantos-reel-9x16.mp4 --codec=h264 --crf=16",
+    "still": "remotion still DisantosReel out/preview/quadro.png --frame=330",
+    "preview": "node scripts/verificar-assets.mjs && remotion render DisantosReel out/preview/previa-baixa.mp4 --codec=h264 --scale=0.5 --crf=26",
+    "audio": "python3 scripts/gerar-audio.py",
+    "assets": "node scripts/verificar-assets.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource/cormorant-garamond": "5.2.8",
+    "@fontsource/manrope": "5.2.8",
+    "@remotion/cli": "4.0.535",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.535"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.12",
+    "typescript": "5.6.3"
+  }
+}
