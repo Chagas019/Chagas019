@@ -61,7 +61,7 @@ export const GlassCard: React.FC<{
   );
 };
 
-// Painel de voz em vidro com ondas animadas (a narração "tocando"). Rótulo embaixo.
+// Painel em vidro com ondas animadas, que acompanham a trilha. Rótulo embaixo.
 export const GlassWave: React.FC<{ label: string; top: number; start: number; bars?: number }> = ({
   label,
   top,

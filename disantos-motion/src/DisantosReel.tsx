@@ -5,7 +5,6 @@ import { S02Memoria } from "./scenes/S02Memoria";
 import { S03Identidade } from "./scenes/S03Identidade";
 import { S04Conexao } from "./scenes/S04Conexao";
 import { S05Assinatura } from "./scenes/S05Assinatura";
-import { Captions } from "./components/Captions";
 import { MusicMix } from "./audio/MusicMix";
 import { FlashCut, LightLeak, SweepLine } from "./components/Transitions";
 import { ChapterBar } from "./components/Chapters";
@@ -76,7 +75,6 @@ export const DisantosReel: React.FC = () => (
       </Sequence>
 
       <CutFlashes />
-      <Captions />
       <MusicMix />
     </AbsoluteFill>
   </FontGate>

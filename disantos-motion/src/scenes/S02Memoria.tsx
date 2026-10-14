@@ -11,8 +11,8 @@ import { rise } from "../lib/motion";
 
 // CENA 02 — A MEMÓRIA (3–7 s)
 // Abertura por máscara circular. A foto da estampa entra em macro e recua (dolly-out),
-// com foco que se fecha (rack focus) e uma passagem de luz. A narração é legendada pelo
-// componente Captions, no topo da composição.
+// com foco que se fecha (rack focus) e uma passagem de luz. A trilha segue a
+// cena em painel de ondas.
 export const S02Memoria: React.FC = () => {
   const frame = useCurrentFrame();
   const reveal = rise(frame, 0, 24);
@@ -32,7 +32,7 @@ export const S02Memoria: React.FC = () => {
         <div><KineticText text="A fé que vestimos." start={100} stagger={1.1} duration={24} /></div>
         <div><KineticText text="A história que carregamos." start={122} stagger={0.9} duration={24} /></div>
       </div>
-      <GlassWave label="Narração" top={1400} start={18} />
+      <GlassWave label="Trilha original" top={1400} start={18} />
       <Vignette strength={0.6} />
       <Grain opacity={0.07} />
     </AbsoluteFill>

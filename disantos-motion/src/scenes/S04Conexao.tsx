@@ -13,7 +13,7 @@ import { HEIGHT } from "../config/timeline";
 // CENA 04 — A CONEXÃO (12–16 s)
 // A música cresce. A câmera se aproxima devagar do detalhe mais importante da estampa.
 // Se existir uso real autorizado (pessoas vestindo a peça), ele é preferido ao produto
-// isolado. A narração é legendada pelo componente Captions.
+// isolado.
 export const S04Conexao: React.FC = () => {
   const frame = useCurrentFrame();
   const reveal = rise(frame, 0, 26);
@@ -36,8 +36,26 @@ export const S04Conexao: React.FC = () => {
       <div style={{ position: "absolute", left: 0, right: 0, top: 330, textAlign: "center", fontFamily: BRAND.fonts.display, fontStyle: "italic", fontSize: 70, color: BRAND.colors.ivory }}>
         <KineticText text="Vestir a fé com memória." start={64} stagger={1.1} duration={26} />
       </div>
-      <GlassCard x={70} y={560} rotate={-5} title="Fé" sub="Atravessa gerações" start={22} phase={0} />
-      <GlassCard x={710} y={640} rotate={4} title="Memória" sub="Viva em cada um" start={32} phase={2} />
+      {/* Camada 3D: os cards inclinam em perspectiva e se endireitam, como no exemplo de referência */}
+      <AbsoluteFill
+        style={{
+          perspective: 1400,
+          perspectiveOrigin: "50% 40%",
+          pointerEvents: "none",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            transformStyle: "preserve-3d",
+            transform: `rotateX(${10 - 10 * rise(frame, 18, 60)}deg) rotateY(${-16 + 16 * rise(frame, 18, 60)}deg)`,
+          }}
+        >
+          <GlassCard x={70} y={560} rotate={-5} title="Fé" sub="Atravessa gerações" start={22} phase={0} />
+          <GlassCard x={710} y={640} rotate={4} title="Memória" sub="Viva em cada um" start={32} phase={2} />
+        </div>
+      </AbsoluteFill>
       <LightLeak frame={frame} at={6} dir={-1} />
       <Particles count={30} seed={41} color={BRAND.colors.ivory} speed={0.7} />
       <div

@@ -18,7 +18,6 @@ const PRODUTOS = {
 
 const status = {
   logo: pub("marca/logo.png"),
-  narracao: pub("narracao/narracao-final.wav"),
   trilhaLicenciada: pub("audio/trilha-licenciada.mp3"),
   produtos: Object.fromEntries(Object.entries(PRODUTOS).map(([k, f]) => [k, pub(f)])),
 };
@@ -31,7 +30,6 @@ writeFileSync(join(root, "src", "config", "assets.generated.ts"), file);
 console.log("Assets da campanha:");
 const row = (nome, ok, obs = "") => console.log(`  ${ok ? "[ok]   " : "[falta]"} ${nome}${obs ? ` — ${obs}` : ""}`);
 row("logo oficial (marca/logo.png)", status.logo, status.logo ? "" : "usando tipografia DISANTOS");
-row("narração (narracao/narracao-final.wav)", status.narracao, status.narracao ? "" : "sem narração: legendas do roteiro aparecem, sem áudio de voz");
 row("trilha licenciada (opcional)", status.trilhaLicenciada, status.trilhaLicenciada ? "" : "usando trilha original gerada");
 for (const [k, f] of Object.entries(PRODUTOS)) row(`produto ${f}`, status.produtos[k], status.produtos[k] ? "" : "quadro-reserva na cena");
 const faltam = Object.values(status.produtos).filter((v) => !v).length;

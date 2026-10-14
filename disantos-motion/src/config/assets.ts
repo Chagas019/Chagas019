@@ -19,10 +19,6 @@ export const hasProduct = (slot: ProductSlot): boolean => ASSET_STATUS.produtos[
 export const LOGO_FILE = "marca/logo.png";
 export const hasLogo = ASSET_STATUS.logo;
 
-// Narração gravada (ou sintetizada por serviço de qualidade). Ela deve ocupar a linha do tempo
-// inteira, de 0 a 20 s, para que as legendas e a mixagem fiquem alinhadas.
-export const NARRATION_FILE = "narracao/narracao-final.wav";
-export const hasNarration = ASSET_STATUS.narracao;
 
 // Trilha: usa a licenciada se existir; senão a trilha original gerada por scripts/gerar-audio.py.
 export const MUSIC_FILE = ASSET_STATUS.trilhaLicenciada
