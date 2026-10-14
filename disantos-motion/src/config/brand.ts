@@ -5,15 +5,15 @@ export const BRAND = {
   signature: "Vista a fé. Carregue a história.",
   colors: {
     black: "#030406",
-    navyDeep: "#030C2C",
-    navy: "#05144D", // azul-marinho exato da logo
-    navyMid: "#0A2265",
+    navyDeep: "#06101F",
+    navy: "#0B1C34",
+    navyMid: "#13294B",
     ivory: "#F3EEE3",
     ivoryDim: "rgba(243, 238, 227, 0.72)",
     blueLight: "#6E9FE0",
     blueGlow: "rgba(110, 159, 224, 0.55)",
-    gold: "#F0A62A", // dourado exato da cruz e do arco da logo
-    goldDim: "rgba(240, 166, 42, 0.6)",
+    gold: "#C9A66B",
+    goldDim: "rgba(201, 166, 107, 0.6)",
   },
   fonts: {
     // Serif editorial para títulos (cinematográfica, clássica sem ser decorativa)
