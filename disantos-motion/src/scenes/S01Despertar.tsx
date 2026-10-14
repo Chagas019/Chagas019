@@ -3,44 +3,66 @@ import { Backdrop, Grain, Vignette } from "../components/Backdrop";
 import { LightBeam, LightLine } from "../components/LightBeam";
 import { Particles } from "../components/Particles";
 import { KineticText } from "../components/KineticText";
+import { LogoBadge } from "../components/Logo";
 import { BRAND } from "../config/brand";
 import { rise } from "../lib/motion";
-import { HEIGHT } from "../config/timeline";
+import { hasLogo } from "../config/assets";
+import { WIDTH } from "../config/timeline";
 
 // CENA 01 — O DESPERTAR DA MARCA (0–3 s)
-// Tela quase preta, linha de luz azul que se abre, texto que surge devagar.
-// A câmera virtual empurra (dolly-in) enquanto a linha se estabiliza.
+// Tela quase preta. A linha de luz azul se abre, o selo surge no escuro e a câmera
+// se aproxima da cruz dourada (o "t" da logo). Depois, a frase entra embaixo.
+const BADGE = 300;
+const BADGE_TOP = 430;
+// Ponto da cruz dentro da logo (medido na arte original): ~66% da largura e ~45% da altura.
+// Dentro do selo, a logo ocupa 66% da largura e fica centralizada.
+const CROSS_ORIGIN = `${50 + (0.665 - 0.5) * 66}% ${50 + (0.45 - 0.5) * 36 + 3}%`;
+
 export const S01Despertar: React.FC = () => {
   const frame = useCurrentFrame();
   const push = 1.07 - 0.07 * rise(frame, 0, 90);
   const line = rise(frame, 8, 42);
-  const textY = HEIGHT / 2;
+  const badge = rise(frame, 6, 40);
+  const toCross = 1 + 0.55 * rise(frame, 24, 66);
 
   return (
     <AbsoluteFill>
       <Backdrop />
       <AbsoluteFill style={{ transform: `scale(${push})`, transformOrigin: "50% 48%" }}>
         <LightBeam progress={Math.min(1, frame / 90)} intensity={0.22} color={BRAND.colors.blueLight} width={380} />
-        <LightLine progress={line} y={textY + 58} />
-        <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
+        {hasLogo && (
           <div
             style={{
-              fontFamily: BRAND.fonts.display,
-              fontStyle: "italic",
-              fontWeight: 400,
-              fontSize: 96,
-              lineHeight: 1.12,
-              textAlign: "center",
-              color: BRAND.colors.ivory,
-              marginTop: -120,
-              width: 900,
+              position: "absolute",
+              left: (WIDTH - BADGE) / 2,
+              top: BADGE_TOP,
+              transform: `scale(${toCross})`,
+              transformOrigin: CROSS_ORIGIN,
             }}
           >
-            <KineticText text="Algumas histórias" start={22} stagger={1.1} duration={28} />
-            <br />
-            <KineticText text="nunca deixam de viver." start={50} stagger={1.1} duration={28} />
+            <LogoBadge diameter={BADGE} progress={badge} />
           </div>
-        </AbsoluteFill>
+        )}
+        <LightLine progress={line} y={1120} />
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            top: 830,
+            textAlign: "center",
+            fontFamily: BRAND.fonts.display,
+            fontStyle: "italic",
+            fontWeight: 400,
+            fontSize: 92,
+            lineHeight: 1.12,
+            color: BRAND.colors.ivory,
+          }}
+        >
+          <KineticText text="Algumas histórias" start={34} stagger={1.1} duration={28} />
+          <br />
+          <KineticText text="nunca deixam de viver." start={60} stagger={1.1} duration={28} />
+        </div>
       </AbsoluteFill>
       <Particles count={34} seed={11} speed={0.6} />
       <Vignette strength={0.7} />

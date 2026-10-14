@@ -7,6 +7,9 @@ import { S04Conexao } from "./scenes/S04Conexao";
 import { S05Assinatura } from "./scenes/S05Assinatura";
 import { Captions } from "./components/Captions";
 import { MusicMix } from "./audio/MusicMix";
+import { FlashCut, LightLeak } from "./components/Transitions";
+import { useCurrentFrame } from "remotion";
+import { CUTS } from "./config/timeline";
 import { SCENES, TOTAL_FRAMES } from "./config/timeline";
 import { BRAND } from "./config/brand";
 
@@ -19,6 +22,18 @@ const FONT_LOADS = [
   '500 40px "Manrope"',
   '400 40px "Manrope"',
 ];
+
+const CutFlashes: React.FC = () => {
+  const frame = useCurrentFrame();
+  return (
+    <>
+      {CUTS.map((c) => (
+        <FlashCut key={c} frame={frame} at={c} />
+      ))}
+      <LightLeak frame={frame} at={CUTS[3]} />
+    </>
+  );
+};
 
 const FontGate: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [handle] = useState(() => delayRender("carregando fontes"));
@@ -55,6 +70,7 @@ export const DisantosReel: React.FC = () => (
         <S05Assinatura />
       </Sequence>
 
+      <CutFlashes />
       <Captions />
       <MusicMix />
     </AbsoluteFill>

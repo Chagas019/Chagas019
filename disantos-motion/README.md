@@ -68,7 +68,7 @@ No ambiente em que esta campanha foi montada, o caminho era `/opt/pw-browsers/ch
 | O que | Onde colocar | Efeito |
 |---|---|---|
 | Fotos de produto | `public/produtos/` com os nomes de `produtos/LEIA-ME.md` | Substitui o quadro-reserva na cena |
-| Logo oficial | `public/marca/logo.png` | Substitui a tipografia DISANTOS na cena 05 |
+| Logo oficial | `public/marca/logo.png` | Já incluída (extraída da arte enviada). Aparece no selo branco nas cenas 01 e 05 |
 | Narração | `public/narracao/narracao-final.wav` | Entra na mixagem e a trilha abaixa nas falas |
 | Trilha licenciada | `public/audio/trilha-licenciada.mp3` | Substitui a trilha gerada (precisa de licença comercial) |
 
@@ -77,6 +77,8 @@ Depois de qualquer troca, rode `npm run assets` antes de renderizar. O comando `
 ## Estado desta entrega
 
 **Executado e verificado:**
+- Logo oficial incluída, com a cruz dourada como ponto de aproximação da câmera na cena 01.
+- Transições de corte com flash de luz e vazamento diagonal, palavras-carimbo e frases de marca.
 - Projeto Remotion completo, com cinco cenas, componentes reutilizáveis e linha do tempo em frames.
 - Animações por `useCurrentFrame`, `interpolate` e `spring`/`rise`, sem timers do navegador nem aleatoriedade (grão e partículas são determinísticos).
 - Trilha, varredura, impacto e assinatura sonora gerados por código, com níveis conferidos (pico em -1,2 dB na prévia).
@@ -86,7 +88,6 @@ Depois de qualquer troca, rode `npm run assets` antes de renderizar. O comando `
 
 **Ainda depende de arquivos externos (não existem nos repositórios):**
 - **Fotos reais das camisetas e das estampas.** Sem elas, as cenas 02, 03 e 04 mostram quadros-reserva identificados. Nenhuma estampa foi inventada.
-- **Logo oficial da DISANTOS.** Sem ela, a cena 05 usa a tipografia do nome.
 - **Narração em português do Brasil.** Não há voz gerada nem gravada. Veja `narracao/roteiro-narracao.md`.
 - **Trilha licenciada (opcional).** A trilha gerada é original e pode ser usada.
 - **CTA de compra.** Não há endereço oficial confirmado, então a assinatura final não tem link nem oferta.

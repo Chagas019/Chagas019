@@ -1,22 +1,22 @@
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { Backdrop, Grain, Vignette } from "../components/Backdrop";
-import { LightBeam } from "../components/LightBeam";
+import { LightBeam, LightLine } from "../components/LightBeam";
 import { ProductPlate } from "../components/ProductPlate";
 import { KineticText } from "../components/KineticText";
+import { StampWord } from "../components/StampWord";
 import { BRAND } from "../config/brand";
 import { rise } from "../lib/motion";
 import type { ProductSlot } from "../config/assets";
 
 // CENA 03 — A IDENTIDADE (7–12 s)
-// Cortes rítmicos entre os produtos. Cada corte é uma varredura horizontal, com um
-// flash de luz e uma leve panorâmica. Entre os cortes há pausas para respirar.
-// Os textos entram depois da primeira pausa, sobre a imagem escurecida.
-const SHOTS: { slot: ProductSlot; from: number; length: number; pan: number; scale: number; focus: string }[] = [
-  { slot: "frenteCamiseta", from: 0, length: 22, pan: -46, scale: 1.16, focus: "50% 40%" },
-  { slot: "detalheTecido", from: 22, length: 20, pan: 38, scale: 1.3, focus: "40% 55%" },
-  { slot: "detalheGola", from: 42, length: 22, pan: -30, scale: 1.2, focus: "60% 30%" },
-  { slot: "macroEstampa", from: 64, length: 22, pan: 34, scale: 1.25, focus: "50% 50%" },
-  { slot: "frenteCamiseta", from: 86, length: 30, pan: -20, scale: 1.08, focus: "50% 36%" },
+// Cortes rítmicos entre os produtos. Cada corte é uma varredura horizontal com flash de
+// luz, panorâmica e uma palavra-carimbo. Depois vêm as frases da identidade.
+const SHOTS: { slot: ProductSlot; from: number; length: number; pan: number; scale: number; focus: string; word: string }[] = [
+  { slot: "frenteCamiseta", from: 0, length: 22, pan: -46, scale: 1.16, focus: "50% 40%", word: "Fé" },
+  { slot: "detalheTecido", from: 22, length: 20, pan: 38, scale: 1.3, focus: "40% 55%", word: "Memória" },
+  { slot: "detalheGola", from: 42, length: 22, pan: -30, scale: 1.2, focus: "60% 30%", word: "História" },
+  { slot: "macroEstampa", from: 64, length: 22, pan: 34, scale: 1.25, focus: "50% 50%", word: "Identidade" },
+  { slot: "frenteCamiseta", from: 86, length: 30, pan: -20, scale: 1.08, focus: "50% 36%", word: "" },
 ];
 
 export const S03Identidade: React.FC = () => {
@@ -26,9 +26,8 @@ export const S03Identidade: React.FC = () => {
   const local = frame - shot.from;
   const cutIn = rise(local, 0, 9);
   const drift = shot.pan * (local / shot.length);
-  const scale = shot.scale - 0.06 * rise(local, 0, shot.length);
+  const scale = shot.scale - 0.06 * rise(local, 0, shot.length) + 0.05 * (1 - cutIn);
 
-  // Textos: "Não é apenas uma camiseta." depois, e depois a tríade em tamanho grande.
   const textOut = 1 - rise(frame, 126, 14);
   const dim = 0.32 + 0.22 * rise(frame, 36, 40);
 
@@ -41,10 +40,15 @@ export const S03Identidade: React.FC = () => {
       <LightBeam progress={cutIn} color={BRAND.colors.blueLight} intensity={0.5 * (1 - local / 14)} width={200} />
       <AbsoluteFill style={{ background: `radial-gradient(ellipse 85% 42% at 50% 50%, rgba(3,4,6,0.78), rgba(3,4,6,0) 70%)` }} />
 
+      {shot.word && (
+        <StampWord key={shot.from} text={shot.word} start={shot.from + 4} end={shot.from + shot.length} size={shot.word.length > 6 ? 104 : 150} top={300} />
+      )}
+
       <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", opacity: textOut }}>
         <div style={{ position: "absolute", top: 760, width: "100%", textAlign: "center", fontFamily: BRAND.fonts.display, fontStyle: "italic", fontSize: 60, color: BRAND.colors.ivoryDim }}>
           <KineticText text="Não é apenas uma camiseta." start={38} stagger={0.9} duration={22} />
         </div>
+        <LightLine progress={rise(frame, 60, 28)} y={846} width={520} />
         <div style={{ position: "absolute", top: 880, width: "100%", textAlign: "center", fontFamily: BRAND.fonts.display, fontWeight: 500, fontSize: 116, lineHeight: 1.04, color: BRAND.colors.ivory }}>
           <div><KineticText text="É fé." start={92} stagger={1.5} duration={20} /></div>
           <div><KineticText text="É história." start={106} stagger={1.5} duration={20} /></div>

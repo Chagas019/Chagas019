@@ -1,6 +1,6 @@
 // Arquivo gerado por scripts/verificar-assets.mjs. Não edite à mão.
 export const ASSET_STATUS = {
-  "logo": false,
+  "logo": true,
   "narracao": false,
   "trilhaLicenciada": false,
   "produtos": {

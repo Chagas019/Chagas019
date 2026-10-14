@@ -3,6 +3,8 @@ import { Backdrop, Grain, Vignette } from "../components/Backdrop";
 import { LightBeam } from "../components/LightBeam";
 import { Particles } from "../components/Particles";
 import { ProductPlate, pickSlot } from "../components/ProductPlate";
+import { KineticText } from "../components/KineticText";
+import { LightLeak } from "../components/Transitions";
 import { BRAND } from "../config/brand";
 import { rise } from "../lib/motion";
 import { HEIGHT } from "../config/timeline";
@@ -14,14 +16,13 @@ import { HEIGHT } from "../config/timeline";
 export const S04Conexao: React.FC = () => {
   const frame = useCurrentFrame();
   const reveal = rise(frame, 0, 26);
-  const maskRadius = reveal * 1500;
   const zoom = 1 + 0.26 * rise(frame, 0, 120);
   const slot = pickSlot("usoReal", "composicaoHero", "frenteCamiseta");
   const glow = rise(frame, 20, 90);
   const rule = rise(frame, 70, 40);
 
   return (
-    <AbsoluteFill style={{ clipPath: `circle(${maskRadius}px at 50% 50%)` }}>
+    <AbsoluteFill style={{ clipPath: `inset(${(1 - reveal) * 100}% 0 0 0)` }}>
       <Backdrop tint="navy" />
       <ProductPlate slot={slot} scale={zoom} focus="48% 40%" dim={0.18} />
       <AbsoluteFill
@@ -31,6 +32,10 @@ export const S04Conexao: React.FC = () => {
         }}
       />
       <LightBeam progress={rise(frame, 10, 110)} color={BRAND.colors.gold} intensity={0.22} width={300} angle={-12} />
+      <div style={{ position: "absolute", left: 0, right: 0, top: 330, textAlign: "center", fontFamily: BRAND.fonts.display, fontStyle: "italic", fontSize: 70, color: BRAND.colors.ivory }}>
+        <KineticText text="Vestir a fé com memória." start={64} stagger={1.1} duration={26} />
+      </div>
+      <LightLeak frame={frame} at={6} dir={-1} />
       <Particles count={30} seed={41} color={BRAND.colors.ivory} speed={0.7} />
       <div
         style={{
