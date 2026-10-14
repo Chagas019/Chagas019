@@ -50,3 +50,25 @@ export const LightLeak: React.FC<{ frame: number; at: number; dir?: 1 | -1; colo
     </AbsoluteFill>
   );
 };
+
+// Linha dourada que atravessa o quadro de lado a lado no corte.
+export const SweepLine: React.FC<{ frame: number; at: number; y?: number }> = ({ frame, at, y = 960 }) => {
+  const p = interpolate(frame, [at - 2, at + 16], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  if (p <= 0 || p >= 1) return null;
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: y,
+        left: 0,
+        width: "100%",
+        height: 2,
+        background: `linear-gradient(90deg, transparent, ${BRAND.colors.gold}, #FFFFFF, ${BRAND.colors.gold}, transparent)`,
+        transform: `translateX(${-100 + 200 * p}%)`,
+        boxShadow: `0 0 16px 2px rgba(240,166,42,0.35)`,
+        opacity: Math.sin(p * Math.PI),
+        pointerEvents: "none",
+      }}
+    />
+  );
+};

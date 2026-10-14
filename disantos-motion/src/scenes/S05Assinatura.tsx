@@ -12,13 +12,13 @@ import { HEIGHT, WIDTH } from "../config/timeline";
 export const S05Assinatura: React.FC = () => {
   const frame = useCurrentFrame();
   const reveal = rise(frame, 0, 26);
-  const maskRadius = reveal * 1500;
+  const iris = (1 - reveal) * 50;
   const rule = rise(frame, 56, 34);
   const signature = rise(frame, 76, 30);
   const badgeCenter = HEIGHT / 2 - 160;
 
   return (
-    <AbsoluteFill style={{ clipPath: `circle(${maskRadius}px at 50% 50%)` }}>
+    <AbsoluteFill style={{ clipPath: `inset(${iris}% ${iris}% ${iris}% ${iris}% round ${(1 - reveal) * 240}px)` }}>
       <Backdrop />
       <LightBeam progress={rise(frame, 6, 60)} color={BRAND.colors.gold} intensity={0.16} width={420} angle={-12} />
       <AbsoluteFill style={{ alignItems: "center", justifyContent: "flex-start" }}>

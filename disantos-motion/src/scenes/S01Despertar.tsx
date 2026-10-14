@@ -43,6 +43,9 @@ export const S01Despertar: React.FC = () => {
             <LogoBadge diameter={BADGE} progress={badge} />
           </div>
         )}
+        <div style={{ position: "absolute", left: 0, right: 0, top: 790, textAlign: "center", fontFamily: BRAND.fonts.text, fontSize: 26, letterSpacing: "0.36em", textTransform: "uppercase", color: BRAND.colors.goldDim, opacity: rise(frame, 4, 30) }}>
+          Streetwear católico
+        </div>
         <LightLine progress={line} y={1120} />
         <div
           style={{
