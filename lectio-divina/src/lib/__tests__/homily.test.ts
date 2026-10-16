@@ -102,3 +102,30 @@ describe('homilia automática', () => {
     expect(gerarHomilia({ ...l, liturgia: '29º Domingo do Tempo Comum' }, '2026-10-18', 'domingo').texto).toContain('neste domingo, dia do Senhor');
   });
 });
+
+describe('não atribui a Jesus a fala de outros', () => {
+  const mt22 =
+    'Naquele tempo, 15os fariseus fizeram um plano para apanhar Jesus em alguma palavra. 16Então mandaram os seus discípulos, junto com alguns do partido de Herodes, para dizerem a Jesus: “Mestre, sabemos que és verdadeiro e que, de fato, ensinas o caminho de Deus. Não te deixas influenciar pela opinião dos outros, pois não julgas um homem pelas aparências. 17Dize-nos, pois, o que pensas: é lícito ou não pagar imposto a César?” 18Jesus percebeu a maldade deles e disse: “Hipócritas! Por que me preparais uma armadilha? 19Mostrai-me a moeda do imposto!” Levaram-lhe então a moeda. 20E Jesus disse: “De quem é a figura e a inscrição desta moeda?” 21Eles responderam: “De César”. Jesus então lhes disse: “Dai, pois, a César o que é de César e a Deus o que é de Deus”.';
+
+  it('usa só as falas de Jesus', async () => {
+    const { frasesRanqueadas } = await import('../homily');
+    const r = frasesRanqueadas(mt22);
+    expect(r.deJesus).toBe(true);
+    expect(r.frases[0]).toBe('Dai, pois, a César o que é de César e a Deus o que é de Deus');
+    expect(r.frases.join(' ')).not.toMatch(/Mestre, sabemos|influenciar|lícito/);
+  });
+
+  it('sem fala de Jesus, não diz que Jesus falou', async () => {
+    const { gerarHomilia } = await import('../homily');
+    const h = gerarHomilia(
+      {
+        data: '2026-12-08', liturgia: 'Imaculada Conceição', cor: 'Branco', primeiraLeitura: null, salmo: null, segundaLeitura: null,
+        evangelho: { referencia: 'Lc 1,26-38', titulo: '', texto: 'Naquele tempo, o anjo disse a Maria: “Alegra-te, cheia de graça, o Senhor está contigo!”' },
+      },
+      '2026-12-08',
+      'terça-feira',
+    );
+    expect(h.texto).not.toMatch(/Jesus não fala por falar|Hoje o Senhor nos repete/);
+    expect(h.texto).toContain('Alegra-te, cheia de graça, o Senhor está contigo!');
+  });
+});

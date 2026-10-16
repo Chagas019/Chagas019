@@ -60,26 +60,57 @@ const quebrarFrases = (t: string) =>
     .map((f) => f.trim().replace(/^[—–-]\s*/, ''))
     .filter(Boolean);
 
-/** Frases das falas do Evangelho (entre aspas), da mais forte para a menos forte. */
-export function frasesRanqueadas(texto: string): string[] {
-  const limpo = semVersiculos(texto.replace(/\n+/g, ' '));
-  // Uma fala pode ser longa (um discurso inteiro): quebra em frases e fica com as de tamanho bom.
-  const candidatas: { f: string; n: number; i: number }[] = [];
+// Quem fala antes das aspas é Jesus? ("Jesus disse:", "Jesus então lhes disse:", "disse Jesus:")
+// "dizerem a Jesus:" não conta: ali Jesus é quem ouve.
+const VERBOS = '(disse|diz|dizia|respondeu|responde|falou|falar|declarou|ensinava|ensinou|exclamou|perguntou|acrescentou|continuou)';
+const FALA_DE_JESUS = new RegExp(`Jesus[^.:“”"]{0,80}\\b${VERBOS}|\\b${VERBOS}(-lhes)?,?\\s+Jesus\\b`, 'i');
+
+const OUTRO_FALANTE = /\b(eles|elas|disseram|responderam|perguntaram|fariseus|escribas|discípulos|apóstolos|Pedro|povo|multidão|homem|mulher|anjo|Maria|João|soldados|centurião)\b/i;
+
+type Candidata = { f: string; n: number; i: number };
+
+function candidatas(limpo: string, soDeJesus: boolean): Candidata[] {
+  const out: Candidata[] = [];
+  let fimAnterior = 0;
+  let anteriorDeJesus = false;
   for (const m of limpo.matchAll(/[“"]([^”"]+)[”"]/g)) {
+    const antes = limpo.slice(fimAnterior, m.index);
+    fimAnterior = (m.index ?? 0) + m[0].length;
+    // "E acrescentou:" logo depois de uma fala de Jesus continua sendo Jesus, se ninguém mais entrou na cena.
+    const continuacao: boolean = anteriorDeJesus && antes.length < 60 && !OUTRO_FALANTE.test(antes);
+    anteriorDeJesus = FALA_DE_JESUS.test(antes) || continuacao;
+    if (soDeJesus && !anteriorDeJesus) continue;
+    // Uma fala pode ser longa (um discurso inteiro): quebra em frases e fica com as de tamanho bom.
     const fs = quebrarFrases(m[1]);
     fs.forEach((f, k) => {
-      if (f.length >= 25 && f.length <= 180 && f.split(' ').length >= 5 && !candidatas.some((c) => c.f === f)) {
-        candidatas.push({ f, n: pontuar(f, k === fs.length - 1), i: candidatas.length });
+      if (f.length >= 25 && f.length <= 180 && f.split(' ').length >= 5 && !out.some((c) => c.f === f)) {
+        out.push({ f, n: pontuar(f, k === fs.length - 1), i: out.length });
       }
     });
   }
-  if (candidatas.length) return candidatas.sort((a, b) => b.n - a.n || a.f.length - b.f.length || a.i - b.i).map((c) => c.f);
-  return quebrarFrases(limpo.replace(/^Naquele tempo,?\s*/i, '')).filter((f) => f.length > 20).slice(0, 2);
+  return out;
+}
+
+/**
+ * Frases do Evangelho, da mais forte para a menos forte. Prefere as falas de Jesus;
+ * `deJesus` diz se as frases são mesmo dele (para a homilia não atribuir a Jesus a fala de outro).
+ */
+export function frasesRanqueadas(texto: string): { frases: string[]; deJesus: boolean } {
+  const limpo = semVersiculos(texto.replace(/\n+/g, ' '));
+  const ordenar = (cs: Candidata[]) => cs.sort((a, b) => b.n - a.n || a.f.length - b.f.length || a.i - b.i).map((c) => c.f);
+  const deJesus = candidatas(limpo, true);
+  if (deJesus.length) return { frases: ordenar(deJesus), deJesus: true };
+  const outras = candidatas(limpo, false);
+  if (outras.length) return { frases: ordenar(outras), deJesus: false };
+  return {
+    frases: quebrarFrases(limpo.replace(/^Naquele tempo,?\s*/i, '')).filter((f) => f.length > 20).slice(0, 2),
+    deJesus: false,
+  };
 }
 
 /** Até 3 frases para destacar, na ordem em que aparecem no Evangelho. */
 export function frasesChave(texto: string, max = 3): string[] {
-  const top = frasesRanqueadas(texto).slice(0, max);
+  const top = frasesRanqueadas(texto).frases.slice(0, max);
   const limpo = semVersiculos(texto.replace(/\n+/g, ' '));
   return top.sort((a, b) => limpo.indexOf(a) - limpo.indexOf(b));
 }
@@ -112,7 +143,7 @@ export function montarRoteiro(l: Liturgia, dataLonga: string): Roteiro {
   const ev = evangelista(l.evangelho.referencia);
   const tempo = tempoLiturgico(l.liturgia);
   const frases = frasesChave(l.evangelho.texto);
-  const frase = frasesRanqueadas(l.evangelho.texto)[0] ?? '';
+  const frase = frasesRanqueadas(l.evangelho.texto).frases[0] ?? '';
   const refrao = l.salmo?.refrao ?? '';
   const nomeEv = ev ? `segundo ${ev.nome}` : '';
 
@@ -195,9 +226,9 @@ const TEMPO_NA_HOMILIA: Record<string, string> = {
 };
 
 const ABERTURAS = [
-  (quando: string, ev: string, f: string) => `Irmãos e irmãs, ${quando} o Evangelho${ev} nos coloca diante de uma palavra de Jesus que merece ficar no nosso coração: “${f}”.`,
+  (quando: string, ev: string, f: string) => `Irmãos e irmãs, ${quando} o Evangelho${ev} nos coloca diante de uma palavra que merece ficar no nosso coração: “${f}”.`,
   (quando: string, ev: string, f: string) => `Meus irmãos, ${quando} o Senhor nos fala no Evangelho${ev}, e uma frase se destaca, como se fosse dita para cada um de nós: “${f}”.`,
-  (quando: string, ev: string, f: string) => `Queridos irmãos e irmãs, ${quando} a Palavra de Deus chega até nós pelo Evangelho${ev}. Guardemos especialmente esta palavra de Jesus: “${f}”.`,
+  (quando: string, ev: string, f: string) => `Queridos irmãos e irmãs, ${quando} a Palavra de Deus chega até nós pelo Evangelho${ev}. Guardemos especialmente esta palavra: “${f}”.`,
 ];
 
 const ATUALIZACOES = [
@@ -233,7 +264,7 @@ export function gerarHomilia(l: Liturgia, iso: string, diaDaSemana: string): Hom
   const seed = semente(iso);
   const ev = evangelista(l.evangelho.referencia);
   const tempo = tempoLiturgico(l.liturgia);
-  const ranqueadas = frasesRanqueadas(l.evangelho.texto);
+  const { frases: ranqueadas, deJesus } = frasesRanqueadas(l.evangelho.texto);
   const central = ranqueadas[0] ?? 'Segue-me';
   const outras = frasesChave(l.evangelho.texto).filter((f) => f !== central).slice(0, 2);
   const refrao = l.salmo?.refrao ?? '';
@@ -253,9 +284,11 @@ export function gerarHomilia(l: Liturgia, iso: string, diaDaSemana: string): Hom
   // 2. O texto
   const texto2 = [
     ev ? PALAVRA_DO_EVANGELISTA[ev.nome] : '',
-    `No trecho de hoje (${l.evangelho.referencia}), Jesus não fala por falar.`,
-    outras.length === 1 ? `Ele diz também: “${fecharFrase(outras[0])}”` : '',
-    outras.length >= 2 ? `Ele diz também: “${fecharFrase(outras[0])}” E ainda: “${fecharFrase(outras[1])}”` : '',
+    deJesus
+      ? `No trecho de hoje (${l.evangelho.referencia}), Jesus não fala por falar.`
+      : `O trecho de hoje (${l.evangelho.referencia}) merece ser lido com calma.`,
+    outras.length === 1 ? `${deJesus ? 'Ele diz' : 'O texto diz'} também: “${fecharFrase(outras[0])}”` : '',
+    outras.length >= 2 ? `${deJesus ? 'Ele diz' : 'O texto diz'} também: “${fecharFrase(outras[0])}” E ainda: “${fecharFrase(outras[1])}”` : '',
     'Cada uma dessas palavras revela o coração de Deus, que nos conhece, nos chama e nos quer inteiros.',
   ];
   p.push(texto2.filter(Boolean).join(' '));
@@ -278,7 +311,7 @@ export function gerarHomilia(l: Liturgia, iso: string, diaDaSemana: string): Hom
   }
 
   // 4. Para hoje
-  p.push(`${sortear(ATUALIZACOES, seed, 1)} Hoje o Senhor nos repete: “${fecharFrase(central)}”`);
+  p.push(`${sortear(ATUALIZACOES, seed, 1)} ${deJesus ? 'Hoje o Senhor nos repete' : 'Guardemos hoje esta Palavra'}: “${fecharFrase(central)}”`);
 
   // 5. Convite e conclusão
   p.push(sortear(CONVITES, seed, 2));
