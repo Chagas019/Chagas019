@@ -12,8 +12,12 @@ Site com a Lectio Divina de cada dia. Feito com React, Vite, Tailwind CSS e luci
 O dia muda à meia-noite de Brasília, também quando a pessoa volta para a aba. A liturgia é buscada assim:
 
 1. cache do navegador (`localStorage`);
-2. `GET /api/lectio?data=aaaa-mm-dd`, uma função da Vercel (`api/lectio.js`) que busca a [API pública de liturgia diária](https://github.com/Dancrf/liturgia-diaria) e guarda a resposta em cache na CDN por 12 h;
-3. se a função não responder, a mesma API é chamada direto pelo navegador.
+2. `GET /api/lectio?data=aaaa-mm-dd`, uma função da Vercel (`api/lectio.js`) que tenta, nesta ordem, duas fontes públicas:
+   - [API Liturgia Diária](https://github.com/Dancrf/liturgia-diaria): `https://liturgia.up.railway.app/v2/?dia=16&mes=10&ano=2026`;
+   - reserva: API das Edições CNBB (a que alimenta liturgiadiaria.edicoescnbb.com.br): `https://api-liturgia.edicoescnbb.com.br/contents/in/date/2026-10-16`.
+
+   A resposta fica 12 h em cache na CDN, e o site mostra de qual fonte vieram os textos;
+3. se a função não responder (por exemplo, no `npm run dev`), a API Liturgia Diária é chamada direto pelo navegador.
 
 Nada fica gravado no repositório, então não há tarefa agendada para manter. Para trocar a fonte, defina `LITURGIA_API` na função e/ou `VITE_LITURGIA_API` no site.
 

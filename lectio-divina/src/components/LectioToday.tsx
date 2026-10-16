@@ -272,10 +272,16 @@ export default function LectioToday({ iso, today, onChangeDay, isDone, onToggleD
             </div>
 
             <p className="mt-8 text-white/35 text-xs leading-relaxed">
-              Textos da Liturgia Diária, carregados automaticamente a cada dia pela API pública{' '}
-              <a className="underline hover:text-white" href="https://github.com/Dancrf/liturgia-diaria" target="_blank" rel="noreferrer">
-                liturgia-diaria
-              </a>
+              Textos da Liturgia Diária, carregados automaticamente a cada dia de fonte pública:{' '}
+              {lectio.data.fonte === 'cnbb' ? (
+                <a className="underline hover:text-white" href="https://liturgiadiaria.edicoescnbb.com.br/" target="_blank" rel="noreferrer">
+                  Edições CNBB
+                </a>
+              ) : (
+                <a className="underline hover:text-white" href="https://github.com/Dancrf/liturgia-diaria" target="_blank" rel="noreferrer">
+                  API Liturgia Diária
+                </a>
+              )}
               . Confira também na{' '}
               <a className="underline hover:text-white" href="https://liturgia.cancaonova.com/pb/" target="_blank" rel="noreferrer">
                 Canção Nova

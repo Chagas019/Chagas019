@@ -13,6 +13,8 @@ export interface Liturgia {
   salmo: Leitura | null;
   segundaLeitura: Leitura | null;
   evangelho: Leitura;
+  /** Fonte usada pela função /api: 'liturgia-diaria' ou 'cnbb'. */
+  fonte?: string;
 }
 
 export function normalizeLiturgia(raw: unknown, dataPedida?: string): Liturgia;
