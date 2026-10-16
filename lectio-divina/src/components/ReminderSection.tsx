@@ -17,8 +17,8 @@ export default function ReminderSection() {
             Coloque na sua agenda.
           </h2>
           <p className="mt-6 max-w-md text-white/60 text-sm sm:text-base leading-relaxed">
-            Escolha um horário e adicione um compromisso diário no seu calendário para rezar o Evangelho e preparar a
-            homilia. Todo dia ele avisa e traz o link do site, que já abre no Evangelho do dia.
+            Escolha um horário e adicione um compromisso diário no seu calendário. Todo dia ele avisa e traz o link do
+            site, que já abre no Evangelho e na homilia do dia.
           </p>
         </Reveal>
 

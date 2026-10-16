@@ -12,13 +12,13 @@ export default function StepsSection() {
     <section id="passos" className="scroll-mt-4 bg-black px-6 sm:px-10 lg:px-16 py-16 sm:py-20 lg:py-28">
       <div className="mx-auto max-w-6xl">
         <Reveal>
-        <span className="text-white/50 text-xs tracking-[0.3em] uppercase">Antes de pregar, rezar</span>
+        <span className="text-white/50 text-xs tracking-[0.3em] uppercase">Para rezar</span>
         <h2 className="mt-5 font-podium uppercase leading-[0.95] tracking-tight text-[clamp(2.2rem,5vw,4rem)]">
           Os quatro passos.
         </h2>
         <p className="mt-6 max-w-xl text-white/60 text-sm sm:text-base leading-relaxed">
-          A homilia nasce da oração. Antes de seguir o roteiro, faça a Lectio Divina com o Evangelho do dia: a leitura
-          orante da Bíblia, praticada pela Igreja desde os primeiros monges. Quem prega primeiro se deixa tocar pela Palavra.
+          Depois de ler a homilia, reze o Evangelho do dia com a Lectio Divina: a leitura orante da Bíblia, praticada
+          pela Igreja desde os primeiros monges. Assim a Palavra sai da página e entra na vida.
         </p>
         </Reveal>
         <div className="mt-12 grid gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-4">

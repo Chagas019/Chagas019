@@ -4,8 +4,8 @@ Site com a Lectio Divina de cada dia. Feito com React, Vite, Tailwind CSS e luci
 
 - **Abertura** em tela cheia, com vídeo de fundo. Mostra a data de hoje, a referência do Evangelho do dia e quantos dias seguidos a pessoa já rezou.
 - **O Evangelho de hoje** aparece sozinho todo dia, com as outras leituras e o salmo logo abaixo.
-- **Preparar a homilia**: um roteiro montado automaticamente a partir das leituras do dia (`src/lib/homily.ts`). Destaca frases do Evangelho (copiadas do próprio texto), explica o evangelista e o tempo litúrgico, e guia em 5 passos: abertura, o que o texto diz, ligação com as outras leituras, atualização e convite final. O esboço pode ser copiado com um toque, e a pessoa não precisa escrever nada.
-- **Calendário** do mês: hoje fica destacado e os dias com a homilia preparada ganham uma marca. Tocar num dia abre o Evangelho e o roteiro daquela data.
+- **A homilia de hoje**, escrita automaticamente a partir das leituras do dia (`gerarHomilia` em `src/lib/homily.ts`). Ela usa a frase mais forte do Evangelho como título, comenta o evangelista e o tempo litúrgico, liga com a 1ª leitura e o refrão do salmo, traz para a vida e termina na Eucaristia. As frases entre aspas são copiadas do próprio Evangelho e do salmo. A redação varia conforme a data e é sempre a mesma para o mesmo dia. Dá para copiar ou ouvir em voz alta, e ninguém precisa escrever nada. Quem vai pregar pode abrir o roteiro por trás da homilia.
+- **Calendário** do mês: hoje fica destacado e os dias em que a homilia foi lida ganham uma marca. Tocar num dia abre o Evangelho e a homilia daquela data.
 - **Lembrete**: cria um compromisso diário no horário escolhido, no Google Agenda ou num arquivo `.ics` (iPhone e Outlook).
 
 ## Como atualiza todo dia

@@ -1,8 +1,8 @@
-import { useMemo, useState } from 'react';
-import { BookOpen, Check, ChevronLeft, ChevronRight, Copy, ExternalLink, RotateCw } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { BookOpen, Check, ChevronLeft, ChevronRight, Copy, ExternalLink, RotateCw, Square, Volume2 } from 'lucide-react';
 import { useLectio } from '../hooks';
-import { addDays, longDate } from '../lib/dates';
-import { montarRoteiro } from '../lib/homily';
+import { addDays, longDate, weekday } from '../lib/dates';
+import { gerarHomilia, montarRoteiro } from '../lib/homily';
 import { liturgicalColor, type Leitura } from '../lib/lectio';
 import Reveal from './Reveal';
 
@@ -70,21 +70,55 @@ function DayNav({ iso, today, onChangeDay }: Pick<Props, 'iso' | 'today' | 'onCh
 export default function LectioToday({ iso, today, onChangeDay, isDone, onToggleDone }: Props) {
   const lectio = useLectio(iso);
   const [copied, setCopied] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
   const isToday = iso === today;
   const roteiro = useMemo(
     () => (lectio.status === 'ok' ? montarRoteiro(lectio.data, longDate(iso)) : null),
     [lectio, iso],
   );
+  const homilia = useMemo(
+    () => (lectio.status === 'ok' ? gerarHomilia(lectio.data, iso, weekday(iso)) : null),
+    [lectio, iso],
+  );
+  const canSpeak = typeof window !== 'undefined' && 'speechSynthesis' in window;
+
+  // Para a leitura em voz alta ao trocar de dia ou sair da página.
+  useEffect(() => {
+    return () => {
+      if (canSpeak) window.speechSynthesis.cancel();
+      setSpeaking(false);
+    };
+  }, [iso, canSpeak]);
 
   const copy = async () => {
-    if (!roteiro) return;
+    if (!homilia) return;
     try {
-      await navigator.clipboard.writeText(roteiro.esboco);
+      await navigator.clipboard.writeText(homilia.texto);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     } catch {
       /* sem permissão de área de transferência */
     }
+  };
+
+  const speak = () => {
+    if (!homilia || !canSpeak) return;
+    const synth = window.speechSynthesis;
+    if (speaking) {
+      synth.cancel();
+      setSpeaking(false);
+      return;
+    }
+    const u = new SpeechSynthesisUtterance(homilia.paragrafos.join('\n\n'));
+    u.lang = 'pt-BR';
+    u.rate = 0.95;
+    const voz = synth.getVoices().find((v) => v.lang.toLowerCase().startsWith('pt-br'));
+    if (voz) u.voice = voz;
+    u.onend = () => setSpeaking(false);
+    u.onerror = () => setSpeaking(false);
+    synth.cancel();
+    synth.speak(u);
+    setSpeaking(true);
   };
 
   return (
@@ -185,84 +219,51 @@ export default function LectioToday({ iso, today, onChangeDay, isDone, onToggleD
         </div>
       </section>
 
-      {/* Roteiro automático da homilia */}
-      {roteiro && lectio.status === 'ok' && (
+      {/* Homilia do dia, escrita automaticamente */}
+      {homilia && roteiro && lectio.status === 'ok' && (
         <section id="homilia" className="scroll-mt-4 bg-neutral-950 px-6 sm:px-10 lg:px-16 py-16 sm:py-20 lg:py-28">
-          <div className="mx-auto max-w-5xl">
+          <div className="mx-auto max-w-3xl">
             <Reveal>
-              <span className="text-white/50 text-xs tracking-[0.3em] uppercase">Preparar a homilia</span>
+              <span className="text-white/50 text-xs tracking-[0.3em] uppercase">
+                {isToday ? 'A homilia de hoje' : 'Homilia do dia'} · {lectio.data.evangelho.referencia}
+              </span>
               <h2 className="mt-5 font-podium uppercase leading-[0.95] tracking-tight text-[clamp(2.2rem,5vw,4rem)]">
-                A homilia de hoje, passo a passo.
+                “{homilia.titulo}”
               </h2>
-              <p className="mt-6 max-w-2xl text-white/60 text-sm sm:text-base leading-relaxed">
-                O roteiro é montado sozinho a partir das leituras de {longDate(iso)}. Reze o Evangelho, siga os passos e
-                fale com o coração: uma boa homilia de semana tem de 5 a 8 minutos.
-              </p>
             </Reveal>
 
-            {roteiro.frases.length > 0 && (
-              <Reveal delay={1} className="mt-12">
-                <p className="text-xs tracking-[0.3em] uppercase text-white/50">Frases do Evangelho para destacar</p>
-                <div className="mt-5 grid gap-px bg-white/10 md:grid-cols-3">
-                  {roteiro.frases.map((f, i) => (
-                    <blockquote key={i} className="bg-neutral-950 p-6 text-white/90 text-base sm:text-lg leading-relaxed">
-                      “{f}”
-                    </blockquote>
-                  ))}
-                </div>
-              </Reveal>
-            )}
-
-            {(roteiro.evangelista || roteiro.tempo) && (
-              <Reveal className="mt-12 grid gap-6 sm:grid-cols-2">
-                {roteiro.evangelista && (
-                  <div className="border border-white/10 p-6">
-                    <p className="text-xs tracking-widest uppercase text-white/50">Evangelista</p>
-                    <p className="mt-2 font-podium uppercase text-2xl">{roteiro.evangelista.nome}</p>
-                    <p className="mt-3 text-white/65 text-sm leading-relaxed">{roteiro.evangelista.nota}</p>
-                  </div>
-                )}
-                {roteiro.tempo && (
-                  <div className="border border-white/10 p-6">
-                    <p className="text-xs tracking-widest uppercase text-white/50">Tempo litúrgico</p>
-                    <p className="mt-2 font-podium uppercase text-2xl">{roteiro.tempo.nome}</p>
-                    <p className="mt-3 text-white/65 text-sm leading-relaxed">{roteiro.tempo.dica}</p>
-                  </div>
-                )}
-              </Reveal>
-            )}
-
-            <ol className="mt-14 space-y-px bg-white/10">
-              {roteiro.passos.map((p, i) => (
-                <li key={p.titulo} className="bg-neutral-950">
-                  <Reveal className="grid gap-4 py-8 sm:grid-cols-[80px_1fr] sm:gap-8">
-                    <span className="font-podium text-white/30 text-4xl">{String(i + 1).padStart(2, '0')}</span>
-                    <div>
-                      <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-                        <h3 className="font-podium uppercase text-2xl sm:text-3xl">{p.titulo}</h3>
-                        <span className="text-xs tracking-widest uppercase text-white/40">{p.minutos}</span>
-                      </div>
-                      <p className="mt-3 text-white/75 text-sm sm:text-base leading-relaxed">{p.texto}</p>
-                      <ul className="mt-4 space-y-1.5 text-white/50 text-sm">
-                        {p.perguntas.map((q) => (
-                          <li key={q}>— {q}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </Reveal>
-                </li>
-              ))}
-            </ol>
-
-            <Reveal className="mt-12 flex flex-wrap gap-4">
+            <Reveal delay={1} className="mt-8 flex flex-wrap gap-3">
               <button
                 type="button"
                 onClick={copy}
-                className="group inline-flex items-center gap-2 bg-black hover:bg-neutral-900 border border-white/20 px-6 sm:px-8 py-4 text-xs tracking-widest uppercase transition-colors"
+                className="inline-flex items-center gap-2 bg-black hover:bg-neutral-900 border border-white/20 px-5 sm:px-7 py-3 sm:py-4 text-[11px] sm:text-xs tracking-widest uppercase transition-colors"
               >
                 <Copy className="w-4 h-4" />
-                {copied ? 'Esboço copiado' : 'Copiar o esboço da homilia'}
+                {copied ? 'Homilia copiada' : 'Copiar homilia'}
               </button>
+              {canSpeak && (
+                <button
+                  type="button"
+                  onClick={speak}
+                  className="inline-flex items-center gap-2 border border-white/30 hover:border-white/60 hover:bg-white/10 px-5 sm:px-7 py-3 sm:py-4 text-[11px] sm:text-xs tracking-widest uppercase transition-all"
+                >
+                  {speaking ? <Square className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                  {speaking ? 'Parar' : 'Ouvir'}
+                </button>
+              )}
+            </Reveal>
+
+            <Reveal delay={2}>
+              <article className="mt-10 text-white/85 text-base sm:text-lg leading-relaxed">
+                {homilia.paragrafos.map((par, i) => (
+                  <p key={i} className="mb-6 last:mb-0 first-letter:font-podium first-letter:text-white">
+                    {par}
+                  </p>
+                ))}
+              </article>
+            </Reveal>
+
+            <Reveal className="mt-12">
               <button
                 type="button"
                 onClick={onToggleDone}
@@ -271,8 +272,50 @@ export default function LectioToday({ iso, today, onChangeDay, isDone, onToggleD
                 }`}
               >
                 <Check className="w-4 h-4" />
-                {isDone ? 'Homilia preparada · no calendário' : 'Marcar homilia como preparada'}
+                {isDone ? 'Homilia lida · marcada no calendário' : 'Marcar homilia como lida'}
               </button>
+              <p className="mt-6 text-white/35 text-xs leading-relaxed">
+                Homilia escrita automaticamente pelo site a partir das leituras do dia: as frases entre aspas são do próprio
+                Evangelho e do salmo. Muda sozinha todo dia.
+              </p>
+            </Reveal>
+
+            {/* Para quem vai pregar: o roteiro por trás da homilia */}
+            <Reveal className="mt-14">
+              <details className="group border-t border-white/10 pt-6">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-xs tracking-widest uppercase text-white/70 hover:text-white">
+                  Vai pregar? Veja o roteiro desta homilia
+                  <ChevronRight className="w-4 h-4 transition-transform group-open:rotate-90" />
+                </summary>
+                <div className="mt-8">
+                  {roteiro.frases.length > 0 && (
+                    <>
+                      <p className="text-xs tracking-[0.3em] uppercase text-white/50">Frases do Evangelho para destacar</p>
+                      <div className="mt-4 grid gap-px bg-white/10">
+                        {roteiro.frases.map((f, i) => (
+                          <blockquote key={i} className="bg-neutral-950 py-4 text-white/85 leading-relaxed">
+                            “{f}”
+                          </blockquote>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                  <ol className="mt-8 space-y-6">
+                    {roteiro.passos.map((p, i) => (
+                      <li key={p.titulo} className="grid grid-cols-[48px_1fr] gap-4">
+                        <span className="font-podium text-white/30 text-3xl">{String(i + 1).padStart(2, '0')}</span>
+                        <div>
+                          <div className="flex flex-wrap items-baseline gap-x-3">
+                            <h3 className="font-podium uppercase text-xl sm:text-2xl">{p.titulo}</h3>
+                            <span className="text-[10px] tracking-widest uppercase text-white/40">{p.minutos}</span>
+                          </div>
+                          <p className="mt-2 text-white/65 text-sm leading-relaxed">{p.texto}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </details>
             </Reveal>
           </div>
         </section>

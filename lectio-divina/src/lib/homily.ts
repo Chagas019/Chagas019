@@ -38,24 +38,54 @@ export function semVersiculos(texto: string): string {
     .trim();
 }
 
-/** Até 3 frases curtas das falas do Evangelho (entre aspas) para destacar; senão, as primeiras frases. */
-export function frasesChave(texto: string, max = 3): string[] {
-  const limpo = semVersiculos(texto.replace(/\n+/g, ' '));
-  const frases = (t: string) => t.split(/(?<=[.!?])\s+/).map((f) => f.trim().replace(/^[—–-]\s*/, ''));
-  // Uma fala pode ser longa (um discurso inteiro): quebra em frases e fica com as de tamanho bom.
-  const falas = [...limpo.matchAll(/[“"]([^”"]+)[”"]/g)]
-    .flatMap((m) => frases(m[1]))
-    .filter((f) => f.length >= 25 && f.length <= 180 && f.split(' ').length >= 5);
-  const unicas = [...new Set(falas)];
-  if (unicas.length) {
-    // Frases mais curtas costumam ser as mais fortes para uma homilia; mantém a ordem do texto.
-    const escolhidas = [...unicas].sort((a, b) => a.length - b.length).slice(0, max);
-    return unicas.filter((f) => escolhidas.includes(f));
-  }
-  return frases(limpo.replace(/^Naquele tempo,?\s*/i, ''))
-    .filter((f) => f.length > 20)
-    .slice(0, Math.min(2, max));
+const CONECTIVOS = /^(sim|não,|portanto|pois|porque|então|e |mas |ora|no entanto|por isso|assim|que |quem )/i;
+const FORTES = /\b(Deus|Pai|Reino|amor|amai|ama|vida|paz|misericórdia|medo|valeis|perdo|segue|segui|felizes|bem-aventurad|alegr|luz|fé|salva|coração|Senhor)/i;
+const PESADAS = /\b(inferno|temei|ai de|hipócritas|condena)/i;
+
+function pontuar(f: string, ultimaDaFala: boolean): number {
+  let n = 0;
+  if (FORTES.test(f)) n += 3;
+  if (ultimaDaFala) n += 2;
+  if (f.endsWith('!')) n += 1;
+  if (CONECTIVOS.test(f)) n -= 3;
+  if (PESADAS.test(f)) n -= 4;
+  if (f.endsWith('?')) n -= 2;
+  if (f.length > 120) n -= 1;
+  return n;
 }
+
+const quebrarFrases = (t: string) =>
+  t
+    .split(/(?<=[.!?])\s+/)
+    .map((f) => f.trim().replace(/^[—–-]\s*/, ''))
+    .filter(Boolean);
+
+/** Frases das falas do Evangelho (entre aspas), da mais forte para a menos forte. */
+export function frasesRanqueadas(texto: string): string[] {
+  const limpo = semVersiculos(texto.replace(/\n+/g, ' '));
+  // Uma fala pode ser longa (um discurso inteiro): quebra em frases e fica com as de tamanho bom.
+  const candidatas: { f: string; n: number; i: number }[] = [];
+  for (const m of limpo.matchAll(/[“"]([^”"]+)[”"]/g)) {
+    const fs = quebrarFrases(m[1]);
+    fs.forEach((f, k) => {
+      if (f.length >= 25 && f.length <= 180 && f.split(' ').length >= 5 && !candidatas.some((c) => c.f === f)) {
+        candidatas.push({ f, n: pontuar(f, k === fs.length - 1), i: candidatas.length });
+      }
+    });
+  }
+  if (candidatas.length) return candidatas.sort((a, b) => b.n - a.n || a.f.length - b.f.length || a.i - b.i).map((c) => c.f);
+  return quebrarFrases(limpo.replace(/^Naquele tempo,?\s*/i, '')).filter((f) => f.length > 20).slice(0, 2);
+}
+
+/** Até 3 frases para destacar, na ordem em que aparecem no Evangelho. */
+export function frasesChave(texto: string, max = 3): string[] {
+  const top = frasesRanqueadas(texto).slice(0, max);
+  const limpo = semVersiculos(texto.replace(/\n+/g, ' '));
+  return top.sort((a, b) => limpo.indexOf(a) - limpo.indexOf(b));
+}
+
+const NOVO_TESTAMENTO = /^\s*(At|Rm|[12]\s?Cor|Gl|Ef|Fl|Cl|[12]\s?Ts|[12]\s?Tm|Tt|Fm|Hb|Tg|[12]\s?Pd|[123]\s?Jo|Jd|Ap)\b/;
+export const doNovoTestamento = (ref: string) => NOVO_TESTAMENTO.test(ref);
 
 export type Tempo = { nome: string; dica: string };
 
@@ -82,7 +112,7 @@ export function montarRoteiro(l: Liturgia, dataLonga: string): Roteiro {
   const ev = evangelista(l.evangelho.referencia);
   const tempo = tempoLiturgico(l.liturgia);
   const frases = frasesChave(l.evangelho.texto);
-  const frase = frases[0] ?? '';
+  const frase = frasesRanqueadas(l.evangelho.texto)[0] ?? '';
   const refrao = l.salmo?.refrao ?? '';
   const nomeEv = ev ? `segundo ${ev.nome}` : '';
 
@@ -138,4 +168,122 @@ export function montarRoteiro(l: Liturgia, dataLonga: string): Roteiro {
     .join('\n');
 
   return { evangelista: ev, tempo, frases, passos, esboco };
+}
+
+// ---------------------------------------------------------------------------
+// Homilia completa, escrita automaticamente a partir das leituras do dia.
+// O texto junta frases copiadas do Evangelho e do salmo com reflexões gerais e
+// seguras (sem inventar fatos sobre o texto). A variação de frases é sorteada pela
+// data, então cada dia tem uma redação diferente, mas sempre a mesma para aquele dia.
+
+export type Homilia = { titulo: string; paragrafos: string[]; texto: string };
+
+const PALAVRA_DO_EVANGELISTA: Record<string, string> = {
+  Mateus: 'Mateus gosta de mostrar Jesus como o Mestre que cumpre as promessas de Deus e ensina o caminho do Reino. Ele não fala de longe: fala para quem quer de verdade ser discípulo.',
+  Marcos: 'Marcos conta tudo com pressa, como quem não quer perder tempo: Jesus passa, age, cura e chama. E, ao mesmo tempo, vai revelando quem Ele é: o Filho de Deus que veio para servir.',
+  Lucas: 'Lucas é chamado o evangelista da misericórdia. No seu Evangelho, Jesus tem um olhar especial para os pobres, para os pecadores, para os que ninguém vê, e muitas vezes aparece rezando ao Pai.',
+  João: 'João escreve como quem contempla. Cada gesto de Jesus é um sinal, cada palavra abre uma janela para o mistério: Ele é a Palavra feita carne, que veio para que tenhamos vida em abundância.',
+};
+
+const TEMPO_NA_HOMILIA: Record<string, string> = {
+  Advento: 'Estamos no Advento, tempo de espera e de vigilância. A Igreja nos convida a preparar o coração, porque o Senhor vem, e vem para ficar.',
+  Natal: 'Estamos no tempo do Natal, quando contemplamos um Deus que não ficou distante, mas se fez criança, se fez próximo, se fez um de nós.',
+  Quaresma: 'Estamos na Quaresma, caminho de conversão rumo à Páscoa. Oração, jejum e caridade não são peso: são o jeito de abrir espaço para Deus.',
+  'Semana Santa': 'Estamos na Semana Santa, o coração do ano litúrgico. Tudo o que ouvimos hoje nos aproxima da cruz e da ressurreição do Senhor.',
+  Páscoa: 'Estamos no tempo pascal, tempo da alegria do Ressuscitado. Cristo está vivo, e cada Palavra que ouvimos agora tem o brilho da manhã da Páscoa.',
+  'Tempo Comum': 'Estamos no Tempo Comum, e isso não quer dizer tempo sem importância: é o tempo de seguir Jesus no dia a dia, no trabalho, em casa, nas coisas simples.',
+};
+
+const ABERTURAS = [
+  (quando: string, ev: string, f: string) => `Irmãos e irmãs, ${quando} o Evangelho${ev} nos coloca diante de uma palavra de Jesus que merece ficar no nosso coração: “${f}”.`,
+  (quando: string, ev: string, f: string) => `Meus irmãos, ${quando} o Senhor nos fala no Evangelho${ev}, e uma frase se destaca, como se fosse dita para cada um de nós: “${f}”.`,
+  (quando: string, ev: string, f: string) => `Queridos irmãos e irmãs, ${quando} a Palavra de Deus chega até nós pelo Evangelho${ev}. Guardemos especialmente esta palavra de Jesus: “${f}”.`,
+];
+
+const ATUALIZACOES = [
+  'Esta Palavra não foi escrita só para quem estava ali com Jesus. Ela é para nós, hoje. Pensemos na nossa casa, no nosso trabalho, nas pessoas com quem convivemos: onde precisamos ouvir isso de novo? Talvez numa relação que esfriou, numa preocupação que tira o nosso sono, numa decisão que estamos adiando.',
+  'É fácil ouvir o Evangelho e achar que ele fala dos outros. Mas Jesus olha para nós. Ele conhece o nosso cansaço, as nossas lutas, as nossas alegrias e as nossas quedas. E é justamente aí, na vida como ela é, que a sua Palavra quer entrar e transformar.',
+  'Quantas vezes vivemos correndo, cheios de compromissos, e a Palavra de Deus fica para depois. Hoje o Senhor nos para no caminho. Ele não quer só ser ouvido: quer ser acolhido, quer mudar alguma coisa concreta em nós, em nossa família, em nossa comunidade.',
+];
+
+const CONVITES = [
+  'Por isso, levemos daqui um propósito simples: escolher um gesto concreto, nesta semana, que mostre que esta Palavra entrou em nós. Uma reconciliação, uma visita, uma oração mais fiel, um perdão que estava guardado.',
+  'Que tal sairmos daqui com um compromisso pequeno, mas verdadeiro? Repetir esta frase do Evangelho ao acordar, e deixar que ela guie as nossas escolhas durante o dia.',
+  'Peçamos ao Senhor a coragem de não deixar esta Palavra só nos ouvidos. Que ela desça ao coração e chegue às mãos, em gestos de amor, de paciência e de serviço a quem mais precisa.',
+];
+
+const CONCLUSOES = [
+  'E agora, ao redor do altar, o mesmo Senhor que nos falou na Palavra se entrega a nós no Pão da Eucaristia. Que Ele nos dê a graça de viver o que ouvimos. Amém.',
+  'Que Nossa Senhora, que guardava todas as coisas no coração, nos ensine a guardar e a viver esta Palavra. E que a Eucaristia que vamos celebrar nos dê força para isso. Amém.',
+  'Continuemos esta celebração com o coração aberto. O Cristo que nos falou agora vai se fazer alimento para nós. Que Ele nos transforme naquilo que recebemos. Amém.',
+];
+
+function semente(iso: string): number {
+  let h = 0;
+  for (const c of iso) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return h;
+}
+
+const sortear = <T,>(lista: T[], seed: number, salto: number) => lista[(seed + salto) % lista.length];
+
+const fecharFrase = (f: string) => (/[.!?…]$/.test(f) ? f : `${f}.`);
+
+/** Escreve a homilia do dia, pronta para ler ou rezar, a partir das leituras. */
+export function gerarHomilia(l: Liturgia, iso: string, diaDaSemana: string): Homilia {
+  const seed = semente(iso);
+  const ev = evangelista(l.evangelho.referencia);
+  const tempo = tempoLiturgico(l.liturgia);
+  const ranqueadas = frasesRanqueadas(l.evangelho.texto);
+  const central = ranqueadas[0] ?? 'Segue-me';
+  const outras = frasesChave(l.evangelho.texto).filter((f) => f !== central).slice(0, 2);
+  const refrao = l.salmo?.refrao ?? '';
+  const domingo = /domingo/i.test(l.liturgia) || diaDaSemana === 'domingo';
+  const quando = domingo ? 'neste domingo, dia do Senhor,' : `nesta ${diaDaSemana},`;
+  const evTxt = ev ? ` segundo ${ev.nome}` : '';
+
+  const p: string[] = [];
+
+  // 1. Abertura
+  p.push(
+    [sortear(ABERTURAS, seed, 0)(quando, evTxt, fecharFrase(central).replace(/\.$/, '')), tempo ? TEMPO_NA_HOMILIA[tempo.nome] : '']
+      .filter(Boolean)
+      .join(' '),
+  );
+
+  // 2. O texto
+  const texto2 = [
+    ev ? PALAVRA_DO_EVANGELISTA[ev.nome] : '',
+    `No trecho de hoje (${l.evangelho.referencia}), Jesus não fala por falar.`,
+    outras.length === 1 ? `Ele diz também: “${fecharFrase(outras[0])}”` : '',
+    outras.length >= 2 ? `Ele diz também: “${fecharFrase(outras[0])}” E ainda: “${fecharFrase(outras[1])}”` : '',
+    'Cada uma dessas palavras revela o coração de Deus, que nos conhece, nos chama e nos quer inteiros.',
+  ];
+  p.push(texto2.filter(Boolean).join(' '));
+
+  // 3. As leituras juntas
+  if (l.primeiraLeitura || refrao) {
+    p.push(
+      [
+        l.primeiraLeitura
+          ? doNovoTestamento(l.primeiraLeitura.referencia)
+            ? `A primeira leitura (${l.primeiraLeitura.referencia}), dos escritos dos apóstolos, mostra como a Igreja nascente acolheu e viveu este mesmo Evangelho.`
+            : `A primeira leitura (${l.primeiraLeitura.referencia}) caminha junto com este Evangelho: a Palavra de Deus é uma só, e o Antigo e o Novo Testamento se iluminam um ao outro.`
+          : '',
+        l.segundaLeitura ? `E a segunda leitura (${l.segundaLeitura.referencia}) nos ajuda a ver como os primeiros cristãos viveram esta mesma fé.` : '',
+        refrao ? `Por isso, com o salmista, rezamos de coração: “${fecharFrase(refrao)}”` : '',
+      ]
+        .filter(Boolean)
+        .join(' '),
+    );
+  }
+
+  // 4. Para hoje
+  p.push(`${sortear(ATUALIZACOES, seed, 1)} Hoje o Senhor nos repete: “${fecharFrase(central)}”`);
+
+  // 5. Convite e conclusão
+  p.push(sortear(CONVITES, seed, 2));
+  p.push(sortear(CONCLUSOES, seed, 0));
+
+  const titulo = fecharFrase(central).replace(/\.$/, '');
+  return { titulo, paragrafos: p, texto: [titulo.toUpperCase(), ...p].join('\n\n') };
 }

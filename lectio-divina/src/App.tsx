@@ -143,9 +143,9 @@ export default function App() {
             </h1>
 
             <p className="animate-fade-up-delay-2 mt-6 lg:mt-8 text-white/70 text-sm sm:text-base font-inter leading-relaxed max-w-md">
-              O Evangelho de cada dia e um roteiro
+              O Evangelho de cada dia e a homilia
               <br />
-              para preparar a homilia —{' '}
+              prontos para você rezar —{' '}
               <strong className="text-white font-semibold">sem se perder.</strong>
             </p>
 

@@ -60,3 +60,45 @@ describe('roteiro da homilia', () => {
     expect(r.passos[1].texto).toContain('segundo Lucas');
   });
 });
+
+describe('homilia automática', () => {
+  const l = {
+    data: '2026-10-16',
+    liturgia: '6ª feira da 28ª Semana do Tempo Comum',
+    cor: 'Verde',
+    primeiraLeitura: { referencia: 'Ef 1,11-14', titulo: '', texto: '' },
+    salmo: { referencia: 'Sl 32(33)', titulo: '', texto: '', refrao: 'Feliz o povo que o Senhor escolheu por sua herança!' },
+    segundaLeitura: null,
+    evangelho: {
+      referencia: 'Lc 12,1-7',
+      titulo: '',
+      texto: 'Naquele tempo, Jesus começou a falar: “Tomai cuidado com o fermento dos fariseus, que é a hipocrisia. 6No entanto, nenhum deles é esquecido por Deus. Vós valeis mais do que muitos pardais”.',
+    },
+  };
+
+  it('escreve a homilia inteira com as leituras do dia', async () => {
+    const { gerarHomilia } = await import('../homily');
+    const h = gerarHomilia(l, '2026-10-16', 'sexta-feira');
+    expect(h.paragrafos.length).toBeGreaterThanOrEqual(5);
+    expect(h.texto).toContain('nesta sexta-feira');
+    expect(h.texto).toContain('segundo Lucas');
+    expect(h.texto).toContain('Lc 12,1-7');
+    expect(h.texto).toContain('Ef 1,11-14');
+    expect(h.texto).toContain('Feliz o povo que o Senhor escolheu por sua herança!');
+    expect(h.texto).toContain('Tempo Comum');
+    expect(h.texto.trim().endsWith('Amém.')).toBe(true);
+    expect(h.texto).not.toMatch(/undefined|null|“”/);
+  });
+
+  it('é a mesma para o mesmo dia e muda de redação entre dias', async () => {
+    const { gerarHomilia } = await import('../homily');
+    expect(gerarHomilia(l, '2026-10-16', 'sexta-feira').texto).toBe(gerarHomilia(l, '2026-10-16', 'sexta-feira').texto);
+    const textos = new Set(['2026-10-16', '2026-10-17', '2026-10-18', '2026-10-19'].map((d) => gerarHomilia(l, d, 'sábado').paragrafos[0]));
+    expect(textos.size).toBeGreaterThan(1);
+  });
+
+  it('fala de domingo quando é domingo', async () => {
+    const { gerarHomilia } = await import('../homily');
+    expect(gerarHomilia({ ...l, liturgia: '29º Domingo do Tempo Comum' }, '2026-10-18', 'domingo').texto).toContain('neste domingo, dia do Senhor');
+  });
+});

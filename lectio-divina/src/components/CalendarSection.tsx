@@ -31,8 +31,8 @@ export default function CalendarSection({ today, selected, done, onPick }: Props
             Um dia de cada vez.
           </h2>
           <p className="mt-6 max-w-md text-white/60 text-sm sm:text-base leading-relaxed">
-            Toque em qualquer dia para abrir o Evangelho e o roteiro da homilia daquela data. Hoje fica destacado e
-            os dias com a homilia preparada ganham uma marca — assim você sempre sabe onde está.
+            Toque em qualquer dia para abrir o Evangelho e a homilia daquela data. Hoje fica destacado e os dias em
+            que você leu a homilia ganham uma marca — assim você sempre sabe onde está.
           </p>
           <div className="mt-10 flex flex-wrap gap-8 sm:gap-12">
             <div>
@@ -44,7 +44,7 @@ export default function CalendarSection({ today, selected, done, onPick }: Props
                 {doneThisMonth}
                 {daysSoFar > 0 && <span className="text-white/30 text-xl sm:text-2xl">/{daysSoFar}</span>}
               </div>
-              <div className="mt-1 text-white/50 text-[10px] sm:text-xs tracking-widest uppercase">Preparadas no mês</div>
+              <div className="mt-1 text-white/50 text-[10px] sm:text-xs tracking-widest uppercase">Lidas no mês</div>
             </div>
           </div>
           <ul className="mt-10 space-y-3 text-xs text-white/60">
@@ -58,7 +58,7 @@ export default function CalendarSection({ today, selected, done, onPick }: Props
               <span className="relative h-5 w-5 bg-white/5">
                 <span className="absolute bottom-0.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-amber-300" />
               </span>
-              Homilia preparada
+              Homilia lida
             </li>
           </ul>
         </Reveal>
@@ -119,7 +119,7 @@ export default function CalendarSection({ today, selected, done, onPick }: Props
                         <button
                           type="button"
                           onClick={() => onPick(iso)}
-                          aria-label={`Abrir o Evangelho de ${iso}${isDone ? ', homilia preparada' : ''}`}
+                          aria-label={`Abrir o Evangelho de ${iso}${isDone ? ', homilia lida' : ''}`}
                           aria-current={isToday ? 'date' : undefined}
                           className={`relative flex aspect-square w-full items-center justify-center text-sm sm:text-base transition-colors ${
                             isSel
