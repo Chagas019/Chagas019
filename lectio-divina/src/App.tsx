@@ -5,7 +5,8 @@ import { shortDate, weekday } from './lib/dates';
 import { streak } from './lib/progress';
 import LectioToday from './components/LectioToday';
 import CalendarSection from './components/CalendarSection';
-import StepsSection from './components/StepsSection';
+import PraticaLectio from './components/PraticaLectio';
+import SectionDots from './components/SectionDots';
 import ReminderSection from './components/ReminderSection';
 import Footer from './components/Footer';
 import JesusBackground from './components/JesusBackground';
@@ -14,8 +15,8 @@ import ScrollProgress from './components/ScrollProgress';
 const NAV_LINKS = [
   { label: 'Evangelho', href: '#hoje' },
   { label: 'Homilia', href: '#homilia' },
+  { label: 'Sua Lectio', href: '#pratica' },
   { label: 'Calendário', href: '#calendario' },
-  { label: 'Lembrete', href: '#lembrete' },
 ];
 
 export default function App() {
@@ -59,7 +60,8 @@ export default function App() {
   return (
     <>
       <ScrollProgress />
-      <section className="relative h-screen min-h-[640px] w-full overflow-hidden">
+      <SectionDots />
+      <section id="topo" className="relative h-screen min-h-[640px] w-full overflow-hidden">
         <JesusBackground />
 
         <div className="relative z-10 flex h-full flex-col">
@@ -118,9 +120,9 @@ export default function App() {
             </h1>
 
             <p className="animate-fade-up-delay-2 mt-6 lg:mt-8 text-white/70 text-sm sm:text-base font-inter leading-relaxed max-w-md">
-              O Evangelho de cada dia e a homilia
+              O Evangelho e a homilia de cada dia,
               <br />
-              prontos para você rezar —{' '}
+              e um guia para você fazer a sua Lectio —{' '}
               <strong className="text-white font-semibold">sem se perder.</strong>
             </p>
 
@@ -219,11 +221,9 @@ export default function App() {
           iso={selected}
           today={today}
           onChangeDay={setSelected}
-          isDone={done.has(selected)}
-          onToggleDone={() => toggleDone(selected)}
         />
+        <PraticaLectio feito={done.has(today)} onConcluir={() => toggleDone(today)} />
         <CalendarSection today={today} selected={selected} done={done} onPick={openDay} />
-        <StepsSection />
         <ReminderSection />
       </main>
       <Footer />

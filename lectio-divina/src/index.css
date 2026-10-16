@@ -106,7 +106,7 @@ body {
   isolation: isolate;
   overflow: hidden;
 }
-.sec > * { position: relative; z-index: 1; }
+.sec > *:not(.absolute) { position: relative; z-index: 1; }
 /* Textura de papel/grão bem leve */
 .sec::before {
   content: '';
@@ -284,7 +284,40 @@ body {
 @keyframes rolar { 0% { transform: translateY(0); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
 .rolar-ponto { animation: rolar 1.8s ease-in-out infinite; }
 
+
+/* Faixa da Palavra do dia */
+.sec-verse {
+  background:
+    radial-gradient(ellipse 50% 60% at 50% 50%, rgb(var(--ouro) / 0.2), transparent 70%),
+    linear-gradient(180deg, #050505 0%, #140d05 30%, #1c1207 50%, #140d05 70%, #050505 100%);
+}
+.sec-verse::after { top: 10%; left: 20%; background: radial-gradient(circle, rgb(var(--ouro) / 0.25), transparent 60%); }
+.cruz-fundo {
+  opacity: 0.05;
+  filter: blur(1px);
+  animation: cruz-respira 9s ease-in-out infinite;
+}
+@keyframes cruz-respira {
+  0%, 100% { opacity: 0.04; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.09; transform: translate(-50%, -50%) scale(1.04); }
+}
+
+/* Troca de passo na prática da Lectio */
+@keyframes passo-entra {
+  from { opacity: 0; transform: translateX(24px); filter: blur(6px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+.passo-entra { animation: passo-entra 0.55s cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* Foco visível e dourado para quem navega pelo teclado */
+:focus-visible {
+  outline: 2px solid rgb(var(--ouro));
+  outline-offset: 3px;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .cruz-fundo,
+  .passo-entra,
   .sec::after,
   .ornamento,
   .titulo-brilho,

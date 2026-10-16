@@ -1,17 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
-import { BookOpen, Check, ChevronLeft, ChevronRight, Copy, ExternalLink, RotateCw, Square, Volume2 } from 'lucide-react';
+import { ArrowDown, BookOpen, ChevronLeft, ChevronRight, Copy, ExternalLink, RotateCw, Square, Volume2 } from 'lucide-react';
 import { useLectio } from '../hooks';
 import { addDays, longDate, weekday } from '../lib/dates';
-import { gerarHomilia, montarRoteiro } from '../lib/homily';
+import { frasesRanqueadas, gerarHomilia } from '../lib/homily';
 import { liturgicalColor, type Leitura } from '../lib/lectio';
 import Reveal from './Reveal';
+import VersiculoDoDia from './VersiculoDoDia';
 
 type Props = {
   iso: string;
   today: string;
   onChangeDay: (iso: string) => void;
-  isDone: boolean;
-  onToggleDone: () => void;
 };
 
 /** Mostra os números de versículo grudados no texto ("2Não") como numerozinhos dourados. */
@@ -85,15 +84,16 @@ function DayNav({ iso, today, onChangeDay }: Pick<Props, 'iso' | 'today' | 'onCh
   );
 }
 
-export default function LectioToday({ iso, today, onChangeDay, isDone, onToggleDone }: Props) {
+export default function LectioToday({ iso, today, onChangeDay }: Props) {
   const lectio = useLectio(iso);
   const [copied, setCopied] = useState(false);
   const [speaking, setSpeaking] = useState(false);
   const isToday = iso === today;
-  const roteiro = useMemo(
-    () => (lectio.status === 'ok' ? montarRoteiro(lectio.data, longDate(iso)) : null),
-    [lectio, iso],
-  );
+  const versiculo = useMemo(() => {
+    if (lectio.status !== 'ok') return null;
+    const r = frasesRanqueadas(lectio.data.evangelho.texto);
+    return r.frases[0] ? { frase: r.frases[0], deJesus: r.deJesus, referencia: lectio.data.evangelho.referencia } : null;
+  }, [lectio]);
   const homilia = useMemo(
     () => (lectio.status === 'ok' ? gerarHomilia(lectio.data, iso, weekday(iso)) : null),
     [lectio, iso],
@@ -239,15 +239,17 @@ export default function LectioToday({ iso, today, onChangeDay, isDone, onToggleD
       </section>
 
       {/* Homilia do dia, escrita automaticamente */}
-      {homilia && roteiro && lectio.status === 'ok' && (
+      {versiculo && <VersiculoDoDia {...versiculo} />}
+
+      {homilia && lectio.status === 'ok' && (
         <section id="homilia" className="sec sec-homily scroll-mt-4 px-6 sm:px-10 lg:px-16 py-16 sm:py-20 lg:py-28">
           <div className="mx-auto max-w-3xl">
             <Reveal>
               <span className="eyebrow">
-                {isToday ? 'A homilia de hoje' : 'Homilia do dia'} · {lectio.data.evangelho.referencia}
+                Homilia · {lectio.data.evangelho.referencia}
               </span>
-              <h2 className="titulo-brilho mt-5 font-serif italic leading-[1.05] text-[clamp(2.2rem,5vw,4rem)]">
-                “{homilia.titulo}”
+              <h2 className="titulo-brilho mt-5 font-podium uppercase leading-[0.95] tracking-tight text-[clamp(2.2rem,5vw,4rem)]">
+                {isToday ? 'A homilia de hoje.' : 'A homilia do dia.'}
               </h2>
               <div className="ornamento" />
             </Reveal>
@@ -283,59 +285,14 @@ export default function LectioToday({ iso, today, onChangeDay, isDone, onToggleD
               </article>
             </Reveal>
 
-            <Reveal className="mt-12">
-              <button
-                type="button"
-                onClick={onToggleDone}
-                className={`inline-flex items-center gap-2 px-6 sm:px-8 py-4 text-xs tracking-widest uppercase transition-colors ${
-                  isDone ? 'bg-white text-black' : 'border border-white/30 hover:border-white/60 hover:bg-white/10'
-                }`}
-              >
-                <Check className="w-4 h-4" />
-                {isDone ? 'Homilia lida · marcada no calendário' : 'Marcar homilia como lida'}
-              </button>
-              <p className="mt-6 text-white/35 text-xs leading-relaxed">
-                Homilia escrita automaticamente pelo site a partir das leituras do dia: as frases entre aspas são do próprio
-                Evangelho e do salmo. Muda sozinha todo dia.
+            <Reveal className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-ouro/15 pt-6">
+              <p className="max-w-md text-white/40 text-xs leading-relaxed">
+                Homilia escrita automaticamente pelo site a partir das leituras do dia. Muda sozinha todo dia.
               </p>
-            </Reveal>
-
-            {/* Para quem vai pregar: o roteiro por trás da homilia */}
-            <Reveal className="mt-14">
-              <details className="group border-t border-white/10 pt-6">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-xs tracking-widest uppercase text-white/70 hover:text-white">
-                  Vai pregar? Veja o roteiro desta homilia
-                  <ChevronRight className="w-4 h-4 transition-transform group-open:rotate-90" />
-                </summary>
-                <div className="mt-8">
-                  {roteiro.frases.length > 0 && (
-                    <>
-                      <p className="text-xs tracking-[0.3em] uppercase text-white/50">Frases do Evangelho para destacar</p>
-                      <div className="mt-4 grid gap-px bg-white/10">
-                        {roteiro.frases.map((f, i) => (
-                          <blockquote key={i} className="bg-neutral-950 py-4 text-white/85 leading-relaxed">
-                            “{f}”
-                          </blockquote>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                  <ol className="mt-8 space-y-6">
-                    {roteiro.passos.map((p, i) => (
-                      <li key={p.titulo} className="grid grid-cols-[48px_1fr] gap-4">
-                        <span className="font-podium text-white/30 text-3xl">{String(i + 1).padStart(2, '0')}</span>
-                        <div>
-                          <div className="flex flex-wrap items-baseline gap-x-3">
-                            <h3 className="font-podium uppercase text-xl sm:text-2xl">{p.titulo}</h3>
-                            <span className="text-[10px] tracking-widest uppercase text-white/40">{p.minutos}</span>
-                          </div>
-                          <p className="mt-2 text-white/65 text-sm leading-relaxed">{p.texto}</p>
-                        </div>
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-              </details>
+              <a href="#pratica" className="group inline-flex items-center gap-2 text-xs tracking-widest uppercase text-ouro hover:text-ouro-claro">
+                Agora, faça a sua Lectio
+                <ArrowDown className="w-4 h-4 transition-transform group-hover:translate-y-0.5" />
+              </a>
             </Reveal>
           </div>
         </section>

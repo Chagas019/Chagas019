@@ -33,7 +33,7 @@ export default function CalendarSection({ today, selected, done, onPick }: Props
               <div className="ornamento" />
           <p className="mt-6 max-w-md text-white/60 text-sm sm:text-base leading-relaxed">
             Toque em qualquer dia para abrir o Evangelho e a homilia daquela data. Hoje fica destacado e os dias em
-            que você leu a homilia ganham uma marca — assim você sempre sabe onde está.
+            que você fez a sua Lectio ganham uma marca — assim você sempre sabe onde está.
           </p>
           <div className="mt-10 flex flex-wrap gap-8 sm:gap-12">
             <div>
@@ -59,7 +59,7 @@ export default function CalendarSection({ today, selected, done, onPick }: Props
               <span className="relative h-5 w-5 bg-white/5">
                 <span className="absolute bottom-0.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-ouro" />
               </span>
-              Homilia lida
+              Lectio feita
             </li>
           </ul>
         </Reveal>
@@ -120,7 +120,7 @@ export default function CalendarSection({ today, selected, done, onPick }: Props
                         <button
                           type="button"
                           onClick={() => onPick(iso)}
-                          aria-label={`Abrir o Evangelho de ${iso}${isDone ? ', homilia lida' : ''}`}
+                          aria-label={`Abrir o Evangelho de ${iso}${isDone ? ', Lectio feita' : ''}`}
                           aria-current={isToday ? 'date' : undefined}
                           className={`relative flex aspect-square w-full items-center justify-center text-sm sm:text-base transition-colors ${
                             isSel
