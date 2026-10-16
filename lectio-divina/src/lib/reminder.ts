@@ -14,7 +14,7 @@ function end(iso: string, hhmm: string, minutes: number): string {
 }
 
 const description = (siteUrl: string) =>
-  `Hora da Lectio Divina: leia o Evangelho do dia devagar, medite, reze e contemple. ${siteUrl}`;
+  `Hora da Lectio Divina: reze o Evangelho do dia e prepare a homilia com o roteiro do site. ${siteUrl}`;
 
 /** Lembrete diário em .ics (Apple, Outlook e outros), todo dia no horário escolhido. */
 export function buildIcs(hhmm: string, siteUrl: string, now: Date = new Date()): string {

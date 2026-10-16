@@ -1,6 +1,7 @@
 import { CalendarPlus, Download } from 'lucide-react';
 import { useLocalStorage } from '../hooks';
 import { downloadIcs, googleCalendarUrl } from '../lib/reminder';
+import Reveal from './Reveal';
 
 export default function ReminderSection() {
   const [time, setTime] = useLocalStorage('lectio:horario', '06:30');
@@ -10,20 +11,20 @@ export default function ReminderSection() {
   return (
     <section id="lembrete" className="scroll-mt-4 bg-neutral-950 px-6 sm:px-10 lg:px-16 py-16 sm:py-20 lg:py-28">
       <div className="mx-auto max-w-6xl grid gap-10 lg:grid-cols-2 lg:gap-20 items-end">
-        <div>
+        <Reveal>
           <span className="text-white/50 text-xs tracking-[0.3em] uppercase">Lembrete</span>
           <h2 className="mt-5 font-podium uppercase leading-[0.95] tracking-tight text-[clamp(2.2rem,5vw,4rem)]">
             Coloque na sua agenda.
           </h2>
           <p className="mt-6 max-w-md text-white/60 text-sm sm:text-base leading-relaxed">
-            Escolha um horário e adicione um compromisso diário com a Lectio no seu calendário. Todo dia ele avisa e traz
-            o link do site, que já abre na leitura do dia.
+            Escolha um horário e adicione um compromisso diário no seu calendário para rezar o Evangelho e preparar a
+            homilia. Todo dia ele avisa e traz o link do site, que já abre no Evangelho do dia.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="border border-white/10 p-6 sm:p-8">
+        <Reveal delay={1} className="border border-white/10 p-6 sm:p-8">
           <label htmlFor="horario" className="text-xs tracking-widest uppercase text-white/60">
-            Horário da sua Lectio
+            Horário da sua oração
           </label>
           <input
             id="horario"
@@ -52,7 +53,7 @@ export default function ReminderSection() {
             </button>
           </div>
           <p className="mt-4 text-white/35 text-xs">Repete todo dia, no horário de Brasília.</p>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

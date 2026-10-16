@@ -13,9 +13,9 @@ const VIDEO_URL =
   'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_154941_df1a96e1-a06f-450c-bd02-d863414cc1a0.mp4';
 
 const NAV_LINKS = [
-  { label: 'Hoje', href: '#hoje' },
+  { label: 'Evangelho', href: '#hoje' },
+  { label: 'Homilia', href: '#homilia' },
   { label: 'Calendário', href: '#calendario' },
-  { label: 'Os Passos', href: '#passos' },
   { label: 'Lembrete', href: '#lembrete' },
 ];
 
@@ -35,6 +35,22 @@ export default function App() {
       lastToday.current = today;
     }
   }, [today]);
+
+  // O React não escreve o atributo `muted` no HTML; sem ele o iPhone bloqueia o autoplay do vídeo de fundo.
+  const videoRef = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = true;
+    v.defaultMuted = true;
+    v.setAttribute('muted', '');
+    v.setAttribute('playsinline', '');
+    v.play().catch(() => {
+      /* economia de bateria: tenta de novo no primeiro toque */
+      const retry = () => v.play().catch(() => {});
+      window.addEventListener('touchstart', retry, { once: true, passive: true });
+    });
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
@@ -61,14 +77,15 @@ export default function App() {
     <>
       <section className="relative h-screen min-h-[640px] w-full overflow-hidden">
         <video
+          ref={videoRef}
           className="absolute inset-0 h-full w-full object-cover"
           src={VIDEO_URL}
           autoPlay
           muted
           loop
           playsInline
+          preload="auto"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/10" />
 
         <div className="relative z-10 flex h-full flex-col">
           {/* Navbar */}
@@ -93,7 +110,7 @@ export default function App() {
               href="#hoje"
               className="hidden md:inline-flex items-center gap-2 border border-white/30 hover:border-white/60 hover:bg-white/10 px-6 py-3 font-inter text-xs text-white tracking-widest uppercase transition-all"
             >
-              Ler hoje
+              Homilia de hoje
               <ArrowUpRight className="w-4 h-4" />
             </a>
 
@@ -126,9 +143,9 @@ export default function App() {
             </h1>
 
             <p className="animate-fade-up-delay-2 mt-6 lg:mt-8 text-white/70 text-sm sm:text-base font-inter leading-relaxed max-w-md">
-              A Palavra de Deus de cada dia,
+              O Evangelho de cada dia e um roteiro
               <br />
-              para ler devagar e rezar —{' '}
+              para preparar a homilia —{' '}
               <strong className="text-white font-semibold">sem se perder.</strong>
             </p>
 
@@ -137,7 +154,7 @@ export default function App() {
                 href="#hoje"
                 className="group inline-flex items-center gap-2 bg-black hover:bg-neutral-900 px-5 sm:px-7 py-3 sm:py-4 font-inter text-[11px] sm:text-xs text-white tracking-widest uppercase transition-colors"
               >
-                Ler a Lectio de hoje
+                Ver o Evangelho de hoje
                 <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </a>
               <div className="hidden sm:flex items-center gap-3">
@@ -206,7 +223,7 @@ export default function App() {
               transform: menuOpen ? 'translateY(0)' : 'translateY(20px)',
             }}
           >
-            Ler hoje
+            Homilia de hoje
             <ArrowUpRight className="w-4 h-4" />
           </a>
         </div>

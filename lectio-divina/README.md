@@ -3,8 +3,9 @@
 Site com a Lectio Divina de cada dia. Feito com React, Vite, Tailwind CSS e lucide-react.
 
 - **Abertura** em tela cheia, com vídeo de fundo. Mostra a data de hoje, a referência do Evangelho do dia e quantos dias seguidos a pessoa já rezou.
-- **A Lectio de hoje** traz o Evangelho do dia e os passos *Lectio, Meditatio, Oratio, Contemplatio e Actio*. Tem um campo para anotações, que ficam só no aparelho, um timer de 3 minutos de silêncio e um botão "Concluí". As outras leituras e o salmo ficam logo abaixo.
-- **Calendário** do mês: hoje fica destacado e os dias concluídos ganham uma marca. Tocar num dia abre a Lectio daquela data. Também mostra os dias seguidos e quantas Lectios foram feitas no mês.
+- **O Evangelho de hoje** aparece sozinho todo dia, com as outras leituras e o salmo logo abaixo.
+- **Preparar a homilia**: um roteiro montado automaticamente a partir das leituras do dia (`src/lib/homily.ts`). Destaca frases do Evangelho (copiadas do próprio texto), explica o evangelista e o tempo litúrgico, e guia em 5 passos: abertura, o que o texto diz, ligação com as outras leituras, atualização e convite final. O esboço pode ser copiado com um toque, e a pessoa não precisa escrever nada.
+- **Calendário** do mês: hoje fica destacado e os dias com a homilia preparada ganham uma marca. Tocar num dia abre o Evangelho e o roteiro daquela data.
 - **Lembrete**: cria um compromisso diário no horário escolhido, no Google Agenda ou num arquivo `.ics` (iPhone e Outlook).
 
 ## Como atualiza todo dia
