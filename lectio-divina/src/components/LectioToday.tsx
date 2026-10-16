@@ -14,7 +14,25 @@ type Props = {
   onToggleDone: () => void;
 };
 
-function Paragraphs({ text }: { text: string }) {
+/** Mostra os números de versículo grudados no texto ("2Não") como numerozinhos dourados. */
+function Versiculos({ text }: { text: string }) {
+  const partes = text.split(/(?<=^|[\s“"‘(])(\d+(?:,\s?\d+)?)(?=[A-Za-zÀ-ÿ“"‘])/);
+  return (
+    <>
+      {partes.map((t, i) =>
+        i % 2 === 1 ? (
+          <sup key={i} className="mr-0.5 font-inter text-[0.6em] font-semibold text-ouro/80">
+            {t}
+          </sup>
+        ) : (
+          t
+        ),
+      )}
+    </>
+  );
+}
+
+function Paragraphs({ text, first = '' }: { text: string; first?: string }) {
   return (
     <>
       {text
@@ -22,8 +40,8 @@ function Paragraphs({ text }: { text: string }) {
         .map((p) => p.trim())
         .filter(Boolean)
         .map((p, i) => (
-          <p key={i} className="mb-4 last:mb-0">
-            {p}
+          <p key={i} className={`mb-4 last:mb-0 ${i === 0 ? first : ''}`}>
+            <Versiculos text={p} />
           </p>
         ))}
     </>
@@ -124,18 +142,19 @@ export default function LectioToday({ iso, today, onChangeDay, isDone, onToggleD
   return (
     <>
       {/* Evangelho do dia */}
-      <section id="hoje" className="scroll-mt-4 bg-black px-6 sm:px-10 lg:px-16 py-16 sm:py-20 lg:py-28">
+      <section id="hoje" className="sec sec-gospel scroll-mt-4 px-6 sm:px-10 lg:px-16 py-16 sm:py-20 lg:py-28">
         <div className="mx-auto max-w-3xl">
           <Reveal>
             <div className="flex flex-wrap items-center justify-between gap-4">
-              <span className="text-white/50 text-xs tracking-[0.3em] uppercase">
+              <span className="eyebrow">
                 {isToday ? 'O Evangelho de hoje' : 'Evangelho do dia'}
               </span>
               <DayNav iso={iso} today={today} onChangeDay={onChangeDay} />
             </div>
-            <h2 className="mt-5 font-podium uppercase leading-[0.95] tracking-tight text-[clamp(2rem,5vw,3.5rem)]">
+            <h2 className="titulo-brilho mt-5 font-podium uppercase leading-[0.95] tracking-tight text-[clamp(2rem,5vw,3.5rem)]">
               {longDate(iso)}
             </h2>
+              <div className="ornamento" />
             {lectio.status === 'ok' && (lectio.data.liturgia || lectio.data.cor) && (
               <p className="mt-3 flex items-center gap-2 text-white/60 text-sm">
                 {lectio.data.cor && (
@@ -184,13 +203,13 @@ export default function LectioToday({ iso, today, onChangeDay, isDone, onToggleD
 
           {lectio.status === 'ok' && (
             <>
-              <Reveal delay={1} className="mt-10 border-l-2 border-white/30 pl-5 sm:pl-7">
-                <p className="flex items-center gap-2 text-xs tracking-widest uppercase text-white/60">
+              <Reveal delay={1} className="vidro mt-10 rounded-sm border-l-2 !border-l-ouro p-6 sm:p-10">
+                <p className="flex items-center gap-2 text-xs tracking-widest uppercase text-ouro">
                   <BookOpen className="w-4 h-4" /> Evangelho · {lectio.data.evangelho.referencia}
                 </p>
                 {lectio.data.evangelho.titulo && <p className="mt-3 italic text-white/60">{lectio.data.evangelho.titulo}</p>}
-                <div className="mt-4 text-white/90 text-base sm:text-lg leading-relaxed">
-                  <Paragraphs text={lectio.data.evangelho.texto} />
+                <div className="mt-5 font-serif text-white/90 text-lg sm:text-xl leading-relaxed">
+                  <Paragraphs text={lectio.data.evangelho.texto} first="capitular" />
                 </div>
               </Reveal>
 
@@ -221,22 +240,23 @@ export default function LectioToday({ iso, today, onChangeDay, isDone, onToggleD
 
       {/* Homilia do dia, escrita automaticamente */}
       {homilia && roteiro && lectio.status === 'ok' && (
-        <section id="homilia" className="scroll-mt-4 bg-neutral-950 px-6 sm:px-10 lg:px-16 py-16 sm:py-20 lg:py-28">
+        <section id="homilia" className="sec sec-homily scroll-mt-4 px-6 sm:px-10 lg:px-16 py-16 sm:py-20 lg:py-28">
           <div className="mx-auto max-w-3xl">
             <Reveal>
-              <span className="text-white/50 text-xs tracking-[0.3em] uppercase">
+              <span className="eyebrow">
                 {isToday ? 'A homilia de hoje' : 'Homilia do dia'} · {lectio.data.evangelho.referencia}
               </span>
-              <h2 className="mt-5 font-podium uppercase leading-[0.95] tracking-tight text-[clamp(2.2rem,5vw,4rem)]">
+              <h2 className="titulo-brilho mt-5 font-serif italic leading-[1.05] text-[clamp(2.2rem,5vw,4rem)]">
                 “{homilia.titulo}”
               </h2>
+              <div className="ornamento" />
             </Reveal>
 
             <Reveal delay={1} className="mt-8 flex flex-wrap gap-3">
               <button
                 type="button"
                 onClick={copy}
-                className="inline-flex items-center gap-2 bg-black hover:bg-neutral-900 border border-white/20 px-5 sm:px-7 py-3 sm:py-4 text-[11px] sm:text-xs tracking-widest uppercase transition-colors"
+                className="btn-ouro inline-flex items-center gap-2 px-5 sm:px-7 py-3 sm:py-4 text-[11px] sm:text-xs font-semibold tracking-widest uppercase"
               >
                 <Copy className="w-4 h-4" />
                 {copied ? 'Homilia copiada' : 'Copiar homilia'}
@@ -245,7 +265,7 @@ export default function LectioToday({ iso, today, onChangeDay, isDone, onToggleD
                 <button
                   type="button"
                   onClick={speak}
-                  className="inline-flex items-center gap-2 border border-white/30 hover:border-white/60 hover:bg-white/10 px-5 sm:px-7 py-3 sm:py-4 text-[11px] sm:text-xs tracking-widest uppercase transition-all"
+                  className="inline-flex items-center gap-2 border border-ouro/40 hover:border-ouro hover:bg-ouro/10 px-5 sm:px-7 py-3 sm:py-4 text-[11px] sm:text-xs tracking-widest uppercase transition-all"
                 >
                   {speaking ? <Square className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                   {speaking ? 'Parar' : 'Ouvir'}
@@ -254,9 +274,9 @@ export default function LectioToday({ iso, today, onChangeDay, isDone, onToggleD
             </Reveal>
 
             <Reveal delay={2}>
-              <article className="mt-10 text-white/85 text-base sm:text-lg leading-relaxed">
+              <article className="vidro mt-10 p-6 sm:p-10 text-white/85 text-base sm:text-lg leading-relaxed">
                 {homilia.paragrafos.map((par, i) => (
-                  <p key={i} className="mb-6 last:mb-0 first-letter:font-podium first-letter:text-white">
+                  <p key={i} className={`mb-6 last:mb-0 ${i === 0 ? 'capitular' : ''}`}>
                     {par}
                   </p>
                 ))}

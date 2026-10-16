@@ -9,6 +9,7 @@ import StepsSection from './components/StepsSection';
 import ReminderSection from './components/ReminderSection';
 import Footer from './components/Footer';
 import JesusBackground from './components/JesusBackground';
+import ScrollProgress from './components/ScrollProgress';
 
 const NAV_LINKS = [
   { label: 'Evangelho', href: '#hoje' },
@@ -57,6 +58,7 @@ export default function App() {
 
   return (
     <>
+      <ScrollProgress />
       <section className="relative h-screen min-h-[640px] w-full overflow-hidden">
         <JesusBackground />
 
@@ -103,7 +105,7 @@ export default function App() {
           {/* Hero */}
           <div className="flex flex-1 flex-col justify-center px-6 sm:px-10 lg:px-16 pb-10">
             <div className="animate-fade-up flex items-center gap-3 mb-6 lg:mb-8">
-              <Crown className="w-4 h-4 text-white/70" />
+              <Crown className="w-4 h-4 text-ouro" />
               <span className="text-white/70 text-xs sm:text-sm font-inter tracking-[0.3em] uppercase">
                 Lectio Divina Diária
               </span>
@@ -125,13 +127,13 @@ export default function App() {
             <div className="animate-fade-up-delay-3 mt-8 lg:mt-10 flex flex-wrap items-center gap-4 sm:gap-6">
               <a
                 href="#hoje"
-                className="group inline-flex items-center gap-2 bg-black hover:bg-neutral-900 px-5 sm:px-7 py-3 sm:py-4 font-inter text-[11px] sm:text-xs text-white tracking-widest uppercase transition-colors"
+                className="btn-ouro group inline-flex items-center gap-2 px-5 sm:px-7 py-3 sm:py-4 font-inter text-[11px] sm:text-xs font-semibold tracking-widest uppercase"
               >
                 Ver o Evangelho de hoje
                 <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </a>
               <div className="hidden sm:flex items-center gap-3">
-                <Award className="w-8 h-8 text-white/50" />
+                <Award className="w-8 h-8 text-ouro/80" />
                 <div className="text-white/60 text-xs tracking-wider uppercase font-inter leading-snug">
                   <div>Atualiza</div>
                   <div>todo dia</div>
@@ -153,6 +155,16 @@ export default function App() {
             </div>
           </div>
         </div>
+        <a
+          href="#hoje"
+          aria-label="Rolar para o Evangelho"
+          className="absolute bottom-6 left-1/2 z-10 hidden -translate-x-1/2 sm:flex flex-col items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-white/60 hover:text-ouro transition-colors"
+        >
+          Role
+          <span className="flex h-9 w-5 justify-center rounded-full border border-white/40 pt-1.5">
+            <span className="rolar-ponto h-2 w-0.5 rounded-full bg-ouro" />
+          </span>
+        </a>
       </section>
 
       {/* Menu do celular */}

@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
-const ANIM = ['animate-fade-up', 'animate-fade-up-delay-1', 'animate-fade-up-delay-2', 'animate-fade-up-delay-3', 'animate-fade-up-delay-4'];
+const ANIM = ['revelar', 'revelar revelar-1', 'revelar revelar-2', 'revelar revelar-3', 'revelar revelar-4'];
 
-/** Faz o bloco subir e aparecer (mesma animação fade-up da abertura) quando entra na tela. */
+/** Faz o bloco subir, sair do desfoque e aparecer quando entra na tela. */
 export default function Reveal({ children, delay = 0, className = '' }: { children: ReactNode; delay?: 0 | 1 | 2 | 3 | 4; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);

@@ -23,13 +23,14 @@ export default function CalendarSection({ today, selected, done, onPick }: Props
   const daysSoFar = month < today.slice(0, 7) ? weeks.flat().filter(Boolean).length : month === today.slice(0, 7) ? Number(today.slice(8)) : 0;
 
   return (
-    <section id="calendario" className="scroll-mt-4 bg-neutral-950 px-6 sm:px-10 lg:px-16 py-16 sm:py-20 lg:py-28">
+    <section id="calendario" className="sec sec-calendar scroll-mt-4 px-6 sm:px-10 lg:px-16 py-16 sm:py-20 lg:py-28">
       <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1fr_1.3fr] lg:gap-20">
         <Reveal>
-          <span className="text-white/50 text-xs tracking-[0.3em] uppercase">Calendário</span>
-          <h2 className="mt-5 font-podium uppercase leading-[0.95] tracking-tight text-[clamp(2.2rem,5vw,4rem)]">
+          <span className="eyebrow">Calendário</span>
+          <h2 className="titulo-brilho mt-5 font-podium uppercase leading-[0.95] tracking-tight text-[clamp(2.2rem,5vw,4rem)]">
             Um dia de cada vez.
           </h2>
+              <div className="ornamento" />
           <p className="mt-6 max-w-md text-white/60 text-sm sm:text-base leading-relaxed">
             Toque em qualquer dia para abrir o Evangelho e a homilia daquela data. Hoje fica destacado e os dias em
             que você leu a homilia ganham uma marca — assim você sempre sabe onde está.
@@ -49,21 +50,21 @@ export default function CalendarSection({ today, selected, done, onPick }: Props
           </div>
           <ul className="mt-10 space-y-3 text-xs text-white/60">
             <li className="flex items-center gap-3">
-              <span className="h-5 w-5 ring-1 ring-white" /> Hoje
+              <span className="h-5 w-5 ring-1 ring-ouro" /> Hoje
             </li>
             <li className="flex items-center gap-3">
-              <span className="h-5 w-5 bg-white" /> Dia aberto
+              <span className="btn-ouro h-5 w-5" /> Dia aberto
             </li>
             <li className="flex items-center gap-3">
               <span className="relative h-5 w-5 bg-white/5">
-                <span className="absolute bottom-0.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-amber-300" />
+                <span className="absolute bottom-0.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-ouro" />
               </span>
               Homilia lida
             </li>
           </ul>
         </Reveal>
 
-        <Reveal delay={1} className="border border-white/10 p-4 sm:p-8">
+        <Reveal delay={1} className="vidro p-4 sm:p-8">
           <div className="flex items-center justify-between">
             <button
               type="button"
@@ -123,15 +124,15 @@ export default function CalendarSection({ today, selected, done, onPick }: Props
                           aria-current={isToday ? 'date' : undefined}
                           className={`relative flex aspect-square w-full items-center justify-center text-sm sm:text-base transition-colors ${
                             isSel
-                              ? 'bg-white text-black font-semibold'
-                              : `bg-white/5 hover:bg-white/15 ${iso > today ? 'text-white/45' : 'text-white/90'}`
-                          } ${isToday && !isSel ? 'ring-1 ring-white' : ''} ${isSunday && !isSel ? 'font-semibold' : ''}`}
+                              ? 'btn-ouro font-semibold'
+                              : `bg-white/5 hover:bg-ouro/15 hover:-translate-y-0.5 ${iso > today ? 'text-white/45' : 'text-white/90'}`
+                          } ${isToday && !isSel ? 'ring-1 ring-ouro shadow-[0_0_18px_-4px_rgba(212,168,83,0.7)]' : ''} ${isSunday && !isSel ? 'font-semibold' : ''}`}
                         >
                           {Number(iso.slice(8))}
                           {isDone && (
                             <span
                               className={`absolute bottom-1 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full ${
-                                isSel ? 'bg-amber-500' : 'bg-amber-300'
+                                isSel ? 'bg-vinho' : 'bg-ouro'
                               }`}
                             />
                           )}

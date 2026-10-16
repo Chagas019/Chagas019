@@ -86,7 +86,209 @@ body {
   box-shadow: 0 0 8px rgba(255, 230, 180, 0.9);
 }
 
+
+/* ===================================================================
+   Identidade visual: paleta litúrgica (ouro, vinho, azul da noite, roxo)
+   =================================================================== */
+:root {
+  --ouro: 212 168 83;
+  --vinho: 74 15 31;
+  --noite: 11 20 48;
+  --roxo: 42 22 69;
+  --ruido: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+::selection { background: rgb(var(--ouro) / 0.35); color: #fff; }
+
+/* Seções: cada uma com sua cor, que nasce e termina no preto para emendar sem corte */
+.sec {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.sec > * { position: relative; z-index: 1; }
+/* Textura de papel/grão bem leve */
+.sec::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: var(--ruido);
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+/* Luz que flutua devagar, como reflexo de vitral */
+.sec::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  width: 70vmax;
+  height: 70vmax;
+  border-radius: 9999px;
+  filter: blur(60px);
+  opacity: 0.45;
+  pointer-events: none;
+  animation: luz-flutua 22s ease-in-out infinite alternate;
+}
+@keyframes luz-flutua {
+  0% { transform: translate3d(-10%, -5%, 0) scale(1); }
+  100% { transform: translate3d(12%, 8%, 0) scale(1.15); }
+}
+
+.sec-gospel {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgb(var(--ouro) / 0.16), transparent 70%),
+    linear-gradient(180deg, #000 0%, rgb(var(--noite)) 18%, #08102a 82%, #050505 100%);
+}
+.sec-gospel::after { top: -20%; right: -25%; background: radial-gradient(circle, rgb(var(--ouro) / 0.35), transparent 60%); }
+
+.sec-homily {
+  background:
+    radial-gradient(ellipse 60% 40% at 15% 10%, rgb(var(--ouro) / 0.12), transparent 70%),
+    linear-gradient(180deg, #050505 0%, rgb(var(--vinho)) 22%, #2c0812 80%, #050505 100%);
+}
+.sec-homily::after { bottom: -30%; left: -25%; background: radial-gradient(circle, rgba(196, 30, 58, 0.45), transparent 60%); }
+
+.sec-calendar {
+  background:
+    radial-gradient(ellipse 70% 50% at 85% 20%, rgba(124, 58, 237, 0.22), transparent 70%),
+    linear-gradient(180deg, #050505 0%, rgb(var(--roxo)) 22%, #160b26 80%, #050505 100%);
+}
+.sec-calendar::after { top: -10%; left: -30%; background: radial-gradient(circle, rgba(124, 58, 237, 0.4), transparent 60%); }
+
+.sec-steps {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 100%, rgb(var(--ouro) / 0.14), transparent 70%),
+    linear-gradient(180deg, #050505 0%, #0d1a3a 25%, rgb(var(--noite)) 80%, #050505 100%);
+}
+.sec-steps::after { bottom: -35%; right: -20%; background: radial-gradient(circle, rgba(59, 130, 246, 0.3), transparent 60%); }
+
+.sec-reminder {
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 30%, rgb(var(--ouro) / 0.18), transparent 70%),
+    linear-gradient(180deg, #050505 0%, #2a0a14 30%, #12050a 85%, #000 100%);
+}
+.sec-reminder::after { top: -25%; right: -30%; background: radial-gradient(circle, rgb(var(--ouro) / 0.3), transparent 60%); }
+
+/* Rótulo dourado com uma pequena cruz */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgb(var(--ouro));
+}
+.eyebrow::before {
+  content: '';
+  width: 0.7rem;
+  height: 0.95rem;
+  flex: none;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 19'%3E%3Cpath d='M5.5 0h3v5.5H14v3H8.5V19h-3V8.5H0v-3h5.5z'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 19'%3E%3Cpath d='M5.5 0h3v5.5H14v3H8.5V19h-3V8.5H0v-3h5.5z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* Linha dourada que se desenha ao aparecer */
+.ornamento {
+  height: 1px;
+  width: 7rem;
+  margin-top: 1.5rem;
+  background: linear-gradient(90deg, rgb(var(--ouro)), rgb(var(--ouro) / 0));
+  transform-origin: left;
+  animation: risco 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+}
+@keyframes risco { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* Títulos com brilho dourado que passa */
+.titulo-brilho {
+  background: linear-gradient(100deg, #fff 0%, #fff 40%, rgb(var(--ouro-claro, 241 215 154)) 50%, #fff 60%, #fff 100%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  animation: brilho 7s ease-in-out infinite;
+}
+@keyframes brilho { 0%, 100% { background-position: 100% 0; } 50% { background-position: 0% 0; } }
+
+/* Cartões de vidro com borda dourada */
+.vidro {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgb(var(--ouro) / 0.22);
+  -webkit-backdrop-filter: blur(14px);
+          backdrop-filter: blur(14px);
+  box-shadow: 0 20px 60px -30px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.4s, box-shadow 0.4s;
+}
+.vidro-hover:hover {
+  transform: translateY(-4px);
+  border-color: rgb(var(--ouro) / 0.5);
+  box-shadow: 0 30px 70px -30px rgb(var(--ouro) / 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Botão dourado */
+.btn-ouro {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f1d79a, rgb(var(--ouro)) 45%, #a77f2e);
+  color: #1a1206;
+  box-shadow: 0 10px 30px -10px rgb(var(--ouro) / 0.6);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.btn-ouro::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.55) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.8s;
+}
+.btn-ouro:hover { transform: translateY(-2px); box-shadow: 0 16px 40px -12px rgb(var(--ouro) / 0.8); }
+.btn-ouro:hover::after { transform: translateX(120%); }
+
+/* Capitular dourada (primeira letra) */
+.capitular::first-letter {
+  float: left;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 3.6em;
+  line-height: 0.85;
+  padding: 0.08em 0.12em 0 0;
+  color: rgb(var(--ouro));
+}
+
+/* Barra de leitura no topo */
+.progresso {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 3px;
+  z-index: 60;
+  transform-origin: left;
+  background: linear-gradient(90deg, #a77f2e, #f1d79a, #d4a853);
+  box-shadow: 0 0 12px rgb(var(--ouro) / 0.7);
+}
+
+/* Transição ao rolar: sobe, desfoca → foca */
+@keyframes revelar {
+  from { opacity: 0; transform: translateY(40px) scale(0.98); filter: blur(10px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+.revelar { opacity: 0; animation: revelar 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.revelar-1 { animation-delay: 0.12s; }
+.revelar-2 { animation-delay: 0.24s; }
+.revelar-3 { animation-delay: 0.36s; }
+.revelar-4 { animation-delay: 0.48s; }
+
+/* Indicador de rolar na abertura */
+@keyframes rolar { 0% { transform: translateY(0); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+.rolar-ponto { animation: rolar 1.8s ease-in-out infinite; }
+
 @media (prefers-reduced-motion: reduce) {
+  .sec::after,
+  .ornamento,
+  .titulo-brilho,
+  .rolar-ponto,
   .jesus-move,
   .jesus-glow,
   .jesus-particle {
@@ -100,8 +302,11 @@ body {
   .animate-fade-up-delay-4,
   .animate-fade-in,
   .animate-fade-in-delay,
-  .animate-scale-in {
+  .animate-scale-in,
+  .revelar {
     animation: none;
     opacity: 1;
+    filter: none;
+    transform: none;
   }
 }

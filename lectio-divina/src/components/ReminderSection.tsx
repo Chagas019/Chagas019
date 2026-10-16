@@ -9,20 +9,21 @@ export default function ReminderSection() {
   const valid = /^\d{2}:\d{2}$/.test(time);
 
   return (
-    <section id="lembrete" className="scroll-mt-4 bg-neutral-950 px-6 sm:px-10 lg:px-16 py-16 sm:py-20 lg:py-28">
+    <section id="lembrete" className="sec sec-reminder scroll-mt-4 px-6 sm:px-10 lg:px-16 py-16 sm:py-20 lg:py-28">
       <div className="mx-auto max-w-6xl grid gap-10 lg:grid-cols-2 lg:gap-20 items-end">
         <Reveal>
-          <span className="text-white/50 text-xs tracking-[0.3em] uppercase">Lembrete</span>
-          <h2 className="mt-5 font-podium uppercase leading-[0.95] tracking-tight text-[clamp(2.2rem,5vw,4rem)]">
+          <span className="eyebrow">Lembrete</span>
+          <h2 className="titulo-brilho mt-5 font-podium uppercase leading-[0.95] tracking-tight text-[clamp(2.2rem,5vw,4rem)]">
             Coloque na sua agenda.
           </h2>
+              <div className="ornamento" />
           <p className="mt-6 max-w-md text-white/60 text-sm sm:text-base leading-relaxed">
             Escolha um horário e adicione um compromisso diário no seu calendário. Todo dia ele avisa e traz o link do
             site, que já abre no Evangelho e na homilia do dia.
           </p>
         </Reveal>
 
-        <Reveal delay={1} className="border border-white/10 p-6 sm:p-8">
+        <Reveal delay={1} className="vidro p-6 sm:p-8">
           <label htmlFor="horario" className="text-xs tracking-widest uppercase text-white/60">
             Horário da sua oração
           </label>
@@ -31,7 +32,7 @@ export default function ReminderSection() {
             type="time"
             value={time}
             onChange={(e) => setTime(e.target.value)}
-            className="mt-3 block w-full bg-white/5 border border-white/15 focus:border-white/50 outline-none px-4 py-3 text-2xl font-semibold text-white [color-scheme:dark]"
+            className="mt-3 block w-full bg-white/5 border border-white/15 focus:border-ouro outline-none px-4 py-3 text-2xl font-semibold text-white [color-scheme:dark]"
           />
           <div className="mt-6 flex flex-wrap gap-3">
             <a
@@ -39,7 +40,7 @@ export default function ReminderSection() {
               target="_blank"
               rel="noreferrer"
               aria-disabled={!valid}
-              className="inline-flex items-center gap-2 bg-white text-black hover:bg-white/90 px-5 py-3 text-xs tracking-widest uppercase transition-colors"
+              className="btn-ouro inline-flex items-center gap-2 px-5 py-3 text-xs font-semibold tracking-widest uppercase"
             >
               <CalendarPlus className="w-4 h-4" /> Google Agenda
             </a>

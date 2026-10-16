@@ -5,7 +5,7 @@ const INSTAGRAM_URL = 'https://www.instagram.com/chagas_catolico';
 
 export default function Footer() {
   return (
-    <footer className="bg-black border-t border-white/10 px-6 sm:px-10 lg:px-16 py-10">
+    <footer className="relative bg-black border-t border-ouro/20 px-6 sm:px-10 lg:px-16 py-10">
       <div className="mx-auto flex max-w-6xl flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <span className="font-podium uppercase text-xl tracking-wider">Lectio Divina</span>

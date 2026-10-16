@@ -9,22 +9,23 @@ const STEPS = [
 
 export default function StepsSection() {
   return (
-    <section id="passos" className="scroll-mt-4 bg-black px-6 sm:px-10 lg:px-16 py-16 sm:py-20 lg:py-28">
+    <section id="passos" className="sec sec-steps scroll-mt-4 px-6 sm:px-10 lg:px-16 py-16 sm:py-20 lg:py-28">
       <div className="mx-auto max-w-6xl">
         <Reveal>
-        <span className="text-white/50 text-xs tracking-[0.3em] uppercase">Para rezar</span>
-        <h2 className="mt-5 font-podium uppercase leading-[0.95] tracking-tight text-[clamp(2.2rem,5vw,4rem)]">
+        <span className="eyebrow">Para rezar</span>
+        <h2 className="titulo-brilho mt-5 font-podium uppercase leading-[0.95] tracking-tight text-[clamp(2.2rem,5vw,4rem)]">
           Os quatro passos.
         </h2>
+              <div className="ornamento" />
         <p className="mt-6 max-w-xl text-white/60 text-sm sm:text-base leading-relaxed">
           Depois de ler a homilia, reze o Evangelho do dia com a Lectio Divina: a leitura orante da Bíblia, praticada
           pela Igreja desde os primeiros monges. Assim a Palavra sai da página e entra na vida.
         </p>
         </Reveal>
-        <div className="mt-12 grid gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s, i) => (
-            <Reveal key={s.n} delay={(i + 1) as 1 | 2 | 3 | 4} className="bg-black p-6 sm:p-8">
-              <div className="font-podium text-white/30 text-4xl">{s.n}</div>
+            <Reveal key={s.n} delay={(i + 1) as 1 | 2 | 3 | 4} className="vidro vidro-hover p-6 sm:p-8">
+              <div className="font-serif italic text-ouro text-5xl">{s.n}</div>
               <div className="mt-6 font-podium uppercase text-2xl sm:text-3xl">{s.name}</div>
               <div className="mt-1 text-xs tracking-widest uppercase text-white/50">{s.pt}</div>
               <p className="mt-5 text-white/65 text-sm leading-relaxed">{s.text}</p>
