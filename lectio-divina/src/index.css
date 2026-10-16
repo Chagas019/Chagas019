@@ -55,7 +55,43 @@ body {
   }
 }
 
+/* Fundo da abertura: Jesus em movimento */
+@keyframes jesus-move {
+  0% { transform: scale(1.04) translate3d(0, 0, 0); }
+  50% { transform: scale(1.14) translate3d(-1.5%, -1.5%, 0); }
+  100% { transform: scale(1.04) translate3d(0, 0, 0); }
+}
+@keyframes jesus-glow {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.75; }
+}
+@keyframes jesus-particle {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  15% { opacity: 0.9; }
+  100% { transform: translate3d(30px, -105vh, 0); opacity: 0; }
+}
+.jesus-move {
+  animation: jesus-move 24s ease-in-out infinite;
+  will-change: transform;
+}
+.jesus-glow {
+  background: radial-gradient(ellipse at 62% 28%, rgba(255, 222, 160, 0.35), transparent 55%);
+  mix-blend-mode: screen;
+  animation: jesus-glow 6s ease-in-out infinite;
+}
+.jesus-particle {
+  animation-name: jesus-particle;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  box-shadow: 0 0 8px rgba(255, 230, 180, 0.9);
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .jesus-move,
+  .jesus-glow,
+  .jesus-particle {
+    animation: none;
+  }
   html { scroll-behavior: auto; }
   .animate-fade-up,
   .animate-fade-up-delay-1,

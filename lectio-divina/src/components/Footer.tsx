@@ -1,4 +1,5 @@
 import { Instagram } from 'lucide-react';
+import { JESUS_CREDITO } from './JesusBackground';
 
 const INSTAGRAM_URL = 'https://www.instagram.com/chagas_catolico';
 
@@ -11,6 +12,7 @@ export default function Footer() {
           <p className="mt-2 text-white/40 text-xs leading-relaxed max-w-sm">
             “Lâmpada para os meus pés é a tua palavra, e luz para o meu caminho.” — Sl 119(118),105
           </p>
+          <p className="mt-2 text-white/25 text-[10px] leading-relaxed max-w-sm">Imagem de abertura: {JESUS_CREDITO}.</p>
         </div>
         <div className="sm:text-right">
           <p className="text-white/40 text-[10px] tracking-[0.3em] uppercase">Criador do site</p>

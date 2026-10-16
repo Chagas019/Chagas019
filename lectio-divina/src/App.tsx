@@ -8,9 +8,7 @@ import CalendarSection from './components/CalendarSection';
 import StepsSection from './components/StepsSection';
 import ReminderSection from './components/ReminderSection';
 import Footer from './components/Footer';
-
-const VIDEO_URL =
-  'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_154941_df1a96e1-a06f-450c-bd02-d863414cc1a0.mp4';
+import JesusBackground from './components/JesusBackground';
 
 const NAV_LINKS = [
   { label: 'Evangelho', href: '#hoje' },
@@ -36,22 +34,6 @@ export default function App() {
     }
   }, [today]);
 
-  // O React não escreve o atributo `muted` no HTML; sem ele o iPhone bloqueia o autoplay do vídeo de fundo.
-  const videoRef = useRef<HTMLVideoElement>(null);
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    v.muted = true;
-    v.defaultMuted = true;
-    v.setAttribute('muted', '');
-    v.setAttribute('playsinline', '');
-    v.play().catch(() => {
-      /* economia de bateria: tenta de novo no primeiro toque */
-      const retry = () => v.play().catch(() => {});
-      window.addEventListener('touchstart', retry, { once: true, passive: true });
-    });
-  }, []);
-
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
   }, [menuOpen]);
@@ -76,16 +58,7 @@ export default function App() {
   return (
     <>
       <section className="relative h-screen min-h-[640px] w-full overflow-hidden">
-        <video
-          ref={videoRef}
-          className="absolute inset-0 h-full w-full object-cover"
-          src={VIDEO_URL}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-        />
+        <JesusBackground />
 
         <div className="relative z-10 flex h-full flex-col">
           {/* Navbar */}
