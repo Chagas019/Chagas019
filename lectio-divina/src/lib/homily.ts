@@ -38,22 +38,22 @@ export function semVersiculos(texto: string): string {
     .trim();
 }
 
-/** Até 3 falas do Evangelho (entre aspas) boas para destacar; senão, as primeiras frases. */
+/** Até 3 frases curtas das falas do Evangelho (entre aspas) para destacar; senão, as primeiras frases. */
 export function frasesChave(texto: string, max = 3): string[] {
   const limpo = semVersiculos(texto.replace(/\n+/g, ' '));
-  const falas = [...limpo.matchAll(/[“"]([^”"]{25,200})[”"]/g)]
-    .map((m) => m[1].trim().replace(/^[—–-]\s*/, ''))
-    .filter((f) => f.split(' ').length >= 5);
+  const frases = (t: string) => t.split(/(?<=[.!?])\s+/).map((f) => f.trim().replace(/^[—–-]\s*/, ''));
+  // Uma fala pode ser longa (um discurso inteiro): quebra em frases e fica com as de tamanho bom.
+  const falas = [...limpo.matchAll(/[“"]([^”"]+)[”"]/g)]
+    .flatMap((m) => frases(m[1]))
+    .filter((f) => f.length >= 25 && f.length <= 180 && f.split(' ').length >= 5);
   const unicas = [...new Set(falas)];
   if (unicas.length) {
-    // Falas mais curtas costumam ser as mais fortes para uma homilia; mantém a ordem do texto.
+    // Frases mais curtas costumam ser as mais fortes para uma homilia; mantém a ordem do texto.
     const escolhidas = [...unicas].sort((a, b) => a.length - b.length).slice(0, max);
     return unicas.filter((f) => escolhidas.includes(f));
   }
-  return limpo
-    .replace(/^Naquele tempo,?\s*/i, '')
-    .split(/(?<=[.!?])\s+/)
-    .filter((s) => s.length > 20)
+  return frases(limpo.replace(/^Naquele tempo,?\s*/i, ''))
+    .filter((f) => f.length > 20)
     .slice(0, Math.min(2, max));
 }
 

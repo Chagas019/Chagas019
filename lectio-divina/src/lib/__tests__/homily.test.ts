@@ -19,6 +19,15 @@ describe('roteiro da homilia', () => {
     expect(f.every((x) => t.includes(x.slice(0, 15)) || semVersiculos(t).includes(x))).toBe(true);
   });
 
+  it('quebra uma fala longa em frases curtas', () => {
+    const t = 'Naquele tempo, 1Jesus começou a falar: “Tomai cuidado com o fermento dos fariseus, que é a hipocrisia. 2Não há nada de escondido que não venha a ser revelado, e não há nada de oculto que não venha a ser conhecido. 6No entanto, nenhum deles é esquecido por Deus. 7Até mesmo os cabelos de vossa cabeça estão todos contados. Não tenhais medo! Vós valeis mais do que muitos pardais”.';
+    const f = frasesChave(t);
+    expect(f).toHaveLength(3);
+    expect(f).toContain('No entanto, nenhum deles é esquecido por Deus.');
+    expect(f).toContain('Vós valeis mais do que muitos pardais');
+    expect(f.every((x) => x.length <= 180)).toBe(true);
+  });
+
   it('sem aspas, usa as primeiras frases', () => {
     expect(frasesChave('Naquele tempo, Jesus subiu ao monte para rezar sozinho. Depois desceu.')[0]).toBe(
       'Jesus subiu ao monte para rezar sozinho.',
