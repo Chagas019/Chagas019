@@ -49,6 +49,8 @@ export type Title = {
   end: number;
   style: TitleStyle;
   lines: string[];
+  /** linha em itálico dourado nas afirmações (padrão: a segunda) */
+  accent?: number;
 };
 
 export type Act = { id: string; name: string; folder: string; start: number; end: number };

@@ -312,8 +312,8 @@ def compose_music():
     for k, name in enumerate(["D2", "A2", "F#3", "E4", "A4"]):
         add(dry, piano(hz(name), 6, 0.32), p + 0.4 + k * 0.22, -0.3 + k * 0.15)
     titles = {t["id"]: t for t in TL["titles"]}
-    add(dry, piano(hz("F#5"), 3, 0.24), 131.2, 0.3)
-    add(dry, piano(hz("E5"), 3, 0.2), 133.6, 0.2)
+    add(dry, piano(hz("F#5"), 3, 0.24), p + 2.7, 0.3)
+    add(dry, piano(hz("E5"), 3, 0.2), p + 5.1, 0.2)
     # "Somos chamados a levar o amor de Cristo": o acorde se abre, quente (Sol maior com 9ª)
     love = titles["t8"]["start"]
     for k, name in enumerate(["G2", "D3", "B3", "A4", "D5"]):

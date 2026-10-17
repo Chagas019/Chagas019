@@ -169,12 +169,12 @@ const TitleCard: React.FC<{ title: Title }> = ({ title }) => {
             style={{
               fontFamily: fonts.editorial,
               fontWeight: 300,
-              fontStyle: i === 1 ? "italic" : "normal",
+              fontStyle: i === (title.accent ?? 1) ? "italic" : "normal",
               fontSize: statementSize,
               lineHeight: 1.06,
               whiteSpace: "nowrap",
               letterSpacing: "-0.015em",
-              color: i === 1 ? colors.goldLight : colors.ivory,
+              color: i === (title.accent ?? 1) ? colors.goldLight : colors.ivory,
               textShadow: "0 2px 24px rgba(0,0,0,0.6)",
             }}
           >

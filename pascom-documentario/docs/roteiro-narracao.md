@@ -81,6 +81,9 @@ no vídeo (pode variar ±0,5 s; ajuste depois em `src/data/timeline.json`).
 | n32 | 1:54,9 | Porque não estamos aqui apenas para mostrar / o que acontece dentro da Igreja. // |
 | n33 | 2:00,7 | Estamos aqui para ajudar as pessoas / a encontrarem **Aquele** / que dá sentido a tudo. /// |
 
+Depois de n33, sem voz: na tela, "Talvez a única Igreja que alguém veja esta semana seja a que
+você mostrou." Deixe esse silêncio existir; não grave nada por cima.
+
 ## ATO 5 — O ENVIO
 
 Sem narração. A trilha e o ambiente da igreja conduzem: "SOMOS CHAMADOS A ALGO MAIOR." →

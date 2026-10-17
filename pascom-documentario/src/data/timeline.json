@@ -2,7 +2,7 @@
   "title": "SOMOS CHAMADOS A ALGO MAIOR",
   "subtitle": "Uma história sobre vocação, comunicação e missão.",
   "fps": 30,
-  "durationSec": 149,
+  "durationSec": 154.0,
   "notes": "Fonte única de sincronia. Tempos em segundos. Os tempos da narração foram estimados em ritmo documental (≈5,6 sílabas/s com pausas). Depois de gravar a voz, ajuste start/end de cada fala e as cenas acompanham.",
   "acts": [
     {
@@ -31,14 +31,14 @@
       "name": "A Missão",
       "folder": "mission",
       "start": 89.5,
-      "end": 128.5
+      "end": 133.5
     },
     {
       "id": "act5",
       "name": "O Envio",
       "folder": "ending",
-      "start": 128.5,
-      "end": 149
+      "start": 133.5,
+      "end": 154.0
     }
   ],
   "shots": [
@@ -543,7 +543,7 @@
       "id": "m-church",
       "act": "act4",
       "start": 120.7,
-      "end": 128.5,
+      "end": 133.5,
       "plate": "stainedGlass",
       "plateProps": {
         "intensity": 0.85
@@ -561,8 +561,8 @@
     {
       "id": "e-nave",
       "act": "act5",
-      "start": 128.5,
-      "end": 142.0,
+      "start": 133.5,
+      "end": 147.0,
       "plate": "nave",
       "plateProps": {
         "cross": true,
@@ -581,8 +581,8 @@
     {
       "id": "e-black",
       "act": "act5",
-      "start": 142.0,
-      "end": 149,
+      "start": 147.0,
+      "end": 154.0,
       "plate": "black",
       "purpose": "Assinatura: PASCOM — Comunicar para evangelizar.",
       "transition": "slow"
@@ -881,9 +881,21 @@
       ]
     },
     {
+      "id": "t9",
+      "start": 127.2,
+      "end": 133.2,
+      "style": "statement",
+      "accent": 2,
+      "lines": [
+        "Talvez a única Igreja",
+        "que alguém veja esta semana",
+        "seja a que você mostrou."
+      ]
+    },
+    {
       "id": "t6",
-      "start": 131.0,
-      "end": 136.2,
+      "start": 136.0,
+      "end": 141.2,
       "style": "hero",
       "lines": [
         "SOMOS CHAMADOS",
@@ -892,8 +904,8 @@
     },
     {
       "id": "t8",
-      "start": 136.8,
-      "end": 142.6,
+      "start": 141.8,
+      "end": 147.6,
       "style": "statement",
       "lines": [
         "Somos chamados a levar",
@@ -903,8 +915,8 @@
     },
     {
       "id": "t7",
-      "start": 143.4,
-      "end": 148.6,
+      "start": 148.4,
+      "end": 153.6,
       "style": "signature",
       "lines": [
         "PASCOM",
@@ -1003,8 +1015,8 @@
     "pauseStart": 54.4,
     "climax": 55.7,
     "releaseFrom": 89.5,
-    "pianoSoloFrom": 128.5,
-    "end": 149
+    "pianoSoloFrom": 133.5,
+    "end": 154.0
   },
   "breath": {
     "from": 54.3,
@@ -1043,8 +1055,8 @@
     },
     {
       "id": "ch5",
-      "start": 128.8,
-      "end": 130.9,
+      "start": 133.8,
+      "end": 135.9,
       "number": "V",
       "name": "O envio"
     }
