@@ -106,7 +106,7 @@ Todas com licença livre (SIL OFL), instaladas pelo npm via Fontsource. Nada é 
 | 0:55,7 | Algo Maior | Clarão e tutti: **SOMOS CHAMADOS A ALGO MAIOR.** Cortes secos no pulso, curtidas e números se apagam, adoração, o clique no abraço, procissão. |
 | 1:29,5 | A Missão | A música desacelera. Quem estava atrás da câmera, as horas de edição, o acolhimento, a esperança, Cristo ao centro. |
 | 2:07 | — | Silêncio de narração. Sobre a igreja iluminada: "Talvez a única Igreja / que alguém veja esta semana / *seja a que você mostrou.*" |
-| 2:13,5 | O Envio | A câmera se afasta da nave, a tela escurece. "SOMOS CHAMADOS A ALGO MAIOR." → "Somos chamados a levar *o amor de Cristo* através da comunicação." → "SOMOS CHAMADOS A SER PÁSCOA." → **PASCOM** — *Comunicar para evangelizar.* O som da igreja some. |
+| 2:13,5 | O Envio | A câmera se afasta da nave, a tela escurece. "SOMOS CHAMADOS A ALGO MAIOR." → "Somos chamados a levar *o amor de Cristo* através da comunicação." → "SOMOS CHAMADOS A SER PASCOM." → **PASCOM** — *Comunicar para evangelizar.* O som da igreja some. |
 
 A duração (2 min 39 s) é maior que os 90–120 s pensados no início porque segue o ritmo natural da
 narração completa, sem comprimir as falas. Para um corte de 90 s, o caminho é encurtar o texto do

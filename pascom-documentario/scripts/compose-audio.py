@@ -320,7 +320,7 @@ def compose_music():
         add(dry, piano(hz(name), 5, 0.27 - k * 0.02), love + k * 0.11, -0.3 + k * 0.15)
     add(dry, piano(hz("B4"), 3, 0.2), love + 2.6, 0.2)
     add(dry, piano(hz("A4"), 3, 0.18), love + 4.2, 0.1)
-    # "Somos chamados a ser Páscoa": acorde de Lá, luminoso, que pede a resolução
+    # "Somos chamados a ser PASCOM": acorde de Lá, luminoso, que pede a resolução
     easter = titles["t10"]["start"]
     for k, name in enumerate(["A2", "E3", "C#4", "E4", "A4", "E5"]):
         add(dry, piano(hz(name), 5, 0.28 - k * 0.02), easter + k * 0.1, -0.3 + k * 0.12)
