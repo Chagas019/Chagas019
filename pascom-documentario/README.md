@@ -12,7 +12,8 @@ responsabilidade, a comunicação é missão e Cristo é o centro.
 | Parte | Estado |
 |---|---|
 | Montagem em 5 atos (Silêncio, Chamado, Algo Maior, Missão, Envio), 2 min 24 s | pronta |
-| Motion design: tipografia editorial, máscaras, transições por luminosidade, câmera simulada, granulação, vinheta | pronto |
+| Motion design: tipografia autoral, máscaras, transições por luminosidade, câmera simulada | pronto |
+| Acabamento de película (para não parecer "gerado"): grão de 35 mm, trepidação do projetor, poeira e fios, vazamentos de luz, suavidade óptica, exposição que respira | pronto |
 | Trilha original (piano, cordas, tímpanos) com pausa antes do clímax e clímax em 0:55,7 | composta por código, sem licenças de terceiros |
 | Sound design: ambiente de igreja, passos, porta, zíper, anel de foco, obturador sincronizado com os cortes | sintetizado |
 | Legendas da narração (queimadas no vídeo e em `.srt`) | prontas |
@@ -82,6 +83,18 @@ npm run audio:compose          # refaz score.mp3, church-ambience.mp3 e foley.mp
 
 Os eventos (clímax, pausa musical, cliques de câmera, passos, porta) vêm de `timeline.json`. Mudou
 um tempo lá, rode de novo e o som acompanha.
+
+## Tipografia
+
+Todas com licença livre (SIL OFL), instaladas pelo npm via Fontsource. Nada é baixado na hora do render.
+
+| Uso | Fonte | Por quê |
+|---|---|---|
+| Frase principal e PASCOM | **Instrument Serif** (normal e itálico) | serifa de alto contraste, de cartaz de cinema contemporâneo |
+| Afirmações ("Mas não se tratava…", "Maior do que curtidas…") | **Fraunces Light** | serifa editorial com desenho de livro impresso; a segunda linha em itálico dourado responde à primeira |
+| Frases íntimas ("Às vezes, tudo começa com um olhar.", "Transformar dons em missão.") | **Homemade Apple** | letra de mão, como a anotação de quem fotografa, escrita na tela num ritmo irregular |
+| Cartelas de capítulo e dados da câmera | **IBM Plex Mono** | linguagem de documentário, datilografada letra a letra |
+| Legendas | **Instrument Sans** | legível no celular |
 
 ## Linha do tempo
 

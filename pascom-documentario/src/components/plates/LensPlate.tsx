@@ -99,7 +99,7 @@ export const LensPlate: React.FC<PlateProps> = ({ progress, frame, width: W, hei
                 x={cx + Math.cos(a) * R * 0.79}
                 y={cy + rise + Math.sin(a) * R * 0.79}
                 fill={i === 4 ? colors.gold : "#c9c2b6"}
-                fontFamily={fonts.sans}
+                fontFamily={fonts.mono}
                 fontSize={R * 0.055}
                 textAnchor="middle"
                 dominantBaseline="middle"
@@ -141,7 +141,7 @@ export const LensPlate: React.FC<PlateProps> = ({ progress, frame, width: W, hei
           <circle cx={cx + R * 0.2} cy={cy + rise + R * 0.24} r={R * 0.03} fill={colors.goldLight} opacity={0.4 + 0.3 * smoothNoise("lens", t)} />
         </g>
         <circle cx={cx} cy={cy + rise} r={R * 0.66} fill="none" stroke="#3b3733" strokeWidth={W * 0.003} />
-        <text x={cx} y={cy + rise + R * 0.6} fill="#8d867b" fontFamily={fonts.sans} fontSize={R * 0.04} textAnchor="middle" letterSpacing={R * 0.01}>
+        <text x={cx} y={cy + rise + R * 0.6} fill="#8d867b" fontFamily={fonts.mono} fontSize={R * 0.04} textAnchor="middle" letterSpacing={R * 0.01}>
           50mm  1:1.4
         </text>
       </g>

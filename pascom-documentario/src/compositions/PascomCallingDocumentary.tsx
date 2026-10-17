@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsoluteFill } from "remotion";
 import { CinematicText } from "../components/CinematicText";
-import { FilmLook, FilmTransition } from "../components/FilmTransition";
+import { FilmGate, FilmLook, FilmTransition } from "../components/FilmTransition";
 import { SoundDesign } from "../components/SoundDesign";
 import { Subtitles } from "../components/Subtitles";
 import { timeline } from "../data/timeline";
@@ -20,13 +20,15 @@ export type DocumentaryProps = {
 
 export const PascomCallingDocumentary: React.FC<DocumentaryProps> = ({ showCaptions, musicVolume }) => (
   <AbsoluteFill style={{ backgroundColor: colors.night }}>
-    <OpeningScene />
-    <CallingScene />
-    <WorshipScene />
-    <MissionScene />
-    <EndingScene />
-    <FilmTransition />
-    <CinematicText titles={timeline.titles} />
+    <FilmGate>
+      <OpeningScene />
+      <CallingScene />
+      <WorshipScene />
+      <MissionScene />
+      <EndingScene />
+      <FilmTransition />
+    </FilmGate>
+    <CinematicText titles={timeline.titles} chapters={timeline.chapters} />
     {showCaptions ? <Subtitles cues={timeline.narration} /> : null}
     <FilmLook />
     <SoundDesign musicVolume={musicVolume} />

@@ -1,8 +1,12 @@
-import "@fontsource/cormorant-garamond/400.css";
-import "@fontsource/cormorant-garamond/400-italic.css";
-import "@fontsource/cormorant-garamond/500.css";
-import "@fontsource/cormorant-garamond/600.css";
-import "@fontsource-variable/inter";
+import "@fontsource/instrument-serif/400.css";
+import "@fontsource/instrument-serif/400-italic.css";
+import "@fontsource/fraunces/300.css";
+import "@fontsource/fraunces/300-italic.css";
+import "@fontsource/homemade-apple/400.css";
+import "@fontsource/ibm-plex-mono/400.css";
+import "@fontsource/ibm-plex-mono/500.css";
+import "@fontsource/instrument-sans/400.css";
+import "@fontsource/instrument-sans/600.css";
 import { continueRender, delayRender } from "remotion";
 
 export const colors = {
@@ -21,19 +25,33 @@ export const colors = {
   glassViolet: "#4a2a6e",
 };
 
+/**
+ * Tipografia (todas OFL, servidas localmente pelo Fontsource):
+ * - display: Instrument Serif — títulos de cinema, contraste alto, desenho contemporâneo.
+ * - editorial: Fraunces Light — afirmações, serifa "suave" com personalidade de livro impresso.
+ * - hand: Homemade Apple — a letra de alguém, para as frases íntimas (anotação do fotógrafo).
+ * - mono: IBM Plex Mono — cartelas de capítulo e dados de câmera, linguagem de documentário.
+ * - sans: Instrument Sans — legendas, legibilidade em celular.
+ */
 export const fonts = {
-  serif: '"Cormorant Garamond", "Times New Roman", serif',
-  sans: '"Inter Variable", "Helvetica Neue", Arial, sans-serif',
+  display: '"Instrument Serif", "Times New Roman", serif',
+  editorial: '"Fraunces", Georgia, serif',
+  hand: '"Homemade Apple", cursive',
+  mono: '"IBM Plex Mono", "Courier New", monospace',
+  sans: '"Instrument Sans", "Helvetica Neue", Arial, sans-serif',
 };
 
 // Garante que as fontes estejam carregadas antes de qualquer quadro ser capturado.
 if (typeof document !== "undefined") {
   const handle = delayRender("Carregando tipografia");
   Promise.all([
-    document.fonts.load(`400 64px ${fonts.serif}`),
-    document.fonts.load(`italic 400 64px ${fonts.serif}`),
-    document.fonts.load(`500 64px ${fonts.serif}`),
-    document.fonts.load(`600 64px ${fonts.serif}`),
+    document.fonts.load(`400 64px ${fonts.display}`),
+    document.fonts.load(`italic 400 64px ${fonts.display}`),
+    document.fonts.load(`300 64px ${fonts.editorial}`),
+    document.fonts.load(`italic 300 64px ${fonts.editorial}`),
+    document.fonts.load(`400 64px ${fonts.hand}`),
+    document.fonts.load(`400 32px ${fonts.mono}`),
+    document.fonts.load(`500 32px ${fonts.mono}`),
     document.fonts.load(`400 32px ${fonts.sans}`),
     document.fonts.load(`600 32px ${fonts.sans}`),
   ])

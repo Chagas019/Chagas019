@@ -834,7 +834,7 @@
       "id": "t1",
       "start": 5.0,
       "end": 9.0,
-      "style": "whisper",
+      "style": "hand",
       "lines": [
         "Às vezes, tudo começa",
         "com um olhar."
@@ -874,7 +874,7 @@
       "id": "t5",
       "start": 68.2,
       "end": 75.0,
-      "style": "statement",
+      "style": "hand",
       "lines": [
         "Transformar dons",
         "em missão."
@@ -1000,5 +1000,42 @@
     "to": 55.65,
     "depth": 0.94,
     "note": "A imagem quase apaga durante a pausa musical; o clímax entra com um clarão quente."
-  }
+  },
+  "chapters": [
+    {
+      "id": "ch1",
+      "start": 9.2,
+      "end": 13.4,
+      "number": "I",
+      "name": "O silêncio"
+    },
+    {
+      "id": "ch2",
+      "start": 26.4,
+      "end": 30.6,
+      "number": "II",
+      "name": "O chamado"
+    },
+    {
+      "id": "ch3",
+      "start": 78.8,
+      "end": 82.8,
+      "number": "III",
+      "name": "Algo maior"
+    },
+    {
+      "id": "ch4",
+      "start": 90.2,
+      "end": 94.4,
+      "number": "IV",
+      "name": "A missão"
+    },
+    {
+      "id": "ch5",
+      "start": 128.8,
+      "end": 130.9,
+      "number": "V",
+      "name": "O envio"
+    }
+  ]
 }

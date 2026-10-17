@@ -9,10 +9,15 @@ const Photo: React.FC<{ x: number; y: number; w: number; h: number; seed: number
   const kind = seed % 3;
   return (
     <g>
+      <defs>
+        <filter id="cs-photo-soft" x="-5%" y="-5%" width="110%" height="110%">
+          <feGaussianBlur stdDeviation={w * 0.012} />
+        </filter>
+      </defs>
       <rect x={x} y={y} width={w} height={h} fill="#120c08" />
-      <g opacity={exposure}>
+      <g opacity={exposure} filter="url(#cs-photo-soft)">
         <rect x={x} y={y} width={w} height={h} fill={kind === 0 ? "#5a3a1f" : kind === 1 ? "#3d2a1a" : "#4b3322"} />
-        <ellipse cx={x + w * (0.3 + s[0].a * 0.4)} cy={y + h * 0.35} rx={w * 0.45} ry={h * 0.32} fill={colors.goldLight} opacity={0.55} />
+        <ellipse cx={x + w * (0.3 + s[0].a * 0.4)} cy={y + h * 0.35} rx={w * 0.45} ry={h * 0.32} fill={colors.goldLight} opacity={0.32} />
         {kind === 0 && (
           <>
             <path d={personPath(x + w * 0.42, y + h * 1.0, w * 0.55)} fill="#1a110a" />
@@ -76,7 +81,7 @@ export const ContactSheetPlate: React.FC<PlateProps> = ({ progress, frame, width
             return <rect key={i} x={(i * pw) / 48} y={-v * W * 0.1} width={pw / 52} height={v * W * 0.1} fill="#f4ead8" opacity={0.35} />;
           })}
         </g>
-        <text x={W / 2} y={H * 0.16 + ph + W * 0.2} fill="#f4ead8" opacity={0.55} fontFamily={fonts.sans} fontSize={W * 0.03} textAnchor="middle" letterSpacing={W * 0.006}>
+        <text x={W / 2} y={H * 0.16 + ph + W * 0.2} fill="#f4ead8" opacity={0.55} fontFamily={fonts.mono} fontSize={W * 0.03} textAnchor="middle" letterSpacing={W * 0.006}>
           {hh}:{mm}
         </text>
         <rect width={W} height={H} fill={colors.gold} opacity={0.04 * exposure} style={{ mixBlendMode: "screen" }} />
@@ -109,7 +114,7 @@ export const ContactSheetPlate: React.FC<PlateProps> = ({ progress, frame, width
         return (
           <g key={tile.i} opacity={op}>
             <Photo x={x} y={y} w={cw} h={chh} seed={tile.i} exposure={chosen ? 1 : 0.55 + 0.3 * tile.c} />
-            <g opacity={1 - fadeNumbers} fontFamily={fonts.sans} fontSize={W * 0.026} fill="#f4ead8">
+            <g opacity={1 - fadeNumbers} fontFamily={fonts.mono} fontSize={W * 0.026} fill="#f4ead8">
               <path
                 d={`M ${x + W * 0.02} ${y + chh + W * 0.045} c ${-W * 0.012} ${-W * 0.012} ${-W * 0.004} ${-W * 0.026} ${W * 0.008} ${-W * 0.016} c ${W * 0.012} ${-W * 0.01} ${W * 0.02} ${W * 0.004} ${W * 0.008} ${W * 0.016} Z`}
                 fill={colors.glassRuby}

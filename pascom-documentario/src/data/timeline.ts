@@ -39,7 +39,9 @@ export type NarrationCue = {
   direction: string;
 };
 
-export type TitleStyle = "whisper" | "statement" | "hero" | "signature";
+export type TitleStyle = "whisper" | "hand" | "statement" | "hero" | "signature";
+
+export type Chapter = { id: string; start: number; end: number; number: string; name: string };
 
 export type Title = {
   id: string;
@@ -80,6 +82,7 @@ export const timeline = raw as unknown as {
   sfx: SfxEvent[];
   music: Record<string, number | string>;
   breath: { from: number; to: number; depth: number };
+  chapters: Chapter[];
 };
 
 export const assets = assetsRaw as Assets;

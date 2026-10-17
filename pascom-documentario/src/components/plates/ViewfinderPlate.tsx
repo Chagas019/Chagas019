@@ -131,7 +131,7 @@ export const ViewfinderPlate: React.FC<PlateProps> = ({ progress, frame, width: 
           );
         }),
       )}
-      <g fontFamily={fonts.sans} fontSize={W * 0.026} fill="#f4ead8" opacity={0.8} letterSpacing={W * 0.002}>
+      <g fontFamily={fonts.mono} fontSize={W * 0.026} fill="#f4ead8" opacity={0.8} letterSpacing={W * 0.002}>
         <text x={fx + W * 0.02} y={fy + frameH + W * 0.06}>1/125</text>
         <text x={fx + frameW * 0.27} y={fy + frameH + W * 0.06}>F2.8</text>
         <text x={fx + frameW * 0.5} y={fy + frameH + W * 0.06}>ISO 1600</text>

@@ -43,6 +43,9 @@ export const StainedGlassPlate: React.FC<PlateProps> = ({ progress, frame, width
         <filter id="sg-soft" x="-20%" y="-20%" width="140%" height="140%">
           <feGaussianBlur stdDeviation={W * 0.012} />
         </filter>
+        <filter id="sg-lens" x="-5%" y="-5%" width="110%" height="110%">
+          <feGaussianBlur stdDeviation={W * 0.0028} />
+        </filter>
         <filter id="sg-glow" x="-30%" y="-30%" width="160%" height="160%">
           <feGaussianBlur stdDeviation={W * 0.03} />
         </filter>
@@ -57,11 +60,13 @@ export const StainedGlassPlate: React.FC<PlateProps> = ({ progress, frame, width
       <path d={arch} fill={colors.goldLight} opacity={0.35 * intensity * shimmer} filter="url(#sg-glow)" />
 
       {/* vitral */}
-      <g clipPath="url(#sg-arch)">
+      <g clipPath="url(#sg-arch)" filter="url(#sg-lens)">
         {Array.from({ length: rows }).map((_, r) =>
           Array.from({ length: cols }).map((__, c) => {
             const idx = (r * 3 + c * 5 + (r % 2)) % PANE_COLORS.length;
             const pulse = 0.75 + 0.25 * smoothNoise(`p${r}-${c}`, t * 0.4);
+            // vidro soprado: cada peça tem espessura e cor próprias
+            const tone = smoothNoise(`tone${r}-${c}`, 0.5);
             return (
               <rect
                 key={`${r}-${c}`}
@@ -70,7 +75,7 @@ export const StainedGlassPlate: React.FC<PlateProps> = ({ progress, frame, width
                 width={cw}
                 height={rh}
                 fill={PANE_COLORS[idx]}
-                opacity={(0.55 + 0.4 * pulse) * intensity}
+                opacity={(0.35 + 0.35 * pulse + 0.3 * tone) * intensity}
               />
             );
           }),
