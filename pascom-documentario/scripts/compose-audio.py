@@ -324,8 +324,8 @@ def compose_music():
     easter = titles["t10"]["start"]
     for k, name in enumerate(["A2", "E3", "C#4", "E4", "A4", "E5"]):
         add(dry, piano(hz(name), 5, 0.28 - k * 0.02), easter + k * 0.1, -0.3 + k * 0.12)
-    # assinatura PASCOM: o acorde final de Ré
-    sig = titles["t7"]["start"]
+    # o acorde final de Ré resolve sob "A SER PASCOM."
+    sig = easter + 2.8
     for k, name in enumerate(["D2", "D3", "A3", "F#4", "A4", "D5"]):
         add(dry, piano(hz(name), 6, 0.3 - k * 0.02), sig + k * 0.09, -0.3 + k * 0.12)
 

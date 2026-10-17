@@ -11,7 +11,7 @@ responsabilidade, a comunicação é missão e Cristo é o centro.
 
 | Parte | Estado |
 |---|---|
-| Montagem em 5 atos (Silêncio, Chamado, Algo Maior, Missão, Envio), 2 min 39 s | pronta |
+| Montagem em 5 atos (Silêncio, Chamado, Algo Maior, Missão, Envio), 2 min 38 s | pronta |
 | Motion design: tipografia autoral, máscaras, transições por luminosidade, câmera simulada | pronto |
 | Acabamento de película (para não parecer "gerado"): grão de 35 mm, trepidação do projetor, poeira e fios, vazamentos de luz, suavidade óptica, exposição que respira | pronto |
 | Trilha original (piano, cordas, tímpanos) com pausa antes do clímax e clímax em 0:55,7 | composta por código, sem licenças de terceiros |
@@ -106,9 +106,9 @@ Todas com licença livre (SIL OFL), instaladas pelo npm via Fontsource. Nada é 
 | 0:55,7 | Algo Maior | Clarão e tutti: **SOMOS CHAMADOS A ALGO MAIOR.** Cortes secos no pulso, curtidas e números se apagam, adoração, o clique no abraço, procissão. |
 | 1:29,5 | A Missão | A música desacelera. Quem estava atrás da câmera, as horas de edição, o acolhimento, a esperança, Cristo ao centro. |
 | 2:07 | — | Silêncio de narração. Sobre a igreja iluminada: "Talvez a única Igreja / que alguém veja esta semana / *seja a que você mostrou.*" |
-| 2:13,5 | O Envio | A câmera se afasta da nave, a tela escurece. "SOMOS CHAMADOS A ALGO MAIOR." → "Somos chamados a levar *o amor de Cristo* através da comunicação." → "SOMOS CHAMADOS A SER PASCOM." → **PASCOM** — *Comunicar para evangelizar.* O som da igreja some. |
+| 2:13,5 | O Envio | A câmera se afasta da nave, a tela escurece. "SOMOS CHAMADOS A ALGO MAIOR." → "Somos chamados a levar *o amor de Cristo* através da comunicação." → "SOMOS CHAMADOS A SER PASCOM." O som da igreja some. |
 
-A duração (2 min 39 s) é maior que os 90–120 s pensados no início porque segue o ritmo natural da
+A duração (2 min 38 s) é maior que os 90–120 s pensados no início porque segue o ritmo natural da
 narração completa, sem comprimir as falas. Para um corte de 90 s, o caminho é encurtar o texto do
 Ato 4 em `timeline.json` (falas, planos e títulos), não acelerar a voz.
 

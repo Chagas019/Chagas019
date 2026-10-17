@@ -2,7 +2,7 @@
   "title": "SOMOS CHAMADOS A ALGO MAIOR",
   "subtitle": "Uma história sobre vocação, comunicação e missão.",
   "fps": 30,
-  "durationSec": 159.4,
+  "durationSec": 158.4,
   "notes": "Fonte única de sincronia. Tempos em segundos. Os tempos da narração foram estimados em ritmo documental (≈5,6 sílabas/s com pausas). Depois de gravar a voz, ajuste start/end de cada fala e as cenas acompanham.",
   "acts": [
     {
@@ -38,7 +38,7 @@
       "name": "O Envio",
       "folder": "ending",
       "start": 133.5,
-      "end": 159.4
+      "end": 158.4
     }
   ],
   "shots": [
@@ -582,9 +582,9 @@
       "id": "e-black",
       "act": "act5",
       "start": 147.0,
-      "end": 159.4,
+      "end": 158.4,
       "plate": "black",
-      "purpose": "Assinatura: PASCOM — Comunicar para evangelizar.",
+      "purpose": "Assinatura: SOMOS CHAMADOS A SER PASCOM.",
       "transition": "slow"
     }
   ],
@@ -916,21 +916,11 @@
     {
       "id": "t10",
       "start": 148.2,
-      "end": 153.4,
+      "end": 157.2,
       "style": "hero",
       "lines": [
         "SOMOS CHAMADOS",
         "A SER PASCOM."
-      ]
-    },
-    {
-      "id": "t7",
-      "start": 153.8,
-      "end": 159.0,
-      "style": "signature",
-      "lines": [
-        "PASCOM",
-        "Comunicar para evangelizar."
       ]
     }
   ],
@@ -1026,7 +1016,7 @@
     "climax": 55.7,
     "releaseFrom": 89.5,
     "pianoSoloFrom": 133.5,
-    "end": 159.4
+    "end": 158.4
   },
   "breath": {
     "from": 54.3,

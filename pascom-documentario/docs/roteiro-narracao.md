@@ -88,4 +88,4 @@ você mostrou." Deixe esse silêncio existir; não grave nada por cima.
 
 Sem narração. A trilha e o ambiente da igreja conduzem: "SOMOS CHAMADOS A ALGO MAIOR." →
 "Somos chamados a levar o amor de Cristo através da comunicação." →
-"PASCOM — Comunicar para evangelizar." → silêncio.
+"SOMOS CHAMADOS A SER PASCOM." → silêncio.
