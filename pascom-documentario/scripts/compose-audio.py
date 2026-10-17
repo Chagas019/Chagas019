@@ -311,11 +311,19 @@ def compose_music():
     p = M["pianoSoloFrom"]
     for k, name in enumerate(["D2", "A2", "F#3", "E4", "A4"]):
         add(dry, piano(hz(name), 6, 0.32), p + 0.4 + k * 0.22, -0.3 + k * 0.15)
+    titles = {t["id"]: t for t in TL["titles"]}
     add(dry, piano(hz("F#5"), 3, 0.24), 131.2, 0.3)
     add(dry, piano(hz("E5"), 3, 0.2), 133.6, 0.2)
-    add(dry, piano(hz("D5"), 4, 0.22), 135.4, 0.1)
+    # "Somos chamados a levar o amor de Cristo": o acorde se abre, quente (Sol maior com 9ª)
+    love = titles["t8"]["start"]
+    for k, name in enumerate(["G2", "D3", "B3", "A4", "D5"]):
+        add(dry, piano(hz(name), 5, 0.27 - k * 0.02), love + k * 0.11, -0.3 + k * 0.15)
+    add(dry, piano(hz("B4"), 3, 0.2), love + 2.6, 0.2)
+    add(dry, piano(hz("A4"), 3, 0.18), love + 4.2, 0.1)
+    # assinatura PASCOM: o acorde final de Ré
+    sig = titles["t7"]["start"]
     for k, name in enumerate(["D2", "D3", "A3", "F#4", "A4", "D5"]):
-        add(dry, piano(hz(name), 6, 0.3 - k * 0.02), 138.8 + k * 0.09, -0.3 + k * 0.12)
+        add(dry, piano(hz(name), 6, 0.3 - k * 0.02), sig + k * 0.09, -0.3 + k * 0.12)
 
     ir = church_ir(4.6)
     mix = reverb(dry, ir, wet=0.55) + reverb(strings, ir, wet=0.7) + reverb(perc, ir, wet=0.45)

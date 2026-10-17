@@ -84,4 +84,5 @@ no vídeo (pode variar ±0,5 s; ajuste depois em `src/data/timeline.json`).
 ## ATO 5 — O ENVIO
 
 Sem narração. A trilha e o ambiente da igreja conduzem: "SOMOS CHAMADOS A ALGO MAIOR." →
+"Somos chamados a levar o amor de Cristo através da comunicação." →
 "PASCOM — Comunicar para evangelizar." → silêncio.

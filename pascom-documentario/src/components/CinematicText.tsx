@@ -153,6 +153,9 @@ const TitleCard: React.FC<{ title: Title }> = ({ title }) => {
   }
 
   // statement: diagramação editorial, alinhada à esquerda; a segunda linha em itálico responde à primeira.
+  // O corpo diminui só o necessário para a linha mais longa caber sem quebrar.
+  const longest = Math.max(...title.lines.map((l) => l.length));
+  const statementSize = Math.min(unit * (portrait ? 0.084 : 0.072), (width * 0.82) / (longest * 0.48));
   return (
     <AbsoluteFill style={{ justifyContent: "center", paddingLeft: width * 0.09, paddingRight: width * 0.09 }}>
       <AbsoluteFill style={{ background: "linear-gradient(90deg, rgba(5,4,7,0.62), rgba(5,4,7,0.25) 70%, transparent)" }} />
@@ -167,8 +170,9 @@ const TitleCard: React.FC<{ title: Title }> = ({ title }) => {
               fontFamily: fonts.editorial,
               fontWeight: 300,
               fontStyle: i === 1 ? "italic" : "normal",
-              fontSize: unit * (portrait ? 0.084 : 0.072),
+              fontSize: statementSize,
               lineHeight: 1.06,
+              whiteSpace: "nowrap",
               letterSpacing: "-0.015em",
               color: i === 1 ? colors.goldLight : colors.ivory,
               textShadow: "0 2px 24px rgba(0,0,0,0.6)",
