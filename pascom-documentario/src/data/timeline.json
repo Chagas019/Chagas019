@@ -1,0 +1,1004 @@
+{
+  "title": "SOMOS CHAMADOS A ALGO MAIOR",
+  "subtitle": "Uma história sobre vocação, comunicação e missão.",
+  "fps": 30,
+  "durationSec": 144,
+  "notes": "Fonte única de sincronia. Tempos em segundos. Os tempos da narração foram estimados em ritmo documental (≈5,6 sílabas/s com pausas). Depois de gravar a voz, ajuste start/end de cada fala e as cenas acompanham.",
+  "acts": [
+    {
+      "id": "act1",
+      "name": "O Silêncio",
+      "folder": "opening",
+      "start": 0,
+      "end": 26
+    },
+    {
+      "id": "act2",
+      "name": "O Chamado",
+      "folder": "calling",
+      "start": 26,
+      "end": 55.7
+    },
+    {
+      "id": "act3",
+      "name": "Algo Maior",
+      "folder": "worship",
+      "start": 55.7,
+      "end": 89.5
+    },
+    {
+      "id": "act4",
+      "name": "A Missão",
+      "folder": "mission",
+      "start": 89.5,
+      "end": 128.5
+    },
+    {
+      "id": "act5",
+      "name": "O Envio",
+      "folder": "ending",
+      "start": 128.5,
+      "end": 144
+    }
+  ],
+  "shots": [
+    {
+      "id": "o-black",
+      "act": "act1",
+      "start": 0,
+      "end": 3.2,
+      "plate": "black",
+      "purpose": "Silêncio. A tela preta deixa o som da igreja nascer.",
+      "transition": "dissolve"
+    },
+    {
+      "id": "o-door",
+      "act": "act1",
+      "start": 3.2,
+      "end": 8.4,
+      "plate": "door",
+      "move": "push",
+      "slot": "opening/church-door",
+      "queries": [
+        "church door opening light",
+        "old church door opening",
+        "porta de igreja abrindo"
+      ],
+      "purpose": "Uma porta se abre: a luz entra antes da história.",
+      "transition": "slow"
+    },
+    {
+      "id": "o-glass",
+      "act": "act1",
+      "start": 8.4,
+      "end": 14,
+      "plate": "stainedGlass",
+      "move": "drift",
+      "slot": "opening/stained-glass",
+      "queries": [
+        "church sunlight through stained glass",
+        "empty Catholic church",
+        "church interior morning light",
+        "cinematic church interior"
+      ],
+      "purpose": "Igreja vazia antes da Missa, luz pelos vitrais.",
+      "transition": "dissolve"
+    },
+    {
+      "id": "o-bag",
+      "act": "act1",
+      "start": 14,
+      "end": 18,
+      "plate": "lens",
+      "plateProps": {
+        "phase": "reveal"
+      },
+      "move": "push",
+      "slot": "opening/camera-bag",
+      "queries": [
+        "photographer preparing camera cinematic",
+        "taking camera out of bag",
+        "photographer behind the scenes"
+      ],
+      "purpose": "A câmera sai da bolsa: o gesto de quem se prepara para servir.",
+      "transition": "dissolve"
+    },
+    {
+      "id": "o-lens",
+      "act": "act1",
+      "start": 18,
+      "end": 21.4,
+      "plate": "lens",
+      "plateProps": {
+        "phase": "focus"
+      },
+      "move": "push",
+      "slot": "opening/lens-adjust",
+      "queries": [
+        "camera lens close up",
+        "hands adjusting camera settings",
+        "professional camera cinematic close up"
+      ],
+      "purpose": "A lente é ajustada: o olhar começa a ganhar foco.",
+      "transition": "dissolve"
+    },
+    {
+      "id": "o-finder",
+      "act": "act1",
+      "start": 21.4,
+      "end": 26,
+      "plate": "viewfinder",
+      "plateProps": {
+        "label": "ALTAR"
+      },
+      "move": "still",
+      "slowMo": 0.6,
+      "slot": "opening/viewfinder",
+      "queries": [
+        "camera viewfinder close up",
+        "photographer looking through camera",
+        "camera screen live view"
+      ],
+      "purpose": "Pelo visor, a percepção: não era apenas fotografar. A imagem respira.",
+      "transition": "dissolve"
+    },
+    {
+      "id": "c-enter",
+      "act": "act2",
+      "start": 26,
+      "end": 31.4,
+      "plate": "nave",
+      "plateProps": {
+        "people": true
+      },
+      "move": "push",
+      "slot": "calling/people-entering",
+      "queries": [
+        "people entering church",
+        "church congregation documentary",
+        "Catholic Mass cinematic footage"
+      ],
+      "purpose": "Pessoas entram na igreja: Deus chama através do que colocamos a serviço.",
+      "transition": "slow"
+    },
+    {
+      "id": "c-mass",
+      "act": "act2",
+      "start": 31.4,
+      "end": 36.4,
+      "plate": "viewfinder",
+      "plateProps": {
+        "label": "SANTA MISSA"
+      },
+      "move": "drift",
+      "slot": "calling/photographer-mass",
+      "queries": [
+        "photographer taking pictures in church",
+        "religious event photographer",
+        "church photographer"
+      ],
+      "purpose": "Talvez tenha começado com uma câmera: o fotógrafo acompanha a Missa.",
+      "transition": "dissolve"
+    },
+    {
+      "id": "c-team",
+      "act": "act2",
+      "start": 36.4,
+      "end": 40.7,
+      "plate": "bokeh",
+      "plateProps": {
+        "tone": "cool"
+      },
+      "move": "drift",
+      "slot": "calling/media-team",
+      "queries": [
+        "church media team",
+        "church video production",
+        "volunteer photographer"
+      ],
+      "purpose": "Talvez com um vídeo: a equipe prepara os equipamentos.",
+      "transition": "dissolve"
+    },
+    {
+      "id": "c-prayer",
+      "act": "act2",
+      "start": 40.7,
+      "end": 46.7,
+      "plate": "candles",
+      "move": "push",
+      "slowMo": 0.7,
+      "slot": "calling/youth-praying",
+      "queries": [
+        "young people praying in church",
+        "Catholic church candles",
+        "community praying together"
+      ],
+      "purpose": "O que estava diante das lentes: jovens reunidos em oração.",
+      "transition": "dissolve"
+    },
+    {
+      "id": "c-people",
+      "act": "act2",
+      "start": 46.7,
+      "end": 50.5,
+      "plate": "bokeh",
+      "plateProps": {
+        "tone": "warm"
+      },
+      "move": "drift",
+      "slot": "calling/community-gathering",
+      "queries": [
+        "Catholic youth community",
+        "church community gathering",
+        "people greeting at church"
+      ],
+      "purpose": "Era sobre as pessoas, sobre os encontros.",
+      "transition": "dissolve"
+    },
+    {
+      "id": "c-welcome",
+      "act": "act2",
+      "start": 50.5,
+      "end": 55.7,
+      "plate": "stainedGlass",
+      "plateProps": {
+        "intensity": 0.6
+      },
+      "move": "push",
+      "slowMo": 0.6,
+      "slot": "calling/welcome",
+      "queries": [
+        "people hugging church",
+        "welcoming embrace community",
+        "photographer documenting community"
+      ],
+      "purpose": "Histórias que Deus escreve em silêncio: alguém acolhe alguém.",
+      "transition": "dissolve"
+    },
+    {
+      "id": "w-hit",
+      "act": "act3",
+      "start": 55.7,
+      "end": 61,
+      "plate": "nave",
+      "plateProps": {
+        "glory": true
+      },
+      "move": "pull",
+      "slot": "worship/community-assembly",
+      "queries": [
+        "church congregation documentary",
+        "Catholic Mass cinematic footage",
+        "people worshipping Jesus"
+      ],
+      "purpose": "Clímax: SOMOS CHAMADOS A ALGO MAIOR. A comunidade inteira no quadro.",
+      "transition": "light"
+    },
+    {
+      "id": "w-feed",
+      "act": "act3",
+      "start": 61,
+      "end": 65.3,
+      "plate": "contactSheet",
+      "plateProps": {
+        "mode": "metrics"
+      },
+      "move": "push",
+      "slot": "worship/editing-photos",
+      "queries": [
+        "photo editing on laptop",
+        "photographer editing photos",
+        "scrolling social media phone"
+      ],
+      "purpose": "Maior do que curtidas, maior do que números.",
+      "transition": "cut"
+    },
+    {
+      "id": "w-adore",
+      "act": "act3",
+      "start": 65.3,
+      "end": 68.2,
+      "plate": "candles",
+      "plateProps": {
+        "monstrance": true
+      },
+      "move": "push",
+      "slowMo": 0.5,
+      "slot": "worship/adoration",
+      "queries": [
+        "Eucharistic adoration",
+        "Catholic youth worship",
+        "young people praying in church"
+      ],
+      "purpose": "Somos chamados a servir: jovens em adoração.",
+      "transition": "cut"
+    },
+    {
+      "id": "w-hug",
+      "act": "act3",
+      "start": 68.2,
+      "end": 72.6,
+      "plate": "viewfinder",
+      "plateProps": {
+        "label": "ENCONTRO"
+      },
+      "move": "still",
+      "slowMo": 0.5,
+      "slot": "worship/photographer-hug",
+      "queries": [
+        "photographer documenting community",
+        "people hugging slow motion",
+        "photographer taking pictures event"
+      ],
+      "purpose": "Técnica em serviço: um fotógrafo registra um abraço. Clique na montagem.",
+      "transition": "cut"
+    },
+    {
+      "id": "w-team",
+      "act": "act3",
+      "start": 72.6,
+      "end": 75.3,
+      "plate": "bokeh",
+      "plateProps": {
+        "tone": "warm",
+        "dense": true
+      },
+      "move": "drift",
+      "slot": "worship/team-working",
+      "queries": [
+        "church media team",
+        "video production team working",
+        "church video production"
+      ],
+      "purpose": "Comunicação em encontro: a equipe trabalha em conjunto.",
+      "transition": "cut"
+    },
+    {
+      "id": "w-procession",
+      "act": "act3",
+      "start": 75.3,
+      "end": 78.6,
+      "plate": "procession",
+      "move": "drift",
+      "slowMo": 0.6,
+      "slot": "worship/procession",
+      "queries": [
+        "church procession cinematic",
+        "candle procession night",
+        "religious procession"
+      ],
+      "purpose": "Imagens em testemunhos de fé: um videomaker acompanha a procissão.",
+      "transition": "cut"
+    },
+    {
+      "id": "w-light",
+      "act": "act3",
+      "start": 78.6,
+      "end": 83,
+      "plate": "stainedGlass",
+      "plateProps": {
+        "intensity": 1
+      },
+      "move": "pull",
+      "slot": "worship/light-church",
+      "queries": [
+        "light rays church interior",
+        "church sunlight through stained glass",
+        "church altar cinematic"
+      ],
+      "purpose": "Luz atravessando a igreja: os dons a serviço do Reino.",
+      "transition": "cut"
+    },
+    {
+      "id": "w-observe",
+      "act": "act3",
+      "start": 83,
+      "end": 89.5,
+      "plate": "nave",
+      "plateProps": {
+        "people": true
+      },
+      "move": "pull",
+      "slot": "worship/observing-community",
+      "queries": [
+        "photographer documenting community",
+        "church congregation documentary",
+        "community praying together"
+      ],
+      "purpose": "Até o que parece pequeno: um agente da PASCOM observa a comunidade.",
+      "transition": "cut"
+    },
+    {
+      "id": "m-lower",
+      "act": "act4",
+      "start": 89.5,
+      "end": 94.6,
+      "plate": "lens",
+      "plateProps": {
+        "phase": "rest"
+      },
+      "move": "still",
+      "slowMo": 0.5,
+      "slot": "mission/camera-lowered",
+      "queries": [
+        "photographer lowering camera",
+        "photographer holding camera thoughtful",
+        "photographer behind the scenes"
+      ],
+      "purpose": "Quem estava atrás da câmera: o fotógrafo abaixa a câmera.",
+      "transition": "slow"
+    },
+    {
+      "id": "m-hours",
+      "act": "act4",
+      "start": 94.6,
+      "end": 99.8,
+      "plate": "contactSheet",
+      "plateProps": {
+        "mode": "develop"
+      },
+      "move": "push",
+      "slot": "mission/photo-taken",
+      "queries": [
+        "photographer editing photos at night",
+        "photo editing on laptop",
+        "photographs printed on table"
+      ],
+      "purpose": "As horas dedicadas àquela imagem.",
+      "transition": "dissolve"
+    },
+    {
+      "id": "m-embrace",
+      "act": "act4",
+      "start": 99.8,
+      "end": 104.8,
+      "plate": "bokeh",
+      "plateProps": {
+        "tone": "warm"
+      },
+      "move": "push",
+      "slowMo": 0.6,
+      "slot": "mission/embrace",
+      "queries": [
+        "people hugging church",
+        "community embrace",
+        "friends hugging slow motion"
+      ],
+      "purpose": "Alguém se sente acolhido.",
+      "transition": "dissolve"
+    },
+    {
+      "id": "m-hope",
+      "act": "act4",
+      "start": 104.8,
+      "end": 107.7,
+      "plate": "candles",
+      "move": "push",
+      "slot": "mission/hope",
+      "queries": [
+        "lighting a candle church",
+        "Catholic church candles",
+        "hand lighting candle"
+      ],
+      "purpose": "Alguém reencontra a esperança.",
+      "transition": "dissolve"
+    },
+    {
+      "id": "m-christ",
+      "act": "act4",
+      "start": 107.7,
+      "end": 110.9,
+      "plate": "nave",
+      "plateProps": {
+        "cross": true
+      },
+      "move": "push",
+      "slot": "mission/altar-cross",
+      "queries": [
+        "church altar cinematic",
+        "crucifix church light",
+        "Jesus cross church"
+      ],
+      "purpose": "Alguém se aproxima de Cristo: Ele é o centro.",
+      "transition": "dissolve"
+    },
+    {
+      "id": "m-serve",
+      "act": "act4",
+      "start": 110.9,
+      "end": 114.9,
+      "plate": "bokeh",
+      "plateProps": {
+        "tone": "warm",
+        "dense": true
+      },
+      "move": "drift",
+      "slot": "mission/youth-serving",
+      "queries": [
+        "young volunteers serving community",
+        "Catholic youth community",
+        "volunteers helping church"
+      ],
+      "purpose": "A missão terá valido a pena: jovens servindo.",
+      "transition": "dissolve"
+    },
+    {
+      "id": "m-procession",
+      "act": "act4",
+      "start": 114.9,
+      "end": 120.7,
+      "plate": "procession",
+      "move": "drift",
+      "slowMo": 0.7,
+      "slot": "mission/celebration",
+      "queries": [
+        "church procession cinematic",
+        "community celebration church",
+        "religious festival procession"
+      ],
+      "purpose": "Mais do que mostrar o que acontece dentro da Igreja.",
+      "transition": "dissolve"
+    },
+    {
+      "id": "m-church",
+      "act": "act4",
+      "start": 120.7,
+      "end": 128.5,
+      "plate": "stainedGlass",
+      "plateProps": {
+        "intensity": 0.85
+      },
+      "move": "pull",
+      "slot": "mission/church-illuminated",
+      "queries": [
+        "illuminated church interior",
+        "church interior lights evening",
+        "cinematic church interior"
+      ],
+      "purpose": "Aquele que dá sentido a tudo: a igreja iluminada.",
+      "transition": "dissolve"
+    },
+    {
+      "id": "e-nave",
+      "act": "act5",
+      "start": 128.5,
+      "end": 139,
+      "plate": "nave",
+      "plateProps": {
+        "cross": true,
+        "fadeToDark": true
+      },
+      "move": "pullSlow",
+      "slot": "ending/church-wide",
+      "queries": [
+        "empty Catholic church",
+        "church interior wide shot",
+        "church sunlight through stained glass"
+      ],
+      "purpose": "Plano contemplativo. A câmera se afasta, a tela escurece: envio.",
+      "transition": "slow"
+    },
+    {
+      "id": "e-black",
+      "act": "act5",
+      "start": 139,
+      "end": 144,
+      "plate": "black",
+      "purpose": "Assinatura: PASCOM — Comunicar para evangelizar.",
+      "transition": "slow"
+    }
+  ],
+  "narration": [
+    {
+      "id": "n01",
+      "start": 5.0,
+      "end": 7.4,
+      "text": "Às vezes, tudo começa com um olhar.",
+      "caption": false,
+      "direction": "Quase sussurrado. Voz próxima do microfone, sem pressa."
+    },
+    {
+      "id": "n02",
+      "start": 8.4,
+      "end": 9.6,
+      "text": "Uma imagem.",
+      "direction": "Pausa curta antes e depois."
+    },
+    {
+      "id": "n03",
+      "start": 10.1,
+      "end": 11.1,
+      "text": "Um instante.",
+      "direction": "Mais baixo que a frase anterior."
+    },
+    {
+      "id": "n04",
+      "start": 11.8,
+      "end": 16.4,
+      "text": "A vontade de guardar aquilo que o tempo parece querer levar embora.",
+      "direction": "Leve saudade. Alongue \"embora\"."
+    },
+    {
+      "id": "n05",
+      "start": 17.4,
+      "end": 19.7,
+      "text": "Mas, em algum momento, percebemos...",
+      "direction": "Virada. Respire antes de \"percebemos\" e deixe as reticências soarem."
+    },
+    {
+      "id": "n06",
+      "start": 20.6,
+      "end": 23.4,
+      "text": "que não se tratava apenas de fotografar.",
+      "caption": false,
+      "direction": "Firme e calmo. Depois, silêncio de 2 a 3 segundos."
+    },
+    {
+      "id": "n07",
+      "start": 26.0,
+      "end": 30.4,
+      "text": "Porque Deus também nos chama através daquilo que colocamos a serviço.",
+      "direction": "Testemunho, não pregação. Destaque leve em \"chama\"."
+    },
+    {
+      "id": "n08",
+      "start": 31.4,
+      "end": 34.2,
+      "text": "Talvez tenha começado com uma câmera.",
+      "direction": "Lembrança pessoal, quase um sorriso."
+    },
+    {
+      "id": "n09",
+      "start": 34.6,
+      "end": 36.0,
+      "text": "Talvez com um vídeo.",
+      "direction": "Mesmo tom, ritmo de enumeração."
+    },
+    {
+      "id": "n10",
+      "start": 36.4,
+      "end": 39.7,
+      "text": "Talvez com a vontade de comunicar alguma coisa.",
+      "direction": "Abre um pouco a voz."
+    },
+    {
+      "id": "n11",
+      "start": 40.7,
+      "end": 45.8,
+      "text": "Mas o chamado nunca foi apenas sobre aquilo que estava diante das nossas lentes.",
+      "direction": "Começa o crescimento emocional. Sem acelerar."
+    },
+    {
+      "id": "n12",
+      "start": 46.7,
+      "end": 48.3,
+      "text": "Era sobre as pessoas.",
+      "direction": "Simples, sincero."
+    },
+    {
+      "id": "n13",
+      "start": 48.7,
+      "end": 50.1,
+      "text": "Sobre os encontros.",
+      "direction": ""
+    },
+    {
+      "id": "n14",
+      "start": 50.5,
+      "end": 53.5,
+      "text": "Sobre as histórias que Deus escreve em silêncio.",
+      "direction": "Diminua na palavra \"silêncio\". A música para logo depois."
+    },
+    {
+      "id": "n15",
+      "start": 55.7,
+      "end": 58.7,
+      "text": "Somos chamados a algo maior do que fotografias.",
+      "caption": false,
+      "direction": "O coração do filme. Voz plena, sem gritar. Entra junto com o tutti da música."
+    },
+    {
+      "id": "n16",
+      "start": 59.5,
+      "end": 60.7,
+      "text": "Maior do que vídeos.",
+      "direction": "Ritmo marcado, acompanhando os cortes."
+    },
+    {
+      "id": "n17",
+      "start": 61.0,
+      "end": 62.4,
+      "text": "Maior do que curtidas.",
+      "caption": false,
+      "direction": ""
+    },
+    {
+      "id": "n18",
+      "start": 62.8,
+      "end": 64.2,
+      "text": "Maior do que números.",
+      "caption": false,
+      "direction": "Feche a enumeração descendo o tom."
+    },
+    {
+      "id": "n19",
+      "start": 65.3,
+      "end": 67.0,
+      "text": "Somos chamados a servir.",
+      "direction": "Convicção serena. Pausa depois."
+    },
+    {
+      "id": "n20",
+      "start": 68.2,
+      "end": 70.5,
+      "text": "A transformar técnica em serviço.",
+      "caption": false,
+      "direction": "Cada par de palavras é uma decisão."
+    },
+    {
+      "id": "n21",
+      "start": 70.9,
+      "end": 72.6,
+      "text": "Criatividade em missão.",
+      "caption": false,
+      "direction": ""
+    },
+    {
+      "id": "n22",
+      "start": 73.0,
+      "end": 74.9,
+      "text": "Comunicação em encontro.",
+      "caption": false,
+      "direction": ""
+    },
+    {
+      "id": "n23",
+      "start": 75.3,
+      "end": 77.6,
+      "text": "E imagens em testemunhos de fé.",
+      "direction": "Ponto alto da sequência. Destaque em \"fé\"."
+    },
+    {
+      "id": "n24",
+      "start": 78.6,
+      "end": 82.5,
+      "text": "Porque, quando colocamos nossos dons a serviço do Reino de Deus,",
+      "direction": "Mais íntimo, a música abre espaço."
+    },
+    {
+      "id": "n25",
+      "start": 82.8,
+      "end": 88.1,
+      "text": "até aquilo que parece pequeno pode se tornar instrumento de evangelização.",
+      "direction": "Conclusão do ato. Termine com segurança, sem cair o tom."
+    },
+    {
+      "id": "n26",
+      "start": 90.1,
+      "end": 93.8,
+      "text": "Talvez nem todos se lembrem de quem estava atrás da câmera.",
+      "direction": "Humildade. A música desacelera."
+    },
+    {
+      "id": "n27",
+      "start": 94.6,
+      "end": 98.8,
+      "text": "Talvez ninguém saiba quantas horas foram dedicadas àquela imagem.",
+      "direction": "Sem queixa: é constatação serena."
+    },
+    {
+      "id": "n28",
+      "start": 99.8,
+      "end": 104.2,
+      "text": "Mas, se através daquilo que comunicamos, alguém se sentir acolhido...",
+      "direction": "Abre a esperança. Reticências reais."
+    },
+    {
+      "id": "n29",
+      "start": 104.8,
+      "end": 107.1,
+      "text": "se alguém reencontrar a esperança...",
+      "direction": ""
+    },
+    {
+      "id": "n30",
+      "start": 107.7,
+      "end": 110.0,
+      "text": "se alguém se aproximar de Cristo...",
+      "direction": "A frase mais delicada. Quase em oração."
+    },
+    {
+      "id": "n31",
+      "start": 110.9,
+      "end": 113.7,
+      "text": "então nossa missão terá valido a pena.",
+      "direction": "Resolução. Leve sorriso na voz."
+    },
+    {
+      "id": "n32",
+      "start": 114.9,
+      "end": 120.0,
+      "text": "Porque não estamos aqui apenas para mostrar o que acontece dentro da Igreja.",
+      "direction": "Clara e pausada."
+    },
+    {
+      "id": "n33",
+      "start": 120.7,
+      "end": 126.2,
+      "text": "Estamos aqui para ajudar as pessoas a encontrarem Aquele que dá sentido a tudo.",
+      "direction": "Última fala. Destaque em \"Aquele\". Silêncio depois."
+    }
+  ],
+  "titles": [
+    {
+      "id": "t1",
+      "start": 5.0,
+      "end": 9.0,
+      "style": "whisper",
+      "lines": [
+        "Às vezes, tudo começa",
+        "com um olhar."
+      ]
+    },
+    {
+      "id": "t2",
+      "start": 20.6,
+      "end": 25.6,
+      "style": "statement",
+      "lines": [
+        "Mas não se tratava",
+        "apenas de fotografar."
+      ]
+    },
+    {
+      "id": "t3",
+      "start": 55.7,
+      "end": 60.8,
+      "style": "hero",
+      "lines": [
+        "SOMOS CHAMADOS",
+        "A ALGO MAIOR."
+      ]
+    },
+    {
+      "id": "t4",
+      "start": 61.0,
+      "end": 65.0,
+      "style": "statement",
+      "lines": [
+        "Maior do que curtidas.",
+        "Maior do que números."
+      ]
+    },
+    {
+      "id": "t5",
+      "start": 68.2,
+      "end": 75.0,
+      "style": "statement",
+      "lines": [
+        "Transformar dons",
+        "em missão."
+      ]
+    },
+    {
+      "id": "t6",
+      "start": 131.0,
+      "end": 137.6,
+      "style": "hero",
+      "lines": [
+        "SOMOS CHAMADOS",
+        "A ALGO MAIOR."
+      ]
+    },
+    {
+      "id": "t7",
+      "start": 138.8,
+      "end": 143.6,
+      "style": "signature",
+      "lines": [
+        "PASCOM",
+        "Comunicar para evangelizar."
+      ]
+    }
+  ],
+  "sfx": [
+    {
+      "type": "footsteps",
+      "t": 1.4,
+      "dur": 3.4,
+      "gain": 0.55
+    },
+    {
+      "type": "door",
+      "t": 3.2,
+      "gain": 0.7
+    },
+    {
+      "type": "zipper",
+      "t": 14.2,
+      "gain": 0.45
+    },
+    {
+      "type": "focusRing",
+      "t": 18.4,
+      "dur": 2.4,
+      "gain": 0.4
+    },
+    {
+      "type": "shutter",
+      "t": 25.0,
+      "gain": 0.55
+    },
+    {
+      "type": "shutter",
+      "t": 33.0,
+      "gain": 0.4
+    },
+    {
+      "type": "murmur",
+      "t": 26.0,
+      "dur": 29.0,
+      "gain": 0.22
+    },
+    {
+      "type": "shutter",
+      "t": 55.7,
+      "gain": 0.6
+    },
+    {
+      "type": "shutter",
+      "t": 61.0,
+      "gain": 0.45
+    },
+    {
+      "type": "shutter",
+      "t": 62.8,
+      "gain": 0.45
+    },
+    {
+      "type": "shutter",
+      "t": 70.5,
+      "gain": 0.55
+    },
+    {
+      "type": "shutter",
+      "t": 72.6,
+      "gain": 0.4
+    },
+    {
+      "type": "murmur",
+      "t": 72.0,
+      "dur": 17.0,
+      "gain": 0.18
+    },
+    {
+      "type": "shutter",
+      "t": 89.9,
+      "gain": 0.35
+    },
+    {
+      "type": "murmur",
+      "t": 99.5,
+      "dur": 21.0,
+      "gain": 0.16
+    }
+  ],
+  "music": {
+    "bpm": 64,
+    "key": "Ré maior",
+    "pianoIn": 3.4,
+    "stringsIn": 26.0,
+    "buildFrom": 40.7,
+    "pauseStart": 54.4,
+    "climax": 55.7,
+    "releaseFrom": 89.5,
+    "pianoSoloFrom": 128.5,
+    "end": 144
+  },
+  "breath": {
+    "from": 54.3,
+    "to": 55.65,
+    "depth": 0.94,
+    "note": "A imagem quase apaga durante a pausa musical; o clímax entra com um clarão quente."
+  }
+}

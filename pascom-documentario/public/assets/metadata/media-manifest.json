@@ -1,0 +1,10 @@
+{
+  "generatedAt": null,
+  "notes": "Preenchido por scripts/fetch-media.mjs com cada arquivo realmente baixado e verificado (ffprobe). Vazio nesta versão: o ambiente de desenvolvimento não tinha chave de API nem acesso de rede a Pexels, Pixabay, Wikimedia Commons ou Internet Archive. Os planos sem filmagem usam placas procedurais (src/components/plates). Áudio: ver 'audio'.",
+  "items": [],
+  "audio": [
+    { "file": "assets/audio/music/score.mp3", "platform": "Composição original (scripts/compose-audio.py)", "license": "Mesma licença do projeto; sem amostras de terceiros", "durationSec": 144, "scene": "Todos os atos" },
+    { "file": "assets/audio/ambience/church-ambience.mp3", "platform": "Síntese original (scripts/compose-audio.py)", "license": "Mesma licença do projeto", "durationSec": 144, "scene": "Todos os atos" },
+    { "file": "assets/audio/sfx/foley.mp3", "platform": "Síntese original (scripts/compose-audio.py)", "license": "Mesma licença do projeto", "durationSec": 144, "scene": "Passos, porta, zíper, anel de foco, obturador" }
+  ]
+}

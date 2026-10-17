@@ -1,0 +1,32 @@
+{
+  "name": "pascom-somos-chamados",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Documentário cinematográfico vertical sobre o chamado da PASCOM (Remotion).",
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio",
+    "media:search": "node scripts/fetch-media.mjs --dry-run",
+    "media:fetch": "node scripts/fetch-media.mjs",
+    "audio:compose": "python3 scripts/compose-audio.py",
+    "assets:scan": "node scripts/scan-assets.mjs",
+    "subtitles": "node scripts/build-subtitles.mjs",
+    "typecheck": "tsc --noEmit",
+    "render": "npm run assets:scan && remotion render PascomCallingDocumentary out/somos-chamados-a-algo-maior-9x16.mp4",
+    "render:16x9": "npm run assets:scan && remotion render PascomCallingDocumentary16x9 out/somos-chamados-a-algo-maior-16x9.mp4",
+    "still": "remotion still PascomCallingDocumentary out/still.png"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@remotion/cli": "^4.0.536",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.536"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/react": "^18.3.12",
+    "typescript": "^5.6.3"
+  }
+}
