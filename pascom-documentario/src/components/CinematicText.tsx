@@ -102,9 +102,6 @@ const TitleCard: React.FC<{ title: Title }> = ({ title }) => {
     const o = interpolate(frame, [out - 10, out + 20], [1, 0], clamp);
     return (
       <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", opacity: o }}>
-        <div style={{ fontFamily: fonts.mono, fontSize: unit * 0.027, letterSpacing: "0.42em", marginRight: "-0.42em", color: colors.gold, opacity: b * 0.9, marginBottom: unit * 0.02 }}>
-          PASTORAL DA COMUNICAÇÃO
-        </div>
         <div
           style={{
             fontFamily: fonts.display,
