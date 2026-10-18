@@ -34,6 +34,7 @@
   /* sombras e movimento */
   --sombra-card: 0 calc(30 * var(--u)) calc(60 * var(--u)) rgba(0, 0, 0, 0.55);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  color-scheme: dark;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -68,7 +69,7 @@ h1, h2, h3, p { margin: 0; font-weight: inherit; }
 /* ---------- painel ---------- */
 .painel {
   position: relative;
-  margin: calc(18 * var(--u));
+  margin: max(16px, calc(18 * var(--u)));
   background: var(--painel);
   border: 1px solid var(--borda);
   border-radius: var(--r-painel);
@@ -359,7 +360,7 @@ h1, h2, h3, p { margin: 0; font-weight: inherit; }
 /* ---------- empilhado (até 859px) ---------- */
 @media (max-width: 859px) {
   :root { --u: 1px; }
-  .painel { margin: 10px; padding-bottom: 28px; }
+  .painel { margin: 16px; padding-bottom: 28px; }
   .topo { height: 72px; padding: 0 16px 0 20px; }
   .contato { display: none; }
   .hamburguer {
