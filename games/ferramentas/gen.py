@@ -32,7 +32,10 @@ def streaks(w, h, n, y_range, x_range, colors, thick=(1, 6), inten=(0.3, 1.2), l
 
 
 def tonemap(x, k=1.0):
-    return 1 - np.exp(-x * k)
+    """Comprime o brilho sem lavar a cor: o laranja continua laranja quando fica forte."""
+    m = x.max(axis=2, keepdims=True)
+    m2 = 1 - np.exp(-m * k)
+    return x * np.where(m > 1e-6, m2 / np.maximum(m, 1e-6), 0)
 
 
 def rot(arr, deg, out=None):
@@ -76,34 +79,40 @@ obj_rgb[oy:oy + obj.height, ox:ox + obj.width] = o[..., :3] * o[..., 3:4]
 obj_a[oy:oy + obj.height, ox:ox + obj.width] = o[..., 3]
 
 BW, BH = int(W * 1.4), int(H * 1.4)
-back = streaks(BW, BH, 80, (0.36, 0.64), (0.05, 0.95), [WHITE, WHITE, ORANGE, ORANGE, HOT], thick=(0.8, 5), inten=(0.15, 0.9), length=(0.25, 0.7), glow=4)
-back += streaks(BW, BH, 10, (0.44, 0.56), (0.25, 0.9), [ORANGE, ORANGE], thick=(8, 22), inten=(0.25, 0.6), length=(0.3, 0.6), glow=2)
-back = rot(tonemap(back, 1.3), 22, (W, H))
-mid = streaks(BW, BH, 26, (0.46, 0.55), (0.35, 0.85), [ORANGE, ORANGE, HOT, WHITE], thick=(1, 7), inten=(0.3, 1.1), length=(0.25, 0.55), glow=3)
-mid = rot(tonemap(mid, 1.4), 22, (W, H))
+GRAY = np.array([0.78, 0.78, 0.8])
+# fumaça branca/cinza na faixa de cima, laranja forte no meio
+white = streaks(BW, BH, 70, (0.33, 0.5), (0.1, 0.75), [WHITE, GRAY, WHITE], thick=(0.8, 6), inten=(0.1, 0.75), length=(0.25, 0.6), glow=5)
+white += streaks(BW, BH, 8, (0.36, 0.48), (0.15, 0.7), [GRAY], thick=(14, 30), inten=(0.08, 0.2), length=(0.3, 0.6), glow=2)
+orange = streaks(BW, BH, 60, (0.47, 0.6), (0.12, 0.85), [ORANGE, ORANGE, ORANGE, HOT], thick=(0.8, 6), inten=(0.25, 1.2), length=(0.2, 0.55), glow=4)
+orange += streaks(BW, BH, 10, (0.5, 0.57), (0.3, 0.75), [ORANGE], thick=(10, 26), inten=(0.35, 0.8), length=(0.25, 0.5), glow=2)
+orange += streaks(BW, BH, 12, (0.6, 0.66), (0.1, 0.6), [WHITE, GRAY], thick=(0.8, 3), inten=(0.2, 0.6), length=(0.2, 0.45), glow=4)
+back = rot(tonemap(white, 1.2) + tonemap(orange, 1.6), 22, (W, H))
+core = streaks(BW, BH, 26, (0.49, 0.57), (0.3, 0.62), [ORANGE, ORANGE, HOT, np.array([1.0, 0.75, 0.55])], thick=(1, 6), inten=(0.5, 1.4), length=(0.15, 0.35), glow=3)
+mid = rot(tonemap(core, 1.6), 22, (W, H))
 # fade nas bordas esquerda/direita
 xs = np.linspace(0, 1, W)[None, :, None]
-edge = np.clip(np.minimum(xs / 0.22, (1 - xs) / 0.3), 0, 1) ** 1.4
+edge = np.clip(np.minimum(xs / 0.2, (1 - xs) / 0.38), 0, 1) ** 1.5
 back *= edge; mid *= edge
-glow = blur(mid, 18) * 0.8
+glow = blur(mid, 22) * 0.9
 comp = back * (1 - obj_a[..., None]) + obj_rgb
 # luz laranja atravessa o meio do objeto (tela)
-front = np.clip(mid * 0.85 + glow, 0, 1)
-comp = 1 - (1 - comp) * (1 - front * np.where(obj_a[..., None] > 0, 0.28, 1.0))
+front = np.clip(mid + glow, 0, 1)
+comp = 1 - (1 - comp) * (1 - front * np.where(obj_a[..., None] > 0, 0.9, 1.0))
 save_rgba(comp, obj_a, "hero-peca.webp")
 
 # ---------- cartão do hero (luz no canto inferior direito) ----------
 w, h = 880, 628
-c = streaks(int(w * 1.4), int(h * 1.4), 46, (0.5, 0.82), (0.35, 1.0), [ORANGE, HOT, WHITE, ORANGE], thick=(0.8, 5), inten=(0.25, 1.2), length=(0.3, 0.7))
-c = rot(tonemap(c, 1.3), 14, (w, h))
+c = streaks(int(w * 1.4), int(h * 1.4), 46, (0.5, 0.82), (0.35, 1.0), [ORANGE, ORANGE, HOT, WHITE, ORANGE], thick=(0.8, 5), inten=(0.25, 1.2), length=(0.3, 0.7))
+c = rot(tonemap(c, 1.5), 14, (w, h))
 c = c * np.clip((np.linspace(0, 1, w)[None, :, None] - 0.25) / 0.5, 0, 1)
 save_rgb(c + 14 / 255, "cartao-luz.webp")
 
 # ---------- card "Dicas": faixas laranjas horizontais ----------
 w, h = 880, 560
-d = streaks(int(w * 1.2), int(h * 1.2), 55, (0.22, 0.7), (-0.2, 1.0), [ORANGE, ORANGE, HOT, WHITE], thick=(1, 9), inten=(0.3, 1.3), length=(0.5, 1.2), glow=3)
-d += streaks(int(w * 1.2), int(h * 1.2), 8, (0.3, 0.62), (-0.2, 1.0), [ORANGE], thick=(18, 36), inten=(0.3, 0.6), length=(0.7, 1.3), glow=1.6)
-d = rot(tonemap(d, 1.25), -3, (w, h))
+d = streaks(int(w * 1.2), int(h * 1.2), 80, (0.22, 0.64), (-0.2, 1.0), [ORANGE, ORANGE, ORANGE, HOT], thick=(1, 10), inten=(0.3, 1.2), length=(0.6, 1.3), glow=3)
+d += streaks(int(w * 1.2), int(h * 1.2), 10, (0.3, 0.58), (-0.2, 1.0), [ORANGE], thick=(16, 34), inten=(0.15, 0.4), length=(0.8, 1.3), glow=1.6)
+d += streaks(int(w * 1.2), int(h * 1.2), 12, (0.28, 0.6), (-0.2, 1.0), [WHITE], thick=(0.6, 1.6), inten=(0.2, 0.6), length=(0.5, 1.1), glow=3)
+d = rot(tonemap(d, 1.5), -3, (w, h))
 save_rgb(d + 5 / 255, "card-dicas.webp")
 
 # ---------- card "Reviews": rastro cinza/branco com laranja ----------

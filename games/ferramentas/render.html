@@ -46,10 +46,10 @@ const q = new URLSearchParams(location.search);
 root.rotation.set(+(q.get('rx') ?? -0.3), +(q.get('ry') ?? 0.5), +(q.get('rz') ?? -0.35), 'YXZ');
 scene.add(root);
 
-const warm = new THREE.DirectionalLight(0xff4a12, 14); warm.position.set(5, 0.5, 0.5); scene.add(warm);
+const warm = new THREE.DirectionalLight(0xff3a0a, 10); warm.position.set(2.5, -4, -1); scene.add(warm);
 const warm2 = new THREE.PointLight(0xff5a1a, 60, 0, 2); warm2.position.set(1.6, 0.2, 2.2); /* sem ponto quente */
-const key = new THREE.DirectionalLight(0xffffff, 2.4); key.position.set(-3, 6, -1); scene.add(key);
-const rim = new THREE.DirectionalLight(0xffffff, 3.0); rim.position.set(-2, -3, -4); scene.add(rim);
+const key = new THREE.DirectionalLight(0xffffff, 3.6); key.position.set(-3, 6, -1); scene.add(key);
+const rim = new THREE.DirectionalLight(0xffffff, 5.0); rim.position.set(-2, -3, -4); scene.add(rim);
 
 const cam = new THREE.PerspectiveCamera(30, W / H, 0.1, 100);
 cam.position.set(0, 0, 14);
