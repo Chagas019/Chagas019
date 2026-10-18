@@ -67,7 +67,7 @@
             <p class="banner__kicker">${dias(h) >= 0 ? 'Próximo grande lançamento' : 'Lançamento em destaque'}</p>
             <h1 class="banner__titulo" id="banner-titulo">Call of Duty®: Modern Warfare 4 –<br>PS5, Xbox e PC</h1>
             <p class="banner__linha"><span class="cinza">${esc(h.genero)}</span><span>${esc(dataCurta(h))}</span><span class="pilula">${esc(falta(h))}</span></p>
-            <p class="banner__info">Também anunciado para Switch 2 · fora do PS4 e Xbox One</p>
+            <p class="banner__info">Também no Switch 2 · fora do PS4 e Xbox One</p>
             <button class="botao" type="button" data-jogo="${h.id}">Ver detalhes</button>
           </div>
         </section>

@@ -95,21 +95,24 @@ function title(lines, opt) {
 
 const scenes = {
   hero() {
-    rect(grad([[0, '#000'], [0.35, '#2a0303'], [0.62, '#9a0606'], [1, '#ff1a0a']], 0, 0, W, 0));
-    glow(W * 0.62, H * 0.45, 420, 'rgba(255,40,10,.55)');
-    // fumaça e respingos
-    for (let i = 0; i < 260; i++) glow(R(W * 0.35, W), R(0, H), R(10, 70), `rgba(${R(10, 60) | 0},0,0,.9)`, R(0.2, 0.7));
-    for (let i = 0; i < 900; i++) { g.fillStyle = `rgba(0,0,0,${R(0.2, 0.8)})`; g.fillRect(R(W * 0.38, W * 0.75), R(H * 0.35, H), R(1, 3), R(4, 40)); }
-    // ruínas ao fundo
-    g.fillStyle = 'rgba(15,0,0,.85)';
-    let x = W * 0.36;
-    while (x < W) { const w = R(30, 90), h = R(80, 260); g.fillRect(x, H - h, w, h); for (let j = 0; j < 6; j++) g.clearRect(x + R(4, w - 10), H - h + R(10, h - 20), 6, 9); x += w + R(2, 14); }
-    g.globalCompositeOperation = 'source-over';
-    rect(grad([[0, 'rgba(0,0,0,0)'], [0.75, 'rgba(0,0,0,.15)'], [1, 'rgba(0,0,0,.7)']]));
-    streaks(140, '#ff6a4a', -0.03, 0.18);
-    grain(0.1);
-    title([['CALL OF DUTY', 34, 'Oswald'], ['MODERN', 92, 'Anton'], ['WARFARE 4', 92, 'Anton']],
-      { x: W * 0.58, y: H * 0.3, gradient: [[0, '#f4f4f4'], [0.55, '#b9b9b9'], [1, '#7c7c7c']], shadow: 'rgba(0,0,0,.85)', track: 2 });
+    // esquerda preta, vermelho crescendo para a direita, figura no centro e título sobre o peito
+    rect(grad([[0, '#000'], [0.22, '#0a0000'], [0.42, '#4a0303'], [0.7, '#c80808'], [1, '#ff1208']], 0, 0, W, 0));
+    glow(W * 0.78, H * 0.5, 520, 'rgba(255,30,10,.45)');
+    for (let i = 0; i < 1400; i++) { g.fillStyle = `rgba(0,0,0,${R(0.15, 0.6)})`; g.fillRect(R(W * 0.4, W * 0.72), R(0, H), R(1, 3), R(3, 30)); }
+    // massa de fumaça escura no centro, onde fica o personagem na arte oficial
+    const cx = W * 0.5;
+    for (let i = 0; i < 420; i++) {
+      const y = R(-0.1, 1.1) * H, larg = W * (0.05 + 0.1 * Math.min(1, Math.max(0, y / H - 0.2)) * 1.6);
+      glow(cx + R(-larg, larg), y, R(30, 90), `rgba(${R(5, 25) | 0},${R(0, 4) | 0},0,.9)`, R(0.15, 0.45));
+    }
+    glow(cx + W * 0.06, H * 0.3, 140, 'rgba(255,50,20,.35)');
+    for (let i = 0; i < 600; i++) { g.fillStyle = `rgba(${R(120, 220) | 0},${R(20, 60) | 0},${R(10, 40) | 0},${R(0.04, 0.18)})`; g.fillRect(cx + R(-W * 0.14, W * 0.14), R(0, H), R(1, 3), R(1, 3)); }
+    // respingos escuros saindo da figura
+    for (let i = 0; i < 260; i++) { g.fillStyle = `rgba(0,0,0,${R(0.3, 0.9)})`; const x = R(W * 0.3, W * 0.62), y = R(H * 0.1, H); g.beginPath(); g.arc(x, y, R(1, 7), 0, 7); g.fill(); }
+    rect(grad([[0, 'rgba(0,0,0,0)'], [0.8, 'rgba(0,0,0,.1)'], [1, 'rgba(0,0,0,.45)']]));
+    grain(0.09);
+    title([['CALL OF DUTY', 30, 'Oswald'], ['MODERN', 70, 'Anton'], ['WARFARE 4', 70, 'Anton']],
+      { x: W * 0.5, y: H * 0.56, gradient: [[0, '#f2f2f2'], [0.6, '#bdbdbd'], [1, '#8a8a8a']], shadow: 'rgba(0,0,0,.9)', track: 3 });
   },
   mw4() {
     rect(grad([[0, '#2b2f24'], [0.55, '#4a1d10'], [1, '#0d0d0b']]));
