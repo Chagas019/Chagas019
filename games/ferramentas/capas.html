@@ -1,0 +1,246 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- Gera as capas e o banner do portal (arte própria, desenhada em canvas).
+     Uso: abrir capas.html?id=gta6 (ou ?id=hero) e capturar o canvas. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Cinzel:wght@700;900&family=Oswald:wght@500;700&family=Black+Ops+One&family=Pirata+One&family=Righteous&display=swap">
+<style>html,body{margin:0;background:#000}canvas{display:block}</style>
+</head><body>
+<canvas id="c"></canvas>
+<script>
+const q = new URLSearchParams(location.search);
+const id = q.get('id') || 'gta6';
+const hero = id === 'hero';
+const W = hero ? 1408 : 528, H = hero ? 492 : 612;
+const cv = document.getElementById('c'); cv.width = W; cv.height = H;
+const g = cv.getContext('2d');
+
+let seed = [...id].reduce((a, ch) => a * 31 + ch.charCodeAt(0), 7) >>> 0;
+const rnd = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296);
+const R = (a, b) => a + rnd() * (b - a);
+
+function grad(stops, x0 = 0, y0 = 0, x1 = 0, y1 = H) {
+  const l = g.createLinearGradient(x0, y0, x1, y1);
+  stops.forEach(([o, c]) => l.addColorStop(o, c));
+  return l;
+}
+function rect(fill) { g.fillStyle = fill; g.fillRect(0, 0, W, H); }
+function glow(x, y, r, color, a = 1) {
+  const rg = g.createRadialGradient(x, y, 0, x, y, r);
+  rg.addColorStop(0, color); rg.addColorStop(1, 'rgba(0,0,0,0)');
+  g.globalAlpha = a; g.fillStyle = rg; g.fillRect(x - r, y - r, r * 2, r * 2); g.globalAlpha = 1;
+}
+function ridge(base, amp, color, step = 18, rough = 0.5) {
+  g.fillStyle = color; g.beginPath(); g.moveTo(0, H);
+  let y = base;
+  for (let x = 0; x <= W + step; x += step) { y += R(-amp, amp) * rough + (base - y) * 0.15; g.lineTo(x, y); }
+  g.lineTo(W, H); g.closePath(); g.fill();
+}
+function particles(n, color, rmin, rmax, y0 = 0, y1 = H) {
+  for (let i = 0; i < n; i++) { g.globalAlpha = R(0.3, 1); g.fillStyle = color; g.beginPath(); g.arc(R(0, W), R(y0, y1), R(rmin, rmax), 0, 7); g.fill(); }
+  g.globalAlpha = 1;
+}
+function grain(a = 0.08) {
+  const img = g.getImageData(0, 0, W, H), d = img.data;
+  for (let i = 0; i < d.length; i += 4) { const n = (rnd() - 0.5) * 255 * a; d[i] += n; d[i + 1] += n; d[i + 2] += n; }
+  g.putImageData(img, 0, 0);
+}
+function vignette(a = 0.6) {
+  const rg = g.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.3, W / 2, H / 2, Math.max(W, H) * 0.75);
+  rg.addColorStop(0, 'rgba(0,0,0,0)'); rg.addColorStop(1, `rgba(0,0,0,${a})`);
+  g.fillStyle = rg; g.fillRect(0, 0, W, H);
+}
+function palm(x, y, h, color) {
+  g.strokeStyle = color; g.fillStyle = color; g.lineWidth = h * 0.035; g.lineCap = 'round';
+  g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + h * 0.12, y - h * 0.5, x + h * 0.05, y - h); g.stroke();
+  const tx = x + h * 0.05, ty = y - h;
+  for (let i = 0; i < 7; i++) {
+    const a = -Math.PI / 2 + (i - 3) * 0.55, L = h * R(0.35, 0.5);
+    g.lineWidth = h * 0.02;
+    g.beginPath(); g.moveTo(tx, ty);
+    g.quadraticCurveTo(tx + Math.cos(a) * L * 0.6, ty + Math.sin(a) * L * 0.6 - h * 0.05, tx + Math.cos(a) * L, ty + Math.sin(a) * L + h * 0.12); g.stroke();
+  }
+}
+function tree(x, y, h, color) {
+  g.fillStyle = color;
+  for (let i = 0; i < 4; i++) {
+    const w = h * (0.42 - i * 0.07), yy = y - i * h * 0.22;
+    g.beginPath(); g.moveTo(x - w, yy); g.lineTo(x, yy - h * 0.38); g.lineTo(x + w, yy); g.fill();
+  }
+  g.fillRect(x - h * 0.03, y - 2, h * 0.06, h * 0.12);
+}
+function streaks(n, color, angle, alpha = 0.5) {
+  g.save(); g.translate(W / 2, H / 2); g.rotate(angle);
+  for (let i = 0; i < n; i++) {
+    g.globalAlpha = R(0.05, alpha); g.fillStyle = color;
+    g.fillRect(R(-W, W), R(-H, H), R(W * 0.2, W * 0.9), R(0.5, 2.5));
+  }
+  g.restore(); g.globalAlpha = 1;
+}
+function title(lines, opt) {
+  const { font, color = '#fff', x = W / 2, y = H * 0.8, align = 'center', shadow = 'rgba(0,0,0,.7)', stroke, gradient, track = 0 } = opt;
+  g.textAlign = align; g.textBaseline = 'alphabetic';
+  let yy = y;
+  lines.forEach(([txt, size, f], i) => {
+    if (i) yy += size * 0.96;
+    g.font = `${size}px ${f || font}`;
+    g.letterSpacing = track + 'px';
+    g.shadowColor = shadow; g.shadowBlur = size * 0.3; g.shadowOffsetY = size * 0.05;
+    if (gradient) { const m = g.measureText(txt); g.fillStyle = grad(gradient, 0, yy - size, 0, yy); } else g.fillStyle = color;
+    g.fillText(txt, x, yy);
+    g.shadowColor = 'transparent';
+    if (stroke) { g.lineWidth = stroke[1]; g.strokeStyle = stroke[0]; g.strokeText(txt, x, yy); }
+    yy += size * 0.12;
+  });
+}
+
+const scenes = {
+  hero() {
+    // esquerda preta, vermelho crescendo para a direita, figura no centro e título sobre o peito
+    rect(grad([[0, '#000'], [0.22, '#0a0000'], [0.42, '#4a0303'], [0.7, '#c80808'], [1, '#ff1208']], 0, 0, W, 0));
+    glow(W * 0.78, H * 0.5, 520, 'rgba(255,30,10,.45)');
+    for (let i = 0; i < 1400; i++) { g.fillStyle = `rgba(0,0,0,${R(0.15, 0.6)})`; g.fillRect(R(W * 0.4, W * 0.72), R(0, H), R(1, 3), R(3, 30)); }
+    // massa de fumaça escura no centro, onde fica o personagem na arte oficial
+    const cx = W * 0.5;
+    for (let i = 0; i < 420; i++) {
+      const y = R(-0.1, 1.1) * H, larg = W * (0.05 + 0.1 * Math.min(1, Math.max(0, y / H - 0.2)) * 1.6);
+      glow(cx + R(-larg, larg), y, R(30, 90), `rgba(${R(5, 25) | 0},${R(0, 4) | 0},0,.9)`, R(0.15, 0.45));
+    }
+    glow(cx + W * 0.06, H * 0.3, 140, 'rgba(255,50,20,.35)');
+    for (let i = 0; i < 600; i++) { g.fillStyle = `rgba(${R(120, 220) | 0},${R(20, 60) | 0},${R(10, 40) | 0},${R(0.04, 0.18)})`; g.fillRect(cx + R(-W * 0.14, W * 0.14), R(0, H), R(1, 3), R(1, 3)); }
+    // respingos escuros saindo da figura
+    for (let i = 0; i < 260; i++) { g.fillStyle = `rgba(0,0,0,${R(0.3, 0.9)})`; const x = R(W * 0.3, W * 0.62), y = R(H * 0.1, H); g.beginPath(); g.arc(x, y, R(1, 7), 0, 7); g.fill(); }
+    rect(grad([[0, 'rgba(0,0,0,0)'], [0.8, 'rgba(0,0,0,.1)'], [1, 'rgba(0,0,0,.45)']]));
+    grain(0.09);
+    title([['CALL OF DUTY', 30, 'Oswald'], ['MODERN', 70, 'Anton'], ['WARFARE 4', 70, 'Anton']],
+      { x: W * 0.5, y: H * 0.56, gradient: [[0, '#f2f2f2'], [0.6, '#bdbdbd'], [1, '#8a8a8a']], shadow: 'rgba(0,0,0,.9)', track: 3 });
+  },
+  mw4() {
+    rect(grad([[0, '#2b2f24'], [0.55, '#4a1d10'], [1, '#0d0d0b']]));
+    glow(W * 0.5, H * 0.55, 330, 'rgba(255,90,20,.55)');
+    for (let i = 0; i < 160; i++) glow(R(0, W), R(H * 0.2, H), R(20, 70), 'rgba(20,18,14,.9)', R(0.2, 0.6));
+    let x = 0; g.fillStyle = '#0c0c0a';
+    while (x < W) { const w = R(30, 70), h = R(120, 300); g.fillRect(x, H - h, w, h); x += w + R(0, 10); }
+    particles(120, '#ffb15a', 0.6, 2.2, H * 0.2, H * 0.9);
+    vignette(0.6); grain(0.1);
+    title([['CALL OF DUTY', 30, 'Oswald'], ['MODERN', 86, 'Anton'], ['WARFARE 4', 86, 'Anton']], { y: H * 0.2, gradient: [[0, '#fff'], [1, '#9a9a9a']] });
+  },
+  ffr() {
+    rect(grad([[0, '#0b1f4d'], [0.5, '#2c6fbf'], [1, '#e9f4ff']]));
+    glow(W * 0.5, H * 0.42, 300, 'rgba(180,230,255,.8)');
+    for (let i = 0; i < 9; i++) {
+      const cx = W * 0.5 + R(-150, 150), cy = H * 0.5 + R(-120, 120), s = R(40, 120);
+      g.fillStyle = `rgba(${R(120, 200) | 0},${R(210, 250) | 0},255,${R(0.35, 0.75)})`;
+      g.beginPath(); g.moveTo(cx, cy - s * 1.6); g.lineTo(cx + s * 0.45, cy); g.lineTo(cx, cy + s * 0.6); g.lineTo(cx - s * 0.45, cy); g.fill();
+    }
+    g.imageSmoothingEnabled = false;
+    for (let i = 0; i < 160; i++) { g.fillStyle = `rgba(255,255,255,${R(0.3, 1)})`; const s = R(2, 6) | 0; g.fillRect((R(0, W) / 4 | 0) * 4, (R(0, H * 0.6) / 4 | 0) * 4, s, s); }
+    ridge(H * 0.86, 30, '#1b3a2a', 16, 0.6); ridge(H * 0.92, 20, '#0d2219', 12, 0.6);
+    vignette(0.45); grain(0.05);
+    title([['FINAL FANTASY', 46, 'Cinzel'], ['RESONANCE', 54, 'Cinzel']], { y: H * 0.11, gradient: [[0, '#fffbe8'], [1, '#d9b765']], shadow: 'rgba(0,20,60,.8)' });
+  },
+  pbz() {
+    rect(grad([[0, '#efe9dc'], [1, '#cfc6b3']]));
+    g.strokeStyle = '#111'; g.lineCap = 'round';
+    for (let i = 0; i < 9; i++) {
+      g.globalAlpha = R(0.55, 0.95); g.lineWidth = R(10, 70);
+      g.beginPath(); const y = R(H * 0.15, H * 0.95);
+      g.moveTo(R(-50, W * 0.3), y); g.bezierCurveTo(R(0, W), y + R(-160, 160), R(0, W), y + R(-160, 160), R(W * 0.7, W + 50), y + R(-200, 200)); g.stroke();
+    }
+    g.globalAlpha = 1;
+    g.save(); g.translate(W * 0.5, H * 0.5); g.rotate(-0.55);
+    g.fillStyle = '#d4140f'; g.fillRect(-W, -5, W * 2, 10); glow(0, 0, 240, 'rgba(230,20,10,.35)'); g.restore();
+    for (let i = 0; i < 70; i++) { g.fillStyle = `rgba(200,15,10,${R(0.4, 0.9)})`; g.beginPath(); g.arc(R(W * 0.2, W * 0.8), R(H * 0.3, H * 0.7), R(1, 6), 0, 7); g.fill(); }
+    vignette(0.35); grain(0.12);
+    title([['PHANTOM BLADE', 50, 'Anton'], ['ZERO', 120, 'Anton']], { y: H * 0.66, color: '#0d0d0d', shadow: 'rgba(255,255,255,.4)', track: 3 });
+  },
+  zelda() {
+    rect(grad([[0, '#06131f'], [0.55, '#14402f'], [1, '#04100a']]));
+    glow(W * 0.7, H * 0.22, 220, 'rgba(255,240,190,.5)');
+    g.fillStyle = '#fff6d8'; g.beginPath(); g.arc(W * 0.7, H * 0.22, 46, 0, 7); g.fill();
+    particles(90, '#fff', 0.5, 1.5, 0, H * 0.5);
+    for (let l = 0; l < 3; l++) for (let i = 0; i < 12; i++) tree(R(-20, W + 20), H * (0.72 + l * 0.1), R(140, 240) - l * 20, ['#0f2e22', '#0a2118', '#04110b'][l]);
+    particles(60, '#d6ff8a', 1, 3, H * 0.45, H * 0.95);
+    vignette(0.55); grain(0.07);
+    title([['THE LEGEND OF', 30, 'Cinzel'], ['ZELDA', 104, 'Cinzel'], ['OCARINA OF TIME', 34, 'Cinzel']], { y: H * 0.36, gradient: [[0, '#fff3c4'], [1, '#c9952d']], shadow: 'rgba(0,0,0,.9)' });
+  },
+  gta6() {
+    rect(grad([[0, '#2a0b4a'], [0.38, '#d1336f'], [0.62, '#ff9a3c'], [0.63, '#1b6f8a'], [1, '#062a3a']]));
+    g.save(); g.beginPath(); g.arc(W * 0.5, H * 0.6, 150, Math.PI, 0); g.clip();
+    g.fillStyle = grad([[0, '#ffe36e'], [1, '#ff5a6a']], 0, H * 0.6 - 150, 0, H * 0.6); g.fillRect(0, 0, W, H);
+    g.fillStyle = 'rgba(209,51,111,.9)'; for (let i = 0; i < 6; i++) g.fillRect(0, H * 0.6 - 18 - i * 22, W, 4 + i);
+    g.restore();
+    for (let i = 0; i < 40; i++) { g.globalAlpha = R(0.15, 0.5); g.fillStyle = '#ffd0a0'; g.fillRect(W * 0.5 - R(20, 150), H * 0.6 + R(4, 200), R(40, 300), R(1, 3)); }
+    g.globalAlpha = 1;
+    palm(W * 0.14, H, 420, '#14051f'); palm(W * 0.86, H, 360, '#14051f'); palm(W * 0.74, H, 250, '#1d0a2c');
+    vignette(0.45); grain(0.07);
+    title([['GRAND THEFT AUTO', 34, 'Righteous'], ['VI', 190, 'Righteous']], { y: H * 0.1, gradient: [[0, '#fff'], [0.5, '#ffd1e6'], [1, '#ff7fb5']], shadow: 'rgba(60,0,60,.8)' });
+  },
+  dqm() {
+    rect(grad([[0, '#1d1033'], [0.55, '#6b3a5a'], [1, '#2a1a12']]));
+    glow(W * 0.5, H * 0.55, 260, 'rgba(255,180,90,.45)');
+    ridge(H * 0.78, 26, '#3a2418', 14, 0.6); ridge(H * 0.88, 18, '#1d120c', 12, 0.6);
+    g.strokeStyle = '#120a08'; g.lineCap = 'round';
+    (function branch(x, y, a, len, w) { if (len < 8) return; g.lineWidth = w; const x2 = x + Math.cos(a) * len, y2 = y + Math.sin(a) * len; g.beginPath(); g.moveTo(x, y); g.lineTo(x2, y2); g.stroke(); branch(x2, y2, a - R(0.2, 0.6), len * 0.72, w * 0.7); branch(x2, y2, a + R(0.2, 0.6), len * 0.7, w * 0.7); })(W * 0.5, H * 0.86, -Math.PI / 2, 120, 18);
+    for (let i = 0; i < 14; i++) { const x = R(40, W - 40), y = R(H * 0.3, H * 0.75); glow(x, y, R(14, 30), ['rgba(120,220,255,.9)', 'rgba(255,140,200,.9)', 'rgba(170,255,140,.9)'][i % 3]); }
+    vignette(0.5); grain(0.07);
+    title([['DRAGON QUEST', 46, 'Cinzel'], ['MONSTERS', 54, 'Cinzel'], ['THE WITHERED WORLD', 26, 'Oswald']], { y: H * 0.1, gradient: [[0, '#fff6d0'], [1, '#e2a73c']], shadow: 'rgba(30,0,40,.9)' });
+  },
+  mhw() {
+    rect(grad([[0, '#6b3a1a'], [0.45, '#d9874a'], [1, '#3b2010']]));
+    glow(W * 0.62, H * 0.3, 260, 'rgba(255,220,160,.6)');
+    // silhueta de criatura na tempestade
+    g.fillStyle = 'rgba(40,20,10,.55)'; g.beginPath(); g.ellipse(W * 0.55, H * 0.5, 210, 80, -0.2, 0, 7); g.fill();
+    g.beginPath(); g.moveTo(W * 0.3, H * 0.5); g.quadraticCurveTo(W * 0.12, H * 0.25, W * 0.02, H * 0.3); g.quadraticCurveTo(W * 0.15, H * 0.4, W * 0.3, H * 0.56); g.fill();
+    g.beginPath(); g.moveTo(W * 0.6, H * 0.45); g.lineTo(W * 0.95, H * 0.12); g.lineTo(W * 0.75, H * 0.48); g.fill();
+    streaks(260, '#ffd9a8', 0.12, 0.25);
+    ridge(H * 0.8, 20, '#4a2812', 22, 0.4); ridge(H * 0.9, 14, '#2a170b', 18, 0.4);
+    vignette(0.5); grain(0.09);
+    title([['MONSTER HUNTER', 46, 'Bebas Neue'], ['WILDS', 128, 'Bebas Neue']], { y: H * 0.68, gradient: [[0, '#fff'], [1, '#e7c38a']], shadow: 'rgba(40,15,0,.9)', track: 2 });
+  },
+  poe2() {
+    rect(grad([[0, '#05141a'], [0.6, '#0f3036'], [1, '#020809']]));
+    glow(W * 0.5, H * 0.45, 230, 'rgba(255,190,90,.55)');
+    g.fillStyle = '#020708';
+    g.beginPath(); g.moveTo(W * 0.18, H); g.lineTo(W * 0.18, H * 0.42); g.quadraticCurveTo(W * 0.5, H * 0.05, W * 0.82, H * 0.42); g.lineTo(W * 0.82, H); g.lineTo(W * 0.72, H); g.lineTo(W * 0.72, H * 0.46); g.quadraticCurveTo(W * 0.5, H * 0.2, W * 0.28, H * 0.46); g.lineTo(W * 0.28, H); g.fill();
+    g.fillStyle = '#05090a'; g.beginPath(); g.moveTo(W * 0.46, H * 0.85); g.lineTo(W * 0.5, H * 0.52); g.lineTo(W * 0.54, H * 0.85); g.fill();
+    particles(140, '#ffb35c', 0.6, 2.4, H * 0.2, H);
+    vignette(0.65); grain(0.09);
+    title([['PATH OF EXILE', 50, 'Cinzel'], ['II', 120, 'Cinzel']], { y: H * 0.7, gradient: [[0, '#ffe7b0'], [1, '#b0782b']], shadow: 'rgba(0,0,0,.95)' });
+  },
+  pz2() {
+    rect(grad([[0, '#8fd3e8'], [0.45, '#2f9e8a'], [0.62, '#1f6e7a'], [1, '#0b2f45']]));
+    for (let i = 0; i < 7; i++) { g.globalAlpha = 0.15; g.fillStyle = '#fff'; g.beginPath(); g.moveTo(W * 0.3 + i * 30, 0); g.lineTo(W * 0.1 + i * 70, H * 0.6); g.lineTo(W * 0.18 + i * 70, H * 0.6); g.fill(); }
+    g.globalAlpha = 1;
+    for (let i = 0; i < 18; i++) { g.fillStyle = ['#1e5e2c', '#2c7a36', '#164a24'][i % 3]; g.beginPath(); g.arc(R(-40, W + 40), R(-30, 90), R(50, 110), 0, 7); g.fill(); }
+    g.strokeStyle = '#123'; g.lineWidth = 3;
+    for (let i = 0; i < 9; i++) { const x = R(60, W - 60), y = R(130, 260), s = R(8, 18); g.beginPath(); g.moveTo(x - s, y); g.quadraticCurveTo(x - s / 2, y - s / 2, x, y); g.quadraticCurveTo(x + s / 2, y - s / 2, x + s, y); g.stroke(); }
+    for (let i = 0; i < 90; i++) { g.fillStyle = `rgba(255,255,255,${R(0.2, 0.6)})`; g.beginPath(); g.arc(R(0, W), R(H * 0.62, H), R(1, 4), 0, 7); g.fill(); }
+    vignette(0.4); grain(0.05);
+    title([['PLANET', 62, 'Righteous'], ['ZOO 2', 104, 'Righteous']], { y: H * 0.66, color: '#fff', shadow: 'rgba(0,40,40,.8)' });
+  },
+  rer() {
+    rect(grad([[0, '#0a0000'], [0.6, '#2a0505'], [1, '#000']]));
+    glow(W * 0.5, H * 0.3, 170, 'rgba(200,0,0,.6)');
+    g.fillStyle = '#b30d0d'; g.beginPath(); g.arc(W * 0.5, H * 0.3, 70, 0, 7); g.fill();
+    g.fillStyle = '#050000';
+    g.fillRect(W * 0.18, H * 0.48, W * 0.64, H * 0.5); g.beginPath(); g.moveTo(W * 0.12, H * 0.5); g.lineTo(W * 0.5, H * 0.36); g.lineTo(W * 0.88, H * 0.5); g.fill();
+    for (let i = 0; i < 12; i++) { g.fillStyle = rnd() > 0.6 ? 'rgba(255,190,90,.8)' : '#120202'; g.fillRect(W * 0.22 + (i % 6) * 50, H * 0.56 + (i / 6 | 0) * 70, 26, 38); }
+    streaks(220, '#ccc', 1.35, 0.25);
+    vignette(0.7); grain(0.1);
+    title([['RESIDENT EVIL', 46, 'Oswald'], ['REQUIEM', 96, 'Pirata One']], { y: H * 0.76, color: '#e9e9e9', shadow: 'rgba(120,0,0,.9)' });
+  },
+  b007() {
+    rect(grad([[0, '#0c0c0c'], [1, '#000']]));
+    for (let i = 0; i < 9; i++) { g.strokeStyle = `rgba(212,175,90,${0.08 + i * 0.07})`; g.lineWidth = 10; g.beginPath(); g.arc(W * 0.5, H * 0.42, 40 + i * 26, 0, 7); g.stroke(); }
+    glow(W * 0.5, H * 0.42, 120, 'rgba(255,230,160,.5)');
+    vignette(0.6); grain(0.08);
+    title([['007', 130, 'Bebas Neue'], ['FIRST LIGHT', 52, 'Bebas Neue']], { y: H * 0.74, gradient: [[0, '#fff2c8'], [1, '#c79a3c']], track: 4 });
+  },
+};
+
+document.fonts.ready.then(async () => {
+  await Promise.all(['Anton', 'Bebas Neue', 'Cinzel', 'Oswald', 'Pirata One', 'Righteous'].map(f => document.fonts.load(`40px "${f}"`)));
+  (scenes[id] || scenes.gta6)();
+  window.done = cv.toDataURL('image/png');
+});
+</script></body></html>
