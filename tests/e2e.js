@@ -489,6 +489,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     check(/não vamos adivinhar/.test(r) && /Galaxy/.test(r) && !/balanço de branco/.test(r), "Android desconhecido: não inventa ficha técnica");
     await p.click('[data-cam-cat="and-avancado"]');
     check(/balanço de branco/.test(await txt("#cam-result")), "Android avançado no seletor libera as dicas de modo Pro");
+    check(await p.getAttribute(".credit a", "href") === "https://www.instagram.com/chagas_catolico/" && /Site criado por/.test(await txt(".credit")), "rodapé mostra quem criou o site");
     check(!p.erros.length, "câmera sem erros", p.erros.join(" | "));
     await p.context().close();
   }
