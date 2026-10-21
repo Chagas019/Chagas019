@@ -22,11 +22,34 @@ const skyVertex = /* glsl */ `
 `;
 const skyFragment = /* glsl */ `
   uniform vec3 uTop; uniform vec3 uHorizon; uniform vec3 uBottom; uniform vec3 uSunDir; uniform vec3 uGlow;
+  uniform float uClouds; uniform vec3 uCloudLit; uniform vec3 uCloudShade; uniform float uTime;
   varying vec3 vDir;
+  float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+  float noise(vec2 p) {
+    vec2 i = floor(p); vec2 f = fract(p);
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
+  }
+  float fbm(vec2 p) {
+    float v = 0.0; float a = 0.5;
+    for (int i = 0; i < 6; i++) { v += a * noise(p); p = p * 2.03 + vec2(1.7, 9.2); a *= 0.5; }
+    return v;
+  }
   void main() {
-    float h = vDir.y;
+    vec3 dir = normalize(vDir);
+    float h = dir.y;
     vec3 col = h > 0.0 ? mix(uHorizon, uTop, pow(clamp(h, 0.0, 1.0), 0.55)) : mix(uHorizon, uBottom, clamp(-h * 6.0, 0.0, 1.0));
-    float sun = max(dot(normalize(vDir), normalize(uSunDir)), 0.0);
+    float sun = max(dot(dir, normalize(uSunDir)), 0.0);
+    // nuvens volumosas projetadas num plano alto (mais densas perto do horizonte)
+    if (h > 0.0 && uClouds > 0.0) {
+      vec2 p = dir.xz / (h + 0.12) * 1.6 + vec2(uTime * 0.004, uTime * 0.002);
+      float d = fbm(p);
+      float cover = smoothstep(0.62 - uClouds * 0.32, 0.95 - uClouds * 0.2, d);
+      float thick = fbm(p * 1.7 + 3.1);
+      vec3 cloud = mix(uCloudShade, uCloudLit, clamp(thick * 1.25 + pow(sun, 4.0) * 0.6, 0.0, 1.0));
+      float fade = smoothstep(0.0, 0.12, h);
+      col = mix(col, cloud, cover * fade * 0.95);
+    }
     col += uGlow * (pow(sun, 600.0) * 2.5 + pow(sun, 16.0) * 0.35 + pow(sun, 3.0) * 0.08);
     gl_FragColor = vec4(col, 1.0);
     #include <colorspace_fragment>
@@ -46,6 +69,10 @@ function makeSkyMaterial() {
       uBottom: { value: new Color() },
       uSunDir: { value: new Vector3() },
       uGlow: { value: new Color() },
+      uClouds: { value: 0 },
+      uCloudLit: { value: new Color() },
+      uCloudShade: { value: new Color() },
+      uTime: { value: 0 },
     },
   });
 }
@@ -56,6 +83,9 @@ function syncSky(m: ShaderMaterial) {
   m.uniforms.uBottom.value.copy(atmosphere.skyBottom);
   m.uniforms.uSunDir.value.copy(atmosphere.sunDir);
   m.uniforms.uGlow.value.copy(atmosphere.sunGlow);
+  m.uniforms.uClouds.value = atmosphere.clouds;
+  m.uniforms.uCloudLit.value.copy(atmosphere.cloudLit);
+  m.uniforms.uCloudShade.value.copy(atmosphere.cloudShade);
 }
 
 /** Céu em gradiente, estrelas, sol/lua, luz hemisférica, neblina e mapa de ambiente para reflexos. */
@@ -98,6 +128,7 @@ export function SkyAndLights() {
     const k = s.reducedMotion ? 1 : 1 - Math.exp(-delta * 1.6);
     lerpAtmosphere(ATMOSPHERES[s.timeOfDay], k);
     syncSky(skyMat);
+    skyMat.uniforms.uTime.value += s.reducedMotion ? 0 : delta;
     fog.color.copy(atmosphere.fog);
     gl.toneMappingExposure = atmosphere.exposure;
     scene.environmentIntensity = atmosphere.envIntensity;
@@ -165,6 +196,9 @@ function EnvMap() {
     sky.uniforms.uBottom.value.copy(t.skyBottom);
     sky.uniforms.uSunDir.value.copy(t.sunDir);
     sky.uniforms.uGlow.value.copy(t.sunGlow);
+    sky.uniforms.uClouds.value = t.clouds;
+    sky.uniforms.uCloudLit.value.copy(t.cloudLit);
+    sky.uniforms.uCloudShade.value.copy(t.cloudShade);
     const sphereGeo = new SphereGeometry(100, 32, 16);
     envScene.add(new Mesh(sphereGeo, sky));
     const panels: [string, number, [number, number, number], [number, number], number][] =

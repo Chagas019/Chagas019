@@ -6,6 +6,8 @@ export interface QualityProfile {
   shadows: boolean;
   shadowMapSize: number;
   postprocessing: boolean;
+  /** Oclusão de ambiente (sombras de contato) no pós-processamento. */
+  ao: 'off' | 'half' | 'full';
   antialias: boolean;
   cityBlocks: number;
   trees: number;
@@ -15,9 +17,9 @@ export interface QualityProfile {
 }
 
 export const QUALITY: Record<Quality, QualityProfile> = {
-  low: { dpr: [0.75, 1], shadows: false, shadowMapSize: 512, postprocessing: false, antialias: false, cityBlocks: 70, trees: 60, envResolution: 64, detailDistance: 220 },
-  medium: { dpr: [1, 1.5], shadows: true, shadowMapSize: 1024, postprocessing: false, antialias: true, cityBlocks: 140, trees: 130, envResolution: 128, detailDistance: 360 },
-  high: { dpr: [1, 2], shadows: true, shadowMapSize: 2048, postprocessing: true, antialias: false, cityBlocks: 220, trees: 220, envResolution: 256, detailDistance: 520 },
+  low: { dpr: [0.75, 1], shadows: false, shadowMapSize: 512, postprocessing: false, ao: 'off', antialias: false, cityBlocks: 70, trees: 60, envResolution: 64, detailDistance: 220 },
+  medium: { dpr: [1, 1.5], shadows: true, shadowMapSize: 1024, postprocessing: true, ao: 'half', antialias: false, cityBlocks: 140, trees: 130, envResolution: 128, detailDistance: 360 },
+  high: { dpr: [1, 2], shadows: true, shadowMapSize: 2048, postprocessing: true, ao: 'full', antialias: false, cityBlocks: 220, trees: 220, envResolution: 256, detailDistance: 520 },
 };
 
 export const QUALITY_LABEL: Record<Quality, string> = { low: 'Leve', medium: 'Equilibrada', high: 'Máxima' };

@@ -120,8 +120,18 @@ O build é estático (`dist/`) com caminhos relativos — funciona na raiz de um
 
 O workflow `.github/workflows/skyline-40.yml` verifica tipos, roda os testes unitários e gera o build a cada mudança na pasta.
 
+### Acabamento visual
+
+Ripado e forros em madeira, travertino, molduras e jardineiras em grafite, perfis de LED quente nos forros,
+vidro escuro reflexivo, céu com nuvens procedurais refletido nas fachadas, grama texturizada, paisagismo com
+copas orgânicas e carros esportivos com silhueta real. Nas qualidades Equilibrada e Máxima entram oclusão de
+ambiente (N8AO), SMAA, tone mapping ACES e uma leve gradação de cor.
+
 ## Limitações conhecidas
 
+- O resultado é um render em tempo real no navegador; renders fotorrealistas offline (D5 Render, Lumion,
+  Twinmotion) usam iluminação global por traçado de raios e bibliotecas de modelos fotográficos e chegam a um
+  realismo maior em imagens e vídeos estáticos.
 - Não há modelos GLB externos nem texturas fotográficas: toda a geometria e as texturas são geradas no navegador, o que
   mantém o carregamento leve e sem dependência de terceiros. Para substituir por modelos de projeto (BIM/GLB), use
   `useGLTF` do Drei no lugar dos módulos de `three/building`.

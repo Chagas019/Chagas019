@@ -1,7 +1,7 @@
 import { Html } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
-import { CylinderGeometry, MeshBasicMaterial, MeshStandardMaterial, Shape, ShapeGeometry, type Group, type Mesh } from 'three';
+import { MeshBasicMaterial, MeshStandardMaterial, Shape, ShapeGeometry, type Group, type Mesh } from 'three';
 import {
   GARAGE_CONFIG, TECH_ROOMS, garageBands, garageColumns, garageLevels, garageRamps, garageSpots, type GarageLevel,
 } from '../../data/garage';
@@ -10,6 +10,7 @@ import { useSkyline } from '../../state/store';
 import { MAT, makeLabelTexture } from '../materials';
 import { getConcreteFloorTexture } from '../textures';
 import { InstancedBoxes, type BoxItem } from '../environment/InstancedBoxes';
+import { WHEELS, carGeometries } from '../environment/carGeometry';
 
 const cfg = GARAGE_CONFIG;
 const LEVEL_COLORS = ['#4f86ff', '#e0a43a', '#4fbf8a', '#d0587c'];
@@ -116,10 +117,11 @@ function GarageLevelView({ level, active }: { level: GarageLevel; active: boolea
     for (const sp of spots) {
       if (!sp.occupied) continue;
       const f = sp.facing;
-      bodies.push({ p: [sp.x, y + 0.55, sp.z], s: [1.82, 0.62, 4.45], color: sp.carColor });
-      cabins.push({ p: [sp.x, y + 1.1, sp.z - f * 0.25], s: [1.6, 0.52, 2.3] });
-      for (const dx of [-0.82, 0.82]) for (const dz of [-1.4, 1.45]) wheels.push({ p: [sp.x + dx, y + 0.34, sp.z + dz * f], s: [0.68, 0.24, 0.68] });
-      for (const dx of [-0.6, 0.6]) heads.push({ p: [sp.x + dx, y + 0.65, sp.z + f * 2.23], s: [0.32, 0.1, 0.03] });
+      const r = f > 0 ? 0 : Math.PI;
+      bodies.push({ p: [sp.x, y, sp.z], s: [1, 1, 1], r, color: sp.carColor });
+      cabins.push({ p: [sp.x, y, sp.z], s: [1, 1, 1], r });
+      heads.push({ p: [sp.x, y, sp.z], s: [1, 1, 1], r });
+      for (const [wx, wy, wz] of WHEELS) wheels.push({ p: [sp.x + wx * f, y + wy, sp.z + wz * f], s: [1, 1, 1] });
     }
     return { lines, dashes, arrows, lights, cols, colBands, bodies, cabins, wheels, heads };
   }, [bands, columns, spots, y, H]);
@@ -138,12 +140,8 @@ function GarageLevelView({ level, active }: { level: GarageLevel; active: boolea
     g.rotateX(-Math.PI / 2);
     return g;
   }, []);
-  const wheelGeo = useMemo(() => {
-    const g = new CylinderGeometry(0.5, 0.5, 1, 14);
-    g.rotateZ(Math.PI / 2);
-    return g;
-  }, []);
-  useEffect(() => () => { arrowGeo.dispose(); wheelGeo.dispose(); }, [arrowGeo, wheelGeo]);
+  const car = carGeometries();
+  useEffect(() => () => arrowGeo.dispose(), [arrowGeo]);
 
   const walls = useRef<(Mesh | null)[]>([]);
   // Paredes do perímetro voltadas para a câmera somem (vista em "casa de bonecas").
@@ -187,10 +185,10 @@ function GarageLevelView({ level, active }: { level: GarageLevel; active: boolea
       <InstancedBoxes items={data.lights} material={lightMat} />
       <InstancedBoxes items={data.cols} material={MAT.concrete} castShadow receiveShadow />
       <InstancedBoxes items={data.colBands} material={bandMat} />
-      <InstancedBoxes items={data.bodies} material={MAT.paint} castShadow />
-      <InstancedBoxes items={data.cabins} material={MAT.carGlass} />
-      <InstancedBoxes items={data.wheels} material={MAT.tire} geometry={wheelGeo} />
-      <InstancedBoxes items={data.heads} material={MAT.lightCool} />
+      <InstancedBoxes items={data.bodies} material={MAT.paint} geometry={car.body} castShadow />
+      <InstancedBoxes items={data.cabins} material={MAT.carGlass} geometry={car.glass} />
+      <InstancedBoxes items={data.wheels} material={MAT.tire} geometry={car.wheel} />
+      <InstancedBoxes items={data.heads} material={MAT.lightCool} geometry={car.lights} />
 
       {/* núcleo de elevadores e escadas (prolongamento da torre) com vestíbulo */}
       <mesh position={[0, y + H / 2, 0]} material={MAT.core} castShadow receiveShadow>

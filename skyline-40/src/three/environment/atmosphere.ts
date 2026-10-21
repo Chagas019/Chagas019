@@ -17,6 +17,9 @@ export interface Atmosphere {
   exposure: number;
   stars: number;
   envIntensity: number;
+  clouds: number;
+  cloudLit: Color;
+  cloudShade: Color;
 }
 
 const c = (h: string) => new Color(h);
@@ -37,6 +40,9 @@ export const ATMOSPHERES: Record<TimeOfDay, Atmosphere> = {
     exposure: 0.95,
     stars: 0,
     envIntensity: 1,
+    clouds: 0.75,
+    cloudLit: c('#f4f5f7'),
+    cloudShade: c('#7d8794'),
   },
   sunset: {
     sunDir: new Vector3(-0.82, 0.13, 0.55).normalize(),
@@ -53,6 +59,9 @@ export const ATMOSPHERES: Record<TimeOfDay, Atmosphere> = {
     exposure: 1.05,
     stars: 0.15,
     envIntensity: 0.8,
+    clouds: 0.6,
+    cloudLit: c('#ffc28a'),
+    cloudShade: c('#5d4a5c'),
   },
   night: {
     sunDir: new Vector3(0.35, 0.62, -0.45).normalize(),
@@ -69,6 +78,9 @@ export const ATMOSPHERES: Record<TimeOfDay, Atmosphere> = {
     exposure: 1.15,
     stars: 1,
     envIntensity: 0.35,
+    clouds: 0.25,
+    cloudLit: c('#2a3550'),
+    cloudShade: c('#0b1020'),
   },
 };
 
@@ -84,6 +96,8 @@ export const atmosphere: Atmosphere = {
   skyBottom: ATMOSPHERES.day.skyBottom.clone(),
   sunGlow: ATMOSPHERES.day.sunGlow.clone(),
   fog: ATMOSPHERES.day.fog.clone(),
+  cloudLit: ATMOSPHERES.day.cloudLit.clone(),
+  cloudShade: ATMOSPHERES.day.cloudShade.clone(),
 };
 
 export function lerpAtmosphere(target: Atmosphere, k: number) {
@@ -102,4 +116,7 @@ export function lerpAtmosphere(target: Atmosphere, k: number) {
   a.exposure += (target.exposure - a.exposure) * k;
   a.stars += (target.stars - a.stars) * k;
   a.envIntensity += (target.envIntensity - a.envIntensity) * k;
+  a.clouds += (target.clouds - a.clouds) * k;
+  a.cloudLit.lerp(target.cloudLit, k);
+  a.cloudShade.lerp(target.cloudShade, k);
 }

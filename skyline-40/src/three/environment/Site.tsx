@@ -1,15 +1,16 @@
 import { useFrame } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
 import {
-  Color, CylinderGeometry, IcosahedronGeometry, MeshBasicMaterial, MeshStandardMaterial, Path, Shape, ShapeGeometry,
+  Color, CylinderGeometry, IcosahedronGeometry, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial, Path, Shape, ShapeGeometry,
   type Group,
 } from 'three';
 import { useSkyline } from '../../state/store';
 import { QUALITY } from '../../config/performance';
 import { garageRamps, GARAGE_CONFIG } from '../../data/garage';
-import { MAT } from '../materials';
+import { MAT, realMaterials } from '../materials';
+import { WHEELS, carGeometries } from './carGeometry';
 import { getPavingTexture, getWaterNormal } from '../textures';
-import { rng } from '../utils/geo';
+import { merge, rng } from '../utils/geo';
 import { floorRuntime as rt } from '../building/floorRuntime';
 import { InstancedBoxes, type BoxItem } from './InstancedBoxes';
 
@@ -124,13 +125,35 @@ function Plaza({ landscape }: { landscape: boolean }) {
         ]),
       ]
     : [];
+  const grass = useMemo(() => realMaterials().grass(6), []);
+  const shrubGeo = useMemo(() => new IcosahedronGeometry(1, 1), []);
+  const shrubMat = useMemo(() => new MeshStandardMaterial({ color: '#ffffff', roughness: 0.9, flatShading: true }), []);
+  useEffect(() => () => { grass.map?.dispose(); grass.dispose(); shrubGeo.dispose(); shrubMat.dispose(); }, [grass, shrubGeo, shrubMat]);
+  // maciços de arbustos e forrações junto à base do edifício (como no paisagismo de referência)
+  const shrubs: BoxItem[] = useMemo(() => {
+    const rand = rng(77);
+    const out: BoxItem[] = [];
+    const greens = ['#4a6e3d', '#5d8247', '#3d5c34', '#6f8f4a', '#7a9a52', '#8a7f4a'];
+    const add = (x: number, z: number) => {
+      const s = 0.5 + rand() * 0.6;
+      out.push({ p: [x, 0.25 + s * 0.4, z], s: [s * 1.2, s * 0.9, s * 1.1], r: rand() * 3, color: greens[Math.floor(rand() * greens.length)] });
+    };
+    for (const sx of [-1, 1]) {
+      for (let z = -10; z <= 10; z += 1.1) add(sx * (16.2 + rand() * 0.8), z + rand() * 0.4);
+      for (let x = 9.5; x <= 15.5; x += 1.0) add(sx * x, 12.2 + rand() * 0.6);
+      for (let x = 2; x <= 15; x += 1.1) add(sx * x, -12.3 - rand() * 0.6);
+    }
+    return out;
+  }, []);
   const benches: BoxItem[] = [
     ...[-1, 1].flatMap((sx) => [20, 26, 32, 38].map((z) => ({ p: [sx * 9.3, 0.25, z] as [number, number, number], s: [0.6, 0.45, 2.2] as [number, number, number] }))),
   ];
   return (
     <group name="plaza">
-      <InstancedBoxes items={lawns} material={MAT.lawn} receiveShadow />
+      <InstancedBoxes items={lawns} material={grass} receiveShadow />
       <InstancedBoxes items={hedges} material={MAT.plantDark} castShadow />
+      {landscape && <InstancedBoxes items={shrubs} material={shrubMat} geometry={shrubGeo} castShadow />}
+      <PlazaCars />
       <InstancedBoxes items={benches} material={MAT.wood} castShadow />
       {/* espelho d'água de chegada */}
       <mesh position={[0, 0.12, 31]} material={MAT.stone} receiveShadow>
@@ -139,6 +162,34 @@ function Plaza({ landscape }: { landscape: boolean }) {
       <mesh position={[0, 0.25, 31]} rotation={[-Math.PI / 2, 0, 0]} material={reflecting}>
         <planeGeometry args={[12, 14.2]} />
       </mesh>
+    </group>
+  );
+}
+
+/** Dois esportivos na área de embarque sob a marquise (pintura metálica com verniz). */
+function PlazaCars() {
+  const car = carGeometries();
+  const paints = useMemo(() => [
+    new MeshPhysicalMaterial({ color: '#2e3136', roughness: 0.25, metalness: 0.7, clearcoat: 1, clearcoatRoughness: 0.05, envMapIntensity: 1.5 }),
+    new MeshPhysicalMaterial({ color: '#b9bec5', roughness: 0.22, metalness: 0.8, clearcoat: 1, clearcoatRoughness: 0.05, envMapIntensity: 1.5 }),
+  ], []);
+  useEffect(() => () => paints.forEach((m) => m.dispose()), [paints]);
+  const cars: { p: [number, number, number]; r: number; m: number }[] = [
+    { p: [-3.4, 0.06, 15.4], r: Math.PI / 2 + 0.12, m: 0 },
+    { p: [4.2, 0.06, 18.6], r: -Math.PI / 2 - 0.25, m: 1 },
+  ];
+  return (
+    <group name="plaza-cars">
+      {cars.map((c, i) => (
+        <group key={i} position={c.p} rotation={[0, c.r, 0]}>
+          <mesh geometry={car.body} material={paints[c.m]} castShadow receiveShadow />
+          <mesh geometry={car.glass} material={MAT.carGlass} />
+          <mesh geometry={car.lights} material={MAT.lightCool} />
+          {WHEELS.map((w, k) => (
+            <mesh key={k} geometry={car.wheel} material={MAT.tire} position={w} castShadow />
+          ))}
+        </group>
+      ))}
     </group>
   );
 }
@@ -256,22 +307,35 @@ function Trees({ count }: { count: number }) {
     const trunks: BoxItem[] = [];
     const crowns: BoxItem[] = [];
     const palms: BoxItem[] = [];
-    const greens = ['#4f6d44', '#5a7a4c', '#46623f', '#64834f', '#3f5a3a'];
+    const greens = ['#3f6234', '#4b7038', '#36552e', '#5a7d3f', '#6b8a45', '#41633a'];
     chosen.forEach((t) => {
       if (t.palm) {
         trunks.push({ p: [t.x, t.h / 2, t.z], s: [0.35, t.h, 0.35] });
         palms.push({ p: [t.x, t.h, t.z], s: [3.6, 0.9, 3.6], r: rand() * 3, color: '#4f7a45' });
       } else {
         trunks.push({ p: [t.x, t.h * 0.3, t.z], s: [0.4, t.h * 0.6, 0.4] });
-        crowns.push({ p: [t.x, t.h * 0.7, t.z], s: [t.h * 0.45, t.h * 0.5, t.h * 0.45], r: rand() * 3, color: greens[Math.floor(rand() * greens.length)] });
+        crowns.push({ p: [t.x, t.h * 0.68, t.z], s: [t.h * 0.34, t.h * 0.36, t.h * 0.34], r: rand() * 3, color: greens[Math.floor(rand() * greens.length)] });
       }
     });
     return { trunks, crowns, palms };
   }, [count]);
   const trunkGeo = useMemo(() => new CylinderGeometry(0.5, 0.65, 1, 6), []);
-  const crownGeo = useMemo(() => new IcosahedronGeometry(1, 1), []);
+  const crownGeo = useMemo(() => {
+    // copa orgânica: três volumes sobrepostos, levemente deformados
+    const parts = [[0, 0, 0, 1], [0.45, 0.25, 0.2, 0.72], [-0.4, 0.15, -0.25, 0.68], [0.1, 0.55, -0.1, 0.6]].map(([x, y, z, r]) => {
+      const g = new IcosahedronGeometry(r, 3);
+      const pos = g.attributes.position;
+      for (let i = 0; i < pos.count; i++) {
+        const k = 1 + Math.sin(pos.getX(i) * 7.1 + pos.getY(i) * 5.3) * 0.06 + Math.cos(pos.getZ(i) * 6.7) * 0.05;
+        pos.setXYZ(i, pos.getX(i) * k + x, pos.getY(i) * k * 0.9 + y, pos.getZ(i) * k + z);
+      }
+      return g;
+    });
+    // mantém as normais esféricas do icosaedro (sombreamento suave)
+    return merge(parts);
+  }, []);
   const palmGeo = useMemo(() => new IcosahedronGeometry(1, 0), []);
-  const crownMat = useMemo(() => new MeshStandardMaterial({ color: '#ffffff', roughness: 0.9, flatShading: true }), []);
+  const crownMat = useMemo(() => new MeshStandardMaterial({ color: '#ffffff', roughness: 0.85 }), []);
   useEffect(() => () => { trunkGeo.dispose(); crownGeo.dispose(); palmGeo.dispose(); crownMat.dispose(); }, [trunkGeo, crownGeo, palmGeo, crownMat]);
   return (
     <group name="trees">

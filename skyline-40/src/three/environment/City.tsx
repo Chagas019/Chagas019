@@ -32,7 +32,8 @@ function facadeTextures() {
     for (let col = 0; col < cols; col++) {
       const x = col * cw + 2;
       const y = r * rh + 2;
-      d.fillStyle = `rgb(${88 + rand() * 30}, ${104 + rand() * 30}, ${122 + rand() * 30})`;
+      const g = 70 + rand() * 22;
+      d.fillStyle = `rgb(${g}, ${g + 8}, ${g + 16})`;
       d.fillRect(x, y, cw - 4, rh - 4);
       if (rand() < 0.42) {
         const warm = rand() < 0.7;
@@ -78,7 +79,7 @@ export function City() {
   const blocks = useMemo(() => {
     const rand = rng(1234);
     const out: { x: number; z: number; w: number; d: number; h: number; c: Color }[] = [];
-    const tints = ['#e8e4dc', '#d4d8dc', '#c6c2b8', '#b9c0c8', '#efece6', '#a7adb4'];
+    const tints = ['#ece6da', '#d9d6cf', '#c9c1b2', '#bfc3c6', '#f1ede5', '#a9a49a', '#8f9296'];
     for (let gx = -720; gx <= 720; gx += 36) {
       for (let gz = -980; gz <= 120; gz += 36) {
         if (Math.abs(gx) < 92 && Math.abs(gz) < 84) continue; // terreno do empreendimento

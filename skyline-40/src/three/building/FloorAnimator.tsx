@@ -97,7 +97,8 @@ export function FloorAnimator() {
         facadeMetal: glassT * detail,
         railing: detail,
         interior: (anyInterior && detail) || focus === n ? 1 : 0,
-        glow: glassT * (n / FLOOR_COUNT < wave ? 1 : 0) * (isNight ? 1 : 0) * (focus === n ? 0 : 1),
+        // de dia os interiores aparecem levemente iluminados (aspecto habitado); à noite acendem em onda
+        glow: glassT * (isNight ? (n / FLOOR_COUNT < wave ? 1 : 0) : 0.3) * (focus === n ? 0 : 1),
       };
       for (const c of CATEGORIES) {
         const tgt = targets[c];

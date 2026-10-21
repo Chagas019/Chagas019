@@ -8,7 +8,7 @@ import {
 import { FLOORS, FLOOR_COUNT, floorHeight, floorLabel, floorSector, floorVariant, getFloorInfo, type FloorVariant, BUILDING } from '../../data/building';
 import { UNITS } from '../../data/apartment';
 import { useSkyline } from '../../state/store';
-import { MAT } from '../materials';
+import { MAT, realMaterials } from '../materials';
 import { rng } from '../utils/geo';
 import { buildFloorModule, disposeModule } from './floorGeometry';
 import { FloorInstances } from './FloorInstances';
@@ -20,6 +20,7 @@ const techStructure = new MeshStandardMaterial({ color: '#cfd8e6', roughness: 0.
 const ledMat = new MeshBasicMaterial({ color: '#dfe9ff', toneMapped: false });
 
 export function Building() {
+  const R = useMemo(realMaterials, []);
   const technical = useSkyline((s) => s.layers.technical);
   const modules = useMemo(() => Object.fromEntries(VARIANTS.map((v) => [v, buildFloorModule(v)])) as Record<FloorVariant, ReturnType<typeof buildFloorModule>>, []);
   const floorsBy = useMemo(() => Object.fromEntries(VARIANTS.map((v) => [v, FLOORS.filter((n) => floorVariant(n) === v)])) as Record<FloorVariant, number[]>, []);
@@ -41,6 +42,12 @@ export function Building() {
             <FloorInstances floors={floors} geometry={m.handrail} material={MAT.metalLight} category="railing" />
             <FloorInstances floors={floors} geometry={m.interior} material={MAT.interiorWall} category="interior" receiveShadow castShadow />
             <FloorInstances floors={floors} geometry={m.led} material={ledMat} category="structure" />
+            <FloorInstances floors={floors} geometry={m.wood} material={R.wood} category="structure" castShadow receiveShadow />
+            <FloorInstances floors={floors} geometry={m.soffit} material={R.soffit} category="structure" receiveShadow />
+            <FloorInstances floors={floors} geometry={m.graphite} material={R.graphite} category="structure" castShadow receiveShadow />
+            <FloorInstances floors={floors} geometry={m.stone} material={R.stone} category="structure" castShadow receiveShadow />
+            <FloorInstances floors={floors} geometry={m.ledWarm} material={R.ledWarm} category="structure" />
+            <FloorInstances floors={floors} geometry={m.plants} material={R.plants} category="railing" castShadow />
             <FloorInstances floors={floors} geometry={m.finish} material={v === 'typical' || v === 'upper' ? MAT.wood : MAT.stone} category="finish" pickable receiveShadow />
           </group>
         );
@@ -60,6 +67,8 @@ function LedDriver() {
   useFrame(() => {
     const on = useSkyline.getState().layers.archLights;
     ledMat.color.set('#dfe9ff').multiplyScalar(on ? 0.18 + rt.night * 1.9 : 0.12);
+    // perfis quentes dos forros: acesos também de dia, como nos renders de arquitetura
+    realMaterials().ledWarm.color.set('#ffcf8f').multiplyScalar(on ? 0.9 + rt.night * 1.6 : 0.25);
   });
   return null;
 }

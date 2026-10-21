@@ -151,3 +151,137 @@ export function disposeTextures() {
   waterNormal?.dispose();
   waterNormal = null;
 }
+
+/* ---------- materiais realistas (texturas procedurais, mapeadas em metros) ---------- */
+
+function valueNoise(seed: number) {
+  const perm = new Uint8Array(512);
+  let s = seed;
+  for (let i = 0; i < 256; i++) perm[i] = i;
+  for (let i = 255; i > 0; i--) {
+    s = (s * 16807) % 2147483647;
+    const j = s % (i + 1);
+    [perm[i], perm[j]] = [perm[j], perm[i]];
+  }
+  for (let i = 0; i < 256; i++) perm[i + 256] = perm[i];
+  const rnd = (x: number, y: number) => perm[(perm[x & 255] + (y & 255)) & 511] / 255;
+  const smooth = (t: number) => t * t * (3 - 2 * t);
+  // ruído periódico (período p) para a textura repetir sem emendas
+  return (x: number, y: number, p: number) => {
+    const xi = Math.floor(x);
+    const yi = Math.floor(y);
+    const fx = smooth(x - xi);
+    const fy = smooth(y - yi);
+    const m = (v: number) => ((v % p) + p) % p;
+    const a = rnd(m(xi), m(yi));
+    const b = rnd(m(xi + 1), m(yi));
+    const c = rnd(m(xi), m(yi + 1));
+    const d = rnd(m(xi + 1), m(yi + 1));
+    return a + (b - a) * fx + (c - a) * fy + (a - b - c + d) * fx * fy;
+  };
+}
+
+function fbm(n: ReturnType<typeof valueNoise>, x: number, y: number, p: number, oct = 4) {
+  let v = 0;
+  let amp = 0.5;
+  let f = 1;
+  for (let o = 0; o < oct; o++) {
+    v += amp * n(x * f, y * f, p * f);
+    amp *= 0.5;
+    f *= 2;
+  }
+  return v;
+}
+
+function pixelTexture(key: string, w: number, h: number, fn: (x: number, y: number) => [number, number, number]) {
+  const hit = cache.get(key);
+  if (hit) return hit;
+  const c = document.createElement('canvas');
+  c.width = w;
+  c.height = h;
+  const ctx = c.getContext('2d')!;
+  const img = ctx.createImageData(w, h);
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const [r, g, b] = fn(x, y);
+      const i = (y * w + x) * 4;
+      img.data[i] = r;
+      img.data[i + 1] = g;
+      img.data[i + 2] = b;
+      img.data[i + 3] = 255;
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+  const tex = new CanvasTexture(c);
+  tex.wrapS = tex.wrapT = RepeatWrapping;
+  tex.colorSpace = SRGBColorSpace;
+  tex.anisotropy = 8;
+  cache.set(key, tex);
+  return tex;
+}
+
+/** Madeira cumaru/freijó com veios verticais (ripados, brises e forros). Um ladrilho = 1 × 2 m. */
+export function getWoodTexture() {
+  const n = valueNoise(11);
+  return pixelTexture('wood-real', 256, 512, (x, y) => {
+    const u = x / 256;
+    const v = y / 512;
+    const plank = Math.floor(u * 4);
+    const tone = 0.85 + n(plank * 3.1, 0.5, 64) * 0.3;
+    const grain = fbm(n, u * 40 + plank * 7, v * 3, 40 * 1, 4);
+    const ring = Math.sin((u * 60 + grain * 6) * Math.PI) * 0.5 + 0.5;
+    const k = tone * (0.78 + grain * 0.35 + ring * 0.08);
+    const gap = (u * 4) % 1 < 0.025 ? 0.45 : 1;
+    return [150 * k * gap, 96 * k * gap, 58 * k * gap];
+  });
+}
+
+/** Travertino bege com veios horizontais. Um ladrilho = 2 × 2 m. */
+export function getStoneTexture() {
+  const n = valueNoise(23);
+  return pixelTexture('travertine', 512, 512, (x, y) => {
+    const u = x / 512;
+    const v = y / 512;
+    const base = fbm(n, u * 6, v * 6, 6, 5);
+    const vein = Math.abs(Math.sin((v * 18 + fbm(n, u * 3, v * 3, 3, 3) * 2.4) * Math.PI));
+    const pores = n(u * 120, v * 120, 120) > 0.86 ? 0.82 : 1;
+    const joint = (u * 2) % 1 < 0.006 || (v * 4) % 1 < 0.008 ? 0.8 : 1;
+    const k = (0.86 + base * 0.2 - (1 - vein) * 0.05) * pores * joint;
+    return [214 * k, 196 * k, 168 * k];
+  });
+}
+
+/** Concreto/porcelanato claro com leve variação (evita superfícies "chapadas"). */
+export function getConcreteTexture() {
+  const n = valueNoise(37);
+  return pixelTexture('concrete-light', 256, 256, (x, y) => {
+    const u = x / 256;
+    const v = y / 256;
+    const k = 0.93 + fbm(n, u * 8, v * 8, 8, 4) * 0.1;
+    return [236 * k, 236 * k, 232 * k];
+  });
+}
+
+/** Grama com variação de tons. Um ladrilho = 4 × 4 m. */
+export function getGrassTexture() {
+  const n = valueNoise(51);
+  return pixelTexture('grass', 256, 256, (x, y) => {
+    const u = x / 256;
+    const v = y / 256;
+    const big = fbm(n, u * 4, v * 4, 4, 3);
+    const blade = n(u * 128, v * 128, 128);
+    const k = 0.72 + big * 0.35 + blade * 0.18;
+    return [72 * k, 112 * k, 52 * k];
+  });
+}
+
+/** Asfalto com agregado. Um ladrilho = 4 × 4 m. */
+export function getAsphaltTexture() {
+  const n = valueNoise(67);
+  return pixelTexture('asphalt', 256, 256, (x, y) => {
+    const u = x / 256;
+    const v = y / 256;
+    const k = 0.8 + fbm(n, u * 6, v * 6, 6, 3) * 0.25 + (n(u * 200, v * 200, 200) - 0.5) * 0.25;
+    return [52 * k, 54 * k, 58 * k];
+  });
+}

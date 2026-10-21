@@ -1,7 +1,8 @@
 import {
   AdditiveBlending, CanvasTexture, Color, DoubleSide, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial, type MeshStandardMaterialParameters,
-  SRGBColorSpace, type Material,
+  SRGBColorSpace, type Material, type Texture,
 } from 'three';
+import { getAsphaltTexture, getConcreteTexture, getGrassTexture, getStoneTexture, getWoodTexture } from './textures';
 
 /**
  * Biblioteca de materiais compartilhados (paleta: grafite, branco, cinza mineral, azul profundo
@@ -16,8 +17,8 @@ export const MAT = {
   concreteRaw: std('#a9adb0', 0.9),
   core: std('#8b9096', 0.9),
   glass: new MeshPhysicalMaterial({
-    color: new Color('#5b7c9e'), metalness: 0.35, roughness: 0.05, transparent: true, opacity: 0.58,
-    envMapIntensity: 2.1, reflectivity: 0.9, clearcoat: 1, clearcoatRoughness: 0.05, depthWrite: false,
+    color: new Color('#26384a'), metalness: 0.6, roughness: 0.03, transparent: true, opacity: 0.8,
+    envMapIntensity: 2.4, reflectivity: 0.9, clearcoat: 1, clearcoatRoughness: 0.05, depthWrite: false,
   }),
   railGlass: new MeshPhysicalMaterial({
     color: new Color('#cfe2f0'), metalness: 0.1, roughness: 0.05, transparent: true, opacity: 0.22,
@@ -39,7 +40,7 @@ export const MAT = {
   plantDark: std('#2f4a33', 0.9),
   soil: std('#5a4636', 1),
   deck: std('#9b7656', 0.7),
-  paving: std('#bdbab3', 0.92),
+  paving: std('#a8a49b', 0.92),
   asphalt: std('#2b2e33', 0.95),
   lawn: std('#5f7d4f', 1),
   water: std('#2c6f8f', 0.1),
@@ -50,7 +51,7 @@ export const MAT = {
   highlight: new MeshBasicMaterial({ color: new Color('#79a8ff'), transparent: true, opacity: 0.12, depthWrite: false }),
   carGlass: std('#101418', 0.15, 0.6),
   tire: std('#141414', 0.9),
-  paint: std('#ffffff', 0.32, 0.6),
+  paint: new MeshPhysicalMaterial({ color: new Color('#ffffff'), roughness: 0.28, metalness: 0.65, clearcoat: 1, clearcoatRoughness: 0.06, envMapIntensity: 1.4 }),
   marking: std('#e9e7df', 0.7),
   markingYellow: std('#d9b23a', 0.7),
 } satisfies Record<string, Material>;
@@ -88,4 +89,39 @@ export function makeLabelTexture(text: string, opts: { w?: number; h?: number; b
   tex.colorSpace = SRGBColorSpace;
   tex.anisotropy = 4;
   return tex;
+}
+
+let real: ReturnType<typeof createRealMaterials> | null = null;
+
+function createRealMaterials() {
+  const tex = (t: Texture, rx: number, ry: number, rot = 0) => {
+    const c = t.clone();
+    c.needsUpdate = true;
+    c.repeat.set(rx, ry);
+    if (rot) {
+      c.center.set(0.5, 0.5);
+      c.rotation = rot;
+    }
+    return c;
+  };
+  const wood = getWoodTexture();
+  // concreto branco com leve textura (UV em metros: 1 ladrilho a cada 4 m)
+  MAT.concrete.map = tex(getConcreteTexture(), 0.25, 0.25);
+  MAT.concrete.needsUpdate = true;
+  return {
+    wood: new MeshStandardMaterial({ map: tex(wood, 1, 0.5), roughness: 0.62, color: new Color('#ffffff') }),
+    soffit: new MeshStandardMaterial({ map: tex(wood, 0.5, 1, Math.PI / 2), roughness: 0.6, color: new Color('#f2e2d2') }),
+    stone: new MeshStandardMaterial({ map: tex(getStoneTexture(), 0.5, 0.5), roughness: 0.55 }),
+    graphite: new MeshStandardMaterial({ color: new Color('#2a2d32'), roughness: 0.42, metalness: 0.55 }),
+    plants: new MeshStandardMaterial({ color: new Color('#4d7240'), roughness: 0.85, flatShading: true }),
+    ledWarm: new MeshBasicMaterial({ color: new Color('#ffcf8f'), toneMapped: false }),
+    grass: (repeat: number) => new MeshStandardMaterial({ map: tex(getGrassTexture(), repeat, repeat), roughness: 1 }),
+    asphalt: (repeat: number) => new MeshStandardMaterial({ map: tex(getAsphaltTexture(), repeat, repeat), roughness: 0.92 }),
+  };
+}
+
+/** Materiais com textura (criados sob demanda, só no navegador). */
+export function realMaterials() {
+  if (!real) real = createRealMaterials();
+  return real;
 }

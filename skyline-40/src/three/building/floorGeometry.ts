@@ -1,4 +1,4 @@
-import type { BufferGeometry } from 'three';
+import { IcosahedronGeometry, type BufferGeometry } from 'three';
 import { BUILDING, type FloorVariant } from '../../data/building';
 import { UNITS, WALLS, DOORS, unitToFloor } from '../../data/apartment';
 import { box, cyl, merge } from '../utils/geo';
@@ -19,6 +19,18 @@ export interface FloorModule {
   finish: BufferGeometry;
   /** Frisos de LED nas quinas (iluminação arquitetônica noturna). */
   led: BufferGeometry;
+  /** Ripados e brises em madeira (veio vertical). */
+  wood: BufferGeometry;
+  /** Forros de madeira sob as varandas e a marquise (veio horizontal). */
+  soffit: BufferGeometry;
+  /** Molduras e jardineiras em grafite. */
+  graphite: BufferGeometry;
+  /** Revestimento em travertino. */
+  stone: BufferGeometry;
+  /** Vegetação nas jardineiras das varandas. */
+  plants: BufferGeometry;
+  /** Perfis de LED quente embutidos nos forros. */
+  ledWarm: BufferGeometry;
 }
 
 const { halfX: HX, halfZ: HZ, slabThickness: ST, core: CORE } = BUILDING;
@@ -109,6 +121,10 @@ function balconyParts(variant: FloorVariant, h: number) {
   const structure: BufferGeometry[] = [];
   const railing: BufferGeometry[] = [];
   const handrail: BufferGeometry[] = [];
+  const soffit: BufferGeometry[] = [];
+  const ledWarm: BufferGeometry[] = [];
+  const graphite: BufferGeometry[] = [];
+  const plants: BufferGeometry[] = [];
   const D = BUILDING.balconyDepth;
   const RH = 1.08;
   const wrap = variant === 'upper';
@@ -122,6 +138,18 @@ function balconyParts(variant: FloorVariant, h: number) {
       const cx = sx * (x0 + w / 2);
       const cz = sz * (HZ + D / 2);
       structure.push(box(w, 0.24, D, cx, -0.12, cz));
+      // forro de madeira e perfil de LED quente sob a varanda (visto de baixo, como no render)
+      soffit.push(box(w - 0.1, 0.03, D - 0.12, cx, -0.255, cz - sz * 0.02));
+      ledWarm.push(box(w - 0.4, 0.025, 0.05, cx, -0.275, sz * (HZ + D - 0.35)));
+      // jardineira em grafite com vegetação junto ao guarda-corpo
+      const px = sx * (x0 + 1.4);
+      graphite.push(box(2.2, 0.55, 0.5, px, 0.275, sz * (HZ + D - 0.35)));
+      for (let i = 0; i < 4; i++) {
+        const g = new IcosahedronGeometry(0.34 + (i % 2) * 0.1, 1);
+        g.scale(1, 0.85, 0.8);
+        g.translate(px - 0.75 + i * 0.5, 0.75 + (i % 2) * 0.12, sz * (HZ + D - 0.35));
+        plants.push(g);
+      }
       railing.push(box(w, RH, 0.03, cx, RH / 2, sz * (HZ + D - 0.04)));
       handrail.push(box(w, 0.05, 0.07, cx, RH, sz * (HZ + D - 0.04)));
       if (wrap) {
@@ -136,18 +164,27 @@ function balconyParts(variant: FloorVariant, h: number) {
         handrail.push(box(0.07, 0.05, len + D, sx * (HX + D - 0.04), RH, sz * (z0 + (len + D) / 2)));
         railing.push(box(D, RH, 0.03, sideX, RH / 2, sz * z0));
         handrail.push(box(D, 0.05, 0.07, sideX, RH, sz * z0));
+        soffit.push(box(D - 0.12, 0.03, len, sideX, -0.255, sideZ));
+        ledWarm.push(box(0.05, 0.025, len, sx * (HX + D - 0.35), -0.275, sideZ));
       } else {
+        // moldura grafite fechando a varanda na extremidade (como o pórtico escuro da referência)
+        graphite.push(box(0.4, h, D + 0.2, sx * (HX - 0.1), h / 2 - ST, sz * (HZ + D / 2 + 0.1)));
         railing.push(box(0.03, RH, D, sx * (HX - 0.3), RH / 2, cz));
         handrail.push(box(0.07, 0.05, D, sx * (HX - 0.3), RH, cz));
       }
     }
   }
-  return { structure, railing, handrail };
+  return { structure, railing, handrail, soffit, ledWarm, graphite, plants };
 }
 
 function facadeParts(variant: FloorVariant, h: number) {
   const glass: BufferGeometry[] = [];
   const metal: BufferGeometry[] = [];
+  const wood: BufferGeometry[] = [];
+  const graphite: BufferGeometry[] = [];
+  const stone: BufferGeometry[] = [];
+  const soffit: BufferGeometry[] = [];
+  const ledWarm: BufferGeometry[] = [];
   const gh = h - ST - 0.1;
   const gy = 0.08 + gh / 2 - 0.04;
   const inset = variant === 'lobby' ? 1.2 : 0.06;
@@ -155,8 +192,21 @@ function facadeParts(variant: FloorVariant, h: number) {
   const gz = HZ - inset;
   glass.push(box(gx * 2, gh, 0.04, 0, gy, gz));
   glass.push(box(gx * 2, gh, 0.04, 0, gy, -gz));
-  glass.push(box(0.04, gh, gz * 2, gx, gy, 0));
-  glass.push(box(0.04, gh, gz * 2, -gx, gy, 0));
+  if (variant === 'lobby') {
+    // laterais do térreo revestidas em travertino; frente e fundos envidraçados
+    stone.push(box(0.3, gh + 0.1, gz * 2, gx, gy, 0));
+    stone.push(box(0.3, gh + 0.1, gz * 2, -gx, gy, 0));
+    // forro de madeira e LED sob a marquise
+    soffit.push(box(17.6, 0.04, 8.2, 0, 4.58, HZ + 4.25));
+    for (const x of [-6, -2, 2, 6]) ledWarm.push(box(0.06, 0.03, 7.6, x, 4.555, HZ + 4.25));
+    // pórtico grafite emoldurando o acesso
+    graphite.push(box(10, 0.6, 0.5, 0, 5.3, HZ + 0.3));
+    graphite.push(box(0.5, 5.6, 0.5, -5, 2.8, HZ + 0.3));
+    graphite.push(box(0.5, 5.6, 0.5, 5, 2.8, HZ + 0.3));
+  } else {
+    glass.push(box(0.04, gh, gz * 2, gx, gy, 0));
+    glass.push(box(0.04, gh, gz * 2, -gx, gy, 0));
+  }
 
   // montantes da pele de vidro
   const step = variant === 'lobby' ? 2.4 : 1.5;
@@ -164,7 +214,7 @@ function facadeParts(variant: FloorVariant, h: number) {
     metal.push(box(0.06, gh, 0.14, x, gy, gz + 0.04));
     metal.push(box(0.06, gh, 0.14, x, gy, -gz - 0.04));
   }
-  for (let z = -gz + step; z < gz - 0.2; z += step) {
+  for (let z = -gz + step; z < gz - 0.2 && variant !== 'lobby'; z += step) {
     metal.push(box(0.14, gh, 0.06, gx + 0.04, gy, z));
     metal.push(box(0.14, gh, 0.06, -gx - 0.04, gy, z));
   }
@@ -177,26 +227,26 @@ function facadeParts(variant: FloorVariant, h: number) {
   // brises verticais
   if (variant === 'podium') {
     for (let x = -HX + 0.4; x <= HX - 0.3; x += 0.8) {
-      metal.push(box(0.07, h, 0.42, x, h / 2 - ST, HZ + 0.26));
-      metal.push(box(0.07, h, 0.42, x, h / 2 - ST, -HZ - 0.26));
+      wood.push(box(0.07, h, 0.42, x, h / 2 - ST, HZ + 0.26));
+      wood.push(box(0.07, h, 0.42, x, h / 2 - ST, -HZ - 0.26));
     }
     for (let z = -HZ + 0.4; z <= HZ - 0.3; z += 0.8) {
-      metal.push(box(0.42, h, 0.07, HX + 0.26, h / 2 - ST, z));
-      metal.push(box(0.42, h, 0.07, -HX - 0.26, h / 2 - ST, z));
+      wood.push(box(0.42, h, 0.07, HX + 0.26, h / 2 - ST, z));
+      wood.push(box(0.42, h, 0.07, -HX - 0.26, h / 2 - ST, z));
     }
   } else if (variant === 'typical' || variant === 'upper') {
     const limit = variant === 'upper' ? 2.6 : HZ - 0.4;
     for (let z = -limit; z <= limit + 0.01; z += 1.2) {
-      metal.push(box(0.5, h, 0.08, HX + 0.3, h / 2 - ST, z));
-      metal.push(box(0.5, h, 0.08, -HX - 0.3, h / 2 - ST, z));
+      wood.push(box(0.5, h, 0.08, HX + 0.3, h / 2 - ST, z));
+      wood.push(box(0.5, h, 0.08, -HX - 0.3, h / 2 - ST, z));
     }
   } else if (variant === 'crown') {
     for (let x = -HX + 1.5; x < HX; x += 3) {
-      metal.push(box(0.12, h, 0.6, x, h / 2 - ST, HZ + 0.32));
-      metal.push(box(0.12, h, 0.6, x, h / 2 - ST, -HZ - 0.32));
+      graphite.push(box(0.12, h, 0.6, x, h / 2 - ST, HZ + 0.32));
+      graphite.push(box(0.12, h, 0.6, x, h / 2 - ST, -HZ - 0.32));
     }
   }
-  return { glass, metal };
+  return { glass, metal, wood, graphite, stone, soffit, ledWarm };
 }
 
 /** Paredes internas das quatro unidades, portas e acabamento de piso. */
@@ -263,13 +313,22 @@ export function buildFloorModule(variant: FloorVariant): FloorModule {
   const structure = slabParts(variant, h);
   const railing: BufferGeometry[] = [];
   const handrail: BufferGeometry[] = [];
+  const f = facadeParts(variant, h);
+  const { glass, metal } = f;
+  const soffit = [...f.soffit];
+  const ledWarm = [...f.ledWarm];
+  const graphite = [...f.graphite];
+  const plants: BufferGeometry[] = [];
   if (variant === 'typical' || variant === 'upper') {
     const b = balconyParts(variant, h);
     structure.push(...b.structure);
     railing.push(...b.railing);
     handrail.push(...b.handrail);
+    soffit.push(...b.soffit);
+    ledWarm.push(...b.ledWarm);
+    graphite.push(...b.graphite);
+    plants.push(...b.plants);
   }
-  const { glass, metal } = facadeParts(variant, h);
   const { interior, finish } = interiorParts(variant, h);
   const led: BufferGeometry[] = [];
   for (const sx of [-1, 1]) for (const sz of [-1, 1]) led.push(box(0.1, h, 0.1, sx * (HX + 0.09), h / 2 - ST, sz * (HZ + 0.09)));
@@ -279,6 +338,12 @@ export function buildFloorModule(variant: FloorVariant): FloorModule {
   }
   return {
     led: merge(led),
+    wood: merge(f.wood),
+    soffit: merge(soffit),
+    graphite: merge(graphite),
+    stone: merge(f.stone),
+    plants: merge(plants),
+    ledWarm: merge(ledWarm),
     structure: merge(structure),
     core: merge(coreParts(h)),
     glass: merge(glass),

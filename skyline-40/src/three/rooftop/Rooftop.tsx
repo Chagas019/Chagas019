@@ -4,7 +4,8 @@ import { BackSide, Color, MeshStandardMaterial, type Group, type PointLight } fr
 import { BUILDING, FLOOR_COUNT, floorHeight } from '../../data/building';
 import { useSkyline } from '../../state/store';
 import { floorRuntime as rt, visibility } from '../building/floorRuntime';
-import { MAT } from '../materials';
+import { MAT, realMaterials } from '../materials';
+import { box } from '../utils/geo';
 import { getDeckTexture, getTileTexture, getWaterNormal } from '../textures';
 import { B, C, Plant } from '../apartment/FurniturePiece';
 
@@ -293,9 +294,14 @@ function Garden() {
 
 function CoreOverrun() {
   const { halfX: cx, halfZ: cz } = BUILDING.core;
+  const R = realMaterials();
+  const geos = useMemo(() => ({ volume: box(cx * 2 + 0.6, 3.6, cz * 2 + 0.6, 0, 1.8, 0), soffit: box(cx * 2 + 2.3, 0.04, cz * 2 + 3.5, 0, 3.6, 0.9) }), [cx, cz]);
+  useEffect(() => () => { geos.volume.dispose(); geos.soffit.dispose(); }, [geos]);
   return (
     <group name="core-overrun">
-      <B s={[cx * 2 + 0.6, 3.6, cz * 2 + 0.6]} p={[0, 1.8, 0]} m={MAT.core} />
+      {/* volume da casa de máquinas revestido em travertino, com forro de madeira na marquise */}
+      <mesh geometry={geos.volume} material={R.stone} castShadow receiveShadow />
+      <mesh geometry={geos.soffit} material={R.soffit} />
       {/* porta envidraçada de acesso à cobertura */}
       <B s={[3.6, 2.6, 0.06]} p={[0, 1.42, cz + 0.32]} m={MAT.glass} cast={false} />
       <B s={[3.8, 0.12, 0.12]} p={[0, 2.75, cz + 0.33]} m={MAT.metal} />
