@@ -53,7 +53,10 @@ function seoPages(siteUrl: string): Plugin {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), 'VITE_');
   return {
-    plugins: [react(), seoPages((env.VITE_SITE_URL ?? '').replace(/\/$/, ''))],
+    // modo "preview": build com caminhos relativos e rotas por hash, para hospedar como página estática num subcaminho
+    base: mode === 'preview' ? './' : '/',
+    define: mode === 'preview' ? { 'import.meta.env.VITE_ROUTER': JSON.stringify('hash') } : {},
+    plugins: [react(), ...(mode === 'preview' ? [] : [seoPages((env.VITE_SITE_URL ?? '').replace(/\/$/, ''))])],
     resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
     build: {
       target: 'es2022',

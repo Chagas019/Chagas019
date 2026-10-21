@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router';
+import { createBrowserRouter, createHashRouter, RouterProvider } from 'react-router';
 import { Layout } from '@/components/layout/Layout';
 import { RouteError } from '@/components/layout/RouteError';
 import { AuthProvider } from '@/hooks/useAuth';
@@ -27,7 +27,10 @@ const AdminPropertyEdit = lazy(() => import('@/pages/admin/AdminPropertyEdit'));
 const AdminLeads = lazy(() => import('@/pages/admin/AdminLeads'));
 const AdminContent = lazy(() => import('@/pages/admin/AdminContent'));
 
-const router = createBrowserRouter([
+// Prévia embutida (npm run build:preview): rotas por hash, porque a página roda dentro de um frame
+const createRouter = import.meta.env.VITE_ROUTER === 'hash' ? createHashRouter : createBrowserRouter;
+
+const router = createRouter([
   {
     element: <Layout />,
     errorElement: <RouteError />,

@@ -75,7 +75,23 @@ interface DemoOverrides { edited: Record<string, Property>; created: Property[] 
 const readDemo = () => readJSON<DemoOverrides>(DEMO_KEY, { edited: {}, created: [] });
 function demoAll(): Property[] {
   const o = readDemo();
-  return [...demoProperties.map((p) => o.edited[p.id] ?? p), ...o.created];
+  return [...demoProperties.map((p) => o.edited[p.id] ?? p), ...o.created].map(localizeMedia);
+}
+
+/** Caminhos "/media/..." passam a respeitar a base do build (necessário quando o site roda num subcaminho) */
+const asset = (u: string) => (u.startsWith('/') && !u.startsWith('//') ? import.meta.env.BASE_URL + u.slice(1) : u);
+const media = <T extends { src: string; thumb?: string }>(m: T): T => ({ ...m, src: asset(m.src), thumb: m.thumb && asset(m.thumb) });
+function localizeMedia(p: Property): Property {
+  if (import.meta.env.BASE_URL === '/') return p;
+  return {
+    ...p,
+    cover: media(p.cover),
+    gallery: p.gallery.map(media),
+    floorPlan: p.floorPlan?.kind === 'imagem' ? { ...p.floorPlan, levels: p.floorPlan.levels.map((l) => ({ ...l, image: media(l.image) })) } : p.floorPlan,
+    // na prévia hospedada como página estática o modelo vai como glTF JSON (.gltf.json), não .glb
+    model3d: p.model3d && { ...p.model3d, url: asset(import.meta.env.VITE_ROUTER === 'hash' ? p.model3d.url.replace(/\.glb$/, '.gltf.json') : p.model3d.url) },
+    panoramas: p.panoramas?.map(media),
+  };
 }
 
 const delay = <T,>(v: T) => new Promise<T>((r) => setTimeout(() => r(v), 120));

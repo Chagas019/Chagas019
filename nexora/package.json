@@ -10,6 +10,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
+    "build:preview": "vite build --mode preview --outDir dist-preview",
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run",
     "renders": "node scripts/render-assets.mjs"
