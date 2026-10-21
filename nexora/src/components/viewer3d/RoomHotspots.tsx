@@ -7,7 +7,7 @@ import type { AnchorMap } from './ScreenProjector';
  */
 export function RoomHotspots({ rooms, selected, onSelect, anchors }: { rooms: Model3D['rooms']; selected?: string; onSelect: (id: string) => void; anchors: AnchorMap }) {
   return (
-    <div role="group" className="pointer-events-none absolute inset-0 overflow-hidden" aria-label="Ambientes no modelo">
+    <div role="group" className="pointer-events-none absolute inset-0 z-10 overflow-hidden" aria-label="Ambientes no modelo">
       {Object.entries(rooms).map(([id, r]) => (
         <button
           key={id}
