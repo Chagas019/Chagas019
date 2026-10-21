@@ -440,6 +440,59 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     await q.context().close();
   }
 
+  console.log("12. Formação: câmera do celular");
+  {
+    const p = await pagina(browser);
+    const txt = sel => p.textContent(sel);
+    check(/Configure seu celular e aprenda a fotografar como um profissional/.test(await txt("#cam-h")), "seção da câmera tem o título");
+    await p.click("#form-cam"); await p.waitForTimeout(900);
+    const topo = await p.$eval("#camera", e => e.getBoundingClientRect().top);
+    check(topo >= -5 && topo < 200, "atalho da formação leva à câmera", String(topo));
+    check((await p.$$("#cam-phones [role=radio]")).length === 6 && (await p.$$("#cam-objs [role=radio]")).length === 9, "seletor com 6 celulares e 8 objetivos (mais Todos)");
+    check(/Escolha a categoria/.test(await txt("#cam-tips .dep")), "sem categoria, pede para escolher o celular");
+    await p.click('[data-cam-cat="and-avancado"]');
+    check(await p.getAttribute('[data-cam-cat="and-avancado"]', "aria-checked") === "true", "categoria fica marcada");
+    check(/Modo Pro/.test(await txt("#cam-tips .dep")), "Android avançado mostra recursos que dependem do modelo");
+    check(await p.getAttribute('[data-cam-mod="m3"]', "aria-selected") === "true", "categoria abre as aulas certas");
+    await p.click('[data-cam-obj="reels"]');
+    check(/9:16/.test(await txt("#cam-tips")) && !/Modo Pro/.test(await txt("#cam-tips")), "filtro por objetivo muda as dicas");
+    await p.focus('[data-cam-cat="and-avancado"]'); await p.keyboard.press("ArrowRight");
+    check(await p.getAttribute('[data-cam-cat="ip-antigo"]', "aria-checked") === "true", "setas do teclado trocam a categoria");
+    check(/Como gravar vídeos bonitos com um iPhone antigo/.test(await txt("#cam-panel")), "aula especial do iPhone antigo");
+    await p.click('[data-cam-mod="m1"]');
+    check(/Como conseguir boas fotos com um celular simples/.test(await txt("#cam-panel")) && /Desafio 1/.test(await txt("#cam-panel")), "módulo do Android básico com aula especial e desafio");
+    await p.check('#cam-panel [data-cam-desafio="1"]');
+    check((await p.$$('[data-cam-mod="m1"] .ok')).length === 1, "desafio concluído aparece na aba");
+    check((await p.$$("#cam-sits .cam-sit")).length === 5 && /Desafio 6/.test(await txt("#cam-sits")), "situações A a E e desafio 6");
+    check((await p.$$("#cam-table tbody tr")).length === 9 && /Pontos de partida/.test(await txt("#cam-tabela")), "tabela com 9 objetivos e o aviso de ponto de partida");
+    check(/Gravar Vídeo/.test(await txt("#cam-menus")) && /Pro \/ Manual/.test(await txt("#cam-menus")), "guia de menus do iPhone e do Android");
+    await p.reload(); await p.waitForTimeout(500);
+    check(await p.getAttribute('[data-cam-cat="ip-antigo"]', "aria-checked") === "true" && await p.isChecked('[data-cam-desafio="1"]').catch(() => false) === false, "categoria salva após recarregar");
+    await p.click('[data-cam-mod="m1"]');
+    check(await p.isChecked('#cam-panel [data-cam-desafio="1"]'), "desafio continua concluído após recarregar");
+    // assistente
+    check(/escolha a marca, o objetivo, o ambiente e o tipo de cena/.test(await txt("#cam-result")), "assistente diz o que falta");
+    const wiz = async (marca, modelo, obj, amb, cena) => {
+      await p.selectOption("#wz-marca", marca); await p.fill("#wz-modelo", modelo);
+      for (const [n, v] of [["obj", obj], ["amb", amb], ["cena", cena]]) await p.click(`#cam-wiz label:has(input[name="${n}"][value="${v}"])`);
+      return txt("#cam-result");
+    };
+    let r = await wiz("iphone", "iPhone 11", "foto", "escuro", "parados");
+    check(/iPhone 11/.test(r) && /Modo Noite/.test(r) && /Fotografia/.test(r) && !/Vídeo: comece/.test(r), "iPhone 11: reconhece o modelo e o Modo Noite");
+    r = await wiz("iphone", "iphone 6", "video", "escuro", "movimento");
+    check(/até 1080p/.test(r) && /30 fps/.test(r) && /não tem vídeo 4K/.test(r), "iPhone 6: sem 4K e 30 fps no escuro");
+    r = await wiz("iphone", "iPhone 15 Pro", "ambos", "claro", "movimento");
+    check(/Apple Log/.test(r) && /60 fps/.test(r) && /Modo Ação/.test(r), "iPhone 15 Pro: recursos Pro, 60 fps com luz");
+    r = await wiz("iphone", "iPhone 16e", "video", "claro", "parados");
+    check(/uma só lente/.test(r), "iPhone 16e: avisa que a configuração é diferente");
+    r = await wiz("samsung", "Galaxy A15", "foto", "misto", "altar");
+    check(/não vamos adivinhar/.test(r) && /Galaxy/.test(r) && !/balanço de branco/.test(r), "Android desconhecido: não inventa ficha técnica");
+    await p.click('[data-cam-cat="and-avancado"]');
+    check(/balanço de branco/.test(await txt("#cam-result")), "Android avançado no seletor libera as dicas de modo Pro");
+    check(!p.erros.length, "câmera sem erros", p.erros.join(" | "));
+    await p.context().close();
+  }
+
   console.log("8. Celular, tablet e notebook (12 tamanhos de tela)");
   {
     const TELAS = [["celular 360", 360, 740, 1], ["celular 390", 390, 844, 1], ["celular 430", 430, 932, 1], ["celular deitado", 844, 390, 1],

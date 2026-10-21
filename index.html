@@ -521,6 +521,127 @@
   .lesson .lt-t { font-size: 15px; }
   .lesson .lt-m { font-size: 12px; color: var(--on-dark-muted); white-space: nowrap; }
 
+  /* formação: câmera do celular */
+  .form-cam { display: flex; align-items: center; gap: 12px; margin-top: 18px; padding: 14px 16px; border-radius: 18px; border: 1px solid rgba(255,106,31,.45); background: rgba(255,106,31,.08); text-align: left; width: 100%; }
+  .form-cam:hover { background: rgba(255,106,31,.14); }
+  .form-cam b { display: block; font-weight: 600; }
+  .form-cam small { color: var(--on-dark-muted); font-size: 13px; }
+  .cam-h2 { font-size: clamp(30px, 4.4vw, 62px); max-width: 18ch; }
+  .cam-principle { margin: 0 0 22px; padding: 18px 22px; border-left: 3px solid var(--accent); border-radius: 0 18px 18px 0; background: rgba(255,255,255,.05); max-width: 760px; }
+  .cam-principle p { margin: 0; font-size: clamp(17px, 1.8vw, 20px); line-height: 1.5; }
+  .cam-principle b { color: #ffb089; font-weight: 600; }
+  .cam-index { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+  .cam-index a { min-height: 38px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); color: rgba(255,255,255,.88); text-decoration: none; font-size: 13px; display: inline-flex; align-items: center; }
+  .cam-index a:hover { background: rgba(255,255,255,.08); }
+  .cam-block { margin-top: 40px; scroll-margin-top: calc(var(--top-h) + 12px); }
+  .cam-step { display: flex; align-items: center; gap: 12px; margin: 0 0 8px; font-size: clamp(20px, 2.4vw, 26px); font-weight: 500; }
+  .cam-step > span { width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: #111; display: grid; place-items: center; font-size: 15px; font-weight: 700; flex-shrink: 0; }
+  .cam-step-sm { font-size: 18px; margin-top: 22px; }
+  .cam-step-sm > span { width: 28px; height: 28px; font-size: 13px; background: rgba(255,255,255,.14); color: #fff; }
+  .cam-note { margin: 0 0 16px; color: var(--on-dark-muted); font-size: 14px; line-height: 1.5; max-width: 70ch; }
+  .cam-note b { color: #fff; font-weight: 600; }
+  .cam-phones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .cam-phone { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; align-items: center; padding: 14px; border-radius: 18px; border: 1px solid var(--line); background: rgba(255,255,255,.04); text-align: left; min-height: 76px; transition: background .2s, border-color .2s; }
+  .cam-phone:hover { background: rgba(255,255,255,.08); }
+  .cam-phone svg { grid-row: 1 / span 2; color: rgba(255,255,255,.7); }
+  .cam-phone b { font-weight: 600; font-size: 15px; }
+  .cam-phone small { font-size: 12px; color: var(--on-dark-muted); }
+  .cam-phone[aria-checked="true"] { border-color: var(--accent); background: rgba(255,106,31,.14); }
+  .cam-phone[aria-checked="true"] svg { color: var(--accent); }
+  .cam-objs .fchip[aria-checked="true"] { background: #fff; color: #111; border-color: #fff; }
+  .cam-tips { margin-top: 6px; }
+  .cam-tips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cam-card { padding: 18px; border-radius: 20px; border: 1px solid var(--line); background: rgba(255,255,255,.04); }
+  .cam-card h4 { margin: 0 0 10px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+  .cam-card.dep h4 { color: #ffd27a; }
+  .cam-card ul { margin: 0; padding-left: 18px; display: grid; gap: 8px; font-size: 14.5px; line-height: 1.5; color: rgba(255,255,255,.9); }
+  .cam-card p { margin: 0 0 8px; font-size: 14px; line-height: 1.5; color: rgba(255,255,255,.82); }
+  .cam-empty { padding: 18px; border-radius: 18px; border: 1px dashed var(--line); color: var(--on-dark-muted); font-size: 14px; }
+  .cam-tabs { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 10px; scrollbar-width: none; }
+  .cam-tabs::-webkit-scrollbar { display: none; }
+  .cam-tab { flex: 0 0 auto; min-height: 42px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); font-size: 14px; color: rgba(255,255,255,.88); display: inline-flex; align-items: center; gap: 8px; }
+  .cam-tab:hover { background: rgba(255,255,255,.08); }
+  .cam-tab[aria-selected="true"] { background: #fff; color: #111; border-color: #fff; }
+  .cam-tab .ok { width: 8px; height: 8px; border-radius: 50%; background: #3ddc84; }
+  .cam-panel { padding: clamp(18px, 3vw, 28px); border-radius: 22px; border: 1px solid var(--line); background: radial-gradient(70% 90% at 0% 0%, rgba(226,72,27,.18), transparent 60%), rgba(255,255,255,.03); outline: none; }
+  .cam-panel > h4 { margin: 0 0 4px; font-size: 22px; font-weight: 500; }
+  .cam-panel > .cam-note { margin-bottom: 14px; }
+  .cam-lessons { display: grid; gap: 8px; }
+  .cam-lesson { border-radius: 16px; border: 1px solid var(--line); background: rgba(255,255,255,.04); }
+  .cam-lesson summary { cursor: pointer; list-style: none; padding: 14px 16px; display: flex; align-items: center; gap: 12px; min-height: 52px; font-size: 16px; }
+  .cam-lesson summary::-webkit-details-marker { display: none; }
+  .cam-lesson summary::after { content: "+"; margin-left: auto; font-size: 22px; line-height: 1; color: var(--on-dark-muted); }
+  .cam-lesson[open] summary::after { content: "–"; }
+  .cam-lesson summary .n { font-size: 12px; color: #ffb089; font-variant-numeric: tabular-nums; min-width: 22px; }
+  .cam-lesson summary .star { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: #111; background: var(--accent); padding: 3px 8px; border-radius: 999px; }
+  .cam-body { padding: 0 18px 18px; font-size: 15px; line-height: 1.6; color: rgba(255,255,255,.88); }
+  .cam-body > * { max-width: 72ch; }
+  .cam-body p { margin: 0 0 12px; }
+  .cam-body ul, .cam-body ol { margin: 0 0 12px; padding-left: 20px; }
+  .cam-body li { margin-bottom: 6px; }
+  .cam-body b { color: #fff; }
+  .cam-body h5 { margin: 16px 0 6px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #ffb089; }
+  .cam-body .dep { display: inline-block; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #ffd27a; border: 1px solid rgba(255,210,122,.5); border-radius: 999px; padding: 1px 7px; margin-right: 4px; vertical-align: 1px; }
+  .cam-body .tip { padding: 12px 14px; border-radius: 14px; background: rgba(255,106,31,.1); border: 1px solid rgba(255,106,31,.3); }
+  .cam-chal { margin-top: 16px; padding: 18px; border-radius: 18px; background: #fff; color: var(--ink); color-scheme: light; }
+  .cam-chal .tag { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--red); font-weight: 700; }
+  .cam-chal h5 { margin: 4px 0 8px; font-size: 19px; font-weight: 600; }
+  .cam-chal ol { margin: 0 0 10px; padding-left: 20px; font-size: 14.5px; line-height: 1.5; }
+  .cam-chal .resp { font-size: 13px; color: var(--muted); margin: 0 0 10px; }
+  .cam-sits { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; align-items: start; }
+  .cam-sit { border-radius: 18px; border: 1px solid var(--line); background: rgba(255,255,255,.04); }
+  .cam-sit summary { cursor: pointer; list-style: none; padding: 16px 18px; display: grid; gap: 2px; }
+  .cam-sit summary::-webkit-details-marker { display: none; }
+  .cam-sit summary .tag { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+  .cam-sit summary b { font-size: 18px; font-weight: 500; }
+  .cam-sit summary small { color: var(--on-dark-muted); font-size: 13px; }
+  .cam-sit[open] { background: rgba(255,255,255,.07); }
+  .cam-sit ul { margin: 0; padding: 0 18px 18px 36px; display: grid; gap: 6px; font-size: 14.5px; line-height: 1.5; color: rgba(255,255,255,.9); }
+  .cam-table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; font-size: 15px; }
+  .cam-table th, .cam-table td { padding: 14px 16px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); line-height: 1.45; }
+  .cam-table thead th { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); background: rgba(255,255,255,.04); }
+  .cam-table tbody th { font-weight: 600; width: 32%; }
+  .cam-table tbody tr:last-child > * { border-bottom: 0; }
+  .cam-table tbody tr:nth-child(even) { background: rgba(255,255,255,.025); }
+  .cam-table td small { display: block; color: var(--on-dark-muted); font-size: 13px; margin-top: 4px; }
+  .cam-menus { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cam-path { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin: 2px 0 4px; }
+  .cam-path span { padding: 4px 10px; border-radius: 8px; background: rgba(255,255,255,.1); font-size: 13px; font-weight: 600; }
+  .cam-path i { font-style: normal; color: var(--on-dark-muted); }
+  .cam-menus li small { display: block; color: var(--on-dark-muted); font-size: 13px; }
+  .cam-warn { margin: 14px 0 0; padding: 14px 16px; border-radius: 14px; background: rgba(255,210,122,.1); border: 1px solid rgba(255,210,122,.35); font-size: 14px; line-height: 1.5; color: rgba(255,255,255,.9); max-width: 900px; }
+  .cam-wiz { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .cam-wiz-q { margin: 0; padding: 16px; border-radius: 18px; border: 1px solid var(--line); background: rgba(255,255,255,.04); display: grid; gap: 8px; align-content: start; min-width: 0; }
+  .cam-wiz-q > label, .cam-wiz-q legend { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; padding: 0; }
+  .cam-wiz-q legend { float: left; width: 100%; margin-bottom: 8px; }
+  .cam-wiz-q legend + * { clear: both; }
+  .cam-qn { width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,.14); display: inline-grid; place-items: center; font-size: 12px; flex-shrink: 0; }
+  .cam-wiz select, .cam-wiz input[type="text"] { width: 100%; min-height: 46px; border-radius: 12px; border: 1px solid rgba(255,255,255,.25); background: #1d1410; color: #fff; padding: 0 12px; font: inherit; font-size: 16px; }
+  .cam-wiz select:focus, .cam-wiz input[type="text"]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,106,31,.25); }
+  .cam-wiz-q small { color: var(--on-dark-muted); font-size: 12px; }
+  .cam-opts { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cam-opts label { min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 14px; }
+  .cam-opts input { position: absolute; opacity: 0; pointer-events: none; }
+  .cam-opts label:has(input:checked) { background: #fff; color: #111; border-color: #fff; }
+  .cam-opts label:has(input:focus-visible) { outline: 2px solid #fff; outline-offset: 2px; }
+  .cam-result { margin-top: 14px; }
+  .cam-rec { display: grid; gap: 12px; }
+  .cam-rec .cam-card dl { margin: 0; display: grid; gap: 10px; }
+  .cam-rec dt { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--on-dark-muted); }
+  .cam-rec dd { margin: 2px 0 0; font-size: 15px; line-height: 1.5; }
+  .cam-rec dd b { color: #fff; }
+  @media (max-width: 900px) {
+    .cam-phones { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cam-tips-grid, .cam-menus { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .cam-phones { grid-template-columns: 1fr; }
+    .cam-table, .cam-table tbody, .cam-table tr, .cam-table th, .cam-table td { display: block; width: auto; }
+    .cam-table thead { display: none; }
+    .cam-table tbody th { width: auto; border-bottom: 0; padding-bottom: 2px; }
+    .cam-table tbody td { padding-top: 0; }
+  }
+
   /* linha do tempo */
   .tl { display: grid; gap: 18px; }
   .tl-track { display: flex; gap: 8px; overflow-x: auto; padding: 6px 2px 10px; scrollbar-width: none; position: relative; }
@@ -1176,8 +1297,84 @@
         </div>
         <div class="form-actions"><button class="btn-pill" id="form-go">Começar a formação</button><button class="ghost-pill" id="form-reset" hidden>Recomeçar</button></div>
         <p class="mini-note">Seu progresso fica salvo neste aparelho.</p>
+        <button class="form-cam" id="form-cam"><span class="i3d" style="--s:44px"><img src="icones/camera.webp" alt=""></span><span><b>Câmera do celular: Android e iPhone</b><small>Configure seu aparelho e aprenda a fotografar e gravar na igreja.</small></span></button>
       </div>
       <div class="modules" id="modules"></div>
+    </div>
+  </section>
+
+  <section class="sec cam" id="camera" aria-labelledby="cam-h">
+    <div class="sec-label">[ Formação · Câmera do celular ]</div>
+    <h2 id="cam-h" class="sec-h2 cam-h2">Configure seu celular e aprenda a fotografar como um profissional.</h2>
+    <p class="lead">Do celular mais simples aos modelos mais avançados: aprenda a aproveitar a câmera que você tem para registrar a beleza da fé.</p>
+    <blockquote class="cam-principle"><p>Não é necessário ter o celular mais caro para aprender a fotografar bem. É necessário <b>conhecer o equipamento</b>, <b>dominar a luz</b> e <b>desenvolver o olhar</b>.</p></blockquote>
+    <nav class="cam-index" aria-label="Partes da formação de câmera">
+      <a href="#cam-seletor">1. Seu celular</a><a href="#cam-aulas">2. Aulas</a><a href="#cam-situacoes">3. Na igreja</a><a href="#cam-tabela">4. Tabela</a><a href="#cam-menus">5. Onde fica cada ajuste</a><a href="#cam-assistente">6. Assistente</a>
+    </nav>
+
+    <div class="cam-block" id="cam-seletor">
+      <h3 class="cam-step"><span>1</span>Qual é o seu celular?</h3>
+      <p class="cam-note">Escolha a categoria mais parecida com o seu aparelho. As dicas e as aulas abaixo se ajustam à sua escolha.</p>
+      <div class="cam-phones" role="radiogroup" aria-label="Categoria do celular" id="cam-phones"></div>
+      <h3 class="cam-step cam-step-sm">E o que você quer registrar?</h3>
+      <div class="chips-row cam-objs" role="radiogroup" aria-label="Objetivo" id="cam-objs"></div>
+      <div class="cam-tips" id="cam-tips" aria-live="polite"></div>
+    </div>
+
+    <div class="cam-block" id="cam-aulas">
+      <h3 class="cam-step"><span>2</span>Aulas por tipo de celular</h3>
+      <p class="cam-note">Cada módulo termina com um desafio prático. Marque os desafios que concluir: o progresso fica salvo neste aparelho.</p>
+      <div class="cam-tabs" role="tablist" aria-label="Módulos de câmera" id="cam-tabs"></div>
+      <div class="cam-panel" role="tabpanel" id="cam-panel" tabindex="-1"></div>
+    </div>
+
+    <div class="cam-block" id="cam-situacoes">
+      <h3 class="cam-step"><span>3</span>Configurações práticas para fotografar na igreja</h3>
+      <p class="cam-note">Situações reais com recomendações que se adaptam a qualquer aparelho. Toque numa situação para abrir.</p>
+      <div class="cam-sits" id="cam-sits"></div>
+    </div>
+
+    <div class="cam-block" id="cam-tabela">
+      <h3 class="cam-step"><span>4</span>Tabela de configurações iniciais</h3>
+      <p class="cam-note"><b>Pontos de partida, não regras.</b> Nenhuma configuração serve para todos os aparelhos: teste no seu celular, no local, antes da celebração.</p>
+      <table class="cam-table" id="cam-table"><caption class="sr">Configuração inicial sugerida para cada objetivo</caption></table>
+    </div>
+
+    <div class="cam-block" id="cam-menus">
+      <h3 class="cam-step"><span>5</span>Onde fica cada configuração</h3>
+      <div class="cam-menus" id="cam-menus-box"></div>
+      <p class="cam-warn" role="note">Os nomes dos menus mudam conforme o fabricante, o modelo, o aplicativo de câmera e a versão do sistema. Se não encontrar uma opção, procure o manual do seu aparelho no site oficial do fabricante. Se ela não existir no seu celular, tudo bem: as dicas universais continuam valendo.</p>
+    </div>
+
+    <div class="cam-block" id="cam-assistente">
+      <h3 class="cam-step"><span>6</span>Assistente de configuração</h3>
+      <p class="cam-note">Responda cinco perguntas e veja por onde começar. Quando o modelo não for reconhecido, mostramos configurações seguras para qualquer aparelho e como conferir o que o seu tem.</p>
+      <form class="cam-wiz" id="cam-wiz" novalidate>
+        <div class="cam-wiz-q">
+          <label for="wz-marca"><span class="cam-qn">1</span>Marca do celular</label>
+          <select id="wz-marca" name="marca">
+            <option value="">Escolha a marca</option>
+            <option value="iphone">Apple (iPhone)</option>
+            <option value="samsung">Samsung Galaxy</option>
+            <option value="motorola">Motorola</option>
+            <option value="xiaomi">Xiaomi, Redmi ou POCO</option>
+            <option value="pixel">Google Pixel</option>
+            <option value="outra">Outra marca ou não sei</option>
+          </select>
+        </div>
+        <div class="cam-wiz-q">
+          <label for="wz-modelo"><span class="cam-qn">2</span>Modelo, se souber</label>
+          <input id="wz-modelo" name="modelo" type="text" autocomplete="off" placeholder="Ex.: iPhone 11, Galaxy A15, Moto G54">
+          <small>No iPhone: Ajustes → Geral → Sobre. No Android: Configurações → Sobre o telefone.</small>
+        </div>
+        <fieldset class="cam-wiz-q"><legend><span class="cam-qn">3</span>Objetivo</legend>
+          <div class="cam-opts"><label><input type="radio" name="obj" value="foto"> Fotografia</label><label><input type="radio" name="obj" value="video"> Vídeo</label><label><input type="radio" name="obj" value="ambos"> Os dois</label></div></fieldset>
+        <fieldset class="cam-wiz-q"><legend><span class="cam-qn">4</span>Ambiente</legend>
+          <div class="cam-opts"><label><input type="radio" name="amb" value="claro"> Claro</label><label><input type="radio" name="amb" value="escuro"> Escuro</label><label><input type="radio" name="amb" value="misto"> Iluminação mista</label></div></fieldset>
+        <fieldset class="cam-wiz-q"><legend><span class="cam-qn">5</span>Tipo de cena</legend>
+          <div class="cam-opts"><label><input type="radio" name="cena" value="parados"> Pessoas paradas</label><label><input type="radio" name="cena" value="movimento"> Movimento</label><label><input type="radio" name="cena" value="altar"> Altar</label><label><input type="radio" name="cena" value="arquitetura"> Arquitetura</label></div></fieldset>
+      </form>
+      <div class="cam-result" id="cam-result" aria-live="polite"></div>
     </div>
   </section>
 
@@ -2860,6 +3057,492 @@ $("docs-grid").addEventListener("click", e => {
 $("glos-grid").innerHTML = GLOSSARIO.map(g => `<button class="flip" aria-pressed="false" aria-label="${g.t}: ${g.d}"><span class="in"><span class="face front"><b>${g.t}</b><small>Toque para ver</small></span><span class="face back">${g.d}</span></span></button>`).join("");
 $("glos-grid").addEventListener("click", e => { const b = e.target.closest(".flip"); if (b) b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") !== "true"); });
 $("faq").innerHTML = FAQ.map(f => `<details><summary>${f.p}</summary><p>${f.r}</p></details>`).join("");
+
+/* ---------- Formação: câmera do celular (Android e iPhone) ----------
+   Recursos de modelos específicos aparecem sempre marcados como "depende do modelo".
+   Só afirmamos o que é público nas fichas técnicas da Apple; para Android, que varia demais, damos o caminho para conferir. */
+const CAM_CATS = [
+  { id: "and-basico", nome: "Android antigo ou básico", sub: "Uma lente boa, poucos ajustes", mod: "m1" },
+  { id: "and-inter", nome: "Android intermediário", sub: "Mais de uma lente, alguns ajustes", mod: "m2" },
+  { id: "and-avancado", nome: "Android avançado", sub: "Modo Pro, RAW, 4K", mod: "m3" },
+  { id: "ip-antigo", nome: "iPhone antigo", sub: "Do iPhone 6 ao 11 e os SE", mod: "m4" },
+  { id: "ip-inter", nome: "iPhone intermediário", sub: "iPhone 12 em diante", mod: "m5" },
+  { id: "ip-pro", nome: "iPhone Pro ou avançado", sub: "Linhas Pro e Pro Max", mod: "m5" },
+];
+const CAM_OBJS = [
+  ["todos", "Todos"], ["missa", "Durante a Santa Missa"], ["cinema", "Vídeos cinematográficos"], ["escuro", "Ambientes escuros"],
+  ["reels", "Reels e Stories"], ["pessoas", "Pessoas e grupos"], ["altar", "Altar e arquitetura"],
+  ["procissao", "Procissões e movimento"], ["qualidade", "Sem perder qualidade"],
+];
+const ANDROIDS = ["and-basico", "and-inter", "and-avancado"], IPHONES = ["ip-antigo", "ip-inter", "ip-pro"];
+// c: categorias (null = todas) · o: objetivos (null = todos) · dep: recurso que depende do modelo
+const CAM_TIPS = [
+  { t: "Limpe a lente com um pano macio antes de começar. Marca de dedo deixa a foto leitosa e cria halos em volta das velas e das luzes.", c: null, o: null },
+  { t: "Use a câmera principal (1x). Em quase todos os celulares é a de melhor qualidade, principalmente com pouca luz.", c: null, o: null },
+  { t: "Evite o zoom digital (ampliar com os dedos além das lentes do aparelho). Aproxime-se com discrição, quando for possível, ou recorte a foto depois.", c: null, o: ["missa", "altar", "pessoas", "qualidade", "procissao"] },
+  { t: "Toque na tela sobre o que importa para focar e medir a luz; depois deslize para clarear ou escurecer.", c: null, o: ["missa", "escuro", "altar", "pessoas", "qualidade"] },
+  { t: "Segure com as duas mãos, cotovelos junto ao corpo, e solte o ar devagar ao fotografar. Apoie num banco, pilar ou coluna quando puder.", c: null, o: ["missa", "escuro", "cinema", "altar", "qualidade"] },
+  { t: "Ative a grade nas configurações da câmera para alinhar o altar, as colunas e o horizonte.", c: null, o: ["altar", "pessoas", "cinema", "qualidade"] },
+  { t: "Durante a celebração: sem flash, sem subir ao presbitério e sem atrapalhar a visão dos fiéis. Na consagração, a oração vem antes do registro.", c: null, o: ["missa", "escuro", "procissao"] },
+  { t: "Para Reels e Stories, grave na vertical (9:16) e deixe espaço livre em cima e embaixo, onde ficam os botões e as legendas das redes.", c: null, o: ["reels"] },
+  { t: "Para as redes, 1080p a 30 fps é um ponto de partida prático, quando disponível: arquivo leve e qualidade suficiente.", c: null, o: ["reels"] },
+  { t: "Grave cenas curtas e variadas (3 a 6 segundos): detalhe, rosto, ambiente. A edição fica mais fácil.", c: null, o: ["reels", "cinema"] },
+  { t: "Som limpo vale mais que imagem perfeita: aproxime-se de quem fala, fuja do vento e, se possível, use o som da mesa ou um microfone.", c: null, o: ["reels", "cinema"] },
+  { t: "Em grupos, coloque as pessoas de frente para a luz (janela, porta), fotografe na altura dos olhos e faça várias fotos para escolher uma sem olhos fechados.", c: null, o: ["pessoas"] },
+  { t: "Desligue filtros de beleza e efeitos. A imagem natural respeita as pessoas e o momento.", c: null, o: ["pessoas", "qualidade", "missa"] },
+  { t: "Em igreja escura, procure as áreas mais iluminadas e ajuste a exposição pelo rosto, sem deixá-lo escuro demais.", c: null, o: ["escuro", "missa", "pessoas"] },
+  { t: "Altar muito iluminado: toque no altar e baixe a exposição até as velas e as vestes brancas mostrarem detalhe.", c: null, o: ["altar", "missa"] },
+  { t: "Em procissões, estude o percurso: escolha um ponto, espere a cena chegar até você e fotografe no momento decisivo.", c: null, o: ["procissao"] },
+  { t: "Planeje planos abertos, médios, fechados e detalhes. Movimentos lentos e com propósito; nada de câmera passeando sem destino.", c: null, o: ["cinema", "procissao"] },
+  { t: "Antes do evento: bateria carregada, espaço livre na memória e o celular no modo avião ou não perturbe.", c: null, o: ["qualidade", "cinema", "procissao", "reels", "missa"] },
+  { t: "Amplie a primeira foto na tela: está nítida? Os brancos têm detalhe? Corrija antes de continuar.", c: null, o: ["qualidade", "altar", "escuro"] },
+
+  { t: "Em aparelhos simples, a melhor configuração é luz boa, mãos firmes e bom enquadramento. Não tente compensar a falta de luz com zoom ou ajustes que o aparelho não tem.", c: ["and-basico"], o: null },
+  { t: "Escolha a maior resolução de foto disponível em Configurações. Na proporção 4:3, a maioria dos celulares usa a área inteira do sensor.", c: ["and-basico", "and-inter"], o: ["qualidade", "altar", "pessoas"] },
+  { t: "Vídeo: escolha 1080p se a opção aparecer. Alguns aparelhos básicos só gravam até 720p, e tudo bem para Stories.", c: ["and-basico"], o: ["cinema", "reels", "procissao"], dep: true },
+  { t: "Memória curta? Grave clipes curtos e passe tudo para o computador ou para a nuvem depois de cada evento, sem baixar a qualidade de gravação.", c: ["and-basico", "ip-antigo"], o: ["qualidade", "cinema", "reels"] },
+  { t: "Modo noturno pode não existir. Se existir, use só com o celular apoiado e pessoas paradas: ele demora alguns segundos para capturar.", c: ["and-basico", "and-inter"], o: ["escuro", "missa"], dep: true },
+  { t: "Descubra a câmera mais nítida: faça a mesma foto em 0,5x, 1x e 2x (se houver) e compare ampliando. Em geral, a 1x vence.", c: ["and-inter", "and-avancado", "ip-inter", "ip-pro"], o: ["qualidade", "altar"] },
+  { t: "Ultra-angular (0,5x), quando houver, é ótima para a nave e a fachada com boa luz, mas perde qualidade no escuro e entorta as bordas.", c: ["and-inter", "and-avancado", "ip-inter", "ip-pro"], o: ["altar", "escuro"], dep: true },
+  { t: "Sensores de 50, 64, 108 ou 200 MP costumam salvar fotos de 12 a 16 MP por padrão, juntando pixels. Esse modo padrão é melhor no escuro; use o de alta resolução só com muita luz.", c: ["and-inter", "and-avancado"], o: ["qualidade", "escuro", "altar"], dep: true },
+  { t: "Bloqueie foco e exposição antes de gravar: em muitos aparelhos é tocar e segurar na tela até aparecer um cadeado ou “AE/AF”.", c: ["and-inter", "and-avancado"], o: ["cinema", "altar", "missa"], dep: true },
+  { t: "Estabilização de vídeo, quando houver, fica nas configurações da câmera. Alguns modos “super estáveis” cortam a imagem e pedem muita luz.", c: ["and-inter", "and-avancado"], o: ["cinema", "procissao", "reels"], dep: true },
+  { t: "60 fps só com boa luz. Em igreja escura, 30 fps deixa entrar mais luz em cada quadro e gera menos ruído.", c: ["and-inter", "and-avancado", "ip-antigo", "ip-inter", "ip-pro"], o: ["procissao", "cinema", "escuro"] },
+  { t: "Modo retrato funciona bem para uma ou duas pessoas paradas e próximas. Confira o contorno do desfoque em cabelos, véus e mãos.", c: ["and-inter", "and-avancado", "ip-inter", "ip-pro"], o: ["pessoas"], dep: true },
+  { t: "Evite que o aparelho troque de lente sozinho durante a gravação: grave na 1x e não use zoom no meio da cena.", c: ["and-inter", "and-avancado"], o: ["cinema", "procissao"] },
+  { t: "Modo Pro: ISO o mais baixo que a luz permitir; 1/125 s ou mais rápido para pessoas em movimento; 1/30 a 1/60 s só com apoio e assunto parado.", c: ["and-avancado"], o: ["escuro", "missa", "procissao", "pessoas"], dep: true },
+  { t: "Iluminação mista (lâmpada amarela + janela): ajuste o balanço de branco manual (K) até uma parede ou uma veste branca parecer branca.", c: ["and-avancado"], o: ["altar", "missa", "cinema"], dep: true },
+  { t: "RAW só se você vai editar: o arquivo é bem maior e precisa de tratamento. Para publicar logo, o JPEG ou HEIF comum basta.", c: ["and-avancado", "ip-pro"], o: ["qualidade", "altar"], dep: true },
+  { t: "Gravação em Log, quando o aparelho tiver, deixa a imagem acinzentada e precisa de correção de cor depois. Não use se o vídeo for direto para as redes.", c: ["and-avancado", "ip-pro"], o: ["cinema"], dep: true },
+  { t: "Microfone externo (USB-C ou sem fio), quando o aparelho e o aplicativo aceitarem, melhora muito homilias, testemunhos e entrevistas.", c: ["and-avancado", "ip-inter", "ip-pro"], o: ["cinema", "reels"], dep: true },
+  { t: "No iPhone, toque e segure na tela até aparecer “Bloqueio AE/AF”; depois arraste o ícone do sol para clarear ou escurecer.", c: IPHONES, o: ["missa", "escuro", "altar", "cinema"] },
+  { t: "Ajustes → Câmera → Gravar Vídeo: 1080p a 30 qps para o dia a dia; 60 qps para movimento, se houver luz.", c: IPHONES, o: ["reels", "cinema", "procissao", "qualidade"] },
+  { t: "4K existe a partir do iPhone 6s; o iPhone 6 grava até 1080p. Modo Noite, só a partir do iPhone 11 (não existe nos modelos SE).", c: ["ip-antigo"], o: null, dep: true },
+  { t: "Gravações longas esquentam o aparelho: tire a capa, evite sol direto e não carregue enquanto grava, se puder evitar.", c: ["ip-antigo", "and-basico"], o: ["cinema", "procissao", "qualidade"] },
+  { t: "Em modelos com lente 2x (como iPhone 7 Plus, 8 Plus, X e XS), a teleobjetiva recebe menos luz: no escuro, prefira a 1x.", c: ["ip-antigo"], o: ["escuro", "altar"], dep: true },
+  { t: "Modo Cinema a partir do iPhone 13 e Modo Ação a partir do iPhone 14. O Modo Ação precisa de bastante luz.", c: ["ip-inter", "ip-pro"], o: ["cinema", "procissao", "reels"], dep: true },
+  { t: "Vídeo HDR (a partir do iPhone 12) dá cores e brilho ricos, mas pode aparecer estourado ou lavado em alguns aplicativos e telas. Se for o caso, desligue em Ajustes → Câmera → Gravar Vídeo.", c: ["ip-inter", "ip-pro"], o: ["reels", "cinema", "qualidade"], dep: true },
+  { t: "Em Ajustes → Câmera → Gravar Vídeo, quando aparecer, ative “Bloquear Câmera” para o iPhone não trocar de lente sozinho durante a gravação.", c: ["ip-inter", "ip-pro"], o: ["cinema", "procissao"], dep: true },
+  { t: "24 qps dá um visual de cinema, mas pede movimentos lentos; com movimentos rápidos, prefira 30.", c: ["ip-inter", "ip-pro", "and-avancado"], o: ["cinema"] },
+  { t: "ProRAW (Pro a partir do 12 Pro), ProRes (Pro a partir do 13 Pro) e Apple Log (Pro a partir do 15 Pro): ative em Ajustes → Câmera → Formatos só quando for editar. Os arquivos são muito grandes.", c: ["ip-pro"], o: ["qualidade", "cinema"], dep: true },
+  { t: "Teleobjetiva (o número varia: 2x, 3x ou 5x, conforme o modelo) para o altar à distância, sempre com boa luz.", c: ["ip-pro"], o: ["altar", "missa"], dep: true },
+];
+
+const DEP = `<span class="dep">depende do modelo</span>`;
+const CAM_MODS = [
+  { id: "m1", nome: "Android básico", titulo: "Android antigo ou básico", desc: "Câmeras mais simples, sensores menores e desempenho limitado. Aqui, o segredo é luz, firmeza e enquadramento.",
+    aulas: [
+      { t: "Antes de fotografar: lente limpa e a câmera certa", html: `
+<p><b>Limpe a lente.</b> O celular passa o dia no bolso e na mão; a lente fica engordurada. Passe um pano macio de microfibra (ou a ponta de uma camiseta de algodão limpa), em movimentos circulares. Uma lente suja deixa a foto leitosa e cria halos em volta de velas e lâmpadas.</p>
+<p><b>Use a câmera principal.</b> É a lente que abre quando você entra no aplicativo, normalmente marcada como 1x. Ela costuma ter o melhor sensor do aparelho. Lentes extras de celulares simples (macro, profundidade) geralmente têm resolução baixa.</p>
+<p><b>Evite o zoom digital.</b> Ampliar com os dedos só recorta a imagem e aumenta o ruído. Se precisar de um enquadramento mais fechado, aproxime-se com discrição, quando a celebração permitir, ou recorte a foto depois, com cuidado.</p>` },
+      { t: "Luz e firmeza: o que mais muda a foto", html: `
+<p><b>Use a luz que existe.</b> Janelas, portas abertas, vitrais e a iluminação do altar são suas aliadas. Coloque-se de modo que a luz ilumine o rosto das pessoas, e não que fique atrás delas.</p>
+<p><b>Estabilize o celular.</b> Segure com as duas mãos, cotovelos junto ao corpo. Apoie o braço num banco, num pilar ou na parede. Respire, solte o ar devagar e toque no botão com suavidade.</p>
+<p><b>Igreja escura sem foto tremida.</b> Com pouca luz, o celular deixa o obturador aberto por mais tempo, e qualquer tremida borra a foto. Por isso:</p>
+<ul><li>procure as áreas mais iluminadas;</li><li>apoie o aparelho;</li><li>fotografe quando as pessoas estiverem paradas;</li><li>faça duas ou três fotos da mesma cena e fique com a mais nítida.</li></ul>
+<p><b>Foco e exposição com um toque.</b> Toque na tela sobre o rosto ou o objeto principal. Em muitos aparelhos aparece um ícone de sol ou uma barra: deslize para clarear ou escurecer.</p>` },
+      { t: "Configurações que valem a pena", html: `
+<p>Abra o aplicativo Câmera e procure a engrenagem ou o menu de configurações. Os nomes variam, mas costuma haver:</p>
+<ul>
+<li><b>Resolução da foto:</b> escolha a maior disponível.</li>
+<li><b>Proporção 4:3:</b> na maioria dos celulares, é a que usa o sensor inteiro. Use 16:9 ou 9:16 só quando o destino pedir (tela de TV, Stories).</li>
+<li><b>Grade (linhas de grade):</b> ative. Ela ajuda a deixar o altar e as colunas retos e a aplicar a regra dos terços.</li>
+<li><b>Filtros de beleza e efeitos:</b> desligue. Eles alisam a pele e apagam detalhes.</li>
+<li><b>Vídeo em 1080p:</b> escolha quando a opção aparecer. ${DEP} Alguns aparelhos básicos só chegam a 720p.</li>
+</ul>
+<p><b>Economizar espaço sem perder qualidade:</b> em vez de baixar a resolução, apague fotos repetidas, transfira tudo para o computador ou para a nuvem depois de cada evento e esvazie a lixeira do aplicativo Galeria.</p>` },
+      { t: "Como conseguir boas fotos com um celular simples", star: true, html: `
+<p class="tip">Em aparelhos básicos, é melhor buscar uma imagem <b>bem iluminada, estável e corretamente enquadrada</b> do que tentar configurações avançadas que o aparelho não tem.</p>
+<ol>
+<li><b>Escolha a luz primeiro.</b> Antes de apontar o celular, olhe onde está a luz. Uma pessoa perto da janela rende mais do que qualquer ajuste.</li>
+<li><b>Chegue perto com os pés, não com o zoom.</b></li>
+<li><b>Enquadre com calma.</b> Use a grade. Deixe espaço em volta da cena e confira se nada corta a cabeça das pessoas.</li>
+<li><b>Toque para focar</b> no assunto principal e ajuste a exposição se o rosto estiver escuro.</li>
+<li><b>Firme o aparelho</b> e faça mais de uma foto.</li>
+<li><b>Confira ampliando</b> a primeira foto. Se tremeu, apoie melhor; se ficou escura, procure mais luz.</li>
+</ol>
+<p>Lembre: as limitações do aparelho aparecem mais no escuro e no zoom. Fuja dessas duas situações e o celular simples vai surpreender.</p>` },
+    ],
+    desafio: { n: 1, t: "Fotografe o interior da igreja com três enquadramentos", passos: ["Uma foto aberta, mostrando a nave inteira.", "Uma foto média, de uma parte do espaço (o altar, uma capela, um vitral).", "Uma foto de detalhe (uma imagem sacra, uma vela, um castiçal).", "Use a câmera principal, a grade e nenhum zoom digital."] } },
+
+  { id: "m2", nome: "Android intermediário", titulo: "Android intermediário", desc: "Mais de uma lente e mais ajustes. Os menus mudam de marca para marca, e até entre modelos da mesma marca.",
+    aulas: [
+      { t: "Resolução, proporção e a câmera mais nítida", html: `
+<p>Em <b>Câmera → Configurações</b> (ou no menu de proporção, na tela da câmera), confira:</p>
+<ul>
+<li><b>Proporção:</b> 4:3 para fotos, porque em geral usa o sensor inteiro.</li>
+<li><b>Resolução:</b> muitos aparelhos anunciam 50, 64 ou 108 MP, mas salvam fotos de 12 a 16 MP por padrão, juntando grupos de pixels. Esse modo padrão costuma ser <b>melhor com pouca luz</b>. O modo de alta resolução ${DEP} só compensa com muita luz e assunto parado.</li>
+</ul>
+<h5>As lentes</h5>
+<ul>
+<li><b>Principal (1x):</b> quase sempre a melhor, sobretudo no escuro.</li>
+<li><b>Ultra-angular (0,5x ou 0,6x)</b> ${DEP}: cabe mais coisa, ótima para a nave com boa luz; entorta as bordas e perde qualidade no escuro.</li>
+<li><b>Teleobjetiva (2x, 3x…)</b> ${DEP}: existe em poucos intermediários. Muitos aparelhos mostram “2x”, mas é só um recorte da principal.</li>
+</ul>
+<p class="tip"><b>Teste rápido:</b> fotografe a mesma cena em 0,5x, 1x e 2x, amplie as três e compare os detalhes. Você vai descobrir qual é a câmera mais nítida do seu aparelho.</p>` },
+      { t: "Modo retrato, modo noturno e exposição", html: `
+<p><b>Modo retrato</b> ${DEP}: desfoca o fundo. Funciona melhor com uma ou duas pessoas paradas, a cerca de 1 a 2 metros. Confira o contorno em cabelos, véus e mãos: o desfoque pode errar.</p>
+<p><b>Modo noturno</b> ${DEP}: junta várias fotos em alguns segundos. <b>Use</b> com o celular apoiado, em cenas paradas (altar vazio, arquitetura). <b>Evite</b> com pessoas em movimento e em momentos rápidos: a foto sai borrada ou com “fantasmas”.</p>
+<p><b>Bloquear foco e exposição</b> ${DEP}: em muitos aparelhos, toque e segure na tela até aparecer um cadeado ou “AE/AF”. Assim o celular não muda a luz a cada movimento.</p>
+<p><b>Exposição manual:</b> depois de tocar no assunto, deslize o ícone de sol ou a barra para baixo se as luzes estourarem, para cima se os rostos ficarem escuros.</p>` },
+      { t: "Vídeo: resolução, fps e estabilização", html: `
+<p>O ajuste de vídeo costuma aparecer na própria tela do modo Vídeo (algo como “FHD 30”) ou nas configurações.</p>
+<ul>
+<li><b>Resolução:</b> 1080p (FHD) para o dia a dia e as redes; 4K, se houver ${DEP}, quando você tiver espaço e quiser editar.</li>
+<li><b>30 fps:</b> padrão para gravações gerais e para ambientes com pouca luz.</li>
+<li><b>60 fps:</b> movimento mais fluido, bom para procissões ao ar livre, mas pede mais luz. No escuro, o vídeo fica mais ruidoso.</li>
+<li><b>Estabilização</b> ${DEP}: pode ser eletrônica (EIS, recorta um pouco a imagem) ou óptica (OIS, mecânica, presente em menos aparelhos). Deixe ligada, mas saiba que alguns aparelhos a desligam em 4K ou 60 fps.</li>
+</ul>
+<p><b>Evite a troca automática de lentes:</b> comece a gravar na 1x e não use zoom durante a cena. Em alguns aparelhos, aproximar ou afastar troca a lente e a cor muda de repente.</p>
+<p><b>Pouca luz sem ruído:</b> fique em 1080p a 30 fps, use a lente principal, aproxime-se da fonte de luz e não force a exposição para cima.</p>` },
+      { t: "Exemplos por marca (confira no seu modelo)", html: `
+<p>Os exemplos abaixo mostram onde as opções <b>costumam</b> ficar. Os menus mudam com o modelo e com a versão do sistema; se não encontrar, procure o manual do seu aparelho no site do fabricante.</p>
+<ul>
+<li><b>Samsung Galaxy:</b> na câmera, a engrenagem fica em geral no canto da tela. Lá costumam estar <b>Linhas de grade</b>, a estabilização de vídeo e o tamanho das fotos. Modos extras, como <b>Pro</b> (em parte dos modelos), aparecem em <b>Mais</b>.</li>
+<li><b>Motorola:</b> configurações pela engrenagem ou por um menu na tela da câmera. Modos como Retrato, Noturno e, em alguns modelos, <b>Pro</b> aparecem em <b>Mais</b> ou deslizando entre os modos.</li>
+<li><b>Xiaomi, Redmi e POCO:</b> as configurações costumam ficar num ícone de menu (≡ ou três linhas) ou na engrenagem. O modo <b>Pro</b> aparece em <b>Mais</b> ou na faixa de modos em muitos modelos.</li>
+<li><b>Google Pixel:</b> ajustes rápidos pela seta ou engrenagem na tela da câmera; controles manuais completos só em alguns modelos recentes.</li>
+<li><b>Outras marcas</b> (Realme, Oppo, Asus, LG, Nokia…): procure a engrenagem e a opção “Mais”.</li>
+</ul>` },
+    ],
+    desafio: { n: 2, t: "Faça uma foto bem exposta em ambiente escuro", passos: ["Escolha um canto escuro da igreja, sem celebração acontecendo.", "Use a lente principal, apoie o celular e toque no assunto.", "Ajuste a exposição até o assunto aparecer bem, sem estourar as luzes.", "Compare: uma foto com modo noturno (se houver) e uma sem. Qual ficou mais natural?"] } },
+
+  { id: "m3", nome: "Android avançado", titulo: "Android avançado", desc: "Controles manuais e recursos profissionais. Mais liberdade, e mais responsabilidade nas escolhas.",
+    aulas: [
+      { t: "Modo Pro: ISO, velocidade e balanço de branco", html: `
+<p>O modo <b>Pro</b> ou <b>Manual</b> ${DEP} deixa você decidir o que o celular decidiria sozinho.</p>
+<ul>
+<li><b>ISO:</b> a sensibilidade do sensor. ISO baixo (50–200) dá imagem limpa; <b>ISO alto gera ruído</b> (granulado e manchas de cor). Use o mais baixo que a luz permitir.</li>
+<li><b>Velocidade do obturador:</b> por quanto tempo a luz entra. <b>Velocidades baixas borram pessoas em movimento.</b> Referências: 1/125 s ou mais rápido para pessoas andando; 1/250 s ou mais para crianças e procissões; 1/30 a 1/60 s só com apoio e assunto parado.</li>
+<li><b>Balanço de branco (WB, em K):</b> corrige a cor da luz. Lâmpadas amarelas ficam por volta de 2.700–3.200 K; luz do dia, por volta de 5.500 K. Na dúvida, ajuste até uma parede ou veste branca parecer branca.</li>
+<li><b>Compensação de exposição (EV):</b> clareia (+) ou escurece (−) mantendo o resto automático. Ótima para começar.</li>
+</ul>
+<p class="tip"><b>Ordem prática:</b> escolha a velocidade que a cena pede (movimento?), depois suba o ISO só até a foto ficar clara o suficiente.</p>` },
+      { t: "Foco, RAW e a lente ideal", html: `
+<p><b>Foco automático</b> resolve quase tudo: toque no assunto. <b>Foco manual</b> ${DEP} ajuda quando o celular “caça” o foco no escuro ou quando há algo na frente (grades, flores). Muitos aparelhos mostram as áreas em foco coloridas (<em>focus peaking</em>).</p>
+<p><b>RAW (DNG)</b> ${DEP}: guarda todos os dados do sensor, para editar sombras, altas luzes e cor com mais folga. Use só se for editar e tiver espaço: cada arquivo é muito maior que um JPEG. Alguns Samsung avançados usam um aplicativo à parte, o Expert RAW, em modelos compatíveis.</p>
+<h5>Qual lente usar</h5>
+<ul>
+<li><b>Ultra-angular:</b> a nave inteira, a fachada, com boa luz. Mantenha o celular reto para as colunas não “caírem”.</li>
+<li><b>Principal:</b> pessoas, grupos, qualquer cena escura.</li>
+<li><b>Teleobjetiva</b> ${DEP}: o altar à distância, detalhes de vitrais e imagens, sem sair do lugar. Pede mais luz.</li>
+</ul>` },
+      { t: "Vídeo avançado: 4K, fps, perfis de cor e áudio", html: `
+<ul>
+<li><b>4K</b> ${DEP}: mais detalhe e margem para recortar. Arquivos grandes; confira espaço e bateria.</li>
+<li><b>24 fps:</b> visual de cinema, com movimentos lentos. <b>30 fps:</b> uso geral. <b>60 fps:</b> movimento fluido ou câmera lenta na edição, com boa luz.</li>
+<li><b>Perfis de cor e Log</b> ${DEP}: só em aparelhos compatíveis. O vídeo sai acinzentado de propósito e precisa de correção de cor no editor. Se o vídeo vai direto para as redes, não use.</li>
+<li><b>Estabilização:</b> ajuda muito, mas não faz milagre. Pode recortar a imagem, ser desligada em algumas resoluções e criar “tremidinhas” no escuro. Caminhe devagar, com os joelhos flexionados.</li>
+<li><b>Áudio</b> ${DEP}: alguns aparelhos permitem escolher o microfone (interno, USB-C, Bluetooth) e o nível do som no modo Pro de vídeo. Teste antes: microfone externo perto de quem fala vale mais do que qualquer ajuste de imagem.</li>
+</ul>` },
+      { t: "Cores naturais e altar sem luzes estouradas", html: `
+<p>Igrejas misturam luz amarela das lâmpadas, luz azulada das janelas e, às vezes, LEDs coloridos. O automático se confunde e muda a cor a cada passo.</p>
+<ul>
+<li><b>Fixe o balanço de branco</b> no modo Pro, em vez do automático, para a cor não mudar no meio do vídeo.</li>
+<li>Escolha a temperatura da <b>luz principal da cena</b> (normalmente, a do altar).</li>
+</ul>
+<h5>Velas e vestes brancas</h5>
+<ul>
+<li>Use compensação de exposição negativa (−0,3 a −1,0) quando o altar estiver muito claro.</li>
+<li>Se o aparelho mostrar <b>histograma</b> ou <b>zebra</b> ${DEP}, evite que o gráfico “bata” na direita.</li>
+<li>Rostos um pouco escuros se recuperam na edição; brancos estourados, não.</li>
+</ul>` },
+    ],
+    desafio: { n: 3, t: "Grave três planos diferentes de uma mesma cena", passos: ["Escolha uma cena simples: o altar sendo preparado, o coral ensaiando.", "Plano aberto (o ambiente), plano médio (as pessoas) e plano fechado (mãos, objetos).", "5 a 8 segundos cada, com o balanço de branco fixo para as cores combinarem.", "Monte os três em sequência e veja se a história fica clara."] } },
+
+  { id: "m4", nome: "iPhone antigo", titulo: "iPhones antigos", desc: "iPhone 6, 7, 8, X, XR, XS, 11 e SE. Cada modelo e versão do iOS tem recursos próprios: confira o seu.",
+    aulas: [
+      { t: "Ajustes de gravação no iPhone", html: `
+<p>Abra <b>Ajustes → Câmera → Gravar Vídeo</b>. As opções que aparecem são as que o seu modelo tem.</p>
+<ul>
+<li><b>1080p a 30 qps:</b> a escolha prática para o dia a dia, leve e com boa qualidade.</li>
+<li><b>1080p a 60 qps:</b> para movimento (procissões, crianças) quando há boa luz.</li>
+<li><b>4K</b> ${DEP}: existe a partir do iPhone 6s. O iPhone 6 grava até 1080p. Ocupa bem mais espaço.</li>
+</ul>
+<p>Em <b>Ajustes → Câmera → Formatos</b> ${DEP}, “Alta Eficiência” economiza espaço; “Mais Compatível” gera arquivos maiores, mas abre em qualquer computador.</p>
+<p class="tip">Não conte com 4K, modo Noite ou estabilização avançada sem conferir. O <b>Modo Noite</b> existe a partir do iPhone 11 e não existe nos modelos SE.</p>` },
+      { t: "Foco, exposição e a lente principal", html: `
+<ul>
+<li><b>Toque na tela</b> sobre o assunto para focar e medir a luz.</li>
+<li><b>Bloqueio AE/AF:</b> toque e segure até aparecer “Bloqueio AE/AF”. O foco e a luz ficam fixos, mesmo se algo passar na frente.</li>
+<li><b>Exposição:</b> depois do toque, arraste o ícone do sol para cima ou para baixo.</li>
+<li><b>Lente principal (1x):</b> a melhor do aparelho. Em modelos com lente 2x ${DEP} (como 7 Plus, 8 Plus, X e XS), ela recebe menos luz; no escuro, o iPhone pode até usar a principal recortada. O iPhone 11 tem ultra-angular (0,5x), boa para a nave com luz.</li>
+<li><b>Sem zoom digital:</b> ampliar com os dedos além das lentes do aparelho piora a imagem.</li>
+</ul>
+<p><b>Fotos sem borrão na missa:</b> apoie o iPhone, fotografe nos momentos de pausa (as pessoas paradas), segure o botão por menos tempo e faça duas ou três fotos. Para disparar sem mexer, use o botão de volume.</p>` },
+      { t: "Como gravar vídeos bonitos com um iPhone antigo", star: true, html: `
+<ol>
+<li><b>Prepare o aparelho:</b> lente limpa, bateria cheia, espaço livre (apague o que já está guardado em outro lugar e esvazie “Apagados”).</li>
+<li><b>Escolha 1080p a 30 qps</b> em Ajustes → Câmera → Gravar Vídeo. É estável, leve e bonito.</li>
+<li><b>Fique onde há luz.</b> Vídeo no escuro em aparelho antigo fica granulado: aproxime-se do altar ou das janelas.</li>
+<li><b>Bloqueie AE/AF</b> antes de apertar o botão vermelho. Assim a luz e o foco não “respiram” durante a cena.</li>
+<li><b>Grave com estabilidade:</b> duas mãos, cotovelos colados, celular perto do corpo. Para caminhar, passos curtos e joelhos flexionados. Um apoio simples (banco, pilar) já resolve muito.</li>
+<li><b>Planos curtos:</b> 5 a 10 segundos por cena, sem zoom.</li>
+<li><b>Gravações longas:</b> tire a capa, evite sol direto e pause entre as partes para o iPhone não esquentar. Se aparecer aviso de temperatura, pare e deixe esfriar.</li>
+</ol>` },
+      { t: "Exportar mantendo a qualidade", html: `
+<ul>
+<li><b>Para o computador:</b> use o cabo ou o AirDrop (para Mac). Pelo cabo, os arquivos chegam como foram gravados.</li>
+<li><b>Para a equipe:</b> prefira links (iCloud, Google Drive) ou o envio como <b>documento</b> no WhatsApp, em vez de foto ou vídeo comum, que são comprimidos.</li>
+<li><b>Nas redes:</b> publique a partir do arquivo original no celular, e não de uma cópia recebida pelo WhatsApp.</li>
+<li><b>Fotos HEIC:</b> se algum computador não abrir, ative “Mais Compatível” em Ajustes → Câmera → Formatos ${DEP} antes do próximo evento.</li>
+</ul>` },
+    ],
+    desafio: { n: 4, t: "Grave um vídeo vertical de 15 segundos", passos: ["Grave na vertical (9:16), com 1080p a 30 qps, se disponível.", "Junte três planos curtos (5 s cada) de um mesmo tema: a igreja vazia, a chegada das pessoas, um detalhe.", "Bloqueie AE/AF em cada plano.", "Deixe livre o topo e a base da tela, onde as redes colocam os botões."] } },
+
+  { id: "m5", nome: "iPhone 12 em diante", titulo: "iPhones intermediários e avançados", desc: "iPhone 12, 13, 14, 15, 16 e posteriores, incluindo os Pro. Nem todos têm as mesmas lentes, modos de vídeo e formatos profissionais.",
+    aulas: [
+      { t: "Resolução e taxa de quadros", html: `
+<p>Em <b>Ajustes → Câmera → Gravar Vídeo</b> e, nos modelos mais recentes, também no canto da tela da câmera (toque em “HD/4K” e no número de qps):</p>
+<ul>
+<li><b>HD (720p):</b> só se faltar espaço.</li>
+<li><b>Full HD (1080p):</b> redes sociais e gravações longas.</li>
+<li><b>4K:</b> quando houver espaço e o vídeo for editado ou exibido em tela grande.</li>
+<li><b>24 qps:</b> visual cinematográfico, com movimentos lentos e planejados.</li>
+<li><b>30 qps:</b> uso geral, e a melhor escolha com pouca luz.</li>
+<li><b>60 qps:</b> movimentos rápidos ou câmera lenta na edição. Pede luz.</li>
+</ul>
+<p>Quando aparecer, a opção <b>“FPS automático”</b> ${DEP} reduz a taxa de quadros no escuro para clarear a imagem.</p>` },
+      { t: "Lentes, foco e exposição sem surpresas", html: `
+<ul>
+<li><b>Lentes:</b> todos os modelos 12 a 16 “numerados” têm principal e ultra-angular; os <b>Pro</b> somam teleobjetiva (2x, 2,5x, 3x ou 5x, conforme o modelo). Modelos como o iPhone 16e ${DEP} têm uma única lente traseira. Confira na ficha técnica do seu.</li>
+<li><b>Bloqueio AE/AF:</b> toque e segure. Depois arraste o sol para ajustar a exposição.</li>
+<li><b>Bloquear Câmera</b> ${DEP}: em Ajustes → Câmera → Gravar Vídeo, impede o iPhone de trocar de lente sozinho durante a gravação.</li>
+<li><b>Evite mudanças no meio da cena:</b> bloqueie AE/AF, não use zoom e mantenha a mesma distância do assunto.</li>
+<li><b>Balanço de branco e exposição manuais:</b> o aplicativo Câmera não tem controle de balanço de branco. Aplicativos com controles manuais, como o Blackmagic Camera (gratuito), permitem fixar a cor e a exposição.</li>
+</ul>` },
+      { t: "Modo Cinema, Modo Ação e HDR", html: `
+<ul>
+<li><b>Modo Cinema</b> ${DEP} (a partir do iPhone 13): desfoca o fundo no vídeo e permite mudar o foco depois. Bom para uma ou duas pessoas paradas e com boa luz; o recorte pode errar em véus, cabelos e objetos finos.</li>
+<li><b>Modo Ação</b> ${DEP} (a partir do iPhone 14): estabilização forte para caminhar junto da procissão. Recorta a imagem e precisa de <b>bastante luz</b>; no escuro, o próprio iPhone avisa.</li>
+<li><b>Vídeo HDR</b> ${DEP} (a partir do iPhone 12): mais brilho e cor em telas compatíveis. Em alguns aplicativos, editores e telas o vídeo pode aparecer estourado ou lavado. Se isso acontecer, desligue em Ajustes → Câmera → Gravar Vídeo.</li>
+<li><b>HDR nas fotos:</b> acontece automaticamente; ajuda em cenas com janelas claras e interior escuro, mas pode deixar a imagem “plana”. Se não gostar, baixe a exposição com o sol.</li>
+</ul>` },
+      { t: "ProRes, Apple Log e áudio (só nos compatíveis)", html: `
+<ul>
+<li><b>ProRAW</b> ${DEP}: fotos para edição avançada, nos Pro a partir do iPhone 12 Pro. Ative em Ajustes → Câmera → Formatos.</li>
+<li><b>ProRes</b> ${DEP}: vídeo de alta qualidade para edição profissional, nos Pro a partir do iPhone 13 Pro. Os arquivos são enormes; em alguns modelos, as resoluções em ProRes dependem da capacidade de armazenamento ou de um SSD externo.</li>
+<li><b>Apple Log</b> ${DEP}: nos Pro a partir do iPhone 15 Pro. Imagem acinzentada de propósito, que precisa de correção de cor. Não use para vídeo que vai direto para as redes.</li>
+<li><b>Microfones externos:</b> modelos com conector Lightning aceitam microfones Lightning; a partir do iPhone 15, a entrada é USB-C. Há também microfones sem fio com receptor. Grave um teste antes da celebração.</li>
+</ul>` },
+      { t: "Oração, procissão e evento com movimentos suaves", html: `
+<ul>
+<li><b>Momentos de oração:</b> câmera parada, apoiada, plano fechado com respeito. Sem aproximar-se de quem reza.</li>
+<li><b>Procissões:</b> escolha o ponto de onde a procissão vem até você. Para acompanhar, caminhe devagar, celular perto do corpo, Modo Ação só com luz.</li>
+<li><b>Movimentos suaves:</b> gire o corpo inteiro, e não só os pulsos; comece e termine cada movimento parado por 2 segundos.</li>
+<li><b>Exposição e foco estáveis:</b> bloqueie AE/AF antes de cada plano e mantenha a mesma lente.</li>
+</ul>` },
+    ],
+    desafio: { n: 5, t: "Compare uma imagem original com uma edição natural", passos: ["Escolha uma foto sua de uma celebração ou da igreja.", "Faça uma edição leve: endireite, recorte, ajuste luz e sombras, corrija a cor.", "Nada de filtros fortes ou de mudar o que aconteceu.", "Coloque lado a lado: a edição respeitou a cena? Ficou mais clara sem parecer artificial?"] } },
+];
+
+const CAM_SITS = [
+  { l: "A", t: "Igreja escura", d: "Pouca luz, missa à noite, capela fechada.", i: ["Procure as áreas com melhor iluminação: perto do altar, das velas, das luminárias.", "Use a câmera principal (1x), que é a que mais recebe luz.", "Evite o zoom digital: no escuro ele multiplica o ruído.", "Segure o aparelho com firmeza, com as duas mãos e apoio.", "Ajuste a exposição pelo rosto, sem escurecer demais as pessoas.", "Não dependa do flash durante a celebração: ele distrai e achata a imagem."] },
+  { l: "B", t: "Altar muito iluminado", d: "Holofotes, velas, toalhas e vestes brancas.", i: ["Toque na região de interesse (o altar) para ajustar a exposição por ela.", "Reduza a exposição se as luzes estiverem estouradas.", "Preserve os detalhes das vestes, das velas e dos elementos do altar.", "Confira o resultado ampliando a foto antes de continuar fotografando."] },
+  { l: "C", t: "Pessoas em movimento", d: "Entrada, ofertório, saída, crianças.", i: ["Com controles manuais, prefira velocidades mais rápidas (1/125 s ou mais).", "Fotografe no momento decisivo: o gesto, o olhar, o passo.", "Evite modos noturnos, que prolongam a captura e borram quem se move.", "Em vídeo, use 60 fps quando o movimento justificar e houver luz suficiente; no escuro, 30 fps."] },
+  { l: "D", t: "Vídeos cinematográficos", d: "Retrospectivas, convites, memória de eventos.", i: ["Grave com movimentos suaves, começando e terminando parado.", "Mantenha a lente limpa.", "Planeje os enquadramentos antes de gravar.", "Use 24 ou 30 fps conforme o estilo e a iluminação (24 pede movimentos lentos e mais luz).", "Evite movimentos sem propósito.", "Registre planos abertos, médios, fechados e detalhes."] },
+  { l: "E", t: "Stories e Reels", d: "Conteúdo rápido para as redes.", i: ["Grave na vertical, em 9:16.", "Prefira 1080p a 30 fps como configuração prática, quando disponível.", "Capte áudio limpo: perto de quem fala, longe do vento e das caixas de som.", "Grave cenas curtas e variadas.", "Evite textos e rostos importantes nas áreas cobertas pelos botões e legendas das redes (topo e base da tela)."] },
+];
+const CAM_DESAFIO6 = { n: 6, t: "Produza uma sequência visual que conte uma pequena história de fé", passos: ["Escolha um tema: a preparação da missa, um batizado (com autorização), uma festa da comunidade.", "Planeje 5 a 8 imagens ou planos: começo, meio e fim.", "Misture planos abertos, médios, fechados e detalhes.", "Mostre a sequência à equipe e pergunte: a história ficou clara sem legenda?"] };
+
+const CAM_TABELA = [
+  ["Fotografias comuns", "Maior resolução prática disponível", "Em sensores de alta resolução, o modo padrão (12–16 MP) costuma ser o mais equilibrado."],
+  ["Fotos de grupos", "Lente principal e boa iluminação", "Pessoas de frente para a luz; várias fotos para escolher."],
+  ["Igreja escura", "Câmera principal, apoio firme e exposição cuidadosa", "Sem zoom digital e sem flash durante a celebração."],
+  ["Vídeo para redes sociais", "1080p, 30 fps, quando disponível", "Na vertical (9:16) para Reels e Stories."],
+  ["Vídeo em 4K", "4K, 30 fps, se o aparelho suportar e houver espaço", "Confira bateria e memória antes."],
+  ["Movimento rápido", "60 fps, se a iluminação for suficiente", "No escuro, volte para 30 fps."],
+  ["Visual cinematográfico", "24 fps, se disponível, com movimento controlado", "Movimentos lentos e planejados."],
+  ["Fotos para edição avançada", "RAW, somente se disponível e necessário", "Arquivos muito maiores; exige edição."],
+  ["Vídeo profissional", "Controles manuais ou perfis avançados, quando suportados", "Log e ProRes só em aparelhos compatíveis e com correção de cor depois."],
+];
+
+const camPath = p => `<span class="cam-path">${p.map(x => `<span>${x}</span>`).join("<i>→</i>")}</span>`;
+const CAM_MENUS = [
+  { t: "No iPhone", itens: [
+    [["Ajustes", "Câmera", "Gravar Vídeo"], "Resolução (HD, 1080p, 4K) e taxa de quadros; nos modelos compatíveis, Vídeo HDR, FPS automático e Bloquear Câmera."],
+    [["Ajustes", "Câmera", "Formatos"], "Quando disponível: Alta Eficiência ou Mais Compatível; ProRAW, ProRes e Apple Log nos modelos Pro compatíveis."],
+    [["Ajustes", "Câmera", "Grade"], "Linhas para alinhar o enquadramento."],
+    [["App Câmera", "toque e segure na tela"], "Bloqueio AE/AF; depois arraste o ícone do sol para ajustar a exposição."],
+    [["App Câmera", "faixa de modos"], "Foto, Vídeo, Retrato e, nos compatíveis, Cinema; Modo Ação e Modo Noite aparecem como ícones quando o modelo tem."],
+  ] },
+  { t: "No Android", itens: [
+    [["App Câmera", "Configurações (engrenagem ou ≡)"], "Ponto de partida de quase tudo. Em alguns aparelhos, parte das opções fica direto na tela da câmera."],
+    [["Configurações", "Tamanho / resolução da foto e do vídeo"], "Pode aparecer como proporção (4:3, 16:9) ou como “FHD”, “UHD”, “4K”."],
+    [["Modo Vídeo", "taxa de quadros"], "30 ou 60 fps, às vezes direto na tela de vídeo."],
+    [["Configurações", "Grade / Linhas de grade"], "Alinhamento do enquadramento."],
+    [["Configurações", "Estabilização de vídeo"], "Quando disponível; alguns aparelhos a desligam em 4K ou 60 fps."],
+    [["Mais", "Pro / Manual"], "Quando disponível: ISO, velocidade, balanço de branco, foco manual e RAW."],
+  ] },
+];
+
+/* ---------- Assistente: o que sabemos de cada iPhone (fichas técnicas da Apple) ---------- */
+function iphoneInfo(txt) {
+  const s = String(txt || "").toLowerCase().replace(/iphone/g, " ").replace(/\s+/g, " ").trim();
+  if (!s) return null;
+  const pro = /\bpro\b/.test(s);
+  if (/\bse\b/.test(s)) return { nome: "iPhone SE", se: true, k4: true, noite: false, cinema: false, acao: false, ultra: false, tele: false, hdr: false, proraw: false, prores: false, log: false };
+  let n = null, s6 = false, varia = /\bair\b|\d+\s*e\b/.test(s);
+  const x = s.match(/\bx([rs])?\b/);
+  if (x) n = 10;
+  else { const m = s.match(/\b(\d{1,2})\s*([se])?\b/); if (m) { n = +m[1]; s6 = m[2] === "s"; } }
+  if (/\bair\b/.test(s) && n == null) n = 17;
+  if (n == null || n < 6 || n > 17) return null;
+  const nome = "iPhone " + (x ? "X" + (x[1] ? x[1].toUpperCase() : "") : n + (s6 ? "s" : "")) + (pro ? " Pro" : "") + (/\bmax\b/.test(s) ? " Max" : "") + (/\bplus\b/.test(s) ? " Plus" : "") + (/\bmini\b/.test(s) ? " mini" : "") + (/\d+\s*e\b/.test(s) ? "e" : "") + (/\bair\b/.test(s) ? " Air" : "");
+  const plus = /\bplus\b/.test(s);
+  return { nome, n, varia,
+    k4: n >= 7 || s6 || n === 10, noite: n >= 11, hdr: n >= 12,
+    cinema: varia ? null : n >= 13, acao: varia ? null : n >= 14,
+    ultra: varia ? false : n >= 11, tele: pro || (n === 10 && x && x[1] !== "r") || ((n === 7 || n === 8) && plus),
+    proraw: pro && n >= 12, prores: pro && n >= 13, log: pro && n >= 15 };
+}
+const MARCA_MENU = {
+  samsung: "Na câmera do Galaxy, a engrenagem costuma ficar no canto da tela; o modo Pro, quando existe, aparece em “Mais”.",
+  motorola: "Na câmera Motorola, procure a engrenagem e os modos em “Mais”; o modo Pro existe só em parte dos modelos.",
+  xiaomi: "Nos Xiaomi, Redmi e POCO, as configurações costumam ficar no ícone ≡ ou na engrenagem; o modo Pro aparece em “Mais” ou na faixa de modos em muitos modelos.",
+  pixel: "No Pixel, os ajustes rápidos ficam na própria tela da câmera (seta ou engrenagem); controles manuais completos existem só em alguns modelos recentes.",
+  outra: "Procure a engrenagem ou o ícone ≡ no aplicativo Câmera e a opção “Mais” na faixa de modos.",
+};
+function camRecomendar({ marca, modelo, obj, amb, cena }) {
+  const ip = marca === "iphone", info = ip ? iphoneInfo(modelo) : null, cat = camCat;
+  const pro = !ip && cat === "and-avancado"; // modo Pro: só sugerimos para Android avançado (o app Câmera do iPhone não tem)
+  const mov = cena === "movimento", escuro = amb === "escuro", misto = amb === "misto";
+  const foto = [], video = [], fatos = [];
+  // Foto
+  foto.push(["Lente", escuro ? "<b>Principal (1x).</b> É a que mais recebe luz; deixe a ultra-angular e a teleobjetiva para quando houver luz boa."
+    : cena === "arquitetura" ? "<b>Principal (1x)</b> ou, para a nave inteira, a <b>ultra-angular (0,5x)</b>, se o seu celular tiver. Mantenha o aparelho reto para as colunas não entortarem."
+    : cena === "altar" ? "<b>Principal (1x).</b> Para o altar à distância, teleobjetiva só se o aparelho tiver uma de verdade e houver luz; nunca zoom digital."
+    : "<b>Principal (1x)</b>, na altura dos olhos das pessoas."]);
+  foto.push(["Exposição", cena === "altar" ? "Toque no altar e <b>baixe a exposição</b> até velas e vestes brancas mostrarem detalhe."
+    : escuro ? "Toque no rosto ou no assunto e <b>suba a exposição só um pouco</b>; sem estourar as velas e sem flash durante a celebração."
+    : misto ? "Toque na parte mais importante da cena. As cores vão variar entre a luz da janela e a das lâmpadas; escolha um lado da luz para as pessoas." : "Toque no assunto e ajuste o sol/barra até os rostos ficarem naturais."]);
+  if (mov) foto.push(["Movimento", `Fotografe no <b>momento decisivo</b> e faça várias fotos. <b>Evite o modo noturno</b>, que borra quem se move.${pro ? " No modo Pro, comece em <b>1/125 s ou mais rápido</b> e suba o ISO só o necessário." : ""}${escuro ? " No escuro, espere as pausas do movimento (uma parada da procissão, o gesto final)." : ""}`]);
+  else foto.push(["Estabilidade", `Duas mãos e apoio firme.${escuro ? (info ? (info.noite ? " O <b>Modo Noite</b> do seu iPhone liga sozinho no escuro: segure firme até terminar a captura, e use só com pessoas paradas." : " Seu modelo não tem Modo Noite: o apoio firme e a busca por luz fazem toda a diferença.") : " Se o aparelho tiver modo noturno, use com o celular apoiado e só com pessoas paradas.") : ""}`]);
+  if (misto && pro) foto.push(["Cor", "No modo Pro, fixe o <b>balanço de branco</b> (cerca de 3.000 K para lâmpadas amarelas) até uma superfície branca parecer branca."]);
+  foto.push(["Resolução", "A <b>maior resolução prática</b> em 4:3. Em sensores de 50 MP ou mais, mantenha o modo padrão; o de alta resolução só com muita luz."]);
+  // Vídeo
+  const fps = mov ? (escuro ? "<b>30 fps.</b> O movimento pediria 60, mas no escuro 60 fps escurece a imagem e aumenta o ruído." : "<b>60 fps</b>, porque há luz e movimento. Também permite câmera lenta na edição.")
+    : (cena === "arquitetura" || cena === "altar") ? (escuro ? "<b>30 fps.</b> Com pouca luz, é mais seguro que 24 ou 60." : "<b>24 fps</b> para um visual cinematográfico com movimentos lentos, ou <b>30 fps</b> para uso geral.") : "<b>30 fps</b>, o equilíbrio para gravações gerais.";
+  const res = info && !info.k4 ? "<b>1080p.</b> Seu modelo grava até 1080p." : "<b>1080p</b> para as redes; <b>4K</b> se o aparelho tiver e houver espaço e bateria.";
+  video.push(["Resolução", res], ["Taxa de quadros", fps]);
+  video.push(["Foco e exposição", `<b>Bloqueie AE/AF</b> (toque e segure) antes de gravar, para a luz e o foco não mudarem no meio da cena.${cena === "altar" ? " Bloqueie no altar, com a exposição um pouco abaixo, para preservar as velas." : ""}`]);
+  video.push(["Estabilidade", mov ? (info && info.acao ? "Para acompanhar a procissão, o <b>Modo Ação</b> do seu iPhone ajuda" + (escuro ? ", mas no escuro ele não funciona bem: prefira ficar parado num ponto e deixar a cena vir até você." : ", com bastante luz.")
+      : "Prefira ficar parado num ponto e deixar a cena vir até você. Para caminhar, passos curtos e joelhos flexionados; a estabilização do aparelho, quando houver, ajuda.")
+    : "Câmera apoiada e parada; movimentos lentos, começando e terminando parado."]);
+  video.push(["Lente", `Grave na <b>1x</b> e não use zoom durante a cena, para o aparelho não trocar de lente sozinho.${info && info.n >= 13 && !info.varia ? " No seu iPhone, procure “Bloquear Câmera” em Ajustes → Câmera → Gravar Vídeo." : ""}`]);
+  if (cena === "parados" && info && info.cinema) video.push(["Modo Cinema", "Seu iPhone tem <b>Modo Cinema</b>: bom para uma ou duas pessoas paradas, com boa luz."]);
+  if (misto && pro) video.push(["Cor", "Fixe o balanço de branco no modo Pro de vídeo (ou num aplicativo com controles manuais) para a cor não mudar durante a cena."]);
+  video.push(["Som", "Aproxime-se de quem fala ou use um microfone externo compatível; teste antes da celebração."]);
+  // O que sabemos do aparelho
+  if (info) {
+    const sim = [], nao = [];
+    (info.k4 ? sim : nao).push("vídeo 4K");
+    (info.noite ? sim : nao).push("Modo Noite");
+    if (info.ultra) sim.push("ultra-angular (0,5x)");
+    if (info.tele) sim.push("teleobjetiva");
+    if (info.hdr) sim.push("Vídeo HDR");
+    if (info.cinema === true) sim.push("Modo Cinema"); else if (info.cinema === false) nao.push("Modo Cinema");
+    if (info.acao === true) sim.push("Modo Ação"); else if (info.acao === false && info.n >= 12) nao.push("Modo Ação");
+    if (info.proraw) sim.push("ProRAW"); if (info.prores) sim.push("ProRes"); if (info.log) sim.push("Apple Log");
+    fatos.push(`<p><b>${esc(info.nome)}</b>, pelo que a Apple informa para a linha: ${sim.length ? "tem " + sim.join(", ") : "recursos básicos de câmera"}${nao.length ? "; não tem " + nao.join(", ") : ""}.</p>`);
+    if (info.varia) fatos.push("<p>Modelos como “e” e “Air” têm configurações diferentes dos demais da mesma geração (por exemplo, uma só lente traseira). Confira a ficha técnica do seu.</p>");
+    fatos.push("<p>As opções exatas de resolução e qps aparecem em <b>Ajustes → Câmera → Gravar Vídeo</b>. Variantes (Plus, mini, Pro Max) e a versão do iOS podem mudar detalhes.</p>");
+  } else if (ip) {
+    fatos.push(`<p>${modelo ? `Não reconhecemos “${esc(modelo)}”.` : "Sem o modelo, usamos configurações seguras para qualquer iPhone."} Para ver o nome exato, abra <b>Ajustes → Geral → Sobre</b>. As opções de vídeo do seu aparelho aparecem em <b>Ajustes → Câmera → Gravar Vídeo</b>.</p>`);
+  } else {
+    fatos.push(`<p>${modelo ? `Não temos aqui a ficha técnica de “${esc(modelo)}”, e não vamos adivinhar.` : "Sem o modelo, usamos configurações seguras para qualquer aparelho."} Os recursos variam muito entre modelos Android, até da mesma marca.</p>`);
+    fatos.push(`<p><b>Como conferir:</b> abra a câmera e veja as opções de resolução de vídeo (aparece 4K? 60 fps?); procure “Pro” ou “Manual” em “Mais”. ${MARCA_MENU[marca] || MARCA_MENU.outra} A ficha técnica oficial fica no site do fabricante.</p>`);
+    if (cat && ANDROIDS.includes(cat)) fatos.push(`<p>Você escolheu <b>${CAM_CATS.find(c => c.id === cat).nome}</b> no seletor; as dicas de modo Pro só aparecem para aparelhos avançados.</p>`);
+  }
+  const bloco = (titulo, itens) => `<div class="cam-card"><h4>${titulo}</h4><dl>${itens.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl></div>`;
+  return `<div class="cam-rec">
+    <div class="cam-card dep"><h4>O que sabemos do seu aparelho</h4>${fatos.join("")}</div>
+    <div class="cam-tips-grid">${obj !== "video" ? bloco("Fotografia: comece assim", foto) : ""}${obj !== "foto" ? bloco("Vídeo: comece assim", video) : ""}</div>
+    <p class="cam-note">São pontos de partida. Faça um teste no local antes da celebração e ajuste ao que você vê na tela.</p></div>`;
+}
+
+/* ---------- Montagem da seção ---------- */
+let camCat = store.get("camCat", null), camObj = "todos", camMod = (CAM_CATS.find(c => c.id === camCat) || CAM_CATS[0]).mod;
+let camFeitos = new Set(store.get("camDesafios", []));
+const PHONE_SVG = `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>`;
+function camDesafioHTML(d) {
+  const feito = camFeitos.has(d.n);
+  return `<div class="cam-chal"><span class="tag">Desafio ${d.n}</span><h5>${d.t}</h5><ol>${d.passos.map(p => `<li>${p}</li>`).join("")}</ol>
+    <p class="resp">Respeite a celebração, a privacidade das pessoas e as orientações da comunidade: fotografe fora dos momentos centrais da liturgia e peça autorização para publicar rostos, principalmente de crianças.</p>
+    <label class="check"><input type="checkbox" data-cam-desafio="${d.n}"${feito ? " checked" : ""}> Concluí este desafio</label></div>`;
+}
+function renderCamTips() {
+  $("cam-phones").innerHTML = CAM_CATS.map(c => `<button type="button" class="cam-phone" role="radio" aria-checked="${c.id === camCat}" tabindex="${c.id === (camCat || CAM_CATS[0].id) ? 0 : -1}" data-cam-cat="${c.id}">${PHONE_SVG}<b>${c.nome}</b><small>${c.sub}</small></button>`).join("");
+  $("cam-objs").innerHTML = CAM_OBJS.map(([k, nome]) => `<button type="button" class="fchip" role="radio" aria-checked="${k === camObj}" tabindex="${k === camObj ? 0 : -1}" data-cam-obj="${k}">${nome}</button>`).join("");
+  const vale = t => (!t.c || (camCat && t.c.includes(camCat))) && (camObj === "todos" || !t.o || t.o.includes(camObj));
+  const uni = CAM_TIPS.filter(t => !t.dep && vale(t)), dep = CAM_TIPS.filter(t => t.dep && camCat && vale(t));
+  const cat = CAM_CATS.find(c => c.id === camCat);
+  $("cam-tips").innerHTML = `<div class="cam-tips-grid">
+    <div class="cam-card"><h4>Vale para ${cat ? "o seu celular" : "qualquer celular"}</h4><ul>${uni.map(t => `<li>${t.t}</li>`).join("") || "<li>Nenhuma dica específica para este objetivo nesta categoria; veja as aulas abaixo.</li>"}</ul></div>
+    <div class="cam-card dep"><h4>Depende do seu modelo: confira se o seu tem</h4>${!cat ? `<p>Escolha a categoria do seu celular para ver os recursos que só alguns modelos têm.</p>`
+      : dep.length ? `<p>Nem todo aparelho desta categoria tem estes recursos. Se não encontrar no seu, siga as dicas universais.</p><ul>${dep.map(t => `<li>${t.t}</li>`).join("")}</ul>` : `<p>Para este objetivo, as dicas universais ao lado já resolvem.</p>`}</div></div>
+    ${cat ? `<p class="cam-note" style="margin-top:12px">Aulas recomendadas: <button type="button" class="ghost-pill" data-cam-go="${cat.mod}">${CAM_MODS.find(m => m.id === cat.mod).titulo} ›</button></p>` : ""}`;
+}
+function renderCamTabs() {
+  $("cam-tabs").innerHTML = CAM_MODS.map((m, i) => `<button type="button" class="cam-tab" role="tab" id="cam-tab-${m.id}" aria-selected="${m.id === camMod}" aria-controls="cam-panel" tabindex="${m.id === camMod ? 0 : -1}" data-cam-mod="${m.id}">${i + 1}. ${m.nome}${camFeitos.has(m.desafio.n) ? '<span class="ok" aria-hidden="true"></span><span class="sr"> (desafio concluído)</span>' : ""}</button>`).join("");
+}
+function renderCamAulas() {
+  renderCamTabs();
+  const m = CAM_MODS.find(x => x.id === camMod);
+  $("cam-panel").setAttribute("aria-labelledby", "cam-tab-" + m.id);
+  $("cam-panel").innerHTML = `<h4>${m.titulo}</h4><p class="cam-note">${m.desc}</p>
+    <div class="cam-lessons">${m.aulas.map((a, i) => `<details class="cam-lesson"${i === 0 ? " open" : ""}><summary><span class="n">${String(i + 1).padStart(2, "0")}</span>${a.t}${a.star ? '<span class="star">Aula especial</span>' : ""}</summary><div class="cam-body">${a.html}</div></details>`).join("")}</div>
+    ${camDesafioHTML(m.desafio)}`;
+}
+function renderCamera() {
+  renderCamTips(); renderCamAulas();
+  $("cam-sits").innerHTML = CAM_SITS.map(s => `<details class="cam-sit"><summary><span class="tag">Situação ${s.l}</span><b>${s.t}</b><small>${s.d}</small></summary><ul>${s.i.map(x => `<li>${x}</li>`).join("")}</ul></details>`).join("")
+    + `<div style="grid-column:1/-1">${camDesafioHTML(CAM_DESAFIO6)}</div>`;
+  $("cam-table").insertAdjacentHTML("beforeend", `<thead><tr><th scope="col">Objetivo</th><th scope="col">Configuração inicial sugerida</th></tr></thead>
+    <tbody>${CAM_TABELA.map(([o, c, n]) => `<tr><th scope="row">${o}</th><td>${c}<small>${n}</small></td></tr>`).join("")}</tbody>`);
+  $("cam-menus-box").innerHTML = CAM_MENUS.map(g => `<div class="cam-card"><h4>${g.t}</h4><ul>${g.itens.map(([p, d]) => `<li>${camPath(p)}<small>${d}</small></li>`).join("")}</ul></div>`).join("");
+  renderCamWiz();
+}
+function renderCamWiz() {
+  const f = $("cam-wiz"), v = n => (f.querySelector(`[name="${n}"]:checked`) || {}).value;
+  const r = { marca: f.marca.value, modelo: f.modelo.value.trim(), obj: v("obj"), amb: v("amb"), cena: v("cena") };
+  const falta = [!r.marca && "a marca", !r.obj && "o objetivo", !r.amb && "o ambiente", !r.cena && "o tipo de cena"].filter(Boolean);
+  $("cam-result").innerHTML = falta.length ? `<div class="cam-empty">Para ver as recomendações, escolha ${falta.join(", ").replace(/, ([^,]*)$/, " e $1")}.</div>` : camRecomendar(r);
+}
+function camRadioKeys(e, sel, attr, set) {
+  if (!["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"].includes(e.key)) return;
+  const bs = [...e.currentTarget.querySelectorAll(sel)], i = bs.indexOf(e.target); if (i < 0) return;
+  e.preventDefault();
+  const b = bs[(i + (e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : -1) + bs.length) % bs.length];
+  set(b.getAttribute(attr)); e.currentTarget.querySelector(`[${attr}="${b.getAttribute(attr)}"]`).focus();
+}
+const camSetCat = id => { camCat = id; store.set("camCat", id); camMod = CAM_CATS.find(c => c.id === id).mod; renderCamTips(); renderCamAulas(); renderCamWiz(); };
+const camSetObj = k => { camObj = k; renderCamTips(); };
+const camSetMod = id => { camMod = id; renderCamAulas(); };
+$("cam-phones").addEventListener("click", e => { const b = e.target.closest("[data-cam-cat]"); if (b) camSetCat(b.dataset.camCat); });
+$("cam-phones").addEventListener("keydown", e => camRadioKeys(e, "[data-cam-cat]", "data-cam-cat", camSetCat));
+$("cam-objs").addEventListener("click", e => { const b = e.target.closest("[data-cam-obj]"); if (b) camSetObj(b.dataset.camObj); });
+$("cam-objs").addEventListener("keydown", e => camRadioKeys(e, "[data-cam-obj]", "data-cam-obj", camSetObj));
+$("cam-tabs").addEventListener("click", e => { const b = e.target.closest("[data-cam-mod]"); if (b) camSetMod(b.dataset.camMod); });
+$("cam-tabs").addEventListener("keydown", e => camRadioKeys(e, "[data-cam-mod]", "data-cam-mod", camSetMod));
+$("cam-tips").addEventListener("click", e => {
+  const b = e.target.closest("[data-cam-go]"); if (!b) return;
+  camSetMod(b.dataset.camGo);
+  $("cam-aulas").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+});
+$("camera").addEventListener("change", e => {
+  const c = e.target.closest("[data-cam-desafio]"); if (!c) return;
+  const n = +c.dataset.camDesafio;
+  c.checked ? camFeitos.add(n) : camFeitos.delete(n);
+  store.set("camDesafios", [...camFeitos]);
+  if (c.checked) toast(`Desafio ${n} concluído. Mostre o resultado à equipe!`);
+  renderCamTabs();
+});
+$("cam-wiz").addEventListener("input", renderCamWiz);
+$("cam-wiz").addEventListener("submit", e => e.preventDefault());
+$("form-cam").onclick = () => scrollToSec("camera")();
+renderCamera();
 
 /* ---------- Rolagem: barra de progresso, voltar ao topo, menu ativo ---------- */
 let quadroPedido = false, rolou = true;
