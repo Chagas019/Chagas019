@@ -285,3 +285,36 @@ export function getAsphaltTexture() {
     return [52 * k, 54 * k, 58 * k];
   });
 }
+
+/** Folhagem recortada (alfa): dezenas de folhas em tons de verde, usada nas copas das árvores. */
+export function getFoliageTexture() {
+  const hit = cache.get('foliage');
+  if (hit) return hit;
+  const S = 256;
+  const c = document.createElement('canvas');
+  c.width = c.height = S;
+  const ctx = c.getContext('2d')!;
+  let seed = 7;
+  const r = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  for (let i = 0; i < 520; i++) {
+    const x = r() * S;
+    const y = r() * S;
+    // mais folhas no centro do tufo, bordas irregulares
+    const d = Math.hypot(x - S / 2, y - S / 2) / (S / 2);
+    if (d > 0.95 || r() < d * 0.55) continue;
+    const g = 70 + r() * 70;
+    ctx.fillStyle = `rgb(${Math.round(g * 0.55)}, ${Math.round(g + 30)}, ${Math.round(g * 0.4)})`;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(r() * Math.PI);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 4 + r() * 5, 2 + r() * 2.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+  const tex = new CanvasTexture(c);
+  tex.colorSpace = SRGBColorSpace;
+  tex.anisotropy = 4;
+  cache.set('foliage', tex);
+  return tex;
+}

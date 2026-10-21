@@ -17,8 +17,8 @@ const _c = new Color();
 
 /** Muitos objetos iguais num único draw call (pilares, vagas, luminárias, árvores...). */
 export function InstancedBoxes({
-  items, material, geometry, castShadow, receiveShadow, name,
-}: { items: BoxItem[]; material: Material; geometry?: BufferGeometry; castShadow?: boolean; receiveShadow?: boolean; name?: string }) {
+  items, material, geometry, castShadow, receiveShadow, name, depthMaterial,
+}: { items: BoxItem[]; material: Material; geometry?: BufferGeometry; castShadow?: boolean; receiveShadow?: boolean; name?: string; depthMaterial?: Material }) {
   const ref = useRef<InstancedMesh>(null);
   const geo = useMemo(() => geometry ?? new BoxGeometry(1, 1, 1), [geometry]);
   useLayoutEffect(() => {
@@ -36,5 +36,5 @@ export function InstancedBoxes({
   }, [items]);
   useLayoutEffect(() => () => { if (!geometry) geo.dispose(); }, [geo, geometry]);
   if (items.length === 0) return null;
-  return <instancedMesh key={items.length} ref={ref} name={name} args={[geo, material, items.length]} castShadow={castShadow} receiveShadow={receiveShadow} raycast={() => null} />;
+  return <instancedMesh key={items.length} ref={ref} name={name} args={[geo, material, items.length]} customDepthMaterial={depthMaterial} castShadow={castShadow} receiveShadow={receiveShadow} raycast={() => null} />;
 }

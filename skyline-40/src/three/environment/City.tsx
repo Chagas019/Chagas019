@@ -19,7 +19,7 @@ function facadeTextures() {
   const night = make();
   const d = day.getContext('2d')!;
   const n = night.getContext('2d')!;
-  d.fillStyle = '#c9ccce';
+  d.fillStyle = '#b8b6b0';
   d.fillRect(0, 0, W, H);
   n.fillStyle = '#000';
   n.fillRect(0, 0, W, H);
@@ -70,7 +70,7 @@ export function City() {
     uv.needsUpdate = true;
     const tex = facadeTextures();
     const m = new MeshStandardMaterial({
-      map: tex.map, emissiveMap: tex.emissive, emissive: new Color('#ffffff'), emissiveIntensity: 0, roughness: 0.75, metalness: 0.15,
+      map: tex.map, emissiveMap: tex.emissive, emissive: new Color('#ffffff'), emissiveIntensity: 0, roughness: 0.42, metalness: 0.35, envMapIntensity: 1.2,
     });
     return { geometry: g, material: m };
   }, []);
@@ -79,7 +79,8 @@ export function City() {
   const blocks = useMemo(() => {
     const rand = rng(1234);
     const out: { x: number; z: number; w: number; d: number; h: number; c: Color }[] = [];
-    const tints = ['#ece6da', '#d9d6cf', '#c9c1b2', '#bfc3c6', '#f1ede5', '#a9a49a', '#8f9296'];
+    // mistura de fachadas: concreto claro, pedra, e torres de vidro escuro (refletem o HDRI)
+    const tints = ['#d8d2c6', '#c4bfb4', '#a8a296', '#8d9298', '#6f7a86', '#56616d', '#b9b1a2', '#e2ddd3'];
     for (let gx = -720; gx <= 720; gx += 36) {
       for (let gz = -980; gz <= 120; gz += 36) {
         if (Math.abs(gx) < 92 && Math.abs(gz) < 84) continue; // terreno do empreendimento

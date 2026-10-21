@@ -40,7 +40,7 @@ export const MAT = {
   plantDark: std('#2f4a33', 0.9),
   soil: std('#5a4636', 1),
   deck: std('#9b7656', 0.7),
-  paving: std('#a8a49b', 0.92),
+  paving: std('#94908a', 0.92),
   asphalt: std('#2b2e33', 0.95),
   lawn: std('#5f7d4f', 1),
   water: std('#2c6f8f', 0.1),

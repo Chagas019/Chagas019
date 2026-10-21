@@ -125,7 +125,9 @@ O workflow `.github/workflows/skyline-40.yml` verifica tipos, roda os testes uni
 Ripado e forros em madeira, travertino, molduras e jardineiras em grafite, perfis de LED quente nos forros,
 vidro escuro reflexivo, céu com nuvens procedurais refletido nas fachadas, grama texturizada, paisagismo com
 copas orgânicas e carros esportivos com silhueta real. Nas qualidades Equilibrada e Máxima entram oclusão de
-ambiente (N8AO), SMAA, tone mapping ACES e uma leve gradação de cor.
+ambiente (N8AO), SMAA, tone mapping ACES e uma leve gradação de cor. Reflexos e luz indireta usam mapas HDRI
+fotográficos CC0 (Poly Haven, empacotados em `@pmndrs/assets`) carregados sob demanda por horário; as copas das
+árvores usam folhagem recortada com sombra correspondente.
 
 ## Limitações conhecidas
 

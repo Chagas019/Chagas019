@@ -1,7 +1,7 @@
 import { useFrame } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
 import {
-  Color, CylinderGeometry, IcosahedronGeometry, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial, Path, Shape, ShapeGeometry,
+  Color, CylinderGeometry, DoubleSide, IcosahedronGeometry, MeshDepthMaterial, PlaneGeometry, RGBADepthPacking, Vector3, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial, Path, Shape, ShapeGeometry,
   type Group,
 } from 'three';
 import { useSkyline } from '../../state/store';
@@ -9,7 +9,7 @@ import { QUALITY } from '../../config/performance';
 import { garageRamps, GARAGE_CONFIG } from '../../data/garage';
 import { MAT, realMaterials } from '../materials';
 import { WHEELS, carGeometries } from './carGeometry';
-import { getPavingTexture, getWaterNormal } from '../textures';
+import { getFoliageTexture, getPavingTexture, getWaterNormal } from '../textures';
 import { merge, rng } from '../utils/geo';
 import { floorRuntime as rt } from '../building/floorRuntime';
 import { InstancedBoxes, type BoxItem } from './InstancedBoxes';
@@ -28,7 +28,7 @@ export function Site() {
   const plaza = useRef<Group>(null);
   const fade = useRef(1);
 
-  const groundMat = useMemo(() => new MeshStandardMaterial({ color: new Color('#8d9189'), roughness: 1, transparent: true, opacity: 1, depthWrite: true }), []);
+  const groundMat = useMemo(() => new MeshStandardMaterial({ color: new Color('#5f625d'), roughness: 1, transparent: true, opacity: 1, depthWrite: true }), []);
   const pavingMat = useMemo(() => {
     const t = getPavingTexture().clone();
     t.needsUpdate = true;
@@ -314,34 +314,44 @@ function Trees({ count }: { count: number }) {
         palms.push({ p: [t.x, t.h, t.z], s: [3.6, 0.9, 3.6], r: rand() * 3, color: '#4f7a45' });
       } else {
         trunks.push({ p: [t.x, t.h * 0.3, t.z], s: [0.4, t.h * 0.6, 0.4] });
-        crowns.push({ p: [t.x, t.h * 0.68, t.z], s: [t.h * 0.34, t.h * 0.36, t.h * 0.34], r: rand() * 3, color: greens[Math.floor(rand() * greens.length)] });
+        crowns.push({ p: [t.x, t.h * 0.68, t.z], s: [t.h * 0.5, t.h * 0.48, t.h * 0.5], r: rand() * 3, color: greens[Math.floor(rand() * greens.length)] });
       }
     });
     return { trunks, crowns, palms };
   }, [count]);
   const trunkGeo = useMemo(() => new CylinderGeometry(0.5, 0.65, 1, 6), []);
+  // copa em folhagem recortada: dezenas de planos com textura de folhas (silhueta natural)
   const crownGeo = useMemo(() => {
-    // copa orgânica: três volumes sobrepostos, levemente deformados
-    const parts = [[0, 0, 0, 1], [0.45, 0.25, 0.2, 0.72], [-0.4, 0.15, -0.25, 0.68], [0.1, 0.55, -0.1, 0.6]].map(([x, y, z, r]) => {
-      const g = new IcosahedronGeometry(r, 3);
+    const rand = rng(99);
+    const planes = [];
+    for (let i = 0; i < 18; i++) {
+      const g = new PlaneGeometry(1.25, 1.25);
+      g.rotateX(rand() * Math.PI);
+      g.rotateY(rand() * Math.PI * 2);
+      const a = rand() * Math.PI * 2;
+      const rr = Math.sqrt(rand()) * 0.55;
+      g.translate(Math.cos(a) * rr, (rand() - 0.4) * 0.7, Math.sin(a) * rr);
+      // normais apontando para fora: luz suave como uma copa volumosa
       const pos = g.attributes.position;
-      for (let i = 0; i < pos.count; i++) {
-        const k = 1 + Math.sin(pos.getX(i) * 7.1 + pos.getY(i) * 5.3) * 0.06 + Math.cos(pos.getZ(i) * 6.7) * 0.05;
-        pos.setXYZ(i, pos.getX(i) * k + x, pos.getY(i) * k * 0.9 + y, pos.getZ(i) * k + z);
+      const nor = g.attributes.normal;
+      for (let k = 0; k < pos.count; k++) {
+        const v = new Vector3(pos.getX(k), pos.getY(k) + 0.2, pos.getZ(k)).normalize();
+        nor.setXYZ(k, v.x, v.y, v.z);
       }
-      return g;
-    });
-    // mantém as normais esféricas do icosaedro (sombreamento suave)
-    return merge(parts);
+      planes.push(g);
+    }
+    return merge(planes);
   }, []);
   const palmGeo = useMemo(() => new IcosahedronGeometry(1, 0), []);
-  const crownMat = useMemo(() => new MeshStandardMaterial({ color: '#ffffff', roughness: 0.85 }), []);
-  useEffect(() => () => { trunkGeo.dispose(); crownGeo.dispose(); palmGeo.dispose(); crownMat.dispose(); }, [trunkGeo, crownGeo, palmGeo, crownMat]);
+  const crownMat = useMemo(() => new MeshStandardMaterial({ color: '#ffffff', roughness: 0.8, map: getFoliageTexture(), alphaTest: 0.5, side: DoubleSide }), []);
+  const crownDepth = useMemo(() => new MeshDepthMaterial({ depthPacking: RGBADepthPacking, map: getFoliageTexture(), alphaTest: 0.5 }), []);
+  const palmMat = useMemo(() => new MeshStandardMaterial({ color: '#ffffff', roughness: 0.85, flatShading: true }), []);
+  useEffect(() => () => { trunkGeo.dispose(); crownGeo.dispose(); palmGeo.dispose(); crownMat.dispose(); crownDepth.dispose(); palmMat.dispose(); }, [trunkGeo, crownGeo, palmGeo, crownMat, crownDepth, palmMat]);
   return (
     <group name="trees">
       <InstancedBoxes items={data.trunks} material={MAT.woodDark} geometry={trunkGeo} castShadow />
-      <InstancedBoxes items={data.crowns} material={crownMat} geometry={crownGeo} castShadow />
-      <InstancedBoxes items={data.palms} material={crownMat} geometry={palmGeo} castShadow />
+      <InstancedBoxes items={data.crowns} material={crownMat} geometry={crownGeo} depthMaterial={crownDepth} castShadow />
+      <InstancedBoxes items={data.palms} material={palmMat} geometry={palmGeo} castShadow />
     </group>
   );
 }

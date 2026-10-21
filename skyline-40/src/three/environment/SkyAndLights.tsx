@@ -1,10 +1,11 @@
 import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import {
-  AdditiveBlending, Mesh, MeshBasicMaterial, PlaneGeometry, PMREMGenerator, Scene, SphereGeometry, BackSide, BufferAttribute, BufferGeometry, Color, Fog, ShaderMaterial, Vector3,
+  AdditiveBlending, EquirectangularReflectionMapping, Mesh, PMREMGenerator, Scene, SphereGeometry, BackSide, BufferAttribute, BufferGeometry, Color, Fog, ShaderMaterial, Vector3,
   type DirectionalLight, type HemisphereLight, type Points, type PointsMaterial,
 } from 'three';
-import { useSkyline } from '../../state/store';
+import { useSkyline, type TimeOfDay } from '../../state/store';
+import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js';
 import { QUALITY } from '../../config/performance';
 import { ATMOSPHERES, atmosphere, lerpAtmosphere } from './atmosphere';
 import { rng } from '../utils/geo';
@@ -183,11 +184,20 @@ export function SkyAndLights() {
  * Mapa de ambiente (reflexos e luz indireta) gerado com PMREM a partir do céu do horário escolhido,
  * mais painéis de luz. É refeito a cada troca de horário e o anterior é liberado.
  */
+const HDRI: Record<TimeOfDay, () => Promise<{ default: string }>> = {
+  // mapas fotográficos CC0 (Poly Haven via @pmndrs/assets), baixados sob demanda
+  day: () => import('@pmndrs/assets/hdri/city.exr'),
+  sunset: () => import('@pmndrs/assets/hdri/sunset.exr'),
+  night: () => import('@pmndrs/assets/hdri/night.exr'),
+};
+const HDRI_ROTATION: Record<TimeOfDay, number> = { day: 0.6, sunset: 2.2, night: 0 };
+
 function EnvMap() {
   const timeOfDay = useSkyline((s) => s.timeOfDay);
   const gl = useThree((s) => s.gl);
   const scene = useThree((s) => s.scene);
   useLayoutEffect(() => {
+    // 1) mapa procedural imediato (céu do horário), 2) troca pelo HDRI fotográfico quando carregar
     const t = ATMOSPHERES[timeOfDay];
     const envScene = new Scene();
     const sky = makeSkyMaterial();
@@ -201,30 +211,36 @@ function EnvMap() {
     sky.uniforms.uCloudShade.value.copy(t.cloudShade);
     const sphereGeo = new SphereGeometry(100, 32, 16);
     envScene.add(new Mesh(sphereGeo, sky));
-    const panels: [string, number, [number, number, number], [number, number], number][] =
-      timeOfDay === 'night'
-        ? [['#ffd7a0', 0.9, [0, 6, -70], [140, 4], 0], ['#8fb0ff', 0.6, [70, 10, 0], [120, 6], -Math.PI / 2]]
-        : [[timeOfDay === 'day' ? '#ffffff' : '#ffc79a', timeOfDay === 'day' ? 2.2 : 1.2, [0, 40, 0], [80, 80], -1], ['#e8f0ff', 1.4, [-60, 8, -30], [60, 12], Math.PI / 2]];
-    const extras: { dispose(): void }[] = [sphereGeo, sky];
-    for (const [color, k, pos, size, rotY] of panels) {
-      const g = new PlaneGeometry(size[0], size[1]);
-      const m = new MeshBasicMaterial({ color, side: 2, toneMapped: false });
-      m.color.multiplyScalar(k);
-      const mesh = new Mesh(g, m);
-      mesh.position.set(...pos);
-      if (rotY === -1) mesh.rotation.x = Math.PI / 2;
-      else mesh.rotation.y = rotY;
-      envScene.add(mesh);
-      extras.push(g, m);
-    }
     const pmrem = new PMREMGenerator(gl);
-    const target = pmrem.fromScene(envScene, 0.02);
-    scene.environment = target.texture;
+    const procedural = pmrem.fromScene(envScene, 0.02);
+    sphereGeo.dispose();
+    sky.dispose();
+    scene.environment = procedural.texture;
+    let hdr: { dispose(): void } | null = null;
+    let cancelled = false;
+    HDRI[timeOfDay]()
+      .then((m) => new EXRLoader().loadAsync(m.default))
+      .then((tex) => {
+        if (cancelled) {
+          tex.dispose();
+          return;
+        }
+        tex.mapping = EquirectangularReflectionMapping;
+        const target = pmrem.fromEquirectangular(tex);
+        tex.dispose();
+        hdr = target;
+        scene.environment = target.texture;
+        scene.environmentRotation.set(0, HDRI_ROTATION[timeOfDay], 0);
+      })
+      .catch(() => {
+        /* sem o HDRI, fica o mapa procedural */
+      });
     return () => {
-      if (scene.environment === target.texture) scene.environment = null;
-      target.dispose();
+      cancelled = true;
+      scene.environment = null;
+      procedural.dispose();
+      hdr?.dispose();
       pmrem.dispose();
-      extras.forEach((e) => e.dispose());
     };
   }, [timeOfDay, gl, scene]);
   return null;
