@@ -1995,7 +1995,7 @@ const FONTES = {
   cnbb: { nome: "CNBB", url: "https://www.cnbb.org.br/liturgia-diaria/" },
   outra: { nome: "Outra fonte", url: "" },
 };
-const fonteHTML = k => { const f = FONTES[k]; if (!f || k === "outra") return ""; return `Fonte: <a href="${f.url}" target="_blank" rel="noopener">${f.nome}</a>`; };
+const fonteHTML = (k, url) => { const f = FONTES[k]; if (!f || k === "outra") return ""; return `Fonte: <a href="${esc(url || f.url)}" target="_blank" rel="noopener">${f.nome}</a>`; };
 const normTxt = t => String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[–—−]/g, "-").replace(/[“”«»"']/g, "").replace(/\s+/g, "");
 const inSource = (v, src) => !!v && normTxt(src).includes(normTxt(v));
 function importBox(kind) {
@@ -2154,23 +2154,38 @@ function liturgicalDay(d) {
 }
 function weekday(iso) { const [y, m, d] = iso.split("-").map(Number); return mk(y, m, d).toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" }); }
 
+/* ---------- Liturgia automática ----------
+   O site busca as referências do dia na Canção Nova pela função /api/liturgia (no Vercel).
+   Se a equipe publicar as leituras do dia, a versão da equipe tem prioridade. */
+const LITURGIA_API = /vercel\.app$|^comunica-fe/.test(location.hostname) ? "/api/liturgia" : "https://comunica-fe.vercel.app/api/liturgia";
+let liturgiaAuto = null;
+const liturgiaDoDia = () => liturgias[TODAY] || liturgiaAuto;
+async function buscarLiturgiaAuto() {
+  try {
+    const r = await fetch(LITURGIA_API, { cache: "no-store" });
+    if (!r.ok) return;
+    const d = await r.json();
+    if (d && d.data === TODAY && (d.primeira || d.evangelho)) { liturgiaAuto = { ...d, auto: true }; renderLiturgia(); renderFrases(); }
+  } catch (e) { /* sem internet, ou dentro do Claude: segue sem a liturgia automática */ }
+}
+
 /* ---------- Liturgia: painel e modais ---------- */
 const LINKS = `<div class="ext-links"><a href="https://www.cnbb.org.br/liturgia-diaria/" target="_blank" rel="noopener">Liturgia diária · CNBB</a><a href="https://liturgia.cancaonova.com/pb/" target="_blank" rel="noopener">Liturgia · Canção Nova</a></div>`;
 function renderLiturgia() {
   const L = liturgicalDay(new Date()), [nomeCor, hex] = COR[L.cor];
   $("litu-date").textContent = weekday(TODAY);
   $("litu-season").innerHTML = `${L.festa ? `<span><b>${esc(L.festa)}</b></span>` : ""}<span><i class="dot" style="background:${hex}"></i>${nomeCor}</span><span>${L.tempo}${L.semana ? " · " + L.semana : ""}</span><span>Ano ${L.ciclo} · Ano ${L.par}</span>`;
-  const lit = liturgias[TODAY];
+  const lit = liturgiaDoDia();
   $("litu-body").innerHTML = lit
-    ? `<ul class="readings">${[["Primeira leitura", lit.primeira], ["Salmo", lit.salmo + (lit.refrao ? " — " + lit.refrao : "")], ["Segunda leitura", lit.segunda], ["Evangelho", lit.evangelho]].filter(r => r[1]).map(([k, v]) => `<li><b>${k}</b><span>${esc(v)}</span></li>`).join("")}</ul>${lit.fonte && lit.fonte !== "outra" ? `<div class="src" style="margin-top:8px">${fonteHTML(lit.fonte)}</div>` : ""}`
+    ? `<ul class="readings">${[["Primeira leitura", lit.primeira], ["Salmo", lit.salmo + (lit.refrao ? " — " + lit.refrao : "")], ["Segunda leitura", lit.segunda], ["Evangelho", lit.evangelho]].filter(r => r[1]).map(([k, v]) => `<li><b>${k}</b><span>${esc(v)}</span></li>`).join("")}</ul>${lit.fonte && lit.fonte !== "outra" ? `<div class="src" style="margin-top:8px">${lit.auto ? "Atualizada sozinha · " : ""}${fonteHTML(lit.fonte, lit.url)}</div>` : ""}`
     : `<div class="empty-state">${ico("ampulheta", 40)}<span>${canWrite ? "As leituras de hoje ainda não foram publicadas. Toque em + para publicar." : "A equipe ainda não publicou as leituras de hoje. Veja nas fontes oficiais em “Ler a liturgia”."}</span></div>`;
   renderAbaAtual();
 }
 // Conteúdo da liturgia, usado na janela e na aba Liturgia
 function liturgiaCorpo() {
-  const L = liturgicalDay(new Date()), lit = liturgias[TODAY];
+  const L = liturgicalDay(new Date()), lit = liturgiaDoDia();
   return `<div class="season">${L.festa ? `<span style="background:var(--soft)"><b>${esc(L.festa)}</b></span>` : ""}<span style="background:var(--soft)"><i class="dot" style="background:${COR[L.cor][1]}"></i>${COR[L.cor][0]}</span><span style="background:var(--soft)">${L.tempo}${L.semana ? " · " + L.semana : ""}</span></div>
-    ${lit ? [["Primeira leitura", lit.primeira], ["Salmo responsorial", lit.salmo + (lit.refrao ? "\nR. " + lit.refrao : "")], ["Segunda leitura", lit.segunda], ["Evangelho", lit.evangelho]].filter(r => r[1]).map(([k, v]) => `<div class="read-block"><h4>${k}</h4><p>${esc(v)}</p></div>`).join("") + (lit.texto ? `<div class="read-block"><h4>Texto e reflexão</h4><p>${esc(lit.texto)}</p></div>` : "") + (lit.fonte && lit.fonte !== "outra" ? `<div class="src">${fonteHTML(lit.fonte)}</div>` : "")
+    ${lit ? [["Primeira leitura", lit.primeira], ["Salmo responsorial", lit.salmo + (lit.refrao ? "\nR. " + lit.refrao : "")], ["Segunda leitura", lit.segunda], ["Evangelho", lit.evangelho]].filter(r => r[1]).map(([k, v]) => `<div class="read-block"><h4>${k}</h4><p>${esc(v)}</p></div>`).join("") + (lit.texto ? `<div class="read-block"><h4>Texto e reflexão</h4><p>${esc(lit.texto)}</p></div>` : "") + (lit.fonte && lit.fonte !== "outra" ? `<div class="src">${lit.auto ? "Atualizada sozinha a partir da fonte, todos os dias. " : ""}${fonteHTML(lit.fonte, lit.url)}${lit.url ? ` · <a href="${esc(lit.url)}" target="_blank" rel="noopener">ler as leituras completas</a>` : ""}</div>` : "")
       : `<p class="empty" style="margin:0">As leituras de hoje ainda não foram publicadas pela equipe.</p>`}
     <div><h3 style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin:0 0 8px">Fontes oficiais</h3>${LINKS}</div>
     ${shareRow(`Liturgia de ${weekday(TODAY)}: ${COR[L.cor][0].toLowerCase()}, ${L.tempo}${lit && lit.evangelho ? ". Evangelho: " + lit.evangelho : ""}`, "liturgia")}
@@ -2180,7 +2195,7 @@ function openLiturgia() {
   openModal(`<div class="m-plain">${closeBtn()}<h2>Liturgia de ${esc(weekday(TODAY))}</h2>${liturgiaCorpo()}</div>`);
 }
 function openLiturgiaForm() {
-  const lit = liturgias[TODAY] || {};
+  const lit = liturgias[TODAY] || liturgiaAuto || {};
   const f = (id, label, ph, v, area) => `<div class="field"><label for="${id}">${label}</label>${area ? `<textarea id="${id}" placeholder="${ph}">${esc(v)}</textarea>` : `<input id="${id}" placeholder="${ph}" value="${esc(v)}">`}</div>`;
   openModal(`<div class="m-plain">${closeBtn()}<h2>Leituras de hoje</h2>
     ${importBox("lit")}
@@ -2251,14 +2266,16 @@ function openEventForm() {
 
 /* ---------- Frases da equipe ---------- */
 const sortedFrases = () => [...teamFrases].sort((a, b) => (b.dia || "").localeCompare(a.dia || "") || (b.criadoEm || 0) - (a.criadoEm || 0));
-function todaysFrase() { return sortedFrases().find(f => f.dia === TODAY) || null; }
+// refrão do salmo da liturgia automática, usado como frase do dia quando a equipe não publicou nenhuma
+const fraseAuto = () => liturgiaAuto && liturgiaAuto.refrao ? { texto: liturgiaAuto.refrao, autor: `Salmo responsorial (${(liturgiaAuto.salmo || "").split(" (R")[0]})`.replace(" ()", ""), dia: TODAY, fonte: liturgiaAuto.fonte, auto: true } : null;
+function todaysFrase() { return sortedFrases().find(f => f.dia === TODAY) || fraseAuto(); }
 function renderFrases() {
   const f = todaysFrase() || sortedFrases().find(x => x.dia <= TODAY);
   $("fr-box").innerHTML = f
     ? `<blockquote class="team-q">${f.dia === TODAY ? `<span class="today">Hoje</span><br>` : ""}“${esc(f.texto)}”<cite>— ${esc(f.autor || "Comunica+Fé")}${f.dia !== TODAY ? " · " + esc(weekday(f.dia)) : ""}</cite>${f.fonte && f.fonte !== "outra" ? `<div class="src" style="margin-top:6px">${fonteHTML(f.fonte)}</div>` : ""}</blockquote>${shareRow(`Frase do dia: “${f.texto}” (${f.autor || "Comunica+Fé"})`, "frases")}`
     : `<div class="empty-state">${ico("ampulheta", 40)}<span>${canWrite ? "Nenhuma frase publicada. Toque em + para publicar a frase de hoje." : "A equipe ainda não publicou a frase de hoje."}</span></div>`;
   // frases da equipe também entram no player
-  const team = sortedFrases().filter(x => x.dia <= TODAY).map(x => ({ s: { nome: x.autor || "Comunica+Fé", curto: x.autor || "Comunica+Fé", ini: (x.autor || "Comunica+Fé").split(/\s+/).map(w => w[0]).join("").slice(0, 2).toUpperCase(), cor: "linear-gradient(160deg,#c8102e,#2b0606)", foto: "" }, f: x.texto, team: true }));
+  const team = [...(sortedFrases().some(x => x.dia === TODAY) || !fraseAuto() ? [] : [fraseAuto()]), ...sortedFrases().filter(x => x.dia <= TODAY)].map(x => ({ s: { nome: x.autor || "Comunica+Fé", curto: x.autor || "Comunica+Fé", ini: (x.autor || "Comunica+Fé").split(/\s+/).map(w => w[0]).join("").slice(0, 2).toUpperCase(), cor: "linear-gradient(160deg,#c8102e,#2b0606)", foto: "" }, f: x.texto, team: true }));
   const cur = QUOTES[qI];
   QUOTES = [...team, ...SAINT_QUOTES];
   if (!qPlaying) { qI = todaysFrase() ? 0 : Math.max(0, QUOTES.findIndex(q => q.f === (cur && cur.f))); renderQuote(); }
@@ -4298,6 +4315,7 @@ renderHero(); renderPick(); renderMass(); setMassUI(false); renderQuote(); resta
 renderFormacao(); renderTimeline(); renderDocs(); medir(); onScroll(); showFrame();
 renderLiturgia(); renderAgenda(); renderFrases(); applyTeam();
 startData().then(openFromHash);
+buscarLiturgiaAuto();
 iniciarConta();
 </script>
 </body>

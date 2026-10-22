@@ -31,9 +31,11 @@ function mockClaude({ can, id = "u_teste", rejeitaEscrita = false, sample = null
   })();`;
 }
 
-async function pagina(browser, { largura = 1280, mock = null, hash = "" } = {}) {
+async function pagina(browser, { largura = 1280, mock = null, hash = "", liturgia = null } = {}) {
   const ctx = await browser.newContext({ viewport: { width: largura, height: 900 } });
   if (mock) await ctx.addInitScript(mock);
+  // a liturgia automática vem da internet; nos testes, a resposta é simulada (ou fica indisponível)
+  await ctx.route(/\/api\/liturgia/, r => liturgia ? r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(liturgia) }) : r.fulfill({ status: 200, contentType: "application/json", body: "{}" }));
   const p = await ctx.newPage();
   p.erros = [];
   p.on("pageerror", e => p.erros.push(e.message));
@@ -385,7 +387,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     check(p.erros.length === 0, "sem erros no console", p.erros.join(" | "));
     await p.context().close();
     for (const [w, h] of [[390, 844], [820, 1180]]) {
-      const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: true, isMobile: w < 700 });
+      const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: true, isMobile: w < 700 }); await ctx.route(/\/api\/liturgia/, r => r.fulfill({ status: 200, contentType: "application/json", body: "{}" }));
       const m = await ctx.newPage(); await m.goto(URL + "#frase"); await m.waitForTimeout(500);
       const r = await m.evaluate(() => { const d = document.getElementById("fw"); const btns = [...d.querySelectorAll(".fw-actions button")].map(b => b.getBoundingClientRect());
         return { open: d.open, cabe: d.scrollWidth <= innerWidth, botoes: btns.every(b => b.bottom <= innerHeight && b.height >= 44) }; });
@@ -397,7 +399,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
   console.log("11. Abertura no estilo da referência: cenas guiadas pela rolagem");
   {
     for (const [w, h, mob] of [[1366, 850, 0], [390, 844, 1]]) {
-      const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: !!mob, isMobile: !!mob });
+      const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: !!mob, isMobile: !!mob }); await ctx.route(/\/api\/liturgia/, r => r.fulfill({ status: 200, contentType: "application/json", body: "{}" }));
       const p = await ctx.newPage(); const erros = []; p.on("pageerror", e => erros.push(e.message));
       await p.goto(URL); await p.waitForTimeout(600);
       check(await p.evaluate(() => !document.querySelector("#nucleo, .cine-ic, .warp, .portal, .cine-dust, .corner, .editorial")), `${w}px: núcleo holográfico, ícones de vidro e transições antigas saíram`);
@@ -578,13 +580,33 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     await p.context().close();
   }
 
+  console.log("15. Liturgia automática");
+  {
+    const d = new Date(), hoje = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    const auto = { data: hoje, titulo: "Quinta-feira", primeira: "Ef 3,14-21", salmo: "Sl 32(33),1-2.4-5 (R. 5b)", refrao: "Transborda em toda a terra a bondade do Senhor!", segunda: "", evangelho: "Lc 12,49-53", fonte: "cancaonova", url: "https://liturgia.cancaonova.com/pb/liturgia/exemplo/" };
+    const p = await pagina(browser, { liturgia: auto }); await p.waitForTimeout(300);
+    const card = await p.textContent("#litu-body");
+    check(/Ef 3,14-21/.test(card) && /Lc 12,49-53/.test(card) && /Atualizada sozinha/.test(card), "card mostra a liturgia do dia sem ninguém publicar");
+    check(/Transborda em toda a terra/.test(await p.textContent("#fr-box")), "refrão do salmo vira a frase do dia");
+    await p.click("[data-tab=liturgia]");
+    check(/Ef 3,14-21/.test(await p.textContent("#corpo-liturgia")) && !!(await p.$('#corpo-liturgia a[href="https://liturgia.cancaonova.com/pb/liturgia/exemplo/"]')), "aba Liturgia mostra as leituras e o link para o texto completo");
+    await p.click("[data-tab=inicio]");
+    await p.click("#litu-add"); await p.fill("#l-1", "Gl 1,1-5"); await p.click("#lit-form button[type=submit]"); await p.waitForTimeout(200);
+    check(/Gl 1,1-5/.test(await p.textContent("#litu-body")) && !/Atualizada sozinha/.test(await p.textContent("#litu-body")), "liturgia publicada pela equipe tem prioridade sobre a automática");
+    check(!p.erros.length, "liturgia automática sem erros", p.erros.join(" | "));
+    await p.context().close();
+    const velha = await pagina(browser, { liturgia: { ...auto, data: "2020-01-01" } }); await velha.waitForTimeout(300);
+    check(!/Ef 3,14-21/.test(await velha.textContent("#litu-body")), "liturgia de outro dia é ignorada");
+    await velha.context().close();
+  }
+
   console.log("8. Celular, tablet e notebook (12 tamanhos de tela)");
   {
     const TELAS = [["celular 360", 360, 740, 1], ["celular 390", 390, 844, 1], ["celular 430", 430, 932, 1], ["celular deitado", 844, 390, 1],
       ["tablet 768", 768, 1024, 1], ["tablet 820", 820, 1180, 1], ["tablet deitado", 1024, 768, 1], ["tablet 1180", 1180, 820, 1],
       ["notebook 1280", 1280, 800, 0], ["notebook 1366", 1366, 768, 0], ["notebook 1440", 1440, 900, 0], ["monitor 1920", 1920, 1080, 0]];
     for (const [nome, w, h, toque] of TELAS) {
-      const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: !!toque, isMobile: !!toque && w < 700 });
+      const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: !!toque, isMobile: !!toque && w < 700 }); await ctx.route(/\/api\/liturgia/, r => r.fulfill({ status: 200, contentType: "application/json", body: "{}" }));
       const p = await ctx.newPage(); const erros = []; p.on("pageerror", e => erros.push(e.message));
       await p.goto(URL); await p.waitForTimeout(500);
       const r = await p.evaluate(() => {
