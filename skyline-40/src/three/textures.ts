@@ -1,4 +1,4 @@
-import { CanvasTexture, DataTexture, LinearFilter, LinearMipmapLinearFilter, RepeatWrapping, RGBAFormat, SRGBColorSpace, UnsignedByteType } from 'three';
+import { CanvasTexture, DataTexture, NoColorSpace, LinearFilter, LinearMipmapLinearFilter, RepeatWrapping, RGBAFormat, SRGBColorSpace, UnsignedByteType } from 'three';
 
 let waterNormal: DataTexture | null = null;
 
@@ -317,4 +317,17 @@ export function getFoliageTexture() {
   tex.anisotropy = 4;
   cache.set('foliage', tex);
   return tex;
+}
+
+/** Variação de rugosidade (manchas, desgaste): cinza tileável usado como roughnessMap. */
+export function getRoughnessTexture() {
+  const n = valueNoise(91);
+  const t = pixelTexture('roughness-var', 256, 256, (x, y) => {
+    const u = x / 256;
+    const v = y / 256;
+    const k = 150 + (fbm(n, u * 8, v * 8, 8, 5) - 0.5) * 150 + (n(u * 64, v * 64, 64) - 0.5) * 40;
+    return [k, k, k];
+  });
+  t.colorSpace = NoColorSpace;
+  return t;
 }

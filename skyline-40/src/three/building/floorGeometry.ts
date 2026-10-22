@@ -75,6 +75,8 @@ function coreParts(h: number): BufferGeometry[] {
   return parts;
 }
 
+const drip: BufferGeometry[] = [];
+
 function slabParts(variant: FloorVariant, h: number) {
   const structure: BufferGeometry[] = [];
   // laje principal
@@ -85,6 +87,12 @@ function slabParts(variant: FloorVariant, h: number) {
   structure.push(box(HX * 2 + 0.12, band, 0.12, 0, -band / 2 + 0.08, -HZ - 0.02));
   structure.push(box(0.12, band, HZ * 2 + 0.12, HX + 0.02, -band / 2 + 0.08, 0));
   structure.push(box(0.12, band, HZ * 2 + 0.12, -HX - 0.02, -band / 2 + 0.08, 0));
+  // pingadeira: friso escuro rebaixado sob a faixa (junta de sombra entre laje e caixilho)
+  const dy = -band + 0.08 - 0.025;
+  drip.push(box(HX * 2 + 0.16, 0.05, 0.16, 0, dy, HZ + 0.03));
+  drip.push(box(HX * 2 + 0.16, 0.05, 0.16, 0, dy, -HZ - 0.03));
+  drip.push(box(0.16, 0.05, HZ * 2 + 0.16, HX + 0.03, dy, 0));
+  drip.push(box(0.16, 0.05, HZ * 2 + 0.16, -HX - 0.03, dy, 0));
 
   // pilares periféricos (atrás da pele de vidro)
   const colH = h - ST;
@@ -214,6 +222,15 @@ function facadeParts(variant: FloorVariant, h: number) {
     metal.push(box(0.06, gh, 0.14, x, gy, gz + 0.04));
     metal.push(box(0.06, gh, 0.14, x, gy, -gz - 0.04));
   }
+  // travessa horizontal (peitoril de 1,10 m) e perfil inferior do caixilho
+  if (variant !== 'lobby') {
+    for (const yy of [1.1, 0.12]) {
+      metal.push(box(gx * 2, 0.07, 0.12, 0, yy, gz + 0.04));
+      metal.push(box(gx * 2, 0.07, 0.12, 0, yy, -gz - 0.04));
+      metal.push(box(0.12, 0.07, gz * 2, gx + 0.04, yy, 0));
+      metal.push(box(0.12, 0.07, gz * 2, -gx - 0.04, yy, 0));
+    }
+  }
   for (let z = -gz + step; z < gz - 0.2 && variant !== 'lobby'; z += step) {
     metal.push(box(0.14, gh, 0.06, gx + 0.04, gy, z));
     metal.push(box(0.14, gh, 0.06, -gx - 0.04, gy, z));
@@ -310,6 +327,7 @@ function interiorParts(variant: FloorVariant, h: number) {
 
 export function buildFloorModule(variant: FloorVariant): FloorModule {
   const h = floorHeightFor(variant);
+  drip.length = 0;
   const structure = slabParts(variant, h);
   const railing: BufferGeometry[] = [];
   const handrail: BufferGeometry[] = [];
@@ -317,7 +335,7 @@ export function buildFloorModule(variant: FloorVariant): FloorModule {
   const { glass, metal } = f;
   const soffit = [...f.soffit];
   const ledWarm = [...f.ledWarm];
-  const graphite = [...f.graphite];
+  const graphite = [...f.graphite, ...drip];
   const plants: BufferGeometry[] = [];
   if (variant === 'typical' || variant === 'upper') {
     const b = balconyParts(variant, h);

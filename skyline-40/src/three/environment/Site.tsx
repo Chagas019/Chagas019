@@ -126,9 +126,10 @@ function Plaza({ landscape }: { landscape: boolean }) {
       ]
     : [];
   const grass = useMemo(() => realMaterials().grass(6), []);
-  const shrubGeo = useMemo(() => new IcosahedronGeometry(1, 1), []);
-  const shrubMat = useMemo(() => new MeshStandardMaterial({ color: '#ffffff', roughness: 0.9, flatShading: true }), []);
-  useEffect(() => () => { grass.map?.dispose(); grass.dispose(); shrubGeo.dispose(); shrubMat.dispose(); }, [grass, shrubGeo, shrubMat]);
+  const shrubGeo = useMemo(() => foliageGeometry(7, 12), []);
+  const shrubMat = useMemo(() => new MeshStandardMaterial({ color: '#ffffff', roughness: 0.85, map: getFoliageTexture(), alphaTest: 0.5, side: DoubleSide }), []);
+  const shrubDepth = useMemo(() => new MeshDepthMaterial({ depthPacking: RGBADepthPacking, map: getFoliageTexture(), alphaTest: 0.5 }), []);
+  useEffect(() => () => { grass.map?.dispose(); grass.dispose(); shrubGeo.dispose(); shrubMat.dispose(); shrubDepth.dispose(); }, [grass, shrubGeo, shrubMat, shrubDepth]);
   // maciços de arbustos e forrações junto à base do edifício (como no paisagismo de referência)
   const shrubs: BoxItem[] = useMemo(() => {
     const rand = rng(77);
@@ -136,7 +137,7 @@ function Plaza({ landscape }: { landscape: boolean }) {
     const greens = ['#4a6e3d', '#5d8247', '#3d5c34', '#6f8f4a', '#7a9a52', '#8a7f4a'];
     const add = (x: number, z: number) => {
       const s = 0.5 + rand() * 0.6;
-      out.push({ p: [x, 0.25 + s * 0.4, z], s: [s * 1.2, s * 0.9, s * 1.1], r: rand() * 3, color: greens[Math.floor(rand() * greens.length)] });
+      out.push({ p: [x, 0.2 + s * 0.45, z], s: [s * 1.7, s * 1.1, s * 1.6], r: rand() * 3, color: greens[Math.floor(rand() * greens.length)] });
     };
     for (const sx of [-1, 1]) {
       for (let z = -10; z <= 10; z += 1.1) add(sx * (16.2 + rand() * 0.8), z + rand() * 0.4);
@@ -152,7 +153,7 @@ function Plaza({ landscape }: { landscape: boolean }) {
     <group name="plaza">
       <InstancedBoxes items={lawns} material={grass} receiveShadow />
       <InstancedBoxes items={hedges} material={MAT.plantDark} castShadow />
-      {landscape && <InstancedBoxes items={shrubs} material={shrubMat} geometry={shrubGeo} castShadow />}
+      {landscape && <InstancedBoxes items={shrubs} material={shrubMat} geometry={shrubGeo} depthMaterial={shrubDepth} castShadow />}
       <PlazaCars />
       <InstancedBoxes items={benches} material={MAT.wood} castShadow />
       {/* espelho d'água de chegada */}
@@ -194,6 +195,29 @@ function PlazaCars() {
   );
 }
 
+/** Folhagem em cartões recortados (copas de árvores e maciços de arbustos). */
+function foliageGeometry(seed: number, cards: number) {
+    const rand = rng(seed);
+  const planes = [];
+  for (let i = 0; i < cards; i++) {
+    const g = new PlaneGeometry(1.25, 1.25);
+    g.rotateX(rand() * Math.PI);
+    g.rotateY(rand() * Math.PI * 2);
+    const a = rand() * Math.PI * 2;
+    const rr = Math.sqrt(rand()) * 0.55;
+    g.translate(Math.cos(a) * rr, (rand() - 0.4) * 0.7, Math.sin(a) * rr);
+    // normais apontando para fora: luz suave como uma copa volumosa
+    const pos = g.attributes.position;
+    const nor = g.attributes.normal;
+    for (let k = 0; k < pos.count; k++) {
+      const v = new Vector3(pos.getX(k), pos.getY(k) + 0.2, pos.getZ(k)).normalize();
+      nor.setXYZ(k, v.x, v.y, v.z);
+    }
+    planes.push(g);
+  }
+  return merge(planes);
+}
+
 function Roads() {
   const items: BoxItem[] = useMemo(() => [
     { p: [0, 0.02, 58], s: [1400, 0.04, 12] },
@@ -211,10 +235,32 @@ function Roads() {
     for (let i = 0; i < 10; i++) out.push({ p: [-4.5 + i, 0.05, 58], s: [0.5, 0.01, 10] });
     return out;
   }, []);
+  // carros estacionados junto às calçadas (entorno urbano vivo)
+  const car = carGeometries();
+  const parked = useMemo(() => {
+    const rand = rng(303);
+    const colors = ['#1c1f24', '#e8e8e6', '#8d939b', '#203a63', '#3b3f45', '#6b1f24', '#c9ccd1'];
+    const bodies: BoxItem[] = [];
+    const wheels: BoxItem[] = [];
+    const lanes: { z: number; r: number }[] = [{ z: 53.6, r: Math.PI / 2 }, { z: 62.4, r: -Math.PI / 2 }, { z: -47.6, r: Math.PI / 2 }, { z: -56.4, r: -Math.PI / 2 }];
+    for (const lane of lanes) {
+      for (let x = -220; x <= 220; x += 6.2) {
+        if (Math.abs(x) < 14 || rand() < 0.45) continue;
+        const px = x + (rand() - 0.5) * 0.8;
+        bodies.push({ p: [px, 0.04, lane.z], s: [1, 1, 1], r: lane.r, color: colors[Math.floor(rand() * colors.length)] });
+        const dir = lane.r > 0 ? 1 : -1;
+        for (const [wx, wy, wz] of WHEELS) wheels.push({ p: [px + wz * dir, 0.04 + wy, lane.z - wx * dir], s: [1, 1, 1], r: lane.r });
+      }
+    }
+    return { bodies, wheels, glass: bodies.map(({ p, s, r }) => ({ p, s, r })) };
+  }, []);
   return (
     <group name="roads">
       <InstancedBoxes items={items} material={MAT.asphalt} receiveShadow />
       <InstancedBoxes items={marks} material={MAT.marking} />
+      <InstancedBoxes items={parked.bodies} material={MAT.paint} geometry={car.body} castShadow />
+      <InstancedBoxes items={parked.glass} material={MAT.carGlass} geometry={car.glass} />
+      <InstancedBoxes items={parked.wheels} material={MAT.tire} geometry={car.wheel} />
     </group>
   );
 }
@@ -321,27 +367,7 @@ function Trees({ count }: { count: number }) {
   }, [count]);
   const trunkGeo = useMemo(() => new CylinderGeometry(0.5, 0.65, 1, 6), []);
   // copa em folhagem recortada: dezenas de planos com textura de folhas (silhueta natural)
-  const crownGeo = useMemo(() => {
-    const rand = rng(99);
-    const planes = [];
-    for (let i = 0; i < 18; i++) {
-      const g = new PlaneGeometry(1.25, 1.25);
-      g.rotateX(rand() * Math.PI);
-      g.rotateY(rand() * Math.PI * 2);
-      const a = rand() * Math.PI * 2;
-      const rr = Math.sqrt(rand()) * 0.55;
-      g.translate(Math.cos(a) * rr, (rand() - 0.4) * 0.7, Math.sin(a) * rr);
-      // normais apontando para fora: luz suave como uma copa volumosa
-      const pos = g.attributes.position;
-      const nor = g.attributes.normal;
-      for (let k = 0; k < pos.count; k++) {
-        const v = new Vector3(pos.getX(k), pos.getY(k) + 0.2, pos.getZ(k)).normalize();
-        nor.setXYZ(k, v.x, v.y, v.z);
-      }
-      planes.push(g);
-    }
-    return merge(planes);
-  }, []);
+  const crownGeo = useMemo(() => foliageGeometry(99, 18), []);
   const palmGeo = useMemo(() => new IcosahedronGeometry(1, 0), []);
   const crownMat = useMemo(() => new MeshStandardMaterial({ color: '#ffffff', roughness: 0.8, map: getFoliageTexture(), alphaTest: 0.5, side: DoubleSide }), []);
   const crownDepth = useMemo(() => new MeshDepthMaterial({ depthPacking: RGBADepthPacking, map: getFoliageTexture(), alphaTest: 0.5 }), []);

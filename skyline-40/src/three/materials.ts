@@ -2,7 +2,7 @@ import {
   AdditiveBlending, CanvasTexture, Color, DoubleSide, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial, type MeshStandardMaterialParameters,
   SRGBColorSpace, type Material, type Texture,
 } from 'three';
-import { getAsphaltTexture, getConcreteTexture, getGrassTexture, getStoneTexture, getWoodTexture } from './textures';
+import { getAsphaltTexture, getConcreteTexture, getRoughnessTexture, getGrassTexture, getStoneTexture, getWoodTexture } from './textures';
 
 /**
  * Biblioteca de materiais compartilhados (paleta: grafite, branco, cinza mineral, azul profundo
@@ -17,7 +17,7 @@ export const MAT = {
   concreteRaw: std('#a9adb0', 0.9),
   core: std('#8b9096', 0.9),
   glass: new MeshPhysicalMaterial({
-    color: new Color('#26384a'), metalness: 0.6, roughness: 0.03, transparent: true, opacity: 0.8,
+    color: new Color('#26384a'), metalness: 0.6, roughness: 0.03, transparent: true, opacity: 0.8, ior: 1.52, specularIntensity: 1,
     envMapIntensity: 2.4, reflectivity: 0.9, clearcoat: 1, clearcoatRoughness: 0.05, depthWrite: false,
   }),
   railGlass: new MeshPhysicalMaterial({
@@ -107,12 +107,17 @@ function createRealMaterials() {
   const wood = getWoodTexture();
   // concreto branco com leve textura (UV em metros: 1 ladrilho a cada 4 m)
   MAT.concrete.map = tex(getConcreteTexture(), 0.25, 0.25);
+  // microdetalhe: manchas de rugosidade e relevo sutil (superfícies menos "plásticas")
+  const rough = (r: number) => tex(getRoughnessTexture(), r, r);
+  MAT.concrete.roughnessMap = rough(0.3);
+  MAT.concrete.bumpMap = MAT.concrete.map;
+  MAT.concrete.bumpScale = 0.4;
   MAT.concrete.needsUpdate = true;
   return {
-    wood: new MeshStandardMaterial({ map: tex(wood, 1, 0.5), roughness: 0.62, color: new Color('#ffffff') }),
-    soffit: new MeshStandardMaterial({ map: tex(wood, 0.5, 1, Math.PI / 2), roughness: 0.6, color: new Color('#f2e2d2') }),
-    stone: new MeshStandardMaterial({ map: tex(getStoneTexture(), 0.5, 0.5), roughness: 0.55 }),
-    graphite: new MeshStandardMaterial({ color: new Color('#2a2d32'), roughness: 0.42, metalness: 0.55 }),
+    wood: new MeshStandardMaterial({ map: tex(wood, 1, 0.5), bumpMap: tex(wood, 1, 0.5), bumpScale: 1.2, roughnessMap: rough(0.6), roughness: 0.75, color: new Color('#ffffff') }),
+    soffit: new MeshStandardMaterial({ map: tex(wood, 0.5, 1, Math.PI / 2), bumpMap: tex(wood, 0.5, 1, Math.PI / 2), bumpScale: 0.8, roughness: 0.6, color: new Color('#f2e2d2') }),
+    stone: new MeshStandardMaterial({ map: tex(getStoneTexture(), 0.5, 0.5), bumpMap: tex(getStoneTexture(), 0.5, 0.5), bumpScale: 0.9, roughnessMap: rough(0.4), roughness: 0.7 }),
+    graphite: new MeshStandardMaterial({ color: new Color('#2a2d32'), roughness: 0.42, metalness: 0.55, roughnessMap: rough(0.5) }),
     plants: new MeshStandardMaterial({ color: new Color('#4d7240'), roughness: 0.85, flatShading: true }),
     ledWarm: new MeshBasicMaterial({ color: new Color('#ffcf8f'), toneMapped: false }),
     grass: (repeat: number) => new MeshStandardMaterial({ map: tex(getGrassTexture(), repeat, repeat), roughness: 1 }),
