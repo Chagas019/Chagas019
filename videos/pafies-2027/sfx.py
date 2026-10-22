@@ -29,7 +29,7 @@ kick = np.sin(2 * np.pi * (45 + 90 * np.exp(-kt * 30)) * kt) * np.exp(-kt * 9)
 hn = int(.06 * SR); hat = (rng.standard_normal(hn) - lowpass(rng.standard_normal(hn), 4)) * np.exp(-np.arange(hn) / SR * 70)
 b = 0.0; k = 0
 while b < DUR - .2:
-    if b > 0.6 and not (23.5 < b < 24.0):
+    if b > 0.6 and not (26.6 < b < 27.1):
         at(bed, b, kick * (.9 if k % 2 == 0 else .6))
         at(bed, b + beat / 2, hat * .25)
     b += beat; k += 1
@@ -52,7 +52,7 @@ def whoosh(dur=.7, amp=.5):
     x = lowpass(x, 6) - lowpass(x, 60)
     e = np.sin(np.linspace(0, np.pi, n)) ** 2
     return x * e * amp
-for c in [2.2, 7.4, 12.28, 18.85, 23.6]:
+for c in [3.2, 9.65, 14.55, 20.9, 26.7]:
     at(fx, c, whoosh(.55, .9))
 # impactos
 def impact(amp=1.0):
@@ -60,24 +60,25 @@ def impact(amp=1.0):
     boom = np.sin(2 * np.pi * (38 + 60 * np.exp(-tt * 12)) * tt) * np.exp(-tt * 3.5)
     crack = rng.standard_normal(n) * np.exp(-tt * 40) * .5
     return (boom + crack) * amp
-for c, a in [(9.3, .9), (17.45, 1.0), (24.05, 1.1), (2.43, .5)]:
+for c, a in [(11.92, .9), (19.75, 1.0), (27.1, 1.1), (3.45, .5)]:
     at(fx, c, impact(a))
 # ticks (dias da semana e contador)
 tn = int(.03 * SR); tick = np.sin(2 * np.pi * 2400 * np.arange(tn) / SR) * np.exp(-np.arange(tn) / SR * 160)
-for i in range(7): at(fx, 7.87 + i * 0.2, tick * .35)
-for i in range(9): at(fx, 15.75 + (i / 9) ** .8 * 1.6, tick * .3)
+for i in range(7): at(fx, 10.55 + i * 0.2, tick * .35)
+for i in range(9): at(fx, 18.25 + (i / 9) ** .8 * 1.5, tick * .3)
 # riser antes da assinatura
 rn = int(1.3 * SR); rt = np.arange(rn) / SR
 riser = np.sin(2 * np.pi * (300 + 900 * (rt / 1.3) ** 2) * rt) * (rt / 1.3) ** 2 * .12 + (lowpass(rng.standard_normal(rn), 3)) * (rt / 1.3) ** 3 * .25
-at(fx, 22.75, riser)
+at(fx, 25.8, riser)
 # brilho no logo
 sn = int(1.2 * SR); st = np.arange(sn) / SR
 shimmer = sum(np.sin(2 * np.pi * f * st) for f in [1760, 2217, 2637, 3520]) * np.exp(-st * 3) * .05
-at(fx, 24.1, shimmer)
+at(fx, 27.15, shimmer)
 
 # narração
 v, vsr = sf.read(os.path.join(D, "audio", "narracao.wav"))
 if v.ndim > 1: v = v.mean(axis=1)
+v = v / (np.max(np.abs(v)) + 1e-9) * .89
 v = np.interp(np.arange(int(len(v) * SR / vsr)) / SR, np.arange(len(v)) / vsr, v)
 voice = np.zeros(N); voice[: min(N, len(v))] = v[:N]
 # ducking: envelope da voz suavizado

@@ -299,7 +299,7 @@ extrude($('#s5a'),14,'#1f4fd8','#0b1f6e');
 extrude($('#s6b'),12,'#1f4fd8','#0b1f6e');
 
 /* ---------- linha do tempo (sincronizada com a narração) ---------- */
-const S={s1:[0,2.42],s2:[2.32,7.62],s3:[7.52,12.5],s4:[12.4,19.08],s5:[18.98,23.9],s6:[23.8,30.2]};
+const S={s1:[0,3.5],s2:[3.4,9.95],s3:[9.85,14.85],s4:[14.75,21.2],s5:[21.1,27.0],s6:[26.9,30.2]};
 const scenes=Object.fromEntries(Object.keys(S).map(k=>[k,$('#'+k)]));
 
 function sceneT(id,t){
@@ -315,7 +315,7 @@ function sceneT(id,t){
 function render(t){
   drawBG(t);
   // câmera: deriva suave + tremores de impacto
-  const [sx1,sy1]=shake(t,9.3,22),[sx2,sy2]=shake(t,17.45,26),[sx3,sy3]=shake(t,24.05,14),[sx4,sy4]=shake(t,19.05,16);
+  const [sx1,sy1]=shake(t,11.92,22),[sx2,sy2]=shake(t,19.75,26),[sx3,sy3]=shake(t,27.1,14),[sx4,sy4]=shake(t,21.15,16);
   $('#cam').style.transform=`translate(${sx1+sx2+sx3+sx4}px,${sy1+sy2+sy3+sy4}px) rotate(${Math.sin(t*.5)*.6}deg) scale(${1.02+Math.sin(t*.3)*.015})`;
 
   /* CENA 1 */
@@ -325,63 +325,63 @@ function render(t){
     set($('#s1logo'),{z:lerp(-2200,0,k),ry:lerp(-260,0,eo(P(l,.15,1.2))),rx:Math.sin(l*2)*6,s:1,o:P(l,.15,.4)});
     $('#s1logo').style.setProperty('--sh',`${lerp(150,-60,eio(P(l,.9,1.7)))}%`);
     for(const[id,d]of[['#s1r1',.9],['#s1r2',1.25]]){const q=P(l,d,d+1.1);set($(id),{s:lerp(.85,1.9,eo(q)),o:(1-q)*(q>0?1:0)})}
-    letters($('#s1a'),l,.55,{dur:.45,stagger:.06});
-    letters($('#s1b'),l,.95,{dur:.5,stagger:.03});
-    letters($('#s1c'),l,1.25,{dur:.5,stagger:.04});
-    set($('#s1c'),{s:1+.04*Math.sin(l*6)*P(l,1.6,1.8)});
+    letters($('#s1a'),l,.45,{dur:.45,stagger:.06});
+    letters($('#s1b'),l,1.2,{dur:.5,stagger:.03});
+    letters($('#s1c'),l,2.1,{dur:.5,stagger:.04});
+    set($('#s1c'),{s:1+.04*Math.sin(l*6)*P(l,2.5,2.7)});
   }
 
   /* CENA 2 */
   l=sceneT('s2',t);
   if(l!==null){
-    const outA=2.35;
+    const outA=3.2;
     const qa=ei(P(l,outA,outA+.4));
     set($('#s2A'),{y:-qa*400,o:1-qa,rx:-6+qa*-25});
     set($('#s2tag'),{y:(1-eo(P(l,.05,.45)))*40,o:eo(P(l,.05,.45))});
     $('#s2dot').style.opacity=.4+.6*Math.abs(Math.sin(l*7));
-    letters($('#s2a'),l,.12,{dur:.45,stagger:.035});
-    letters($('#s2b'),l,.48,{dur:.45,stagger:.035});
-    letters($('#s2c'),l,.85,{dur:.5,stagger:.05});
+    letters($('#s2a'),l,.2,{dur:.45,stagger:.035});
+    letters($('#s2b'),l,.55,{dur:.45,stagger:.035});
+    letters($('#s2c'),l,.9,{dur:.5,stagger:.05});
     set($('#s2c'),{s:1+.05*eo(P(l,.9,1.6)),rx:8});
     set($('#s2a'),{rx:8});set($('#s2b'),{rx:8});
     // B: 10ª gincana solidária pafies 2027
-    const b0=2.45, kb=eo(P(l,b0,b0+.7));
+    const b0=3.3, kb=eo(P(l,b0,b0+.7));
     $('#s2B').style.opacity=l>=b0?1:0;
     set($('#s2k'),{y:(1-kb)*30,o:kb});
     const kt=back(P(l,b0+.05,b0+.95),1.4);
     set($('#s2ten'),{z:lerp(-1400,0,kt),ry:lerp(110,-8+Math.sin(l*1.2)*8,eo(P(l,b0,b0+1.1))),rx:6,o:P(l,b0,b0+.25)});
     letters($('#s2g1'),l,b0+.7,{dur:.45,stagger:.035});
     letters($('#s2g2'),l,b0+1.05,{dur:.45,stagger:.035});
-    const kc=back(P(l,b0+1.75,b0+2.2),2);
-    set($('#s2chip'),{s:kc,o:P(l,b0+1.75,b0+1.9)});
+    const kc=back(P(l,b0+2.15,b0+2.6),2);
+    set($('#s2chip'),{s:kc,o:P(l,b0+2.15,b0+2.3)});
   }
 
   /* CENA 3 */
   l=sceneT('s3',t);
   if(l!==null){
-    const outA=2.42, qa=ei(P(l,outA,outA+.35));
+    const outA=2.8, qa=ei(P(l,outA,outA+.35));
     set($('#s3A'),{y:-qa*300,s:1-qa*.2,o:1-qa});
-    letters($('#s3t1'),l,.08,{dur:.4,stagger:.025});
-    letters($('#s3t2'),l,.3,{dur:.4,stagger:.025});
+    letters($('#s3t1'),l,.4,{dur:.4,stagger:.025});
+    letters($('#s3t2'),l,.62,{dur:.4,stagger:.025});
     // dias: destaque percorre até DOMINGO
     set($('#s3days'),{y:(1-eo(P(l,.1,.5)))*60,o:eo(P(l,.1,.5))});
-    const prog=P(l,.35,1.55)*6;
+    const prog=P(l,.7,1.9)*6;
     dayEls.forEach((d,i)=>{
       const act=Math.max(0,1-Math.abs(prog-i)*1.4), last=i===6&&prog>=5.6;
       d.style.background=last?'linear-gradient(135deg,#5aa8ff,#1f5cff)':`rgba(${8+act*30},${24+act*80},${84+act*170},.6)`;
       d.style.color=last||act>.5?'#fff':'#9dbcf0';
       d.style.borderColor=last?'#fff':`rgba(140,196,255,${.35+act*.6})`;
-      d.style.transform=`translateY(${-act*18}px) scale(${last?1+.12*back(P(l,1.5,1.85)):1+act*.08})`;
+      d.style.transform=`translateY(${-act*18}px) scale(${last?1+.12*back(P(l,1.85,2.2)):1+act*.08})`;
       d.style.boxShadow=last?'0 0 50px rgba(47,123,255,.9)':'none';
       d.style.opacity=i<6&&prog>i+.8?.45:1;
     });
-    const kc=eo(P(l,1.55,2.15));
-    set($('#s3card'),{rx:lerp(-95,8,kc)+Math.sin(l*1.5)*2,ry:Math.sin(l*.9)*6,z:lerp(-300,0,kc),o:P(l,1.55,1.7)});
+    const kc=eo(P(l,1.9,2.5));
+    set($('#s3card'),{rx:lerp(-95,8,kc)+Math.sin(l*1.5)*2,ry:Math.sin(l*.9)*6,z:lerp(-300,0,kc),o:P(l,1.9,2.05)});
     $('#s3card').style.transformOrigin='50% 0%';
-    const ks=P(l,1.72,1.88);
+    const ks=P(l,2.07,2.23);
     set($('#s3stamp'),{s:lerp(3.2,1,ei(ks)),rz:-12,o:ks>0?Math.min(1,ks*3):0});
     // B: última hora
-    const b0=2.48;
+    const b0=2.85;
     $('#s3B').style.opacity=l>=b0?1:0;
     const kk=back(P(l,b0,b0+.6),1.5);
     set($('#clock'),{s:kk,rz:(1-kk)*-90,o:P(l,b0,b0+.15)});
@@ -398,43 +398,43 @@ function render(t){
   /* CENA 4 */
   l=sceneT('s4',t);
   if(l!==null){
-    const outA=3.1, qa=ei(P(l,outA,outA+.4));
+    const outA=3.3, qa=ei(P(l,outA,outA+.4));
     set($('#s4A'),{x:-qa*200,o:1-qa,s:1-qa*.15});
-    letters($('#s4h1'),l,.1,{dur:.45,stagger:.025,out:1.75,outDur:.3});
-    letters($('#s4h2'),l,2.0,{dur:.45,stagger:.025});
-    const k1=eo(P(l,.35,1.1));
+    letters($('#s4h1'),l,.3,{dur:.45,stagger:.025,out:1.65,outDur:.3});
+    letters($('#s4h2'),l,1.8,{dur:.45,stagger:.025});
+    const k1=eo(P(l,.45,1.2));
     set($('#s4c1'),{x:lerp(-700,0,k1),ry:lerp(-70,14,k1)+Math.sin(l*1.2)*3,rz:lerp(-20,-6,k1),z:lerp(-200,0,k1),o:P(l,.35,.5)});
-    $('#chk').setAttribute('stroke-dashoffset',160*(1-eo(P(l,.95,1.35))));
-    const k2=eo(P(l,1.95,2.7));
-    set($('#s4c2'),{x:lerp(700,0,k2),ry:lerp(70,-14,k2)+Math.sin(l*1.2+1)*3,rz:lerp(20,7,k2),z:lerp(-200,60,k2),o:P(l,1.95,2.1)});
+    $('#chk').setAttribute('stroke-dashoffset',160*(1-eo(P(l,1.1,1.5))));
+    const k2=eo(P(l,1.75,2.5));
+    set($('#s4c2'),{x:lerp(700,0,k2),ry:lerp(70,-14,k2)+Math.sin(l*1.2+1)*3,rz:lerp(20,7,k2),z:lerp(-200,60,k2),o:P(l,1.75,1.9)});
     // B: contagem até a 10ª edição
-    const b0=3.2;
+    const b0=3.4;
     $('#s4B').style.opacity=l>=b0?1:0;
     set($('#s4k'),{y:(1-eo(P(l,b0,b0+.4)))*30,o:eo(P(l,b0,b0+.4))});
-    const cnt=P(l,b0+.15,b0+1.8), n=Math.min(10,1+Math.floor(eio(cnt)*9.999));
+    const cnt=P(l,b0+.1,b0+1.6), n=Math.min(10,1+Math.floor(eio(cnt)*9.999));
     $('#s4numTxt').textContent=(n===10&&cnt>=1)?'10ª':String(n).padStart(2,'0');
-    const hit=P(l,b0+1.8,b0+2.25);
+    const hit=P(l,b0+1.6,b0+2.05);
     set($('#s4num'),{s:(cnt<1?.9+.04*Math.sin(l*40):1+.18*(1-eo(hit))*(hit>0?1:0)),ry:Math.sin(l*1.1)*8,o:P(l,b0,b0+.2)});
     edDots.forEach((d,i)=>{const on=eio(cnt)*10>i+.5;d.setAttribute('fill',on?'#3d8bff':'rgba(140,196,255,.18)');d.setAttribute('stroke',on?'#fff':'rgba(140,196,255,.6)');d.setAttribute('r',on?30:24)});
     set($('#dots'),{rz:l*12,s:eo(P(l,b0,b0+.6))*(1+.06*(1-eo(hit))*(hit>0?1:0)),o:P(l,b0,b0+.3)});
-    letters($('#s4ed'),l,b0+1.9,{dur:.45,stagger:.05});
+    letters($('#s4ed'),l,b0+1.7,{dur:.45,stagger:.05});
   }
 
   /* CENA 5 */
   l=sceneT('s5',t);
   if(l!==null){
     // linhas de velocidade
-    const sl=1-P(l,1.7,2.1);
+    const sl=1-P(l,2.3,2.7);
     speeds.forEach(s=>{const sp=+s.dataset.sp, ph=+s.dataset.ph;const x=((l*sp*900+ph*2200)%2200)-600;s.style.transform=`translateX(${x}px)`;s.style.opacity=sl*.8});
-    const qa=ei(P(l,1.8,2.1));
+    const qa=ei(P(l,2.4,2.7));
     set($('#s5A'),{x:qa*500,o:1-qa,blur:qa*10});
-    const kc=eo(P(l,.05,.4));
-    letters($('#s5a'),l,.05,{dur:.35,stagger:.03,from:-120});
+    const kc=eo(P(l,.2,.55));
+    letters($('#s5a'),l,.2,{dur:.35,stagger:.03,from:-120});
     set($('#s5a'),{x:lerp(-400,0,kc)+Math.sin(l*30)*3*(1-P(l,.4,1.2))});
-    letters($('#s5b'),l,.6,{dur:.4,stagger:.025});
-    letters($('#s5c'),l,.85,{dur:.4,stagger:.04});
+    letters($('#s5b'),l,.75,{dur:.4,stagger:.025});
+    letters($('#s5c'),l,1.0,{dur:.4,stagger:.04});
     // B: link na bio
-    const b0=1.95, b1=3.45;
+    const b0=2.55, b1=4.3;
     const kb=back(P(l,b0,b0+.55),1.8), ob=ei(P(l,b1,b1+.3));
     $('#s5B').style.opacity=(l>=b0?1:0)*(1-ob);
     set($('#s5btn'),{s:kb*(1-.06*Math.max(0,Math.sin((l-b0-.8)*6))*P(l,b0+.8,b0+.9)),rx:12+Math.sin(l*2)*4,ry:Math.sin(l*1.4)*8});
@@ -442,7 +442,7 @@ function render(t){
     set($('#s5arrow'),{y:-Math.abs(Math.sin((l-b0)*5))*30,o:P(l,b0+.3,b0+.5)});
     for(const[id,d]of[['#s5r1',b0+.75],['#s5r2',b0+1.05]]){const q=P(l,d,d+.9);const el=$(id);el.style.left='390px';el.style.top='675px';set(el,{s:lerp(.6,2.6,eo(q)),o:(1-q)*(q>0?1:0)})}
     // C: esperamos vocês
-    const c0=3.55;
+    const c0=4.4;
     $('#s5C').style.opacity=l>=c0?1:0;
     letters($('#s5e1'),l,c0,{dur:.4,stagger:.03});
     letters($('#s5e2'),l,c0+.3,{dur:.45,stagger:.05});
@@ -467,7 +467,7 @@ function render(t){
   }
 
   // flashes de luz nas viradas e impactos
-  const fl=[[2.36,.5],[7.55,.45],[12.43,.45],[19.0,.5],[23.85,.7],[9.3,.35],[17.45,.4]];
+  const fl=[[3.45,.5],[9.9,.45],[14.8,.45],[21.15,.5],[26.95,.7],[11.92,.35],[19.75,.4]];
   let f=0;for(const[a,amp]of fl){const q=P(t,a-.06,a+.32);if(q>0&&q<1)f=Math.max(f,amp*(q<.2?q/.2:1-(q-.2)/.8))}
   $('#flash').style.opacity=f;
   gr.putImageData(tiles[Math.floor(t*30)%tiles.length],0,0);
@@ -475,7 +475,7 @@ function render(t){
 window.render=render;
 window.ready=document.fonts.ready.then(()=>new Promise(r=>{const i=new Image();i.onload=r;i.src='assets/logo-pafies.png'}));
 // pré-visualização no navegador: toca em tempo real com ?play
-if(location.search.includes('play')){const a=new Audio('audio/narracao.wav'),t0=performance.now();a.play().catch(()=>{});(function loop(){render(((performance.now()-t0)/1000)%30);requestAnimationFrame(loop)})()}
+if(location.search.includes('play')){const a=new Audio('audio/narracao.wav'),t0=performance.now();a.play().catch(()=>{});(function loop(){render(((performance.now()-t0)/1000)%30.2);requestAnimationFrame(loop)})()}
 else render(+(new URLSearchParams(location.search).get('t')||0));
 </script>
 </body>
