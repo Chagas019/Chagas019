@@ -1,0 +1,10 @@
+rules_version = '2';
+// Regras do banco (Firestore) do login da Comunica+Fé.
+// Cada pessoa só lê e grava o próprio progresso, em usuarios/{uid}. Nada mais fica aberto.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /usuarios/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}
