@@ -14,7 +14,7 @@ A senha fica guardada pelo Firebase, nunca no site.
 
 ## 1. Criar o projeto (5 minutos)
 
-1. Abra <https://console.firebase.google.com> com a conta Google da paróquia e toque em **Criar um projeto**
+1. Abra <https://console.firebase.google.com> com a conta Google da equipe e toque em **Criar um projeto**
    (nome sugerido: `comunica-fe`). O Google Analytics pode ficar desligado.
 2. Na página do projeto, toque no ícone **`</>` (Web)** para adicionar um app da Web. Nome: `site`.
    Não marque o Firebase Hosting.
@@ -42,7 +42,7 @@ Em **Authentication → Configurações → Domínios autorizados**, adicione:
 
 - `comunica-fe.vercel.app`
 
-(e qualquer domínio próprio que a paróquia venha a usar).
+(e qualquer domínio próprio que a comunidade venha a usar).
 
 ## 4. Criar o banco do progresso
 

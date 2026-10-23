@@ -12,11 +12,12 @@ const TIPOS = {
   enquete: "Perguntas e enquetes", calendario: "Calendário editorial",
 };
 const TAMANHOS = { curto: "curto e direto", medio: "de tamanho médio", longo: "mais completo" };
-const SISTEMA = `Você ajuda a Pastoral da Comunicação (PASCOM) de uma paróquia católica no Brasil a criar conteúdo para redes sociais. Escreva em português do Brasil, fiel à doutrina da Igreja Católica.
+const SISTEMA = `Você ajuda a equipe de comunicação de uma comunidade católica no Brasil a criar conteúdo para redes sociais. Escreva em português do Brasil, fiel à doutrina da Igreja Católica.
 Regras:
 - Nunca invente citações da Bíblia, de documentos da Igreja, do Papa ou de santos. Só cite um texto se ele estiver nas informações do pedido; se uma citação ajudar, escreva [inserir citação conferida].
 - Não invente datas, horários, nomes, locais ou preços: use só o que está no pedido e escreva [a confirmar] onde faltar.
 - Nada de sensacionalismo, promessas de milagre ou ataques a pessoas e a outras religiões.
+- Não cite emissoras, conferências de bispos, movimentos ou outras instituições, nem as apresente como parceiras, responsáveis ou apoiadoras do conteúdo, a não ser que o pedido traga esse nome.
 - Fotos e vídeos de crianças só com autorização dos responsáveis: lembre disso quando sugerir imagens.
 - Entregue só o conteúdo pronto, organizado e fácil de copiar, sem explicar o que você fez.`;
 
@@ -31,7 +32,7 @@ export function montarPedido(b) {
 Objetivo: ${curto(b.objetivo, 80) || "Evangelizar"}.
 Público: ${curto(b.publico, 80) || "Toda a comunidade"}.
 Tom: ${curto(b.tom, 30) || "Acolhedor"}.
-Tema e informações da paróquia: ${tema}${lit}`;
+Tema e informações da comunidade: ${tema}${lit}`;
 }
 
 /* login: confere o token do Firebase (assinatura do Google, projeto e validade) e se a pessoa é da equipe */
@@ -90,7 +91,7 @@ export default async function handler(req, res) {
 
   const corpo = typeof req.body === "string" ? (() => { try { return JSON.parse(req.body); } catch { return {}; } })() : req.body || {};
   const pedido = montarPedido(corpo);
-  if (!pedido) return res.status(400).json({ erro: "Escreva o tema e as informações da paróquia." });
+  if (!pedido) return res.status(400).json({ erro: "Escreva o tema e as informações da comunidade." });
 
   try {
     const r = await fetch("https://api.anthropic.com/v1/messages", {

@@ -31,13 +31,11 @@ function mockClaude({ can, id = "u_teste", rejeitaEscrita = false, sample = null
   })();`;
 }
 
-async function pagina(browser, { largura = 1280, mock = null, hash = "", liturgia = null, conteudo = null } = {}) {
+async function pagina(browser, { largura = 1280, mock = null, hash = "", conteudo = null } = {}) {
   const ctx = await browser.newContext({ viewport: { width: largura, height: 900 }, acceptDownloads: true });
   // a IA do Criador de conteúdo também é simulada: por padrão, aparece como não configurada
   await ctx.route(/\/api\/conteudo/, r => conteudo ? conteudo(r) : r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ configurado: false, exigeLogin: true, falta: ["chave", "login"] }) }));
   if (mock) await ctx.addInitScript(mock);
-  // a liturgia automática vem da internet; nos testes, a resposta é simulada (ou fica indisponível)
-  await ctx.route(/\/api\/liturgia/, r => liturgia ? r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(liturgia) }) : r.fulfill({ status: 200, contentType: "application/json", body: "{}" }));
   const p = await ctx.newPage();
   p.erros = [];
   p.on("pageerror", e => p.erros.push(e.message));
@@ -56,7 +54,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
   {
     const p = await pagina(browser);
     check((await p.$$("h1")).length === 1, "um único h1");
-    for (const [aba, re] of [["liturgia", /Liturgia de/], ["agenda", /Agenda paroquial/], ["frases", /Frases da equipe/], ["santos", /Carlo Acutis/]]) {
+    for (const [aba, re] of [["liturgia", /Liturgia de/], ["agenda", /Agenda da comunidade/], ["frases", /Frases da equipe/], ["santos", /Carlo Acutis/]]) {
       await p.click(`[data-tab=${aba}]`);
       check(await p.isVisible(`[data-painel=${aba}]`) && re.test(await p.textContent(`[data-painel=${aba}]`)), `aba "${aba}" mostra o assunto`);
       check(await p.getAttribute(`[data-tab=${aba}]`, "aria-selected") === "true" && await p.isHidden("[data-painel=inicio]"), `aba "${aba}" fica marcada e esconde as outras`);
@@ -303,7 +301,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     check(topo >= 80 && topo < 200, "aba Formação mostra a formação logo abaixo do cabeçalho", String(topo));
     check(await p.getAttribute("[data-tab=formacao]", "aria-selected") === "true" && await p.isHidden("#abertura"), "aba Formação fica marcada e esconde o início");
     check((await p.$$("#modules .lesson[data-licao]")).length >= 20, "formação tem pelo menos 20 páginas", String((await p.$$("#modules .lesson[data-licao]")).length));
-    check(/0 de 37/.test(await p.textContent("#form-count")), "progresso começa em 0 de 37");
+    check(/0 de 29/.test(await p.textContent("#form-count")), "progresso começa em 0 de 29");
     await p.click("#form-go");
     check(await p.evaluate(() => document.getElementById("leitor").open) && /Por que um Concílio/.test(await p.textContent("#lt-body")), "Começar abre a primeira página");
     check(await p.isDisabled("#lt-prev"), "na primeira página, Anterior fica desativado");
@@ -315,9 +313,9 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     await p.click("#lt-read"); check(await p.getAttribute("#lt-read", "aria-pressed") === "false", "dá para desmarcar como lida");
     await p.click("#lt-read");
     await p.click("#lt-close"); await p.waitForTimeout(100);
-    check(/1 de 37/.test(await p.textContent("#form-count")) && /Continuar/.test(await p.textContent("#form-go")), "progresso e botão Continuar atualizam");
+    check(/1 de 29/.test(await p.textContent("#form-count")) && /Continuar/.test(await p.textContent("#form-go")), "progresso e botão Continuar atualizam");
     await p.reload(); await p.waitForTimeout(500);
-    check(/1 de 37/.test(await p.textContent("#form-count")), "progresso continua após recarregar");
+    check(/1 de 29/.test(await p.textContent("#form-count")), "progresso continua após recarregar");
     // teste do módulo
     await p.click('[data-quiz="0"]');
     await p.click("#quiz-form button[type=submit]");
@@ -328,10 +326,10 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     await p.click("#lt-close"); await p.waitForTimeout(100);
     check(/teste: 2 de 3/.test(await p.textContent('[data-mod="m1"] .mod-p')), "nota do teste aparece no módulo");
     // história local (modo local permite escrever)
-    await p.evaluate(() => openLicao(LICOES.findIndex(l => /Como começou a Pastoral da Comunicação/.test(l.titulo))));
-    check(!!(await p.$("#local-box")), "página da história tem o espaço 'E na nossa paróquia?'");
-    await p.click("#hist-edit"); await p.fill("#hist-txt", "A Comunica+Fé da nossa paróquia começou com dois jovens e um celular."); await p.click("#hist-save"); await p.waitForTimeout(200);
-    check(/dois jovens/.test(await p.textContent("#local-box")), "equipe salva a história da paróquia");
+    await p.evaluate(() => openLicao(LICOES.findIndex(l => /Como nasceram as equipes de comunicação/.test(l.titulo))));
+    check(!!(await p.$("#local-box")), "página da história tem o espaço 'E na nossa comunidade?'");
+    await p.click("#hist-edit"); await p.fill("#hist-txt", "A Comunica+Fé da nossa comunidade começou com dois jovens e um celular."); await p.click("#hist-save"); await p.waitForTimeout(200);
+    check(/dois jovens/.test(await p.textContent("#local-box")), "equipe salva a história da comunidade");
     await p.click("#lt-close");
     // linha do tempo
     await p.click("[data-tab=linha]");
@@ -407,7 +405,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     check(p.erros.length === 0, "sem erros no console", p.erros.join(" | "));
     await p.context().close();
     for (const [w, h] of [[390, 844], [820, 1180]]) {
-      const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: true, isMobile: w < 700 }); await ctx.route(/\/api\/liturgia/, r => r.fulfill({ status: 200, contentType: "application/json", body: "{}" }));
+      const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: true, isMobile: w < 700 });
       const m = await ctx.newPage(); await m.goto(URL + "#frase"); await m.waitForTimeout(500);
       const r = await m.evaluate(() => { const d = document.getElementById("fw"); const btns = [...d.querySelectorAll(".fw-actions button")].map(b => b.getBoundingClientRect());
         return { open: d.open, cabe: d.scrollWidth <= innerWidth, botoes: btns.every(b => b.bottom <= innerHeight && b.height >= 44) }; });
@@ -576,24 +574,38 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     await p.context().close();
   }
 
-  console.log("15. Liturgia automática");
+  console.log("15. Trocar o dia na escala");
   {
-    const d = new Date(), hoje = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-    const auto = { data: hoje, titulo: "Quinta-feira", primeira: "Ef 3,14-21", salmo: "Sl 32(33),1-2.4-5 (R. 5b)", refrao: "Transborda em toda a terra a bondade do Senhor!", segunda: "", evangelho: "Lc 12,49-53", fonte: "cancaonova", url: "https://liturgia.cancaonova.com/pb/liturgia/exemplo/" };
-    const p = await pagina(browser, { liturgia: auto }); await p.waitForTimeout(300);
-    const card = await p.textContent("#litu-body");
-    check(/Ef 3,14-21/.test(card) && /Lc 12,49-53/.test(card) && /Atualizada sozinha/.test(card), "card mostra a liturgia do dia sem ninguém publicar");
-    check(/Transborda em toda a terra/.test(await p.textContent("#fr-box")), "refrão do salmo vira a frase do dia");
-    await p.click("[data-tab=liturgia]");
-    check(/Ef 3,14-21/.test(await p.textContent("#corpo-liturgia")) && !!(await p.$('#corpo-liturgia a[href="https://liturgia.cancaonova.com/pb/liturgia/exemplo/"]')), "aba Liturgia mostra as leituras e o link para o texto completo");
-    await p.click("[data-tab=inicio]");
-    await p.click("#litu-add"); await p.fill("#l-1", "Gl 1,1-5"); await p.click("#lit-form button[type=submit]"); await p.waitForTimeout(200);
-    check(/Gl 1,1-5/.test(await p.textContent("#litu-body")) && !/Atualizada sozinha/.test(await p.textContent("#litu-body")), "liturgia publicada pela equipe tem prioridade sobre a automática");
-    check(!p.erros.length, "liturgia automática sem erros", p.erros.join(" | "));
+    const p = await pagina(browser);
+    const d = new Date(), iso = x => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`;
+    const dia1 = iso(new Date(d.getFullYear(), d.getMonth(), d.getDate() + 3)), dia2 = iso(new Date(d.getFullYear(), d.getMonth(), d.getDate() + 10));
+    await p.click("#agendar"); await p.fill("#s-d", dia1); await p.fill("#s-h", "10:00"); await p.fill("#s-l", "Igreja matriz"); await p.fill("#s-foto", "Ana"); await p.fill("#s-video", "Bruno");
+    await p.click("#esc-form button[type=submit]"); await p.waitForTimeout(300);
+    check(!!(await p.$('#modal [data-trocar$="/foto"]')), "função preenchida tem o botão Trocar dia");
+    await p.click('#modal [data-trocar$="/foto"]');
+    check(/Trocar o dia/.test(await p.textContent("#modal h2")) && /Ana/.test(await p.textContent("#modal-body")), "Trocar dia abre o formulário com o nome da pessoa");
+    await p.click("#tr-form button[type=submit]");
+    check(/diferente/.test(await p.textContent("#tr-note")), "o mesmo dia e horário é recusado");
+    await p.fill("#tr-d", dia2); await p.click("#tr-form button[type=submit]"); await p.waitForTimeout(300);
+    const lista = await p.evaluate(() => escalas.map(e => ({ data: e.data, hora: e.hora, local: e.local, funcoes: e.funcoes })));
+    const nova = lista.find(e => e.data === dia2), velha = lista.find(e => e.data === dia1);
+    check(nova && nova.funcoes.foto === "Ana" && nova.hora === "10:00" && nova.local === "Igreja matriz", "nova escala no dia escolhido com a pessoa na mesma função", JSON.stringify(lista));
+    check(velha && !velha.funcoes.foto && velha.funcoes.video === "Bruno", "a função fica vaga na escala de antes e o resto não muda");
+    // Bruno também troca para o mesmo dia: entra na escala que já existe, sem criar outra
+    await fechar(p); await p.evaluate(() => openTrocaDia(escalas.find(e => e.funcoes.video).id, "video"));
+    await p.fill("#tr-d", dia2); await p.click("#tr-form button[type=submit]"); await p.waitForTimeout(300);
+    const l2 = await p.evaluate(() => escalas.map(e => ({ data: e.data, funcoes: e.funcoes })));
+    check(l2.filter(e => e.data === dia2).length === 1 && l2.find(e => e.data === dia2).funcoes.video === "Bruno", "trocar para um dia que já tem escala usa essa escala");
+    // função ocupada no destino é recusada
+    await fechar(p); await p.click("#agendar"); await p.fill("#s-d", dia1); await p.fill("#s-h", "10:00"); await p.fill("#s-foto", "Carla"); await p.click("#esc-form button[type=submit]"); await p.waitForTimeout(300);
+    await p.click('#modal [data-trocar$="/foto"]'); await p.fill("#tr-d", dia2); await p.click("#tr-form button[type=submit]");
+    check(/Ana/.test(await p.textContent("#tr-note")), "não troca para uma função que já tem alguém");
+    // pela aba Equipe, nos compromissos da pessoa
+    await fechar(p); await p.evaluate(() => data.set("membros", "m1", { nome: "Carla", funcoes: ["foto"], ativo: true })); await p.waitForTimeout(100);
+    await p.click("[data-tab=equipe]"); await p.click('[data-eq="m1"]');
+    check(!!(await p.$('#corpo-equipe [data-trocar]')), "compromissos da pessoa na aba Equipe têm Trocar dia");
+    check(!p.erros.length, "trocar o dia sem erros", p.erros.join(" | "));
     await p.context().close();
-    const velha = await pagina(browser, { liturgia: { ...auto, data: "2020-01-01" } }); await velha.waitForTimeout(300);
-    check(!/Ef 3,14-21/.test(await velha.textContent("#litu-body")), "liturgia de outro dia é ignorada");
-    await velha.context().close();
   }
 
   console.log("16. Painel inicial, agenda e avisos (modo local)");
@@ -602,7 +614,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     const d = new Date(), iso = x => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`;
     const amanha = iso(new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1));
     check(/Comunicação/.test(await p.textContent("#show-h")) && /evangeliza/.test(await p.textContent("#show-h")), "abertura com o título “Comunicação que evangeliza.”");
-    check(/Liturgia, agenda, formação e comunicação paroquial em um só lugar/.test(await p.textContent(".bh-sub")), "abertura com a nova descrição");
+    check(/Liturgia, agenda, formação e comunicação da comunidade em um só lugar/.test(await p.textContent(".bh-sub")), "abertura com a nova descrição");
     check(/Acessar painel/.test(await p.textContent(".bh-cta")) && /Ver agenda/.test(await p.textContent(".bh-cta")), "abertura com os botões Acessar painel e Ver agenda");
     await p.click('.bh [data-ir="painel"]'); await p.waitForFunction(() => Math.abs(document.getElementById("painel").getBoundingClientRect().top) < 200, null, { timeout: 3000 }).catch(() => {});
     check(await p.evaluate(() => Math.abs(document.getElementById("painel").getBoundingClientRect().top) < 200), "Acessar painel leva ao painel");
@@ -615,11 +627,11 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     check(/Nenhum evento marcado/.test(await p.textContent("#prox")) && /Nenhum aviso/.test(await p.textContent("#avisos")), "sem dados, eventos e avisos mostram estado vazio");
     // evento novo pela aba Agenda
     await p.click("[data-tab=agenda]"); await p.click('#corpo-agenda [data-act="ev-add"]');
-    await p.fill("#e-t", "Retiro dos jovens"); await p.fill("#e-d", amanha); await p.fill("#e-h", "19:30"); await p.fill("#e-l", "Salão paroquial");
+    await p.fill("#e-t", "Retiro dos jovens"); await p.fill("#e-d", amanha); await p.fill("#e-h", "19:30"); await p.fill("#e-l", "Salão da comunidade");
     await p.click('#ev-form label:has(input[value="retiro"])'); await p.click("#ev-form button[type=submit]"); await p.waitForTimeout(200);
     check(!(await aberto(p)) && /Retiro dos jovens/.test(await p.textContent("#corpo-agenda")) && /Retiro/.test(await p.textContent("#corpo-agenda .evi .ds-chip")), "evento publicado aparece na agenda com a categoria");
     await p.click("[data-tab=inicio]");
-    check(/Retiro dos jovens/.test(await p.textContent("#prox")) && /19:30/.test(await p.textContent("#prox")) && /Salão paroquial/.test(await p.textContent("#prox")), "painel mostra o próximo evento com data, hora e local");
+    check(/Retiro dos jovens/.test(await p.textContent("#prox")) && /19:30/.test(await p.textContent("#prox")) && /Salão da comunidade/.test(await p.textContent("#prox")), "painel mostra o próximo evento com data, hora e local");
     await p.click('#prox [data-evento]');
     check(await aberto(p) && /Adicionar à minha agenda/.test(await p.textContent("#modal-body")), "Detalhes abre o evento");
     const [dl] = await Promise.all([p.waitForEvent("download", { timeout: 8000 }).catch(() => null), p.click("#ev-ics")]);
@@ -755,8 +767,8 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     await p.click("#avatar"); await p.fill("#c-email", "rita@exemplo.com"); await p.fill("#c-senha", "fe2026!"); await p.click("#conta-form button[type=submit]"); await p.waitForTimeout(300); await fechar(p);
     await p.click("[data-tab=agenda]");
     check(!!(await p.$('#corpo-agenda [data-act="ev-add"]')) && /pode publicar na agenda/.test(await p.textContent("#corpo-agenda")), "integrante da equipe pode publicar na agenda");
-    await p.click('#corpo-agenda [data-act="ev-add"]'); await p.fill("#e-t", "Reunião da PASCOM"); await p.click("#ev-form button[type=submit]"); await p.waitForTimeout(300);
-    check(await p.evaluate(() => Object.entries(window.__fbDocs).some(([k, v]) => k.startsWith("agenda/") && v.titulo === "Reunião da PASCOM")), "evento fica gravado no Firestore");
+    await p.click('#corpo-agenda [data-act="ev-add"]'); await p.fill("#e-t", "Reunião da equipe de comunicação"); await p.click("#ev-form button[type=submit]"); await p.waitForTimeout(300);
+    check(await p.evaluate(() => Object.entries(window.__fbDocs).some(([k, v]) => k.startsWith("agenda/") && v.titulo === "Reunião da equipe de comunicação")), "evento fica gravado no Firestore");
     await p.click("[data-tab=inicio]"); check(await p.isHidden("#aviso-add"), "integrante comum não publica avisos");
     await p.click("#avatar"); await p.click("#conta-sair"); await p.waitForTimeout(100);
     await p.evaluate(() => { window.__fbDocs["equipe/u_rita@exemplo.com"] = { papel: "coordenacao" }; });
@@ -778,7 +790,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
       ["tablet 768", 768, 1024, 1], ["tablet 820", 820, 1180, 1], ["tablet deitado", 1024, 768, 1], ["tablet 1180", 1180, 820, 1],
       ["notebook 1280", 1280, 800, 0], ["notebook 1366", 1366, 768, 0], ["notebook 1440", 1440, 900, 0], ["monitor 1920", 1920, 1080, 0]];
     for (const [nome, w, h, toque] of TELAS) {
-      const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: !!toque, isMobile: !!toque && w < 700 }); await ctx.route(/\/api\/liturgia/, r => r.fulfill({ status: 200, contentType: "application/json", body: "{}" }));
+      const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: !!toque, isMobile: !!toque && w < 700 });
       const p = await ctx.newPage(); const erros = []; p.on("pageerror", e => erros.push(e.message));
       await p.goto(URL); await p.waitForTimeout(500);
       const r = await p.evaluate(() => {

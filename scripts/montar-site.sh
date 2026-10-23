@@ -29,7 +29,7 @@ img_url = (site + IMG) if site else IMG
 icone = ("data:image/svg+xml," + "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23c8102e'/%3E"
          "%3Cpath d='M32 14v36M22 26h20' stroke='white' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E")
 
-org = {"@type": "Organization", "name": "Comunica+Fé", "alternateName": "Pastoral da Comunicação",
+org = {"@type": "Organization", "name": "Comunica+Fé",
        "description": DESC, "logo": img_url}
 web = {"@type": "WebSite", "name": "Comunica+Fé", "description": DESC, "inLanguage": "pt-BR"}
 if site:
@@ -54,7 +54,7 @@ meta = [
     f'<meta property="og:image" content="{img_url}">',
     '<meta property="og:image:width" content="1200">',
     '<meta property="og:image:height" content="630">',
-    '<meta property="og:image:alt" content="Comunica+Fé, Pastoral da Comunicação: liturgia do dia, agenda e frase do dia">',
+    '<meta property="og:image:alt" content="Comunica+Fé: comunicação que evangeliza. Liturgia, agenda, escala, formação e criação de conteúdo católico">',
     '<meta name="twitter:card" content="summary_large_image">',
     f'<meta name="twitter:title" content="{TITULO}">',
     f'<meta name="twitter:description" content="{DESC}">',
