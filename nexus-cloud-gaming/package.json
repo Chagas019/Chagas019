@@ -1,0 +1,16 @@
+{
+  "name": "nexus-cloud-gaming",
+  "private": true,
+  "version": "0.2.0",
+  "description": "NEXUS CLOUD GAMING — Seu universo gamer. Em qualquer tela.",
+  "workspaces": ["packages/*", "apps/*"],
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "npm run dev -w @nexus/web",
+    "build": "npm run build -w @nexus/web",
+    "start": "npm run start -w @nexus/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:e2e": "npm run test:e2e -w @nexus/web"
+  }
+}

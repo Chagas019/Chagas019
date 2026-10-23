@@ -1,0 +1,49 @@
+name: NEXUS — testes
+
+# Roda só quando o subprojeto nexus-cloud-gaming muda; não afeta os outros sites do repositório.
+on:
+  push:
+    paths: ['nexus-cloud-gaming/**', '.github/workflows/nexus-ci.yml']
+  pull_request:
+    paths: ['nexus-cloud-gaming/**', '.github/workflows/nexus-ci.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: nexus-cloud-gaming
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: nexus-cloud-gaming/package-lock.json
+      - run: npm ci
+      - name: Tipos
+        run: npm run typecheck
+      - name: Testes de domínio
+        run: npm test
+      - name: Build de produção
+        run: npm run build
+      - name: Navegadores do Playwright
+        run: npx playwright install --with-deps chromium webkit
+        working-directory: nexus-cloud-gaming/apps/web
+      - name: Testes E2E (Chromium desktop/celular e WebKit/iPhone)
+        run: npx playwright test
+        working-directory: nexus-cloud-gaming/apps/web
+        env:
+          PW_WEBKIT: '1'
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: nexus-cloud-gaming/apps/web/test-results
+          retention-days: 7
