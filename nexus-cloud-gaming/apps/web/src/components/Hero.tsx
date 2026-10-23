@@ -9,7 +9,7 @@ import { GameCover } from './GameCover';
  * Tudo é transform/opacity, para manter 60 fps em celulares modestos.
  */
 export function Hero() {
-  const stack = ['xonotic', 'supertuxkart', '0ad'].map((s) => GAMES.find((g) => g.slug === s)!) as Game[];
+  const stack = ['void-runner', 'neon-breaker', 'starfall'].map((s) => GAMES.find((g) => g.slug === s)!) as Game[];
   return (
     <section aria-labelledby="hero-titulo" className="relative isolate overflow-hidden">
       {/* Chão em grade com fuga para o horizonte */}
@@ -30,7 +30,7 @@ export function Hero() {
       <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 pb-20 pt-12 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:pb-28 lg:pt-20">
         <div>
           <span className="chip border-violet/50 text-[#c4b5fd]">
-            <Sparkles className="h-3.5 w-3.5" aria-hidden="true" /> Prévia de desenvolvimento
+            <Sparkles className="h-3.5 w-3.5" aria-hidden="true" /> Jogos já disponíveis
           </span>
           <h1 id="hero-titulo" className="mt-5 text-[2.6rem] font-bold leading-[1.02] sm:text-6xl lg:text-7xl">
             <span className="text-gradient">Seu universo gamer.</span>
@@ -38,11 +38,11 @@ export function Hero() {
             Em qualquer tela.
           </h1>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
-            Jogos rodando na nuvem e chegando ao seu celular pelo navegador, com controle Bluetooth ou toque. Estamos
-            construindo o streaming próprio — por enquanto, explore o catálogo e prepare seu aparelho.
+            Jogue agora pelo navegador do celular, com toque ou controle Bluetooth, sem instalar nada. O streaming de
+            jogos maiores direto da nuvem está em construção.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link href="/catalogo" className="btn btn-primary h-14 px-7 text-base">
+            <Link href="/catalogo?disponibilidade=operacional" className="btn btn-primary h-14 px-7 text-base">
               <Play className="h-5 w-5 fill-current" aria-hidden="true" /> Jogar agora
             </Link>
             <Link href="/controle" className="btn btn-ghost h-14 px-6 text-base">
@@ -50,7 +50,7 @@ export function Hero() {
             </Link>
           </div>
           <p className="mt-4 text-xs text-faint">
-            Nenhum jogo é transmitido ainda. Títulos sem streaming aparecem como “Em breve”.
+            Jogos marcados como “Em breve” dependem do streaming na nuvem, ainda não ativo.
           </p>
         </div>
 

@@ -23,10 +23,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 const PENDING = 'A confirmar';
-const ACCESS_LABEL = { 'nexus-stream': 'Streaming próprio NEXUS (WebRTC)', 'servico-oficial': 'Serviço oficial externo', nenhum: 'Sem acesso' };
+const ACCESS_LABEL = { navegador: 'Roda no navegador, neste aparelho', 'nexus-stream': 'Streaming próprio NEXUS (WebRTC)', 'servico-oficial': 'Serviço oficial externo', nenhum: 'Sem acesso' };
 const CONTROLLER_LABEL = { completo: 'Controle completo', parcial: 'Controle parcial (teclado recomendado)', 'teclado-mouse': 'Teclado e mouse' };
 
 function facts(game: Game): [string, string][] {
+  const local = game.access === 'navegador';
   return [
     ['Plataforma', getPlatform(game.platform).name],
     ['Desenvolvedora', game.developer],
@@ -38,9 +39,9 @@ function facts(game: Game): [string, string][] {
     ['Método de acesso', ACCESS_LABEL[game.access]],
     ['Controle', CONTROLLER_LABEL[game.controller]],
     ['Controles de toque', game.touchControls ? 'Previstos' : 'Não'],
-    ['Qualidade máxima', game.maxQuality ?? `${PENDING} após medição`],
-    ['Tempo de inicialização', game.bootSeconds ? `~${game.bootSeconds} s` : `${PENDING} após medição`],
-    ['Requisitos do servidor', game.serverRequirements ?? `${PENDING} após benchmark (Fase 4)`],
+    ['Qualidade máxima', local ? 'Resolução nativa da tela' : game.maxQuality ?? `${PENDING} após medição`],
+    ['Tempo de inicialização', local ? 'Imediato' : game.bootSeconds ? `~${game.bootSeconds} s` : `${PENDING} após medição`],
+    [local ? 'Requisitos' : 'Requisitos do servidor', local ? 'Navegador atual (Chrome, Safari, Edge ou Firefox)' : game.serverRequirements ?? `${PENDING} após benchmark (Fase 4)`],
   ];
 }
 
@@ -67,7 +68,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
             </nav>
             <div className="mt-4 flex flex-wrap gap-2">
               <AvailabilityBadge value={game.availability} />
-              <DemoBadge />
+              {game.demo && <DemoBadge />}
             </div>
             <h1 className="mt-4 text-4xl font-bold sm:text-6xl">{game.name}</h1>
             <p className="mt-3 text-lg text-muted">{game.tagline}</p>
@@ -80,6 +81,9 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                 <span className="sr-only">(abre site externo)</span>
               </a>
             </div>
+            {!game.demo && game.access === 'navegador' && (
+              <p className="mt-5 max-w-2xl text-sm text-muted">Jogo original do NEXUS: roda direto no seu aparelho, com toque, controle Bluetooth ou teclado. Não precisa de instalação.</p>
+            )}
             {game.availability !== 'operacional' && (
               <p className="mt-5 flex max-w-2xl gap-2 text-sm text-muted">
                 <Info className="mt-0.5 h-4 w-4 shrink-0 text-warn" aria-hidden="true" />
@@ -101,7 +105,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
           ))}
         </dl>
         <p className="mt-3 text-xs text-faint">
-          Capa ilustrativa gerada pelo NEXUS. Imagens oficiais só serão usadas com direito de uso confirmado.
+          Capa gerada pelo NEXUS. Imagens oficiais só serão usadas com direito de uso confirmado.
         </p>
       </Section>
 

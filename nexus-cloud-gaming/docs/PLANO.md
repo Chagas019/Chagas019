@@ -4,6 +4,7 @@
 |---|---|---|---|
 | 1 — Auditoria | Ambiente, repositórios, ferramentas, limitações | ✅ Concluída | `docs/AUDITORIA.md` |
 | 2 — Interface | Frontend completo, responsivo, PWA, dados demonstrativos identificados | ✅ Concluída | Build de produção, 24 testes de domínio e 40 E2E passando |
+| 2b — Jogos no navegador | 4 jogos originais (canvas 2D) com toque, controle e teclado, publicados na Vercel | ✅ Concluída | 56 testes E2E, incluindo jogar com controle simulado |
 | 3 — Backend | `apps/api`: PostgreSQL, Redis, autenticação, catálogo no banco, favoritos/histórico na conta, painel admin com autorização no servidor | Próxima | Testes de cadastro, login, autorização, admin, segurança da API |
 | 4 — Streaming POC | Um nó com GPU, Selkies/GStreamer + WebRTC, SuperTuxKart em contêiner, player no frontend, métricas reais | Pendente (precisa de GPU) | Latência medida em Android e iPhone reais, documentada |
 | 5 — Integração de jogos | Mais títulos livres validados um a um; login Steam (OpenID) só para identificar a conta; links oficiais | Pendente | Cada título com licença revisada e teste de sessão |

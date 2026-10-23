@@ -18,12 +18,12 @@ export const AVAILABILITY_LABEL: Record<Availability, string> = {
  * Decide o botão principal de um jogo.
  *
  * O botão "Jogar" só aparece quando o título está operacional **e** é
- * executado pelo NEXUS. Qualquer outro caso cai em "Em breve",
+ * executado pelo NEXUS (no navegador ou por streaming próprio). Qualquer outro caso cai em "Em breve",
  * "Indisponível" ou no link do serviço oficial — nunca num botão que
  * aparenta funcionar sem existir integração.
  */
 export function callToAction(game: Game): CallToAction {
-  if (game.availability === 'operacional' && game.access === 'nexus-stream') {
+  if (game.availability === 'operacional' && (game.access === 'navegador' || game.access === 'nexus-stream')) {
     return { kind: 'play', label: 'Jogar', href: `/jogar/${game.slug}` };
   }
   if (game.availability === 'servico-oficial' || game.access === 'servico-oficial') {

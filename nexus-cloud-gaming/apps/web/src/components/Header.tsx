@@ -19,6 +19,8 @@ function isActive(path: string, href: string) {
 
 export function Header() {
   const path = usePathname() ?? '/';
+  // Durante o jogo a barra inferior sairia por cima dos controles de toque.
+  const playing = path.startsWith('/jogar/');
   return (
     <>
       <header className="sticky top-0 z-40 border-b border-line bg-void/70 backdrop-blur-xl pt-[env(safe-area-inset-top)]">
@@ -53,7 +55,7 @@ export function Header() {
       </header>
 
       {/* Navegação inferior no celular: no máximo 5 itens, alvos de 44 px e área segura do iPhone. */}
-      <nav
+      {!playing && <nav
         aria-label="Principal (celular)"
         className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-void/85 backdrop-blur-xl pb-[env(safe-area-inset-bottom)] md:hidden"
       >
@@ -74,7 +76,7 @@ export function Header() {
             );
           })}
         </ul>
-      </nav>
+      </nav>}
     </>
   );
 }

@@ -4,7 +4,9 @@
 
 Plataforma web de jogos na nuvem, mobile-first, pensada para jogar pelo navegador do celular com controle Bluetooth ou toque.
 
-> **Estado: Fase 2 concluída (interface).** O site, o catálogo, a biblioteca local, o teste de controle, a sala de teste e o diagnóstico funcionam de verdade. **Nenhum jogo é transmitido ainda**: não há servidor de jogo com GPU. Títulos sem integração aparecem como "Em breve", nunca com um botão "Jogar" falso. Detalhes em [`/transparencia`](apps/web/src/app/transparencia/page.tsx) e em [docs/PLANO.md](docs/PLANO.md).
+> **Estado:** interface completa e **4 jogos originais jogáveis no navegador** (Neon Breaker, Void Runner, Starfall, Neon Snake), com toque, controle Bluetooth e teclado. O **streaming na nuvem** ainda não existe: não há servidor de jogo com GPU, então os jogos de código aberto (SuperTuxKart etc.) aparecem como "Em breve", nunca com um botão "Jogar" falso.
+
+No ar: https://nexus-cloud-gaming.vercel.app Detalhes em [`/transparencia`](apps/web/src/app/transparencia/page.tsx) e em [docs/PLANO.md](docs/PLANO.md).
 
 ## Estrutura
 
@@ -15,6 +17,7 @@ nexus-cloud-gaming/
 ├── apps/web/             # Next.js 16 + React 19 + Tailwind 4 (PWA)
 │   ├── src/app/          # Rotas (App Router)
 │   ├── src/components/   # Componentes de interface
+│   ├── src/games/        # Jogos originais que rodam no navegador (canvas 2D)
 │   ├── src/lib/          # Hooks do cliente: armazenamento local, Gamepad API, conexão
 │   ├── public/           # Ícones e service worker
 │   └── e2e/              # Testes Playwright
@@ -56,8 +59,8 @@ docker compose --profile fase3 up -d      # + PostgreSQL e Redis (preparação d
 
 ```bash
 npm run typecheck    # TypeScript estrito nos dois pacotes
-npm test             # 24 testes de domínio (Vitest)
-npm run build && npm run test:e2e   # 20 cenários × 2 projetos = 40 testes E2E (Playwright)
+npm test             # 25 testes de domínio (Vitest)
+npm run build && npm run test:e2e   # 28 cenários × 2 projetos = 56 testes E2E (Playwright)
 ```
 
 Com Chromium do sistema: `PW_CHROMIUM_PATH=/caminho/do/chrome npm run test:e2e`. Para incluir o motor do Safari: `npx -w @nexus/web playwright install webkit` e `PW_WEBKIT=1 npm run test:e2e` (a CI faz isso).
@@ -68,6 +71,7 @@ O que os testes cobrem: catálogo, pesquisa sem acento, filtros e validação de
 
 | Recurso | Como |
 |---|---|
+| 4 jogos jogáveis (quebra-blocos, corrida, nave, cobrinha) com pausa, recorde e tela cheia | `src/games` + `GamePlayer` |
 | Catálogo, pesquisa e filtros compartilháveis por URL | `@nexus/core/search` |
 | Favoritos, histórico, preferências | `localStorage` validado (só no aparelho) |
 | Controle Bluetooth: detecção, botões, analógicos, vibração, remapeamento | Gamepad API |
@@ -79,7 +83,7 @@ O que os testes cobrem: catálogo, pesquisa sem acento, filtros e validação de
 
 ## Demonstrativo
 
-- Jogos: títulos reais de **código aberto** (licenças GPL/LGPL), escolhidos porque podem ser executados e transmitidos legalmente. Nenhum roda ainda. Campos que exigem medição ou órgão oficial (classificação indicativa, requisitos, qualidade máxima, tempo de inicialização) aparecem como "A confirmar".
+- Jogos de streaming: títulos reais de **código aberto** (licenças GPL/LGPL), escolhidos porque podem ser executados e transmitidos legalmente. Nenhum roda ainda; dependem do servidor com GPU. Campos que exigem medição ou órgão oficial (classificação indicativa, requisitos, qualidade máxima, tempo de inicialização) aparecem como "A confirmar".
 - Capas: arte gerada pelo próprio site (gradiente + ícone), sem imagens de terceiros.
 - Regiões de servidor e planos: plano de implantação, sem capacidade nem preços.
 

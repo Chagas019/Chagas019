@@ -13,7 +13,7 @@ import { ServiceWorkerRegister } from '@/components/ServiceWorkerRegister';
 export const metadata: Metadata = {
   title: { default: 'NEXUS Cloud Gaming — Seu universo gamer. Em qualquer tela.', template: '%s · NEXUS Cloud Gaming' },
   description:
-    'Plataforma de jogos na nuvem, mobile-first. Catálogo por plataforma, teste de controle Bluetooth e diagnóstico do seu aparelho. Prévia de desenvolvimento.',
+    'Plataforma de jogos na nuvem, mobile-first. Jogos que rodam no navegador do celular com toque ou controle Bluetooth, catálogo por plataforma e streaming na nuvem em construção.',
   applicationName: 'NEXUS',
   appleWebApp: { capable: true, title: 'NEXUS', statusBarStyle: 'black-translucent' },
   formatDetection: { telephone: false },

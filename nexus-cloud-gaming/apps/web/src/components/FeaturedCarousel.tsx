@@ -47,7 +47,7 @@ export function FeaturedCarousel({ games }: { games: Game[] }) {
           <div className="flex flex-wrap gap-2">
             <AvailabilityBadge value={game.availability} />
             <span className="chip">{getPlatform(game.platform).name}</span>
-            <DemoBadge />
+            {game.demo && <DemoBadge />}
           </div>
           <h3 className="text-3xl font-bold sm:text-4xl">{game.name}</h3>
           <p className="max-w-md leading-relaxed text-muted">{game.description}</p>

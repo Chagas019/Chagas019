@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   ACTIONS,
+  BROWSER_GAMES,
   DEFAULT_MAPPING,
   DEFAULT_PREFERENCES,
   EMPTY_FILTERS,
@@ -36,9 +37,15 @@ describe('catálogo', () => {
     for (const g of GAMES) expect(ids.has(g.platform)).toBe(true);
   });
 
-  it('marca todos os títulos como demonstrativos e nenhum como operacional nesta fase', () => {
-    expect(GAMES.every((g) => g.demo)).toBe(true);
-    expect(GAMES.filter(isPlayable)).toHaveLength(0);
+  it('só os jogos do navegador são jogáveis; nenhum título de streaming está operacional', () => {
+    const playable = GAMES.filter(isPlayable);
+    expect(playable.map((g) => g.slug).sort()).toEqual(BROWSER_GAMES.map((g) => g.slug).sort());
+    expect(playable.every((g) => g.access === 'navegador' && !g.demo)).toBe(true);
+    expect(GAMES.filter((g) => g.access === 'nexus-stream').every((g) => g.demo && !isPlayable(g))).toBe(true);
+  });
+
+  it('jogo do navegador operacional ganha "Jogar" apontando para o player', () => {
+    expect(callToAction(getGame('neon-breaker')!)).toEqual({ kind: 'play', label: 'Jogar', href: '/jogar/neon-breaker' });
   });
 
   it('não inventa medições nem classificação indicativa', () => {
@@ -87,12 +94,12 @@ describe('pesquisa e filtros', () => {
 
   it('combina gênero, controle e toque', () => {
     const r = filterGames(GAMES, { ...EMPTY_FILTERS, controller: 'completo', touch: true });
-    expect(r.map((g) => g.slug).sort()).toEqual(['supertux', 'supertuxkart']);
+    expect(r.map((g) => g.slug).sort()).toEqual(['neon-breaker', 'neon-snake', 'starfall', 'supertux', 'supertuxkart', 'void-runner']);
     expect(filterGames(GAMES, { ...EMPTY_FILTERS, genre: 'estrategia' }).every((g) => g.genres.includes('Estratégia'))).toBe(true);
   });
 
-  it('devolve lista vazia para disponibilidade operacional nesta fase', () => {
-    expect(filterGames(GAMES, { ...EMPTY_FILTERS, availability: 'operacional' })).toEqual([]);
+  it('filtra os disponíveis para jogar', () => {
+    expect(filterGames(GAMES, { ...EMPTY_FILTERS, availability: 'operacional' })).toEqual(BROWSER_GAMES);
   });
 
   it('descarta parâmetros desconhecidos e limita o texto', () => {

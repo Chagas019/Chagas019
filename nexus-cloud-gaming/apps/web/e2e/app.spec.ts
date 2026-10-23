@@ -4,15 +4,15 @@ test.describe('página inicial', () => {
   test('mostra hero, CTA principal e aviso de dados demonstrativos', async ({ page }) => {
     await page.goto('/');
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Seu universo gamer');
-    await expect(page.getByRole('link', { name: 'Jogar agora' })).toHaveAttribute('href', '/catalogo');
-    await expect(page.getByText('Dados demonstrativos.')).toBeVisible();
-    for (const id of ['destaques', 'plataformas', 'recentes', 'populares', 'favoritos', 'controle', 'status', 'servidores', 'planos']) {
+    await expect(page.getByRole('link', { name: 'Jogar agora' })).toHaveAttribute('href', '/catalogo?disponibilidade=operacional');
+    await expect(page.getByText('4 jogos já funcionam no navegador.')).toBeVisible();
+    for (const id of ['jogar', 'destaques', 'plataformas', 'recentes', 'populares', 'favoritos', 'controle', 'status', 'servidores', 'planos']) {
       await expect(page.locator(`section#${id}`)).toBeAttached();
     }
   });
 
   test('não tem rolagem horizontal', async ({ page }) => {
-    for (const path of ['/', '/catalogo', '/jogo/supertuxkart', '/controle', '/sala-de-teste', '/servidores', '/plataformas/ps5']) {
+    for (const path of ['/', '/catalogo', '/jogo/supertuxkart', '/jogar/neon-breaker', '/controle', '/sala-de-teste', '/servidores', '/plataformas/ps5']) {
       await page.goto(path);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
       expect(overflow, `rolagem horizontal em ${path}`).toBeLessThanOrEqual(1);
@@ -36,13 +36,15 @@ test.describe('catálogo, pesquisa e filtros', () => {
 
   test('filtros vindos da URL são validados', async ({ page }) => {
     await page.goto('/catalogo?plataforma=dreamcast&controle=completo&toque=1');
-    await expect(page.getByRole('status').filter({ hasText: 'encontrado' })).toHaveText('2 jogos encontrados');
+    await expect(page.getByRole('status').filter({ hasText: 'encontrado' })).toHaveText('6 jogos encontrados');
   });
 
-  test('"Disponível" vazio leva à sala de teste em vez de prometer jogos', async ({ page }) => {
+  test('"Disponível" lista só os jogos que rodam de verdade', async ({ page }) => {
     await page.goto('/catalogo?disponibilidade=operacional');
-    await expect(page.getByText('Nenhum jogo disponível para jogar ainda')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Sala de teste', exact: true })).toBeVisible();
+    await expect(page.getByRole('status').filter({ hasText: 'encontrado' })).toHaveText('4 jogos encontrados');
+    for (const name of ['Neon Breaker', 'Void Runner', 'Starfall', 'Neon Snake']) {
+      await expect(page.getByRole('link', { name: new RegExp(name) })).toBeVisible();
+    }
   });
 });
 
@@ -181,5 +183,76 @@ test.describe('segurança e PWA', () => {
 
   test('rotas inexistentes da API não aceitam comandos', async ({ request }) => {
     expect((await request.post('/api/health', { data: { cmd: 'rm -rf /' } })).status()).toBe(405);
+  });
+});
+
+test.describe('jogos no navegador', () => {
+  test('página do jogo jogável tem botão Jogar que abre o player', async ({ page }) => {
+    await page.goto('/jogo/neon-breaker');
+    await page.getByRole('main').getByRole('link', { name: 'Jogar', exact: true }).click();
+    await expect(page).toHaveURL(/\/jogar\/neon-breaker$/);
+    await expect(page.getByRole('dialog', { name: 'Começar Neon Breaker' })).toBeVisible();
+  });
+
+  test('jogos de streaming não têm rota de player', async ({ page }) => {
+    expect((await page.goto('/jogar/supertuxkart'))?.status()).toBe(404);
+  });
+
+  for (const slug of ['neon-breaker', 'void-runner', 'starfall', 'neon-snake']) {
+    test(`${slug} inicia, desenha e pausa`, async ({ page }) => {
+      const errors: string[] = [];
+      page.on('pageerror', (e) => errors.push(e.message));
+      await page.goto(`/jogar/${slug}`);
+      await page.getByRole('button', { name: 'Começar' }).click();
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+      // O canvas precisa ter pixels desenhados (não pode ficar preto/vazio).
+      const lit = await page.locator('canvas').evaluate((c: HTMLCanvasElement) => {
+        const d = c.getContext('2d')!.getImageData(0, 0, c.width, c.height).data;
+        let n = 0;
+        for (let i = 0; i < d.length; i += 4 * 97) if (d[i] + d[i + 1] + d[i + 2] > 200) n++;
+        return n;
+      });
+      expect(lit).toBeGreaterThan(0);
+      await page.getByRole('button', { name: 'Pausar' }).click();
+      await expect(page.getByRole('dialog', { name: 'Jogo pausado' })).toBeVisible();
+      await page.getByRole('button', { name: 'Continuar' }).click();
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+      expect(errors).toEqual([]);
+    });
+  }
+
+  test('Void Runner: pontua, termina ao bater e salva o recorde', async ({ page }) => {
+    await page.goto('/jogar/void-runner');
+    await page.keyboard.press('Space');
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    // Sem pular, o corredor bate no primeiro obstáculo.
+    await expect(page.getByRole('dialog', { name: 'Fim de jogo' })).toBeVisible({ timeout: 20_000 });
+    const best = Number((await page.getByTestId('best').innerText()).trim());
+    expect(best).toBeGreaterThan(0);
+    await page.reload();
+    await expect(page.getByTestId('best')).toHaveText(String(best));
+    await page.getByRole('button', { name: 'Começar' }).click();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+  });
+
+  test('Neon Snake responde ao controle Bluetooth', async ({ page }) => {
+    await page.addInitScript(() => {
+      const buttons = Array.from({ length: 17 }, () => ({ pressed: false, touched: false, value: 0 }));
+      const pad = { id: 'Controle de teste', index: 0, connected: true, mapping: 'standard', axes: [0, 0, 0, 0], buttons, timestamp: 0 };
+      (window as unknown as { __pad: typeof pad }).__pad = pad;
+      Object.defineProperty(navigator, 'getGamepads', { value: () => [pad, null, null, null] });
+    });
+    await page.goto('/jogar/neon-snake');
+    const set = (i: number, v: boolean) => page.evaluate(([i, v]) => { (window as any).__pad.buttons[i as number] = { pressed: v, touched: v, value: v ? 1 : 0 }; }, [i, v] as const);
+    // A Gamepad API é lida a cada quadro: um aperto real dura vários quadros.
+    const press = async (i: number, v: boolean) => { await set(i, v); await page.waitForTimeout(120); };
+    await press(0, true); // A começa
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await press(0, false);
+    await press(15, true); // direcional direita: a cobra começa a andar e bate na parede
+    await press(15, false);
+    await expect(page.getByRole('dialog', { name: 'Fim de jogo' })).toBeVisible({ timeout: 15_000 });
+    await press(9, true); // Start reinicia
+    await expect(page.getByRole('dialog')).toHaveCount(0);
   });
 });

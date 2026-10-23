@@ -98,3 +98,12 @@ export function usePreferences(): [StreamPreferences, (patch: Partial<StreamPref
   const update = useCallback((patch: Partial<StreamPreferences>) => set({ ...prefs, ...patch }), [prefs, set]);
   return [prefs, update];
 }
+
+const parseScore = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) && v >= 0 ? Math.floor(v) : 0);
+
+/** Recorde de um jogo do navegador, guardado neste aparelho. */
+export function useBestScore(slug: string): [number, (score: number) => void] {
+  const [best, set] = useStored(`best:${slug}`, parseScore, 0);
+  const submit = useCallback((score: number) => { if (score > parseScore(read(`best:${slug}`))) set(score); }, [slug, set]);
+  return [best, submit];
+}

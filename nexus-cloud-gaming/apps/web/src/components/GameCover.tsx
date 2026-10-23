@@ -1,5 +1,5 @@
 import type { Game } from '@nexus/core';
-import { Bomb, Box, CarFront, Cog, Crosshair, Crown, MountainSnow, Shield, Sword, TrainFront, type LucideIcon } from 'lucide-react';
+import { Bomb, Box, BrickWall, CarFront, Cog, Crosshair, Crown, Footprints, MountainSnow, Rocket, Shield, Sword, TrainFront, Worm, type LucideIcon } from 'lucide-react';
 
 const GLYPHS: Record<string, LucideIcon> = {
   kart: CarFront,
@@ -12,6 +12,10 @@ const GLYPHS: Record<string, LucideIcon> = {
   gear: Cog,
   blast: Bomb,
   sword: Sword,
+  bricks: BrickWall,
+  runner: Footprints,
+  ship: Rocket,
+  snake: Worm,
 };
 
 /**

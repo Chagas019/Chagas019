@@ -9,8 +9,8 @@ export function Footer() {
           <Logo />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted">Seu universo gamer. Em qualquer tela.</p>
           <p className="mt-4 max-w-sm text-xs leading-relaxed text-faint">
-            Prévia de desenvolvimento. Os jogos listados ainda não são transmitidos; os estados de disponibilidade
-            mostram exatamente o que existe hoje.
+            Os jogos originais do NEXUS rodam no navegador. Os jogos marcados como “Em breve” dependem do streaming na
+            nuvem, ainda em construção.
           </p>
         </div>
         <div>

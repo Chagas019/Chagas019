@@ -1,12 +1,14 @@
 import type { Game } from './types';
 
 /**
- * Catálogo demonstrativo (Fase 2).
+ * Catálogo.
  *
- * Contém apenas jogos de código aberto, cuja licença permite executar e
- * transmitir o jogo a partir de um servidor. São os candidatos reais para a
- * prova de conceito de streaming (Fase 4). Nenhum deles está operacional
- * ainda: todos aparecem como "Em breve".
+ * Duas origens:
+ * - Jogos originais do NEXUS (`access: 'navegador'`): código próprio, rodam no
+ *   aparelho e estão operacionais.
+ * - Jogos de código aberto cuja licença permite executar e transmitir a partir
+ *   de um servidor. São os candidatos da prova de conceito de streaming
+ *   (Fase 4) e aparecem como "Em breve" até existir servidor com GPU.
  *
  * Campos que dependem de medição ou de órgão oficial ficam `null` em vez de
  * inventados: classificação indicativa (ClassInd), requisitos do servidor,
@@ -17,7 +19,78 @@ import type { Game } from './types';
  */
 const OPEN_SOURCE = 'Projeto comunitário (distribuição livre)';
 
+const ORIGINAL = {
+  developer: 'NEXUS Studio',
+  publisher: 'NEXUS Cloud Gaming',
+  license: 'Original do NEXUS (código e arte próprios)',
+  sourceUrl: 'https://github.com/Chagas019/Chagas019',
+  platform: 'livre',
+  releaseYear: 2026,
+  ageRating: null,
+  serverRequirements: null,
+  access: 'navegador',
+  availability: 'operacional',
+  touchControls: true,
+  maxQuality: null,
+  bootSeconds: null,
+  demo: false,
+} as const;
+
+/** Jogos originais que rodam no navegador. */
+export const BROWSER_GAMES: Game[] = [
+  {
+    ...ORIGINAL,
+    slug: 'neon-breaker',
+    name: 'Neon Breaker',
+    tagline: 'Quebre a parede de neon sem deixar a bola cair.',
+    description:
+      'Quebra-blocos clássico com física de rebatida pelo ponto de contato, fases cada vez mais rápidas e três vidas. Mova a barra com o direcional, o analógico, as setas ou o toque e lance a bola com A.',
+    genres: ['Arcade', 'Casual'],
+    controller: 'completo',
+    cover: { from: '#06b6d4', to: '#4f46e5', glyph: 'bricks' },
+    featured: true,
+    popular: true,
+  },
+  {
+    ...ORIGINAL,
+    slug: 'void-runner',
+    name: 'Void Runner',
+    tagline: 'Corra pelo vazio e pule tudo o que aparecer.',
+    description:
+      'Corrida infinita de um botão: A (ou toque) pula, e dá para pular de novo no ar. A velocidade cresce sem parar; quanto mais longe, maior a pontuação.',
+    genres: ['Arcade', 'Corrida infinita'],
+    controller: 'completo',
+    cover: { from: '#a855f7', to: '#0f172a', glyph: 'runner' },
+    featured: true,
+    popular: true,
+  },
+  {
+    ...ORIGINAL,
+    slug: 'starfall',
+    name: 'Starfall',
+    tagline: 'Defenda o setor contra ondas de naves.',
+    description:
+      'Tiro em nave vertical: mova a nave em qualquer direção e segure A para atirar. Inimigos descem em ondas cada vez mais densas; você tem três escudos.',
+    genres: ['Tiro', 'Arcade'],
+    controller: 'completo',
+    cover: { from: '#f43f5e', to: '#312e81', glyph: 'ship' },
+    popular: true,
+  },
+  {
+    ...ORIGINAL,
+    slug: 'neon-snake',
+    name: 'Neon Snake',
+    tagline: 'A cobrinha de sempre, em neon e cada vez mais rápida.',
+    description:
+      'Coma os orbes, cresça e não bata nas paredes nem em você mesmo. Direcional, analógico, setas ou toque mudam a direção.',
+    genres: ['Arcade', 'Casual', 'Quebra-cabeça'],
+    controller: 'completo',
+    cover: { from: '#22c55e', to: '#0c4a6e', glyph: 'snake' },
+  },
+];
+
 export const GAMES: Game[] = [
+  ...BROWSER_GAMES,
   {
     slug: 'supertuxkart',
     name: 'SuperTuxKart',
@@ -41,7 +114,6 @@ export const GAMES: Game[] = [
     bootSeconds: null,
     cover: { from: '#1d4ed8', to: '#7c3aed', glyph: 'kart' },
     featured: true,
-    popular: true,
     demo: true,
   },
   {
@@ -91,7 +163,6 @@ export const GAMES: Game[] = [
     maxQuality: null,
     bootSeconds: null,
     cover: { from: '#7c3aed', to: '#0f172a', glyph: 'target' },
-    featured: true,
     demo: true,
   },
   {
@@ -116,7 +187,6 @@ export const GAMES: Game[] = [
     maxQuality: null,
     bootSeconds: null,
     cover: { from: '#b45309', to: '#1e1b4b', glyph: 'shield' },
-    featured: true,
     demo: true,
   },
   {

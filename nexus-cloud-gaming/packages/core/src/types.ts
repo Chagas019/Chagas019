@@ -23,11 +23,12 @@ export type PlatformFamily = 'playstation' | 'xbox' | 'nintendo' | 'pc' | 'livre
 
 /**
  * Como o usuário chega ao jogo.
+ * - `navegador`: jogo original do NEXUS que roda no próprio aparelho (HTML5), sem servidor.
  * - `nexus-stream`: executado em servidor próprio do NEXUS e transmitido por WebRTC.
  * - `servico-oficial`: o jogo roda num serviço de terceiros autorizado; o NEXUS só direciona.
  * - `nenhum`: ainda não existe caminho legítimo e validado.
  */
-export type AccessMethod = 'nexus-stream' | 'servico-oficial' | 'nenhum';
+export type AccessMethod = 'navegador' | 'nexus-stream' | 'servico-oficial' | 'nenhum';
 
 /**
  * - `operacional`: integração real, testada, com capacidade disponível. Único estado com "Jogar".
@@ -88,6 +89,6 @@ export interface Game {
   cover: { from: string; to: string; glyph: string };
   featured?: boolean;
   popular?: boolean;
-  /** Dado demonstrativo: entrou no catálogo, mas não há servidor executando. */
-  demo: true;
+  /** `true` quando o título está no catálogo mas ainda não roda (sem servidor de streaming). */
+  demo: boolean;
 }

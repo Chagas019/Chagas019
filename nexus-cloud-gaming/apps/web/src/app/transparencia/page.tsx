@@ -9,6 +9,7 @@ const GROUPS = [
     Icon: CircleCheck,
     tone: 'text-ok',
     items: [
+      '4 jogos originais (Neon Breaker, Void Runner, Starfall, Neon Snake) jogáveis no navegador, com toque, controle e teclado',
       'Catálogo navegável com pesquisa, filtros e links compartilháveis',
       'Favoritos, histórico e preferências salvos neste aparelho',
       'Detecção e teste de controles Bluetooth (Gamepad API) com mapeamento de botões',
@@ -23,7 +24,7 @@ const GROUPS = [
     Icon: FlaskConical,
     tone: 'text-[#c4b5fd]',
     items: [
-      'Lista de jogos: títulos reais de código aberto, mas nenhum está sendo executado',
+      'Jogos de código aberto (SuperTuxKart, 0 A.D. etc.): listados como “Em breve”, aguardando o streaming',
       'Regiões de servidor: plano de implantação, sem capacidade ativa',
       'Planos: estrutura sem preços e sem cobrança',
     ],
@@ -49,7 +50,7 @@ export default function TransparencyPage() {
         O NEXUS está em desenvolvimento. Esta página separa o que é real, o que é demonstração e o que ainda falta, para
         que nenhum botão prometa algo que não existe.
       </PageHeader>
-      <Section title="Estado atual · Fase 2">
+      <Section title="Estado atual">
         <div className="grid gap-4 lg:grid-cols-3">
           {GROUPS.map(({ title, Icon, tone, items }) => (
             <section key={title} className="panel p-6" aria-label={title}>

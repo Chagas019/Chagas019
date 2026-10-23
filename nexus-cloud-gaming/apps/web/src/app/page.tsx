@@ -14,6 +14,7 @@ import { ServiceStatus } from '@/components/ServiceStatus';
 
 export default function HomePage() {
   const featured = GAMES.filter((g) => g.featured);
+  const playable = GAMES.filter((g) => g.access === 'navegador' && g.availability === 'operacional');
   const popular = GAMES.filter((g) => g.popular);
   const added = [...GAMES].reverse().slice(0, 8);
 
@@ -25,14 +26,20 @@ export default function HomePage() {
         <div className="panel flex items-start gap-3 p-4 text-sm text-muted" role="note">
           <FlaskConical className="mt-0.5 h-5 w-5 shrink-0 text-violet" aria-hidden="true" />
           <p>
-            <strong className="text-ink">Dados demonstrativos.</strong> O catálogo lista jogos de código aberto que poderão ser
-            transmitidos legalmente, mas nenhum servidor de jogo está ativo.{' '}
+            <strong className="text-ink">4 jogos já funcionam no navegador.</strong> Os jogos de código aberto marcados como
+            “Em breve” dependem do streaming na nuvem, que ainda não tem servidor ativo.{' '}
             <Link href="/transparencia" className="font-semibold text-cyan underline-offset-2 hover:underline">Veja o que já funciona</Link>.
           </p>
         </div>
       </div>
 
-      <Section id="destaques" eyebrow="Em destaque" title="Para jogar primeiro">
+      <Section id="jogar" eyebrow="Jogue agora" title="Disponíveis para jogar" description="Rodam direto no navegador, com toque, controle ou teclado." action={{ href: '/catalogo?disponibilidade=operacional', label: 'Ver todos' }}>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-4">
+          {playable.map((g, i) => <GameCard key={g.slug} game={g} priority={i < 2} />)}
+        </div>
+      </Section>
+
+      <Section id="destaques" eyebrow="Em destaque" title="Destaques">
         <FeaturedCarousel games={featured} />
       </Section>
 

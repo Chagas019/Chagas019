@@ -17,8 +17,8 @@ export default function CatalogPage() {
   return (
     <>
       <PageHeader eyebrow="Catálogo" title="Todos os jogos">
-        Jogos de código aberto com licença para streaming e plataformas acessíveis por serviços oficiais. Nenhum título
-        está operacional nesta prévia.
+        Jogos originais que rodam no navegador, jogos de código aberto que chegarão pelo streaming e plataformas
+        acessíveis por serviços oficiais.
       </PageHeader>
       <Suspense fallback={<Loading />}>
         <CatalogBrowser />

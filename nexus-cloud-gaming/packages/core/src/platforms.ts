@@ -59,8 +59,8 @@ export const PLATFORMS: Platform[] = [
   { id: 'steam', name: 'Steam', short: 'STM', family: 'pc', defaultAvailability: 'servico-oficial',
     summary: 'Conexão da conta pelo login oficial da Steam (sem pedir senha) está prevista. Streaming da sua biblioteca só por serviços autorizados.',
     officialServices: [GFN, STEAM_LINK] },
-  { id: 'livre', name: 'Gratuitos e independentes', short: 'FREE', family: 'livre', defaultAvailability: 'em-breve',
-    summary: 'Jogos de código aberto cuja licença permite execução e transmissão. São os primeiros candidatos ao streaming próprio.',
+  { id: 'livre', name: 'Gratuitos e independentes', short: 'FREE', family: 'livre', defaultAvailability: 'operacional',
+    summary: 'Jogos originais do NEXUS que rodam direto no navegador, já jogáveis, e jogos de código aberto que serão transmitidos pelo streaming próprio.',
     officialServices: [] },
 ];
 
