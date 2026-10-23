@@ -42,7 +42,7 @@ meta = [
     f"<title>{TITULO}</title>",
     f'<meta name="description" content="{DESC}">',
     '<meta name="robots" content="index, follow, max-image-preview:large">',
-    '<meta name="theme-color" content="#c8102e">',
+    '<meta name="theme-color" content="#2c2c2a">',
     f'<link rel="icon" href="{icone}">',
     *([f'<link rel="canonical" href="{site}">'] if site else []),
     '<meta property="og:type" content="website">',

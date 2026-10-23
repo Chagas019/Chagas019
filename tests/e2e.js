@@ -425,11 +425,11 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
         const cs = e => getComputedStyle(e), b = document.querySelector(".bento");
         const blocos = [".bh", ".bq", "#hoje", ".bv", ".be", ".bc", ".bf"].map(sel => !!b.querySelector(sel));
         return { blocos, borda: cs(b).borderTopWidth, sombra: cs(b).boxShadow, fundo: cs(document.body).backgroundColor, logo: cs(document.querySelector(".logo")).backgroundColor,
-          acoes: cs(document.querySelector(".top-actions")).backgroundColor, rosa: cs(document.querySelector(".bh-art")).backgroundColor, lateral: document.documentElement.scrollWidth > innerWidth };
+          raio: cs(b).borderTopLeftRadius, laranja: cs(document.querySelector(".bv")).backgroundColor, destaque: cs(document.querySelector(".bh-h em")).color, lateral: document.documentElement.scrollWidth > innerWidth };
       });
       check(r.blocos.every(Boolean), `${w}px: abertura, acesso rápido, destaques, avisos, eventos, convite e formação em blocos`, JSON.stringify(r.blocos));
-      check(r.borda === "3px" && /rgb\(17, 17, 17\) 6px 6px|rgb\(17, 17, 17\) 4px 4px/.test(r.sombra), `${w}px: blocos com borda grossa e sombra dura`, r.borda + " " + r.sombra);
-      check(r.fundo === "rgb(242, 239, 230)" && r.logo === "rgb(197, 240, 74)" && r.acoes === "rgb(108, 76, 241)" && r.rosa === "rgb(255, 127, 159)", `${w}px: cores do leiaute (creme, verde, roxo e rosa)`, JSON.stringify(r));
+      check(r.borda === "1px" && r.sombra === "none" && parseFloat(r.raio) >= 20, `${w}px: moldura arredondada com linha fina e sem sombra`, r.borda + " " + r.sombra + " " + r.raio);
+      check(r.fundo === "rgb(44, 44, 42)" && r.laranja === "rgb(255, 90, 31)" && r.destaque === "rgb(255, 90, 31)", `${w}px: cores do leiaute (grafite e laranja)`, JSON.stringify(r));
       check(!r.lateral, `${w}px: sem rolagem lateral`);
       await p.waitForTimeout(300);
       check(/const liturgia_de_hoje/.test(await p.textContent("#bh-code")), `${w}px: quadro roxo mostra a liturgia de hoje`);
