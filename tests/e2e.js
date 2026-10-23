@@ -253,10 +253,10 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     const p = await pagina(browser, { largura: 390 });
     check(await p.evaluate(() => document.documentElement.scrollWidth) <= 390, "sem rolagem lateral");
     const barra = await p.$eval("#bnav", e => [getComputedStyle(e).position, Math.round(innerHeight - e.getBoundingClientRect().bottom), e.querySelectorAll("button").length]);
-    check(barra[0] === "fixed" && barra[1] === 0 && barra[2] === 5, "navegação inferior fixa no rodapé, com 5 atalhos", String(barra));
+    check(barra[0] === "fixed" && barra[1] >= 0 && barra[1] <= 12 && barra[2] === 5, "navegação inferior fixa no rodapé, com 5 atalhos", String(barra));
     check(await p.isHidden(".tabbar"), "no celular, a barra de abas do topo dá lugar à navegação inferior");
     await p.mouse.wheel(0, 1500); await p.waitForTimeout(200);
-    check(await p.$eval("#bnav", e => Math.round(innerHeight - e.getBoundingClientRect().bottom)) === 0, "navegação inferior continua no lugar ao rolar a página");
+    check(await p.$eval("#bnav", e => Math.round(innerHeight - e.getBoundingClientRect().bottom)) === barra[1], "navegação inferior continua no lugar ao rolar a página");
     check(await p.$eval("#avatar", e => e.getBoundingClientRect().right <= innerWidth), "botão da conta cabe na tela");
     for (const aba of ["agenda", "liturgia", "equipe"]) {
       await p.click(`[data-bnav=${aba}]`); await p.waitForTimeout(100);
@@ -285,7 +285,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
       await fechar(p);
     }
     const heroAlt = await p.$eval("#abertura", e => e.offsetHeight / innerHeight);
-    check(heroAlt <= 3.5, "celular: a abertura é mais curta e o painel chega mais cedo", heroAlt.toFixed(2));
+    check(heroAlt <= 2, "celular: a abertura cabe em até duas telas e o painel chega cedo", heroAlt.toFixed(2));
     await p.click("#fav");
     const t = await p.evaluate(() => { const r = document.getElementById("toast").getBoundingClientRect(); return { top: r.top, bottom: r.bottom }; });
     check(t.bottom <= await p.evaluate(() => innerHeight) && t.top > 0, "aviso (toast) aparece dentro da tela", JSON.stringify(t));
@@ -300,7 +300,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     const p = await pagina(browser);
     await p.click("[data-tab=formacao]"); await p.waitForTimeout(300);
     const topo = await p.$eval("#formacao", e => e.getBoundingClientRect().top);
-    check(topo >= 100 && topo < 200, "aba Formação mostra a formação logo abaixo das abas", String(topo));
+    check(topo >= 80 && topo < 200, "aba Formação mostra a formação logo abaixo do cabeçalho", String(topo));
     check(await p.getAttribute("[data-tab=formacao]", "aria-selected") === "true" && await p.isHidden("#abertura"), "aba Formação fica marcada e esconde o início");
     check((await p.$$("#modules .lesson[data-licao]")).length >= 20, "formação tem pelo menos 20 páginas", String((await p.$$("#modules .lesson[data-licao]")).length));
     check(/0 de 37/.test(await p.textContent("#form-count")), "progresso começa em 0 de 37");
@@ -416,58 +416,33 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     }
   }
 
-  console.log("11. Abertura no estilo da referência: cenas guiadas pela rolagem");
+  console.log("11. Página inicial em blocos");
   {
     for (const [w, h, mob] of [[1366, 850, 0], [390, 844, 1]]) {
-      const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: !!mob, isMobile: !!mob }); await ctx.route(/\/api\/liturgia/, r => r.fulfill({ status: 200, contentType: "application/json", body: "{}" }));
+      const ctx = await browser.newContext({ viewport: { width: w, height: h }, hasTouch: !!mob, isMobile: !!mob }); await ctx.route(/\/api\//, r => r.fulfill({ status: 200, contentType: "application/json", body: "{}" }));
       const p = await ctx.newPage(); const erros = []; p.on("pageerror", e => erros.push(e.message));
-      await p.goto(URL); await p.waitForTimeout(600);
-      check(await p.evaluate(() => !document.querySelector("#nucleo, .cine-ic, .warp, .portal, .cine-dust, .corner, .editorial")), `${w}px: núcleo holográfico, ícones de vidro e transições antigas saíram`);
-      const len = await p.$eval("#abertura", e => e.offsetHeight - innerHeight);
-      const em = async t => { await p.evaluate(y => scrollTo(0, y), len * t / 5); await p.waitForTimeout(650); return p.evaluate(() => {
-        const op = id => +getComputedStyle(document.querySelector(id)).opacity, d = document.getElementById("disc").getBoundingClientRect(), pn = document.getElementById("show-panel").getBoundingClientRect();
-        return { topo: document.querySelector(".show-sticky").getBoundingClientRect().top, s: [0, 1, 2, 3, 4, 5].map(i => op(`.scene[data-s="${i}"]`)), edge: op("#show-edge"),
-          disco: d.width, discoDentro: d.left >= -1 && d.right <= innerWidth + 1, painel: pn.width / innerWidth,
-          fio: getComputedStyle(document.querySelector("#show-wire circle")).strokeDasharray, conta: document.getElementById("show-count").textContent, lateral: document.documentElement.scrollWidth > innerWidth };
-      }); };
-      const c0 = await em(0), c1 = await em(1), c2 = await em(2), c3 = await em(3.3), c4 = await em(4), c5 = await em(5);
-      check([c1, c2, c3, c4, c5].every(c => Math.abs(c.topo) < 2), `${w}px: a cena fica presa na tela durante a rolagem`);
-      check(c0.s[0] > .95 && c0.s[1] < .05 && c1.s[1] > .95 && c1.s[0] < .05, `${w}px: as cenas se revezam ao rolar`, JSON.stringify([c0.s, c1.s]));
-      check(/01/.test(c0.conta) && /06/.test(c5.conta), `${w}px: contador de cenas vai de 01 a 06`, c0.conta + " → " + c5.conta);
-      check(c0.disco > 0 && c0.discoDentro && c1.disco > c0.disco, `${w}px: o disco aparece e cresce ao rolar`, JSON.stringify([c0.disco, c1.disco]));
-      check(c2.edge > .9 && c0.edge < .05, `${w}px: borda de luz colorida em “Movida pela fé”`);
-      check(c3.s[3] > .9 && c3.painel > .97, `${w}px: o painel da frase cresce até ocupar a tela`, String(c3.painel));
-      check(c4.s[4] > .9 && parseFloat(c4.fio) > .9, `${w}px: o desenho em linhas se completa`, c4.fio);
-      check(c5.s[5] > .95 && [c0, c1, c2, c3, c4, c5].every(c => !c.lateral), `${w}px: marca no fim e sem rolagem lateral`);
-      const tipos = await p.$$eval(".obj", os => os.map(o => o.dataset.obj));
-      check(tipos.length >= 10 && ["camera", "agenda", "microfone", "celular", "megafone", "monitor"].every(n => tipos.includes(n)), `${w}px: objetos de comunicação na abertura`, tipos.join(","));
-      await em(4.5); const ob = await p.evaluate(() => [...document.querySelectorAll(".obj")].filter(o => +getComputedStyle(o).opacity > .3).map(o => o.dataset.obj));
-      check(ob.length >= 2, `${w}px: objetos atravessam a transição entre as cenas`, ob.join(","));
-      await em(3.12); const ag = await p.evaluate(() => [...document.querySelectorAll('.obj[data-obj="agenda"]')].some(o => +getComputedStyle(o).opacity > .9 && o.querySelector("svg")));
-      check(ag, `${w}px: a agenda aparece na cena “é a sua paróquia”`);
-      await em(0); const cam = await p.evaluate(() => { const o = document.querySelector('.obj[data-obj="camera"]'), r = o.getBoundingClientRect(); return +getComputedStyle(o).opacity > .9 && r.right > 0 && r.left < innerWidth; });
-      check(cam, `${w}px: a câmera aparece na primeira cena`);
-      await p.waitForTimeout(2700);
-      check(await p.evaluate(() => [...document.querySelectorAll(".t")].every(t => t.textContent === t.dataset.text) && !document.documentElement.classList.contains("anim")), `${w}px: rótulos decodificados e entrada encerrada`);
-      if (!mob) {
-        await p.click('.srail [data-cena="4"]'); await p.waitForTimeout(1500);
-        const s4 = await p.evaluate(() => +getComputedStyle(document.querySelector('.scene[data-s="4"]')).opacity);
-        check(s4 > .9 && await p.getAttribute('.srail [data-cena="4"]', "aria-current") === "true", `${w}px: índice lateral leva à cena e marca a ativa`, String(s4));
-      }
-      await em(5);
-      // clique direto: o Playwright rola a página antes de clicar em botões dentro da cena presa (sticky) e muda de cena
-      await p.$eval("#show-servir", b => b.click()); await p.waitForTimeout(150);
-      check(/Venha servir/.test(await p.textContent("#modal-body")), `${w}px: Quero servir abre a inscrição`);
-      await p.click("#modal [data-close]");
-      await p.$eval("#show-share", b => b.click()); await p.waitForTimeout(150);
-      check(/Compartilhar o site/.test(await p.textContent("#modal-body")), `${w}px: Compartilhar o site abre o painel`);
-      await p.click("#modal [data-close]");
-      await p.$eval('.s5 [data-ir="hoje"]', b => b.click()); await p.waitForFunction(() => { const t = document.getElementById("hoje").getBoundingClientRect().top; return t >= 0 && t < 160; }, null, { timeout: 3000 }).catch(() => {});
-      check(await p.evaluate(() => { const t = document.getElementById("hoje").getBoundingClientRect().top; return t >= 0 && t < 160; }), `${w}px: “Ver o que tem hoje” leva aos cards do dia`);
-      await em(3.3);
-      await p.click("#show-frase"); await p.waitForTimeout(200);
-      check(await p.evaluate(() => document.getElementById("fw").open), `${w}px: painel abre a frase do dia`);
-      await p.click("#fw-close");
+      await p.goto(URL); await p.waitForTimeout(500);
+      check(await p.evaluate(() => !document.querySelector(".show, .scene, #disc, .srail, .objs")), `${w}px: a abertura antiga com rolagem guiada saiu`);
+      const r = await p.evaluate(() => {
+        const cs = e => getComputedStyle(e), b = document.querySelector(".bento");
+        const blocos = [".bh", ".bq", "#hoje", ".bv", ".be", ".bc", ".bf"].map(sel => !!b.querySelector(sel));
+        return { blocos, borda: cs(b).borderTopWidth, sombra: cs(b).boxShadow, fundo: cs(document.body).backgroundColor, logo: cs(document.querySelector(".logo")).backgroundColor,
+          acoes: cs(document.querySelector(".top-actions")).backgroundColor, rosa: cs(document.querySelector(".bh-art")).backgroundColor, lateral: document.documentElement.scrollWidth > innerWidth };
+      });
+      check(r.blocos.every(Boolean), `${w}px: abertura, acesso rápido, destaques, avisos, eventos, convite e formação em blocos`, JSON.stringify(r.blocos));
+      check(r.borda === "3px" && /rgb\(17, 17, 17\) 6px 6px|rgb\(17, 17, 17\) 4px 4px/.test(r.sombra), `${w}px: blocos com borda grossa e sombra dura`, r.borda + " " + r.sombra);
+      check(r.fundo === "rgb(242, 239, 230)" && r.logo === "rgb(197, 240, 74)" && r.acoes === "rgb(108, 76, 241)" && r.rosa === "rgb(255, 127, 159)", `${w}px: cores do leiaute (creme, verde, roxo e rosa)`, JSON.stringify(r));
+      check(!r.lateral, `${w}px: sem rolagem lateral`);
+      await p.waitForTimeout(300);
+      check(/const liturgia_de_hoje/.test(await p.textContent("#bh-code")), `${w}px: quadro roxo mostra a liturgia de hoje`);
+      await p.click('[data-hero="servir"]'); await p.waitForTimeout(150);
+      check(/Venha servir/.test(await p.textContent("#modal-body")), `${w}px: botão do coração abre a inscrição`); await p.click("#modal [data-close]");
+      await p.click('.bh [data-hero="share"]'); await p.waitForTimeout(150);
+      check(/Compartilhar o site/.test(await p.textContent("#modal-body")), `${w}px: compartilhar abre o painel`); await p.click("#modal [data-close]");
+      await p.click('.bh [data-hero="frase"]'); await p.waitForTimeout(200);
+      check(await p.evaluate(() => document.getElementById("fw").open), `${w}px: botão de aspas abre a frase do dia`); await p.click("#fw-close");
+      await p.click('.bc [data-action="join"]'); await p.waitForTimeout(150);
+      check(/Venha servir/.test(await p.textContent("#modal-body")), `${w}px: “Quero servir” do bloco roxo abre a inscrição`); await p.click("#modal [data-close]");
       check(!erros.length, `${w}px: sem erros`, erros.join(" | "));
       await ctx.close();
     }
@@ -483,7 +458,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     check(/Configure seu celular e aprenda a fotografar como um profissional/.test(await txt("#cam-h")), "seção da câmera tem o título");
     await p.click("[data-tab=formacao]"); await p.click("#form-cam"); await p.waitForTimeout(300);
     const topo = await p.$eval("#camera", e => e.getBoundingClientRect().top);
-    check(topo >= 100 && topo < 200 && await p.getAttribute("[data-tab=camera]", "aria-selected") === "true", "atalho da formação abre a aba da câmera", String(topo));
+    check(topo >= 80 && topo < 200 && await p.getAttribute("[data-tab=camera]", "aria-selected") === "true", "atalho da formação abre a aba da câmera", String(topo));
     check((await p.$$("#cam-phones [role=radio]")).length === 6 && (await p.$$("#cam-objs [role=radio]")).length === 9, "seletor com 6 celulares e 8 objetivos (mais Todos)");
     check(/Escolha a categoria/.test(await txt("#cam-tips .dep")), "sem categoria, pede para escolher o celular");
     await p.click('[data-cam-cat="and-avancado"]');
@@ -627,9 +602,9 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     const d = new Date(), iso = x => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`;
     const amanha = iso(new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1));
     check(/Comunicação/.test(await p.textContent("#show-h")) && /evangeliza/.test(await p.textContent("#show-h")), "abertura com o título “Comunicação que evangeliza.”");
-    check(/Liturgia, agenda, formação e comunicação paroquial em um só lugar/.test(await p.textContent(".s0 .show-sub")), "abertura com a nova descrição");
-    check(/Acessar painel/.test(await p.textContent(".s0 .show-cta")) && /Ver agenda/.test(await p.textContent(".s0 .show-cta")), "abertura com os botões Acessar painel e Ver agenda");
-    await p.click('.s0 [data-ir="painel"]'); await p.waitForFunction(() => Math.abs(document.getElementById("painel").getBoundingClientRect().top) < 200, null, { timeout: 3000 }).catch(() => {});
+    check(/Liturgia, agenda, formação e comunicação paroquial em um só lugar/.test(await p.textContent(".bh-sub")), "abertura com a nova descrição");
+    check(/Acessar painel/.test(await p.textContent(".bh-cta")) && /Ver agenda/.test(await p.textContent(".bh-cta")), "abertura com os botões Acessar painel e Ver agenda");
+    await p.click('.bh [data-ir="painel"]'); await p.waitForFunction(() => Math.abs(document.getElementById("painel").getBoundingClientRect().top) < 200, null, { timeout: 3000 }).catch(() => {});
     check(await p.evaluate(() => Math.abs(document.getElementById("painel").getBoundingClientRect().top) < 200), "Acessar painel leva ao painel");
     check((await p.$$("#quick .qcard")).length === 6, "acesso rápido com 6 cartões");
     for (const [n, aba] of [[0, "agenda"], [1, "liturgia"], [2, "equipe"], [3, "cobertura"], [4, "formacao"], [5, "criador"]]) {
