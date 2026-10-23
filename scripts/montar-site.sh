@@ -22,7 +22,7 @@ topo, corpo = src[:i], src[i:].strip()
 estilo = topo[topo.index("<style>"):]
 fontes = "\n".join(re.findall(r'<link [^>]*>', topo))
 
-TITULO = "Comunica+Fé | Liturgia do dia, agenda e santos da comunicação"
+TITULO = "Comunica+Fé | Comunicação que evangeliza: liturgia, agenda e formação"
 DESC = re.search(r'<meta name="description" content="([^"]*)">', topo).group(1)
 IMG = "social/comunicafe-1200x630.jpg"
 img_url = (site + IMG) if site else IMG

@@ -3,5 +3,10 @@
   "framework": null,
   "installCommand": "echo sem dependencias",
   "buildCommand": "bash scripts/vercel-build.sh",
-  "outputDirectory": "_site"
+  "outputDirectory": "_site",
+  "functions": {
+    "api/conteudo.mjs": {
+      "maxDuration": 60
+    }
+  }
 }

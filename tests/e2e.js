@@ -31,8 +31,10 @@ function mockClaude({ can, id = "u_teste", rejeitaEscrita = false, sample = null
   })();`;
 }
 
-async function pagina(browser, { largura = 1280, mock = null, hash = "", liturgia = null } = {}) {
-  const ctx = await browser.newContext({ viewport: { width: largura, height: 900 } });
+async function pagina(browser, { largura = 1280, mock = null, hash = "", liturgia = null, conteudo = null } = {}) {
+  const ctx = await browser.newContext({ viewport: { width: largura, height: 900 }, acceptDownloads: true });
+  // a IA do Criador de conteúdo também é simulada: por padrão, aparece como não configurada
+  await ctx.route(/\/api\/conteudo/, r => conteudo ? conteudo(r) : r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ configurado: false, exigeLogin: true, falta: ["chave", "login"] }) }));
   if (mock) await ctx.addInitScript(mock);
   // a liturgia automática vem da internet; nos testes, a resposta é simulada (ou fica indisponível)
   await ctx.route(/\/api\/liturgia/, r => liturgia ? r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(liturgia) }) : r.fulfill({ status: 200, contentType: "application/json", body: "{}" }));
@@ -54,7 +56,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
   {
     const p = await pagina(browser);
     check((await p.$$("h1")).length === 1, "um único h1");
-    for (const [aba, re] of [["liturgia", /Liturgia de/], ["agenda", /Escala das missas/], ["frases", /Frases da equipe/], ["santos", /Carlo Acutis/]]) {
+    for (const [aba, re] of [["liturgia", /Liturgia de/], ["agenda", /Agenda paroquial/], ["frases", /Frases da equipe/], ["santos", /Carlo Acutis/]]) {
       await p.click(`[data-tab=${aba}]`);
       check(await p.isVisible(`[data-painel=${aba}]`) && re.test(await p.textContent(`[data-painel=${aba}]`)), `aba "${aba}" mostra o assunto`);
       check(await p.getAttribute(`[data-tab=${aba}]`, "aria-selected") === "true" && await p.isHidden("[data-painel=inicio]"), `aba "${aba}" fica marcada e esconde as outras`);
@@ -171,13 +173,13 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     await p.fill("#s-foto", "Ana"); await p.fill("#s-transmissao", "João");
     await p.click("#esc-form button[type=submit]"); await p.waitForTimeout(300);
     check(/Missa dominical/.test(await p.textContent("#modal h2")), "após publicar, abre a escala");
-    check((await p.$$("#modal .vaga-chip")).length === 3, "funções vazias aparecem como vaga (3)");
-    check(/2 de 5 funções/.test(await p.textContent("#esc-card")), "card da escala mostra 2 de 5 funções");
+    check((await p.$$("#modal .vaga-chip")).length === 5, "funções vazias aparecem como vaga (5)");
+    check(/2 de 7 funções/.test(await p.textContent("#esc-card")), "card da escala mostra 2 de 7 funções");
     await p.click('#modal [data-take="redes"] button'); await p.waitForTimeout(100);
     check(/nome/.test(await p.textContent("#toast")), "assumir sem nome pede o nome");
     await p.fill("#tk-redes", "Maria"); await p.click('#modal [data-take="redes"] button'); await p.waitForTimeout(300);
-    check(/Maria/.test(await p.textContent("#modal .esc-roles")) && (await p.$$("#modal .vaga-chip")).length === 2, "assumir vaga preenche a função");
-    check(/3 de 5 funções/.test(await p.textContent("#esc-card")), "card atualiza para 3 de 5 funções");
+    check(/Maria/.test(await p.textContent("#modal .esc-roles")) && (await p.$$("#modal .vaga-chip")).length === 4, "assumir vaga preenche a função");
+    check(/3 de 7 funções/.test(await p.textContent("#esc-card")), "card atualiza para 3 de 7 funções");
     const wa = await p.$eval("#modal .share .wa", a => decodeURIComponent(a.href));
     check(/Redes sociais: Maria/.test(wa) && /Coordenação: vaga/.test(wa), "WhatsApp leva a escala com as vagas");
     await p.click("#esc-edit"); await p.fill("#s-coordenacao", "Pedro"); await p.click("#esc-form button[type=submit]"); await p.waitForTimeout(300);
@@ -250,26 +252,44 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
   {
     const p = await pagina(browser, { largura: 390 });
     check(await p.evaluate(() => document.documentElement.scrollWidth) <= 390, "sem rolagem lateral");
-    const barra = await p.$eval(".tabbar", e => [getComputedStyle(e).position, Math.round(e.getBoundingClientRect().top)]);
-    check(barra[0] === "fixed" && barra[1] === 64, "barra de abas fica fixa logo abaixo do topo", String(barra));
+    const barra = await p.$eval("#bnav", e => [getComputedStyle(e).position, Math.round(innerHeight - e.getBoundingClientRect().bottom), e.querySelectorAll("button").length]);
+    check(barra[0] === "fixed" && barra[1] === 0 && barra[2] === 5, "navegação inferior fixa no rodapé, com 5 atalhos", String(barra));
+    check(await p.isHidden(".tabbar"), "no celular, a barra de abas do topo dá lugar à navegação inferior");
     await p.mouse.wheel(0, 1500); await p.waitForTimeout(200);
-    check(await p.$eval(".tabbar", e => Math.round(e.getBoundingClientRect().top)) === 64, "barra de abas continua no lugar ao rolar a página");
+    check(await p.$eval("#bnav", e => Math.round(innerHeight - e.getBoundingClientRect().bottom)) === 0, "navegação inferior continua no lugar ao rolar a página");
     check(await p.$eval("#avatar", e => e.getBoundingClientRect().right <= innerWidth), "botão da conta cabe na tela");
-    for (const aba of ["agenda", "liturgia", "santos", "perguntas"]) {
-      await p.click(`[data-tab=${aba}]`); await p.waitForTimeout(100);
-      check(await p.isVisible(`[data-painel=${aba}]`) && await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `celular: aba "${aba}" abre sem rolagem lateral`);
+    for (const aba of ["agenda", "liturgia", "equipe"]) {
+      await p.click(`[data-bnav=${aba}]`); await p.waitForTimeout(100);
+      check(await p.isVisible(`[data-painel=${aba}]`) && await p.getAttribute(`[data-bnav=${aba}]`, "aria-current") === "page" && await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `celular: atalho "${aba}" abre a aba sem rolagem lateral`);
     }
-    await p.click("[data-tab=inicio]");
-    for (const a of ["conta", "agendar"]) {
+    for (const aba of ["santos", "perguntas", "cobertura", "criador"]) {
+      await p.click("#menu-btn"); check(await p.isVisible("#msheet"), `celular: menu de assuntos abre (${aba})`);
+      await p.click(`[data-msheet=${aba}]`); await p.waitForTimeout(100);
+      check(await p.isHidden("#msheet") && await p.isVisible(`[data-painel=${aba}]`) && await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `celular: menu leva à aba "${aba}" sem rolagem lateral`);
+    }
+    // com dados cadastrados, as abas novas continuam sem rolagem lateral
+    await p.evaluate(() => { const dia = isoDay(addD(new Date(), 2)); data.set("agenda", "x1", { titulo: "Procissão de Nossa Senhora Aparecida com a comunidade", data: dia, hora: "17:00", local: "Saída da Igreja Matriz de São Sebastião", area: "procissao" }); data.set("membros", "m1", { nome: "Maria Aparecida dos Santos Oliveira", funcoes: ["foto", "video"] }); });
+    for (const aba of ["agenda", "equipe", "cobertura"]) {
+      await p.evaluate(a => setTab(a), aba); await p.waitForTimeout(100);
+      check(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `celular: aba "${aba}" com dados, sem rolagem lateral`);
+    }
+    await p.evaluate(() => setTab("agenda")); await p.click('[data-ag-view="mes"]');
+    check(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), "celular: calendário do mês cabe na tela");
+    await p.click("#menu-btn"); await p.keyboard.press("Escape"); check(await p.isHidden("#msheet"), "celular: Esc fecha o menu de assuntos");
+    await p.click("[data-bnav=perfil]"); check(await aberto(p) && /Minha conta/.test(await p.textContent("#modal-body")), "celular: Perfil abre a conta"); await fechar(p);
+    await p.click("[data-bnav=inicio]");
+    for (const a of ["conta"]) {
       await p.click(`.top-actions [data-action=${a}]`); check(await aberto(p), `celular: botão "${a}" abre`);
       const sw = await p.evaluate(() => document.getElementById("modal").scrollWidth <= document.getElementById("modal").clientWidth + 1);
       check(sw, `celular: painel "${a}" sem rolagem lateral`);
       await fechar(p);
     }
+    const heroAlt = await p.$eval("#abertura", e => e.offsetHeight / innerHeight);
+    check(heroAlt <= 3.5, "celular: a abertura é mais curta e o painel chega mais cedo", heroAlt.toFixed(2));
     await p.click("#fav");
     const t = await p.evaluate(() => { const r = document.getElementById("toast").getBoundingClientRect(); return { top: r.top, bottom: r.bottom }; });
     check(t.bottom <= await p.evaluate(() => innerHeight) && t.top > 0, "aviso (toast) aparece dentro da tela", JSON.stringify(t));
-    const pequenos = await p.$$eval(".tab, .top-actions button, .add, .ctl, .round, #fav, .ghost-pill", els => els.filter(e => { const r = e.getBoundingClientRect(); return r.width && (r.width < 36 || r.height < 22); }).map(e => e.id || e.className));
+    const pequenos = await p.$$eval(".bnav button, .top-actions button, .add, .ctl, .round, #fav, .ghost-pill, .qcard", els => els.filter(e => { const r = e.getBoundingClientRect(); return r.width && (r.width < 36 || r.height < 22); }).map(e => e.id || e.className));
     check(pequenos.length === 0, "botões com tamanho tocável", pequenos.join(", "));
     check(p.erros.length === 0, "sem erros no console", p.erros.join(" | "));
     await p.context().close();
@@ -435,13 +455,14 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
         check(s4 > .9 && await p.getAttribute('.srail [data-cena="4"]', "aria-current") === "true", `${w}px: índice lateral leva à cena e marca a ativa`, String(s4));
       }
       await em(5);
-      await p.click("#show-servir"); await p.waitForTimeout(150);
+      // clique direto: o Playwright rola a página antes de clicar em botões dentro da cena presa (sticky) e muda de cena
+      await p.$eval("#show-servir", b => b.click()); await p.waitForTimeout(150);
       check(/Venha servir/.test(await p.textContent("#modal-body")), `${w}px: Quero servir abre a inscrição`);
       await p.click("#modal [data-close]");
-      await p.click("#show-share"); await p.waitForTimeout(150);
+      await p.$eval("#show-share", b => b.click()); await p.waitForTimeout(150);
       check(/Compartilhar o site/.test(await p.textContent("#modal-body")), `${w}px: Compartilhar o site abre o painel`);
       await p.click("#modal [data-close]");
-      await p.click('.s5 [data-ir="hoje"]'); await p.waitForFunction(() => { const t = document.getElementById("hoje").getBoundingClientRect().top; return t >= 0 && t < 160; }, null, { timeout: 3000 }).catch(() => {});
+      await p.$eval('.s5 [data-ir="hoje"]', b => b.click()); await p.waitForFunction(() => { const t = document.getElementById("hoje").getBoundingClientRect().top; return t >= 0 && t < 160; }, null, { timeout: 3000 }).catch(() => {});
       check(await p.evaluate(() => { const t = document.getElementById("hoje").getBoundingClientRect().top; return t >= 0 && t < 160; }), `${w}px: “Ver o que tem hoje” leva aos cards do dia`);
       await em(3.3);
       await p.click("#show-frase"); await p.waitForTimeout(200);
@@ -513,7 +534,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
   {
     const p = await pagina(browser);
     const abas = await p.$$eval("#tabs [role=tab]", bs => bs.map(b => b.dataset.tab));
-    check(abas.length === 11 && abas[0] === "inicio", "barra com 11 abas, começando pelo Início", abas.join(","));
+    check(abas.length === 14 && abas[0] === "inicio", "barra com 14 abas, começando pelo Início", abas.join(","));
     for (const aba of abas) {
       await p.click(`[data-tab=${aba}]`);
       const vis = await p.$$eval("[data-painel]", ps => ps.filter(e => !e.hidden).map(e => e.dataset.painel));
@@ -527,7 +548,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     await p.click('#corpo-agenda [data-act="ev-add"]'); check(await aberto(p) && !!(await p.$("#ev-form")), "aba Agenda: Novo evento abre o formulário");
     await p.fill("#e-t", "Encontro da Comunica+Fé"); await p.click("#ev-form button[type=submit]"); await p.waitForTimeout(200); await fechar(p);
     check(/Encontro da Comunica\+Fé/.test(await p.textContent("#corpo-agenda")), "evento publicado aparece na aba Agenda");
-    await p.click("#corpo-agenda [data-del]"); await p.click("#corpo-agenda [data-del]"); await p.waitForTimeout(200);
+    await p.click("#corpo-agenda [data-evento]"); await p.click("#modal [data-del]"); await p.click("#modal [data-del]"); await p.waitForTimeout(200);
     check(!/Encontro da Comunica\+Fé/.test(await p.textContent("#corpo-agenda")), "excluir na aba Agenda tira o evento");
     await p.click("[data-tab=frases]"); await p.click('#corpo-frases [data-action="quotes"]');
     check(await p.evaluate(() => document.getElementById("fw").open), "aba Frases abre a frase do dia"); await p.click("#fw-close");
@@ -600,6 +621,182 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     await velha.context().close();
   }
 
+  console.log("16. Painel inicial, agenda e avisos (modo local)");
+  {
+    const p = await pagina(browser);
+    const d = new Date(), iso = x => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`;
+    const amanha = iso(new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1));
+    check(/Comunicação/.test(await p.textContent("#show-h")) && /evangeliza/.test(await p.textContent("#show-h")), "abertura com o título “Comunicação que evangeliza.”");
+    check(/Liturgia, agenda, formação e comunicação paroquial em um só lugar/.test(await p.textContent(".s0 .show-sub")), "abertura com a nova descrição");
+    check(/Acessar painel/.test(await p.textContent(".s0 .show-cta")) && /Ver agenda/.test(await p.textContent(".s0 .show-cta")), "abertura com os botões Acessar painel e Ver agenda");
+    await p.click('.s0 [data-ir="painel"]'); await p.waitForFunction(() => Math.abs(document.getElementById("painel").getBoundingClientRect().top) < 200, null, { timeout: 3000 }).catch(() => {});
+    check(await p.evaluate(() => Math.abs(document.getElementById("painel").getBoundingClientRect().top) < 200), "Acessar painel leva ao painel");
+    check((await p.$$("#quick .qcard")).length === 6, "acesso rápido com 6 cartões");
+    for (const [n, aba] of [[0, "agenda"], [1, "liturgia"], [2, "equipe"], [3, "cobertura"], [4, "formacao"], [5, "criador"]]) {
+      await p.click("[data-tab=inicio]"); await p.click(`#quick .qcard >> nth=${n}`);
+      check(await p.isVisible(`[data-painel=${aba}]`), `cartão ${n + 1} do acesso rápido abre "${aba}"`);
+    }
+    await p.click("[data-tab=inicio]");
+    check(/Nenhum evento marcado/.test(await p.textContent("#prox")) && /Nenhum aviso/.test(await p.textContent("#avisos")), "sem dados, eventos e avisos mostram estado vazio");
+    // evento novo pela aba Agenda
+    await p.click("[data-tab=agenda]"); await p.click('#corpo-agenda [data-act="ev-add"]');
+    await p.fill("#e-t", "Retiro dos jovens"); await p.fill("#e-d", amanha); await p.fill("#e-h", "19:30"); await p.fill("#e-l", "Salão paroquial");
+    await p.click('#ev-form label:has(input[value="retiro"])'); await p.click("#ev-form button[type=submit]"); await p.waitForTimeout(200);
+    check(!(await aberto(p)) && /Retiro dos jovens/.test(await p.textContent("#corpo-agenda")) && /Retiro/.test(await p.textContent("#corpo-agenda .evi .ds-chip")), "evento publicado aparece na agenda com a categoria");
+    await p.click("[data-tab=inicio]");
+    check(/Retiro dos jovens/.test(await p.textContent("#prox")) && /19:30/.test(await p.textContent("#prox")) && /Salão paroquial/.test(await p.textContent("#prox")), "painel mostra o próximo evento com data, hora e local");
+    await p.click('#prox [data-evento]');
+    check(await aberto(p) && /Adicionar à minha agenda/.test(await p.textContent("#modal-body")), "Detalhes abre o evento");
+    const [dl] = await Promise.all([p.waitForEvent("download", { timeout: 8000 }).catch(() => null), p.click("#ev-ics")]);
+    const ics = dl ? fs.readFileSync(await dl.path(), "utf8") : "";
+    check(dl && /\.ics$/.test(dl.suggestedFilename()) && /SUMMARY:Retiro dos jovens/.test(ics) && /DTSTART:\d{8}T193000/.test(ics) && /TRIGGER:-PT1H/.test(ics), "evento vira arquivo .ics com lembrete", dl ? dl.suggestedFilename() : "sem download");
+    await p.click("#ev-edit"); await p.fill("#e-t", "Retiro de jovens"); await p.click("#ev-form button[type=submit]"); await p.waitForTimeout(200);
+    check(/Retiro de jovens/.test(await p.textContent("#modal h2")) && /Retiro de jovens/.test(await p.textContent("#prox")), "editar evento salva a mudança e volta ao evento");
+    await fechar(p);
+    await p.click('#prox [data-evento]'); await p.click("#ev-cancel"); await p.waitForTimeout(200); await fechar(p);
+    check(/Cancelado/.test(await p.textContent("#prox")) && !!(await p.$("#prox .evi.cancelado")), "cancelar evento marca como cancelado");
+    // visões da agenda
+    await p.click("[data-tab=agenda]");
+    await p.click('[data-ag-view="mes"]');
+    check((await p.$$("#corpo-agenda .mes .d")).length === 42 && (await p.$$("#corpo-agenda .mes .wd")).length === 7, "visão do mês mostra o calendário");
+    await p.click(`[data-ag-dia="${amanha}"]`);
+    check(await p.getAttribute('[data-ag-view="dia"]', "aria-pressed") === "true" && /Retiro de jovens/.test(await p.textContent("#corpo-agenda")), "tocar no dia abre a visão do dia com o evento");
+    await p.click('[data-ag-view="semana"]'); check((await p.$$("#corpo-agenda .sem .linha")).length === 7, "visão da semana mostra 7 dias");
+    await p.click('[data-ag-view="proximos"]'); await p.click('[data-ag-cat="reuniao"]');
+    check(!/Retiro de jovens/.test(await p.textContent("#corpo-agenda")), "filtro por categoria esconde os outros eventos");
+    await p.click('[data-ag-cat="todas"]');
+    // avisos
+    await p.click("[data-tab=inicio]");
+    check(await p.isVisible("#aviso-add"), "modo local: botão Novo aviso aparece");
+    await p.click("#aviso-add"); await p.click("#av-form button[type=submit]");
+    check(/Preencha/.test(await p.textContent("#av-note")), "aviso sem texto é recusado");
+    await p.fill("#av-t", "Missa em novo horário"); await p.fill("#av-x", "A missa de domingo passa a ser às 8h."); await p.check("#av-fixo");
+    await p.click("#av-form button[type=submit]"); await p.waitForTimeout(200);
+    check(/Missa em novo horário/.test(await p.textContent("#avisos")) && !!(await p.$("#avisos .aviso.fixo")), "aviso publicado e fixado aparece no painel");
+    await p.click("[data-aviso-del]"); await p.click("[data-aviso-del]"); await p.waitForTimeout(200);
+    check(/Nenhum aviso/.test(await p.textContent("#avisos")), "excluir aviso tira do painel");
+    check((await p.$$("#ftea .ftile")).length === 4, "painel mostra materiais de formação");
+    check(!p.erros.length, "painel e agenda sem erros", p.erros.join(" | "));
+    await p.context().close();
+  }
+
+  console.log("17. Equipe, escala e cobertura (modo local)");
+  {
+    const p = await pagina(browser);
+    const d = new Date(), iso = x => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`;
+    const dia = iso(new Date(d.getFullYear(), d.getMonth(), d.getDate() + 2));
+    await p.click("[data-tab=equipe]");
+    check(/Nenhum integrante/.test(await p.textContent("#corpo-equipe")), "sem integrantes, mostra estado vazio");
+    for (const [nome, fn] of [["Ana Souza", "foto"], ["João Lima", "video"]]) {
+      await p.click("#mb-add"); await p.fill("#mb-n", nome); await p.click(`#mb-form label:has(input[value="${fn}"])`); await p.click("#mb-form button[type=submit]"); await p.waitForTimeout(150);
+    }
+    await p.click("#mb-add"); await p.fill("#mb-n", "ana souza"); await p.click("#mb-form button[type=submit]");
+    check(/Já existe/.test(await p.textContent("#mb-note")), "nome repetido na equipe é recusado"); await fechar(p);
+    check((await p.$$("#corpo-equipe .eqc")).length === 2, "integrantes cadastrados aparecem como cartões");
+    // duas escalas no mesmo dia com a mesma pessoa
+    for (const [hora, fk, cel] of [["10:00", "foto", "Missa dominical"], ["11:00", "video", "Batizado"]]) {
+      await p.evaluate(() => openEscalaForm());
+      await p.selectOption("#s-c", cel); await p.fill("#s-d", dia); await p.fill("#s-h", hora); await p.fill(`#s-${fk}`, "Ana Souza");
+      await p.click("#esc-form button[type=submit]"); await p.waitForTimeout(200);
+      if (hora === "11:00") {
+        check(/Atenção: Ana Souza já está em Missa dominical/.test(await p.textContent("#s-note")), "escala avisa conflito de horário da mesma pessoa");
+        await p.click("#esc-form button[type=submit]"); await p.waitForTimeout(200);
+      }
+      await fechar(p);
+    }
+    await p.click("[data-tab=equipe]");
+    check((await p.$$("#corpo-equipe .fn.conflito")).length >= 2, "escalas com conflito ficam marcadas");
+    check(/falta/.test(await p.textContent("#corpo-equipe .pend")) && /no mesmo dia/.test(await p.textContent("#corpo-equipe .pend")), "pendências mostram vagas e conflitos");
+    await p.click('#corpo-equipe .eqc:has-text("Ana Souza")');
+    check(/Compromissos de Ana/.test(await p.textContent("#corpo-equipe")) && (await p.$$("#corpo-equipe [data-confirmar]")).length === 2, "tocar na pessoa mostra os compromissos dela");
+    await p.click("#corpo-equipe [data-confirmar] >> nth=0"); await p.waitForTimeout(200);
+    check((await p.$$("#corpo-equipe [data-confirmar]")).length === 1 && (await p.$$("#corpo-equipe .fn.conf")).length >= 1, "confirmar presença marca a função");
+    // cobertura
+    await p.click("[data-tab=cobertura]");
+    check(/Privacidade/.test(await p.textContent("#corpo-cobertura")) && (await p.$$("#cob-ev option")).length === 2, "cobertura lista os eventos sem checklist e o aviso de privacidade");
+    await p.click("#cob-criar"); await p.waitForTimeout(200);
+    check((await p.$$("#corpo-cobertura .cob-i .chk li")).length === 11, "checklist criada com 11 itens");
+    await p.click('#corpo-cobertura [data-cob$="/ambiente"]'); await p.waitForTimeout(100);
+    check(await p.getAttribute('#corpo-cobertura [data-cob$="/ambiente"]', "data-st") === "andamento", "item passa para Em andamento");
+    await p.click('#corpo-cobertura [data-cob$="/ambiente"]'); await p.waitForTimeout(100);
+    check(await p.getAttribute('#corpo-cobertura [data-cob$="/ambiente"]', "data-st") === "concluido" && /1 de 11 concluídos/.test(await p.textContent("#corpo-cobertura")), "item concluído conta no progresso");
+    check((await p.$$("#cob-ev option")).length === 1, "evento com checklist sai da lista de novos");
+    // formação
+    await p.click("[data-tab=formacao]");
+    check((await p.$$("#cat-f .ftile")).length === 12 && (await p.$$('#cat-f .ftile[aria-disabled="true"]')).length === 3, "catálogo com 12 assuntos e 3 em preparação");
+    await p.click('#cat-f .ftile:has-text("Espiritualidade do comunicador")'); await p.waitForTimeout(200);
+    check(await p.evaluate(() => document.getElementById("leitor").open) && /Espiritualidade/.test(await p.textContent("#lt-mod")), "assunto disponível abre o material");
+    await p.click("#lt-close");
+    check(!p.erros.length, "equipe e cobertura sem erros", p.erros.join(" | "));
+    await p.context().close();
+  }
+
+  console.log("18. Criador de conteúdo");
+  {
+    const off = await pagina(browser); await off.click("[data-tab=criador]"); await off.waitForTimeout(200);
+    check(/ainda não foi ativada/.test(await off.textContent("#cri-status")) && /ANTHROPIC_API_KEY/.test(await off.textContent("#cri-status")), "sem chave, o criador diz o que falta para ativar");
+    await off.fill("#cri-tema", "Festa de São Francisco no sábado"); await off.click("#cri-go");
+    check(/não está ativa/.test(await off.textContent("#cri-note")), "sem IA, gerar avisa e sugere copiar o pedido");
+    await off.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+    await off.click("#cri-copiar-pedido"); await off.waitForTimeout(100);
+    const pedido = await off.evaluate(() => navigator.clipboard.readText()).catch(() => "");
+    check(/Nunca invente citações/.test(pedido) && /Festa de São Francisco/.test(pedido), "copiar pedido leva as regras e o tema");
+    check(!off.erros.length, "criador desligado sem erros", off.erros.join(" | "));
+    await off.context().close();
+
+    let enviado = null;
+    const on = await pagina(browser, { conteudo: r => r.request().method() === "POST" ? (enviado = r.request().postDataJSON(), r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ texto: "Legenda pronta para a festa." }) }))
+      : r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ configurado: true, exigeLogin: false, falta: [] }) }) });
+    await on.click("[data-tab=criador]"); await on.waitForTimeout(200);
+    check(/IA ativa/.test(await on.textContent("#cri-status")), "com a IA configurada, mostra que está ativa");
+    await on.click("#cri-go"); check(/Escreva o tema/.test(await on.textContent("#cri-note")), "sem tema, pede o tema");
+    await on.click('[data-cri-tipo="reels"]'); await on.click('[data-cri-tam="curto"]'); await on.selectOption("#cri-pub", "Jovens");
+    await on.fill("#cri-tema", "Missa dos jovens, sexta às 19h"); await on.click("#cri-go"); await on.waitForTimeout(300);
+    check(/Legenda pronta/.test(await on.textContent("#cri-out")) && await on.isVisible("#cri-copiar"), "conteúdo gerado aparece com o botão de copiar");
+    check(enviado && enviado.tipo === "reels" && enviado.tamanho === "curto" && enviado.publico === "Jovens" && /jovens/.test(enviado.tema) && !("prompt" in enviado), "o site manda só as escolhas; o texto do pedido é montado no servidor", JSON.stringify(enviado));
+    check(!on.erros.length, "criador sem erros", on.erros.join(" | "));
+    await on.context().close();
+
+    const cl = await pagina(browser, { mock: mockClaude({ can: true, sample: '{ texto: "Texto feito pelo Claude." }' }) }); await cl.waitForTimeout(400);
+    await cl.click("[data-tab=criador]"); await cl.waitForTimeout(100);
+    check(/IA do Claude/.test(await cl.textContent("#cri-status")), "no Claude, usa a IA do Claude");
+    await cl.fill("#cri-tema", "Novena de Natal na comunidade"); await cl.click("#cri-go"); await cl.waitForTimeout(200);
+    check(/Texto feito pelo Claude/.test(await cl.textContent("#cri-out")), "no Claude, gera o conteúdo");
+    await cl.context().close();
+  }
+
+  console.log("19. Firebase: permissões da equipe (Firebase de teste)");
+  {
+    const p = await pagina(browser, { mock: fs.readFileSync(path.join(__dirname, "firebase-falso.js"), "utf8") }); await p.waitForTimeout(300);
+    await p.click("[data-tab=agenda]");
+    check(!(await p.$('#corpo-agenda [data-act="ev-add"]')) && /Entre com a conta da equipe/.test(await p.textContent("#corpo-agenda")), "sem login, a agenda é só leitura");
+    await p.click("[data-tab=equipe]"); check(/aparece para quem faz parte da equipe/.test(await p.textContent("#corpo-equipe")), "sem login, a lista da equipe fica protegida");
+    await p.click("#avatar"); await p.click("[data-modo=criar]");
+    await p.fill("#c-nome", "Rita Alves"); await p.fill("#c-email", "rita@exemplo.com"); await p.fill("#c-senha", "fe2026!"); await p.fill("#c-senha2", "fe2026!");
+    await p.click("#conta-form button[type=submit]"); await p.waitForTimeout(300);
+    check(/ainda não faz parte da equipe/.test(await p.textContent("#modal-body")) && /u_rita@exemplo.com/.test(await p.textContent("#modal-body code")), "conta nova mostra o código para pedir acesso");
+    await p.click("#conta-sair"); await p.waitForTimeout(100);
+    await p.evaluate(() => { window.__fbDocs["equipe/u_rita@exemplo.com"] = { papel: "membro" }; });
+    await p.click("#avatar"); await p.fill("#c-email", "rita@exemplo.com"); await p.fill("#c-senha", "fe2026!"); await p.click("#conta-form button[type=submit]"); await p.waitForTimeout(300); await fechar(p);
+    await p.click("[data-tab=agenda]");
+    check(!!(await p.$('#corpo-agenda [data-act="ev-add"]')) && /pode publicar na agenda/.test(await p.textContent("#corpo-agenda")), "integrante da equipe pode publicar na agenda");
+    await p.click('#corpo-agenda [data-act="ev-add"]'); await p.fill("#e-t", "Reunião da PASCOM"); await p.click("#ev-form button[type=submit]"); await p.waitForTimeout(300);
+    check(await p.evaluate(() => Object.entries(window.__fbDocs).some(([k, v]) => k.startsWith("agenda/") && v.titulo === "Reunião da PASCOM")), "evento fica gravado no Firestore");
+    await p.click("[data-tab=inicio]"); check(await p.isHidden("#aviso-add"), "integrante comum não publica avisos");
+    await p.click("#avatar"); await p.click("#conta-sair"); await p.waitForTimeout(100);
+    await p.evaluate(() => { window.__fbDocs["equipe/u_rita@exemplo.com"] = { papel: "coordenacao" }; });
+    await p.click("#avatar"); await p.fill("#c-email", "rita@exemplo.com"); await p.fill("#c-senha", "fe2026!"); await p.click("#conta-form button[type=submit]"); await p.waitForTimeout(300);
+    check(!!(await p.$("#acesso-form")), "coordenação vê o formulário para liberar acesso");
+    await p.fill("#ac-uid", "Xk3pQ9aB7cD1eF2gH4iJ5kL6mN7o"); await p.click("#acesso-form button[type=submit]"); await p.waitForTimeout(200);
+    check(await p.evaluate(() => (window.__fbDocs["equipe/Xk3pQ9aB7cD1eF2gH4iJ5kL6mN7o"] || {}).papel) === "membro", "coordenação libera o acesso de outra pessoa");
+    await fechar(p);
+    check(await p.isVisible("#aviso-add"), "coordenação publica avisos");
+    await p.click("#aviso-add"); await p.fill("#av-t", "Aviso da coordenação"); await p.fill("#av-x", "Reunião na quinta."); await p.click("#av-form button[type=submit]"); await p.waitForTimeout(300);
+    check(/Aviso da coordenação/.test(await p.textContent("#avisos")), "aviso da coordenação aparece para todos");
+    check(!p.erros.length, "Firebase sem erros", p.erros.join(" | "));
+    await p.context().close();
+  }
+
   console.log("8. Celular, tablet e notebook (12 tamanhos de tela)");
   {
     const TELAS = [["celular 360", 360, 740, 1], ["celular 390", 390, 844, 1], ["celular 430", 430, 932, 1], ["celular deitado", 844, 390, 1],
@@ -615,7 +812,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
         document.querySelectorAll(".card:not([hidden]) .body").forEach(bd => { const c = bd.getBoundingClientRect(); [...bd.children].forEach(ch => { if (vis(ch) && !ch.classList.contains("scroll") && ch.getBoundingClientRect().bottom > c.bottom + 1) cortados.push(ch.id || ch.className); }); });
         document.querySelectorAll(".card h3,.card .title,.big-date,.chip,.topbar *,.subhead *").forEach(e => { if (vis(e) && e.scrollWidth > e.clientWidth + 1 && getComputedStyle(e).overflow === "visible") cortados.push(e.id || e.className); });
         const pequenos = [...document.querySelectorAll("button,a,select,[role=switch]")].filter(vis).filter(e => { const b = e.getBoundingClientRect(); return (b.height < 32 || b.width < 32) && !e.closest(".dots") && !e.closest(".colophon"); }).map(e => e.id || e.className);
-        return { lateral: document.documentElement.scrollWidth > innerWidth, menus: [...document.querySelectorAll(".nav,.mobile-nav")].filter(vis).length,
+        return { lateral: document.documentElement.scrollWidth > innerWidth, menus: [...document.querySelectorAll(".nav,.mobile-nav,.bnav")].filter(vis).length,
           cabecalho: document.querySelector(".topbar").getBoundingClientRect().height, cortados, pequenos };
       });
       check(!r.lateral, `${nome}: sem rolagem lateral`);
@@ -623,7 +820,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
       check(r.cabecalho <= 70, `${nome}: cabeçalho em uma linha`, Math.round(r.cabecalho) + "px");
       check(!r.cortados.length, `${nome}: nada cortado nos cards`, r.cortados.join(", "));
       check(!r.pequenos.length, `${nome}: botões com tamanho de toque`, r.pequenos.join(", "));
-      await p.click("#agendar"); await p.waitForTimeout(150);
+      await p.evaluate(() => openEscalaForm()); await p.waitForTimeout(150);
       check(await p.evaluate(() => { const d = document.getElementById("modal"), b = d.getBoundingClientRect(); return b.left >= 0 && b.right <= innerWidth && d.scrollWidth <= d.clientWidth + 1; }), `${nome}: formulário da escala cabe na tela`);
       check(!erros.length, `${nome}: sem erros`, erros.join(" | "));
       await ctx.close();

@@ -3,23 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Comunica+Fé | Liturgia do dia, agenda e santos da comunicação</title>
-<meta name="description" content="Pastoral da Comunicação: escala das missas, liturgia do dia, agenda da paróquia, frase do dia e os santos padroeiros da comunicação.">
+<title>Comunica+Fé | Comunicação que evangeliza: liturgia, agenda e formação</title>
+<meta name="description" content="Pastoral da Comunicação: liturgia do dia, agenda paroquial, escala da equipe, cobertura fotográfica, criador de conteúdo e formação.">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#c8102e">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23c8102e'/%3E%3Cpath d='M32 14v36M22 26h20' stroke='white' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_BR">
 <meta property="og:site_name" content="Comunica+Fé">
-<meta property="og:title" content="Comunica+Fé | Liturgia do dia, agenda e santos da comunicação">
-<meta property="og:description" content="Pastoral da Comunicação: escala das missas, liturgia do dia, agenda da paróquia, frase do dia e os santos padroeiros da comunicação.">
+<meta property="og:title" content="Comunica+Fé | Comunicação que evangeliza: liturgia, agenda e formação">
+<meta property="og:description" content="Pastoral da Comunicação: liturgia do dia, agenda paroquial, escala da equipe, cobertura fotográfica, criador de conteúdo e formação.">
 <meta property="og:image" content="social/comunicafe-1200x630.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Comunica+Fé, Pastoral da Comunicação: liturgia do dia, agenda e frase do dia">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Comunica+Fé | Liturgia do dia, agenda e santos da comunicação">
-<meta name="twitter:description" content="Pastoral da Comunicação: escala das missas, liturgia do dia, agenda da paróquia, frase do dia e os santos padroeiros da comunicação.">
+<meta name="twitter:title" content="Comunica+Fé | Comunicação que evangeliza: liturgia, agenda e formação">
+<meta name="twitter:description" content="Pastoral da Comunicação: liturgia do dia, agenda paroquial, escala da equipe, cobertura fotográfica, criador de conteúdo e formação.">
 <meta name="twitter:image" content="social/comunicafe-1200x630.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,13 +32,13 @@
    "@type": "Organization",
    "name": "Comunica+Fé",
    "alternateName": "Pastoral da Comunicação",
-   "description": "Pastoral da Comunicação: escala das missas, liturgia do dia, agenda da paróquia, frase do dia e os santos padroeiros da comunicação.",
+   "description": "Pastoral da Comunicação: liturgia do dia, agenda paroquial, escala da equipe, cobertura fotográfica, criador de conteúdo e formação.",
    "logo": "social/comunicafe-1200x630.jpg"
   },
   {
    "@type": "WebSite",
    "name": "Comunica+Fé",
-   "description": "Pastoral da Comunicação: escala das missas, liturgia do dia, agenda da paróquia, frase do dia e os santos padroeiros da comunicação.",
+   "description": "Pastoral da Comunicação: liturgia do dia, agenda paroquial, escala da equipe, cobertura fotográfica, criador de conteúdo e formação.",
    "inLanguage": "pt-BR"
   }
  ]
@@ -880,6 +880,8 @@
   .s0 { justify-content: flex-start; }
   .mega { position: relative; font-size: clamp(56px, 13.5vw, 230px); margin-top: 2vh; white-space: nowrap; }
   .mega em { font-style: normal; color: var(--accent); }
+  .mega.duas { font-size: clamp(40px, 9.6vw, 150px); white-space: normal; line-height: .92; }
+  .mega.duas::before, .mega.duas::after { white-space: pre; }
   .mega::before, .mega::after { content: attr(data-echo); position: absolute; left: 0; top: 0; pointer-events: none; color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .35); }
   .mega::before { transform: translate(var(--echo, 0px), var(--echo, 0px)); opacity: var(--echo-o, 0); }
   .mega::after { transform: translate(calc(var(--echo, 0px) * 2), calc(var(--echo, 0px) * 2)); opacity: calc(var(--echo-o, 0) * .5); }
@@ -1104,6 +1106,221 @@
   .card .p-head h3 { font-size: 19px; font-weight: 400; margin: 0; }
   .card .scroll { flex: 1; }
   .card .ev { background: rgba(255,255,255,.06); }
+
+  /* ---------- Sistema de design: medidas comuns das peças novas ---------- */
+  :root {
+    --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px; --sp-6: 40px;
+    --r-sm: 10px; --r-md: 16px; --r-xl: 28px;
+    --surface-1: #17100c; --surface-2: #1f1611; --surface-line: rgba(255, 255, 255, .1);
+    --shadow-1: 0 18px 40px -24px rgba(0, 0, 0, .8);
+    --ok: #3fb27f; --warn: #f2b134; --bad: #ef5a5a;
+    --bnav-h: 0px; /* altura da navegação inferior (só no celular) */
+    --tap: 44px;   /* área mínima de toque */
+  }
+  .ds-card { background: var(--surface-1); border: 1px solid var(--surface-line); border-radius: var(--r-lg); box-shadow: var(--shadow-1); color: #fff; }
+  .ds-btn { min-height: var(--tap); padding: 0 18px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 14px; transition: background .2s, transform .2s var(--ease); }
+  .ds-btn.primary { background: var(--accent); color: #140b06; }
+  .ds-btn.primary:hover { background: #ff7d3a; transform: translateY(-1px); }
+  .ds-btn.light { background: #fff; color: #111; }
+  .ds-btn.ghost { border: 1px solid rgba(255, 255, 255, .4); color: #fff; }
+  .ds-btn.ghost:hover { background: rgba(255, 255, 255, .1); }
+  .ds-btn.sm { min-height: 36px; padding: 0 14px; font-size: 13px; }
+  .ds-btn:disabled { opacity: .55; cursor: default; transform: none; }
+  .ds-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 26px; padding: 0 10px; border-radius: 999px; font-size: 11.5px; font-weight: 600; letter-spacing: .04em; background: rgba(255, 255, 255, .08); color: rgba(255, 255, 255, .86); white-space: nowrap; }
+  .ds-chip.acc { background: rgba(255, 106, 31, .16); color: #ffb48a; }
+  .ds-chip.ok { background: rgba(63, 178, 127, .16); color: #7fd8ae; }
+  .ds-chip.warn { background: rgba(242, 177, 52, .16); color: #f6cd78; }
+  .ds-chip.bad { background: rgba(239, 90, 90, .16); color: #ff9c9c; }
+  .ds-seg { display: inline-flex; padding: 4px; gap: 4px; border-radius: 999px; background: rgba(255, 255, 255, .06); border: 1px solid var(--surface-line); }
+  .ds-seg button { min-height: 36px; padding: 0 14px; border-radius: 999px; font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, .75); }
+  .ds-seg button[aria-pressed="true"] { background: #fff; color: #111; }
+  .ds-state { display: flex; align-items: center; gap: 12px; padding: 18px; border-radius: var(--r-md); border: 1px dashed rgba(255, 255, 255, .16); color: rgba(255, 255, 255, .72); font-size: 14px; }
+  .ds-state.err { border-color: rgba(239, 90, 90, .45); color: #ffb3b3; }
+  .ds-skel { height: 64px; border-radius: var(--r-md); background: linear-gradient(90deg, rgba(255,255,255,.04), rgba(255,255,255,.09), rgba(255,255,255,.04)); background-size: 200% 100%; animation: skel 1.4s linear infinite; }
+  @keyframes skel { to { background-position: -200% 0; } }
+  .ds-prog { display: flex; gap: 4px; }
+  .ds-prog i { flex: 1; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .12); }
+  .ds-prog i.on { background: var(--accent); }
+  .ds-prog i.mid { background: rgba(255, 106, 31, .45); }
+  .ds-h { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .ds-h h2, .ds-h h3 { margin: 0; font-family: var(--font-heavy); font-weight: 800; font-stretch: 75%; text-transform: uppercase; font-size: clamp(24px, 3.2vw, 36px); line-height: .95; letter-spacing: -.01em; }
+  .ds-h p { margin: 6px 0 0; color: var(--on-dark-muted); font-size: 14px; }
+  .ds-field { display: grid; gap: 6px; min-width: 0; }
+  .ds-field select { width: 100%; min-width: 0; text-overflow: ellipsis; }
+  .ds-field label, .ds-field legend { font-size: 12.5px; color: rgba(255, 255, 255, .7); }
+  .ds-field input, .ds-field select, .ds-field textarea { min-height: var(--tap); border-radius: 12px; border: 1px solid rgba(255, 255, 255, .16); background: rgba(255, 255, 255, .04); color: #fff; padding: 0 12px; font: inherit; font-size: 16px; color-scheme: dark; }
+  .ds-field textarea { padding: 10px 12px; min-height: 96px; resize: vertical; }
+  .ds-field select option { background: #1b1410; }
+  .ds-field input:focus, .ds-field select:focus, .ds-field textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255, 106, 31, .2); }
+  .ds-grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 640px) { .ds-grid2 { grid-template-columns: 1fr; } }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ---------- Painel da página inicial ---------- */
+  .dash { display: grid; gap: clamp(28px, 4vw, 44px); padding: clamp(28px, 4vw, 48px) clamp(16px, 3vw, 32px) 8px; color: #fff; }
+  .quick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .qcard { position: relative; overflow: hidden; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px; min-height: 96px; padding: 16px 18px; text-align: left; border-radius: var(--r-lg); background: radial-gradient(120% 120% at 100% 0%, rgba(255, 106, 31, .14), transparent 55%), var(--surface-1); border: 1px solid var(--surface-line); transition: transform .25s var(--ease), border-color .25s, background .25s; }
+  .qcard:hover { transform: translateY(-2px); border-color: rgba(255, 106, 31, .5); }
+  .qcard b { display: block; font-size: 16.5px; font-weight: 600; }
+  .qcard small { display: block; margin-top: 3px; color: var(--on-dark-muted); font-size: 13px; line-height: 1.35; }
+  .qcard .seta { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .08); transition: background .2s, transform .2s; }
+  .qcard:hover .seta { background: var(--accent); color: #140b06; transform: translateX(2px); }
+  @media (max-width: 900px) { .quick { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) {
+    .quick { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .qcard { grid-template-columns: 1fr; align-content: start; gap: 8px; min-height: 0; padding: 14px; }
+    .qcard .seta { display: none; }
+    .qcard b { font-size: 15px; }
+    .qcard small { font-size: 12px; }
+  }
+  .dash-cols { display: grid; grid-template-columns: 1.35fr 1fr; gap: clamp(16px, 3vw, 28px); align-items: start; }
+  @media (max-width: 900px) { .dash-cols { grid-template-columns: 1fr; } }
+  .evl { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .evi { display: grid; grid-template-columns: 58px 1fr auto; gap: 14px; align-items: center; padding: 12px 14px; border-radius: var(--r-md); background: var(--surface-1); border: 1px solid var(--surface-line); }
+  .evi .dia { display: grid; place-items: center; height: 58px; border-radius: 14px; background: rgba(255, 106, 31, .12); color: #ffb48a; line-height: 1; }
+  .evi .dia b { font-size: 22px; font-weight: 700; color: #fff; }
+  .evi .dia small { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; }
+  .evi .o b { display: block; font-weight: 600; font-size: 15.5px; overflow-wrap: anywhere; }
+  .evi .o small { display: block; color: var(--on-dark-muted); font-size: 13px; margin-top: 3px; }
+  .evi .o .ds-chip { margin-top: 6px; }
+  .evi.cancelado .o b { text-decoration: line-through; opacity: .7; }
+  @media (max-width: 520px) { .evi { grid-template-columns: 50px 1fr; } .evi .dia { height: 50px; } .evi > .ds-btn { grid-column: 1 / -1; } }
+  .aviso { padding: 16px 18px; border-radius: var(--r-md); background: var(--surface-1); border: 1px solid var(--surface-line); display: grid; gap: 6px; }
+  .aviso.fixo { border-color: rgba(255, 106, 31, .45); background: radial-gradient(100% 140% at 0% 0%, rgba(255, 106, 31, .12), transparent 60%), var(--surface-1); }
+  .aviso b { font-size: 16px; font-weight: 600; }
+  .aviso p { margin: 0; color: rgba(255, 255, 255, .82); line-height: 1.5; white-space: pre-line; overflow-wrap: anywhere; }
+  .aviso small { color: var(--on-dark-muted); font-size: 12px; }
+  .aviso .acts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+  .form-teaser { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+  .ftile { text-align: left; padding: 16px; border-radius: var(--r-md); background: var(--surface-1); border: 1px solid var(--surface-line); display: grid; gap: 8px; align-content: start; transition: border-color .2s; }
+  .ftile:hover { border-color: rgba(255, 106, 31, .5); }
+  .ftile b { font-size: 15.5px; font-weight: 600; }
+  .ftile small { color: var(--on-dark-muted); font-size: 13px; line-height: 1.4; }
+
+  /* ---------- Agenda: dia, semana e mês ---------- */
+  .ag-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .ag-nav { display: flex; align-items: center; gap: 8px; }
+  .ag-nav b { min-width: 150px; text-align: center; font-weight: 600; }
+  .ag-cats { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; margin-bottom: 16px; }
+  .ag-cats::-webkit-scrollbar { display: none; }
+  .ag-cats button { flex: 0 0 auto; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--surface-line); font-size: 13px; color: rgba(255, 255, 255, .85); }
+  .ag-cats button[aria-pressed="true"] { background: var(--accent); color: #140b06; border-color: var(--accent); }
+  .mes { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+  .mes .wd { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--on-dark-muted); text-align: center; padding: 4px 0; }
+  .mes .d { min-height: 84px; padding: 6px; border-radius: 12px; background: var(--surface-1); border: 1px solid var(--surface-line); text-align: left; display: flex; flex-direction: column; gap: 3px; overflow: hidden; }
+  .mes .d.fora { opacity: .35; }
+  .mes .d.hoje { border-color: var(--accent); }
+  .mes .d .n { font-size: 12px; font-weight: 600; }
+  .mes .d .pt { font-size: 11px; line-height: 1.2; padding: 2px 5px; border-radius: 5px; background: rgba(255, 106, 31, .18); color: #ffd2b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mes .d .pt.esc { background: rgba(255, 255, 255, .12); color: #fff; }
+  .mes .d[aria-pressed="true"] { background: #2a1c14; border-color: rgba(255, 106, 31, .7); }
+  @media (max-width: 640px) {
+    .mes .d { min-height: 50px; padding: 4px; align-items: center; }
+    .mes .d .pt { display: none; }
+    .mes .d .dots { display: flex; gap: 3px; }
+    .mes .d .dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  }
+  @media (min-width: 641px) { .mes .d .dots { display: none; } }
+  .sem { display: grid; gap: 8px; }
+  .sem .linha { display: grid; grid-template-columns: 92px 1fr; gap: 12px; align-items: start; padding: 10px 0; border-top: 1px solid var(--surface-line); }
+  .sem .linha.hoje .q { color: var(--accent); }
+  .sem .q { font-size: 13px; color: var(--on-dark-muted); text-transform: capitalize; }
+  .sem .q b { display: block; font-size: 22px; color: #fff; font-weight: 600; }
+
+  /* ---------- Equipe, escala e cobertura ---------- */
+  .eq-cards { display: flex; gap: 12px; overflow-x: auto; padding: 4px 2px 12px; scrollbar-width: none; scroll-snap-type: x mandatory; }
+  .eq-cards::-webkit-scrollbar { display: none; }
+  .eqc { position: relative; flex: 0 0 150px; scroll-snap-align: start; padding: 14px; border-radius: var(--r-lg); background: var(--surface-1); border: 1px solid var(--surface-line); text-align: left; display: grid; gap: 8px; justify-items: start; transition: transform .25s var(--ease), border-color .25s; }
+  .eqc .ini { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; font-weight: 800; font-size: 18px; background: linear-gradient(135deg, #3a2a20, #17100c); border: 1px solid rgba(255, 255, 255, .14); }
+  .eqc b { font-size: 15px; font-weight: 600; line-height: 1.2; overflow-wrap: anywhere; }
+  .eqc small { color: var(--on-dark-muted); font-size: 12px; line-height: 1.35; }
+  .eqc[aria-pressed="true"] { transform: translateY(-4px); border-color: var(--accent); background: radial-gradient(120% 100% at 50% 0%, rgba(255, 106, 31, .25), transparent 60%), var(--surface-1); }
+  .eqc[aria-pressed="true"] .ini { background: linear-gradient(135deg, var(--accent), var(--ember)); color: #140b06; border-color: transparent; }
+  .eqc[aria-pressed="true"]::before { content: ""; position: absolute; top: -9px; left: 50%; border: 6px solid transparent; border-bottom-color: var(--accent); transform: translateX(-50%); }
+  .esc-l { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+  .esc-i { padding: 14px 16px; border-radius: var(--r-md); background: var(--surface-1); border: 1px solid var(--surface-line); display: grid; gap: 10px; }
+  .esc-i .top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+  .esc-i .top b { font-size: 16px; font-weight: 600; }
+  .esc-i .top small { display: block; color: var(--on-dark-muted); font-size: 13px; margin-top: 2px; }
+  .fn-l { display: flex; flex-wrap: wrap; gap: 6px; }
+  .fn { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 10px; border-radius: 10px; font-size: 13px; background: rgba(255, 255, 255, .06); }
+  .fn em { font-style: normal; color: var(--on-dark-muted); font-size: 12px; }
+  .fn.vaga { border: 1px dashed rgba(242, 177, 52, .6); color: #f6cd78; background: none; }
+  .fn.conf::after { content: "✓"; color: var(--ok); font-weight: 700; }
+  .fn.conflito { border: 1px solid rgba(239, 90, 90, .7); }
+  .eq-sec { display: grid; gap: 14px; }
+  .eq-sec + .eq-sec { margin-top: 34px; }
+  .pend { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+  .pend li { display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px; background: rgba(242, 177, 52, .08); color: #f6dca2; font-size: 14px; }
+  .chk { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .chk li { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px; background: rgba(255, 255, 255, .04); border: 1px solid var(--surface-line); }
+  .chk li span { font-size: 14.5px; }
+  .chk li small { display: block; color: var(--on-dark-muted); font-size: 12px; }
+  .chk .st { min-width: 118px; min-height: 36px; border-radius: 999px; font-size: 12.5px; font-weight: 600; padding: 0 12px; background: rgba(255, 255, 255, .08); color: #fff; }
+  .chk .st[data-st="andamento"] { background: rgba(242, 177, 52, .2); color: #f6cd78; }
+  .chk .st[data-st="concluido"] { background: rgba(63, 178, 127, .22); color: #8be0b8; }
+  .cob-i { padding: 16px; border-radius: var(--r-md); background: var(--surface-1); border: 1px solid var(--surface-line); display: grid; gap: 12px; }
+  .cob-i .top { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: flex-start; }
+  .cob-i .top b { font-size: 16px; font-weight: 600; }
+  .cob-i .top small { display: block; color: var(--on-dark-muted); font-size: 13px; }
+  .painel-form { padding: clamp(16px, 3vw, 24px); border-radius: var(--r-lg); background: var(--surface-1); border: 1px solid var(--surface-line); display: grid; gap: 14px; }
+  .painel-form[hidden] { display: none; }
+  .nota-mod { font-size: 13px; color: var(--on-dark-muted); margin: 0; }
+  .nota-mod b { color: #fff; font-weight: 600; }
+
+  /* ---------- Criador de conteúdo ---------- */
+  .cri { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(16px, 3vw, 28px); align-items: start; }
+  @media (max-width: 900px) { .cri { grid-template-columns: 1fr; } }
+  .cri-out { min-height: 260px; padding: clamp(16px, 3vw, 24px); border-radius: var(--r-lg); background: #fff; color: #161210; display: grid; gap: 12px; align-content: start; }
+  .cri-out .txt { white-space: pre-wrap; line-height: 1.55; font-size: 15px; overflow-wrap: anywhere; }
+  .cri-out .vazio { color: #6d6d72; }
+  .cri-status { font-size: 13px; padding: 10px 12px; border-radius: 12px; background: rgba(255, 255, 255, .05); color: rgba(255, 255, 255, .8); }
+  .cri-status.off { background: rgba(242, 177, 52, .1); color: #f6dca2; }
+  .cri-tipos { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cri-tipos button { min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--surface-line); font-size: 13px; color: rgba(255, 255, 255, .86); }
+  .cri-tipos button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #140b06; }
+
+  /* ---------- Formação: catálogo por assunto ---------- */
+  .cat-f { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; margin-bottom: 36px; }
+  .cat-f .ftile[aria-disabled="true"] { opacity: .7; cursor: default; }
+
+  /* ---------- Celular: menu de assuntos e navegação inferior ---------- */
+  .menu-btn { display: none; }
+  .bnav { display: none; }
+  .msheet { position: fixed; inset: 0; z-index: 60; display: grid; align-items: end; background: rgba(0, 0, 0, .55); backdrop-filter: blur(4px); }
+  .msheet[hidden] { display: none; }
+  .msheet .in { background: #120c09; border-top: 1px solid var(--surface-line); border-radius: 24px 24px 0 0; padding: 18px 16px calc(18px + env(safe-area-inset-bottom, 0px)); max-height: 82vh; overflow-y: auto; color: #fff; }
+  .msheet .hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .msheet .hd b { font-size: 13px; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
+  .msheet .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .msheet .grid button { min-height: 52px; border-radius: 14px; padding: 0 14px; text-align: left; font-weight: 600; font-size: 15px; background: var(--surface-1); border: 1px solid var(--surface-line); }
+  .msheet .grid button[aria-current="true"] { border-color: var(--accent); color: #ffb48a; }
+  @media (max-width: 760px) {
+    :root { --tabs-h: 0px; --bnav-h: 64px; }
+    .tabbar { display: none; }
+    .menu-btn { display: grid; }
+    .bnav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 46; display: grid; grid-template-columns: repeat(5, 1fr);
+      height: calc(var(--bnav-h) + env(safe-area-inset-bottom, 0px)); padding-bottom: env(safe-area-inset-bottom, 0px);
+      background: rgba(12, 8, 6, .96); border-top: 1px solid rgba(255, 255, 255, .08); backdrop-filter: blur(10px); }
+    .bnav button { display: grid; place-items: center; align-content: center; gap: 3px; min-height: var(--tap); font-size: 10.5px; font-weight: 600; color: rgba(255, 255, 255, .62); position: relative; }
+    .bnav button svg { width: 22px; height: 22px; }
+    .bnav button[aria-current="page"] { color: #fff; }
+    .bnav button[aria-current="page"]::before { content: ""; position: absolute; top: 0; left: 30%; right: 30%; height: 3px; border-radius: 0 0 3px 3px; background: var(--accent); }
+    body { padding-bottom: calc(var(--bnav-h) + env(safe-area-inset-bottom, 0px)); }
+    .to-top { bottom: calc(var(--bnav-h) + 14px + env(safe-area-inset-bottom, 0px)); }
+    .toast { bottom: calc(var(--bnav-h) + 16px + env(safe-area-inset-bottom, 0px)); }
+    #agendar { display: none; }
+    .show { height: 330vh; }
+    .show-hint { bottom: 40px; } .show-count { bottom: 44px; }
+    .dash { padding-inline: 14px; }
+    .sec { padding-inline: 16px; }
+  }
+  @media (pointer: coarse) {
+    .tab, .icon-btn, .round, .ghost-pill, .btn-pill, .soft-pill, .btn-line, .fchip, .tl-y, .ds-btn.sm, .ag-cats button, .cri-tipos button, .ds-seg button, .chk .st { min-height: var(--tap); }
+    .ctl, .card .add { min-width: var(--tap); min-height: var(--tap); }
+    .icon-btn, .round { width: var(--tap); height: var(--tap); }
+    .avatar { width: 40px; height: 40px; }
+  }
 </style>
 </head>
 <body>
@@ -1122,6 +1339,7 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
         <span>Agendar<span class="long"> missa</span></span>
       </button>
+      <button class="icon-btn menu-btn" id="menu-btn" aria-label="Todos os assuntos" aria-haspopup="dialog" aria-controls="msheet"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
       <button class="icon-btn" data-nav data-action="search" aria-label="Buscar"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
       <button class="icon-btn" data-nav data-action="settings" aria-label="Configurações"><svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button>
       <button class="avatar" id="avatar" data-nav data-action="conta" aria-label="Minha conta: entrar ou criar conta">EU</button>
@@ -1134,10 +1352,10 @@
     <div class="show-sticky">
       <div class="show-glow" id="show-glow" aria-hidden="true"></div>
       <div class="scene s0" data-s="0">
-        <p class="show-kicker">Pastoral da Comunicação · Paróquia em saída</p>
-        <h2 id="show-h" class="mega" data-echo="COMUNICA+FÉ">COMUNICA<em>+</em>FÉ</h2>
-        <p class="show-sub">Liturgia do dia, escala das missas, agenda e formação. Tudo o que a comunicação da paróquia faz, num só lugar.</p>
-        <div class="show-cta"><button class="btn-pill" data-ir="hoje">Ver o que tem hoje</button><button class="ghost-pill" data-action="agendar">Agendar missa</button></div>
+        <p class="show-kicker">Comunica+Fé · Pastoral da Comunicação</p>
+        <h2 id="show-h" class="mega duas" data-echo="COMUNICAÇÃO&#10;QUE EVANGELIZA.">Comunicação<br>que <em>evangeliza.</em></h2>
+        <p class="show-sub">Liturgia, agenda, formação e comunicação paroquial em um só lugar.</p>
+        <div class="show-cta"><button class="btn-pill" data-ir="painel">Acessar painel</button><button class="ghost-pill" data-action="agenda">Ver agenda</button></div>
       </div>
       <div class="scene s1" data-s="1">
         <h3 class="big">Não é só uma pastoral.</h3>
@@ -1172,6 +1390,30 @@
       <div class="show-count" id="show-count" aria-hidden="true"></div>
     </div>
   </section>
+
+  <div class="dash" id="painel" aria-label="Painel da Comunica+Fé">
+    <section aria-labelledby="quick-h">
+      <div class="ds-h"><div><h2 id="quick-h">Acesso rápido</h2><p>O que a equipe mais usa, a um toque.</p></div></div>
+      <div class="quick" id="quick"></div>
+    </section>
+    <div class="dash-cols">
+      <section aria-labelledby="prox-h">
+        <div class="ds-h"><div><h2 id="prox-h">Próximos eventos</h2><p id="prox-sub">Missas, reuniões e eventos da paróquia.</p></div>
+          <button class="ds-btn ghost sm" data-action="agenda">Ver agenda</button></div>
+        <div id="prox" aria-live="polite"></div>
+      </section>
+      <section aria-labelledby="avisos-h">
+        <div class="ds-h"><div><h2 id="avisos-h">Avisos paroquiais</h2><p>Comunicados da coordenação.</p></div>
+          <button class="ds-btn ghost sm" id="aviso-add" data-coord hidden>Novo aviso</button></div>
+        <div id="avisos" aria-live="polite"></div>
+      </section>
+    </div>
+    <section aria-labelledby="ftea-h">
+      <div class="ds-h"><div><h2 id="ftea-h">Formação</h2><p>Estudo, tutoriais e prática para quem comunica a fé.</p></div>
+        <button class="ds-btn ghost sm" data-tab-ir="formacao">Ver toda a formação</button></div>
+      <div class="form-teaser" id="ftea"></div>
+    </section>
+  </div>
 
   <div class="stage-wrap" id="hoje">
     <div class="stage">
@@ -1325,8 +1567,30 @@
 
   <section class="sec" id="aba-agenda" data-painel="agenda" role="tabpanel" aria-labelledby="tab-agenda" hidden>
     <div class="sec-label">[ Agenda ]</div>
-    <h2 class="sec-h2">Escala das missas e eventos</h2>
-    <div class="tab-sheet" id="corpo-agenda"></div>
+    <h2 class="sec-h2">Agenda paroquial</h2>
+    <p class="lead">Missas, reuniões, retiros, procissões e formações. As escalas da equipe aparecem junto.</p>
+    <div id="corpo-agenda"></div>
+  </section>
+
+  <section class="sec" id="aba-equipe" data-painel="equipe" role="tabpanel" aria-labelledby="tab-equipe" hidden>
+    <div class="sec-label">[ Equipe ]</div>
+    <h2 class="sec-h2">Escala da equipe</h2>
+    <p class="lead">Quem fotografa, filma, faz os stories e cuida das redes em cada celebração. Por trás de cada publicação, há pessoas.</p>
+    <div id="corpo-equipe"></div>
+  </section>
+
+  <section class="sec" id="aba-cobertura" data-painel="cobertura" role="tabpanel" aria-labelledby="tab-cobertura" hidden>
+    <div class="sec-label">[ Cobertura fotográfica ]</div>
+    <h2 class="sec-h2">Checklist de cobertura</h2>
+    <p class="lead">Um roteiro para cada celebração ou evento: do ambiente à publicação final, sem esquecer nada.</p>
+    <div id="corpo-cobertura"></div>
+  </section>
+
+  <section class="sec" id="aba-criador" data-painel="criador" role="tabpanel" aria-labelledby="tab-criador" hidden>
+    <div class="sec-label">[ Criador de conteúdo ]</div>
+    <h2 class="sec-h2">Criador de conteúdo</h2>
+    <p class="lead">Legendas, roteiros de Reels, stories, carrosséis e calendários editoriais para a paróquia. Revise sempre antes de publicar.</p>
+    <div id="corpo-criador"></div>
   </section>
 
   <section class="sec" id="aba-frases" data-painel="frases" role="tabpanel" aria-labelledby="tab-frases" hidden>
@@ -1539,6 +1803,17 @@
     </div>
   </section>
 </dialog>
+<nav class="bnav" id="bnav" aria-label="Navegação principal">
+  <button type="button" data-bnav="inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/><path d="M10 19.5v-5h4v5"/></svg>Início</button>
+  <button type="button" data-bnav="agenda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Agenda</button>
+  <button type="button" data-bnav="liturgia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5c-2-1.6-5-2-8-1.5v13c3-.5 6-.1 8 1.5 2-1.6 5-2 8-1.5V5c-3-.5-6-.1-8 1.5z"/><path d="M12 6.5v13"/></svg>Liturgia</button>
+  <button type="button" data-bnav="equipe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 19.5c.6-3.3 3-5.2 6-5.2s5.4 1.9 6 5.2"/><path d="M15.5 4.9a3.2 3.2 0 0 1 0 6.2M17.5 14.6c1.9.6 3.1 2.3 3.5 4.9"/></svg>Equipe</button>
+  <button type="button" data-bnav="perfil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1-3.8 4-5.8 7.5-5.8s6.5 2 7.5 5.8"/></svg>Perfil</button>
+</nav>
+<div class="msheet" id="msheet" role="dialog" aria-modal="true" aria-labelledby="msheet-h" hidden>
+  <div class="in"><div class="hd"><b id="msheet-h">Todos os assuntos</b><button class="m-close" id="msheet-x" aria-label="Fechar o menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="grid" id="msheet-grid"></div></div>
+</div>
 <button class="to-top" id="to-top" aria-label="Voltar ao topo" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
 <div class="toast" id="toast" role="status"></div>
 
@@ -1585,8 +1860,10 @@ const SAINTS = [
 // Número de WhatsApp da Comunica+Fé para as inscrições, só dígitos com DDI e DDD (ex.: "5511987654321").
 const WHATSAPP_EQUIPE = "";
 const AREAS = {
-  celebracao: { nome: "Celebração", ico: "sino" },
+  celebracao: { nome: "Missa e celebração", ico: "sino" },
   reuniao: { nome: "Reunião", ico: "estrela" },
+  retiro: { nome: "Retiro", ico: "ampulheta" },
+  procissao: { nome: "Procissão", ico: "megafone" },
   foto: { nome: "Fotografia", ico: "camera" },
   transmissao: { nome: "Transmissão", ico: "monitor" },
   redes: { nome: "Redes sociais", ico: "celular" },
@@ -1830,6 +2107,8 @@ function openAgenda() {
 const FUNCOES = [
   { k: "coordenacao", nome: "Coordenação", ico: "estrela" },
   { k: "foto", nome: "Fotografia", ico: "camera" },
+  { k: "video", nome: "Vídeo", ico: "monitor" },
+  { k: "stories", nome: "Stories", ico: "celular" },
   { k: "transmissao", nome: "Transmissão", ico: "monitor" },
   { k: "redes", nome: "Redes sociais", ico: "celular" },
   { k: "som", nome: "Som e projeção", ico: "microfone" },
@@ -1906,7 +2185,8 @@ function openEscalaForm(id) {
       </div>
       <h3 class="sec-title">Quem vai servir</h3>
       <p class="empty" style="margin:0;font-size:13px">Deixe em branco as funções em aberto: elas aparecem como vaga, e a equipe pode assumir.</p>
-      <div class="roles-form">${FUNCOES.map(fn => `<div class="role-row"><label for="s-${fn.k}">${ico(fn.ico, 32)}${fn.nome}</label><div class="field"><input id="s-${fn.k}" value="${esc(f[fn.k] || "")}" placeholder="Nome de quem serve"></div></div>`).join("")}</div>
+      <div class="roles-form">${FUNCOES.map(fn => `<div class="role-row"><label for="s-${fn.k}">${ico(fn.ico, 32)}${fn.nome}</label><div class="field"><input id="s-${fn.k}" list="dl-${fn.k}" autocomplete="off" value="${esc(f[fn.k] || "")}" placeholder="Nome de quem serve"></div></div>`).join("")}</div>
+      ${FUNCOES.map(fn => `<datalist id="dl-${fn.k}">${membros.filter(m => (m.funcoes || []).includes(fn.k)).concat(membros.filter(m => !(m.funcoes || []).includes(fn.k))).map(m => `<option value="${esc(m.nome)}"></option>`).join("")}</datalist>`).join("")}
       <div class="field"><label for="s-o">Observações (opcional)</label><textarea id="s-o" placeholder="Ex.: chegar 30 minutos antes, levar a câmera da paróquia">${e ? esc(e.obs || "") : ""}</textarea></div>
       <p class="note" id="s-note" role="status"></p>
       <button class="btn-red" type="submit">${e ? "Salvar escala" : "Publicar escala"}</button>
@@ -1918,6 +2198,15 @@ function openEscalaForm(id) {
         obs: $("s-o").value.trim(), criadoPor: e ? e.criadoPor ?? null : myId, criadoEm: e ? e.criadoEm ?? Date.now() : Date.now(), atualizadoEm: Date.now() };
       if (!d.data || !d.hora) { $("s-note").textContent = "Preencha a data e o horário da celebração."; return; }
       if (!e && d.data < TODAY) { $("s-note").textContent = "Escolha hoje ou uma data futura."; return; }
+      // mantém as confirmações de quem continua na mesma função
+      d.confirmados = Object.fromEntries(Object.entries((e && e.confirmados) || {}).filter(([k, v]) => v && norm(d.funcoes[k]) === norm(f[k])));
+      const cf = conflitos({ ...d, id: id || "_novo" });
+      const chave = cf.map(c => c.nome + c.outra.id).join("|");
+      if (cf.length && $("esc-form").dataset.aviso !== chave) {
+        $("esc-form").dataset.aviso = chave;
+        $("s-note").textContent = "Atenção: " + cf.map(c => `${c.nome} já está em ${c.outra.celebracao} às ${c.outra.hora}`).join("; ") + ". Toque de novo para salvar mesmo assim.";
+        return;
+      }
       const docId = id || newId();
       if (await writeOr(() => data.set("escalas", docId, d), e ? "Escala atualizada" : "Escala publicada")) openEscala(docId);
     };
@@ -1952,6 +2241,7 @@ const DEEP = {
   frase: () => openFraseWin(), abertura: () => setTab("inicio"), hoje: () => { setTab("inicio", { rolar: false }); scrollToSec("hoje")(); }, liturgia: () => openLiturgia(), agenda: () => openAgenda(), escalas: () => openAgenda(), agendar: () => openEscalaForm(), frases: () => openFrasesEquipe(),
   formacao: () => setTab("formacao"), camera: () => setTab("camera"), linha: () => setTab("linha"), documentos: () => setTab("documentos"), glossario: () => setTab("glossario"), perguntas: () => setTab("perguntas"),
   "aba-liturgia": () => setTab("liturgia"), "aba-agenda": () => setTab("agenda"), "aba-frases": () => setTab("frases"), "aba-santos": () => setTab("santos"), conta: () => openConta(),
+  equipe: () => setTab("equipe"), cobertura: () => setTab("cobertura"), criador: () => setTab("criador"), painel: () => { setTab("inicio", { rolar: false }); scrollToSec("painel")(); },
   galeria: () => openGallery(), participar: () => openJoin(), buscar: () => openSearch(),
 };
 function openFromHash() {
@@ -2056,29 +2346,42 @@ let agenda = [], teamFrases = [], liturgias = {};
 const localRead = c => store.get("db:" + c, {});
 const local = {
   listeners: {},
-  watch(c, cb) { (this.listeners[c] ||= []).push(cb); cb(Object.entries(localRead(c)).map(([id, d]) => ({ id, ...d }))); },
+  watch(c, cb) { (this.listeners[c] ||= []).push(cb); cb(Object.entries(localRead(c)).map(([id, d]) => ({ id, ...d }))); return () => { this.listeners[c] = this.listeners[c].filter(x => x !== cb); }; },
   emit(c) { const rows = Object.entries(localRead(c)).map(([id, d]) => ({ id, ...d })); (this.listeners[c] || []).forEach(cb => cb(rows)); },
   async set(c, id, d) { const all = localRead(c); all[id] = d; store.set("db:" + c, all); this.emit(c); },
   async del(c, id) { const all = localRead(c); delete all[id]; store.set("db:" + c, all); this.emit(c); },
 };
 let db = null;
+// estado de carregamento de cada coleção: "carregando", "ok" ou "erro" (para os avisos de carregamento e de falha)
+const carga = {};
 const data = {
   watch(c, cb) {
-    if (!db) return local.watch(c, cb);
-    db.collection(c).onSnapshot(s => cb(s.docs.map(d => ({ id: d.id, ...d.data() }))), e => { console.warn(c, e.code); });
+    carga[c] = "carregando";
+    const ok = rows => { carga[c] = "ok"; cb(rows); };
+    if (!db) return local.watch(c, ok);
+    return db.collection(c).onSnapshot(s => ok(s.docs.map(d => ({ id: d.id, ...d.data() }))), e => { console.warn(c, e && e.code); carga[c] = "erro"; desenharPainel(); renderAbaAtual(); });
   },
   async set(c, id, d) { if (!db) return local.set(c, id, d); await db.collection(c).doc(id).set(d); },
   async add(c, d) { const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7); return this.set(c, id, d); },
   async del(c, id) { if (!db) return local.del(c, id); await db.collection(c).doc(id).delete(); },
 };
+// papel na equipe quando o site usa o Firebase: "coordenacao" (publica tudo), "membro" (agenda, escala e cobertura) ou null
+var papel = null;
+const podeCoordenar = () => canWrite && (backend !== "firebase" || papel === "coordenacao");
 function modeText() {
   if (backend === "db") return canWrite ? "Você faz parte da equipe e pode publicar." : "Somente leitura. Peça acesso de Colaborador à equipe da Comunica+Fé para publicar.";
+  if (backend === "firebase") {
+    if (!fbUser) return "Somente leitura. Entre com a conta da equipe (botão Perfil) para publicar.";
+    if (!papel) return "Sua conta ainda não faz parte da equipe. Peça à coordenação para liberar seu acesso.";
+    return papel === "coordenacao" ? "Você é da coordenação: pode publicar e editar tudo." : "Você faz parte da equipe e pode publicar na agenda, na escala e nas coberturas.";
+  }
   return "Modo local: o que você publicar fica salvo só neste aparelho.";
 }
 async function writeOr(fn, okMsg) {
   try { await fn(); okMsg && toast(okMsg); return true; }
   catch (e) {
     if (e && e.code === "invalid_argument" && backend === "db") { canWrite = false; applyTeam(); toast("Você não tem permissão para publicar aqui."); }
+    else if (e && e.code === "permission-denied") toast("Sua conta não tem permissão para isso. Fale com a coordenação.");
     else if (e && e.code === "quota_exceeded") toast("O espaço de dados está cheio. Apague itens antigos.");
     else toast("Não foi possível salvar. Tente de novo.");
     return false;
@@ -2086,6 +2389,8 @@ async function writeOr(fn, okMsg) {
 }
 function applyTeam() {
   document.querySelectorAll("[data-team]").forEach(b => b.hidden = !canWrite);
+  document.querySelectorAll("[data-coord]").forEach(b => b.hidden = !podeCoordenar());
+  desenharPainel();
   renderEscalaCard();
   document.querySelectorAll("[data-mode]").forEach(m => m.textContent = modeText());
   renderAbaAtual();
@@ -2240,26 +2545,30 @@ function renderAgenda() {
     : `<li class="empty-state">${ico("ampulheta", 40)}<span>${canWrite ? "Nenhum evento marcado. Toque em + para publicar o primeiro." : "Nenhum evento marcado por enquanto."}</span></li>`;
   renderAbaAtual();
 }
-function openEventForm() {
-  openModal(`<div class="m-plain">${closeBtn()}<h2>Novo evento</h2>
+function openEventForm(id) {
+  if (!canWrite) { toast("Só a equipe da Comunica+Fé publica na agenda."); return; }
+  const ev = typeof id === "string" ? agenda.find(x => x.id === id) : null, area = ev && AREAS[ev.area] ? ev.area : "celebracao";
+  openModal(`<div class="m-plain">${closeBtn()}<h2>${ev ? "Editar evento" : "Novo evento"}</h2>
     <form class="join" id="ev-form" novalidate>
-      <div class="field"><label for="e-t">Título</label><input id="e-t" placeholder="Ex.: Missa da festa da padroeira"></div>
+      <div class="field"><label for="e-t">Título</label><input id="e-t" maxlength="120" value="${ev ? esc(ev.titulo) : ""}" placeholder="Ex.: Missa da festa da padroeira"></div>
       <div class="two">
-        <div class="field"><label for="e-d">Data</label><input id="e-d" type="date" min="${TODAY}" value="${TODAY}"></div>
-        <div class="field"><label for="e-h">Horário</label><input id="e-h" type="time"></div>
+        <div class="field"><label for="e-d">Data</label><input id="e-d" type="date"${ev ? "" : ` min="${TODAY}"`} value="${ev ? esc(ev.data) : TODAY}"></div>
+        <div class="field"><label for="e-h">Horário</label><input id="e-h" type="time" value="${ev ? esc(ev.hora || "") : ""}"></div>
       </div>
-      <div class="field"><label for="e-l">Local</label><input id="e-l" placeholder="Ex.: Igreja matriz"></div>
-      <fieldset class="area-pick"><legend class="sr">Tipo</legend>${Object.entries(AREAS).map(([k, a], i) => `<label><input type="radio" name="e-a" value="${k}" ${i ? "" : "checked"}>${ico(a.ico, 32)}${a.nome}</label>`).join("")}</fieldset>
-      <div class="field"><label for="e-x">Detalhes (opcional)</label><textarea id="e-x" placeholder="Quem participa, o que levar, quem cobre a foto…"></textarea></div>
+      <div class="field"><label for="e-l">Local</label><input id="e-l" maxlength="120" value="${ev ? esc(ev.local || "") : ""}" placeholder="Ex.: Igreja matriz"></div>
+      <fieldset class="area-pick"><legend class="sr">Tipo</legend>${Object.entries(AREAS).map(([k, a]) => `<label><input type="radio" name="e-a" value="${k}" ${k === area ? "checked" : ""}>${ico(a.ico, 32)}${a.nome}</label>`).join("")}</fieldset>
+      <div class="field"><label for="e-x">Detalhes (opcional)</label><textarea id="e-x" maxlength="1500" placeholder="Quem participa, o que levar, quem cobre a foto…">${ev ? esc(ev.desc || "") : ""}</textarea></div>
       <p class="note" id="e-note" role="status"></p>
-      <button class="btn-red" type="submit">Publicar na agenda</button>
+      <button class="btn-red" type="submit">${ev ? "Salvar evento" : "Publicar na agenda"}</button>
     </form></div>`, () => {
     $("ev-form").onsubmit = async e => {
       e.preventDefault();
-      const d = { titulo: $("e-t").value.trim(), data: $("e-d").value, hora: $("e-h").value, local: $("e-l").value.trim(), area: (mBody.querySelector('[name="e-a"]:checked') || {}).value || "celebracao", desc: $("e-x").value.trim(), criadoPor: myId, criadoEm: Date.now() };
+      const d = { titulo: $("e-t").value.trim(), data: $("e-d").value, hora: $("e-h").value, local: $("e-l").value.trim(), area: (mBody.querySelector('[name="e-a"]:checked') || {}).value || "celebracao", desc: $("e-x").value.trim(),
+        status: ev ? ev.status || "ativo" : "ativo", criadoPor: ev ? ev.criadoPor ?? null : myId, criadoEm: ev ? ev.criadoEm ?? Date.now() : Date.now(), atualizadoEm: Date.now() };
       if (!d.titulo || !d.data) { $("e-note").textContent = "Preencha o título e a data."; return; }
-      if (d.data < TODAY) { $("e-note").textContent = "Escolha hoje ou uma data futura."; return; }
-      if (await writeOr(() => data.add("agenda", d), "Evento publicado")) openAgenda();
+      if (!ev && d.data < TODAY) { $("e-note").textContent = "Escolha hoje ou uma data futura."; return; }
+      const docId = ev ? ev.id : newId();
+      if (await writeOr(() => data.set("agenda", docId, d), ev ? "Evento atualizado" : "Evento publicado")) { if (ev) openEvento(docId); else if (abaAtual === "agenda") modal.close(); else openAgenda(); }
     };
   });
 }
@@ -2335,10 +2644,17 @@ async function startData() {
     const can = user ? await user.can("data.write") : null;
     canWrite = can === true || (can === null && !!myId);
     sampleFn = await Promise.race([window.claude.use("sample"), new Promise(r => setTimeout(() => r(null), 4000))]).catch(() => null);
+  } else if (FIREBASE_CONFIG) {
+    // no site publicado com o Firebase configurado, a agenda, a escala e os avisos ficam no Firestore e valem para todos
+    await iniciarConta();
+    if (fbDb) { db = fbDb; backend = "firebase"; canWrite = false; if (fbUser) atualizarPapel(fbUser); }
+    else canWrite = true;
   } else canWrite = true;
   applyTeam();
-  data.watch("agenda", rows => { agenda = rows; renderAgenda(); updateEventsJsonLd(); });
-  data.watch("escalas", rows => { escalas = rows; renderEscalaCard(); updateEventsJsonLd(); });
+  data.watch("avisos", rows => { avisos = rows; desenharPainel(); renderAbaAtual(); });
+  assinarDadosDaEquipe();
+  data.watch("agenda", rows => { agenda = rows; renderAgenda(); updateEventsJsonLd(); desenharPainel(); });
+  data.watch("escalas", rows => { escalas = rows; renderEscalaCard(); updateEventsJsonLd(); desenharPainel(); renderAbaAtual(); });
   data.watch("formacao", rows => { historiaLocal = rows.find(r => r.id === "historia") || null; if (leitor.open && $("local-box")) { $("local-box").outerHTML = historiaHTML(); wireHistoria(); } });
   data.watch("frases", rows => { teamFrases = rows; renderFrases(); });
   data.watch("liturgia", rows => { liturgias = Object.fromEntries(rows.map(r => [r.id, r])); renderLiturgia(); });
@@ -3625,15 +3941,19 @@ renderCamera();
    A barra fica fixa abaixo do topo. Só o painel da aba escolhida aparece; o rodapé fica sempre.
    O endereço acompanha a aba (#formacao, #aba-agenda…), para dar para compartilhar o link. */
 const ABAS = [
-  ["inicio", "Início"], ["liturgia", "Liturgia"], ["agenda", "Agenda"], ["frases", "Frases"], ["santos", "Santos"],
-  ["formacao", "Formação"], ["camera", "Câmera do celular"], ["linha", "Linha do tempo"], ["documentos", "Documentos"],
+  ["inicio", "Início"], ["liturgia", "Liturgia"], ["agenda", "Agenda"], ["equipe", "Equipe"], ["cobertura", "Cobertura"], ["criador", "Criador de conteúdo"],
+  ["frases", "Frases"], ["santos", "Santos"], ["formacao", "Formação"], ["camera", "Câmera do celular"], ["linha", "Linha do tempo"], ["documentos", "Documentos"],
   ["glossario", "Glossário"], ["perguntas", "Perguntas"],
 ];
 const ABAS_COM_PREFIXO = ["liturgia", "agenda", "frases", "santos"]; // #liturgia, #agenda e #frases já abrem as janelas
 var abaAtual = null; // var: as funções de desenho podem ser chamadas antes deste trecho rodar
 function renderAbaAtual() {
   if (abaAtual === "liturgia") $("corpo-liturgia").innerHTML = `<h3>Liturgia de ${esc(weekday(TODAY))}</h3>${liturgiaCorpo()}`;
-  else if (abaAtual === "agenda") { $("corpo-agenda").innerHTML = agendaCorpo(false); wireDeletes(renderAbaAtual, $("corpo-agenda")); }
+  else if (abaAtual === "agenda") renderAgendaTab();
+  else if (abaAtual === "equipe") renderEquipe();
+  else if (abaAtual === "cobertura") renderCobertura();
+  else if (abaAtual === "criador") renderCriador();
+  else if (abaAtual === "formacao") renderCatalogo();
   else if (abaAtual === "frases") {
     $("corpo-frases").innerHTML = `<div class="tab-acoes"><button class="btn-line" data-action="quotes">Abrir a frase do dia</button></div><h3>Frases da equipe</h3>${frasesCorpo()}`;
     wireDeletes(renderAbaAtual, $("corpo-frases"));
@@ -3647,7 +3967,7 @@ function setTab(k, { rolar = true, hash = true } = {}) {
   $("tabs").querySelectorAll(".tab").forEach(b => { const sel = b.dataset.tab === k; b.setAttribute("aria-selected", sel); b.tabIndex = sel ? 0 : -1; });
   const ativa = $("tab-" + k), tr = $("tabs");
   if (ativa) tr.scrollTo({ left: ativa.offsetLeft - tr.clientWidth / 2 + ativa.offsetWidth / 2, behavior: mudou && !semMovimento() ? "smooth" : "auto" });
-  renderAbaAtual();
+  renderAbaAtual(); marcarBnav();
   if (hash) history.replaceState(null, "", k === "inicio" ? location.pathname + location.search : "#" + (ABAS_COM_PREFIXO.includes(k) ? "aba-" + k : k));
   if (rolar) scrollTo({ top: 0 });
   if (k === "inicio") { medir(); desenharAbertura.ultimo = null; }
@@ -3704,7 +4024,8 @@ const iniciaisConta = u => nomeConta(u).split(/[\s._-]+/).filter(Boolean).slice(
 function carregarScript(src) {
   return new Promise((ok, falha) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = () => falha(new Error("script " + src)); document.head.appendChild(s); });
 }
-async function iniciarConta() {
+function iniciarConta() { return (iniciarConta.p ||= carregarConta()); } // roda uma vez só, mesmo chamada de dois lugares
+async function carregarConta() {
   if (!FIREBASE_CONFIG || (window.claude && window.claude.use)) return; // no Claude, a conta é a do próprio Claude
   try {
     if (!window.firebase) for (const m of ["app", "auth", "firestore"]) await carregarScript(`https://cdn.jsdelivr.net/npm/firebase@${FIREBASE_VERSAO}/firebase-${m}-compat.js`);
@@ -3712,7 +4033,7 @@ async function iniciarConta() {
     if (!firebase.apps.length) firebase.initializeApp(cfg);
     fbAuth = firebase.auth(); fbDb = firebase.firestore();
     fbAuth.useDeviceLanguage && fbAuth.useDeviceLanguage();
-    fbAuth.onAuthStateChanged(u => { fbUser = u; desenharAvatar(); if (u) puxarProgresso(u); if (modal.open && mBody.querySelector("[data-conta]")) openConta(); });
+    fbAuth.onAuthStateChanged(u => { fbUser = u; desenharAvatar(); if (u) puxarProgresso(u); if (backend === "firebase") atualizarPapel(u); if (modal.open && mBody.querySelector("[data-conta]")) openConta(); });
     fbAuth.getRedirectResult && fbAuth.getRedirectResult().catch(e => { fbErro = msgErro(e); });
   } catch (e) { fbErro = "Não foi possível carregar o login agora. Confira a internet e tente de novo."; console.warn("login", e); }
 }
@@ -3760,8 +4081,21 @@ function openConta() {
     return openModal(`<div class="m-plain" data-conta>${closeBtn()}<h2>Minha conta</h2>
       <div class="conta-perfil"><span class="avatar logado" aria-hidden="true">${esc(iniciaisConta(fbUser))}</span><div><b>${esc(nomeConta(fbUser))}</b><small>${esc(fbUser.email || "")} · entrou com ${via}</small></div></div>
       <p class="empty" style="margin:0">Seu progresso da formação e dos desafios da câmera fica salvo nesta conta e aparece em qualquer aparelho em que você entrar.</p>
+      ${backend === "firebase" ? `<div class="read-block"><h4>Equipe</h4><p>${esc(modeText())}</p>
+        ${papel ? "" : `<p>Para entrar na equipe, mande este código para a coordenação: <code style="user-select:all;word-break:break-all">${esc(fbUser.uid)}</code> <button type="button" class="btn-line" data-copy="${esc(fbUser.uid)}" style="margin-top:6px">Copiar código</button></p>`}</div>
+        ${papel === "coordenacao" ? `<form class="join" id="acesso-form" novalidate><h3 class="sec-title">Liberar acesso à equipe</h3>
+          <div class="field"><label for="ac-uid">Código da pessoa</label><input id="ac-uid" autocomplete="off" placeholder="A pessoa vê o código em Perfil"></div>
+          <div class="field"><label for="ac-papel">Papel</label><select id="ac-papel"><option value="membro">Equipe (agenda, escala e cobertura)</option><option value="coordenacao">Coordenação (tudo, inclusive avisos e acessos)</option></select></div>
+          <p class="note" id="ac-note" role="status"></p><button class="btn-line" type="submit">Liberar acesso</button></form>` : ""}` : ""}
       <div class="m-actions"><button type="button" class="btn-red" id="conta-sair" style="padding:0 18px">Sair da conta</button>${servir}</div></div>`, () => {
       $("conta-sair").onclick = async () => { await fbAuth.signOut(); toast("Você saiu da conta"); modal.close(); };
+      $("acesso-form") && ($("acesso-form").onsubmit = async e => {
+        e.preventDefault();
+        const uid = $("ac-uid").value.trim();
+        if (!/^[A-Za-z0-9_-]{6,128}$/.test(uid)) { $("ac-note").textContent = "Cole o código que a pessoa copiou no Perfil dela."; return; }
+        try { await fbDb.collection("equipe").doc(uid).set({ papel: $("ac-papel").value, liberadoPor: fbUser.uid, liberadoEm: Date.now() }); $("ac-note").textContent = "Acesso liberado. A pessoa precisa sair e entrar de novo."; $("ac-uid").value = ""; }
+        catch (err) { $("ac-note").textContent = err && err.code === "permission-denied" ? "Sua conta não pode liberar acessos." : "Não foi possível liberar agora. Tente de novo."; }
+      });
     });
   }
   const criar = contaModo === "criar";
@@ -4124,7 +4458,7 @@ function desenharAbertura(t) {
 }
 function showFrame() { pedirQuadro(); }
 addEventListener("resize", () => { medir(); desenharAbertura.ultimo = null; pedirQuadro(); });
-show.addEventListener("click", e => { if (e.target.closest("[data-ir='hoje']")) $("hoje").scrollIntoView({ behavior: semMovimento() ? "auto" : "smooth" }); });
+show.addEventListener("click", e => { const b = e.target.closest("[data-ir]"); if (b && $(b.dataset.ir)) $(b.dataset.ir).scrollIntoView({ behavior: semMovimento() ? "auto" : "smooth" }); });
 $("show-servir").onclick = () => openJoin();
 $("show-frase").onclick = () => openFraseWin();
 $("show-share").onclick = () => openModal(`<div class="m-plain">${closeBtn()}<h2>Compartilhar o site da Comunica+Fé</h2>
@@ -4228,7 +4562,7 @@ const AGENDA_SVG = `<svg viewBox="0 0 120 120" aria-hidden="true"><defs>
   <rect x="54" y="63" width="10" height="8" rx="2" fill="#ff6a1f"/>
   <path d="M20 26c10-6 40-8 60-6" stroke="rgba(255,255,255,.35)" stroke-width="2" fill="none" stroke-linecap="round"/></g></svg>`;
 const OBJETOS = [
-  { n: "camera", k: 0, x: .84, y: .3, s: 150 }, { n: "microfone", k: 0, x: .36, y: .8, s: 110 },
+  { n: "camera", k: 0, x: .84, y: .3, ye: .6, s: 150 }, { n: "microfone", k: 0, x: .36, y: .8, s: 110 },
   { n: "celular", k: 1, x: .34, y: .86, s: 120 }, { n: "megafone", k: 1, x: .9, y: .8, s: 130 },
   { n: "monitor", k: 2, x: .16, y: .64, s: 160 }, { n: "sino", k: 2, x: .85, y: .36, s: 100 },
   { n: "agenda", k: 3, x: .84, y: .24, s: 150 }, { n: "relogio", k: 3, x: .2, y: .26, s: 110 },
@@ -4253,7 +4587,7 @@ function objetosFrame(t, vw, vh) {
     const s = o.s * fatorObj, perto = Math.max(0, z), longe = Math.max(0, -z);
     const esc = 1 + perto * 1.6 - longe * .55;
     const x = (M.estreito ? .1 + (o.x - .1) * .8 : o.x) * vw + (o.x < .5 ? -1 : 1) * perto * vw * .28;
-    const y = o.y * vh - z * vh * .32;
+    const y = (M.estreito && o.ye ? o.ye : o.y) * vh - z * vh * .32;
     el.style.opacity = clamp01(1 - (Math.abs(z) - .45) / .55).toFixed(3);
     el.style.transform = `translate3d(${(x - s / 2).toFixed(1)}px, ${(y - s / 2).toFixed(1)}px, 0) rotate(${(z * (o.x < .5 ? -24 : 24)).toFixed(1)}deg) scale(${esc.toFixed(3)})`;
   });
@@ -4309,7 +4643,538 @@ function estreia() {
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(estreia); else addEventListener("load", estreia);
 let reservaT; addEventListener("resize", () => { clearTimeout(reservaT); reservaT = setTimeout(reservar, 160); });
 
+/* ---------- Painel, agenda, equipe, cobertura e criador de conteúdo ----------
+   Usam a mesma camada de dados do resto do site (data.watch/set/del): no Claude, o banco do artefato;
+   no site publicado com o Firebase configurado, o Firestore (regras em firestore.rules); sem nenhum dos dois,
+   este aparelho. Nada aqui inventa eventos ou pessoas: o que aparece é o que a equipe cadastrou. */
+let avisos = [], membros = [], coberturas = [], unsubEquipe = [];
+const carregando = c => carga[c] === undefined || carga[c] === "carregando";
+const dIso = iso => { const [y, m, d] = iso.split("-").map(Number); return mk(y, m, d); };
+const norm = t => String(t || "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+const iniciais = n => String(n || "?").split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join("");
+const ESTADO_ERRO = o => `<div class="ds-state err" role="alert">Não foi possível carregar ${o}. Confira a internet e tente de novo. <button class="ds-btn ghost sm" data-recarregar style="margin-left:auto">Tentar de novo</button></div>`;
+const ESQUELETO = (n = 3) => Array.from({ length: n }, () => `<div class="ds-skel" aria-hidden="true"></div>`).join("") + `<span class="sr">Carregando…</span>`;
+document.addEventListener("click", e => { if (e.target.closest("[data-recarregar]")) location.reload(); });
+
+function assinarDadosDaEquipe() {
+  unsubEquipe.forEach(u => { try { if (typeof u === "function") u(); } catch {} });
+  unsubEquipe = [];
+  if (backend === "firebase" && !canWrite) { membros = []; coberturas = []; carga.membros = carga.coberturas = "restrito"; renderAbaAtual(); return; }
+  unsubEquipe.push(data.watch("membros", rows => { membros = rows; renderAbaAtual(); }));
+  unsubEquipe.push(data.watch("coberturas", rows => { coberturas = rows; renderAbaAtual(); }));
+}
+// no Firebase, quem pode publicar é quem tem um documento em equipe/{uid}, criado pela coordenação (veja LOGIN.md)
+async function atualizarPapel(u) {
+  papel = null; canWrite = false;
+  if (u && fbDb) {
+    try {
+      const s = await fbDb.collection("equipe").doc(u.uid).get();
+      if (s.exists) { papel = (s.data() || {}).papel === "coordenacao" ? "coordenacao" : "membro"; canWrite = true; }
+    } catch (e) { console.warn("equipe", e && e.code); }
+  }
+  applyTeam(); assinarDadosDaEquipe();
+  if (u && modal.open && mBody.querySelector("[data-conta]")) openConta(); // o papel chega depois do login: redesenha a conta
+}
+
+/* acesso rápido */
+const ATALHOS = [
+  { t: "Agenda paroquial", d: "Missas, reuniões e eventos", ico: "relogio", aba: "agenda" },
+  { t: "Liturgia do dia", d: "Leituras e salmo de hoje", ico: "livros", aba: "liturgia" },
+  { t: "Escala da equipe", d: "Quem serve em cada celebração", ico: "estrela", aba: "equipe" },
+  { t: "Cobertura fotográfica", d: "Checklist de cada evento", ico: "camera", aba: "cobertura" },
+  { t: "Formação", d: "Cursos, tutoriais e prática", ico: "monitor", aba: "formacao" },
+  { t: "Criador de conteúdo", d: "Legendas, Reels e stories", ico: "celular", aba: "criador" },
+];
+const SETA = `<span class="seta" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></span>`;
+$("quick").innerHTML = ATALHOS.map(a => `<button type="button" class="qcard" data-tab-ir="${a.aba}">${ico(a.ico, 44)}<span><b>${a.t}</b><small>${a.d}</small></span>${SETA}</button>`).join("");
+document.addEventListener("click", e => { const b = e.target.closest("[data-tab-ir]"); if (b) setTab(b.dataset.tabIr); });
+
+/* itens da agenda: eventos e escalas juntos */
+const catNome = k => k === "escala" ? "Escala da equipe" : (AREAS[k] || AREAS.celebracao).nome;
+function itensAgenda() {
+  const ev = agenda.map(e => ({ tipo: "evento", id: e.id, data: e.data, hora: e.hora || "", titulo: e.titulo, local: e.local || "", cat: AREAS[e.area] ? e.area : "celebracao", cancelado: e.status === "cancelado", ref: e }));
+  const es = escalas.map(e => ({ tipo: "escala", id: e.id, data: e.data, hora: e.hora || "", titulo: e.celebracao, local: e.local || "", cat: "escala", cancelado: false, ref: e }));
+  return [...ev, ...es].filter(i => i.data).sort((a, b) => (a.data + a.hora).localeCompare(b.data + b.hora));
+}
+function itemHTML(i) {
+  const dt = dIso(i.data);
+  return `<li class="evi${i.cancelado ? " cancelado" : ""}">
+    <div class="dia"><b>${dt.getDate()}</b><small>${MESES[dt.getMonth()]}</small></div>
+    <div class="o"><b>${esc(i.titulo)}</b><small>${esc(weekday(i.data))}${i.hora ? " · " + esc(i.hora) : ""}${i.local ? " · " + esc(i.local) : ""}</small>
+      <span class="ds-chip ${i.cancelado ? "bad" : i.tipo === "escala" ? "" : "acc"}">${i.cancelado ? "Cancelado" : esc(catNome(i.cat))}</span></div>
+    <button class="ds-btn ghost sm" data-${i.tipo === "escala" ? "escala" : "evento"}="${esc(i.id)}" aria-label="Ver detalhes: ${esc(i.titulo)}">Detalhes</button></li>`;
+}
+
+/* painel da página inicial */
+function desenharPainel() {
+  if (!$("prox")) return;
+  if (carga.agenda === "erro" || carga.escalas === "erro") $("prox").innerHTML = ESTADO_ERRO("a agenda");
+  else if (carregando("agenda") || carregando("escalas")) $("prox").innerHTML = ESQUELETO(3);
+  else {
+    const prox = itensAgenda().filter(i => i.data >= TODAY).slice(0, 5);
+    $("prox").innerHTML = prox.length ? `<ul class="evl">${prox.map(itemHTML).join("")}</ul>`
+      : `<div class="ds-state">${ico("ampulheta", 36)}<span>Nenhum evento marcado por enquanto.${canWrite ? " Publique o primeiro na Agenda." : ""}</span></div>`;
+  }
+  if (carga.avisos === "erro") $("avisos").innerHTML = ESTADO_ERRO("os avisos");
+  else if (carregando("avisos")) $("avisos").innerHTML = ESQUELETO(2);
+  else {
+    const ativos = avisosAtivos().slice(0, 4);
+    $("avisos").innerHTML = ativos.length ? `<div style="display:grid;gap:8px">${ativos.map(avisoHTML).join("")}</div>`
+      : `<div class="ds-state">${ico("megafone", 36)}<span>Nenhum aviso no momento.</span></div>`;
+  }
+  $("ftea").innerHTML = CATALOGO_FORM.filter(c => c.st === "ok").slice(0, 4).map(catTile).join("");
+}
+
+/* avisos paroquiais (só a coordenação publica) */
+const avisosAtivos = () => avisos.filter(a => !a.ate || a.ate >= TODAY).sort((a, b) => (b.fixo ? 1 : 0) - (a.fixo ? 1 : 0) || (b.criadoEm || 0) - (a.criadoEm || 0));
+const avisoHTML = a => `<article class="aviso${a.fixo ? " fixo" : ""}">
+  ${a.fixo ? `<span class="ds-chip acc" style="justify-self:start">Fixado</span>` : ""}
+  <b>${esc(a.titulo)}</b><p>${esc(a.texto)}</p>
+  <small>${a.criadoEm ? "Publicado em " + new Date(a.criadoEm).toLocaleDateString("pt-BR") : ""}${a.ate ? " · até " + esc(dm(a.ate)) : ""}</small>
+  ${podeCoordenar() ? `<div class="acts"><button class="ds-btn ghost sm" data-aviso-edit="${esc(a.id)}">Editar</button><button class="ds-btn ghost sm" data-aviso-del="${esc(a.id)}">Excluir</button></div>` : ""}</article>`;
+function openAvisoForm(id) {
+  if (!podeCoordenar()) { toast("Só a coordenação publica avisos."); return; }
+  const a = id ? avisos.find(x => x.id === id) : null;
+  openModal(`<div class="m-plain">${closeBtn()}<h2>${a ? "Editar aviso" : "Novo aviso"}</h2>
+    <form class="join" id="av-form" novalidate>
+      <div class="field"><label for="av-t">Título</label><input id="av-t" maxlength="90" value="${a ? esc(a.titulo) : ""}" placeholder="Ex.: Mudança no horário da missa"></div>
+      <div class="field"><label for="av-x">Comunicado</label><textarea id="av-x" maxlength="800" placeholder="Escreva o aviso como vai aparecer para a comunidade">${a ? esc(a.texto) : ""}</textarea></div>
+      <div class="two">
+        <div class="field"><label for="av-ate">Mostrar até (opcional)</label><input id="av-ate" type="date" min="${TODAY}" value="${a ? esc(a.ate || "") : ""}"></div>
+        <label class="field" style="align-content:end"><span><input type="checkbox" id="av-fixo"${a && a.fixo ? " checked" : ""}> Fixar no topo</span></label>
+      </div>
+      <p class="note" id="av-note" role="status"></p>
+      <button class="btn-red" type="submit">${a ? "Salvar aviso" : "Publicar aviso"}</button>
+    </form></div>`, () => {
+    $("av-form").onsubmit = async e => {
+      e.preventDefault();
+      const d = { titulo: $("av-t").value.trim(), texto: $("av-x").value.trim(), ate: $("av-ate").value || "", fixo: $("av-fixo").checked,
+        criadoPor: a ? a.criadoPor ?? null : myId, criadoEm: a ? a.criadoEm ?? Date.now() : Date.now(), atualizadoEm: Date.now() };
+      if (!d.titulo || !d.texto) { $("av-note").textContent = "Preencha o título e o comunicado."; return; }
+      if (await writeOr(() => data.set("avisos", id || newId(), d), a ? "Aviso atualizado" : "Aviso publicado")) modal.close();
+    };
+  });
+}
+$("aviso-add").onclick = () => openAvisoForm();
+document.addEventListener("click", async e => {
+  const ed = e.target.closest("[data-aviso-edit]"); if (ed) return openAvisoForm(ed.dataset.avisoEdit);
+  const del = e.target.closest("[data-aviso-del]"); if (!del) return;
+  if (!del.classList.contains("confirm")) { del.classList.add("confirm"); del.textContent = "Confirmar exclusão"; return; }
+  await writeOr(() => data.del("avisos", del.dataset.avisoDel), "Aviso excluído");
+});
+
+/* agenda: dia, semana, mês e próximos */
+let agView = store.get("agView", "proximos"), agCat = "todas", agRef = dIso(TODAY);
+const VISOES = [["proximos", "Próximos"], ["dia", "Dia"], ["semana", "Semana"], ["mes", "Mês"]];
+function agTitulo() {
+  if (agView === "dia") return agRef.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
+  if (agView === "semana") { const ini = addD(agRef, -agRef.getDay()), fim = addD(ini, 6); return `${ini.getDate()} ${MESES[ini.getMonth()]} – ${fim.getDate()} ${MESES[fim.getMonth()]}`; }
+  if (agView === "mes") { const t = agRef.toLocaleDateString("pt-BR", { month: "long", year: "numeric" }); return t[0].toUpperCase() + t.slice(1); }
+  return "A partir de hoje";
+}
+function agMover(n) {
+  if (n === 0) agRef = dIso(TODAY);
+  else if (agView === "dia") agRef = addD(agRef, n);
+  else if (agView === "semana") agRef = addD(agRef, 7 * n);
+  else if (agView === "mes") agRef = new Date(agRef.getFullYear(), agRef.getMonth() + n, 1);
+  renderAgendaTab();
+}
+function renderAgendaTab() {
+  const box = $("corpo-agenda");
+  const itens = itensAgenda().filter(i => agCat === "todas" || i.cat === agCat);
+  const porDia = iso => itens.filter(i => i.data === iso);
+  let corpo;
+  if (carga.agenda === "erro" || carga.escalas === "erro") corpo = ESTADO_ERRO("a agenda");
+  else if (carregando("agenda") || carregando("escalas")) corpo = ESQUELETO(4);
+  else if (agView === "mes") {
+    const ini = new Date(agRef.getFullYear(), agRef.getMonth(), 1), comeco = addD(ini, -ini.getDay());
+    const dias = Array.from({ length: 42 }, (_, k) => addD(comeco, k));
+    corpo = `<div class="mes" role="grid" aria-label="${esc(agTitulo())}">${["dom", "seg", "ter", "qua", "qui", "sex", "sáb"].map(w => `<div class="wd" role="columnheader">${w}</div>`).join("")}
+      ${dias.map(d => { const iso = isoDay(d), its = porDia(iso);
+        return `<button type="button" class="d${d.getMonth() !== agRef.getMonth() ? " fora" : ""}${iso === TODAY ? " hoje" : ""}" data-ag-dia="${iso}" aria-label="${esc(weekday(iso))}: ${its.length ? its.length + (its.length > 1 ? " compromissos" : " compromisso") : "nada marcado"}">
+          <span class="n">${d.getDate()}</span>${its.slice(0, 3).map(i => `<span class="pt${i.tipo === "escala" ? " esc" : ""}">${esc(i.hora ? i.hora + " " : "")}${esc(i.titulo)}</span>`).join("")}${its.length > 3 ? `<span class="pt">+${its.length - 3}</span>` : ""}
+          <span class="dots">${its.slice(0, 3).map(() => "<i></i>").join("")}</span></button>`; }).join("")}</div>`;
+  } else if (agView === "semana") {
+    const ini = addD(agRef, -agRef.getDay());
+    corpo = `<div class="sem">${Array.from({ length: 7 }, (_, k) => { const d = addD(ini, k), iso = isoDay(d), its = porDia(iso);
+      return `<div class="linha${iso === TODAY ? " hoje" : ""}"><div class="q"><b>${d.getDate()}</b>${d.toLocaleDateString("pt-BR", { weekday: "short" })}</div>
+        ${its.length ? `<ul class="evl">${its.map(itemHTML).join("")}</ul>` : `<span class="nota-mod" style="padding-top:8px">Nada marcado</span>`}</div>`; }).join("")}</div>`;
+  } else {
+    const lista = agView === "dia" ? porDia(isoDay(agRef)) : itens.filter(i => i.data >= TODAY);
+    corpo = lista.length ? `<ul class="evl">${lista.map(itemHTML).join("")}</ul>`
+      : `<div class="ds-state">${ico("ampulheta", 36)}<span>${agView === "dia" ? "Nada marcado neste dia." : "Nenhum compromisso marcado por enquanto."}${canWrite ? " Toque em “Novo evento” para publicar." : ""}</span></div>`;
+  }
+  const cats = [["todas", "Todas"], ["escala", "Escalas"], ...Object.entries(AREAS).map(([k, a]) => [k, a.nome])];
+  box.innerHTML = `<div class="ag-bar">
+      <div class="ds-seg" role="group" aria-label="Visualizar a agenda por">${VISOES.map(([k, n]) => `<button type="button" data-ag-view="${k}" aria-pressed="${agView === k}">${n}</button>`).join("")}</div>
+      ${canWrite ? `<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="ds-btn primary sm" data-act="ev-add">Novo evento</button><button class="ds-btn ghost sm" data-act="esc-add">Agendar missa</button></div>` : ""}
+    </div>
+    ${agView !== "proximos" ? `<div class="ag-bar"><div class="ag-nav"><button class="round" data-ag-mov="-1" aria-label="Anterior"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m15 6-6 6 6 6"/></svg></button>
+      <b aria-live="polite">${esc(agTitulo())}</b><button class="round" data-ag-mov="1" aria-label="Próximo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg></button></div>
+      <button class="ds-btn ghost sm" data-ag-mov="0">Hoje</button></div>` : ""}
+    <div class="ag-cats" role="group" aria-label="Filtrar por categoria">${cats.map(([k, n]) => `<button type="button" data-ag-cat="${k}" aria-pressed="${agCat === k}">${esc(n)}</button>`).join("")}</div>
+    ${corpo}
+    <p class="nota-mod" style="margin-top:16px">${esc(modeText())}</p>`;
+}
+document.addEventListener("click", e => {
+  const v = e.target.closest("[data-ag-view]"); if (v) { agView = v.dataset.agView; store.set("agView", agView); return renderAgendaTab(); }
+  const m = e.target.closest("[data-ag-mov]"); if (m) return agMover(+m.dataset.agMov);
+  const c = e.target.closest("[data-ag-cat]"); if (c) { agCat = c.dataset.agCat; return renderAgendaTab(); }
+  const d = e.target.closest("[data-ag-dia]"); if (d) { agRef = dIso(d.dataset.agDia); agView = "dia"; return renderAgendaTab(); }
+  const ev = e.target.closest("[data-evento]"); if (ev) openEvento(ev.dataset.evento);
+});
+
+/* evento: detalhes, adicionar à agenda pessoal, editar e cancelar */
+const icsTxt = t => String(t || "").replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
+function icsEvento(i) {
+  const d = i.data.replace(/-/g, ""), uid = `${i.id}@comunicafe`;
+  let quando;
+  if (i.hora) {
+    const [h, mi] = i.hora.split(":").map(Number), fim = new Date(2000, 0, 1, h + 1, mi);
+    const fimDia = h + 1 >= 24 ? isoDay(addD(dIso(i.data), 1)).replace(/-/g, "") : d;
+    quando = `DTSTART:${d}T${i.hora.replace(":", "")}00\r\nDTEND:${fimDia}T${String(fim.getHours()).padStart(2, "0")}${String(fim.getMinutes()).padStart(2, "0")}00`;
+  } else quando = `DTSTART;VALUE=DATE:${d}\r\nDTEND;VALUE=DATE:${isoDay(addD(dIso(i.data), 1)).replace(/-/g, "")}`;
+  const agora = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
+  return ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Comunica+Fe//Agenda//PT-BR", "CALSCALE:GREGORIAN", "BEGIN:VEVENT", `UID:${uid}`, `DTSTAMP:${agora}`, quando,
+    `SUMMARY:${icsTxt(i.titulo)}`, i.local ? `LOCATION:${icsTxt(i.local)}` : "", i.desc ? `DESCRIPTION:${icsTxt(i.desc)}` : "",
+    ...(i.hora ? ["BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${icsTxt(i.titulo)}`, "TRIGGER:-PT1H", "END:VALARM"] : []),
+    "END:VEVENT", "END:VCALENDAR"].filter(Boolean).join("\r\n") + "\r\n";
+}
+async function baixarArquivo(nome, blob) {
+  if (downloadsFn) { try { await downloadsFn.save({ filename: nome, data: blob }); toast("Arquivo salvo"); } catch (e) { if (e.code !== "declined") toast("Não foi possível salvar o arquivo aqui."); } return; }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = nome;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  toast("Arquivo baixado: abra para adicionar à sua agenda");
+}
+function openEvento(id) {
+  const e = agenda.find(x => x.id === id);
+  if (!e) { toast("Esse evento não existe mais."); return; }
+  const cancel = e.status === "cancelado";
+  openModal(`<div class="m-plain">${closeBtn()}<h2>${esc(e.titulo)}</h2>
+    <div class="esc-head"><div class="d">${esc(weekday(e.data))}${e.hora ? ", " + esc(e.hora) : ""}</div>
+      <div class="m">${esc(e.local || "Local a confirmar")} · ${esc(catNome(AREAS[e.area] ? e.area : "celebracao"))}${cancel ? " · <b style=\"color:#c2410c\">Cancelado</b>" : ""}</div></div>
+    ${e.desc ? `<div class="read-block"><h4>Detalhes</h4><p>${esc(e.desc)}</p></div>` : ""}
+    ${cancel ? "" : `<button class="btn-line" id="ev-ics">Adicionar à minha agenda</button>
+    <p class="empty" style="margin:0;font-size:12px">Baixa um arquivo de calendário (.ics) com lembrete uma hora antes. Abra no celular para salvar na sua agenda do Google, do iPhone ou do Outlook.</p>
+    ${shareRow(`Comunica+Fé convida: ${e.titulo}, ${weekday(e.data)}${e.hora ? " às " + e.hora : ""}${e.local ? ", " + e.local : ""}.`, "agenda")}`}
+    ${canWrite ? `<div class="m-actions"><button class="btn-line" id="ev-edit">Editar</button><button class="btn-line" id="ev-cancel">${cancel ? "Reativar evento" : "Cancelar evento"}</button>${delBtn("agenda", e.id)}</div>` : ""}
+  </div>`, () => {
+    $("ev-ics") && ($("ev-ics").onclick = () => baixarArquivo(`${slug(e.titulo) || "evento"}-${e.data}.ics`, new Blob([icsEvento({ ...e, id })], { type: "text/calendar" })));
+    $("ev-edit") && ($("ev-edit").onclick = () => openEventForm(id));
+    $("ev-cancel") && ($("ev-cancel").onclick = async () => { if (await writeOr(() => data.set("agenda", id, { ...stripId(e), status: cancel ? "ativo" : "cancelado", atualizadoEm: Date.now() }), cancel ? "Evento reativado" : "Evento cancelado")) openEvento(id); });
+    wireDeletes(() => modal.close());
+  });
+}
+
+/* equipe: integrantes, compromissos, pendências e histórico */
+let eqSel = store.get("eqSel", null);
+const escalasDe = nome => escalas.filter(e => Object.values(e.funcoes || {}).some(v => norm(v) === norm(nome)));
+const minutos = h => { const [a, b] = String(h || "0:0").split(":").map(Number); return a * 60 + (b || 0); };
+// a mesma pessoa em duas celebrações com menos de 2 horas de diferença
+function conflitos(e, lista = escalas) {
+  const out = [];
+  for (const [fk, nome] of Object.entries(e.funcoes || {})) {
+    if (!nome) continue;
+    for (const o of lista) {
+      if (o.id === e.id || o.data !== e.data || Math.abs(minutos(o.hora) - minutos(e.hora)) >= 120) continue;
+      if (Object.values(o.funcoes || {}).some(v => norm(v) === norm(nome))) out.push({ fk, nome, outra: o });
+    }
+  }
+  return out;
+}
+const nomeFn = k => (FUNCOES.find(f => f.k === k) || { nome: k }).nome;
+function escalaItemHTML(e, { destacar = null, confirmar = false } = {}) {
+  const f = e.funcoes || {}, conf = e.confirmados || {}, cf = conflitos(e).map(c => c.fk);
+  return `<li class="esc-i"><div class="top"><div><b>${esc(e.celebracao)} · ${esc(e.hora)}</b><small>${esc(weekday(e.data))}${e.local ? " · " + esc(e.local) : ""}</small></div>
+      <span class="ds-chip ${filledCount(e) === FUNCOES.length ? "ok" : "warn"}">${filledCount(e)} de ${FUNCOES.length} funções</span></div>
+    <div class="fn-l">${FUNCOES.map(fn => f[fn.k]
+      ? `<span class="fn${conf[fn.k] ? " conf" : ""}${cf.includes(fn.k) ? " conflito" : ""}"${cf.includes(fn.k) ? ' title="Escalado em outra celebração no mesmo horário"' : ""}><em>${fn.nome}</em>${esc(f[fn.k])}</span>`
+      : `<span class="fn vaga"><em>${fn.nome}</em>vaga</span>`).join("")}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      ${confirmar && destacar && canWrite ? FUNCOES.filter(fn => norm(f[fn.k]) === norm(destacar) && !conf[fn.k]).map(fn => `<button class="ds-btn primary sm" data-confirmar="${esc(e.id)}/${fn.k}">Confirmar presença (${fn.nome})</button>`).join("") : ""}
+      <button class="ds-btn ghost sm" data-escala="${esc(e.id)}">Abrir escala</button></div></li>`;
+}
+function renderEquipe() {
+  const box = $("corpo-equipe"), prox = upcomingEscalas(), passadas = escalas.filter(e => e.data < TODAY).sort((a, b) => b.data.localeCompare(a.data)).slice(0, 20);
+  const restrito = carga.membros === "restrito";
+  const lista = [...membros].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+  const sel = lista.find(m => m.id === eqSel);
+  const cards = restrito ? `<div class="ds-state">${ico("estrela", 36)}<span>A lista de integrantes aparece para quem faz parte da equipe. Entre pela aba Perfil.</span></div>`
+    : carregando("membros") ? ESQUELETO(2)
+    : lista.length ? `<div class="eq-cards" role="group" aria-label="Integrantes da equipe">${lista.map(m => `<button type="button" class="eqc" data-eq="${esc(m.id)}" aria-pressed="${m.id === eqSel}"><span class="ini" aria-hidden="true">${esc(iniciais(m.nome))}</span><b>${esc(m.nome)}</b><small>${esc((m.funcoes || []).map(nomeFn).join(", ") || "Sem função definida")}</small></button>`).join("")}</div>`
+    : `<div class="ds-state">${ico("estrela", 36)}<span>Nenhum integrante cadastrado ainda.${podeCoordenar() ? " Toque em “Cadastrar integrante”." : ""}</span></div>`;
+  const doSel = sel ? escalasDe(sel.nome).filter(e => e.data >= TODAY).sort((a, b) => (a.data + a.hora).localeCompare(b.data + b.hora)) : [];
+  // pendências: vagas nos próximos 14 dias, presenças sem confirmar e coberturas de eventos que já passaram
+  const ate14 = isoDay(addD(dIso(TODAY), 14)), pend = [];
+  prox.filter(e => e.data <= ate14).forEach(e => {
+    const vagas = FUNCOES.filter(fn => !(e.funcoes || {})[fn.k]).map(fn => fn.nome);
+    if (vagas.length) pend.push(`${e.celebracao} de ${dm(e.data)}: falta ${vagas.join(", ")}`);
+    const semConf = Object.entries(e.funcoes || {}).filter(([k, v]) => v && !(e.confirmados || {})[k]).length;
+    if (semConf) pend.push(`${e.celebracao} de ${dm(e.data)}: ${semConf} ${semConf > 1 ? "presenças" : "presença"} sem confirmar`);
+    conflitos(e).forEach(c => pend.push(`${c.nome} está em ${e.celebracao} (${e.hora}) e em ${c.outra.celebracao} (${c.outra.hora}) no mesmo dia`));
+  });
+  coberturas.filter(c => c.data < TODAY && progressoCob(c) < ITENS_COB.length).forEach(c => pend.push(`Cobertura de ${c.titulo} (${dm(c.data)}): ${ITENS_COB.length - progressoCob(c)} itens em aberto`));
+  box.innerHTML = `<div class="eq-sec"><div class="ds-h"><div><h3>Integrantes</h3><p>Toque em uma pessoa para ver os compromissos dela.</p></div>
+      ${podeCoordenar() ? `<button class="ds-btn primary sm" id="mb-add">Cadastrar integrante</button>` : ""}</div>${cards}
+      ${sel ? `<div class="ds-h" style="margin:8px 0 0"><div><h3 style="font-size:22px">Compromissos de ${esc(sel.nome.split(" ")[0])}</h3></div>
+        ${podeCoordenar() ? `<button class="ds-btn ghost sm" data-mb-edit="${esc(sel.id)}">Editar integrante</button>` : ""}</div>
+        ${doSel.length ? `<ul class="esc-l">${doSel.map(e => escalaItemHTML(e, { destacar: sel.nome, confirmar: true })).join("")}</ul>` : `<div class="ds-state">Nenhuma escala marcada para ${esc(sel.nome.split(" ")[0])}.</div>`}` : ""}
+    </div>
+    <div class="eq-sec"><div class="ds-h"><div><h3>Pendências</h3><p>O que ainda falta resolver nas próximas duas semanas.</p></div></div>
+      ${carregando("escalas") ? ESQUELETO(1) : pend.length ? `<ul class="pend">${pend.map(p => `<li>${ico("ampulheta", 28)}<span>${esc(p)}</span></li>`).join("")}</ul>` : `<div class="ds-state">Tudo certo por aqui.</div>`}</div>
+    <div class="eq-sec"><div class="ds-h"><div><h3>Próximas escalas</h3><p>Em vermelho: pessoa escalada em duas celebrações no mesmo horário.</p></div>
+      ${canWrite ? `<button class="ds-btn primary sm" data-act="esc-add">Agendar missa</button>` : ""}</div>
+      ${carga.escalas === "erro" ? ESTADO_ERRO("as escalas") : carregando("escalas") ? ESQUELETO(3) : prox.length ? `<ul class="esc-l">${prox.map(e => escalaItemHTML(e)).join("")}</ul>` : `<div class="ds-state">Nenhuma escala marcada.</div>`}</div>
+    <div class="eq-sec"><details><summary class="ds-h" style="cursor:pointer;margin:0"><div><h3>Histórico</h3><p>${passadas.length ? `As últimas ${passadas.length} escalas que já aconteceram.` : "As escalas que já aconteceram ficam aqui."}</p></div></summary>
+      ${passadas.length ? `<ul class="esc-l" style="margin-top:14px">${passadas.map(e => escalaItemHTML(e)).join("")}</ul>` : `<div class="ds-state" style="margin-top:14px">Ainda não há escalas passadas.</div>`}</details></div>
+    <p class="nota-mod" style="margin-top:20px">${esc(modeText())}</p>`;
+  $("mb-add") && ($("mb-add").onclick = () => openMembroForm());
+}
+document.addEventListener("click", async e => {
+  const c = e.target.closest("[data-eq]"); if (c) { eqSel = eqSel === c.dataset.eq ? null : c.dataset.eq; store.set("eqSel", eqSel); return renderEquipe(); }
+  const me = e.target.closest("[data-mb-edit]"); if (me) return openMembroForm(me.dataset.mbEdit);
+  const cf = e.target.closest("[data-confirmar]"); if (!cf) return;
+  const [id, fk] = cf.dataset.confirmar.split("/"), x = escalas.find(s => s.id === id); if (!x) return;
+  await writeOr(() => data.set("escalas", id, { ...stripId(x), confirmados: { ...(x.confirmados || {}), [fk]: true }, atualizadoEm: Date.now() }), "Presença confirmada. Obrigado por servir!");
+});
+function openMembroForm(id) {
+  if (!podeCoordenar()) { toast("Só a coordenação cadastra integrantes."); return; }
+  const m = id ? membros.find(x => x.id === id) : null, fs = new Set((m && m.funcoes) || []);
+  openModal(`<div class="m-plain">${closeBtn()}<h2>${m ? "Editar integrante" : "Cadastrar integrante"}</h2>
+    <p class="empty" style="margin:0;font-size:13px">Guardamos só o nome e as funções, para montar a escala. Não cadastre telefone, endereço ou documentos.</p>
+    <form class="join" id="mb-form" novalidate>
+      <div class="field"><label for="mb-n">Nome</label><input id="mb-n" maxlength="60" autocomplete="off" value="${m ? esc(m.nome) : ""}" placeholder="Como a equipe chama a pessoa"></div>
+      <fieldset class="area-pick"><legend>Funções</legend>${FUNCOES.map(fn => `<label><input type="checkbox" value="${fn.k}"${fs.has(fn.k) ? " checked" : ""}>${ico(fn.ico, 32)}${fn.nome}</label>`).join("")}</fieldset>
+      <p class="note" id="mb-note" role="status"></p>
+      <button class="btn-red" type="submit">${m ? "Salvar" : "Cadastrar"}</button>
+      ${m ? delBtn("membros", m.id) : ""}
+    </form></div>`, () => {
+    $("mb-form").onsubmit = async e => {
+      e.preventDefault();
+      const nome = $("mb-n").value.trim().replace(/\s+/g, " ");
+      if (nome.replace(/[^\p{L}]/gu, "").length < 2) { $("mb-note").textContent = "Escreva o nome da pessoa."; return; }
+      if (membros.some(x => x.id !== id && norm(x.nome) === norm(nome))) { $("mb-note").textContent = "Já existe alguém com esse nome na equipe."; return; }
+      const d = { nome, funcoes: [...mBody.querySelectorAll(".area-pick input:checked")].map(i => i.value), ativo: true, criadoEm: m ? m.criadoEm ?? Date.now() : Date.now(), atualizadoEm: Date.now() };
+      if (await writeOr(() => data.set("membros", id || newId(), d), m ? "Integrante atualizado" : "Integrante cadastrado")) modal.close();
+    };
+    wireDeletes(() => { eqSel = null; modal.close(); });
+  });
+}
+
+/* checklist de cobertura fotográfica */
+const ITENS_COB = [
+  { k: "ambiente", t: "Igreja e ambiente", d: "Fachada, altar, decoração e detalhes, antes de começar" },
+  { k: "momentos", t: "Momentos principais", d: "Entrada, Palavra, consagração (sem flash), comunhão e bênção" },
+  { k: "pessoas", t: "Participantes", d: "Com discrição; respeite quem não quer aparecer" },
+  { k: "video_v", t: "Vídeos verticais", d: "Para Reels e status" },
+  { k: "video_h", t: "Vídeos horizontais", d: "Para YouTube e telão" },
+  { k: "stories", t: "Stories", d: "Antes, durante (sem atrapalhar) e depois" },
+  { k: "entrevistas", t: "Entrevistas", d: "Só com a autorização de quem fala" },
+  { k: "bastidores", t: "Bastidores", d: "Preparação, ensaio, equipe servindo" },
+  { k: "foto_equipe", t: "Foto da equipe", d: "" },
+  { k: "edicao", t: "Seleção e edição das imagens", d: "" },
+  { k: "publicacao", t: "Publicação final", d: "Legenda revisada e marcação da paróquia" },
+];
+const EST_COB = { pendente: "Pendente", andamento: "Em andamento", concluido: "Concluído" };
+const PROX_EST = { pendente: "andamento", andamento: "concluido", concluido: "pendente" };
+const progressoCob = c => ITENS_COB.filter(i => (c.itens || {})[i.k] === "concluido").length;
+function cobHTML(c) {
+  const it = c.itens || {}, feito = progressoCob(c);
+  return `<article class="cob-i"><div class="top"><div><b>${esc(c.titulo)}</b><small>${esc(weekday(c.data))}${c.hora ? " · " + esc(c.hora) : ""}</small></div>
+      <span class="ds-chip ${feito === ITENS_COB.length ? "ok" : "warn"}">${feito} de ${ITENS_COB.length} concluídos</span></div>
+    <div class="ds-prog" aria-hidden="true">${ITENS_COB.map(i => `<i class="${it[i.k] === "concluido" ? "on" : it[i.k] === "andamento" ? "mid" : ""}"></i>`).join("")}</div>
+    <ul class="chk">${ITENS_COB.map(i => { const st = it[i.k] || "pendente";
+      return `<li><span>${i.t}${i.d ? `<small>${i.d}</small>` : ""}</span>${canWrite ? `<button type="button" class="st" data-st="${st}" data-cob="${esc(c.id)}/${i.k}" aria-label="${i.t}: ${EST_COB[st]}. Toque para mudar.">${EST_COB[st]}</button>` : `<span class="st" data-st="${st}" style="display:grid;place-items:center">${EST_COB[st]}</span>`}</li>`; }).join("")}</ul>
+    ${podeCoordenar() ? `<div><button class="ds-btn ghost sm" data-cob-del="${esc(c.id)}">Excluir checklist</button></div>` : ""}</article>`;
+}
+function renderCobertura() {
+  const box = $("corpo-cobertura");
+  if (carga.coberturas === "restrito") { box.innerHTML = `<div class="ds-state">${ico("camera", 36)}<span>As checklists de cobertura aparecem para quem faz parte da equipe. Entre pela aba Perfil.</span></div>`; return; }
+  const ordenadas = [...coberturas].sort((a, b) => (b.data || "").localeCompare(a.data || ""));
+  const ativas = ordenadas.filter(c => c.data >= isoDay(addD(dIso(TODAY), -7)) || progressoCob(c) < ITENS_COB.length);
+  const hist = ordenadas.filter(c => !ativas.includes(c));
+  const jaTem = new Set(coberturas.map(c => c.ref));
+  const opcoes = itensAgenda().filter(i => !i.cancelado && i.data >= isoDay(addD(dIso(TODAY), -7)) && !jaTem.has(`${i.tipo === "escala" ? "escalas" : "agenda"}/${i.id}`));
+  box.innerHTML = `${canWrite ? `<div class="painel-form"><div class="ds-h" style="margin:0"><div><h3 style="font-size:22px">Nova checklist</h3><p>Escolha a celebração ou o evento da agenda.</p></div></div>
+      ${opcoes.length ? `<div class="ds-field"><label for="cob-ev">Evento</label><select id="cob-ev">${opcoes.map(i => `<option value="${i.tipo === "escala" ? "escalas" : "agenda"}/${esc(i.id)}">${esc(dm(i.data))}${i.hora ? " · " + esc(i.hora) : ""} · ${esc(i.titulo)}</option>`).join("")}</select></div>
+        <button class="ds-btn primary" id="cob-criar" style="justify-self:start">Criar checklist</button>`
+        : `<p class="nota-mod">Não há eventos recentes ou futuros sem checklist. Cadastre o evento na Agenda primeiro.</p>`}</div>` : ""}
+    <p class="nota-mod" style="margin:16px 0"><b>Privacidade:</b> fotografe com discrição. Crianças e rostos em close só com autorização dos responsáveis; não publique quem pediu para não aparecer.</p>
+    ${carregando("coberturas") ? ESQUELETO(2) : ativas.length ? `<div style="display:grid;gap:12px">${ativas.map(cobHTML).join("")}</div>` : `<div class="ds-state">${ico("camera", 36)}<span>Nenhuma cobertura em andamento.</span></div>`}
+    ${hist.length ? `<details style="margin-top:24px"><summary class="ds-h" style="cursor:pointer;margin:0"><div><h3>Histórico de coberturas</h3><p>${hist.length} ${hist.length > 1 ? "coberturas concluídas" : "cobertura concluída"}.</p></div></summary><div style="display:grid;gap:12px;margin-top:14px">${hist.map(cobHTML).join("")}</div></details>` : ""}
+    <p class="nota-mod" style="margin-top:20px">${esc(modeText())}</p>`;
+  $("cob-criar") && ($("cob-criar").onclick = async () => {
+    const ref = $("cob-ev").value, [col, id] = ref.split("/"), i = itensAgenda().find(x => (x.tipo === "escala" ? "escalas" : "agenda") === col && x.id === id);
+    if (!i) return;
+    await writeOr(() => data.set("coberturas", newId(), { ref, titulo: i.titulo, data: i.data, hora: i.hora, itens: {}, criadoPor: myId, criadoEm: Date.now(), atualizadoEm: Date.now() }), "Checklist criada");
+  });
+}
+document.addEventListener("click", async e => {
+  const b = e.target.closest("[data-cob]");
+  if (b) {
+    const [id, k] = b.dataset.cob.split("/"), c = coberturas.find(x => x.id === id); if (!c) return;
+    const novo = PROX_EST[(c.itens || {})[k] || "pendente"];
+    await writeOr(() => data.set("coberturas", id, { ...stripId(c), itens: { ...(c.itens || {}), [k]: novo }, atualizadoEm: Date.now() }));
+    return;
+  }
+  const d = e.target.closest("[data-cob-del]"); if (!d) return;
+  if (!d.classList.contains("confirm")) { d.classList.add("confirm"); d.textContent = "Confirmar exclusão"; return; }
+  await writeOr(() => data.del("coberturas", d.dataset.cobDel), "Checklist excluída");
+});
+
+/* formação: catálogo por assunto, com a situação real de cada material */
+const CATALOGO_FORM = [
+  { t: "Fotografia com celular", d: "Luz, firmeza e enquadramento para fotos na igreja.", ir: "aba:camera", st: "ok" },
+  { t: "Configuração de câmeras Android e iPhone", d: "Ajustes por tipo de aparelho, com assistente e desafios.", ir: "aba:camera", st: "ok" },
+  { t: "Gravação de vídeos", d: "Vídeo na celebração, vertical e horizontal.", ir: "licao:Fotografia e vídeo na celebração", st: "ok" },
+  { t: "Cobertura de missas", d: "O que registrar e como se portar durante a celebração.", ir: "licao:Fotografia e vídeo na celebração", st: "ok" },
+  { t: "Evangelização nas redes sociais", d: "Como cuidar das redes da paróquia.", ir: "licao:Redes sociais da paróquia", st: "ok" },
+  { t: "Espiritualidade do comunicador", d: "Comunicar como Jesus, com verdade e cuidado.", ir: "mod:m4", st: "ok" },
+  { t: "Boas práticas para a PASCOM", d: "O que é a Pastoral da Comunicação e os documentos que a orientam.", ir: "mod:m3", st: "ok" },
+  { t: "Iluminação", d: "Dicas de luz dentro da área Câmera do celular.", ir: "aba:camera", st: "parte" },
+  { t: "Composição e enquadramento", d: "Dicas e desafios dentro da área Câmera do celular.", ir: "aba:camera", st: "parte" },
+  { t: "Edição de fotos", d: "Material ainda não publicado.", st: "prep" },
+  { t: "Edição de vídeos", d: "Material ainda não publicado.", st: "prep" },
+  { t: "Comunicação litúrgica", d: "Material ainda não publicado.", st: "prep" },
+];
+const ST_FORM = { ok: ["Disponível", "ok"], parte: ["Dentro de Câmera do celular", ""], prep: ["Em preparação", "warn"] };
+function catTile(c) {
+  const [rot, cls] = ST_FORM[c.st];
+  const lic = c.ir && c.ir.startsWith("licao:") ? LICOES.find(l => l.titulo === c.ir.slice(6)) : null;
+  const lida = lic && lidas.has(lic.key);
+  return `<button type="button" class="ftile"${c.ir ? ` data-form-ir="${esc(c.ir)}"` : ' aria-disabled="true"'}><span class="ds-chip ${cls}" style="justify-self:start">${rot}${lida ? " · lida" : ""}</span><b>${esc(c.t)}</b><small>${esc(c.d)}</small></button>`;
+}
+function irFormacao(ir) {
+  const [tipo, alvo] = [ir.slice(0, ir.indexOf(":")), ir.slice(ir.indexOf(":") + 1)];
+  if (tipo === "aba") return setTab(alvo);
+  const i = tipo === "licao" ? LICOES.findIndex(l => l.titulo === alvo) : LICOES.findIndex(l => l.m.id === alvo);
+  if (i >= 0) openLicao(i); else setTab("formacao");
+}
+document.addEventListener("click", e => { const b = e.target.closest("[data-form-ir]"); if (b) irFormacao(b.dataset.formIr); });
+$("formacao").querySelector(".form-grid").insertAdjacentHTML("beforebegin", `<div class="ds-h"><div><h3 id="cat-f-h">Assuntos para comunicadores</h3><p>Cada assunto mostra se o material já está disponível no site.</p></div></div>
+  <div class="cat-f" id="cat-f" aria-labelledby="cat-f-h"></div>`);
+function renderCatalogo() { $("cat-f").innerHTML = CATALOGO_FORM.map(catTile).join(""); }
+
+/* criador de conteúdo com IA */
+const CRI_TIPOS = [["legenda", "Legenda para Instagram"], ["reels", "Roteiro de Reels"], ["ideias", "Ideias de conteúdo"], ["ganchos", "Ganchos para os primeiros segundos"], ["cta", "Chamadas para ação"],
+  ["stories", "Sequência de Stories"], ["carrossel", "Carrossel educativo"], ["evento", "Divulgação de evento"], ["enquete", "Perguntas e enquetes"], ["calendario", "Calendário editorial"]];
+const CRI_OPC = {
+  objetivo: ["Convidar para um evento", "Evangelizar", "Formar e catequizar", "Informar a comunidade", "Agradecer e celebrar", "Engajar os jovens"],
+  publico: ["Toda a comunidade", "Jovens", "Famílias", "Catequese e crianças (com os pais)", "Pessoas afastadas da Igreja", "Equipe da pastoral"],
+  tom: ["Acolhedor", "Alegre", "Reflexivo", "Formativo", "Solene"],
+  plataforma: ["Instagram", "Facebook", "WhatsApp", "TikTok", "YouTube"],
+};
+let criTipo = "legenda", criTam = "medio", criStatus = null, criUltimo = "";
+const CRI_API = /vercel\.app$|^comunica-fe/.test(location.hostname) ? "/api/conteudo" : "https://comunica-fe.vercel.app/api/conteudo";
+async function verificarCriador() {
+  if (sampleFn) { criStatus = { via: "claude" }; return; }
+  try { const r = await fetch(CRI_API, { cache: "no-store" }); const d = await r.json(); criStatus = d && d.configurado ? { via: "site", login: !!d.exigeLogin } : { via: "off", falta: (d && d.falta) || [] }; }
+  catch { criStatus = { via: "off", falta: [], rede: true } }
+}
+function criStatusHTML() {
+  if (!criStatus) return `<div class="cri-status">Verificando a IA…</div>`;
+  if (criStatus.via === "claude") return `<div class="cri-status">Usando a IA do Claude.</div>`;
+  if (criStatus.via === "site") return `<div class="cri-status">IA ativa.${criStatus.login ? (canWrite && backend === "firebase" ? " Você está na equipe e pode usar." : " Só a equipe usa: entre pela aba Perfil com a conta da equipe.") : ""}</div>`;
+  const falta = (criStatus.falta || []).map(f => ({ chave: "a chave da IA (ANTHROPIC_API_KEY) no Vercel", login: "o login da equipe (Firebase e FIREBASE_PROJECT_ID no Vercel)" })[f] || f);
+  return `<div class="cri-status off">${criStatus.rede ? "Não consegui falar com o servidor da IA agora." : `A IA ainda não foi ativada neste site.${falta.length ? " Falta: " + esc(falta.join("; ")) + "." : ""} O passo a passo está em LOGIN.md.`} Enquanto isso, use “Copiar pedido” e cole em um assistente de IA, ou abra o site pelo link do Claude.</div>`;
+}
+function criPedido() {
+  const v = id => $(id) ? $(id).value : "";
+  const lit = $("cri-lit") && $("cri-lit").checked ? liturgiaDoDia() : null;
+  return { tipo: criTipo, objetivo: v("cri-obj"), publico: v("cri-pub"), tom: v("cri-tom"), plataforma: v("cri-plat"), tamanho: criTam, tema: v("cri-tema").trim().slice(0, 1200),
+    liturgia: lit ? { primeira: lit.primeira || "", salmo: lit.salmo || "", refrao: lit.refrao || "", segunda: lit.segunda || "", evangelho: lit.evangelho || "" } : null };
+}
+// o mesmo texto de api/conteudo.mjs (o servidor monta o dele; este é usado no Claude e no "Copiar pedido")
+function criPrompt(p) {
+  const nomeTipo = (CRI_TIPOS.find(t => t[0] === p.tipo) || CRI_TIPOS[0])[1];
+  const tam = { curto: "curto e direto", medio: "de tamanho médio", longo: "mais completo" }[p.tamanho] || "de tamanho médio";
+  const lit = p.liturgia ? `\nLiturgia do dia (referências conferidas): 1ª leitura ${p.liturgia.primeira || "-"}; salmo ${p.liturgia.salmo || "-"}${p.liturgia.refrao ? ` (refrão: “${p.liturgia.refrao}”)` : ""}; ${p.liturgia.segunda ? `2ª leitura ${p.liturgia.segunda}; ` : ""}Evangelho ${p.liturgia.evangelho || "-"}. Não transcreva o texto das leituras; cite só as referências.` : "";
+  return `${CRI_SISTEMA}\n\nPedido: ${nomeTipo}, ${tam}, para ${p.plataforma}.\nObjetivo: ${p.objetivo}.\nPúblico: ${p.publico}.\nTom: ${p.tom}.\nTema e informações da paróquia: ${p.tema}${lit}`;
+}
+const CRI_SISTEMA = `Você ajuda a Pastoral da Comunicação (PASCOM) de uma paróquia católica no Brasil a criar conteúdo para redes sociais. Escreva em português do Brasil, fiel à doutrina da Igreja Católica.
+Regras:
+- Nunca invente citações da Bíblia, de documentos da Igreja, do Papa ou de santos. Só cite um texto se ele estiver nas informações do pedido; se uma citação ajudar, escreva [inserir citação conferida].
+- Não invente datas, horários, nomes, locais ou preços: use só o que está no pedido e escreva [a confirmar] onde faltar.
+- Nada de sensacionalismo, promessas de milagre ou ataques a pessoas e a outras religiões.
+- Fotos e vídeos de crianças só com autorização dos responsáveis: lembre disso quando sugerir imagens.
+- Entregue só o conteúdo pronto, organizado e fácil de copiar, sem explicar o que você fez.`;
+function renderCriador() {
+  const box = $("corpo-criador");
+  if (box.childElementCount) { $("cri-status").innerHTML = criStatusHTML(); return; }
+  const sel = (id, rot, k) => `<div class="ds-field"><label for="${id}">${rot}</label><select id="${id}">${CRI_OPC[k].map(o => `<option>${o}</option>`).join("")}</select></div>`;
+  box.innerHTML = `<div class="cri">
+    <form class="painel-form" id="cri-form" novalidate>
+      <div id="cri-status">${criStatusHTML()}</div>
+      <fieldset class="ds-field" style="border:0;padding:0;margin:0"><legend>Tipo de conteúdo</legend>
+        <div class="cri-tipos" role="group">${CRI_TIPOS.map(([k, n]) => `<button type="button" data-cri-tipo="${k}" aria-pressed="${k === criTipo}">${n}</button>`).join("")}</div></fieldset>
+      <div class="ds-grid2">${sel("cri-obj", "Objetivo", "objetivo")}${sel("cri-pub", "Público", "publico")}${sel("cri-tom", "Tom", "tom")}${sel("cri-plat", "Plataforma", "plataforma")}</div>
+      <div class="ds-field"><span id="cri-tam-l" style="font-size:12.5px;color:rgba(255,255,255,.7)">Tamanho do texto</span>
+        <div class="ds-seg" role="group" aria-labelledby="cri-tam-l">${[["curto", "Curto"], ["medio", "Médio"], ["longo", "Longo"]].map(([k, n]) => `<button type="button" data-cri-tam="${k}" aria-pressed="${k === criTam}">${n}</button>`).join("")}</div></div>
+      <div class="ds-field"><label for="cri-tema">Tema e informações</label><textarea id="cri-tema" maxlength="1200" placeholder="Ex.: Missa de Nossa Senhora Aparecida, dia 12 de outubro, às 19h, na Igreja Matriz, com coroação"></textarea></div>
+      <label style="font-size:14px;display:flex;gap:8px;align-items:center"><input type="checkbox" id="cri-lit"> Usar as referências da liturgia de hoje</label>
+      <p class="note" id="cri-note" role="status" style="margin:0"></p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="ds-btn primary" type="submit" id="cri-go">Gerar conteúdo</button><button class="ds-btn ghost" type="button" id="cri-copiar-pedido">Copiar pedido</button></div>
+    </form>
+    <div class="cri-out" aria-live="polite"><div class="vazio" id="cri-out">O conteúdo gerado aparece aqui. Confira as informações e a doutrina antes de publicar.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn-line" id="cri-copiar" hidden>Copiar texto</button></div></div></div>`;
+  box.addEventListener("click", e => {
+    const t = e.target.closest("[data-cri-tipo]"); if (t) { criTipo = t.dataset.criTipo; box.querySelectorAll("[data-cri-tipo]").forEach(b => b.setAttribute("aria-pressed", b === t)); }
+    const z = e.target.closest("[data-cri-tam]"); if (z) { criTam = z.dataset.criTam; box.querySelectorAll("[data-cri-tam]").forEach(b => b.setAttribute("aria-pressed", b === z)); }
+  });
+  $("cri-copiar-pedido").onclick = async () => {
+    const p = criPedido(); if (p.tema.length < 8) { $("cri-note").textContent = "Escreva o tema e as informações primeiro."; return; }
+    try { await navigator.clipboard.writeText(criPrompt(p)); toast("Pedido copiado"); } catch { toast("Não foi possível copiar aqui."); }
+  };
+  $("cri-copiar").onclick = async () => { try { await navigator.clipboard.writeText(criUltimo); toast("Texto copiado"); } catch { toast("Não foi possível copiar aqui."); } };
+  $("cri-form").onsubmit = async e => { e.preventDefault(); await gerarConteudo(); };
+  if (!criStatus) verificarCriador().then(() => { if ($("cri-status")) $("cri-status").innerHTML = criStatusHTML(); });
+}
+async function gerarConteudo() {
+  const p = criPedido(), nota = $("cri-note"), out = $("cri-out"), btn = $("cri-go");
+  nota.textContent = "";
+  if (p.tema.length < 8) { nota.textContent = "Escreva o tema e as informações da paróquia (pelo menos uma frase)."; $("cri-tema").focus(); return; }
+  if (!criStatus) await verificarCriador();
+  if (criStatus.via === "off") { $("cri-status").innerHTML = criStatusHTML(); nota.textContent = "A IA não está ativa. Use “Copiar pedido”."; return; }
+  btn.disabled = true; out.className = "vazio"; out.textContent = "Escrevendo…";
+  try {
+    let texto;
+    if (criStatus.via === "claude") {
+      const r = await sampleFn.json(`${criPrompt(p)}\n\nResponda só com JSON: {"texto":"o conteúdo pronto"}`);
+      texto = r && typeof r.texto === "string" ? r.texto : "";
+    } else {
+      const headers = { "content-type": "application/json" };
+      if (fbUser && fbUser.getIdToken) headers.authorization = "Bearer " + await fbUser.getIdToken();
+      const r = await fetch(CRI_API, { method: "POST", headers, body: JSON.stringify(p) });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) throw Object.assign(new Error(d.erro || "falha"), { msg: d.erro });
+      texto = d.texto || "";
+    }
+    if (!texto.trim()) throw new Error("vazio");
+    criUltimo = texto.trim(); out.className = "txt"; out.textContent = criUltimo; $("cri-copiar").hidden = false;
+  } catch (err) {
+    out.className = "vazio";
+    out.textContent = err.msg || (err.code === "rate_limited" ? "Muitos pedidos seguidos. Espere um pouco e tente de novo." : "Não foi possível gerar agora. Tente de novo em instantes.");
+  } finally { btn.disabled = false; }
+}
+
+/* navegação do celular: barra inferior com cinco atalhos e menu com todos os assuntos */
+const BNAV_ABA = { inicio: "inicio", agenda: "agenda", liturgia: "liturgia", equipe: "equipe" };
+function marcarBnav() {
+  $("bnav").querySelectorAll("[data-bnav]").forEach(b => { if (BNAV_ABA[b.dataset.bnav] === abaAtual) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+}
+$("bnav").addEventListener("click", e => { const b = e.target.closest("[data-bnav]"); if (!b) return; if (b.dataset.bnav === "perfil") return openConta(); setTab(BNAV_ABA[b.dataset.bnav]); });
+function abrirMenu() {
+  $("msheet-grid").innerHTML = ABAS.map(([id, nome]) => `<button type="button" data-msheet="${id}"${id === abaAtual ? ' aria-current="true"' : ""}>${nome}</button>`).join("");
+  $("msheet").hidden = false; $("menu-btn").setAttribute("aria-expanded", "true"); $("msheet-grid").querySelector("button").focus();
+}
+function fecharMenu() { $("msheet").hidden = true; $("menu-btn").setAttribute("aria-expanded", "false"); }
+$("menu-btn").onclick = abrirMenu;
+$("msheet-x").onclick = () => { fecharMenu(); $("menu-btn").focus(); };
+$("msheet").addEventListener("click", e => { const b = e.target.closest("[data-msheet]"); if (b) { fecharMenu(); setTab(b.dataset.msheet); } else if (e.target === $("msheet")) fecharMenu(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("msheet").hidden) { fecharMenu(); $("menu-btn").focus(); } });
+
 /* ---------- Início ---------- */
+renderCatalogo();
 iniciarAbas();
 renderHero(); renderPick(); renderMass(); setMassUI(false); renderQuote(); restartHero(); applyFilter(); renderEscalaCard();
 renderFormacao(); renderTimeline(); renderDocs(); medir(); onScroll(); showFrame();

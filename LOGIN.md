@@ -1,10 +1,15 @@
-# Login da Comunica+Fé (Firebase)
+# Login, equipe e IA da Comunica+Fé (Firebase e Vercel)
 
 O site já tem o login pronto: e-mail e senha, Google, Facebook e Apple. Ele só começa a funcionar quando o site
 recebe a configuração de um projeto do **Firebase** (serviço gratuito do Google). Enquanto isso, o botão **EU**
-avisa que as contas ainda não foram ativadas.
+(ou **Perfil**, no celular) avisa que as contas ainda não foram ativadas.
 
-Com a conta, o progresso da formação e dos desafios da câmera fica salvo e aparece em qualquer aparelho.
+Com o Firebase ligado:
+
+- o progresso da formação e dos desafios da câmera fica salvo na conta de cada pessoa;
+- a **agenda, a escala, os avisos, os integrantes e as coberturas** passam a ficar num banco só, igual para todo mundo.
+  Sem o Firebase, o que se publica no site do Vercel fica salvo só no aparelho de quem publicou.
+
 A senha fica guardada pelo Firebase, nunca no site.
 
 ## 1. Criar o projeto (5 minutos)
@@ -45,6 +50,10 @@ Em **Authentication → Configurações → Domínios autorizados**, adicione:
 2. Aba **Regras**: apague o que estiver lá, cole o conteúdo do arquivo [`firestore.rules`](firestore.rules)
    deste repositório e toque em **Publicar**. Com essas regras, cada pessoa só vê e grava o próprio progresso.
 
+Essas regras também definem quem publica: qualquer pessoa **lê** a agenda, a escala e os avisos; só quem está na
+**equipe** publica na agenda, na escala e nas coberturas; só a **coordenação** publica avisos, cadastra integrantes e
+libera acessos.
+
 ## 5. Colocar a configuração no site
 
 Em `site/pagina.html`, procure a linha:
@@ -67,6 +76,32 @@ const FIREBASE_CONFIG = window.COMUNICAFE_FIREBASE || {
 
 Depois rode `bash scripts/montar-site.sh` e publique de novo. Pelo Claude, basta mandar o bloco do passo 1 e
 dizer quais jeitos de entrar foram ativados.
+
+## 6. Criar a coordenação e liberar a equipe
+
+1. Entre no site publicado com a sua conta e abra **Perfil**. Copie o **código** que aparece ali.
+2. No console do Firebase, abra **Firestore Database → Dados → Iniciar coleção**, com o nome `equipe`.
+   O ID do documento é o código copiado. Crie um campo `papel` (texto) com o valor `coordenacao`.
+3. Saia e entre de novo no site. Em **Perfil** aparece **Liberar acesso à equipe**: cada pessoa da equipe manda o
+   próprio código, e a coordenação cola ali e escolhe o papel (equipe ou coordenação).
+
+## 7. Ligar a IA do Criador de conteúdo
+
+O Criador de conteúdo usa a API do Claude (Anthropic). A chave fica só no servidor do Vercel: ela nunca vai para o
+navegador. Só a equipe logada consegue usar a IA, e cada pessoa tem um limite de 20 pedidos por hora.
+
+1. Crie uma chave em <https://console.anthropic.com> (**API Keys**). O uso é cobrado pela Anthropic.
+2. No Vercel, abra o projeto `comunica-fe` → **Settings → Environment Variables** e crie:
+
+   | Nome | Valor |
+   | :--- | :--- |
+   | `ANTHROPIC_API_KEY` | a chave criada no passo 1 |
+   | `FIREBASE_PROJECT_ID` | o `projectId` do seu `firebaseConfig` (por exemplo, `comunica-fe`) |
+
+3. Publique o site de novo (**Deployments → Redeploy**). A aba **Criador de conteúdo** passa a mostrar “IA ativa”.
+
+Sem essas variáveis, o Criador continua funcionando no modo “Copiar pedido” (cola-se o pedido em qualquer assistente
+de IA), e dentro do link do Claude ele usa a IA do próprio Claude.
 
 ## Dentro do Claude
 

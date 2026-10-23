@@ -1,10 +1,61 @@
 rules_version = '2';
-// Regras do banco (Firestore) do login da Comunica+Fé.
-// Cada pessoa só lê e grava o próprio progresso, em usuarios/{uid}. Nada mais fica aberto.
+// Regras do banco (Firestore) da Comunica+Fé.
+// - Agenda, escalas, avisos, liturgia e frases: qualquer pessoa lê; só a equipe publica.
+// - Equipe: quem tem um documento em equipe/{uid}. O primeiro (papel "coordenacao") é criado à mão no console.
+// - Integrantes e coberturas: só a equipe vê. Avisos, integrantes e acessos: só a coordenação muda.
+// - Progresso de cada pessoa: usuarios/{uid}, só ela lê e grava.
 service cloud.firestore {
   match /databases/{database}/documents {
+    function logado() { return request.auth != null; }
+    function daEquipe() { return logado() && exists(/databases/$(database)/documents/equipe/$(request.auth.uid)); }
+    function coord() { return daEquipe() && get(/databases/$(database)/documents/equipe/$(request.auth.uid)).data.papel == "coordenacao"; }
+    function texto(campo, max) { return !(campo in request.resource.data) || (request.resource.data[campo] is string && request.resource.data[campo].size() <= max); }
+    function dataValida() { return request.resource.data.data is string && request.resource.data.data.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$'); }
+
     match /usuarios/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+      allow read, write: if logado() && request.auth.uid == uid;
+    }
+    match /equipe/{uid} {
+      allow read: if logado() && (request.auth.uid == uid || coord());
+      allow write: if coord() && (!("papel" in request.resource.data) || request.resource.data.papel in ["coordenacao", "membro"]);
+      allow delete: if coord();
+    }
+    match /agenda/{id} {
+      allow read: if true;
+      allow create, update: if daEquipe() && dataValida() && texto("titulo", 120) && texto("local", 120) && texto("desc", 1500);
+      allow delete: if daEquipe();
+    }
+    match /escalas/{id} {
+      allow read: if true;
+      allow create, update: if daEquipe() && dataValida() && texto("local", 120) && texto("obs", 1500);
+      allow delete: if daEquipe();
+    }
+    match /avisos/{id} {
+      allow read: if true;
+      allow create, update: if coord() && texto("titulo", 90) && texto("texto", 800);
+      allow delete: if coord();
+    }
+    match /liturgia/{id} {
+      allow read: if true;
+      allow write: if daEquipe();
+    }
+    match /frases/{id} {
+      allow read: if true;
+      allow write: if daEquipe() && texto("texto", 400);
+    }
+    match /formacao/{id} {
+      allow read: if true;
+      allow write: if coord();
+    }
+    match /membros/{id} {
+      allow read: if daEquipe();
+      allow create, update: if coord() && texto("nome", 60);
+      allow delete: if coord();
+    }
+    match /coberturas/{id} {
+      allow read: if daEquipe();
+      allow create, update: if daEquipe() && dataValida();
+      allow delete: if coord();
     }
   }
 }
