@@ -192,6 +192,7 @@ test.describe('jogos no navegador', () => {
     await page.getByRole('main').getByRole('link', { name: 'Jogar', exact: true }).click();
     await expect(page).toHaveURL(/\/jogar\/neon-breaker$/);
     await expect(page.getByRole('dialog', { name: 'Começar Neon Breaker' })).toBeVisible();
+    await expect(page.getByText('Mova com ◀ ▶ e lance a bola com A')).toBeVisible();
   });
 
   test('jogos de streaming não têm rota de player', async ({ page }) => {

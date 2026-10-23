@@ -47,6 +47,8 @@ export function GamePlayer({ game }: { game: CatalogGame }) {
   bestRef.current = best;
   const prefsRef = useRef(prefs);
   prefsRef.current = prefs;
+  // Lido de uma instância descartável: a instância real só nasce no efeito, depois da renderização.
+  const [hint] = useState(() => factory().hint);
   const [phase, setPhase] = useState<Phase>('pronto');
   const phaseRef = useRef<Phase>('pronto');
   const [score, setScore] = useState(0);
@@ -246,7 +248,7 @@ export function GamePlayer({ game }: { game: CatalogGame }) {
               <p className="eyebrow">{phase === 'fim' ? 'Fim de jogo' : phase === 'pausado' ? 'Pausado' : 'Pronto?'}</p>
               <p className="mt-2 font-display text-3xl font-bold sm:text-4xl">{phase === 'fim' ? `${score} pontos` : game.name}</p>
               {phase === 'fim' && newRecord && <p className="mt-2 font-semibold text-amber-300">Novo recorde!</p>}
-              {phase === 'pronto' && <p className="mx-auto mt-3 max-w-xs text-sm text-muted">{instance.current?.hint ?? ''}</p>}
+              {phase === 'pronto' && <p className="mx-auto mt-3 max-w-xs text-sm text-muted">{hint}</p>}
               <button
                 type="button"
                 onClick={() => (phase === 'pausado' ? go('jogando') : start())}
