@@ -23,7 +23,7 @@
 <meta name="twitter:image" content="social/comunicafe-1200x630.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,700..900&family=Space+Mono:wght@400;700&family=Cinzel:wght@600;800&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,700..900&family=Space+Mono:wght@400;700&family=Inter+Tight:wght@500;600&family=Cinzel:wght@600;800&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -1447,6 +1447,126 @@
   }
   @media (prefers-reduced-motion: reduce) {
     .nb-btn, .nb-ico, .ftile { transition: none; }
+  }
+
+  /* ==========================================================================
+     Botões em pílula: azul-marinho, lilás, lilás-claro, laranja, contorno e
+     degradê, com setas em botões redondos. Vale para todos os botões do site.
+     ========================================================================== */
+  :root {
+    --bt-navy: #1b1145; --bt-navy-2: #0e0b38; --bt-peri: #7b7ff3; --bt-peri-l: #aab5fa; --bt-orange: #f88a5b; --bt-ink: #15102a;
+    --bt-grad: linear-gradient(90deg, #7a72f0 0%, #3b2f8f 100%);
+    --font-btn: "Inter Tight", "Inter", "Helvetica Neue", Arial, sans-serif;
+  }
+  /* base: pílula, texto em minúsculas como na referência, sem sombra dura */
+  .nb-btn, .ds-btn, .btn-red, .btn-line, .btn-dark, .btn-sm, .btn-pill, .ghost-pill, .soft-pill, .take button, .del, .prov, .conta-modo button,
+  .share a, .share button, .play-link, .lt-read, .fw-btn, .tab, .fchip, .tl-y, .cam-tab, .cam-index a, .ag-cats button, .cri-tipos button,
+  .ds-seg button, .chk .st, .msheet .grid button, .bnav button[aria-current="page"], .credit a, .cf-logo, .logo {
+    border-radius: 999px !important; font-family: var(--font-btn) !important; text-transform: none !important; letter-spacing: -.02em !important; font-weight: 500 !important;
+  }
+  .nb-btn, .ds-btn, .btn-red, .btn-line, .btn-dark, .btn-pill, .ghost-pill, .soft-pill, .prov, .share a, .share button, .play-link, .fw-btn, .lt-read {
+    min-height: 48px; padding: 0 22px; gap: 10px; font-size: 16px !important; box-shadow: none !important; transition: transform .18s var(--ease), background .18s, filter .18s, box-shadow .18s;
+  }
+  .nb-btn:hover, .ds-btn:hover, .btn-red:hover, .btn-line:hover, .btn-pill:hover, .ghost-pill:hover, .prov:hover, .share a:hover, .share button:hover, .fw-btn:hover {
+    transform: translateY(-2px); box-shadow: 0 10px 22px -12px rgba(27, 17, 69, .55) !important;
+  }
+  .nb-btn:active, .ds-btn:active, .btn-red:active, .btn-line:active { transform: translateY(0) scale(.98); box-shadow: none !important; }
+
+  /* principal: azul-marinho */
+  .nb-btn.lime, .ds-btn.primary, .btn-red, .btn-dark, .btn-sm.dark, .take button, .sec .btn-pill, dialog .btn-pill, .top-actions .btn-pill {
+    background: var(--bt-navy) !important; color: #fff !important; border: 1.5px solid var(--bt-navy) !important;
+  }
+  .nb-btn.lime:hover, .ds-btn.primary:hover, .btn-red:hover { background: var(--bt-navy-2) !important; }
+  /* secundário: contorno */
+  .nb-btn, .ds-btn, .ds-btn.ghost, .btn-line, .btn-sm.ghost, .btn-sm.light, .ghost-pill, .soft-pill, .sec .ghost-pill, .sec .soft-pill, dialog .ghost-pill, .share button {
+    background: #fff; color: var(--bt-ink); border: 1.5px solid var(--bt-ink) !important;
+  }
+  .nb-btn:hover, .ds-btn.ghost:hover, .btn-line:hover, .ghost-pill:hover { background: #f4f3ff; }
+  /* destaque com degradê lilás → azul (abertura e convite) */
+  .bh-cta .nb-btn.lime, .bc .nb-btn { background: var(--bt-grad) !important; border-color: transparent !important; color: #fff !important; }
+  .bc .nb-btn { background: #fff !important; color: var(--bt-navy) !important; }
+  /* lilás e lilás-claro */
+  .nb-btn.roxo-t { background: var(--bt-peri-l) !important; color: var(--bt-navy) !important; border-color: var(--bt-peri-l) !important; }
+  .b-h .nb-btn.sm, .ds-h .ds-btn.ghost.sm { background: var(--bt-peri) !important; color: #fff !important; border-color: var(--bt-peri) !important; }
+  /* laranja: ações de atenção */
+  .del.confirm, .btn-red.danger, [data-aviso-del].confirm, [data-cob-del].confirm, #ev-cancel { background: var(--bt-orange) !important; color: var(--bt-ink) !important; border: 1.5px solid var(--bt-orange) !important; }
+  .del { min-height: 40px; padding: 0 14px 0 6px; border: 1.5px solid var(--bt-orange); color: #b9481e; background: #fff; }
+
+  .nb-btn.sm, .ds-btn.sm, .btn-sm { min-height: 40px; padding: 0 16px; font-size: 14px !important; }
+  /* a seta dentro do botão vira um círculo, como na referência */
+  .nb-btn > svg, .ds-btn > svg { width: 30px; height: 30px; padding: 8px; margin-right: -12px; border-radius: 50% !important; background: rgba(255, 255, 255, .2); flex-shrink: 0; }
+  .nb-btn:not(.lime):not(.roxo-t) > svg { background: var(--bt-peri-l); color: var(--bt-navy); }
+  .bc .nb-btn > svg { background: var(--bt-peri); color: #fff; }
+  .nb-btn.sm > svg { width: 26px; height: 26px; padding: 7px; margin-right: -10px; }
+
+  /* botões redondos: setas, ícones, fechar */
+  .nb-ico, .round, .card .add, .add, .m-close, .m-plain .m-close, .to-top, .ctl, .fw-x, .fw-arrow, .icon-btn, .avatar, .msheet .m-close {
+    border-radius: 50% !important; box-shadow: none !important;
+  }
+  .nb-ico { width: 48px; height: 48px; background: #fff; color: var(--bt-ink); border: 1.5px solid var(--bt-ink); transition: transform .18s var(--ease), background .18s; }
+  .nb-ico:nth-child(4n+1) { background: var(--bt-navy); color: var(--bt-peri-l); border-color: var(--bt-navy); }
+  .nb-ico:nth-child(4n+2) { background: var(--bt-peri-l); color: var(--bt-navy); border-color: var(--bt-peri-l); }
+  .nb-ico:nth-child(4n+3) { background: var(--bt-orange); color: var(--bt-ink); border-color: var(--bt-orange); }
+  .nb-ico:hover { transform: translateY(-2px); background: var(--bt-peri); color: #fff; border-color: var(--bt-peri); box-shadow: none; }
+  .round { width: 44px; height: 44px; background: #fff; color: var(--bt-ink); border: 1.5px solid var(--bt-ink); }
+  #rail-next, #tl-next { background: var(--bt-navy); color: var(--bt-peri-l); border-color: var(--bt-navy); }
+  .round:hover { background: var(--bt-peri); color: #fff; border-color: var(--bt-peri); }
+  .to-top { background: var(--bt-peri); color: #fff; border: 0; }
+  .m-close, .m-plain .m-close { background: #fff; color: var(--bt-ink); border: 1.5px solid var(--bt-ink); }
+  .m-close:hover { background: var(--bt-orange); border-color: var(--bt-orange); }
+  .card .add { background: var(--bt-peri); color: #fff; border: 0; }
+  .ctl.big { background: var(--bt-peri); color: #fff; }
+  .top-actions .icon-btn { width: 42px; height: 42px; }
+  .top-actions .icon-btn:hover, .top-actions .icon-btn[aria-current="true"] { background: var(--bt-peri-l); color: var(--bt-navy); }
+  .avatar { background: #fff; color: var(--bt-navy); border: 1.5px solid #fff; font-family: var(--font-btn); font-weight: 600; }
+  .avatar.logado { background: var(--bt-orange); border-color: var(--bt-orange); }
+  .top-actions .btn-pill { min-height: 40px; font-size: 14px !important; background: #fff !important; color: var(--bt-navy) !important; border-color: #fff !important; }
+
+  /* seleção (abas, filtros, categorias): contorno; escolhido em lilás-claro */
+  .tab, .fchip, .tl-y, .cam-tab, .cam-index a, .ag-cats button, .cri-tipos button, .msheet .grid button {
+    border: 1.5px solid var(--bt-ink) !important; background: #fff; color: var(--bt-ink); font-size: 14px !important; box-shadow: none !important;
+  }
+  .topbar .tab { border-color: transparent !important; font-size: 13px !important; min-height: 36px; padding: 0 12px; }
+  .topbar .tab:hover { background: #f4f3ff; border-color: var(--bt-ink) !important; }
+  .tab[aria-selected="true"], .fchip[aria-pressed="true"], .fchip[aria-checked="true"], .tl-y[aria-selected="true"], .cam-tab[aria-selected="true"], .ag-cats button[aria-pressed="true"],
+  .cri-tipos button[aria-pressed="true"], .msheet .grid button[aria-current="true"], .cam-objs .fchip[aria-checked="true"] {
+    background: var(--bt-peri-l) !important; color: var(--bt-navy) !important; border-color: var(--bt-peri-l) !important;
+  }
+  .topbar .tab[aria-selected="true"] { background: var(--bt-navy) !important; color: #fff !important; border-color: var(--bt-navy) !important; }
+  .ds-seg { border-radius: 999px !important; border: 1.5px solid var(--bt-ink); box-shadow: none; padding: 4px; }
+  .ds-seg button { font-size: 14px !important; }
+  .ds-seg button[aria-pressed="true"] { background: var(--bt-navy); color: #fff; }
+  /* status da cobertura: pendente em contorno, em andamento em laranja, concluído em lilás */
+  .chk .st { border: 1.5px solid var(--bt-ink) !important; font-size: 13px !important; }
+  .chk .st[data-st="andamento"] { background: #fff1ea !important; color: #b9481e !important; border-color: var(--bt-orange) !important; }
+  .chk .st[data-st="andamento"]::before, .chk .st[data-st="concluido"]::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 6px; border-radius: 50% !important; background: currentColor; vertical-align: 1px; }
+  .chk .st[data-st="concluido"] { background: var(--bt-peri-l) !important; color: var(--bt-navy) !important; border-color: var(--bt-peri-l) !important; }
+  /* barra inferior do celular: o atalho ativo vira uma pílula */
+  .bnav button[aria-current="page"] { background: var(--bt-navy) !important; color: #fff !important; margin: 6px 4px; border-right: 0 !important; }
+  /* janela da frase do dia (fundo escuro) */
+  .fw-btn { background: rgba(255, 255, 255, .1); color: #fff; border: 1.5px solid rgba(255, 255, 255, .35); min-height: 46px; }
+  .fw-btn.main { background: var(--bt-peri); border-color: var(--bt-peri); color: #fff; }
+  .fw-x, .fw-arrow { border: 1.5px solid rgba(255, 255, 255, .45); }
+  .fw-arrow:hover, .fw-x:hover { background: var(--bt-peri); border-color: var(--bt-peri); }
+  /* login: marcas mantêm as cores */
+  .prov { border: 1.5px solid var(--bt-ink) !important; background: #fff; color: var(--bt-ink); }
+  .prov.facebook { background: #1877f2 !important; border-color: #1877f2 !important; color: #fff !important; }
+  .prov.apple { background: #000 !important; border-color: #000 !important; color: #fff !important; }
+  .conta-modo button { border: 1.5px solid var(--bt-ink) !important; }
+  .conta-modo button[aria-pressed="true"] { background: var(--bt-navy) !important; border-color: var(--bt-navy) !important; color: #fff; }
+  .share a.wa { background: #25d366 !important; border: 1.5px solid #25d366 !important; color: #08331a !important; }
+  .share a { border: 1.5px solid var(--bt-ink); background: #fff; color: var(--bt-ink); }
+  .credit a { border: 1.5px solid var(--bt-ink); box-shadow: none; background: var(--bt-peri-l); color: var(--bt-navy); }
+  .lt-read { border: 1.5px solid var(--bt-ink); }
+  .lt-read[aria-pressed="true"] { background: var(--bt-peri-l); border-color: var(--bt-peri-l); color: var(--bt-navy); }
+  .play-link { background: var(--bt-peri); color: #fff; border: 0; min-height: 40px; }
+  :focus-visible { outline: 3px solid var(--bt-peri); outline-offset: 3px; }
+  @media (max-width: 760px) {
+    .nb-btn, .ds-btn, .btn-red, .btn-line { font-size: 15px !important; }
+    .bnav button[aria-current="page"] { margin: 6px 2px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nb-btn, .ds-btn, .btn-red, .btn-line, .nb-ico, .round { transition: none; }
   }
 </style>
 </head>
