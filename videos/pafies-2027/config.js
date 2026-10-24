@@ -85,12 +85,12 @@ window.PAFIES = {
   ],
 
   cores: {
-    fundo: "#050607",
+    fundo: "#01040d",
     painel: "#0d0f10",
-    verde: "#3ddc6f",
-    verdeClaro: "#b6f36a",
+    azul: "#2f7bff",
+    azulClaro: "#8cc8ff",
     ciano: "#27c4f5",
-    laranja: "#ff6a2b",
+    laranja: "#4da3ff",
     branco: "#f4f6f5",
   },
 };
