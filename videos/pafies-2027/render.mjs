@@ -115,15 +115,22 @@ fs.writeFileSync(path.join(tmp, "lista.txt"), segs.map(s => `file '${s.arq}'`).j
 console.log(`quadros prontos em ${((Date.now() - inicio) / 1000).toFixed(0)} s; juntando com o áudio…`);
 
 const atraso = Math.round((abertura + config.audio.narracaoInicio) * 1000);
+const lembrete = config.audio.lembrete && fs.existsSync(path.join(aqui, config.audio.lembrete.arquivo)) ? config.audio.lembrete : null;
+const atrasoL = lembrete ? Math.round((abertura + lembrete.inicio) * 1000) : 0;
 // 1) mixa voz e trilha do filme inteiro (a normalização mede sempre o filme todo, mesmo numa prévia)
 const mix = path.join(tmp, "mix.wav");
 await roda("ffmpeg", [
   "-y", "-hide_banner", "-loglevel", "error",
   "-i", path.join(aqui, config.audio.narracao),
   "-i", path.join(aqui, config.audio.trilha),
+  ...(lembrete ? ["-i", path.join(aqui, lembrete.arquivo)] : []),
   "-filter_complex",
-  // voz: limpa graves e entra no tempo certo; trilha: abaixa sozinha quando a voz fala (sidechain)
-  `[0:a]highpass=f=70,adelay=${atraso}|${atraso},aformat=sample_rates=48000:channel_layouts=stereo,asplit=2[voz][chave];` +
+  // voz: limpa graves e entra no tempo certo (narração + lembrete final); trilha: abaixa sozinha quando a voz fala (sidechain)
+  (lembrete
+    ? `[0:a]highpass=f=70,adelay=${atraso}|${atraso},aformat=sample_rates=48000:channel_layouts=stereo[v1];` +
+      `[2:a]highpass=f=70,adelay=${atrasoL}|${atrasoL},aformat=sample_rates=48000:channel_layouts=stereo[v2];` +
+      `[v1][v2]amix=inputs=2:normalize=0:duration=longest,asplit=2[voz][chave];`
+    : `[0:a]highpass=f=70,adelay=${atraso}|${atraso},aformat=sample_rates=48000:channel_layouts=stereo,asplit=2[voz][chave];`) +
   `[1:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.6[mus];` +
   `[mus][chave]sidechaincompress=threshold=0.025:ratio=7:attack=60:release=700:makeup=1[musd];` +
   `[voz][musd]amix=inputs=2:normalize=0:duration=longest,atrim=0:${total}[a]`,

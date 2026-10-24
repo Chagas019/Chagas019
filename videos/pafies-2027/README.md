@@ -1,6 +1,6 @@
 # Vídeo — 10ª Gincana Solidária PAFIES 2027
 
-Vídeo de 66 segundos (8 s de abertura + 58 s de documentário), 16:9, 30 quadros/s, com narração feminina em português do Brasil, trilha instrumental, fundo em degradê preto → azul, painéis 3D animados inspirados nos widgets de referência (cartões escuros com cantos arredondados, gráficos de barras, anéis de progresso, galeria flutuante e linhas de conexão) e formas 3D de cromo iridescente flutuando ao fundo.
+Vídeo de 72 segundos (8 s de abertura + 64 s de documentário), 16:9, 30 quadros/s, com narração feminina em português do Brasil, trilha instrumental, fundo em degradê preto → azul, painéis 3D animados inspirados nos widgets de referência (cartões escuros com cantos arredondados, gráficos de barras, anéis de progresso, galeria flutuante e linhas de conexão) e formas 3D de cromo iridescente flutuando ao fundo.
 
 - `pafies-2027-1080p.mp4`: o vídeo final (1920 × 1080)
 - `index.html`: o vídeo em código. Abra no navegador e clique em **Assistir** (espaço também funciona). A barra permite ir a qualquer segundo.
@@ -36,7 +36,8 @@ Ajustes em `config.js` → `abertura`: duração, posição do emblema na foto, 
 | 29–32 s | Revelação | Flash e raios de luz: **10ª GINCANA SOLIDÁRIA PAFIES 2027** |
 | 32–43 s | Um marco | As fotos voltam em órbita ao redor da marca, conectadas a ela |
 | 43–52 s | O convite | Uma luz azul sobe de baixo e ícones 3D (coração, mãos dadas, cesta, pessoas, play, compartilhar, chat, estrela, link, "10ª") explodem para fora e ficam flutuando em volta do painel de calendário "Próxima edição — Uma história de solidariedade continua", com a linha do tempo de 2017 a 2027 |
-| 52–58 s | Encerramento | Painéis somem, fica a identidade: "Faça parte dessa história." e "Inscrições abertas — link na bio." |
+| 51–52 s | Encerramento | Painéis somem, fica a identidade: "Faça parte dessa história." e "Inscrições abertas — link na bio." |
+| 52–64 s | Lembrete | A narradora lembra: "E só lembrando: amanhã é o último dia de inscrições! Então, se você ainda não se inscreveu… corre, que dá tempo!". Na tela, o painel "Amanhã — é o último dia de inscrições", com um relógio e uma barra de prazo quase completos e pulsando, e a chamada "Corre que dá tempo! Link na bio." (textos em `lembrete…` no `config.js`; a fala é `audio/lembrete.mp3`) |
 
 Os únicos números usados são os do roteiro: 2017, 9 edições, mais de 50 mil toneladas de alimentos, 10ª edição, 2027.
 

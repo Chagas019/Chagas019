@@ -2,7 +2,7 @@
 // Mude o que quiser, salve e recarregue o index.html (ou rode o render.mjs de novo).
 window.PAFIES = {
   // Duração do documentário em segundos (sem contar a abertura).
-  duracao: 58,
+  duracao: 64,
 
   // Abertura com o emblema PAFIES sobre o tecido roxo. Vem antes do documentário,
   // que começa logo depois (todos os tempos abaixo contam a partir do fim da abertura).
@@ -21,6 +21,8 @@ window.PAFIES = {
   audio: {
     // Troque por uma gravação de locutora humana com o mesmo nome, se preferir.
     narracao: "audio/narracao.mp3",
+    // Fala final: lembrete do último dia de inscrições (início em segundos do documentário)
+    lembrete: { arquivo: "audio/lembrete.mp3", inicio: 52.6 },
     // Segundo do vídeo em que a narração começa.
     narracaoInicio: 1.5,
     trilha: "audio/trilha.wav",
@@ -40,6 +42,7 @@ window.PAFIES = {
     marco: 31.8,
     convite: 42.3,
     final: 50.8,
+    lembrete: 52.3, // lembrete: amanhã é o último dia de inscrições
   },
 
   // Legendas na parte de baixo (boas para quem assiste sem som no celular).
@@ -83,6 +86,10 @@ window.PAFIES = {
     calendarioFrase: "Uma história de solidariedade continua",
     finalTitulo: "Faça parte dessa história.",
     finalInscricoes: "Inscrições abertas — link na bio.",
+    lembreteRotulo: "Inscrições",
+    lembreteTitulo: "Amanhã",
+    lembreteFrase: "é o último dia de inscrições",
+    lembreteCta: "Corre que dá tempo! Link na bio.",
   },
 
   // Fotos reais das edições anteriores (coloque os arquivos na pasta fotos/).
@@ -112,8 +119,8 @@ window.PAFIES = {
     { forma: "estrela", de: 29.3, ate: 43.0, x: -770, y: -300, z: -140, tam: 270, incl: [0.25, 0, 0.3], giro: 0.8, doCentro: true },
     { forma: "brilho", de: 29.45, ate: 43.0, x: 770, y: 290, z: -120, tam: 260, incl: [0.4, 0, -0.2], giro: 1.1, doCentro: true },
     { forma: "anel", de: 29.6, ate: 43.0, x: 760, y: -330, z: -280, tam: 230, incl: [0.7, 0, -0.5], giro: 0.7, doCentro: true },
-    { forma: "estrela", de: 51.2, ate: 58, x: -640, y: 250, z: -60, tam: 220, incl: [0.3, 0, -0.25], giro: 0.9 },
-    { forma: "brilho", de: 51.5, ate: 58, x: 660, y: -280, z: -120, tam: 220, incl: [0.4, 0, -0.2], giro: 1.1 },
+    { forma: "estrela", de: 51.2, ate: 64, x: -640, y: 250, z: -60, tam: 220, incl: [0.3, 0, -0.25], giro: 0.9 },
+    { forma: "brilho", de: 51.5, ate: 64, x: 660, y: -280, z: -120, tam: 220, incl: [0.4, 0, -0.2], giro: 1.1 },
   ],
 
   // Ícones 3D que "explodem" na cena do convite (blocos azuis com espessura).
@@ -121,7 +128,7 @@ window.PAFIES = {
   // claro: bloco em azul claro; x, y, z: onde o bloco para; tam: lado em px
   icones: {
     de: 42.5,        // quando a explosão começa
-    ate: 55.0,       // quando terminam de sumir
+    ate: 53.4,       // quando terminam de sumir (antes do lembrete)
     origem: [0, 620], // de onde saem (embaixo, no centro)
     lista: [
       { icone: "chat", x: -820, y: -320, z: -120, tam: 150 },

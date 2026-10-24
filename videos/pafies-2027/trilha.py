@@ -6,7 +6,8 @@ abrindo para um final esperançoso. Os tempos batem com config.js:
 - 11 a 23 s: a história cresce (entra a cama de cordas e um pulso leve)
 - 23 a 29 s: subida de expectativa até a revelação
 - 29 s: impacto suave na revelação da 10ª Gincana
-- 29 a 58 s: tema completo, que vai se acalmando até o fim
+- 29 a 52 s: tema completo, que vai se acalmando
+- 52 a 64 s: lembrete do último dia de inscrições, com o pulso de volta, baixinho
 Esses tempos contam a partir do fim da abertura (8 s). Na abertura: um som
 ambiente grave, uma subida até o brilho forte na borda do emblema (4,6 s) e
 um sopro de transição que entrega o piano do documentário sem corte.
@@ -21,7 +22,9 @@ import numpy as np
 SR = 44100
 ABERTURA = 8.0  # duração da abertura (config.js: abertura.duracao)
 IMPACTO = 4.6   # brilho forte na borda do emblema (config.js: abertura.impacto)
-DUR = ABERTURA + 58.0
+FIM_DOC = 64.0   # duração do documentário (config.js: duracao)
+DUR = ABERTURA + FIM_DOC
+LEMBRETE = 52.3  # lembrete do último dia de inscrições (config.js: cenas.lembrete)
 BPM = 72
 BEAT = 60 / BPM
 REVELACAO = 29.0
@@ -123,6 +126,15 @@ while t < REVELACAO - 0.3:
     tt = np.arange(n) / SR
     kick = np.sin(2 * np.pi * (48 + 60 * np.exp(-tt * 30)) * tt) * np.exp(-tt * 9)
     add(kick * 0.22 * min(1, (t - 10) / 8), t)
+    t += BEAT
+
+# 3b) No lembrete, o pulso volta baixinho: senso de urgência sem pressa
+t = LEMBRETE + .2
+while t < FIM_DOC - 2.5:
+    n = int(SR * 0.5)
+    tt = np.arange(n) / SR
+    kick = np.sin(2 * np.pi * (48 + 60 * np.exp(-tt * 30)) * tt) * np.exp(-tt * 9)
+    add(kick * 0.16 * min(1, (t - LEMBRETE) / 2) * min(1, (FIM_DOC - 2.5 - t) / 2), t)
     t += BEAT
 
 # 4) Subida até a revelação (ruído filtrado que abre) e impacto suave

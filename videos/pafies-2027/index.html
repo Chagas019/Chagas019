@@ -199,6 +199,17 @@
   /* Formas de cromo */
   .cromo canvas, .cromo img { position: absolute; inset: 0; width: 100%; height: 100%; }
 
+  /* Lembrete: último dia de inscrições */
+  #pLembrete { width: 1180px; height: 400px; padding: 46px 56px; }
+  #pLembrete .titulo { font-size: 150px; font-weight: 800; letter-spacing: -.03em; line-height: 1; margin-top: 30px; }
+  #pLembrete .frase { font-size: 42px; font-weight: 500; color: #c9d4ea; margin-top: 14px; letter-spacing: -.01em; }
+  #pLembrete .relogio { position: absolute; right: 64px; top: 50%; width: 270px; height: 270px; transform: translateY(-46%); }
+  #pLembrete .relogio svg { width: 100%; height: 100%; }
+  #pLembrete .prazo { position: absolute; left: 56px; right: 380px; bottom: 44px; height: 8px; border-radius: 8px; background: rgba(255,255,255,.08); overflow: hidden; }
+  #pLembrete .prazo i { position: absolute; inset: 0; transform-origin: 0 50%; border-radius: 8px; background: linear-gradient(90deg, var(--azul), var(--azul-claro), #fff); box-shadow: 0 0 18px rgba(140,200,255,.8); }
+  #ctaLembrete { height: 104px; padding: 0 44px 0 30px; border-radius: 34px; display: flex; align-items: center; gap: 18px; font-size: 44px; font-weight: 700; white-space: nowrap; color: #031027; background: linear-gradient(90deg, #e3f1ff, var(--azul-claro)); box-shadow: 0 20px 60px rgba(47,123,255,.45); }
+  #ctaLembrete svg { width: 48px; height: 48px; }
+
   /* Legenda */
   #legenda { position: absolute; left: 50%; bottom: 46px; transform: translateX(-50%); max-width: 1500px; padding: 14px 30px; border-radius: 20px; background: rgba(0,0,0,.55); font-size: 36px; font-weight: 500; line-height: 1.25; text-align: center; color: #f2f4f3; letter-spacing: -.005em; white-space: nowrap; text-shadow: 0 2px 8px rgba(0,0,0,.6); }
 
@@ -232,7 +243,7 @@
 </div>
 <div id="controles">
   <button id="tocar">▶ Assistir</button>
-  <input id="barra" type="range" min="0" max="66" step="0.01" value="0">
+  <input id="barra" type="range" min="0" max="72" step="0.01" value="0">
   <output id="tempo">0,0 s</output>
 </div>
 
@@ -361,6 +372,24 @@
   final.style.width = "1500px";
 
   const legenda = $("#legenda");
+
+  // Lembrete: amanhã é o último dia de inscrições
+  const pLembrete = el("pLembrete", "painel", `
+    <div class="rotulo">${I.calendario}${T.lembreteRotulo || ""}</div>
+    <div class="titulo tit">${T.lembreteTitulo || ""}</div>
+    <div class="frase">${T.lembreteFrase || ""}</div>
+    <div class="prazo"><i></i></div>
+    <div class="relogio"><svg viewBox="0 0 120 120">
+      <circle cx="60" cy="60" r="50" fill="none" stroke="#0f1f3d" stroke-width="10"/>
+      <circle class="arco" cx="60" cy="60" r="50" fill="none" stroke="#8cc8ff" stroke-width="10" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100" transform="rotate(-90 60 60)"/>
+      <circle cx="60" cy="60" r="36" fill="#0b1630"/>
+      <line class="ponteiro" x1="60" y1="60" x2="60" y2="34" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+      <line x1="60" y1="60" x2="74" y2="60" stroke="#8cc8ff" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="60" cy="60" r="4.5" fill="#fff"/></svg></div>`);
+  const arcoLembrete = $(".arco", pLembrete), ponteiro = $(".ponteiro", pLembrete), prazoLembrete = $(".prazo i", pLembrete);
+  const setaCta = '<svg viewBox="0 0 24 24" fill="none" stroke="#031027" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+  const ctaLembrete = el("ctaLembrete", "painel", `<span>${T.lembreteCta || ""}</span>${setaCta}`);
+  const setaEl = ctaLembrete.querySelector("svg");
 
   // ---------- blocos 3D de ícones (convite) ----------
   const B = (corpo, cor = "#fff") => `<svg viewBox="0 0 24 24" fill="none" stroke="${cor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${corpo}</svg>`;
@@ -722,10 +751,11 @@
       const ent = mola(prog(t, a, a + 1.6));
       const sobe = vaiVem(prog(t, S.convite - .2, S.convite + 1.4));
       const desce = vaiVem(prog(t, S.final - .2, S.final + 1.6));
+      const lembra = vaiVem(prog(t, (S.lembrete || 999) - .3, (S.lembrete || 999) + 1.1));
       const yConvite = -300, yFinal = -140;
       poe(marca, {
-        x: 0, y: mix(mix(0, yConvite, sobe), yFinal, desce), z: mix(-700 + 700 * ent, 0, 1),
-        s: mix(mix(.6 + .4 * ent, .5, sobe), .62, desce),
+        x: 0, y: mix(mix(mix(0, yConvite, sobe), yFinal, desce), -350, lembra), z: mix(-700 + 700 * ent, 0, 1),
+        s: mix(mix(mix(.6 + .4 * ent, .5, sobe), .62, desce), .42, lembra),
         ry: Math.sin(t * .45) * 3 * (1 - sobe), rx: Math.cos(t * .4) * 1.5 * (1 - sobe),
         op: sai(prog(t, a, a + .5)), blur: 14 * (1 - sai(prog(t, a, a + 1))),
       });
@@ -751,11 +781,38 @@
     }
 
     // ----- Encerramento -----
+    const L = S.lembrete || C.duracao + 1;
+    const vaiLembrete = vaiVem(prog(t, L - .3, L + 1));
     {
       const a = S.final;
       const e = sai(prog(t, a + .6, a + 2));
-      poe(final, { x: 0, y: 230 + 40 * (1 - e), z: -200 + 200 * e, op: e * (1 - prog(t, C.duracao - .6, C.duracao)), blur: 8 * (1 - e) });
+      poe(final, { x: 0, y: 230 + 40 * (1 - e) - 140 * vaiLembrete, z: -200 + 200 * e - 400 * vaiLembrete, op: e * (1 - vaiLembrete) * (1 - prog(t, C.duracao - .6, C.duracao)), blur: 8 * (1 - e) + 10 * vaiLembrete });
       marca.style.opacity = (parseFloat(marca.style.opacity) * (1 - prog(t, C.duracao - .6, C.duracao))).toFixed(3);
+    }
+
+    // ----- Lembrete: amanhã é o último dia de inscrições -----
+    {
+      const e = mola(prog(t, L + .2, L + 1.8));
+      const fim = prog(t, C.duracao - .8, C.duracao);
+      poe(pLembrete, {
+        x: 0, y: 90 + 120 * (1 - e), z: -500 + 500 * e,
+        ry: -14 * (1 - e) + Math.sin(t * .5) * 1.5, rx: 8 * (1 - e),
+        op: sai(prog(t, L + .2, L + .9)) * (1 - fim), blur: 10 * (1 - sai(prog(t, L + .2, L + 1.2))),
+      });
+      // o tempo está acabando: o relógio e a barra do prazo quase completos, pulsando
+      const enche = vaiVem(prog(t, L + .8, L + 3.2));
+      const pulso = t > L + 3.2 ? .5 + .5 * Math.sin((t - L) * 6) : 0;
+      arcoLembrete.setAttribute("stroke-dashoffset", (100 - 94 * enche).toFixed(2));
+      arcoLembrete.style.filter = `drop-shadow(0 0 ${(4 + 8 * pulso).toFixed(1)}px rgba(140,200,255,.9))`;
+      ponteiro.setAttribute("transform", `rotate(${(340 * enche + 4 * pulso).toFixed(1)} 60 60)`);
+      prazoLembrete.style.transform = `scaleX(${(.15 + .8 * enche).toFixed(4)})`;
+      // "corre, que dá tempo!" → chamada para a inscrição
+      const c2 = mola(prog(t, L + 3.6, L + 5));
+      poe(ctaLembrete, {
+        x: 0, y: 380 + 60 * (1 - c2), z: 0, s: 1 + .03 * pulso,
+        op: sai(prog(t, L + 3.6, L + 4.1)) * (1 - fim),
+      });
+      setaEl.style.transform = `translateX(${(6 * Math.sin((t - L) * 5)).toFixed(2)}px)`;
     }
 
     // Escurece no começo e no fim
@@ -813,6 +870,7 @@
   addEventListener("resize", ajusta); ajusta();
 
   const voz = new Audio(C.audio.narracao), trilha = new Audio(C.audio.trilha);
+  const LB = C.audio.lembrete, vozL = LB ? new Audio(LB.arquivo) : null;
   const barra = $("#barra"), tempo = $("#tempo"), botao = $("#tocar");
   barra.max = TOTAL;
   let tocando = false, t0 = 0, base = 0;
@@ -827,6 +885,11 @@
     const tv = t - AB - C.audio.narracaoInicio;
     if (tv >= 0 && tv < (voz.duration || 99)) { if (Math.abs(voz.currentTime - tv) > .15) voz.currentTime = tv; if (tocando && voz.paused) voz.play(); }
     else if (!voz.paused) voz.pause();
+    if (vozL) {
+      const tl = t - AB - LB.inicio;
+      if (tl >= 0 && tl < (vozL.duration || 99)) { if (Math.abs(vozL.currentTime - tl) > .15) vozL.currentTime = tl; if (tocando && vozL.paused) vozL.play(); }
+      else if (!vozL.paused) vozL.pause();
+    }
     if (Math.abs(trilha.currentTime - t) > .15) trilha.currentTime = t;
     if (tocando && trilha.paused) trilha.play();
   }
@@ -841,7 +904,7 @@
     if (tocando) { sincroniza(t); requestAnimationFrame(laco); }
   }
   function toca() { if (agora() >= TOTAL) base = 0; tocando = true; t0 = performance.now(); botao.textContent = "❚❚ Pausar"; sincroniza(base); laco(); }
-  function pausa() { base = agora(); tocando = false; voz.pause(); trilha.pause(); botao.textContent = "▶ Assistir"; }
+  function pausa() { base = agora(); tocando = false; voz.pause(); trilha.pause(); if (vozL) vozL.pause(); botao.textContent = "▶ Assistir"; }
   botao.onclick = () => (tocando ? pausa() : toca());
   barra.oninput = () => { base = parseFloat(barra.value); t0 = performance.now(); if (tocando) sincroniza(base); else laco(); };
   addEventListener("keydown", e => { if (e.code === "Space") { e.preventDefault(); botao.click(); } });
