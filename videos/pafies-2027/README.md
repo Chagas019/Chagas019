@@ -13,14 +13,14 @@ Vídeo de 58 segundos, 16:9, 30 quadros/s, com narração feminina em português
 |---|---|---|
 | 0–11 s | O começo (2017) | Tela escura, painel "2017" surge devagar; duas fotografias antigas (em sépia) aparecem atrás |
 | 11–18 s | A história cresceu | As fotos das 9 edições entram em sequência como galeria flutuante, ligadas por linhas luminosas; painel "9 edições realizadas" com barras crescendo uma a uma e a 10ª pontilhada (2027) |
-| 18–23 s | Conquista | Contador "+50.000 alimentos arrecadados" com anel, terminando junto com a fala "mais de 50 mil alimentos" |
+| 18–23 s | Conquista | Contador "+50.000 toneladas de alimentos arrecadadas" com anel, terminando junto com a fala "mais de 50 mil toneladas" |
 | 23–29 s | A décima edição | Contador de edições sobe de 1 a 9 na fala "depois de nove edições" e vira 10 em "décima"; tudo converge para o centro |
 | 29–32 s | Revelação | Flash e raios de luz: **10ª GINCANA SOLIDÁRIA PAFIES 2027** |
 | 32–43 s | Um marco | As fotos voltam em órbita ao redor da marca, conectadas a ela |
 | 43–52 s | O convite | Uma luz azul sobe de baixo e ícones 3D (coração, mãos dadas, cesta, pessoas, play, compartilhar, chat, estrela, link, "10ª") explodem para fora e ficam flutuando em volta do painel de calendário "Próxima edição — Uma história de solidariedade continua", com a linha do tempo de 2017 a 2027 |
 | 52–58 s | Encerramento | Painéis somem, fica a identidade: "Faça parte dessa história." e "Inscrições abertas — link na bio." |
 
-Os únicos números usados são os do roteiro: 2017, 9 edições, mais de 50 mil alimentos, 10ª edição, 2027.
+Os únicos números usados são os do roteiro: 2017, 9 edições, mais de 50 mil toneladas de alimentos, 10ª edição, 2027.
 
 As legendas (ligadas por padrão, para quem assiste sem som) podem ser desligadas em `config.js` (`legendas: false`).
 
@@ -44,7 +44,7 @@ Inspirados na referência dos ícones de aplicativo flutuando: blocos azuis arre
 
 ## Narração
 
-Gerada no ElevenLabs com a voz **Muriell** (feminina, português do Brasil, natural e acolhedora), modelo `eleven_v4`, com direção de interpretação por trecho: carinho e nostalgia em "Tudo começou em 2017…", orgulho em "50 mil alimentos", expectativa crescente na décima edição e tom próximo no convite final. Foram geradas duas versões; a usada é `audio/narracao.mp3` (49,8 s), que respeita melhor as pausas.
+Gerada no ElevenLabs com a voz **Muriell** (feminina, português do Brasil, natural e acolhedora), modelo `eleven_v4`, com direção de interpretação por trecho: carinho e nostalgia em "Tudo começou em 2017…", orgulho em "50 mil toneladas de alimentos", expectativa crescente na décima edição e tom próximo no convite final. Foram geradas duas versões; a usada é `audio/narracao.mp3` (49 s), que respeita melhor as pausas.
 
 **Para trocar por uma locutora humana:** grave o texto do roteiro, salve como `audio/narracao.mp3` e, se o ritmo mudar, ajuste em `config.js` o `narracaoInicio`, os inícios das `cenas` e os tempos das `falas`.
 

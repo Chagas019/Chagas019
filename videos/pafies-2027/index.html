@@ -618,7 +618,7 @@
       });
     }
 
-    // ----- CENA 3: +50.000 alimentos -----
+    // ----- CENA 3: +50.000 toneladas de alimentos -----
     {
       const a = S.conquista;
       const ent = mola(prog(t, a + .1, a + 1.5));
@@ -627,8 +627,8 @@
         x: 0, y: mix(-30 + 80 * (1 - ent), -60, sai3), z: mix(-500 + 500 * ent, -700, sai3),
         ry: -16 * (1 - ent) + Math.sin(t * .5) * 2, rx: 6 * (1 - ent), op: sai(prog(t, a + .1, a + .8)) * (1 - sai3), blur: 8 * sai3,
       });
-      // conta até o total junto com a fala "mais de 50 mil alimentos"
-      const c = vaiVem(prog(t, a + .7, 21.9));
+      // conta até o total junto com a fala "mais de 50 mil toneladas"
+      const c = vaiVem(prog(t, a + .7, S.alimentosFim || a + 3.9));
       valorAlimentos.textContent = fmtMil(T.alimentos * c);
       arcoAlimentos.setAttribute("stroke-dashoffset", (100 - 100 * c).toFixed(2));
       poe(chipEdicoes, {
@@ -646,7 +646,7 @@
       const conta = prog(t, a + .1, 24.9);
       numAtual = 1 + Math.floor(clamp(conta * (T.edicoesRealizadas - 1) + .0001, 0, T.edicoesRealizadas - 1));
       // "décima": vira 10
-      const dezAt = 29.1 - 1.4;
+      const dezAt = S.revelacao - 1.4;
       if (t >= dezAt) numAtual = T.edicaoNumero;
       const pop = t >= dezAt ? 1 + .12 * Math.exp(-(t - dezAt) * 5) * Math.cos((t - dezAt) * 14) : 1;
       numContador.textContent = numAtual;

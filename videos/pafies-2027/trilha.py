@@ -19,7 +19,7 @@ SR = 44100
 DUR = 58.0
 BPM = 72
 BEAT = 60 / BPM
-REVELACAO = 29.1
+REVELACAO = 29.0
 
 rng = np.random.default_rng(2027)
 t_total = int(SR * DUR)

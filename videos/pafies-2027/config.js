@@ -18,36 +18,37 @@ window.PAFIES = {
   // Início (em segundos) de cada cena. Ajuste se trocar a narração.
   cenas: {
     comeco: 0,
-    crescimento: 11.5,
-    conquista: 18.0,
+    crescimento: 11.1,
+    conquista: 17.3,
+    alimentosFim: 21.4, // o contador chega ao total junto com "50 mil"
     decima: 23.2,
-    revelacao: 29.1,
-    marco: 32.0,
-    convite: 42.7,
-    final: 51.6,
+    revelacao: 29.0,
+    marco: 31.8,
+    convite: 42.3,
+    final: 50.8,
   },
 
   // Legendas na parte de baixo (boas para quem assiste sem som no celular).
   legendas: true,
   // Cada fala: início e fim em segundos, e o texto.
   falas: [
-    [1.58, 5.85, "Tudo começou em 2017… com um pequeno grupo de jovens"],
-    [5.9, 8.2, "e um grande desejo no coração:"],
-    [8.38, 11.2, "fazer a diferença na vida de outras pessoas."],
-    [11.54, 13.88, "O que começou pequeno foi crescendo,"],
-    [13.9, 17.8, "reunindo pessoas e transformando solidariedade em ação."],
-    [18.03, 19.28, "Ao longo dessa caminhada,"],
-    [19.3, 23.1, "já conseguimos arrecadar mais de 50 mil alimentos!"],
+    [1.58, 5.66, "Tudo começou em 2017… com um pequeno grupo de jovens"],
+    [5.7, 7.9, "e um grande desejo no coração:"],
+    [8.0, 10.7, "fazer a diferença na vida de outras pessoas."],
+    [11.14, 13.42, "O que começou pequeno foi crescendo,"],
+    [13.5, 17.2, "reunindo pessoas e transformando solidariedade em ação."],
+    [17.34, 18.7, "Ao longo dessa caminhada,"],
+    [18.74, 22.9, "já conseguimos arrecadar mais de 50 mil toneladas de alimentos!"],
     [23.26, 25.58, "Hoje, depois de nove edições,"],
-    [25.6, 28.48, "estamos prestes a viver algo ainda maior:"],
-    [28.5, 31.8, "a nossa décima Gincana Solidária PAFIES!"],
-    [31.97, 34.5, "E essa não é apenas mais uma edição."],
-    [34.54, 36.24, "É um marco na nossa história,"],
-    [36.26, 40.22, "um momento especial que representa tudo o que construímos juntos…"],
-    [40.26, 42.6, "e tudo o que ainda podemos realizar."],
-    [42.77, 45.2, "E você? Quer fazer parte dessa história?"],
-    [45.34, 47.3, "Venha viver esse momento com a gente."],
-    [47.34, 51.6, "Nossa décima Gincana Solidária PAFIES está chegando!"],
+    [25.66, 28.38, "estamos prestes a viver algo ainda maior:"],
+    [28.42, 31.7, "a nossa décima Gincana Solidária PAFIES!"],
+    [31.81, 34.1, "E essa não é apenas mais uma edição."],
+    [34.22, 35.9, "É um marco na nossa história,"],
+    [35.98, 39.82, "um momento especial que representa tudo o que construímos juntos…"],
+    [39.86, 42.2, "e tudo o que ainda podemos realizar."],
+    [42.3, 44.65, "E você? Quer fazer parte dessa história?"],
+    [44.78, 46.6, "Venha viver esse momento com a gente."],
+    [46.7, 50.8, "Nossa décima Gincana Solidária PAFIES está chegando!"],
   ],
 
   textos: {
@@ -59,7 +60,7 @@ window.PAFIES = {
     edicoesRotulo: "edições realizadas",
     alimentos: 50000,
     alimentosPrefixo: "+",
-    alimentosRotulo: "alimentos arrecadados",
+    alimentosRotulo: "toneladas de alimentos arrecadadas",
     edicaoNumero: 10,
     edicaoNome: "GINCANA SOLIDÁRIA",
     marca: "PAFIES",
@@ -94,18 +95,18 @@ window.PAFIES = {
     { forma: "fitas", de: 12.2, ate: 18.6, x: 830, y: -40, z: -60, tam: 300, incl: [0.15, 0, 0], giro: 0.7 },
     { forma: "torcido", de: 18.4, ate: 23.2, x: -800, y: -320, z: -160, tam: 300, incl: [0.9, 0, 0.3], giro: 0.9 },
     { forma: "moldura", de: 23.3, ate: 29.0, x: 0, y: 0, z: -260, tam: 1300, incl: [0.22, 0, 0], giro: 0.3 },
-    { forma: "estrela", de: 29.3, ate: 43.4, x: -770, y: -300, z: -140, tam: 270, incl: [0.25, 0, 0.3], giro: 0.8, doCentro: true },
-    { forma: "brilho", de: 29.45, ate: 43.4, x: 770, y: 290, z: -120, tam: 260, incl: [0.4, 0, -0.2], giro: 1.1, doCentro: true },
-    { forma: "anel", de: 29.6, ate: 43.4, x: 760, y: -330, z: -280, tam: 230, incl: [0.7, 0, -0.5], giro: 0.7, doCentro: true },
-    { forma: "estrela", de: 52.0, ate: 58, x: -640, y: 250, z: -60, tam: 220, incl: [0.3, 0, -0.25], giro: 0.9 },
-    { forma: "brilho", de: 52.3, ate: 58, x: 660, y: -280, z: -120, tam: 220, incl: [0.4, 0, -0.2], giro: 1.1 },
+    { forma: "estrela", de: 29.3, ate: 43.0, x: -770, y: -300, z: -140, tam: 270, incl: [0.25, 0, 0.3], giro: 0.8, doCentro: true },
+    { forma: "brilho", de: 29.45, ate: 43.0, x: 770, y: 290, z: -120, tam: 260, incl: [0.4, 0, -0.2], giro: 1.1, doCentro: true },
+    { forma: "anel", de: 29.6, ate: 43.0, x: 760, y: -330, z: -280, tam: 230, incl: [0.7, 0, -0.5], giro: 0.7, doCentro: true },
+    { forma: "estrela", de: 51.2, ate: 58, x: -640, y: 250, z: -60, tam: 220, incl: [0.3, 0, -0.25], giro: 0.9 },
+    { forma: "brilho", de: 51.5, ate: 58, x: 660, y: -280, z: -120, tam: 220, incl: [0.4, 0, -0.2], giro: 1.1 },
   ],
 
   // Ícones 3D que "explodem" na cena do convite (blocos azuis com espessura).
   // icone: coracao, maos, cesta, pessoas, play, compartilhar, chat, estrela, link ou um texto curto (ex.: "10ª")
   // claro: bloco em azul claro; x, y, z: onde o bloco para; tam: lado em px
   icones: {
-    de: 42.9,        // quando a explosão começa
+    de: 42.5,        // quando a explosão começa
     ate: 55.0,       // quando terminam de sumir
     origem: [0, 620], // de onde saem (embaixo, no centro)
     lista: [
