@@ -243,7 +243,7 @@
 </div>
 <div id="controles">
   <button id="tocar">▶ Assistir</button>
-  <input id="barra" type="range" min="0" max="72" step="0.01" value="0">
+  <input id="barra" type="range" min="0" max="73.5" step="0.01" value="0">
   <output id="tempo">0,0 s</output>
 </div>
 
@@ -807,10 +807,11 @@
       ponteiro.setAttribute("transform", `rotate(${(340 * enche + 4 * pulso).toFixed(1)} 60 60)`);
       prazoLembrete.style.transform = `scaleX(${(.15 + .8 * enche).toFixed(4)})`;
       // "corre, que dá tempo!" → chamada para a inscrição
-      const c2 = mola(prog(t, L + 3.6, L + 5));
+      const LC = S.lembreteCta || L + 3.6;
+      const c2 = mola(prog(t, LC, LC + 1.4));
       poe(ctaLembrete, {
         x: 0, y: 380 + 60 * (1 - c2), z: 0, s: 1 + .03 * pulso,
-        op: sai(prog(t, L + 3.6, L + 4.1)) * (1 - fim),
+        op: sai(prog(t, LC, LC + .5)) * (1 - fim),
       });
       setaEl.style.transform = `translateX(${(6 * Math.sin((t - L) * 5)).toFixed(2)}px)`;
     }

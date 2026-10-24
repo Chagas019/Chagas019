@@ -6,8 +6,8 @@ abrindo para um final esperançoso. Os tempos batem com config.js:
 - 11 a 23 s: a história cresce (entra a cama de cordas e um pulso leve)
 - 23 a 29 s: subida de expectativa até a revelação
 - 29 s: impacto suave na revelação da 10ª Gincana
-- 29 a 52 s: tema completo, que vai se acalmando
-- 52 a 64 s: lembrete do último dia de inscrições, com o pulso de volta, baixinho
+- 29 a 53 s: tema completo, que vai se acalmando
+- 53,7 a 65,5 s: lembrete do último dia de inscrições, com o pulso de volta, baixinho
 Esses tempos contam a partir do fim da abertura (8 s). Na abertura: um som
 ambiente grave, uma subida até o brilho forte na borda do emblema (4,6 s) e
 um sopro de transição que entrega o piano do documentário sem corte.
@@ -22,9 +22,9 @@ import numpy as np
 SR = 44100
 ABERTURA = 8.0  # duração da abertura (config.js: abertura.duracao)
 IMPACTO = 4.6   # brilho forte na borda do emblema (config.js: abertura.impacto)
-FIM_DOC = 64.0   # duração do documentário (config.js: duracao)
+FIM_DOC = 65.5   # duração do documentário (config.js: duracao)
 DUR = ABERTURA + FIM_DOC
-LEMBRETE = 52.3  # lembrete do último dia de inscrições (config.js: cenas.lembrete)
+LEMBRETE = 53.7  # lembrete do último dia de inscrições (config.js: cenas.lembrete)
 BPM = 72
 BEAT = 60 / BPM
 REVELACAO = 29.0

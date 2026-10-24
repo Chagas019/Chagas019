@@ -2,7 +2,7 @@
 // Mude o que quiser, salve e recarregue o index.html (ou rode o render.mjs de novo).
 window.PAFIES = {
   // Duração do documentário em segundos (sem contar a abertura).
-  duracao: 64,
+  duracao: 65.5,
 
   // Abertura com o emblema PAFIES sobre o tecido roxo. Vem antes do documentário,
   // que começa logo depois (todos os tempos abaixo contam a partir do fim da abertura).
@@ -22,7 +22,7 @@ window.PAFIES = {
     // Troque por uma gravação de locutora humana com o mesmo nome, se preferir.
     narracao: "audio/narracao.mp3",
     // Fala final: lembrete do último dia de inscrições (início em segundos do documentário)
-    lembrete: { arquivo: "audio/lembrete.mp3", inicio: 52.6 },
+    lembrete: { arquivo: "audio/lembrete.mp3", inicio: 54.0 },
     // Segundo do vídeo em que a narração começa.
     narracaoInicio: 1.5,
     trilha: "audio/trilha.wav",
@@ -42,7 +42,8 @@ window.PAFIES = {
     marco: 31.8,
     convite: 42.3,
     final: 50.8,
-    lembrete: 52.3, // lembrete: amanhã é o último dia de inscrições
+    lembrete: 53.7, // lembrete: amanhã é o último dia de inscrições
+    lembreteCta: 60.7, // "corre, que dá tempo!": entra a chamada para a inscrição
   },
 
   // Legendas na parte de baixo (boas para quem assiste sem som no celular).
@@ -66,6 +67,9 @@ window.PAFIES = {
     [42.3, 44.65, "E você? Quer fazer parte dessa história?"],
     [44.78, 46.6, "Venha viver esse momento com a gente."],
     [46.7, 50.8, "Nossa décima Gincana Solidária PAFIES está chegando!"],
+    [54.05, 57.85, "E só lembrando: amanhã é o último dia de inscrições!"],
+    [58.1, 60.6, "Então, se você ainda não se inscreveu…"],
+    [60.8, 62.6, "corre, que dá tempo!"],
   ],
 
   textos: {
@@ -119,8 +123,8 @@ window.PAFIES = {
     { forma: "estrela", de: 29.3, ate: 43.0, x: -770, y: -300, z: -140, tam: 270, incl: [0.25, 0, 0.3], giro: 0.8, doCentro: true },
     { forma: "brilho", de: 29.45, ate: 43.0, x: 770, y: 290, z: -120, tam: 260, incl: [0.4, 0, -0.2], giro: 1.1, doCentro: true },
     { forma: "anel", de: 29.6, ate: 43.0, x: 760, y: -330, z: -280, tam: 230, incl: [0.7, 0, -0.5], giro: 0.7, doCentro: true },
-    { forma: "estrela", de: 51.2, ate: 64, x: -640, y: 250, z: -60, tam: 220, incl: [0.3, 0, -0.25], giro: 0.9 },
-    { forma: "brilho", de: 51.5, ate: 64, x: 660, y: -280, z: -120, tam: 220, incl: [0.4, 0, -0.2], giro: 1.1 },
+    { forma: "estrela", de: 51.2, ate: 65.5, x: -640, y: 250, z: -60, tam: 220, incl: [0.3, 0, -0.25], giro: 0.9 },
+    { forma: "brilho", de: 51.5, ate: 65.5, x: 660, y: -280, z: -120, tam: 220, incl: [0.4, 0, -0.2], giro: 1.1 },
   ],
 
   // Ícones 3D que "explodem" na cena do convite (blocos azuis com espessura).
