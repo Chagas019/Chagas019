@@ -17,7 +17,7 @@ Vídeo de 58 segundos, 16:9, 30 quadros/s, com narração feminina em português
 | 23–29 s | A décima edição | Contador de edições sobe de 1 a 9 na fala "depois de nove edições" e vira 10 em "décima"; tudo converge para o centro |
 | 29–32 s | Revelação | Flash e raios de luz: **10ª GINCANA SOLIDÁRIA PAFIES 2027** |
 | 32–43 s | Um marco | As fotos voltam em órbita ao redor da marca, conectadas a ela |
-| 43–52 s | O convite | Painel de calendário "Próxima edição — Uma história de solidariedade continua", linha do tempo de 2017 a 2027 |
+| 43–52 s | O convite | Uma luz azul sobe de baixo e ícones 3D (coração, mãos dadas, cesta, pessoas, play, compartilhar, chat, estrela, link, "10ª") explodem para fora e ficam flutuando em volta do painel de calendário "Próxima edição — Uma história de solidariedade continua", com a linha do tempo de 2017 a 2027 |
 | 52–58 s | Encerramento | Painéis somem, fica a identidade: "Faça parte dessa história." e "Inscrições abertas — link na bio." |
 
 Os únicos números usados são os do roteiro: 2017, 9 edições, mais de 50 mil alimentos, 10ª edição, 2027.
@@ -37,6 +37,10 @@ Inspiradas no pacote de referência, mas desenhadas do zero em código (nenhuma 
 Mude posição, tamanho, inclinação, velocidade e momento de cada uma na lista `elementos` do `config.js`.
 
 No navegador as formas são desenhadas ao vivo. Na renderização, o `render.mjs` primeiro desenha cada forma em 72 ângulos (pasta `.cromo/`, criada sozinha e refeita quando `cromo.js` ou os `elementos` mudam) e depois usa essas imagens, o que deixa o processo muitas vezes mais rápido.
+
+## Ícones 3D do convite
+
+Inspirados na referência dos ícones de aplicativo flutuando: blocos azuis arredondados, com espessura, brilho na face e giro. Saem juntos de baixo, no centro, quando a narração pergunta "E você?", ficam balançando em volta do calendário e se afastam no encerramento. Os ícones são do próprio tema (no lugar dos logotipos de marcas da referência). A lista fica em `icones` no `config.js`: dá para trocar o ícone, a posição, o tamanho, o tom (claro/escuro) ou usar um texto curto, como "10ª".
 
 ## Narração
 

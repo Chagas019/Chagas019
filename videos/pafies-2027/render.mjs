@@ -62,13 +62,15 @@ async function assaFormas() {
   const { chromium } = require("playwright");
   const crypto = require("node:crypto");
   const pasta = path.join(aqui, ".cromo");
-  const assinatura = crypto.createHash("sha1")
-    .update(fs.readFileSync(path.join(aqui, "cromo.js"))).update(JSON.stringify(config.elementos || [])).update(String(escala))
-    .digest("hex");
-  const marca = path.join(pasta, "assinatura.txt");
-  if (fs.existsSync(marca) && fs.readFileSync(marca, "utf8") === assinatura) return;
-  fs.rmSync(pasta, { recursive: true, force: true });
-  fs.mkdirSync(pasta);
+  fs.mkdirSync(pasta, { recursive: true });
+  const shader = crypto.createHash("sha1").update(fs.readFileSync(path.join(aqui, "cromo.js"))).digest("hex");
+  // cada forma tem sua assinatura: só refaz as que mudaram
+  const assinatura = (e, i) => JSON.stringify([shader, escala, i, e.forma, e.tam, e.incl]);
+  const marca = i => path.join(pasta, `${i}.txt`);
+  const elementos = config.elementos || [];
+  const pendentes = elementos.map((e, i) => i).filter(i =>
+    !fs.existsSync(marca(i)) || fs.readFileSync(marca(i), "utf8") !== assinatura(elementos[i], i));
+  if (!pendentes.length) return;
   const browser = await chromium.launch();
   const url = pathToFileURL(path.join(aqui, "index.html")).href + "?render=1&sprites=0";
   const paginas = await Promise.all(Array.from({ length: partes }, async () => {
@@ -77,20 +79,20 @@ async function assaFormas() {
     await p.evaluate(() => window.pronto);
     return p;
   }));
-  const info = await paginas[0].evaluate(() => window.elementosInfo());
   const fila = [];
-  info.forEach((e, i) => { for (let k = 0; k < 72; k++) fila.push([i, k, Math.min(1600, Math.round(e.tam * escala))]); });
+  for (const i of pendentes) for (let k = 0; k < 72; k++) fila.push([i, k, Math.min(1600, Math.round(elementos[i].tam * escala))]);
+  const total = fila.length;
   let feitos = 0;
   await Promise.all(paginas.map(async p => {
     while (fila.length) {
       const [i, k, px] = fila.shift();
       const dado = await p.evaluate(([i, k, px]) => window.assar(i, k, px), [i, k, px]);
       fs.writeFileSync(path.join(pasta, `${i}-${k}.png`), Buffer.from(dado.split(",")[1], "base64"));
-      if (++feitos % 72 === 0) console.log(`formas de cromo: ${feitos} / ${info.length * 72}`);
+      if (++feitos % 72 === 0) console.log(`formas de cromo: ${feitos} / ${total}`);
     }
   }));
   await browser.close();
-  fs.writeFileSync(marca, assinatura);
+  for (const i of pendentes) fs.writeFileSync(marca(i), assinatura(elementos[i], i));
 }
 await assaFormas();
 if (args.includes("--so-formas")) process.exit(0);

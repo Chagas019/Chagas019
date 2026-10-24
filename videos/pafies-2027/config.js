@@ -93,12 +93,34 @@ window.PAFIES = {
     { forma: "anel", de: 4.0, ate: 18.4, x: -660, y: 270, z: -320, tam: 260, incl: [1.05, 0, 0.45], giro: 0.8 },
     { forma: "fitas", de: 12.2, ate: 18.6, x: 830, y: -40, z: -60, tam: 300, incl: [0.15, 0, 0], giro: 0.7 },
     { forma: "torcido", de: 18.4, ate: 23.2, x: -800, y: -320, z: -160, tam: 300, incl: [0.9, 0, 0.3], giro: 0.9 },
-    { forma: "moldura", de: 23.3, ate: 29.0, x: 0, y: 0, z: -260, tam: 900, incl: [0.22, 0, 0], giro: 0.3 },
-    { forma: "estrela", de: 29.3, ate: 51.8, x: -770, y: -300, z: -140, tam: 270, incl: [0.25, 0, 0.3], giro: 0.8, doCentro: true },
-    { forma: "brilho", de: 29.45, ate: 58, x: 770, y: 290, z: -120, tam: 260, incl: [0.4, 0, -0.2], giro: 1.1, doCentro: true },
-    { forma: "anel", de: 29.6, ate: 51.8, x: 760, y: -330, z: -280, tam: 230, incl: [0.7, 0, -0.5], giro: 0.7, doCentro: true },
+    { forma: "moldura", de: 23.3, ate: 29.0, x: 0, y: 0, z: -260, tam: 1300, incl: [0.22, 0, 0], giro: 0.3 },
+    { forma: "estrela", de: 29.3, ate: 43.4, x: -770, y: -300, z: -140, tam: 270, incl: [0.25, 0, 0.3], giro: 0.8, doCentro: true },
+    { forma: "brilho", de: 29.45, ate: 43.4, x: 770, y: 290, z: -120, tam: 260, incl: [0.4, 0, -0.2], giro: 1.1, doCentro: true },
+    { forma: "anel", de: 29.6, ate: 43.4, x: 760, y: -330, z: -280, tam: 230, incl: [0.7, 0, -0.5], giro: 0.7, doCentro: true },
     { forma: "estrela", de: 52.0, ate: 58, x: -640, y: 250, z: -60, tam: 220, incl: [0.3, 0, -0.25], giro: 0.9 },
+    { forma: "brilho", de: 52.3, ate: 58, x: 660, y: -280, z: -120, tam: 220, incl: [0.4, 0, -0.2], giro: 1.1 },
   ],
+
+  // Ícones 3D que "explodem" na cena do convite (blocos azuis com espessura).
+  // icone: coracao, maos, cesta, pessoas, play, compartilhar, chat, estrela, link ou um texto curto (ex.: "10ª")
+  // claro: bloco em azul claro; x, y, z: onde o bloco para; tam: lado em px
+  icones: {
+    de: 42.9,        // quando a explosão começa
+    ate: 55.0,       // quando terminam de sumir
+    origem: [0, 620], // de onde saem (embaixo, no centro)
+    lista: [
+      { icone: "chat", x: -820, y: -320, z: -120, tam: 150 },
+      { icone: "pessoas", x: -650, y: -110, z: 40, tam: 190 },
+      { icone: "cesta", x: -860, y: 140, z: -200, tam: 160, claro: true },
+      { icone: "coracao", x: -690, y: 390, z: 60, tam: 180 },
+      { icone: "play", x: -430, y: -420, z: -260, tam: 150, claro: true },
+      { icone: "estrela", x: 430, y: -430, z: -260, tam: 140 },
+      { icone: "maos", x: 660, y: -150, z: 30, tam: 190, claro: true },
+      { icone: "link", x: 860, y: -350, z: -160, tam: 150 },
+      { icone: "compartilhar", x: 850, y: 120, z: -60, tam: 160 },
+      { icone: "10ª", x: 690, y: 400, z: 70, tam: 190, claro: true },
+    ],
+  },
 
   cores: {
     fundo: "#01040d",
