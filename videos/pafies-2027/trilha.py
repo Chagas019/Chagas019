@@ -7,6 +7,9 @@ abrindo para um final esperançoso. Os tempos batem com config.js:
 - 23 a 29 s: subida de expectativa até a revelação
 - 29 s: impacto suave na revelação da 10ª Gincana
 - 29 a 58 s: tema completo, que vai se acalmando até o fim
+Esses tempos contam a partir do fim da abertura (8 s). Na abertura: um som
+ambiente grave, uma subida até o brilho forte na borda do emblema (4,6 s) e
+um sopro de transição que entrega o piano do documentário sem corte.
 
 Uso: python3 trilha.py   (troque por uma música licenciada, se preferir)
 """
@@ -16,7 +19,9 @@ from pathlib import Path
 import numpy as np
 
 SR = 44100
-DUR = 58.0
+ABERTURA = 8.0  # duração da abertura (config.js: abertura.duracao)
+IMPACTO = 4.6   # brilho forte na borda do emblema (config.js: abertura.impacto)
+DUR = ABERTURA + 58.0
 BPM = 72
 BEAT = 60 / BPM
 REVELACAO = 29.0
@@ -32,7 +37,8 @@ def hz(midi):
 
 
 def add(sig, start, pan=0.0, gain=1.0):
-    i = int(start * SR)
+    """start conta a partir do início do documentário (depois da abertura)."""
+    i = int((start + ABERTURA) * SR)
     if i >= t_total:
         return
     sig = sig[: t_total - i] * gain
@@ -138,7 +144,66 @@ boom = np.sin(2 * np.pi * (38 + 40 * np.exp(-tt * 12)) * tt) * np.exp(-tt * 1.6)
 brilho = sum(np.sin(2 * np.pi * hz(m) * tt) for m in (84, 88, 91, 96)) * np.exp(-tt * 1.2) * 0.05
 add(boom * 0.55 + brilho, REVELACAO)
 
-# 5) Reverb simples (vários ecos difusos) e masterização
+# 5) Abertura (tempos absolutos, do começo do vídeo)
+def na_abertura(sig, inicio, pan=0.0, gain=1.0):
+    add(sig, inicio - ABERTURA, pan, gain)
+
+
+def filtro_que_abre(n, de, ate, semente):
+    r = np.random.default_rng(semente).normal(0, 1, n)
+    cut = np.linspace(de, ate, n) ** 2
+    out = np.zeros(n)
+    acc = 0.0
+    for i in range(n):
+        acc += cut[i] * (r[i] - acc)
+        out[i] = acc
+    return out
+
+
+def sino(f, dur, vel):
+    n = int(SR * dur)
+    tt = np.arange(n) / SR
+    parciais = [(1, 1.0, 1.4), (2.76, .45, 2.2), (5.4, .25, 3.5), (8.93, .12, 5)]  # metal: parciais inarmônicos
+    out = sum(a * np.sin(2 * np.pi * f * k * tt) * np.exp(-tt * d) for k, a, d in parciais)
+    return out * np.minimum(1, tt / .004) * vel
+
+
+# som ambiente grave em Dó, o mesmo tom do piano que vem depois
+# segue até a voz entrar (9,5 s), para não haver silêncio na emenda
+n = int(SR * 11.0)
+tt = np.arange(n) / SR
+env = np.minimum(1, tt / 2.2) * (0.5 + 0.5 * np.clip((tt - 1.5) / (IMPACTO - 1.5), 0, 1))
+env *= np.clip((11.0 - tt) / 2.6, 0, 1)
+drone = (np.sin(2 * np.pi * hz(36) * tt) + .6 * np.sin(2 * np.pi * hz(43) * tt + 1) + .35 * np.sin(2 * np.pi * hz(48) * tt * 1.001))
+drone *= 1 + .12 * np.sin(2 * np.pi * .17 * tt)
+na_abertura(drone * env * .075, 0.0)
+ar = filtro_que_abre(n, .02, .05, 7) * env * .2
+na_abertura(ar, 0.0, pan=-.3)
+na_abertura(np.roll(ar, 900), 0.0, pan=.3)
+# brilho delicado na borda (2,6 a 3,8 s)
+for k, m in enumerate([84, 91, 96]):
+    na_abertura(sino(hz(m), 3, .05), 2.7 + k * .28, pan=-.4 + k * .4)
+# subida até o impacto
+n = int(SR * 2.4)
+tt = np.arange(n) / SR
+subida = filtro_que_abre(n, .03, .32, 11) * (tt / 2.4) ** 2.2 * .28
+subida += np.sin(2 * np.pi * (hz(60) + 240 * (tt / 2.4) ** 2) * tt) * (tt / 2.4) ** 3 * .05
+na_abertura(subida, IMPACTO - 2.4)
+# impacto: grave encorpado + reflexo metálico
+n = int(SR * 4.5)
+tt = np.arange(n) / SR
+boom = np.sin(2 * np.pi * (36 + 44 * np.exp(-tt * 10)) * tt) * np.exp(-tt * 1.3)
+na_abertura(boom * .42, IMPACTO)
+na_abertura(sino(hz(79), 4, .11), IMPACTO + .02, pan=.2)
+na_abertura(sino(hz(91), 3.5, .09), IMPACTO + .05, pan=-.25)
+# sopro de transição no mergulho e no reflexo (7,1 a 8 s)
+n = int(SR * 1.6)
+tt = np.arange(n) / SR
+sopro = filtro_que_abre(n, .06, .3, 23) * np.sin(np.pi * np.clip(tt / 1.6, 0, 1)) ** 2 * .22
+na_abertura(sopro, 6.75, pan=-.2)
+na_abertura(sino(hz(88), 2.5, .06), 7.45, pan=.3)
+
+# 6) Reverb simples (vários ecos difusos) e masterização
 def reverb(x):
     out = x.copy()
     for d, g in [(0.029, 0.32), (0.037, 0.28), (0.041, 0.25), (0.053, 0.2), (0.071, 0.16), (0.089, 0.12)]:

@@ -1,15 +1,29 @@
 # Vídeo — 10ª Gincana Solidária PAFIES 2027
 
-Vídeo de 58 segundos, 16:9, 30 quadros/s, com narração feminina em português do Brasil, trilha instrumental, fundo em degradê preto → azul, painéis 3D animados inspirados nos widgets de referência (cartões escuros com cantos arredondados, gráficos de barras, anéis de progresso, galeria flutuante e linhas de conexão) e formas 3D de cromo iridescente flutuando ao fundo.
+Vídeo de 66 segundos (8 s de abertura + 58 s de documentário), 16:9, 30 quadros/s, com narração feminina em português do Brasil, trilha instrumental, fundo em degradê preto → azul, painéis 3D animados inspirados nos widgets de referência (cartões escuros com cantos arredondados, gráficos de barras, anéis de progresso, galeria flutuante e linhas de conexão) e formas 3D de cromo iridescente flutuando ao fundo.
 
-- `pafies-2027-4k.mp4`: o vídeo final (4K)
+- `pafies-2027-1080p.mp4`: o vídeo final (1920 × 1080)
 - `index.html`: o vídeo em código. Abra no navegador e clique em **Assistir** (espaço também funciona). A barra permite ir a qualquer segundo.
 - `config.js`: **todos os textos, números, datas, fotos, tempos, cores e formas de cromo**. Edite aqui e renderize de novo.
+- `abertura.js`: a abertura com o emblema PAFIES sobre o tecido roxo (composição reutilizável; ajustes em `abertura` no `config.js`).
 - `cromo.js`: as formas de cromo iridescente (anel, fitas cruzadas, brilho de 8 pontas, estrela, moldura ondulada e anel torcido), desenhadas em 3D de verdade por um shader WebGL.
 
 ## Fonte
 
 Títulos, números grandes, a marca "10ª PAFIES" e o encerramento usam a **Montserrat Alternates** (geométrica, pesada, com o "a" de um bojo só), guardada em `fontes/` com a licença livre OFL. Rótulos pequenos e legendas seguem na Inter, que é mais legível em tamanho pequeno.
+
+## Abertura (0–8 s)
+
+Feita a partir da foto original do emblema (`abertura/pafies-emblema.png`). A logo **não é redesenhada**: a própria foto é o "set" filmado, e o movimento vem de uma câmera virtual (aproximação, deslize pelas dobras e inclinação de perspectiva que simula uma órbita curta), com luz, reflexos e sombras em camadas presas à foto. Como a foto é vertical, o tecido continua para os lados com cópias espelhadas da própria foto, mais escuras e desfocadas.
+
+| Tempo | Na tela | No som |
+|---|---|---|
+| 0–2 s | Tela escura; uma luz violeta revela o tecido de perto, com foco se ajustando e um feixe de luz passando pelas fibras | Som ambiente grave e sutil, em Dó (o tom do piano que vem depois) |
+| 2–4 s | A câmera desliza pelas dobras até o emblema, que sai da sombra; um brilho delicado percorre a borda cromada | Três toques metálicos suaves e o ambiente crescendo |
+| 4–6 s | Emblema centralizado; no impacto (4,6 s) um reflexo forte atravessa a borda e o esmalte, o tecido escurece em volta e entra "10ª GINCANA SOLIDÁRIA PAFIES · 2027" | Subida até o impacto, com grave encorpado e reflexo metálico |
+| 6–8 s | A câmera mergulha no azul do emblema até ele encher a tela; um reflexo metálico atravessa a tela e o azul se dissolve no degradê azul da primeira cena | Sopro de transição; o ambiente segue até a voz entrar ("Tudo começou em 2017…") |
+
+Ajustes em `config.js` → `abertura`: duração, posição do emblema na foto, ponto do mergulho, segundo do impacto e textos. Todos os outros tempos do `config.js` continuam contando a partir do início do documentário, então trocar a duração da abertura não desalinha nada (a trilha usa `ABERTURA` e `IMPACTO` no `trilha.py`).
 
 ## Roteiro e cenas
 
@@ -54,7 +68,7 @@ Gerada no ElevenLabs com a voz **Muriell** (feminina, português do Brasil, natu
 
 ## Trilha
 
-`audio/trilha.wav` é gerada por `trilha.py` (piano suave e cordas, crescendo até a revelação). Para usar uma música licenciada, substitua o arquivo mantendo o nome. Na mixagem, a trilha abaixa sozinha sempre que a voz fala (sidechain) e o resultado é normalizado para −14 LUFS (padrão de redes sociais).
+`audio/trilha.wav` é gerada por `trilha.py` (piano suave e cordas, crescendo até a revelação). Para usar uma música licenciada, substitua o arquivo mantendo o nome. Na mixagem, a trilha abaixa sozinha sempre que a voz fala (sidechain) e o resultado é normalizado para −14 LUFS (padrão de redes sociais) em duas passadas, no modo linear, para manter a dinâmica: a abertura começa baixinha e cresce até o impacto.
 
 ## Fotos reais
 
@@ -69,6 +83,7 @@ python3 trilha.py              # só se quiser gerar a trilha de novo
 node render.mjs                # 4K → pafies-2027-4k.mp4
 node render.mjs --1080         # 1920 × 1080 → pafies-2027-1080p.mp4 (mais rápido)
 node render.mjs --partes 8     # usa 8 navegadores ao mesmo tempo
+node render.mjs --1080 --ate 13  # prévia só da abertura e do começo do documentário
 ```
 
 Para Reels/TikTok (9:16), dá para recortar o centro do vídeo 16:9 no editor, mas o ideal é uma versão vertical própria.

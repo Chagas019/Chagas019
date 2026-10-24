@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap">
 <script src="config.js"></script>
 <script src="cromo.js"></script>
+<script src="abertura.js"></script>
 <style>
   /* Montserrat Alternates (OFL), geométrica com "a" de um bojo só, para títulos e números */
   @font-face { font-family: "Titulo"; src: url("fontes/montserrat-alternates-600.woff2") format("woff2"); font-weight: 600; }
@@ -155,6 +156,29 @@
   #final .icones span { width: 76px; height: 76px; border-radius: 24px; display: grid; place-items: center; background: #111413; border: 1px solid rgba(255,255,255,.08); }
   #final .icones svg { width: 40px; height: 40px; }
 
+  /* Abertura: emblema PAFIES sobre o tecido */
+  #escuro { position: absolute; inset: 0; background: #000; z-index: 2; pointer-events: none; }
+  #abertura { position: absolute; inset: 0; z-index: 3; overflow: hidden; background: #020008; }
+  #abertura .ab-plano { position: absolute; left: 0; top: 0; width: 1122px; height: 1402px; transform-origin: 0 0; will-change: transform; }
+  #abertura .ab-plano > * { position: absolute; }
+  #abertura .ab-foto { left: 0; top: 0; width: 1122px; height: 1402px; }
+  #abertura .ab-lado { top: 0; width: 1122px; height: 1402px; transform: scaleX(-1); }
+  #abertura .ab-esq { left: -1121px; }
+  #abertura .ab-dir { left: 1121px; }
+  #abertura .ab-foto { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%); }
+  #abertura .ab-feixe { inset: 0; mix-blend-mode: screen; background: linear-gradient(112deg, transparent 38%, rgba(150,110,255,.18) 46%, rgba(215,195,255,.42) 50%, rgba(150,110,255,.18) 54%, transparent 62%) 0 0 / 260% 100% no-repeat; }
+  #abertura .ab-sombra-emblema { border-radius: 50%; background: radial-gradient(closest-side, rgba(2,0,8,.96) 55%, rgba(2,0,8,.7) 75%, transparent 100%); }
+  #abertura .ab-recorte { border-radius: 50%; }
+  #abertura .ab-varredura { border-radius: 50%; mix-blend-mode: screen; background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,.65) 49%, rgba(190,215,255,.4) 52%, transparent 60%) 0 0 / 260% 100% no-repeat; }
+  #abertura .ab-borda { border-radius: 50%; mix-blend-mode: screen; filter: blur(.6px); }
+  #abertura .ab-escuro, #abertura .ab-reflexo, #abertura .ab-vinheta { position: absolute; inset: 0; pointer-events: none; }
+  #abertura .ab-reflexo { mix-blend-mode: screen; background: linear-gradient(105deg, transparent 35%, rgba(170,205,255,.35) 46%, rgba(255,255,255,.85) 50%, rgba(170,205,255,.35) 54%, transparent 65%) 0 0 / 250% 100% no-repeat; }
+  #abertura .ab-vinheta { background: radial-gradient(120% 95% at 50% 45%, transparent 50%, rgba(0,0,0,.8) 100%); }
+  #abertura .ab-texto { position: absolute; left: 0; right: 0; top: 862px; text-align: center; }
+  #abertura .ab-linha { font-size: 50px; font-weight: 700; color: #f2f3ff; text-shadow: 0 4px 24px rgba(0,0,0,.7); white-space: nowrap; }
+  #abertura .ab-linha span { display: inline-block; }
+  #abertura .ab-ano { display: inline-block; margin-top: 18px; padding: 8px 26px; border-radius: 18px; font-size: 40px; font-weight: 700; color: #f2f3ff; letter-spacing: .12em; border: 1.5px solid rgba(200,210,255,.55); background: rgba(30,40,140,.35); box-shadow: 0 0 30px rgba(80,110,255,.35); }
+
   /* Blocos 3D de ícones (convite) */
   .bloco { transform-style: preserve-3d; perspective: 900px; }
   .bloco .cam { position: absolute; inset: 0; border-radius: 26%; transform-style: preserve-3d; }
@@ -204,10 +228,11 @@
   <div class="camada" id="vinheta"></div>
   <canvas class="camada" id="grao" width="960" height="540"></canvas>
   <div id="legenda"></div>
+  <div id="escuro"></div>
 </div>
 <div id="controles">
   <button id="tocar">▶ Assistir</button>
-  <input id="barra" type="range" min="0" max="58" step="0.01" value="0">
+  <input id="barra" type="range" min="0" max="66" step="0.01" value="0">
   <output id="tempo">0,0 s</output>
 </div>
 
@@ -440,7 +465,7 @@
   ];
 
   // ---------- quadro ----------
-  function quadro(t) {
+  function quadroDoc(t) {
     cam.x = Math.sin(t * .13) * 34 + Math.sin(t * .31) * 10;
     cam.y = Math.cos(t * .11) * 20;
 
@@ -465,7 +490,7 @@
       ctx.beginPath(); ctx.arc(x, y, r, 0, 6.283); ctx.fill();
     }
     ctx.globalAlpha = 1;
-    gctx.drawImage(ruidos[Math.floor(t * 24) % ruidos.length], 0, 0);
+    gctx.drawImage(ruidos[((Math.floor(t * 24) % ruidos.length) + ruidos.length) % ruidos.length], 0, 0);
 
     // ----- CENA 1: 2017 -----
     {
@@ -734,7 +759,9 @@
     }
 
     // Escurece no começo e no fim
-    palco.style.filter = `brightness(${(sai(prog(t, 0, 1.4)) * (1 - prog(t, C.duracao - .5, C.duracao))).toFixed(3)})`;
+    // com abertura, o documentário já clareia enquanto o azul do emblema se dissolve
+    const clareia = AB ? prog(t, -.6, .5) : prog(t, 0, 1.4);
+    $("#escuro").style.opacity = (1 - sai(clareia) * (1 - prog(t, C.duracao - .5, C.duracao))).toFixed(3);
 
     // ----- Legenda -----
     if (C.legendas) {
@@ -747,9 +774,19 @@
     } else legenda.style.display = "none";
   }
 
+  // ---------- abertura + documentário ----------
+  const AB = C.abertura && C.abertura.duracao ? C.abertura.duracao : 0;
+  const TOTAL = AB + C.duracao;
+  const abertura = AB ? Abertura.criar(palco, C.abertura) : null;
+  function quadro(t) {
+    if (abertura) abertura.quadro(t);
+    quadroDoc(t - AB);
+  }
+
   // ---------- carregamento das fotos ----------
   const pronto = Promise.all([
     document.fonts ? document.fonts.ready : Promise.resolve(),
+    abertura ? abertura.pronto : Promise.resolve(),
     ...fotos.map(f => new Promise(res => {
       const im = new Image();
       im.onload = () => {
@@ -777,16 +814,17 @@
 
   const voz = new Audio(C.audio.narracao), trilha = new Audio(C.audio.trilha);
   const barra = $("#barra"), tempo = $("#tempo"), botao = $("#tocar");
-  barra.max = C.duracao;
+  barra.max = TOTAL;
   let tocando = false, t0 = 0, base = 0;
   const agora = () => (tocando ? base + (performance.now() - t0) / 1000 : base);
 
   function volumeTrilha(t) {
+    t -= AB;
     const falando = C.falas.some(([a, b]) => t >= a - .25 && t <= b + .15);
     return falando ? C.audio.trilhaSobVoz : C.audio.trilhaNasPausas;
   }
   function sincroniza(t) {
-    const tv = t - C.audio.narracaoInicio;
+    const tv = t - AB - C.audio.narracaoInicio;
     if (tv >= 0 && tv < (voz.duration || 99)) { if (Math.abs(voz.currentTime - tv) > .15) voz.currentTime = tv; if (tocando && voz.paused) voz.play(); }
     else if (!voz.paused) voz.pause();
     if (Math.abs(trilha.currentTime - t) > .15) trilha.currentTime = t;
@@ -795,14 +833,14 @@
   let volAtual = C.audio.trilhaNasPausas;
   function laco() {
     let t = agora();
-    if (t >= C.duracao) { t = C.duracao; pausa(); }
+    if (t >= TOTAL) { t = TOTAL; pausa(); }
     quadro(t);
     barra.value = t; tempo.textContent = t.toFixed(1).replace(".", ",") + " s";
     volAtual += (volumeTrilha(t) - volAtual) * .08;
     trilha.volume = clamp(volAtual);
     if (tocando) { sincroniza(t); requestAnimationFrame(laco); }
   }
-  function toca() { if (agora() >= C.duracao) base = 0; tocando = true; t0 = performance.now(); botao.textContent = "❚❚ Pausar"; sincroniza(base); laco(); }
+  function toca() { if (agora() >= TOTAL) base = 0; tocando = true; t0 = performance.now(); botao.textContent = "❚❚ Pausar"; sincroniza(base); laco(); }
   function pausa() { base = agora(); tocando = false; voz.pause(); trilha.pause(); botao.textContent = "▶ Assistir"; }
   botao.onclick = () => (tocando ? pausa() : toca());
   barra.oninput = () => { base = parseFloat(barra.value); t0 = performance.now(); if (tocando) sincroniza(base); else laco(); };

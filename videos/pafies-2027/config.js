@@ -1,8 +1,22 @@
 // Tudo o que aparece no vídeo está aqui: textos, números, datas, fotos, áudio e tempos.
 // Mude o que quiser, salve e recarregue o index.html (ou rode o render.mjs de novo).
 window.PAFIES = {
-  // Duração total em segundos (o fim do vídeo).
+  // Duração do documentário em segundos (sem contar a abertura).
   duracao: 58,
+
+  // Abertura com o emblema PAFIES sobre o tecido roxo. Vem antes do documentário,
+  // que começa logo depois (todos os tempos abaixo contam a partir do fim da abertura).
+  abertura: {
+    duracao: 8,
+    imagem: "abertura/pafies-emblema.png", // foto original do emblema (não é redesenhada)
+    // posição do emblema na foto, em pixels: centro, raio do azul e raio externo da borda metálica
+    emblema: { x: 562, y: 693, r: 262, borda: 284, achatado: 0.974 },
+    // ponto azul onde a câmera mergulha na transição
+    mergulho: { x: 565, y: 893 },
+    impacto: 4.6, // segundo do brilho forte na borda, junto com o pico da música
+    texto: "10ª GINCANA SOLIDÁRIA PAFIES",
+    ano: "2027",
+  },
 
   audio: {
     // Troque por uma gravação de locutora humana com o mesmo nome, se preferir.

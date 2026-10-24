@@ -1,5 +1,5 @@
 // Renderiza o vídeo quadro a quadro (Playwright) e junta com a narração e a trilha (ffmpeg).
-// Uso: node render.mjs [--4k | --1080] [--fps 30] [--partes 4] [--saida arquivo.mp4]
+// Uso: node render.mjs [--4k | --1080] [--fps 30] [--partes 4] [--saida arquivo.mp4] [--de 0 --ate 12]
 // --partes divide o trabalho entre vários navegadores ao mesmo tempo (use o número de núcleos).
 import { createRequire } from "node:module";
 import { spawn } from "node:child_process";
@@ -19,7 +19,10 @@ const saida = path.resolve(aqui, opt("--saida", escala === 2 ? "pafies-2027-4k.m
 
 // Lê a configuração do mesmo arquivo usado pelo index.html
 const config = (() => { const window = {}; new Function("window", fs.readFileSync(path.join(aqui, "config.js"), "utf8"))(window); return window.PAFIES; })();
-const quadros = Math.round(config.duracao * fps);
+const abertura = config.abertura && config.abertura.duracao ? config.abertura.duracao : 0;
+const total = abertura + config.duracao; // a abertura vem antes do documentário
+const de = Number(opt("--de", 0)), ate = Math.min(total, Number(opt("--ate", total))); // trecho (prévia)
+const q0 = Math.round(de * fps), quadros = Math.round(ate * fps);
 
 const roda = (cmd, lista, stdin = "ignore") => {
   const p = spawn(cmd, lista, { stdio: [stdin, "inherit", "inherit"] });
@@ -100,9 +103,9 @@ if (args.includes("--so-formas")) process.exit(0);
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "pafies-"));
 const inicio = Date.now();
 const segs = [];
-const tam = Math.ceil(quadros / partes);
+const tam = Math.ceil((quadros - q0) / partes);
 for (let i = 0; i < partes; i++) {
-  const de = i * tam, ate = Math.min(quadros, de + tam);
+  const de = q0 + i * tam, ate = Math.min(quadros, de + tam);
   if (de >= ate) break;
   const arq = path.join(tmp, `parte-${i}.mp4`);
   segs.push({ arq, p: roda(process.execPath, [fileURLToPath(import.meta.url), ...args, "--parte", String(de), String(ate), arq]) });
@@ -111,18 +114,34 @@ await Promise.all(segs.map(s => s.p.fim));
 fs.writeFileSync(path.join(tmp, "lista.txt"), segs.map(s => `file '${s.arq}'`).join("\n"));
 console.log(`quadros prontos em ${((Date.now() - inicio) / 1000).toFixed(0)} s; juntando com o áudio…`);
 
-const atraso = Math.round(config.audio.narracaoInicio * 1000);
+const atraso = Math.round((abertura + config.audio.narracaoInicio) * 1000);
+// 1) mixa voz e trilha do filme inteiro (a normalização mede sempre o filme todo, mesmo numa prévia)
+const mix = path.join(tmp, "mix.wav");
 await roda("ffmpeg", [
   "-y", "-hide_banner", "-loglevel", "error",
-  "-f", "concat", "-safe", "0", "-i", path.join(tmp, "lista.txt"),
   "-i", path.join(aqui, config.audio.narracao),
   "-i", path.join(aqui, config.audio.trilha),
   "-filter_complex",
   // voz: limpa graves e entra no tempo certo; trilha: abaixa sozinha quando a voz fala (sidechain)
-  `[1:a]highpass=f=70,adelay=${atraso}|${atraso},aformat=sample_rates=48000:channel_layouts=stereo,asplit=2[voz][chave];` +
-  `[2:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.6[mus];` +
+  `[0:a]highpass=f=70,adelay=${atraso}|${atraso},aformat=sample_rates=48000:channel_layouts=stereo,asplit=2[voz][chave];` +
+  `[1:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.6[mus];` +
   `[mus][chave]sidechaincompress=threshold=0.025:ratio=7:attack=60:release=700:makeup=1[musd];` +
-  `[voz][musd]amix=inputs=2:normalize=0:duration=longest,loudnorm=I=-14:TP=-1.5:LRA=11,atrim=0:${config.duracao}[a]`,
+  `[voz][musd]amix=inputs=2:normalize=0:duration=longest,atrim=0:${total}[a]`,
+  "-map", "[a]", "-c:a", "pcm_s24le", mix,
+]).fim;
+// 2) mede a sonoridade e normaliza em modo linear (mantém a dinâmica: abertura sutil, impacto forte)
+const medida = await new Promise((res, rej) => {
+  const p = spawn("ffmpeg", ["-hide_banner", "-nostats", "-i", mix, "-af", "loudnorm=I=-14:TP=-1.5:LRA=20:print_format=json", "-f", "null", "-"]);
+  let txt = "";
+  p.stderr.on("data", d => (txt += d));
+  p.on("close", () => { try { res(JSON.parse(txt.slice(txt.lastIndexOf("{")))); } catch (e) { rej(e); } });
+});
+const norm = `loudnorm=I=-14:TP=-1.5:LRA=20:linear=true:measured_I=${medida.input_i}:measured_TP=${medida.input_tp}:measured_LRA=${medida.input_lra}:measured_thresh=${medida.input_thresh}:offset=${medida.target_offset}`;
+await roda("ffmpeg", [
+  "-y", "-hide_banner", "-loglevel", "error",
+  "-f", "concat", "-safe", "0", "-i", path.join(tmp, "lista.txt"),
+  "-i", mix,
+  "-filter_complex", `[1:a]${norm},aresample=48000,atrim=${de}:${ate},asetpts=PTS-STARTPTS[a]`,
   "-map", "0:v", "-map", "[a]", "-c:v", "copy",
   "-c:a", "aac", "-b:a", "256k", "-ar", "48000", "-movflags", "+faststart", "-shortest",
   saida,
