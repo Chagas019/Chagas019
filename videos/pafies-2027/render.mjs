@@ -108,9 +108,25 @@ for (let i = 0; i < partes; i++) {
   const de = q0 + i * tam, ate = Math.min(quadros, de + tam);
   if (de >= ate) break;
   const arq = path.join(tmp, `parte-${i}.mp4`);
-  segs.push({ arq, p: roda(process.execPath, [fileURLToPath(import.meta.url), ...args, "--parte", String(de), String(ate), arq]) });
+  segs.push({ arq, de, ate, p: roda(process.execPath, [fileURLToPath(import.meta.url), ...args, "--parte", String(de), String(ate), arq]) });
 }
-await Promise.all(segs.map(s => s.p.fim));
+// confere cada parte: se alguma saiu com quadros faltando, renderiza de novo (até 2 vezes)
+const contaQuadros = arq => new Promise(res => {
+  const p = spawn("ffprobe", ["-v", "error", "-count_frames", "-select_streams", "v:0", "-show_entries", "stream=nb_read_frames", "-of", "csv=p=0", arq]);
+  let txt = "";
+  p.stdout.on("data", d => (txt += d));
+  p.on("close", () => res(parseInt(txt, 10) || 0));
+});
+await Promise.all(segs.map(async s => {
+  for (let tentativa = 0; ; tentativa++) {
+    try { await s.p.fim; } catch (e) { console.error(e.message); }
+    const n = await contaQuadros(s.arq);
+    if (n === s.ate - s.de) return;
+    if (tentativa >= 2) throw new Error(`parte ${s.de}-${s.ate}: ${n} de ${s.ate - s.de} quadros`);
+    console.log(`parte ${s.de}-${s.ate} saiu com ${n} de ${s.ate - s.de} quadros; renderizando de novo`);
+    s.p = roda(process.execPath, [fileURLToPath(import.meta.url), ...args, "--parte", String(s.de), String(s.ate), s.arq]);
+  }
+}));
 fs.writeFileSync(path.join(tmp, "lista.txt"), segs.map(s => `file '${s.arq}'`).join("\n"));
 console.log(`quadros prontos em ${((Date.now() - inicio) / 1000).toFixed(0)} s; juntando com o áudio…`);
 
@@ -125,12 +141,13 @@ await roda("ffmpeg", [
   "-i", path.join(aqui, config.audio.trilha),
   ...(lembrete ? ["-i", path.join(aqui, lembrete.arquivo)] : []),
   "-filter_complex",
-  // voz: limpa graves e entra no tempo certo (narração + lembrete final); trilha: abaixa sozinha quando a voz fala (sidechain)
+  // voz: limpa graves e entra no tempo certo (narração + lembrete final), com silêncio até o fim para o
+  // sidechain não encerrar a trilha junto com a última fala; trilha: abaixa sozinha quando a voz fala
   (lembrete
     ? `[0:a]highpass=f=70,adelay=${atraso}|${atraso},aformat=sample_rates=48000:channel_layouts=stereo[v1];` +
       `[2:a]highpass=f=70,adelay=${atrasoL}|${atrasoL},aformat=sample_rates=48000:channel_layouts=stereo[v2];` +
-      `[v1][v2]amix=inputs=2:normalize=0:duration=longest,asplit=2[voz][chave];`
-    : `[0:a]highpass=f=70,adelay=${atraso}|${atraso},aformat=sample_rates=48000:channel_layouts=stereo,asplit=2[voz][chave];`) +
+      `[v1][v2]amix=inputs=2:normalize=0:duration=longest,apad=whole_dur=${total},asplit=2[voz][chave];`
+    : `[0:a]highpass=f=70,adelay=${atraso}|${atraso},aformat=sample_rates=48000:channel_layouts=stereo,apad=whole_dur=${total},asplit=2[voz][chave];`) +
   `[1:a]aformat=sample_rates=48000:channel_layouts=stereo,volume=0.6[mus];` +
   `[mus][chave]sidechaincompress=threshold=0.025:ratio=7:attack=60:release=700:makeup=1[musd];` +
   `[voz][musd]amix=inputs=2:normalize=0:duration=longest,atrim=0:${total}[a]`,

@@ -686,7 +686,7 @@
     {
       const a = S.conquista;
       const ent = mola(prog(t, a + .1, a + 1.5));
-      const sai3 = vaiVem(prog(t, S.decima - .2, S.decima + 1));
+      const sai3 = vaiVem(prog(t, S.decima - .7, S.decima + .25));
       poe(pAlimentos, {
         x: 0, y: mix(-30 + 80 * (1 - ent), -60, sai3), z: mix(-500 + 500 * ent, -700, sai3),
         ry: -16 * (1 - ent) + Math.sin(t * .5) * 2, rx: 6 * (1 - ent), op: sai(prog(t, a + .1, a + .8)) * (1 - sai3), blur: 8 * sai3,
@@ -705,7 +705,7 @@
     let numAtual = 1;
     {
       const a = S.decima;
-      const ent = mola(prog(t, a + .1, a + 1.4));
+      const ent = mola(prog(t, a + .3, a + 1.6));
       // "depois de nove edições": conta de 1 a 9 até a palavra "edições"
       const conta = prog(t, a + .1, 24.9);
       numAtual = 1 + Math.floor(clamp(conta * (T.edicoesRealizadas - 1) + .0001, 0, T.edicoesRealizadas - 1));
@@ -724,7 +724,7 @@
       poe(pContador, {
         x: 0, y: 0, z: mix(-600 + 600 * ent, 300, conv), s: pop * mix(1, .6, conv),
         ry: 20 * (1 - ent) + Math.sin(t * .7) * 3, rx: -6 * (1 - ent),
-        op: sai(prog(t, a + .1, a + .8)) * (1 - conv), blur: 12 * conv,
+        op: sai(prog(t, a + .3, a + 1)) * (1 - conv), blur: 12 * conv,
       });
     }
 
