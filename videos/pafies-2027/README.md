@@ -1,10 +1,11 @@
 # Vídeo — 10ª Gincana Solidária PAFIES 2027
 
-Vídeo de 58 segundos, 16:9, em 4K (3840 × 2160, 30 quadros/s), com narração feminina em português do Brasil, trilha instrumental e painéis 3D animados inspirados nos widgets de referência (cartões escuros com cantos arredondados, gráficos de barras, anéis de progresso, galeria flutuante e linhas de conexão).
+Vídeo de 58 segundos, 16:9, 30 quadros/s, com narração feminina em português do Brasil, trilha instrumental, fundo em degradê preto → azul, painéis 3D animados inspirados nos widgets de referência (cartões escuros com cantos arredondados, gráficos de barras, anéis de progresso, galeria flutuante e linhas de conexão) e formas 3D de cromo iridescente flutuando ao fundo.
 
 - `pafies-2027-4k.mp4`: o vídeo final (4K)
 - `index.html`: o vídeo em código. Abra no navegador e clique em **Assistir** (espaço também funciona). A barra permite ir a qualquer segundo.
-- `config.js`: **todos os textos, números, datas, fotos, tempos e cores**. Edite aqui e renderize de novo.
+- `config.js`: **todos os textos, números, datas, fotos, tempos, cores e formas de cromo**. Edite aqui e renderize de novo.
+- `cromo.js`: as formas de cromo iridescente (anel, fitas cruzadas, brilho de 8 pontas, estrela, moldura ondulada e anel torcido), desenhadas em 3D de verdade por um shader WebGL.
 
 ## Roteiro e cenas
 
@@ -22,6 +23,20 @@ Vídeo de 58 segundos, 16:9, em 4K (3840 × 2160, 30 quadros/s), com narração 
 Os únicos números usados são os do roteiro: 2017, 9 edições, mais de 50 mil alimentos, 10ª edição, 2027.
 
 As legendas (ligadas por padrão, para quem assiste sem som) podem ser desligadas em `config.js` (`legendas: false`).
+
+## Formas de cromo iridescente
+
+Inspiradas no pacote de referência, mas desenhadas do zero em código (nenhuma imagem do pacote é usada). Aparecem assim:
+
+- abertura: um brilho de 8 pontas e um anel, ao fundo do "2017";
+- crescimento: fitas cruzadas (a união das equipes) ao lado da galeria;
+- conquista: um anel torcido perto do contador de alimentos;
+- décima edição: uma moldura ondulada girando atrás do contador 1 → 10;
+- revelação: estrela, brilho e anel nascem do centro junto com o flash e ficam em volta da marca até o fim.
+
+Mude posição, tamanho, inclinação, velocidade e momento de cada uma na lista `elementos` do `config.js`.
+
+No navegador as formas são desenhadas ao vivo. Na renderização, o `render.mjs` primeiro desenha cada forma em 72 ângulos (pasta `.cromo/`, criada sozinha e refeita quando `cromo.js` ou os `elementos` mudam) e depois usa essas imagens, o que deixa o processo muitas vezes mais rápido.
 
 ## Narração
 

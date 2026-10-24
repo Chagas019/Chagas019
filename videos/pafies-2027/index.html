@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap">
 <script src="config.js"></script>
+<script src="cromo.js"></script>
 <style>
   :root {
     --fundo: #050607;
@@ -143,6 +144,9 @@
   #final .icones { display: flex; justify-content: center; gap: 22px; margin-bottom: 30px; }
   #final .icones span { width: 76px; height: 76px; border-radius: 24px; display: grid; place-items: center; background: #111413; border: 1px solid rgba(255,255,255,.08); }
   #final .icones svg { width: 40px; height: 40px; }
+
+  /* Formas de cromo */
+  .cromo canvas, .cromo img { position: absolute; inset: 0; width: 100%; height: 100%; }
 
   /* Legenda */
   #legenda { position: absolute; left: 50%; bottom: 46px; transform: translateX(-50%); max-width: 1500px; padding: 14px 30px; border-radius: 20px; background: rgba(0,0,0,.55); font-size: 36px; font-weight: 500; line-height: 1.25; text-align: center; color: #f2f4f3; letter-spacing: -.005em; white-space: nowrap; text-shadow: 0 2px 8px rgba(0,0,0,.6); }
@@ -306,6 +310,42 @@
 
   const legenda = $("#legenda");
 
+  // ---------- formas de cromo ----------
+  const params = new URLSearchParams(location.search);
+  const modoRender = params.has("render");
+  const FORMAS = { anel: 0, fitas: 1, brilho: 2, estrela: 3, moldura: 4, torcido: 5 };
+  const QUADROS_GIRO = 72; // quadros por volta nas imagens pré-renderizadas
+  const glCanvas = document.createElement("canvas");
+  let cromoGL = null;
+  try { cromoGL = window.Cromo && Cromo.criar(glCanvas); } catch (e) { console.warn("cromo:", e.message); }
+  const usaSprites = modoRender && params.get("sprites") !== "0";
+  const elementos = (C.elementos || []).map((c, i) => {
+    const d = el(null, "cromo");
+    d.style.width = d.style.height = c.tam + "px";
+    const item = { c, i, d, tipo: FORMAS[c.forma] ?? 0 };
+    if (usaSprites) {
+      item.imgs = [new Image(), new Image()];
+      item.imgs.forEach(im => d.appendChild(im));
+    } else {
+      item.cv = document.createElement("canvas");
+      item.cv.width = item.cv.height = Math.round(c.tam * Math.min(2, devicePixelRatio || 1));
+      d.appendChild(item.cv);
+    }
+    return item;
+  });
+  // ângulo do giro em voltas (0 a 1) no segundo t
+  const faseGiro = (item, t) => (((t * item.c.giro) / 10 + item.i * 0.137) % 1 + 1) % 1;
+  // desenha a forma num canvas quadrado de lado px, com o giro na fase dada
+  function pintaForma(item, fase, px) {
+    glCanvas.width = glCanvas.height = px;
+    const [ix, iy, iz] = item.c.incl || [0, 0, 0];
+    cromoGL.desenha([{ tipo: item.tipo, sx: px / 2, sy: px / 2, z: 0, tam: px, rot: [ix, iy + fase * Math.PI * 2, iz], op: 1, matiz: item.i * 0.11 }], 0, 1);
+    return glCanvas;
+  }
+  window.assar = (i, k, px) => pintaForma(elementos[i], k / QUADROS_GIRO, px).toDataURL("image/png");
+  window.elementosInfo = () => elementos.map(e => ({ tam: e.c.tam }));
+  let esperas = [];
+
   // ---------- partículas e grão ----------
   const ctx = $("#particulas").getContext("2d");
   const rp = aleatorio(2027);
@@ -334,7 +374,7 @@
     e.style.opacity = op.toFixed(3);
     e.style.display = op <= 0.002 ? "none" : "";
     // fotos ficam sempre atrás dos painéis
-    e.style.zIndex = Math.round((e.classList.contains("foto") ? 1000 : 5000) + z);
+    e.style.zIndex = Math.round((e.classList.contains("foto") || e.classList.contains("cromo") ? 1000 : 5000) + z);
     e.style.transform = `translate(${(sx - w / 2).toFixed(2)}px, ${(sy - h / 2).toFixed(2)}px) perspective(1600px) scale(${s.toFixed(4)}) rotateY(${(o.ry || 0).toFixed(2)}deg) rotateX(${(o.rx || 0).toFixed(2)}deg)`;
     const blur = o.blur || 0;
     e.style.filter = (blur > .05 ? `blur(${blur.toFixed(2)}px) ` : "") + (o.filtro || "");
@@ -387,6 +427,35 @@
       });
       $(".linha i", p2017).style.transform = `scaleX(${sai(prog(t, 2.5, 10)).toFixed(4)})`;
     }
+
+    // ----- Formas de cromo -----
+    elementos.forEach(item => {
+      const c = item.c;
+      const e = mola(prog(t, c.de, c.de + 1.8));
+      const saida = c.ate >= C.duracao ? prog(t, C.duracao - 1, C.duracao) : vaiVem(prog(t, c.ate - 1.2, c.ate));
+      const op = sai(prog(t, c.de, c.de + .7)) * (1 - saida);
+      const de = c.doCentro ? [0, 0, -300] : [c.x * 1.3, c.y * 1.3, c.z - 700];
+      const bob = Math.sin(t * .55 + item.i * 1.9) * 16;
+      const z = mix(de[2], c.z, e) - 300 * saida;
+      poe(item.d, {
+        x: mix(de[0], c.x, e) + Math.cos(t * .4 + item.i) * 10, y: mix(de[1], c.y, e) + bob, z,
+        op, blur: Math.max(0, (-z - 220) / 90),
+      });
+      if (op <= .002) return;
+      const fase = faseGiro(item, t);
+      if (item.imgs) {
+        const f = fase * QUADROS_GIRO, k0 = Math.floor(f) % QUADROS_GIRO, k1 = (k0 + 1) % QUADROS_GIRO, m = f - Math.floor(f);
+        const [a, b] = item.imgs;
+        const src = k => `.cromo/${item.i}-${k}.png`;
+        if (!a.src.endsWith(src(k0))) { a.src = src(k0); esperas.push(a.decode().catch(() => {})); }
+        if (!b.src.endsWith(src(k1))) { b.src = src(k1); esperas.push(b.decode().catch(() => {})); }
+        b.style.opacity = m.toFixed(3);
+      } else if (cromoGL) {
+        const g = item.cv.getContext("2d");
+        g.clearRect(0, 0, item.cv.width, item.cv.height);
+        g.drawImage(pintaForma(item, fase, item.cv.width), 0, 0);
+      }
+    });
 
     // ----- Fotos -----
     const pontosFotos = [];
@@ -621,11 +690,10 @@
     })),
   ]);
 
-  window.renderAt = async t => { quadro(t); await new Promise(requestAnimationFrame); };
+  window.renderAt = async t => { esperas = []; quadro(t); await Promise.all(esperas); await new Promise(requestAnimationFrame); };
   window.pronto = pronto;
 
   // ---------- player ----------
-  const modoRender = new URLSearchParams(location.search).has("render");
   if (modoRender) { document.body.classList.add("render"); pronto.then(() => quadro(0)); return; }
 
   function ajusta() {

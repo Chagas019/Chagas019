@@ -84,6 +84,22 @@ window.PAFIES = {
     { arquivo: "fotos/foto-09.jpg", legenda: "9ª edição" },
   ],
 
+  // Formas 3D de cromo iridescente que flutuam no fundo.
+  // forma: anel, fitas, brilho, estrela, moldura ou torcido
+  // de/ate: segundos em que aparece; x, y: posição a partir do centro da tela; z: profundidade (negativo = mais longe)
+  // tam: tamanho em px; incl: inclinação [x, y, z] em radianos; giro: voltas a cada 10 s; doCentro: nasce do centro
+  elementos: [
+    { forma: "brilho", de: 2.2, ate: 11.8, x: 600, y: -250, z: -220, tam: 300, incl: [0.3, 0, 0.25], giro: 1.0 },
+    { forma: "anel", de: 4.0, ate: 18.4, x: -660, y: 270, z: -320, tam: 260, incl: [1.05, 0, 0.45], giro: 0.8 },
+    { forma: "fitas", de: 12.2, ate: 18.6, x: 830, y: -40, z: -60, tam: 300, incl: [0.15, 0, 0], giro: 0.7 },
+    { forma: "torcido", de: 18.4, ate: 23.2, x: -800, y: -320, z: -160, tam: 300, incl: [0.9, 0, 0.3], giro: 0.9 },
+    { forma: "moldura", de: 23.3, ate: 29.0, x: 0, y: 0, z: -260, tam: 900, incl: [0.22, 0, 0], giro: 0.3 },
+    { forma: "estrela", de: 29.3, ate: 51.8, x: -770, y: -300, z: -140, tam: 270, incl: [0.25, 0, 0.3], giro: 0.8, doCentro: true },
+    { forma: "brilho", de: 29.45, ate: 58, x: 770, y: 290, z: -120, tam: 260, incl: [0.4, 0, -0.2], giro: 1.1, doCentro: true },
+    { forma: "anel", de: 29.6, ate: 51.8, x: 760, y: -330, z: -280, tam: 230, incl: [0.7, 0, -0.5], giro: 0.7, doCentro: true },
+    { forma: "estrela", de: 52.0, ate: 58, x: -640, y: 250, z: -60, tam: 220, incl: [0.3, 0, -0.25], giro: 0.9 },
+  ],
+
   cores: {
     fundo: "#01040d",
     painel: "#0d0f10",

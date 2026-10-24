@@ -57,6 +57,44 @@ if (iParte >= 0) {
   process.exit(0);
 }
 
+// Formas de cromo: renderiza cada uma em 72 ângulos (uma vez só; refaz se mudar cromo.js ou os elementos)
+async function assaFormas() {
+  const { chromium } = require("playwright");
+  const crypto = require("node:crypto");
+  const pasta = path.join(aqui, ".cromo");
+  const assinatura = crypto.createHash("sha1")
+    .update(fs.readFileSync(path.join(aqui, "cromo.js"))).update(JSON.stringify(config.elementos || [])).update(String(escala))
+    .digest("hex");
+  const marca = path.join(pasta, "assinatura.txt");
+  if (fs.existsSync(marca) && fs.readFileSync(marca, "utf8") === assinatura) return;
+  fs.rmSync(pasta, { recursive: true, force: true });
+  fs.mkdirSync(pasta);
+  const browser = await chromium.launch();
+  const url = pathToFileURL(path.join(aqui, "index.html")).href + "?render=1&sprites=0";
+  const paginas = await Promise.all(Array.from({ length: partes }, async () => {
+    const p = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
+    await p.goto(url);
+    await p.evaluate(() => window.pronto);
+    return p;
+  }));
+  const info = await paginas[0].evaluate(() => window.elementosInfo());
+  const fila = [];
+  info.forEach((e, i) => { for (let k = 0; k < 72; k++) fila.push([i, k, Math.min(1600, Math.round(e.tam * escala))]); });
+  let feitos = 0;
+  await Promise.all(paginas.map(async p => {
+    while (fila.length) {
+      const [i, k, px] = fila.shift();
+      const dado = await p.evaluate(([i, k, px]) => window.assar(i, k, px), [i, k, px]);
+      fs.writeFileSync(path.join(pasta, `${i}-${k}.png`), Buffer.from(dado.split(",")[1], "base64"));
+      if (++feitos % 72 === 0) console.log(`formas de cromo: ${feitos} / ${info.length * 72}`);
+    }
+  }));
+  await browser.close();
+  fs.writeFileSync(marca, assinatura);
+}
+await assaFormas();
+if (args.includes("--so-formas")) process.exit(0);
+
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "pafies-"));
 const inicio = Date.now();
 const segs = [];
