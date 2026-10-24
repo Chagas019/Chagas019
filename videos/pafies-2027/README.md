@@ -7,6 +7,10 @@ Vídeo de 58 segundos, 16:9, 30 quadros/s, com narração feminina em português
 - `config.js`: **todos os textos, números, datas, fotos, tempos, cores e formas de cromo**. Edite aqui e renderize de novo.
 - `cromo.js`: as formas de cromo iridescente (anel, fitas cruzadas, brilho de 8 pontas, estrela, moldura ondulada e anel torcido), desenhadas em 3D de verdade por um shader WebGL.
 
+## Fonte
+
+Títulos, números grandes, a marca "10ª PAFIES" e o encerramento usam a **Montserrat Alternates** (geométrica, pesada, com o "a" de um bojo só), guardada em `fontes/` com a licença livre OFL. Rótulos pequenos e legendas seguem na Inter, que é mais legível em tamanho pequeno.
+
 ## Roteiro e cenas
 
 | Tempo | Cena | Na tela |

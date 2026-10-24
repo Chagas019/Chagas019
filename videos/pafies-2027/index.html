@@ -9,6 +9,11 @@
 <script src="config.js"></script>
 <script src="cromo.js"></script>
 <style>
+  /* Montserrat Alternates (OFL), geométrica com "a" de um bojo só, para títulos e números */
+  @font-face { font-family: "Titulo"; src: url("fontes/montserrat-alternates-600.woff2") format("woff2"); font-weight: 600; }
+  @font-face { font-family: "Titulo"; src: url("fontes/montserrat-alternates-700.woff2") format("woff2"); font-weight: 700; }
+  @font-face { font-family: "Titulo"; src: url("fontes/montserrat-alternates-800.woff2") format("woff2"); font-weight: 800; }
+  @font-face { font-family: "Titulo"; src: url("fontes/montserrat-alternates-900.woff2") format("woff2"); font-weight: 900; }
   :root {
     --fundo: #050607;
     --painel: #0d0f10;
@@ -19,6 +24,7 @@
     --branco: #f4f6f5;
     --cinza: #8a8f8c;
     --fonte: "Inter Display", "Inter", system-ui, sans-serif;
+    --titulo: "Titulo", "Inter Display", sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { width: 100%; height: 100%; background: #000; overflow: hidden; }
@@ -32,6 +38,9 @@
     overflow: hidden; transform-origin: 0 0;
   }
   .camada { position: absolute; inset: 0; pointer-events: none; }
+  /* o mundo 3D fica num plano próprio; flash, vinheta, grão e legenda sempre por cima */
+  #mundo { position: absolute; inset: 0; z-index: 1; }
+  #flash, #vinheta, #grao, #legenda { z-index: 2; }
   #brilho { background: radial-gradient(60% 55% at 50% 50%, rgba(47,123,255,.16), transparent 70%); }
   #pontos {
     background-image: radial-gradient(rgba(255,255,255,.08) 1.4px, transparent 1.6px);
@@ -58,6 +67,7 @@
   }
   .rotulo { font-size: 22px; font-weight: 600; letter-spacing: .16em; color: var(--cinza); text-transform: uppercase; display: flex; align-items: center; gap: 14px; }
   .rotulo svg { width: 30px; height: 30px; }
+  .tit { font-family: var(--titulo); }
   .num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
 
   /* 2017 */
@@ -93,7 +103,7 @@
 
   /* Alimentos */
   #pAlimentos { width: 1100px; height: 470px; padding: 50px 60px; }
-  #pAlimentos .valor { font-size: 168px; font-weight: 800; letter-spacing: -.05em; line-height: 1; margin-top: 40px; }
+  #pAlimentos .valor { font-size: 140px; font-weight: 800; letter-spacing: -.03em; line-height: 1; margin-top: 40px; }
   #pAlimentos .valor em { font-style: normal; color: var(--laranja); }
   #pAlimentos .sub { font-size: 36px; color: #b5bab7; margin-top: 18px; font-weight: 500; letter-spacing: -.01em; }
   #pAlimentos svg.anel { position: absolute; right: 60px; top: 50%; width: 300px; height: 300px; transform: translateY(-46%) rotate(-90deg); }
@@ -118,7 +128,7 @@
   #marca .dez { font-size: 330px; font-weight: 900; letter-spacing: -.07em; line-height: .8; background: linear-gradient(180deg, #e3f1ff 0%, var(--azul-claro) 35%, var(--azul) 75%, #1546c9 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 40px rgba(47,123,255,.35)); }
   #marca .dez sup { font-size: .34em; vertical-align: 1.35em; margin-left: 6px; letter-spacing: 0; }
   #marca .col { display: flex; flex-direction: column; gap: 6px; }
-  #marca .gs { font-size: 54px; font-weight: 600; letter-spacing: .1em; color: #dfe3e0; }
+  #marca .gs { font-size: 46px; font-weight: 700; letter-spacing: .05em; white-space: nowrap; color: #dfe3e0; }
   #marca .pf { font-size: 172px; font-weight: 900; letter-spacing: -.035em; line-height: .92; }
   #marca .ano { align-self: flex-start; margin-top: 16px; padding: 10px 26px; border-radius: 20px; font-size: 44px; font-weight: 700; color: #031027; background: linear-gradient(90deg, var(--azul-claro), var(--azul)); letter-spacing: .02em; }
   #marca .borda { position: absolute; inset: 0; border-radius: inherit; padding: 2px; background: conic-gradient(from var(--a, 0deg), transparent 0 60%, rgba(140,200,255,.9) 75%, rgba(39,196,245,.8) 85%, transparent 95%); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
@@ -269,14 +279,14 @@
 
   const p2017 = el("p2017", "painel", `
     <div class="rotulo">${I.semente}${T.comecoTitulo}</div>
-    <div class="ano num">${T.anoInicio}</div>
+    <div class="ano num tit">${T.anoInicio}</div>
     <div class="frase">${T.comecoFrase}</div>
     <div class="linha"><i></i></div>`);
 
   const total = T.edicaoNumero;
   const pEdicoes = el("pEdicoes", "painel", `
     <div class="topo"><div class="rotulo">${I.grafico}${T.crescimentoTitulo}</div></div>
-    <div class="grande"><b class="num">${T.edicoesRealizadas}</b><span>${T.edicoesRotulo}</span></div>
+    <div class="grande"><b class="num tit">${T.edicoesRealizadas}</b><span>${T.edicoesRotulo}</span></div>
     <div class="barras">${Array.from({ length: total }, (_, i) => {
       const futura = i >= T.edicoesRealizadas;
       return `<div class="barra ${futura ? "futura" : ""}"><div class="tubo" style="height:${38 + (i / (total - 1)) * 58}%"><i></i>${futura ? `<div class="dica">${T.ano}</div>` : ""}</div><small>${i + 1}ª</small></div>`;
@@ -287,12 +297,12 @@
 
   const pAlimentos = el("pAlimentos", "painel", `
     <div class="rotulo">${I.cesta}Arrecadação</div>
-    <div class="valor num"><em>${T.alimentosPrefixo}</em><span>0</span></div>
+    <div class="valor num tit"><em>${T.alimentosPrefixo}</em><span>0</span></div>
     <div class="sub">${T.alimentosRotulo}</div>
     <svg class="anel" viewBox="0 0 120 120"><circle cx="60" cy="60" r="48" fill="none" stroke="#0f1f3d" stroke-width="13"/><circle class="arco" cx="60" cy="60" r="48" fill="none" stroke="url(#gAnel)" stroke-width="13" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/><defs><linearGradient id="gAnel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8cc8ff"/><stop offset="1" stop-color="#2f7bff"/></linearGradient></defs></svg>`);
   const valorAlimentos = $(".valor span", pAlimentos), arcoAlimentos = $(".arco", pAlimentos);
 
-  const chipEdicoes = el("chipEdicoes", "painel chip", `<span class="bola">${I.grafico}</span><span><b class="num">${T.edicoesRealizadas}</b> ${T.edicoesRotulo}</span>`);
+  const chipEdicoes = el("chipEdicoes", "painel chip", `<span class="bola">${I.grafico}</span><span><b class="num tit">${T.edicoesRealizadas}</b> ${T.edicoesRotulo}</span>`);
 
   // Contador 1 → 10 com anel de segmentos
   const segs = Array.from({ length: total }, (_, i) => {
@@ -301,18 +311,18 @@
     const [x0, y0] = p(a0), [x1, y1] = p(a1);
     return `<path class="seg" d="M${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)}" stroke="#202523" stroke-width="22" stroke-linecap="round" fill="none"/>`;
   }).join("");
-  const pContador = el("pContador", "painel", `<svg viewBox="0 0 600 600">${segs}</svg><div class="n"><div><b class="num"><span>1</span><sup>ª</sup></b><span>EDIÇÃO</span></div></div>`);
+  const pContador = el("pContador", "painel", `<svg viewBox="0 0 600 600">${segs}</svg><div class="n"><div><b class="num tit"><span>1</span><sup>ª</sup></b><span>EDIÇÃO</span></div></div>`);
   const segEls = [...pContador.querySelectorAll(".seg")], numContador = $(".n b span", pContador);
 
   const marca = el("marca", "painel", `<div class="borda"></div>
-    <div class="dez num">${T.edicaoNumero}<sup>ª</sup></div>
-    <div class="col"><div class="gs">${T.edicaoNome}</div><div class="pf">${T.marca}</div><div class="ano num">${T.ano}</div></div>`);
+    <div class="dez num tit">${T.edicaoNumero}<sup>ª</sup></div>
+    <div class="col"><div class="gs tit">${T.edicaoNome}</div><div class="pf tit">${T.marca}</div><div class="ano num tit">${T.ano}</div></div>`);
   const bordaMarca = $(".borda", marca);
 
   const anos = [];
   const pCalendario = el("pCalendario", "painel", `
     <div class="topo"><div class="rotulo">${I.calendario}${T.calendarioTitulo}</div><div class="ano num">${T.ano}</div></div>
-    <div class="frase">${T.calendarioFrase}</div>
+    <div class="frase tit">${T.calendarioFrase}</div>
     <div class="trilho"><div class="base"></div><div class="cheio"></div>
       ${Array.from({ length: total }, (_, i) => `<div class="marco ${i === total - 1 ? "novo" : ""}" style="left:${(i / (total - 1)) * 100}%"></div>`).join("")}
       <small style="left:0;transform:none">${T.anoInicio}</small><small style="left:100%;transform:translateX(-100%)">${T.ano}</small>
@@ -321,7 +331,7 @@
 
   const final = el("final", "", `
     <div class="icones"><span>${I.coracao}</span><span>${I.maos}</span><span>${I.celular}</span></div>
-    <div class="t">${T.finalTitulo}</div>
+    <div class="t tit">${T.finalTitulo}</div>
     <div class="cta">${I.seta}${T.finalInscricoes}</div>`);
   final.style.width = "1500px";
 
@@ -343,7 +353,7 @@
   const CI = C.icones || { lista: [] };
   const blocos = CI.lista.map((b, i) => {
     const cor = b.claro ? "#1f3fd0" : "#ffffff";
-    const desenho = ICONES_BLOCO[b.icone] ? ICONES_BLOCO[b.icone](cor) : `<b>${b.icone}</b>`;
+    const desenho = ICONES_BLOCO[b.icone] ? ICONES_BLOCO[b.icone](cor) : `<b class="tit">${b.icone}</b>`;
     const esp = Math.max(4, Math.round(b.tam * .045)); // espessura: camadas atrás da face
     const lados = Array.from({ length: 7 }, (_, k) => `<div class="lado" style="transform:translateZ(${-(k + 1) * esp}px);filter:brightness(${(1 - k * .07).toFixed(2)})"></div>`).join("");
     const d = el(null, "bloco" + (b.claro ? " claro" : ""), `<div class="cam">${lados}<div class="face">${desenho}</div></div>`);
