@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Interativo Animado</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+            --accent-color: #38bdf8;
+            --secondary-color: #ec4899;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none; /* Hide default cursor to use custom one */
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            z-index: 10;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .title {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease forwards 0.5s;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #cbd5e1;
+            margin-bottom: 2.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease forwards 0.8s;
+        }
+
+        .cta-button {
+            background: transparent;
+            color: var(--text-color);
+            border: 2px solid var(--accent-color);
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease forwards 1.1s;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background: var(--accent-color);
+            z-index: -1;
+            transition: width 0.3s ease;
+        }
+
+        .cta-button:hover::before {
+            width: 100%;
+        }
+
+        .cta-button:hover {
+            color: var(--bg-color);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+            transform: scale(1.05);
+        }
+
+        /* Pulse Animation */
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent-color);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 999;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        .cursor-trail {
+            width: 8px;
+            height: 8px;
+            background-color: var(--secondary-color);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 998;
+            transform: translate(-50%, -50%);
+            transition: 0.1s ease-out;
+        }
+
+        .cursor.hovering {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(56, 189, 248, 0.1);
+        }
+
+        /* Particles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            background: radial-gradient(circle, var(--secondary-color) 0%, transparent 70%);
+            animation: float 2s ease-out forwards;
+        }
+
+        @keyframes float {
+            0% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0) translateY(-100px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cursor"></div>
+    <div class="cursor-trail"></div>
+
+    <main class="hero">
+        <h1 class="title">Experiência Interativa</h1>
+        <p class="subtitle">Descubra um novo mundo de animações criativas na web.</p>
+        <button class="cta-button" id="magicButton">Explorar Magia</button>
+    </main>
+
+    <script>
+        // Custom Cursor Logic
+        const cursor = document.querySelector('.cursor');
+        const cursorTrail = document.querySelector('.cursor-trail');
+        const button = document.getElementById('magicButton');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+
+            // Adding a small delay to the trail
+            setTimeout(() => {
+                cursorTrail.style.left = e.clientX + 'px';
+                cursorTrail.style.top = e.clientY + 'px';
+            }, 50);
+        });
+
+        // Hover effect for interactive elements
+        button.addEventListener('mouseenter', () => {
+            cursor.classList.add('hovering');
+        });
+
+        button.addEventListener('mouseleave', () => {
+            cursor.classList.remove('hovering');
+        });
+
+        // Particle effect on click
+        button.addEventListener('click', (e) => {
+            const rect = button.getBoundingClientRect();
+            const x = rect.left + rect.width / 2;
+            const y = rect.top + rect.height / 2;
+
+            for (let i = 0; i < 20; i++) {
+                createParticle(x, y);
+            }
+
+            // Randomly change background color on click
+            document.body.style.backgroundColor = \`hsl(\${Math.random() * 360}, 40%, 15%)\`;
+        });
+
+        function createParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+
+            document.body.appendChild(particle);
+
+            // Random size between 10px and 30px
+            const size = Math.random() * 20 + 10;
+            particle.style.width = \`\${size}px\`;
+            particle.style.height = \`\${size}px\`;
+
+            // Random position around the click
+            const destinationX = x + (Math.random() - 0.5) * 200;
+            const destinationY = y + (Math.random() - 0.5) * 200;
+
+            particle.style.left = \`\${destinationX}px\`;
+            particle.style.top = \`\${destinationY}px\`;
+
+            // Remove particle after animation
+            setTimeout(() => {
+                particle.remove();
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
