@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+@theme {
+  --color-df-bg: #050505;
+  --color-df-red: #8B0000;
+  --color-df-red-dark: #3a0000;
+  --color-df-purple: #4B0082;
+  --color-df-blue: #000080;
+  --color-df-gold: #D4AF37;
+
+  --font-cinzel: 'Cinzel', serif;
+  --font-inter: 'Inter', sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-df-bg);
+  color: white;
+  font-family: var(--font-inter);
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  /* Dark fantasy gradient background */
+  background-image: radial-gradient(circle at top right, rgba(75, 0, 130, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at bottom left, rgba(139, 0, 0, 0.15) 0%, transparent 50%),
+                    radial-gradient(circle at center, rgba(0, 0, 128, 0.05) 0%, transparent 100%);
+}
+
+.font-cinzel {
+  font-family: var(--font-cinzel);
+}
+
+.font-inter {
+  font-family: var(--font-inter);
+}
+
+.glass-panel {
+  background: rgba(20, 20, 25, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-hover:hover {
+  background: rgba(30, 30, 40, 0.7);
+  border: 1px solid rgba(212, 175, 55, 0.3); /* df-gold with opacity */
+  box-shadow: 0 0 20px rgba(139, 0, 0, 0.2); /* df-red glow */
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-df-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-df-red-dark);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-df-red);
+}
+
+/* Hide scrollbar when desired */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
