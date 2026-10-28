@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Bell, CalendarDays, ChevronDown, ClipboardList, FileBarChart, LayoutGrid, LogOut, Menu, Plus, Search, Settings, Shapes, Sparkles, Ticket, UserCheck, Users, X,
+  Bell, CalendarDays, GraduationCap, ChevronDown, ClipboardList, FileBarChart, LayoutGrid, LogOut, Menu, Plus, Search, Settings, Shapes, Sparkles, Ticket, UserCheck, Users, X,
   type LucideIcon,
 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -23,6 +23,7 @@ export const NAV: NavItem[] = [
   { to: '/equipe', label: 'Equipe', icon: Users, staffOnly: true },
   { to: '/funcoes', label: 'Funções', icon: Shapes },
   { to: '/eventos', label: 'Eventos', icon: Ticket },
+  { to: '/formacao', label: 'Formação', icon: GraduationCap },
   { to: '/relatorios', label: 'Relatórios', icon: FileBarChart, staffOnly: true },
   { to: '/notificacoes', label: 'Notificações', icon: Bell },
   { to: '/configuracoes', label: 'Configurações', icon: Settings },

@@ -20,6 +20,7 @@ import Roles from './pages/Roles';
 import Schedules from './pages/Schedules';
 import Settings from './pages/Settings';
 import Team from './pages/Team';
+import Training from './pages/Training';
 
 /** Com Supabase configurado, exige sessão válida. Sem ele, abre a demonstração. */
 function AuthGate({ children }: { children: ReactNode }) {
@@ -60,6 +61,9 @@ export default function App() {
                       <Route path="equipe" element={<Team />} />
                       <Route path="funcoes" element={<Roles />} />
                       <Route path="eventos" element={<Events />} />
+                      <Route path="formacao" element={<Training />} />
+                      <Route path="formacao/:moduleId" element={<Training />} />
+                      <Route path="formacao/:moduleId/:lessonId" element={<Training />} />
                       <Route path="relatorios" element={<Reports />} />
                       <Route path="notificacoes" element={<Notifications />} />
                       <Route path="configuracoes" element={<Settings />} />
