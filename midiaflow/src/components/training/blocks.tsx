@@ -189,43 +189,104 @@ const ACCESS = {
 
 function ChurchMap() {
   const [sel, setSel] = useState<ChurchSpot>(SPOTS[0]);
-  const pews = [];
-  for (let r = 0; r < 9; r++) {
-    pews.push({ x: 96, y: 210 + r * 34 }, { x: 222, y: 210 + r * 34 });
-  }
+  const pews: { x: number; y: number }[] = [];
+  for (let r = 0; r < 9; r++) pews.push({ x: 122, y: 304 + r * 28 }, { x: 228, y: 304 + r * 28 });
+  const via = Array.from({ length: 7 }, (_, i) => 318 + i * 44);
+  const label = { fontSize: 8, fill: '#96A3B5' } as const;
   return (
-    <div className="grid gap-4 lg:grid-cols-[minmax(0,420px)_1fr]">
+    <div className="grid gap-4 lg:grid-cols-[minmax(0,440px)_1fr]">
       <div className="rounded-3xl border border-white/[0.07] bg-white/[0.02] p-3">
-        <svg viewBox="0 0 400 680" className="h-auto w-full" role="img" aria-label="Planta da igreja com as posições de fotografia">
+        <svg viewBox="0 0 440 720" className="h-auto w-full" role="img" aria-label="Planta de uma igreja católica em cruz, com as posições de fotografia">
           <defs>
             <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-              <line x1="0" y1="0" x2="0" y2="8" stroke="#FF6B7A" strokeOpacity="0.35" strokeWidth="2" />
+              <line x1="0" y1="0" x2="0" y2="8" stroke="#FF6B7A" strokeOpacity="0.3" strokeWidth="2" />
             </pattern>
+            <radialGradient id="lamp">
+              <stop offset="0" stopColor="#FF4D4D" stopOpacity="0.9" />
+              <stop offset="1" stopColor="#FF4D4D" stopOpacity="0" />
+            </radialGradient>
           </defs>
-          {/* paredes */}
-          <path d="M40 620 V150 Q40 40 200 30 Q360 40 360 150 V620 Z" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.18)" strokeWidth="2" />
-          {/* presbitério */}
-          <path d="M70 180 V150 Q70 66 200 58 Q330 66 330 150 V180 Z" fill="url(#hatch)" stroke="#FF6B7A" strokeOpacity="0.6" strokeDasharray="6 5" />
-          <text x="200" y="172" textAnchor="middle" fontSize="10" fill="#FF6B7A" opacity="0.9" letterSpacing="2">PRESBITÉRIO</text>
-          {/* altar, ambão, cadeira */}
-          <rect x="165" y="100" width="70" height="26" rx="4" fill="#F5F7FA" fillOpacity="0.85" />
-          <text x="200" y="117" textAnchor="middle" fontSize="10" fill="#07090D" fontWeight="600">ALTAR</text>
-          <rect x="92" y="140" width="34" height="18" rx="3" fill="#55B8FF" fillOpacity="0.7" />
-          <text x="109" y="153" textAnchor="middle" fontSize="8" fill="#07090D" fontWeight="600">AMBÃO</text>
-          <circle cx="200" cy="76" r="8" fill="none" stroke="#F5F7FA" strokeOpacity="0.6" />
-          <text x="216" y="79" fontSize="8" fill="#96A3B5">cadeira</text>
-          {/* sacristia */}
-          <rect x="300" y="64" width="56" height="44" rx="4" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.2)" strokeDasharray="3 3" />
-          <text x="328" y="58" textAnchor="middle" fontSize="8" fill="#96A3B5">SACRISTIA</text>
-          {/* bancos */}
-          {pews.map((p, i) => <rect key={i} x={p.x} y={p.y} width="82" height="20" rx="3" fill="rgba(255,255,255,0.07)" />)}
-          <text x="200" y="512" textAnchor="middle" fontSize="9" fill="#96A3B5" letterSpacing="2">NAVE</text>
-          {/* coro */}
-          <rect x="60" y="560" width="280" height="50" rx="6" fill="rgba(85,184,255,0.06)" stroke="rgba(85,184,255,0.3)" strokeDasharray="4 4" />
-          <text x="200" y="604" textAnchor="middle" fontSize="8" fill="#55B8FF">CORO / MEZANINO (piso superior)</text>
-          {/* porta */}
-          <rect x="170" y="616" width="60" height="8" rx="2" fill="#07090D" stroke="rgba(255,255,255,0.4)" />
-          <text x="200" y="642" textAnchor="middle" fontSize="8" fill="#96A3B5">PORTA PRINCIPAL</text>
+
+          {/* Planta em cruz latina: nave, transepto, presbitério e abside */}
+          <path d="M110 665 V290 H40 V205 H130 V95 A90 90 0 0 1 310 95 V205 H400 V290 H330 V665 Z" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.22)" strokeWidth="2" />
+          {/* Sacristia (anexa ao presbitério) */}
+          <rect x="310" y="112" width="84" height="78" fill="rgba(255,255,255,0.035)" stroke="rgba(255,255,255,0.22)" />
+          <line x1="310" y1="160" x2="310" y2="180" stroke="#07090D" strokeWidth="4" />
+          <text x="352" y="128" textAnchor="middle" {...label}>SACRISTIA</text>
+
+          {/* Presbitério elevado (área restrita) com degraus */}
+          <path d="M130 216 V95 A90 90 0 0 1 310 95 V216 Z" fill="url(#hatch)" stroke="#FF6B7A" strokeOpacity="0.55" strokeDasharray="6 5" />
+          {[206, 211, 216].map((y) => <line key={y} x1="132" x2="308" y1={y} y2={y} stroke="rgba(255,255,255,0.18)" />)}
+          <text x="220" y="200" textAnchor="middle" fontSize="9" fill="#FF6B7A" letterSpacing="2">PRESBITÉRIO</text>
+
+          {/* Crucifixo na abside */}
+          <g stroke="#F5F7FA" strokeWidth="2.5" strokeLinecap="round" opacity="0.9">
+            <line x1="220" y1="12" x2="220" y2="34" />
+            <line x1="212" y1="19" x2="228" y2="19" />
+          </g>
+          <text x="236" y="24" {...label}>crucifixo</text>
+          {/* Sacrário + lâmpada do Santíssimo */}
+          <rect x="208" y="42" width="24" height="18" rx="3" fill="#FFC857" />
+          <path d="M220 45 V57 M215 50 H225" stroke="#07090D" strokeWidth="1.6" />
+          <circle cx="248" cy="50" r="10" fill="url(#lamp)" />
+          <circle cx="248" cy="50" r="3" fill="#FF4D4D" />
+          <text x="182" y="54" textAnchor="end" {...label}>sacrário</text>
+          <text x="262" y="53" {...label}>lâmpada</text>
+          {/* Cadeira presidencial e credência */}
+          <path d="M276 92 h16 v14 h-16 z M276 86 h16 v6 h-16 z" fill="rgba(245,247,250,0.35)" />
+          <text x="284" y="118" textAnchor="middle" {...label}>cadeira</text>
+          <rect x="146" y="92" width="26" height="12" rx="2" fill="rgba(245,247,250,0.3)" />
+          <text x="159" y="116" textAnchor="middle" {...label}>credência</text>
+          {/* Altar com cruz e velas */}
+          <rect x="180" y="128" width="80" height="30" rx="3" fill="#F5F7FA" fillOpacity="0.9" />
+          <path d="M220 132 V146 M214 137 H226" stroke="#07090D" strokeWidth="1.6" />
+          <circle cx="188" cy="136" r="2.5" fill="#FFC857" />
+          <circle cx="252" cy="136" r="2.5" fill="#FFC857" />
+          <text x="220" y="155" textAnchor="middle" fontSize="8" fill="#07090D" fontWeight="700">ALTAR</text>
+          {/* Ambão + círio pascal */}
+          <rect x="146" y="170" width="30" height="16" rx="3" fill="#55B8FF" fillOpacity="0.8" />
+          <text x="161" y="181" textAnchor="middle" fontSize="7" fill="#07090D" fontWeight="700">AMBÃO</text>
+          <circle cx="137" cy="164" r="3" fill="#FFC857" />
+          <path d="M137 157 q2 3 0 5 q-2 -2 0 -5" fill="#FF9F5B" />
+          <text x="133" y="152" textAnchor="end" {...label}>círio</text>
+
+          {/* Transepto: imagens de Nossa Senhora e do padroeiro, com velas votivas */}
+          <circle cx="62" cy="240" r="9" fill="#55B8FF" fillOpacity="0.25" stroke="#55B8FF" strokeOpacity="0.7" />
+          <text x="62" y="243.5" textAnchor="middle" fontSize="9" fill="#55B8FF">M</text>
+          {[0, 1, 2].map((i) => <circle key={i} cx={82 + i * 6} cy={252} r="1.8" fill="#FFC857" />)}
+          <text x="62" y="222" textAnchor="middle" {...label}>N. Senhora</text>
+          <circle cx="378" cy="240" r="9" fill="#5BFF9A" fillOpacity="0.2" stroke="#5BFF9A" strokeOpacity="0.6" />
+          <text x="378" y="243.5" textAnchor="middle" fontSize="8" fill="#5BFF9A">SJ</text>
+          {[0, 1, 2].map((i) => <circle key={i} cx={346 + i * 6} cy={252} r="1.8" fill="#FFC857" />)}
+          <text x="378" y="222" textAnchor="middle" {...label}>padroeiro</text>
+
+          {/* Nave: bancos com genuflexório e corredor central */}
+          {pews.map((p, i) => (
+            <g key={i}>
+              <rect x={p.x} y={p.y} width="90" height="16" rx="2.5" fill="rgba(255,255,255,0.08)" />
+              <rect x={p.x} y={p.y + 18} width="90" height="3" rx="1" fill="rgba(255,255,255,0.04)" />
+            </g>
+          ))}
+          <text x="220" y="296" textAnchor="middle" fontSize="8" fill="#96A3B5" letterSpacing="2">NAVE</text>
+          {/* Via-Sacra nas paredes (14 estações) */}
+          {via.flatMap((y, i) => [
+            <path key={`l${i}`} d={`M103 ${y - 5} V${y + 5} M99 ${y - 1} H107`} stroke="#B98BFF" strokeWidth="1.4" />,
+            <path key={`r${i}`} d={`M337 ${y - 5} V${y + 5} M333 ${y - 1} H341`} stroke="#B98BFF" strokeWidth="1.4" />,
+          ])}
+          <text x="96" y="306" textAnchor="end" fontSize="7" fill="#B98BFF">Via-Sacra</text>
+          {/* Confessionário e pia batismal */}
+          <rect x="296" y="566" width="30" height="26" rx="3" fill="rgba(185,139,255,0.15)" stroke="rgba(185,139,255,0.5)" />
+          <text x="311" y="602" textAnchor="middle" fontSize="7" fill="#B98BFF">confessionário</text>
+          <polygon points="140,566 150,566 157,573 157,583 150,590 140,590 133,583 133,573" fill="rgba(85,184,255,0.2)" stroke="#55B8FF" strokeOpacity="0.7" />
+          <text x="145" y="602" textAnchor="middle" fontSize="7" fill="#55B8FF">pia batismal</text>
+          {/* Coro no piso superior */}
+          <rect x="112" y="612" width="216" height="40" rx="5" fill="rgba(85,184,255,0.05)" stroke="rgba(85,184,255,0.3)" strokeDasharray="4 4" />
+          <text x="322" y="624" textAnchor="end" fontSize="7" fill="#55B8FF">CORO (piso superior)</text>
+          {/* Água benta e porta principal */}
+          <circle cx="190" cy="656" r="4" fill="rgba(85,184,255,0.4)" />
+          <circle cx="250" cy="656" r="4" fill="rgba(85,184,255,0.4)" />
+          <rect x="196" y="661" width="48" height="8" rx="2" fill="#07090D" stroke="rgba(255,255,255,0.45)" />
+          <text x="220" y="684" textAnchor="middle" {...label}>PORTA PRINCIPAL · ADRO</text>
 
           {/* posições */}
           {SPOTS.map((s) => {
