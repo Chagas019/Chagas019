@@ -1,9 +1,12 @@
 // Função do Vercel: Criador de conteúdo da Comunica+Fé.
 // Recebe o pedido do formulário, monta o texto do pedido aqui no servidor e chama a API do Claude.
 // A chave fica só na variável de ambiente ANTHROPIC_API_KEY do Vercel e nunca vai para o navegador.
-// Só a equipe usa: o pedido precisa do token de login do Firebase de alguém com documento em equipe/{uid}.
+// Só a equipe usa: o pedido precisa da sessão de uma conta da equipe (api/conta.mjs) ou do token do Firebase de alguém com documento em equipe/{uid}.
 // Chamada direta com fetch, sem dependências: o projeto no Vercel publica sem etapa de instalação.
 import { createPublicKey, createVerify } from "node:crypto";
+import { configurado } from "./_lib/armazem.mjs";
+import { lerToken, contaDoPedido, daEquipe } from "./_lib/sessao.mjs";
+import { corpoDe, tokenDe } from "./_lib/pedido.mjs";
 
 const MODELO = "claude-opus-5-5";
 const TIPOS = {
@@ -56,7 +59,7 @@ export async function conferirToken(token, projeto, chaves) {
   if (dados.aud !== projeto || dados.iss !== `https://securetoken.google.com/${projeto}` || !dados.sub || dados.exp <= agora || dados.iat > agora + 60) return null;
   return dados.sub;
 }
-async function daEquipe(uid, token, projeto) {
+async function daEquipeFirebase(uid, token, projeto) {
   // lê equipe/{uid} com o próprio token da pessoa: as regras do Firestore decidem se ela pode ler
   const r = await fetch(`https://firestore.googleapis.com/v1/projects/${projeto}/databases/(default)/documents/equipe/${encodeURIComponent(uid)}`, { headers: { authorization: "Bearer " + token } });
   return r.ok;
@@ -72,7 +75,8 @@ function dentroDoLimite(uid) {
 
 export default async function handler(req, res) {
   const chave = process.env.ANTHROPIC_API_KEY, projeto = process.env.FIREBASE_PROJECT_ID, semLogin = process.env.CONTEUDO_SEM_LOGIN === "1";
-  const falta = [...(chave ? [] : ["chave"]), ...(projeto || semLogin ? [] : ["login"])];
+  const contas = configurado();
+  const falta = [...(chave ? [] : ["chave"]), ...(projeto || contas || semLogin ? [] : ["login"])];
   res.setHeader("cache-control", "no-store");
   if (req.method === "GET") return res.status(200).json({ configurado: !falta.length, exigeLogin: !semLogin, falta });
   if (req.method !== "POST") return res.status(405).json({ erro: "Método não permitido." });
@@ -80,14 +84,24 @@ export default async function handler(req, res) {
 
   let uid = "aberto";
   if (!semLogin) {
-    const token = (req.headers.authorization || "").replace(/^Bearer\s+/i, "");
-    try { uid = token ? await conferirToken(token, projeto, await chavesGoogle()) : null; } catch { return res.status(503).json({ erro: "Não foi possível conferir o login agora. Tente de novo." }); }
-    if (!uid) return res.status(401).json({ erro: "Entre com a conta da equipe (aba Perfil) para usar a IA." });
-    if (!(await daEquipe(uid, token, projeto).catch(() => false))) return res.status(403).json({ erro: "Sua conta ainda não faz parte da equipe. Peça acesso à coordenação." });
+    const token = tokenDe(req);
+    if (contas && lerToken(token)) {
+      // conta do próprio site
+      let c;
+      try { c = await contaDoPedido(req); } catch { return res.status(503).json({ erro: "Não foi possível conferir o login agora. Tente de novo." }); }
+      if (!c) return res.status(401).json({ erro: "Sua sessão acabou. Entre de novo pela aba Perfil." });
+      if (!daEquipe(c)) return res.status(403).json({ erro: "Sua conta ainda não faz parte da equipe. Peça acesso à coordenação." });
+      uid = c.id;
+    } else {
+      if (!projeto) return res.status(401).json({ erro: "Entre com a conta da equipe (aba Perfil) para usar a IA." });
+      try { uid = token ? await conferirToken(token, projeto, await chavesGoogle()) : null; } catch { return res.status(503).json({ erro: "Não foi possível conferir o login agora. Tente de novo." }); }
+      if (!uid) return res.status(401).json({ erro: "Entre com a conta da equipe (aba Perfil) para usar a IA." });
+      if (!(await daEquipeFirebase(uid, token, projeto).catch(() => false))) return res.status(403).json({ erro: "Sua conta ainda não faz parte da equipe. Peça acesso à coordenação." });
+    }
   }
   if (!dentroDoLimite(uid)) return res.status(429).json({ erro: "Muitos pedidos seguidos. Espere um pouco e tente de novo." });
 
-  const corpo = typeof req.body === "string" ? (() => { try { return JSON.parse(req.body); } catch { return {}; } })() : req.body || {};
+  const corpo = corpoDe(req);
   const pedido = montarPedido(corpo);
   if (!pedido) return res.status(400).json({ erro: "Escreva o tema e as informações da comunidade." });
 

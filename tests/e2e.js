@@ -808,6 +808,103 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     }
   }
 
+  console.log("21. Contas e banco de dados do site (servidor de verdade, com o banco na memória)");
+  {
+    process.env.ARMAZEM = "memoria";
+    const api = {};
+    for (const n of ["conta", "dados", "conteudo"]) api[n] = (await import("file://" + path.join(RAIZ, "api", n + ".mjs"))).default;
+    const ORIGEM = "https://comunica-fe.teste";
+    const MIME = { ".html": "text/html", ".js": "text/javascript", ".webp": "image/webp", ".jpg": "image/jpeg", ".png": "image/png", ".svg": "image/svg+xml", ".json": "application/json", ".mp4": "video/mp4" };
+    const servir = async route => {
+      const req = route.request(), u = new globalThis.URL(req.url());
+      if (u.pathname.startsWith("/api/")) {
+        const h = api[u.pathname.split("/")[2]];
+        if (!h) return route.fulfill({ status: 404, body: "" });
+        const res = { c: 200, b: null, status(c) { this.c = c; return this; }, json(b) { this.b = b; return this; }, setHeader() {} };
+        await h({ method: req.method(), headers: req.headers(), url: u.pathname + u.search, query: Object.fromEntries(u.searchParams), body: req.postData() ? JSON.parse(req.postData()) : {} }, res);
+        return route.fulfill({ status: res.c, contentType: "application/json", body: JSON.stringify(res.b) });
+      }
+      const f = path.join(TMP, u.pathname === "/" ? "index.html" : decodeURIComponent(u.pathname));
+      if (!f.startsWith(TMP) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) return route.fulfill({ status: 404, body: "" });
+      return route.fulfill({ status: 200, body: fs.readFileSync(f), contentType: MIME[path.extname(f)] || "application/octet-stream" });
+    };
+    const aparelho = async (largura = 1280) => {
+      const ctx = await browser.newContext({ viewport: { width: largura, height: 860 } });
+      await ctx.route(ORIGEM + "/**", servir);
+      const p = await ctx.newPage(); p.erros = [];
+      p.on("pageerror", e => p.erros.push(e.message));
+      p.on("console", m => { if (m.type() === "error" && !/status of 40[134]/.test(m.text())) p.erros.push(m.text()); });
+      await p.goto(ORIGEM + "/"); await p.waitForTimeout(700);
+      return p;
+    };
+    const puxar = p => p.evaluate(() => srv.puxar()).then(() => p.waitForTimeout(150));
+
+    const a = await aparelho();
+    check(await a.evaluate(() => backend) === "servidor", "no site publicado, os dados ficam no banco do site");
+    check(/Entre com a sua conta/.test(await a.textContent("[data-mode]")) && await a.isHidden("#ev-add"), "sem login: somente leitura");
+    await a.click("#avatar");
+    check(/E-mail ou nome de usuário/.test(await a.textContent("#modal-body")) && !(await a.$("#modal [data-prov]")), "login com e-mail ou usuário, sem Google nem Facebook");
+    await a.click('[data-modo="criar"]');
+    await a.fill("#c-nome", "Ana Souza"); await a.fill("#c-login", "ana@exemplo.com"); await a.fill("#c-senha", "segredo1"); await a.fill("#c-senha2", "outra");
+    await a.click("#conta-form button[type=submit]");
+    check(/diferentes/.test(await a.textContent("#c-note")), "senhas diferentes são recusadas antes de enviar", (await a.textContent("#modal-body")).replace(/\s+/g, " ").slice(0, 300) + " | " + a.erros.join(" | "));
+    await a.fill("#c-senha2", "segredo1"); await a.click("#conta-form button[type=submit]"); await a.waitForTimeout(500);
+    check(/Coordenação/.test(await a.textContent("#modal-body")) && await a.textContent("#avatar") === "AS", "a primeira conta já entra como coordenação, sem confirmar e-mail");
+    await fechar(a);
+    check(await a.isVisible("#ev-add") && /coordenação/.test(await a.textContent("[data-mode]")), "coordenação vê os botões de publicar");
+    await a.click("#ev-add"); await a.fill("#e-t", "Missa da comunidade"); await a.click("#ev-form button[type=submit]"); await a.waitForTimeout(400);
+    check(/Missa da comunidade/.test(await a.textContent("#ev-list")), "evento publicado vai para o banco e aparece na hora");
+    await fechar(a);
+
+    const b = await aparelho(390);
+    check(/Missa da comunidade/.test(await b.textContent("#ev-list")), "outro aparelho, sem login, vê o evento publicado");
+    await b.click("#avatar"); await b.click('[data-modo="criar"]');
+    await b.fill("#c-nome", "João Silva"); await b.fill("#c-login", "joao.silva"); await b.fill("#c-senha", "senha123"); await b.fill("#c-senha2", "senha123");
+    await b.click("#conta-form button[type=submit]"); await b.waitForTimeout(500);
+    check(/Visitante/.test(await b.textContent("#modal-body")) && /coordenação vê seu nome/.test(await b.textContent("#modal-body")), "conta com nome de usuário entra como visitante");
+    await fechar(b);
+    check(await b.isHidden("#ev-add"), "visitante não publica");
+
+    await a.click("#avatar"); await a.waitForSelector("[data-papel]");
+    check((await a.$$("#eq-contas li")).length === 2, "coordenação vê a lista de contas");
+    const idJoao = await a.$eval("#eq-contas li:has-text('joao.silva') [data-papel]", e => e.dataset.papel);
+    await a.selectOption(`[data-papel="${idJoao}"]`, "membro"); await a.waitForTimeout(300);
+    check(/Acesso atualizado/.test(await a.textContent("#toast")), "coordenação libera o acesso de João à equipe");
+    await a.click(`[data-redefinir="${idJoao}"]`); await a.click(`[data-redefinir="${idJoao}"]`); await a.waitForTimeout(300);
+    const prov = (await a.textContent(".senha-prov code")).trim();
+    check(/^[a-z2-9]{8}$/.test(prov), "coordenação gera uma senha provisória para quem esqueceu");
+    await fechar(a);
+
+    await b.reload(); await b.waitForTimeout(700);
+    check(await b.textContent("#avatar") === "EU", "senha provisória desconecta a sessão antiga");
+    await b.click("#avatar"); await b.fill("#c-login", "joao.silva"); await b.fill("#c-senha", "senha123"); await b.click("#conta-form button[type=submit]"); await b.waitForTimeout(400);
+    check(/incorretos/.test(await b.textContent("#c-note")), "senha antiga não entra mais");
+    await b.fill("#c-senha", prov); await b.click("#conta-form button[type=submit]"); await b.waitForTimeout(500);
+    check(/Equipe/.test(await b.textContent("#modal-body .conta-perfil")), "João entra com a senha provisória e já é da equipe");
+    await b.click(".conta-senha summary"); await b.fill("#s-atual", prov); await b.fill("#s-nova", "novasenha9"); await b.click("#senha-form button[type=submit]"); await b.waitForTimeout(400);
+    check(/trocada/.test(await b.textContent("#s-note")), "João troca a senha");
+    await fechar(b);
+    await b.evaluate(() => openEscalaForm()); await b.fill("#s-h", "10:00"); await b.fill("#s-foto", "João"); await b.click("#esc-form button[type=submit]"); await b.waitForTimeout(500);
+    check(/Missa dominical/.test(await b.textContent("#modal h2")), "equipe publica uma escala");
+    await fechar(b);
+    await puxar(a);
+    check(/1 de 7 funções/.test(await a.textContent("#esc-card")), "a escala publicada no celular aparece no computador");
+    await b.click("[data-bnav=equipe]"); await b.waitForTimeout(300);
+    check(!/aparece para quem faz parte da equipe/.test(await b.textContent("#corpo-equipe")), "equipe vê a lista de integrantes");
+    // aviso: só a coordenação
+    check(await b.isHidden("#aviso-add") && await a.isVisible("#aviso-add"), "só a coordenação vê o botão de aviso");
+    // progresso da formação vai junto com a conta
+    await a.evaluate(() => { lidas.add("0"); saveForm(); }); await a.waitForTimeout(900);
+    const c = await aparelho();
+    await c.click("#avatar"); await c.fill("#c-login", "ANA@exemplo.com"); await c.fill("#c-senha", "segredo1"); await c.click("#conta-form button[type=submit]"); await c.waitForTimeout(600);
+    check(await c.evaluate(() => lidas.has("0")), "o progresso da formação aparece em outro aparelho");
+    await c.click("#conta-sair"); await c.waitForTimeout(200);
+    check(await c.textContent("#avatar") === "EU" && await c.isHidden("#ev-add"), "sair da conta volta para somente leitura");
+    check(!a.erros.length && !b.erros.length && !c.erros.length, "contas e banco sem erros", [...a.erros, ...b.erros, ...c.erros].join(" | "));
+    for (const x of [a, b, c]) await x.context().close();
+    delete process.env.ARMAZEM;
+  }
+
   console.log("20. Revisão geral: todas as abas e janelas, sem liturgia e sem erros");
   for (const largura of [1280, 390]) {
     const ctx = await browser.newContext({ viewport: { width: largura, height: 860 } });

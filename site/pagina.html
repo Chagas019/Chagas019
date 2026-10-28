@@ -528,7 +528,7 @@
   .cam-body .tip { padding: 12px 14px; border-radius: 14px; background: rgba(108, 76, 241, .1); border: 1px solid rgba(108, 76, 241, .3); }
   .cam-chal { margin-top: 16px; padding: 18px; border-radius: 18px; background: #fff; color: var(--ink); color-scheme: light; }
   .cam-chal .tag { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--red); font-weight: 700; }
-  .cam-chal h5 { margin: 4px 0 8px; font-size: 19px; font-weight: 600; }
+  .cam-chal h4, .cam-chal h5 { margin: 4px 0 8px; font-size: 19px; font-weight: 600; }
   .cam-chal ol { margin: 0 0 10px; padding-left: 20px; font-size: 14.5px; line-height: 1.5; }
   .cam-chal .resp { font-size: 13px; color: var(--muted); margin: 0 0 10px; }
   .cam-sits { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; align-items: start; }
@@ -1753,9 +1753,46 @@
     .bnav button { color: rgba(255, 255, 255, .8); border-right: 0; }
     .bnav button[aria-current="page"] { background: var(--gx-o) !important; color: #fff !important; }
   }
+
+  /* ==========================================================================
+     Contraste (WCAG AA): o laranja vivo fica como fundo, com texto grafite por
+     cima (5,3:1); como cor de texto em fundo claro, usamos um laranja queimado
+     (#9a3007, 5:1 ou mais). Peças só decorativas não mudam.
+     ========================================================================== */
+  :root { --gx-o-txt: #9a3007; }
+  .pular { position: fixed; left: 12px; top: -60px; z-index: 1000; padding: 10px 16px; border-radius: 999px; background: var(--gx-o); color: var(--gx-ink); font: 600 15px var(--font-body); text-decoration: none; }
+  .pular:focus { top: 12px; }
+  main:focus { outline: none; }
+  /* texto em cima do laranja: grafite */
+  .bh-tags li:nth-child(2), .bento .nb-btn.lime, .bh-cta .nb-btn.lime, .bento .ds-btn.primary, .qcard:nth-child(3n+2), .qcard:nth-child(3n+2) b, .qcard:nth-child(3n+2) small,
+  .sec-label, .bv, .bv .b-h h2, .bv .ds-state, .bv .ds-state span, .ds-chip.ok, .form-cam, .form-cam b, .form-cam small, .bf .ftile:nth-child(3n+2), .bf .ftile:nth-child(3n+2) b, .bf .ftile:nth-child(3n+2) small,
+  .fw-btn.main, .card.feature, .card.feature .title, .card.feature .feature-q, .card.feature .title .k, #hero-name, #hero-quote, #hero-kicker, .credit a,
+  .b-h .nb-btn.sm, .ds-h .ds-btn.ghost.sm, .bnav button[aria-current="page"], .evi .dia, .evi .dia b, .evi .dia small, .mes .d.hoje, .avatar.logado, .to-top, .play-link, .card .add, .ctl.big,
+  .eqc[aria-pressed="true"], .eqc[aria-pressed="true"] b, .eqc[aria-pressed="true"] small, .cam-phone[aria-checked="true"], .doc[aria-expanded="true"],
+  .tab[aria-selected="true"], .fchip[aria-pressed="true"], .fchip[aria-checked="true"], .tl-y[aria-selected="true"], .cam-tab[aria-selected="true"], .ag-cats button[aria-pressed="true"],
+  .cri-tipos button[aria-pressed="true"], .msheet .grid button[aria-current="true"], .cam-objs .fchip[aria-checked="true"], .lt-read[aria-pressed="true"], .chk .st[data-st="concluido"],
+  .conta-modo button[aria-pressed="true"], #rail-next, .round:hover, .m-close:hover, .top-actions .btn-pill:hover, .nb-ico:nth-child(2), .ds-btn.primary:not(.sec .ds-btn):not(dialog .ds-btn) {
+    color: var(--gx-ink) !important;
+  }
+  .bv .ds-state { border-color: rgba(30, 30, 28, .5) !important; background: rgba(255, 255, 255, .22) !important; }
+  .card.feature .title .k, #hero-kicker { opacity: .8; }
+  .bento .nb-btn.lime > svg, .bento .ds-btn.primary > svg, .bv .nb-btn > svg { background: rgba(30, 30, 28, .16) !important; color: var(--gx-ink) !important; }
+  .bf .ftile:nth-child(3n+2) .ds-chip { color: #fff !important; }
+  /* laranja como texto em fundo claro: laranja queimado */
+  .sec .cam-card h4, .sec .cam-sit summary .tag, .sec .cam-chal .tag, .sec .cam-table thead th, .sec .cam-lesson summary .n, .sec .cam-body h5, .sec .cam-principle b,
+  .doc .tag, .mod-n, .bh-code .k, .sem .linha.hoje .q, .sem .linha.hoje .q b, dialog .msheet .hd b, .sec .sem .linha.hoje .q { color: var(--gx-o-txt) !important; }
+
+  /* conta do próprio site */
+  .contas-l { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .contas-l li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding: 10px 12px; border-radius: 14px; background: #fff; }
+  .contas-l li > div { flex: 1 1 160px; min-width: 0; }
+  .contas-l b { display: block; } .contas-l small { color: var(--muted); overflow-wrap: anywhere; }
+  .contas-l select { min-height: 40px; border-radius: 999px; border: 1px solid #b9b8b1; padding: 0 12px; background: #fff; font: inherit; }
+  .senha-prov code { font-size: 15px; font-weight: 700; }
+  .conta-senha summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; }
 </style>
 
-<h1 class="sr">Comunica+Fé: comunicação católica a serviço da comunidade</h1>
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
 <div class="scroll-bar" aria-hidden="true"><span id="scroll-fill"></span></div>
 <noscript><p style="max-width:640px;margin:0 auto 16px;color:#fff">Comunica+Fé: escala das missas, agenda da comunidade, frase do dia e os santos padroeiros da comunicação. Ative o JavaScript para usar o site.</p></noscript>
 
@@ -1776,6 +1813,8 @@
       <button class="avatar" id="avatar" data-nav data-action="conta" aria-label="Minha conta: entrar ou criar conta">EU</button>
     </div>
   </header>
+  <main id="conteudo" tabindex="-1">
+  <h1 class="sr">Comunica+Fé: comunicação católica a serviço da comunidade</h1>
 
   <div id="painel-inicio" class="bento" data-painel="inicio" role="tabpanel" aria-labelledby="tab-inicio">
   <section class="bh" id="abertura" aria-labelledby="show-h">
@@ -2128,6 +2167,8 @@
     <div class="faq" id="faq"></div>
     <button class="btn-pill" data-action="join" style="margin-top:22px">Quero servir</button>
   </section>
+
+  </main>
 
   <footer class="colophon">
     <button class="cf-logo" data-action="home" aria-label="Comunica+Fé, voltar ao início">COMUNICA<em>+</em>FÉ</button>
@@ -2780,24 +2821,76 @@ const local = {
   async del(c, id) { const all = localRead(c); delete all[id]; store.set("db:" + c, all); this.emit(c); },
 };
 let db = null;
+/* Banco do próprio site (api/dados.mjs e api/conta.mjs, num Blob privado do Vercel).
+   O site pede as coleções a cada 25 segundos (e na hora, quando a pessoa volta para a aba);
+   cada gravação já devolve a coleção atualizada. A versão (v) evita voltar para um dado mais velho. */
+var srvConta = null;
+const srv = {
+  cols: {}, t: null,
+  token: () => store.get("sessao", null),
+  async pedir(url, { method = "GET", body } = {}) {
+    const headers = { "content-type": "application/json" }, tk = this.token();
+    if (tk) headers.authorization = "Bearer " + tk;
+    const r = await fetch(url, { method, headers, cache: "no-store", body: body ? JSON.stringify(body) : undefined });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw Object.assign(new Error(d.erro || "falha"), { msg: d.erro, status: r.status, code: r.status === 401 || r.status === 403 ? "permission-denied" : r.status === 507 ? "quota_exceeded" : "srv" });
+    return d;
+  },
+  watch(c, cb) {
+    const col = (this.cols[c] ||= { cbs: [], v: -1, docs: null });
+    col.cbs.push(cb);
+    if (col.docs) cb(col.docs);
+    this.agendar(30);
+    return () => { col.cbs = col.cbs.filter(x => x !== cb); };
+  },
+  aplicar(c, r) {
+    const col = this.cols[c];
+    if (!col || !r || r.v < col.v) return;
+    col.v = r.v; col.docs = r.docs || [];
+    col.cbs.forEach(cb => cb(col.docs));
+  },
+  async puxar() {
+    const cs = Object.keys(this.cols).filter(c => this.cols[c].cbs.length);
+    try {
+      if (!cs.length) return;
+      const r = await this.pedir("/api/dados?c=" + cs.join(","));
+      for (const [c, x] of Object.entries(r.colecoes || {})) this.aplicar(c, x);
+      if ((r.negadas || []).length) { r.negadas.forEach(c => { carga[c] = "restrito"; }); renderAbaAtual(); }
+    } catch (e) {
+      console.warn("dados", e && e.message);
+      cs.forEach(c => { if (!this.cols[c].docs) carga[c] = "erro"; });
+      desenharPainel(); renderAbaAtual();
+    } finally { this.agendar(document.hidden ? 120e3 : 25e3); }
+  },
+  agendar(ms) { clearTimeout(this.t); this.t = setTimeout(() => this.puxar(), ms); },
+  async set(c, id, d) { this.aplicar(c, await this.pedir("/api/dados", { method: "POST", body: { c, id, d } })); },
+  async del(c, id) { this.aplicar(c, await this.pedir("/api/dados", { method: "POST", body: { c, id, apagar: true } })); },
+};
+document.addEventListener("visibilitychange", () => { if (backend === "servidor" && !document.hidden) srv.agendar(0); });
 // estado de carregamento de cada coleção: "carregando", "ok" ou "erro" (para os avisos de carregamento e de falha)
 const carga = {};
 const data = {
   watch(c, cb) {
     carga[c] = "carregando";
     const ok = rows => { carga[c] = "ok"; cb(rows); };
+    if (backend === "servidor") return srv.watch(c, ok);
     if (!db) return local.watch(c, ok);
     return db.collection(c).onSnapshot(s => ok(s.docs.map(d => ({ id: d.id, ...d.data() }))), e => { console.warn(c, e && e.code); carga[c] = "erro"; desenharPainel(); renderAbaAtual(); });
   },
-  async set(c, id, d) { if (!db) return local.set(c, id, d); await db.collection(c).doc(id).set(d); },
+  async set(c, id, d) { if (backend === "servidor") return srv.set(c, id, d); if (!db) return local.set(c, id, d); await db.collection(c).doc(id).set(d); },
   async add(c, d) { const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7); return this.set(c, id, d); },
-  async del(c, id) { if (!db) return local.del(c, id); await db.collection(c).doc(id).delete(); },
+  async del(c, id) { if (backend === "servidor") return srv.del(c, id); if (!db) return local.del(c, id); await db.collection(c).doc(id).delete(); },
 };
 // papel na equipe quando o site usa o Firebase: "coordenacao" (publica tudo), "membro" (agenda, escala e cobertura) ou null
 var papel = null;
-const podeCoordenar = () => canWrite && (backend !== "firebase" || papel === "coordenacao");
+const podeCoordenar = () => canWrite && (!["firebase", "servidor"].includes(backend) || papel === "coordenacao");
 function modeText() {
   if (backend === "db") return canWrite ? "Você faz parte da equipe e pode publicar." : "Somente leitura. Peça acesso de Colaborador à equipe da Comunica+Fé para publicar.";
+  if (backend === "servidor") {
+    if (!srvConta) return "Somente leitura. Entre com a sua conta (botão Perfil) para publicar.";
+    if (!papel) return "Sua conta ainda não faz parte da equipe. Peça à coordenação para liberar seu acesso.";
+    return papel === "coordenacao" ? "Você é da coordenação: pode publicar e editar tudo." : "Você faz parte da equipe e pode publicar na agenda, na escala e nas coberturas.";
+  }
   if (backend === "firebase") {
     if (!fbUser) return "Somente leitura. Entre com a conta da equipe (botão Perfil) para publicar.";
     if (!papel) return "Sua conta ainda não faz parte da equipe. Peça à coordenação para liberar seu acesso.";
@@ -2809,7 +2902,7 @@ async function writeOr(fn, okMsg) {
   try { await fn(); okMsg && toast(okMsg); return true; }
   catch (e) {
     if (e && e.code === "invalid_argument" && backend === "db") { canWrite = false; applyTeam(); toast("Você não tem permissão para publicar aqui."); }
-    else if (e && e.code === "permission-denied") toast("Sua conta não tem permissão para isso. Fale com a coordenação.");
+    else if (e && e.code === "permission-denied") toast(e.msg || "Sua conta não tem permissão para isso. Fale com a coordenação.");
     else if (e && e.code === "quota_exceeded") toast("O espaço de dados está cheio. Apague itens antigos.");
     else toast("Não foi possível salvar. Tente de novo.");
     return false;
@@ -2950,6 +3043,9 @@ async function startData() {
     await iniciarConta();
     if (fbDb) { db = fbDb; backend = "firebase"; canWrite = false; if (fbUser) atualizarPapel(fbUser); }
     else canWrite = true;
+  } else if (await servidorAtivo()) {
+    backend = "servidor"; canWrite = !!papel;
+    if (srvConta) contaSalvar(); // junta o progresso deste aparelho com o da conta
   } else canWrite = true;
   applyTeam();
   data.watch("avisos", rows => { avisos = rows; desenharPainel(); renderAbaAtual(); });
@@ -4052,7 +4148,7 @@ let camFeitos = new Set(store.get("camDesafios", []));
 const PHONE_SVG = `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>`;
 function camDesafioHTML(d) {
   const feito = camFeitos.has(d.n);
-  return `<div class="cam-chal"><span class="tag">Desafio ${d.n}</span><h5>${d.t}</h5><ol>${d.passos.map(p => `<li>${p}</li>`).join("")}</ol>
+  return `<div class="cam-chal"><span class="tag">Desafio ${d.n}</span><h4>${d.t}</h4><ol>${d.passos.map(p => `<li>${p}</li>`).join("")}</ol>
     <p class="resp">Respeite a celebração, a privacidade das pessoas e as orientações da comunidade: fotografe fora dos momentos centrais da liturgia e peça autorização para publicar rostos, principalmente de crianças.</p>
     <label class="check"><input type="checkbox" data-cam-desafio="${d.n}"${feito ? " checked" : ""}> Concluí este desafio</label></div>`;
 }
@@ -4226,31 +4322,159 @@ async function carregarConta() {
     fbAuth.getRedirectResult && fbAuth.getRedirectResult().catch(e => { fbErro = msgErro(e); });
   } catch (e) { fbErro = "Não foi possível carregar o login agora. Confira a internet e tente de novo."; console.warn("login", e); }
 }
+const iniciaisDe = n => String(n || "").split(/[\s._@-]+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join("") || "EU";
 function desenharAvatar() {
-  const a = $("avatar");
-  a.textContent = fbUser ? iniciaisConta(fbUser) : "EU";
-  a.classList.toggle("logado", !!fbUser);
-  a.setAttribute("aria-label", fbUser ? `Minha conta: ${nomeConta(fbUser)}` : "Minha conta: entrar ou criar conta");
+  const a = $("avatar"), nome = fbUser ? nomeConta(fbUser) : srvConta ? srvConta.nome : null;
+  a.textContent = fbUser ? iniciaisConta(fbUser) : srvConta ? iniciaisDe(srvConta.nome) : "EU";
+  a.classList.toggle("logado", !!nome);
+  a.setAttribute("aria-label", nome ? `Minha conta: ${nome}` : "Minha conta: entrar ou criar conta");
+}
+/* ---------- Contas do próprio site (sem Google, Facebook nem confirmação por e-mail) ---------- */
+const progressoLocal = () => ({ lidas: [...lidas], quiz: quizRes, camDesafios: [...camFeitos], camCat: camCat || null });
+function juntarProgresso(d) {
+  if (!d) return;
+  lidas = new Set([...lidas, ...(d.lidas || [])]);
+  for (const [k, v] of Object.entries(d.quiz || {})) quizRes[k] = Math.max(quizRes[k] ?? 0, v);
+  camFeitos = new Set([...camFeitos, ...(d.camDesafios || [])]);
+  if (!camCat && d.camCat) camSetCat(d.camCat);
+  store.set("lidas", [...lidas]); store.set("quiz", quizRes); store.set("camDesafios", [...camFeitos]);
+  renderFormacao(); renderCamTabs();
+}
+// a conta chegou (login, cadastro ou ao abrir o site): ajusta o papel, o avatar e o progresso
+function aplicarContaServidor(conta, progresso) {
+  srvConta = conta || null; papel = conta ? conta.papel || null : null;
+  if (backend === "servidor") canWrite = !!papel;
+  desenharAvatar(); applyTeam(); assinarDadosDaEquipe();
+  if (conta) { juntarProgresso(progresso); contaSalvar(); }
+}
+// "sim" quando o site tem o banco ativo; false quando não tem (GitHub Pages, arquivo local, banco desligado).
+// Se o servidor existe mas demorou ou falhou, o site fica em somente leitura e tenta de novo depois,
+// em vez de cair no modo local (onde o que se publica ficaria só neste aparelho).
+const SITE_COM_SERVIDOR = /vercel\.app$|^comunica-fe/.test(location.hostname);
+async function servidorAtivo(tentativa = 0) {
+  if (!/^https?:$/.test(location.protocol)) return false;
+  let d;
+  try {
+    d = await Promise.race([srv.pedir("/api/conta"), new Promise((_, n) => setTimeout(() => n(Object.assign(new Error("tempo"), { status: 0 })), 12000))]);
+  } catch (e) {
+    if (e && e.status === 404) return false;
+    if (tentativa < 1) return servidorAtivo(tentativa + 1);
+    if (!SITE_COM_SERVIDOR && !(e && e.status >= 500)) return false;
+    setTimeout(() => servidorAtivo(9).then(ok => { if (ok && backend === "servidor") aplicarContaServidor(srvConta, null); }), 20000);
+    return true;
+  }
+  if (!d || d.ativo !== true) return false;
+  if (!d.conta && srv.token()) store.set("sessao", null); // o servidor respondeu que a sessão não vale mais
+  srvConta = d.conta || null; papel = srvConta ? srvConta.papel || null : null;
+  desenharAvatar();
+  if (srvConta) juntarProgresso(d.progresso);
+  return true;
+}
+function sairServidor() { store.set("sessao", null); aplicarContaServidor(null); srv.agendar(0); }
+const NOME_PAPEL = { coordenacao: "Coordenação", membro: "Equipe" };
+function openContaServidor() {
+  const servir = `<button type="button" class="btn-line" data-action="join">Quero servir na Comunica+Fé</button>`;
+  if (srvConta) {
+    const c = srvConta;
+    return openModal(`<div class="m-plain" data-conta>${closeBtn()}<h2>Minha conta</h2>
+      <div class="conta-perfil"><span class="avatar logado" aria-hidden="true">${esc(iniciaisDe(c.nome))}</span><div><b>${esc(c.nome)}</b><small>${esc(c.login)} · ${c.papel ? NOME_PAPEL[c.papel] : "Visitante"}</small></div></div>
+      <p class="empty" style="margin:0">Seu progresso da formação e dos desafios da câmera fica salvo nesta conta e aparece em qualquer aparelho em que você entrar.</p>
+      <div class="read-block"><h4>Equipe</h4><p>${esc(modeText())}</p>${c.papel ? "" : `<p>A coordenação vê seu nome (${esc(c.nome)}) na lista de contas e libera o acesso por lá.</p>`}</div>
+      ${c.papel === "coordenacao" ? `<div class="read-block" id="eq-contas"><h4>Contas e acessos</h4><p class="empty" style="margin:0">Carregando as contas…</p></div>` : ""}
+      <details class="conta-senha"><summary>Trocar minha senha</summary>
+        <form class="join" id="senha-form" novalidate>
+          <div class="field"><label for="s-atual">Senha atual</label><input id="s-atual" type="password" autocomplete="current-password"></div>
+          <div class="field"><label for="s-nova">Nova senha (mínimo 6 caracteres)</label><input id="s-nova" type="password" autocomplete="new-password"></div>
+          <p class="note" id="s-note" role="status"></p><button class="btn-line" type="submit">Salvar nova senha</button></form></details>
+      <div class="m-actions"><button type="button" class="btn-red" id="conta-sair" style="padding:0 18px">Sair da conta</button>${servir}</div></div>`, () => {
+      $("conta-sair").onclick = () => { sairServidor(); toast("Você saiu da conta"); modal.close(); };
+      $("senha-form").onsubmit = async e => {
+        e.preventDefault();
+        try { const r = await srv.pedir("/api/conta", { method: "POST", body: { acao: "senha", atual: $("s-atual").value, nova: $("s-nova").value } }); store.set("sessao", r.token); $("s-note").textContent = "Senha trocada."; $("senha-form").reset(); }
+        catch (err) { $("s-note").textContent = err.msg || "Não foi possível trocar agora."; }
+      };
+      if (c.papel === "coordenacao") desenharContas();
+    });
+  }
+  const criar = contaModo === "criar";
+  openModal(`<div class="m-plain" data-conta>${closeBtn()}<h2>${criar ? "Criar minha conta" : "Entrar na Comunica+Fé"}</h2>
+    <p class="empty" style="margin:0">Entre com seu e-mail <b>ou</b> com um nome de usuário que você inventar. Não precisa confirmar nada por e-mail.</p>
+    <div class="conta-modo" role="group" aria-label="Entrar ou criar conta"><button type="button" data-modo="entrar" aria-pressed="${!criar}">Entrar</button><button type="button" data-modo="criar" aria-pressed="${criar}">Criar conta</button></div>
+    <form class="join" id="conta-form" novalidate>
+      ${criar ? `<div class="field"><label for="c-nome">Seu nome</label><input id="c-nome" autocomplete="name" maxlength="60"></div>` : ""}
+      <div class="field"><label for="c-login">E-mail ou nome de usuário</label><input id="c-login" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="${criar ? "Ex.: maria@gmail.com ou maria.silva" : ""}"></div>
+      <div class="field"><label for="c-senha">${criar ? "Crie uma senha (mínimo 6 caracteres)" : "Senha"}</label><input id="c-senha" type="password" autocomplete="${criar ? "new-password" : "current-password"}"></div>
+      ${criar ? `<div class="field"><label for="c-senha2">Repita a senha</label><input id="c-senha2" type="password" autocomplete="new-password"></div>` : ""}
+      <p class="note" id="c-note" role="status"></p>
+      <button class="btn-red" type="submit">${criar ? "Criar conta" : "Entrar"}</button>
+      ${criar ? "" : `<button type="button" class="btn-line" id="c-esqueci">Esqueci minha senha</button>`}
+    </form>
+    <p class="empty" style="margin:0;font-size:12px">Guardamos só seu nome, seu login e seu progresso. A senha fica guardada de um jeito que nem a equipe consegue ler. ${servir}</p></div>`, () => {
+    const nota = t => { $("c-note").textContent = t; };
+    mBody.querySelectorAll("[data-modo]").forEach(b => b.onclick = () => { contaModo = b.dataset.modo; openConta(); });
+    $("c-esqueci") && ($("c-esqueci").onclick = () => nota("Peça para alguém da coordenação gerar uma senha provisória para você (em Perfil, na lista de contas). Depois, entre e troque a senha."));
+    $("conta-form").onsubmit = async e => {
+      e.preventDefault();
+      const login = $("c-login").value.trim(), senha = $("c-senha").value, btn = e.submitter || $("conta-form").querySelector("[type=submit]");
+      if (!login) { nota("Digite seu e-mail ou nome de usuário."); $("c-login").focus(); return; }
+      if (senha.length < 6) { nota("A senha precisa ter pelo menos 6 caracteres."); $("c-senha").focus(); return; }
+      let body = { acao: "entrar", login, senha };
+      if (criar) {
+        const nome = $("c-nome").value.trim().replace(/\s+/g, " ");
+        if (nome.replace(/[^\p{L}]/gu, "").length < 2) { nota("Escreva seu nome."); $("c-nome").focus(); return; }
+        if (!login.includes("@") && !/^[a-zA-Z0-9][a-zA-Z0-9._-]{2,29}$/.test(login)) { nota("O nome de usuário precisa ter de 3 a 30 letras ou números, sem espaço (pode usar ponto, traço ou sublinhado)."); $("c-login").focus(); return; }
+        if (senha !== $("c-senha2").value) { nota("As duas senhas estão diferentes."); $("c-senha2").focus(); return; }
+        body = { acao: "criar", nome, login, senha, progresso: progressoLocal() };
+      }
+      btn.disabled = true; nota(criar ? "Criando sua conta…" : "Entrando…");
+      try {
+        const r = await srv.pedir("/api/conta", { method: "POST", body });
+        store.set("sessao", r.token); contaModo = "entrar";
+        aplicarContaServidor(r.conta, r.progresso); srv.agendar(0);
+        toast(criar ? `Conta criada. Bem-vindo(a), ${r.conta.nome.split(" ")[0]}!` : `Olá, ${r.conta.nome.split(" ")[0]}!`);
+        openConta();
+      } catch (err) { nota(err.msg || "Não foi possível agora. Confira a internet e tente de novo."); btn.disabled = false; }
+    };
+    $(criar ? "c-nome" : "c-login").focus();
+  });
+}
+// lista de contas para a coordenação: liberar acesso e gerar senha provisória
+async function desenharContas() {
+  const box = $("eq-contas"); if (!box) return;
+  try {
+    const { contas } = await srv.pedir("/api/conta", { method: "POST", body: { acao: "equipe" } });
+    if (!$("eq-contas")) return;
+    box.innerHTML = `<h4>Contas e acessos</h4><p class="empty" style="margin:0 0 8px;font-size:13px">Quem cria conta entra como visitante. Escolha o papel de cada pessoa.</p>
+      <ul class="contas-l">${contas.map(c => `<li><div><b>${esc(c.nome)}</b><small>${esc(c.login)}</small></div>
+        <label class="sr" for="pp-${esc(c.id)}">Papel de ${esc(c.nome)}</label><select id="pp-${esc(c.id)}" data-papel="${esc(c.id)}"${c.id === srvConta.id ? " disabled" : ""}>
+          ${[["", "Visitante"], ["membro", "Equipe"], ["coordenacao", "Coordenação"]].map(([v, n]) => `<option value="${v}"${(c.papel || "") === v ? " selected" : ""}>${n}</option>`).join("")}</select>
+        ${c.id === srvConta.id ? "" : `<button type="button" class="ds-btn ghost sm" data-redefinir="${esc(c.id)}">Senha provisória</button>`}</li>`).join("")}</ul>`;
+    box.querySelectorAll("[data-papel]").forEach(sel => sel.onchange = async () => {
+      try { await srv.pedir("/api/conta", { method: "POST", body: { acao: "papel", id: sel.dataset.papel, papel: sel.value || null } }); toast("Acesso atualizado"); }
+      catch (err) { toast(err.msg || "Não foi possível mudar agora."); desenharContas(); }
+    });
+    box.querySelectorAll("[data-redefinir]").forEach(b => b.onclick = async () => {
+      if (!b.classList.contains("confirm")) { b.classList.add("confirm"); b.textContent = "Confirmar nova senha"; return; }
+      try { const r = await srv.pedir("/api/conta", { method: "POST", body: { acao: "redefinir", id: b.dataset.redefinir } }); b.outerHTML = `<span class="senha-prov">Nova senha: <code style="user-select:all">${esc(r.senha)}</code></span>`; }
+      catch (err) { toast(err.msg || "Não foi possível agora."); }
+    });
+  } catch (err) { box.innerHTML = `<h4>Contas e acessos</h4><p class="empty" style="margin:0">${esc(err.msg || "Não foi possível carregar as contas.")}</p>`; }
 }
 // junta o progresso salvo na conta com o deste aparelho, sem perder nada dos dois lados
 async function puxarProgresso(u) {
   try {
-    const ref = fbDb.collection("usuarios").doc(u.uid), snap = await ref.get(), d = snap.exists ? snap.data() || {} : {};
-    lidas = new Set([...lidas, ...(d.lidas || [])]);
-    for (const [k, v] of Object.entries(d.quiz || {})) quizRes[k] = Math.max(quizRes[k] ?? 0, v);
-    camFeitos = new Set([...camFeitos, ...(d.camDesafios || [])]);
-    if (!camCat && d.camCat) camSetCat(d.camCat);
-    store.set("lidas", [...lidas]); store.set("quiz", quizRes); store.set("camDesafios", [...camFeitos]);
-    renderFormacao(); renderCamTabs();
+    const ref = fbDb.collection("usuarios").doc(u.uid), snap = await ref.get();
+    juntarProgresso(snap.exists ? snap.data() || {} : {});
     await gravarProgresso();
   } catch (e) { console.warn("progresso", e); }
 }
 function gravarProgresso() {
+  if (backend === "servidor" && srvConta) return srv.pedir("/api/conta", { method: "POST", body: { acao: "progresso", progresso: progressoLocal() } });
   if (!fbUser || !fbDb) return Promise.resolve();
   return fbDb.collection("usuarios").doc(fbUser.uid).set({ nome: nomeConta(fbUser), lidas: [...lidas], quiz: quizRes, camDesafios: [...camFeitos], camCat: camCat || null, atualizadoEm: Date.now() }, { merge: true });
 }
 function contaSalvar() {
-  if (!fbUser) return;
+  if (!fbUser && !(backend === "servidor" && srvConta)) return;
   clearTimeout(contaSalvarT);
   contaSalvarT = setTimeout(() => gravarProgresso().catch(e => console.warn("progresso", e)), 600);
 }
@@ -4260,9 +4484,10 @@ function openConta() {
     return openModal(`<div class="m-plain" data-conta>${closeBtn()}<h2>Minha conta</h2>
       <p class="empty" style="margin:0">Aqui você está usando o site dentro do Claude: quem pode publicar é definido pela sua conta do Claude. ${esc(modeText())}</p>${servir}</div>`);
   }
+  if (backend === "servidor") return openContaServidor();
   if (!FIREBASE_CONFIG) {
     return openModal(`<div class="m-plain" data-conta>${closeBtn()}<h2>Minha conta</h2>
-      <p class="empty" style="margin:0">As contas ainda não foram ativadas neste site. Logo você vai poder entrar com e-mail e senha, Google, Facebook ou Apple e guardar seu progresso em qualquer aparelho.</p>
+      <p class="empty" style="margin:0">As contas ainda não foram ativadas neste site. No site publicado, você entra com e-mail ou nome de usuário e senha, e guarda seu progresso em qualquer aparelho.</p>
       <p class="empty" style="margin:0">Enquanto isso, seu progresso da formação e dos desafios fica salvo neste aparelho.</p>${servir}</div>`);
   }
   if (fbUser) {
@@ -4575,7 +4800,7 @@ document.addEventListener("click", e => { if (e.target.closest("[data-recarregar
 function assinarDadosDaEquipe() {
   unsubEquipe.forEach(u => { try { if (typeof u === "function") u(); } catch {} });
   unsubEquipe = [];
-  if (backend === "firebase" && !canWrite) { membros = []; coberturas = []; carga.membros = carga.coberturas = "restrito"; renderAbaAtual(); return; }
+  if ((backend === "firebase" || backend === "servidor") && !canWrite) { membros = []; coberturas = []; carga.membros = carga.coberturas = "restrito"; renderAbaAtual(); return; }
   unsubEquipe.push(data.watch("membros", rows => { membros = rows; renderAbaAtual(); }));
   unsubEquipe.push(data.watch("coberturas", rows => { coberturas = rows; renderAbaAtual(); }));
 }
@@ -4975,7 +5200,7 @@ function irFormacao(ir) {
   if (i >= 0) openLicao(i); else setTab("formacao");
 }
 document.addEventListener("click", e => { const b = e.target.closest("[data-form-ir]"); if (b) irFormacao(b.dataset.formIr); });
-$("formacao").querySelector(".form-grid").insertAdjacentHTML("beforebegin", `<div class="ds-h"><div><h3 id="cat-f-h">Assuntos para comunicadores</h3><p>Cada assunto mostra se o material já está disponível no site.</p></div></div>
+$("formacao").querySelector(".form-grid").insertAdjacentHTML("beforebegin", `<div class="ds-h"><div><h2 id="cat-f-h">Assuntos para comunicadores</h2><p>Cada assunto mostra se o material já está disponível no site.</p></div></div>
   <div class="cat-f" id="cat-f" aria-labelledby="cat-f-h"></div>`);
 function renderCatalogo() { $("cat-f").innerHTML = CATALOGO_FORM.map(catTile).join(""); }
 
@@ -4998,8 +5223,8 @@ async function verificarCriador() {
 function criStatusHTML() {
   if (!criStatus) return `<div class="cri-status">Verificando a IA…</div>`;
   if (criStatus.via === "claude") return `<div class="cri-status">Usando a IA do Claude.</div>`;
-  if (criStatus.via === "site") return `<div class="cri-status">IA ativa.${criStatus.login ? (canWrite && backend === "firebase" ? " Você está na equipe e pode usar." : " Só a equipe usa: entre pela aba Perfil com a conta da equipe.") : ""}</div>`;
-  const falta = (criStatus.falta || []).map(f => ({ chave: "a chave da IA (ANTHROPIC_API_KEY) no Vercel", login: "o login da equipe (Firebase e FIREBASE_PROJECT_ID no Vercel)" })[f] || f);
+  if (criStatus.via === "site") return `<div class="cri-status">IA ativa.${criStatus.login ? (canWrite && (backend === "firebase" || backend === "servidor") ? " Você está na equipe e pode usar." : " Só a equipe usa: entre pela aba Perfil com a conta da equipe.") : ""}</div>`;
+  const falta = (criStatus.falta || []).map(f => ({ chave: "a chave da IA (ANTHROPIC_API_KEY) no Vercel", login: "o banco de contas do site (Blob no Vercel)" })[f] || f);
   return `<div class="cri-status off">${criStatus.rede ? "Não consegui falar com o servidor da IA agora." : `A IA ainda não foi ativada neste site.${falta.length ? " Falta: " + esc(falta.join("; ")) + "." : ""} O passo a passo está em LOGIN.md.`} Enquanto isso, use “Copiar pedido” e cole em um assistente de IA, ou abra o site pelo link do Claude.</div>`;
 }
 function criPedido() {
@@ -5064,7 +5289,8 @@ async function gerarConteudo() {
       texto = r && typeof r.texto === "string" ? r.texto : "";
     } else {
       const headers = { "content-type": "application/json" };
-      if (fbUser && fbUser.getIdToken) headers.authorization = "Bearer " + await fbUser.getIdToken();
+      if (backend === "servidor" && srv.token()) headers.authorization = "Bearer " + srv.token();
+      else if (fbUser && fbUser.getIdToken) headers.authorization = "Bearer " + await fbUser.getIdToken();
       const r = await fetch(CRI_API, { method: "POST", headers, body: JSON.stringify(p) });
       const d = await r.json().catch(() => ({}));
       if (!r.ok) throw Object.assign(new Error(d.erro || "falha"), { msg: d.erro });
