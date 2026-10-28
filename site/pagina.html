@@ -1,5 +1,5 @@
 <title>Comunica+Fé</title>
-<meta name="description" content="Comunica+Fé: liturgia do dia, agenda da comunidade, escala da equipe, cobertura fotográfica, criador de conteúdo e formação para comunicadores católicos.">
+<meta name="description" content="Comunica+Fé: agenda da comunidade, escala da equipe, cobertura fotográfica, criador de conteúdo e formação para comunicadores católicos.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,700..900&family=Space+Mono:wght@400;700&family=Inter+Tight:wght@500;600&family=Cinzel:wght@600;800&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -50,7 +50,7 @@
   .i3d { display: inline-grid; place-items: center; flex-shrink: 0; width: var(--s, 56px); height: var(--s, 56px); border-radius: calc(var(--s, 56px) * .28); background: #101010; overflow: hidden; }
   .i3d img { width: 112%; height: 112%; object-fit: cover; display: block; }
 
-  /* ---------- Faixa da equipe (liturgia, agenda, frases) ---------- */
+  /* ---------- Faixa da equipe (agenda, frases) ---------- */
   .p-head { display: flex; align-items: center; gap: 12px; }
   .p-head h2 { font-size: 17px; font-weight: 500; margin: 0; }
   .p-head .sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
@@ -62,13 +62,6 @@
   }
   .add:hover { transform: rotate(90deg); box-shadow: 0 6px 18px -6px var(--red); }
   .add[hidden] { display: none; }
-  .season { display: flex; flex-wrap: wrap; gap: 6px; }
-  .season span { font-size: 12px; padding: 6px 10px; border-radius: 999px; background: #fff; display: inline-flex; align-items: center; gap: 6px; }
-  .season .dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgba(0,0,0,.15); }
-  .readings { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
-  .readings li { display: grid; grid-template-columns: 124px 1fr; gap: 10px; font-size: 13px; padding: 8px 10px; background: #fff; border-radius: 10px; }
-  .readings li b { font-weight: 600; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; align-self: center; }
-  .readings li span { min-width: 0; overflow-wrap: anywhere; }
   .p-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
   .btn-sm { min-height: 38px; padding: 0 14px; border-radius: 999px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
   .btn-sm.dark { background: var(--ink); color: #fff; }
@@ -389,14 +382,10 @@
   .pick-arrows { display: flex; gap: 6px; }
   .switch-wrap { display: grid; justify-items: end; gap: 3px; font-size: 10px; color: var(--on-dark-muted); }
 
-  /* cards de conteúdo da equipe (liturgia, agenda, frases da equipe) */
+  /* cards de conteúdo da equipe (agenda, frases da equipe) */
   .card.text .p-head { display: flex; align-items: center; gap: 12px; }
   .card.text .p-head .add { margin-left: auto; }
   .card.text .sub { font-size: 12px; color: var(--on-dark-muted); }
-  .card .season { gap: 4px; }
-  .card .season span { background: rgba(255,255,255,.08); color: #fff; font-size: 11px; padding: 4px 8px; }
-  .card .readings li { background: rgba(255,255,255,.06); color: #fff; grid-template-columns: 1fr; gap: 2px; padding: 8px 10px; }
-  .card .readings li b { color: var(--on-dark-muted); }
   .card .scroll { min-height: 0; overflow: auto; display: grid; gap: 8px; align-content: start; scrollbar-width: thin; }
   .card .mode { font-size: 11px; color: var(--on-dark-muted); }
 
@@ -1768,7 +1757,7 @@
 
 <h1 class="sr">Comunica+Fé: comunicação católica a serviço da comunidade</h1>
 <div class="scroll-bar" aria-hidden="true"><span id="scroll-fill"></span></div>
-<noscript><p style="max-width:640px;margin:0 auto 16px;color:#fff">Comunica+Fé: escala das missas, liturgia do dia, agenda da comunidade, frase do dia e os santos padroeiros da comunicação. Ative o JavaScript para usar o site.</p></noscript>
+<noscript><p style="max-width:640px;margin:0 auto 16px;color:#fff">Comunica+Fé: escala das missas, agenda da comunidade, frase do dia e os santos padroeiros da comunicação. Ative o JavaScript para usar o site.</p></noscript>
 
 <div class="wrap">
   <header class="topbar">
@@ -1793,8 +1782,8 @@
     <div class="bh-txt">
       <p class="bh-tag">Comunica+Fé · Equipe de Comunicação <span aria-hidden="true">✝</span></p>
       <h2 id="show-h" class="bh-h"><span class="hash" aria-hidden="true">#</span>Comunicação<br>que <em>evangeliza.</em></h2>
-      <p class="bh-sub">Liturgia, agenda, formação e comunicação da comunidade em um só lugar.</p>
-      <ul class="bh-tags" aria-label="O que tem aqui"><li>Liturgia do dia</li><li>Escala da equipe</li><li>Formação</li><li>Criador de conteúdo</li></ul>
+      <p class="bh-sub">Agenda, escala, formação e comunicação da comunidade em um só lugar.</p>
+      <ul class="bh-tags" aria-label="O que tem aqui"><li>Agenda</li><li>Escala da equipe</li><li>Formação</li><li>Criador de conteúdo</li></ul>
       <div class="bh-cta"><button class="nb-btn lime" data-ir="painel">Acessar painel <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></button><button class="nb-btn" data-action="agenda">Ver agenda <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" aria-hidden="true"><path d="M12 4v15M6 13l6 6 6-6"/></svg></button></div>
       <p class="bh-k">Espalhe a boa notícia</p>
       <div class="bh-soc">
@@ -1806,7 +1795,7 @@
     </div>
     <div class="bh-art">
       <div class="bh-frame"><img src="fotos/carlo-acutis.jpg" alt="São Carlo Acutis, padroeiro da internet" width="600" height="800" fetchpriority="high"></div>
-      <pre class="bh-code" id="bh-code" aria-label="Liturgia de hoje"></pre>
+      <pre class="bh-code" id="bh-code" aria-label="Missão da Comunica+Fé"></pre>
     </div>
   </section>
 
@@ -1826,7 +1815,7 @@
         <div class="tools">
           <label class="filter"><span class="mini" id="filter-mini" aria-hidden="true"></span><span class="sr">Mostrar</span>
             <select id="filtro">
-              <option value="tudo">Tudo</option><option value="missas">Missas e escalas</option><option value="liturgia">Liturgia</option>
+              <option value="tudo">Tudo</option><option value="missas">Missas e escalas</option>
               <option value="agenda">Agenda</option><option value="santos">Santos</option><option value="frases">Frases</option>
             </select>
           </label>
@@ -1879,21 +1868,6 @@
           <div class="body" id="esc-body"></div>
         </article>
 
-        <!-- Liturgia do dia -->
-        <article class="card text" id="liturgia-painel" data-group="liturgia" aria-labelledby="litu-h">
-          <div class="body">
-            <div class="p-head">
-              <span class="i3d" style="--s:44px"><img src="icones/livros.webp" alt=""></span>
-              <div><h3 id="litu-h">Liturgia do dia</h3><div class="sub" id="litu-date"></div></div>
-              <button class="add" id="litu-add" data-team hidden aria-label="Publicar liturgia de hoje"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
-            </div>
-            <div class="season" id="litu-season"></div>
-            <div class="scroll" id="litu-body"></div>
-            <div class="foot"><button class="ghost-pill" id="litu-read">Ler a liturgia ›</button></div>
-            <span class="mode" data-mode></span>
-          </div>
-        </article>
-
         <!-- Agenda -->
         <article class="card text" data-group="agenda" aria-labelledby="agen-h">
           <div class="body">
@@ -1904,6 +1878,7 @@
             </div>
             <ul class="ev-list scroll" id="ev-list"></ul>
             <div class="foot"><button class="ghost-pill" data-action="agenda">Ver agenda completa ›</button></div>
+            <span class="mode" data-mode></span>
           </div>
         </article>
 
@@ -1983,11 +1958,6 @@
   </section>
   </div><!-- fim do painel Início -->
 
-  <section class="sec" id="aba-liturgia" data-painel="liturgia" role="tabpanel" aria-labelledby="tab-liturgia" hidden>
-    <div class="sec-label">[ Liturgia ]</div>
-    <h2 class="sec-h2">Liturgia do dia</h2>
-    <div class="tab-sheet" id="corpo-liturgia"></div>
-  </section>
 
   <section class="sec" id="aba-agenda" data-painel="agenda" role="tabpanel" aria-labelledby="tab-agenda" hidden>
     <div class="sec-label">[ Agenda ]</div>
@@ -2233,7 +2203,7 @@
 <nav class="bnav" id="bnav" aria-label="Navegação principal">
   <button type="button" data-bnav="inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/><path d="M10 19.5v-5h4v5"/></svg>Início</button>
   <button type="button" data-bnav="agenda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Agenda</button>
-  <button type="button" data-bnav="liturgia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5c-2-1.6-5-2-8-1.5v13c3-.5 6-.1 8 1.5 2-1.6 5-2 8-1.5V5c-3-.5-6-.1-8 1.5z"/><path d="M12 6.5v13"/></svg>Liturgia</button>
+  <button type="button" data-bnav="formacao"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 9 12 4.5 21.5 9 12 13.5z"/><path d="M6.5 11v5c1.6 1.5 3.4 2.2 5.5 2.2s3.9-.7 5.5-2.2v-5"/></svg>Formação</button>
   <button type="button" data-bnav="equipe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 19.5c.6-3.3 3-5.2 6-5.2s5.4 1.9 6 5.2"/><path d="M15.5 4.9a3.2 3.2 0 0 1 0 6.2M17.5 14.6c1.9.6 3.1 2.3 3.5 4.9"/></svg>Equipe</button>
   <button type="button" data-bnav="perfil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1-3.8 4-5.8 7.5-5.8s6.5 2 7.5 5.8"/></svg>Perfil</button>
 </nav>
@@ -2707,9 +2677,9 @@ document.addEventListener("click", async e => {
   }
 });
 const DEEP = {
-  frase: () => openFraseWin(), abertura: () => setTab("inicio"), hoje: () => { setTab("inicio", { rolar: false }); scrollToSec("hoje")(); }, liturgia: () => openLiturgia(), agenda: () => openAgenda(), escalas: () => openAgenda(), agendar: () => openEscalaForm(), frases: () => openFrasesEquipe(),
+  frase: () => openFraseWin(), abertura: () => setTab("inicio"), hoje: () => { setTab("inicio", { rolar: false }); scrollToSec("hoje")(); }, agenda: () => openAgenda(), escalas: () => openAgenda(), agendar: () => openEscalaForm(), frases: () => openFrasesEquipe(),
   formacao: () => setTab("formacao"), camera: () => setTab("camera"), linha: () => setTab("linha"), documentos: () => setTab("documentos"), glossario: () => setTab("glossario"), perguntas: () => setTab("perguntas"),
-  "aba-liturgia": () => setTab("liturgia"), "aba-agenda": () => setTab("agenda"), "aba-frases": () => setTab("frases"), "aba-santos": () => setTab("santos"), conta: () => openConta(),
+  "aba-agenda": () => setTab("agenda"), "aba-frases": () => setTab("frases"), "aba-santos": () => setTab("santos"), conta: () => openConta(),
   equipe: () => setTab("equipe"), cobertura: () => setTab("cobertura"), criador: () => setTab("criador"), painel: () => { setTab("inicio", { rolar: false }); scrollToSec("painel")(); },
   galeria: () => openGallery(), participar: () => openJoin(), buscar: () => openSearch(),
 };
@@ -2745,7 +2715,7 @@ function updateEventsJsonLd() {
 }
 
 /* =========================================================
-   Dados compartilhados: agenda, frases e liturgia
+   Dados compartilhados: agenda, escalas e frases
    (no Claude: banco compartilhado; fora dele: só neste aparelho)
    ========================================================= */
 let backend = "local", canWrite = false, myId = null, sampleFn = null;
@@ -2757,12 +2727,11 @@ const FONTES = {
 const fonteHTML = k => { const f = FONTES[k]; if (!f || k === "outra") return ""; return `Fonte: ${esc(f.nome)}`; };
 const normTxt = t => String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[–—−]/g, "-").replace(/[“”«»"']/g, "").replace(/\s+/g, "");
 const inSource = (v, src) => !!v && normTxt(src).includes(normTxt(v));
-function importBox(kind) {
-  const isLit = kind === "lit";
+function importBox() {
   return `<div class="import" id="imp">
-    <h3>Trazer ${isLit ? "da liturgia" : "de um site"}</h3>
+    <h3>Trazer de um site</h3>
     <ol>
-      <li>Abra ${isLit ? "a liturgia de hoje" : "a liturgia de hoje (ou o santo do dia, uma homilia ou mensagem)"} num site ou aplicativo de sua confiança.</li>
+      <li>Abra o santo do dia, uma homilia ou uma mensagem num site ou aplicativo de sua confiança.</li>
       <li>Selecione todo o texto da página, copie e cole abaixo.</li>
       <li>${sampleFn ? "Toque em “Preencher automaticamente” e confira os campos." : "Copie as informações para os campos abaixo."}</li>
     </ol>
@@ -2772,17 +2741,11 @@ function importBox(kind) {
     <p class="import-status" id="imp-status" role="status"></p>
   </div>`;
 }
-async function runImport(kind, onFill) {
+async function runImport(onFill) {
   const src = $("imp-src").value.trim(), st = $("imp-status"), btn = $("imp-go");
   st.className = "import-status";
   if (src.length < 40) { st.className = "import-status err"; st.textContent = "Cole o texto da página antes de preencher."; return; }
-  const prompt = kind === "lit"
-    ? `Abaixo está o texto copiado de uma página de liturgia diária católica, em português. Extraia somente as referências bíblicas e o refrão do salmo, copiando os caracteres EXATAMENTE como aparecem no texto. Não invente nem complete nada: use "" quando a informação não estiver no texto. Responda só com JSON neste formato:
-{"data":"sexta-feira, 9 de outubro de 2026","primeira":"Gl 3,7-14","salmo":"Sl 110(111),1-2.3-4.5-6 (R. 5b)","refrao":"O Senhor se lembra sempre da Aliança.","segunda":"","evangelho":"Lc 11,15-26"}
-
-TEXTO:
-${src.slice(0, 30000)}`
-    : `Abaixo está um texto copiado de um site católico, em português. Escolha UMA frase curta e inspiradora (até 200 caracteres) para "frase do dia", copiada EXATAMENTE como está no texto, e diga quem é o autor da frase segundo o próprio texto ("" se o texto não disser). Se o texto for a liturgia diária, prefira o refrão do salmo responsorial (autor: "Salmo responsorial") ou, se não houver, um versículo curto do Evangelho (autor: o Evangelho e a referência, como "Evangelho (Lc 11,15-26)"). Não invente nem edite a frase. Responda só com JSON: {"texto":"...","autor":"..."}
+  const prompt = `Abaixo está um texto copiado de um site católico, em português. Escolha UMA frase curta e inspiradora (até 200 caracteres) para "frase do dia", copiada EXATAMENTE como está no texto, e diga quem é o autor da frase segundo o próprio texto ("" se o texto não disser). Não invente nem edite a frase. Responda só com JSON: {"texto":"...","autor":"..."}
 
 TEXTO:
 ${src.slice(0, 30000)}`;
@@ -2807,7 +2770,7 @@ ${src.slice(0, 30000)}`;
     else st.textContent = "Não consegui ler o texto agora. Tente de novo.";
   } finally { if (btn.isConnected) btn.disabled = false; }
 }
-let agenda = [], teamFrases = [], liturgias = {};
+let agenda = [], teamFrases = [];
 const localRead = c => store.get("db:" + c, {});
 const local = {
   listeners: {},
@@ -2869,120 +2832,12 @@ function wireDeletes(reopen, raiz = mBody) {
   });
 }
 
-/* ---------- Calendário litúrgico (calculado) ---------- */
+/* ---------- Datas ---------- */
 const DAY = 864e5;
 const mk = (y, m, d) => new Date(y, m - 1, d);
 const addD = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
 const diffD = (a, b) => Math.round((a - b) / DAY);
-function easter(y) {
-  const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25),
-    g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4,
-    l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451), mo = Math.floor((h + l - 7 * m + 114) / 31);
-  return mk(y, mo, ((h + l - 7 * m + 114) % 31) + 1);
-}
-const advent1 = y => { const x = mk(y, 12, 25); return addD(x, -(x.getDay() || 7) - 21); };
-function baptism(y) { // Brasil: Epifania no domingo entre 2 e 8 de janeiro
-  let ep = mk(y, 1, 2); while (ep.getDay() !== 0) ep = addD(ep, 1);
-  return ep.getDate() >= 7 ? addD(ep, 1) : addD(ep, 7);
-}
-const COR = { verde: ["Verde", "#2e8b57"], roxo: ["Roxo", "#6b2c91"], branco: ["Branco", "#ffffff"], vermelho: ["Vermelho", "#c8102e"], rosa: ["Rosa", "#e58fb1"] };
-const ORD = n => n + "ª";
-const FESTAS = { // celebrações fixas exibidas no calendário
-  "01-01": ["Santa Maria, Mãe de Deus", "branco"], "01-24": ["São Francisco de Sales", "branco"], "03-19": ["São José", "branco"],
-  "06-29": ["São Pedro e São Paulo", "vermelho"], "08-11": ["Santa Clara de Assis", "branco"], "08-14": ["São Maximiliano Kolbe", "vermelho"],
-  "09-29": ["Santos Arcanjos Miguel, Gabriel e Rafael", "branco"], "10-12": ["Nossa Senhora Aparecida", "branco"],
-  "10-22": ["São João Paulo II", "branco"], "11-02": ["Fiéis Defuntos", "roxo"], "12-08": ["Imaculada Conceição", "branco"], "12-25": ["Natal do Senhor", "branco"],
-};
-function liturgicalDay(d) {
-  const y = d.getFullYear(), E = easter(y), adv = advent1(y), bap = baptism(y);
-  const litYearEnd = d >= adv ? y + 1 : y;
-  const ciclo = ["C", "A", "B"][litYearEnd % 3];
-  const par = litYearEnd % 2 === 0 ? "II" : "I";
-  const sunBefore = x => addD(x, -x.getDay());
-  let tempo, cor, semana = "";
-  const ash = addD(E, -46), palm = addD(E, -7), pent = addD(E, 49);
-  if (d >= adv) {
-    tempo = "Advento"; cor = "roxo";
-    const w = Math.floor(diffD(d, adv) / 7) + 1; semana = `semana ${w}`;
-    if (w === 3 && d.getDay() === 0) cor = "rosa";
-    if (d >= mk(y, 12, 25)) { tempo = "Tempo do Natal"; cor = "branco"; semana = ""; }
-  } else if (d <= bap) { tempo = "Tempo do Natal"; cor = "branco"; if (d.getTime() === bap.getTime()) semana = "Batismo do Senhor"; }
-  else if (d < ash) { tempo = "Tempo Comum"; cor = "verde"; let n = 1; for (let x = addD(bap, 1); x <= d; x = addD(x, 1)) if (x.getDay() === 0) n++; semana = `semana ${n}`; }
-  else if (d < palm) {
-    tempo = "Quaresma"; cor = "roxo";
-    const w = d < addD(ash, 4) ? 0 : Math.floor(diffD(d, addD(ash, 4)) / 7) + 1;
-    semana = w ? `semana ${w}` : (diffD(d, ash) === 0 ? "Quarta-feira de Cinzas" : "Depois das Cinzas");
-    if (w === 4 && d.getDay() === 0) cor = "rosa";
-  } else if (d < addD(E, -3)) { tempo = "Semana Santa"; cor = d.getTime() === palm.getTime() ? "vermelho" : "roxo"; }
-  else if (d < E) { tempo = "Tríduo Pascal"; cor = diffD(E, d) === 2 ? "vermelho" : "branco"; }
-  else if (d <= pent) { tempo = "Tempo Pascal"; cor = d.getTime() === pent.getTime() ? "vermelho" : "branco"; const w = Math.floor(diffD(d, E) / 7) + 1; semana = d.getTime() === pent.getTime() ? "Pentecostes" : `semana ${w}`; }
-  else { tempo = "Tempo Comum"; cor = "verde"; const ck = addD(adv, -7); semana = `semana ${34 - Math.floor(diffD(ck, sunBefore(d)) / 7)}`; }
-  const key = `${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-  const festa = FESTAS[key] && !["Quaresma", "Semana Santa", "Tríduo Pascal"].includes(tempo) ? FESTAS[key] : null;
-  if (festa) cor = festa[1];
-  return { tempo, semana, cor, ciclo, par, festa: festa && festa[0] };
-}
 function weekday(iso) { const [y, m, d] = iso.split("-").map(Number); return mk(y, m, d).toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" }); }
-
-const liturgiaDoDia = () => liturgias[TODAY];
-
-/* ---------- Liturgia: painel e modais ---------- */
-function renderLiturgia() {
-  const L = liturgicalDay(new Date()), [nomeCor, hex] = COR[L.cor];
-  $("litu-date").textContent = weekday(TODAY);
-  $("litu-season").innerHTML = `${L.festa ? `<span><b>${esc(L.festa)}</b></span>` : ""}<span><i class="dot" style="background:${hex}"></i>${nomeCor}</span><span>${L.tempo}${L.semana ? " · " + L.semana : ""}</span><span>Ano ${L.ciclo} · Ano ${L.par}</span>`;
-  const lit = liturgiaDoDia();
-  $("litu-body").innerHTML = lit
-    ? `<ul class="readings">${[["Primeira leitura", lit.primeira], ["Salmo", lit.salmo + (lit.refrao ? " — " + lit.refrao : "")], ["Segunda leitura", lit.segunda], ["Evangelho", lit.evangelho]].filter(r => r[1]).map(([k, v]) => `<li><b>${k}</b><span>${esc(v)}</span></li>`).join("")}</ul>${lit.fonte && lit.fonte !== "outra" ? `<div class="src" style="margin-top:8px">${fonteHTML(lit.fonte)}</div>` : ""}`
-    : `<div class="empty-state">${ico("ampulheta", 40)}<span>${canWrite ? "As leituras de hoje ainda não foram publicadas. Toque em + para publicar." : "A equipe ainda não publicou as leituras de hoje. Confira no lecionário ou no folheto da missa."}</span></div>`;
-  renderAbaAtual(); desenharCodigo();
-}
-// Conteúdo da liturgia, usado na janela e na aba Liturgia
-function liturgiaCorpo() {
-  const L = liturgicalDay(new Date()), lit = liturgiaDoDia();
-  return `<div class="season">${L.festa ? `<span style="background:var(--soft)"><b>${esc(L.festa)}</b></span>` : ""}<span style="background:var(--soft)"><i class="dot" style="background:${COR[L.cor][1]}"></i>${COR[L.cor][0]}</span><span style="background:var(--soft)">${L.tempo}${L.semana ? " · " + L.semana : ""}</span></div>
-    ${lit ? [["Primeira leitura", lit.primeira], ["Salmo responsorial", lit.salmo + (lit.refrao ? "\nR. " + lit.refrao : "")], ["Segunda leitura", lit.segunda], ["Evangelho", lit.evangelho]].filter(r => r[1]).map(([k, v]) => `<div class="read-block"><h4>${k}</h4><p>${esc(v)}</p></div>`).join("") + (lit.texto ? `<div class="read-block"><h4>Texto e reflexão</h4><p>${esc(lit.texto)}</p></div>` : "") + (lit.fonte && lit.fonte !== "outra" ? `<div class="src">${fonteHTML(lit.fonte)}</div>` : "")
-      : `<p class="empty" style="margin:0">As leituras de hoje ainda não foram publicadas pela equipe.</p>`}
-    ${shareRow(`Liturgia de ${weekday(TODAY)}: ${COR[L.cor][0].toLowerCase()}, ${L.tempo}${lit && lit.evangelho ? ". Evangelho: " + lit.evangelho : ""}`, "liturgia")}
-    ${canWrite ? `<button class="btn-red" data-act="lit-edit">${lit ? "Editar leituras de hoje" : "Publicar leituras de hoje"}</button>` : ""}`;
-}
-function openLiturgia() {
-  openModal(`<div class="m-plain">${closeBtn()}<h2>Liturgia de ${esc(weekday(TODAY))}</h2>${liturgiaCorpo()}</div>`);
-}
-function openLiturgiaForm() {
-  const lit = liturgias[TODAY] || {};
-  const f = (id, label, ph, v, area) => `<div class="field"><label for="${id}">${label}</label>${area ? `<textarea id="${id}" placeholder="${ph}">${esc(v)}</textarea>` : `<input id="${id}" placeholder="${ph}" value="${esc(v)}">`}</div>`;
-  openModal(`<div class="m-plain">${closeBtn()}<h2>Leituras de hoje</h2>
-    ${importBox("lit")}
-    <form class="join" id="lit-form" novalidate>
-      ${f("l-1", "Primeira leitura", "Ex.: Gl 3,7-14", lit.primeira || "")}
-      ${f("l-s", "Salmo", "Ex.: Sl 110(111)", lit.salmo || "")}
-      ${f("l-r", "Refrão do salmo", "Ex.: O Senhor se lembra sempre da Aliança.", lit.refrao || "")}
-      ${f("l-2", "Segunda leitura (domingos e solenidades)", "Deixe vazio nos dias de semana", lit.segunda || "")}
-      ${f("l-e", "Evangelho", "Ex.: Lc 11,15-26", lit.evangelho || "")}
-      ${f("l-t", "Texto ou reflexão (opcional)", "Cole aqui o texto do Evangelho ou uma reflexão curta", lit.texto || "", true)}
-      <label class="check"><input type="checkbox" id="l-fr" checked> Publicar também o refrão do salmo como frase do dia</label>
-      <p class="note" id="l-note" role="status"></p>
-      <button class="btn-red" type="submit">Publicar</button>
-    </form></div>`, () => {
-    if (lit.fonte) $("imp-fonte").value = lit.fonte;
-    $("imp-go") && ($("imp-go").onclick = () => runImport("lit", o => {
-      if (o.primeira) $("l-1").value = o.primeira; if (o.salmo) $("l-s").value = o.salmo; if (o.refrao) $("l-r").value = o.refrao;
-      if (o.segunda) $("l-2").value = o.segunda; if (o.evangelho) $("l-e").value = o.evangelho;
-    }));
-    $("lit-form").onsubmit = async e => {
-      e.preventDefault();
-      const d = { primeira: $("l-1").value.trim(), salmo: $("l-s").value.trim(), refrao: $("l-r").value.trim(), segunda: $("l-2").value.trim(), evangelho: $("l-e").value.trim(), texto: $("l-t").value.trim(), fonte: $("imp-fonte").value, criadoPor: myId, atualizadoEm: Date.now() };
-      if (!d.primeira || !d.evangelho) { $("l-note").textContent = "Preencha pelo menos a primeira leitura e o Evangelho."; return; }
-      if (!(await writeOr(() => data.set("liturgia", TODAY, d), "Liturgia publicada"))) return;
-      const jaTem = teamFrases.some(x => x.dia === TODAY && normTxt(x.texto) === normTxt(d.refrao));
-      if ($("l-fr").checked && d.refrao && !jaTem) {
-        await writeOr(() => data.add("frases", { texto: d.refrao.replace(/^R\.\s*/, ""), autor: d.salmo ? `Salmo responsorial (${d.salmo.split(" (R")[0]})` : "Salmo responsorial", dia: TODAY, fonte: d.fonte, criadoPor: myId, criadoEm: Date.now() }), "Liturgia e frase do dia publicadas");
-      }
-      modal.close();
-    };
-  });
-}
 
 /* ---------- Agenda: painel e formulário ---------- */
 const upcoming = () => agenda.filter(e => e.data >= TODAY).sort((a, b) => (a.data + (a.hora || "")).localeCompare(b.data + (b.hora || "")));
@@ -3040,7 +2895,7 @@ function renderFrases() {
 }
 function openFraseForm() {
   openModal(`<div class="m-plain">${closeBtn()}<h2>Publicar frase</h2>
-    ${importBox("frase")}
+    ${importBox()}
     <form class="join" id="fr-form" novalidate>
       <div class="field"><label for="f-t">Frase</label><textarea id="f-t" maxlength="400" placeholder="Escreva a frase exatamente como foi dita ou escrita"></textarea></div>
       <div class="two">
@@ -3050,7 +2905,7 @@ function openFraseForm() {
       <p class="note" id="f-note" role="status"></p>
       <button class="btn-red" type="submit">Publicar frase</button>
     </form></div>`, () => {
-    $("imp-go") && ($("imp-go").onclick = () => runImport("frase", o => { if (o.texto) $("f-t").value = o.texto; if (o.autor) $("f-a").value = o.autor; }));
+    $("imp-go") && ($("imp-go").onclick = () => runImport(o => { if (o.texto) $("f-t").value = o.texto; if (o.autor) $("f-a").value = o.autor; }));
     $("fr-form").onsubmit = async e => {
       e.preventDefault();
       const d = { texto: $("f-t").value.trim().replace(/^["“]|["”]$/g, ""), autor: $("f-a").value.trim(), dia: $("f-d").value || TODAY, fonte: $("imp-src").value.trim() ? $("imp-fonte").value : "", criadoPor: myId, criadoEm: Date.now() };
@@ -3072,10 +2927,8 @@ function openFrasesEquipe() {
 // botões de publicar que aparecem tanto nas janelas quanto nas abas
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-act]"); if (!b) return;
-  ({ "lit-edit": openLiturgiaForm, "ev-add": openEventForm, "esc-add": () => openEscalaForm(), "fr-add": openFraseForm })[b.dataset.act]?.();
+  ({ "ev-add": openEventForm, "esc-add": () => openEscalaForm(), "fr-add": openFraseForm })[b.dataset.act]?.();
 });
-$("litu-add").onclick = openLiturgiaForm;
-$("litu-read").onclick = openLiturgia;
 $("ev-add").onclick = openEventForm;
 $("fr-add").onclick = openFraseForm;
 $("fr-all").onclick = openFrasesEquipe;
@@ -3105,7 +2958,6 @@ async function startData() {
   data.watch("escalas", rows => { escalas = rows; renderEscalaCard(); updateEventsJsonLd(); desenharPainel(); renderAbaAtual(); });
   data.watch("formacao", rows => { historiaLocal = rows.find(r => r.id === "historia") || null; if (leitor.open && $("local-box")) { $("local-box").outerHTML = historiaHTML(); wireHistoria(); } });
   data.watch("frases", rows => { teamFrases = rows; renderFrases(); });
-  data.watch("liturgia", rows => { liturgias = Object.fromEntries(rows.map(r => [r.id, r])); renderLiturgia(); });
 }
 function openSettings() {
   const row = (id, label, on) => `<div class="set-row"><span>${label}</span><button class="switch" id="${id}" role="switch" aria-checked="${on}" aria-label="${label}"></button></div>`;
@@ -3345,7 +3197,7 @@ const FORMACAO = [
 </ul>
 <p>Uma rotina simples ajuda muito: reunião mensal, escala publicada com antecedência, formação contínua e um momento de avaliação depois das grandes festas.</p>
 <h4>No nosso site</h4>
-<p>O botão <b>Agendar missa</b> monta a escala, e cada pessoa pode assumir uma vaga. A agenda e a liturgia do dia ficam no topo da página.</p>` },
+<p>O botão <b>Agendar missa</b> monta a escala, e cada pessoa pode assumir uma vaga. A agenda fica no topo da página.</p>` },
     ],
     quiz: [
       { p: "Em que conferência os bispos da América Latina chamaram todos os batizados a serem discípulos missionários?", op: ["Medellín", "Aparecida", "Puebla"], c: 1, exp: "Aparecida (Brasil, 2007)." },
@@ -4280,15 +4132,14 @@ renderCamera();
    A barra fica fixa abaixo do topo. Só o painel da aba escolhida aparece; o rodapé fica sempre.
    O endereço acompanha a aba (#formacao, #aba-agenda…), para dar para compartilhar o link. */
 const ABAS = [
-  ["inicio", "Início"], ["liturgia", "Liturgia"], ["agenda", "Agenda"], ["equipe", "Equipe"], ["cobertura", "Cobertura"], ["criador", "Criador de conteúdo"],
+  ["inicio", "Início"], ["agenda", "Agenda"], ["equipe", "Equipe"], ["cobertura", "Cobertura"], ["criador", "Criador de conteúdo"],
   ["frases", "Frases"], ["santos", "Santos"], ["formacao", "Formação"], ["camera", "Câmera do celular"], ["linha", "Linha do tempo"], ["documentos", "Documentos"],
   ["glossario", "Glossário"], ["perguntas", "Perguntas"],
 ];
-const ABAS_COM_PREFIXO = ["liturgia", "agenda", "frases", "santos"]; // #liturgia, #agenda e #frases já abrem as janelas
+const ABAS_COM_PREFIXO = ["agenda", "frases", "santos"]; // #agenda e #frases já abrem as janelas
 var abaAtual = null; // var: as funções de desenho podem ser chamadas antes deste trecho rodar
 function renderAbaAtual() {
-  if (abaAtual === "liturgia") $("corpo-liturgia").innerHTML = `<h3>Liturgia de ${esc(weekday(TODAY))}</h3>${liturgiaCorpo()}`;
-  else if (abaAtual === "agenda") renderAgendaTab();
+  if (abaAtual === "agenda") renderAgendaTab();
   else if (abaAtual === "equipe") renderEquipe();
   else if (abaAtual === "cobertura") renderCobertura();
   else if (abaAtual === "criador") renderCriador();
@@ -4671,6 +4522,7 @@ function applyFilter() {
   store.set("filtro", v);
 }
 $("filtro").value = store.get("filtro", "tudo");
+if (!$("filtro").value) $("filtro").value = "tudo";
 $("filtro").onchange = applyFilter;
 const step = () => (cards.find(c => !c.hidden)?.getBoundingClientRect().width || 300) + 18;
 $("rail-prev").onclick = () => rail.scrollBy({ left: -step(), behavior: "smooth" });
@@ -4685,18 +4537,17 @@ document.addEventListener("click", e => { const b = e.target.closest("[data-ir]"
 function openCompartilhar() {
   openModal(`<div class="m-plain">${closeBtn()}<h2>Compartilhar o site da Comunica+Fé</h2>
   <p class="empty" style="margin:0">Envie para a equipe, a família e os amigos da comunidade.</p>
-  ${shareRow("Conheça o site da Comunica+Fé: escala das missas, liturgia do dia, formação e os santos da comunicação.", "")}</div>`);
+  ${shareRow("Conheça o site da Comunica+Fé: escala das missas, agenda, formação e os santos da comunicação.", "")}</div>`);
 }
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-hero]"); if (!b) return;
   ({ servir: openJoin, frase: () => openFraseWin(), share: openCompartilhar })[b.dataset.hero]?.();
 });
-// o quadro roxo da abertura mostra a liturgia de hoje como se fosse código
+// o quadro da abertura mostra a missão da Comunica+Fé como se fosse código
 function desenharCodigo() {
-  const l = liturgiaDoDia(), q = v => `<span class="s">'${esc(v)}'</span>`;
-  const linhas = l ? [["primeira", l.primeira], ["salmo", (l.salmo || "").split(" (R")[0]], l.segunda ? ["segunda", l.segunda] : null, ["evangelho", l.evangelho]].filter(x => x && x[1])
-    : [["missao", "evangelizar"], ["leituras", "veja na aba Liturgia"]];
-  $("bh-code").innerHTML = `<span class="c">&gt; const liturgia_de_hoje = {</span>\n${linhas.map(([k, v]) => `  <span class="k">${k}</span>: ${q(v)},`).join("\n")}\n<span class="c">}</span>`;
+  const q = v => `<span class="s">'${esc(v)}'</span>`;
+  const linhas = [["fe", "comunicar"], ["com", "imagens e palavras"], ["para", "a comunidade"]];
+  $("bh-code").innerHTML = `<span class="c">&gt; const missao = {</span>\n${linhas.map(([k, v]) => `  <span class="k">${k}</span>: ${q(v)},`).join("\n")}\n<span class="c">}</span>`;
 }
 // seções: título sobe ao entrar na tela (já está visível; a animação só toca uma vez)
 if ("IntersectionObserver" in window) {
@@ -4744,7 +4595,7 @@ async function atualizarPapel(u) {
 /* acesso rápido */
 const ICO_Q = {
   agenda: '<rect x="3.5" y="5" width="17" height="15.5" rx="1"/><path d="M3.5 10h17M8 3v4M16 3v4M7.5 14h3v3h-3z"/>',
-  liturgia: '<path d="M12 6.5c-2-1.6-5-2-8-1.5v13c3-.5 6-.1 8 1.5 2-1.6 5-2 8-1.5V5c-3-.5-6-.1-8 1.5z"/><path d="M12 6.5v13M7 9h2.5M14.5 9H17"/>',
+  frases: '<path d="M4 11.5C4 8 6 5.6 9.4 5l.6 1.6C8 7.3 7.1 8.6 7 10h3v8H4zm10 0C14 8 16 5.6 19.4 5l.6 1.6c-2 .7-2.9 2-3 3.4h3v8h-6z"/>',
   equipe: '<circle cx="9" cy="8" r="3.2"/><path d="M3 19.5c.6-3.3 3-5.2 6-5.2s5.4 1.9 6 5.2"/><path d="M15.5 4.9a3.2 3.2 0 0 1 0 6.2M17.5 14.6c1.9.6 3.1 2.3 3.5 4.9"/>',
   cobertura: '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13.5" r="3.6"/>',
   formacao: '<path d="M2.5 9 12 4.5 21.5 9 12 13.5z"/><path d="M6.5 11v5c1.6 1.5 3.4 2.2 5.5 2.2s3.9-.7 5.5-2.2v-5M21.5 9v5"/>',
@@ -4752,7 +4603,7 @@ const ICO_Q = {
 };
 const ATALHOS = [
   { t: "Agenda da comunidade", d: "Missas, reuniões e eventos", aba: "agenda" },
-  { t: "Liturgia do dia", d: "Leituras e salmo de hoje", aba: "liturgia" },
+  { t: "Frases da equipe", d: "Frase do dia e reflexões", aba: "frases" },
   { t: "Escala da equipe", d: "Quem serve em cada celebração", aba: "equipe" },
   { t: "Cobertura fotográfica", d: "Checklist de cada evento", aba: "cobertura" },
   { t: "Formação", d: "Cursos, tutoriais e prática", aba: "formacao" },
@@ -5153,16 +5004,13 @@ function criStatusHTML() {
 }
 function criPedido() {
   const v = id => $(id) ? $(id).value : "";
-  const lit = $("cri-lit") && $("cri-lit").checked ? liturgiaDoDia() : null;
-  return { tipo: criTipo, objetivo: v("cri-obj"), publico: v("cri-pub"), tom: v("cri-tom"), plataforma: v("cri-plat"), tamanho: criTam, tema: v("cri-tema").trim().slice(0, 1200),
-    liturgia: lit ? { primeira: lit.primeira || "", salmo: lit.salmo || "", refrao: lit.refrao || "", segunda: lit.segunda || "", evangelho: lit.evangelho || "" } : null };
+  return { tipo: criTipo, objetivo: v("cri-obj"), publico: v("cri-pub"), tom: v("cri-tom"), plataforma: v("cri-plat"), tamanho: criTam, tema: v("cri-tema").trim().slice(0, 1200) };
 }
 // o mesmo texto de api/conteudo.mjs (o servidor monta o dele; este é usado no Claude e no "Copiar pedido")
 function criPrompt(p) {
   const nomeTipo = (CRI_TIPOS.find(t => t[0] === p.tipo) || CRI_TIPOS[0])[1];
   const tam = { curto: "curto e direto", medio: "de tamanho médio", longo: "mais completo" }[p.tamanho] || "de tamanho médio";
-  const lit = p.liturgia ? `\nLiturgia do dia (referências conferidas): 1ª leitura ${p.liturgia.primeira || "-"}; salmo ${p.liturgia.salmo || "-"}${p.liturgia.refrao ? ` (refrão: “${p.liturgia.refrao}”)` : ""}; ${p.liturgia.segunda ? `2ª leitura ${p.liturgia.segunda}; ` : ""}Evangelho ${p.liturgia.evangelho || "-"}. Não transcreva o texto das leituras; cite só as referências.` : "";
-  return `${CRI_SISTEMA}\n\nPedido: ${nomeTipo}, ${tam}, para ${p.plataforma}.\nObjetivo: ${p.objetivo}.\nPúblico: ${p.publico}.\nTom: ${p.tom}.\nTema e informações da comunidade: ${p.tema}${lit}`;
+  return `${CRI_SISTEMA}\n\nPedido: ${nomeTipo}, ${tam}, para ${p.plataforma}.\nObjetivo: ${p.objetivo}.\nPúblico: ${p.publico}.\nTom: ${p.tom}.\nTema e informações da comunidade: ${p.tema}`;
 }
 const CRI_SISTEMA = `Você ajuda a equipe de comunicação de uma comunidade católica no Brasil a criar conteúdo para redes sociais. Escreva em português do Brasil, fiel à doutrina da Igreja Católica.
 Regras:
@@ -5185,7 +5033,6 @@ function renderCriador() {
       <div class="ds-field"><span id="cri-tam-l" style="font-size:12.5px;color:rgba(255,255,255,.7)">Tamanho do texto</span>
         <div class="ds-seg" role="group" aria-labelledby="cri-tam-l">${[["curto", "Curto"], ["medio", "Médio"], ["longo", "Longo"]].map(([k, n]) => `<button type="button" data-cri-tam="${k}" aria-pressed="${k === criTam}">${n}</button>`).join("")}</div></div>
       <div class="ds-field"><label for="cri-tema">Tema e informações</label><textarea id="cri-tema" maxlength="1200" placeholder="Ex.: Missa de Nossa Senhora Aparecida, dia 12 de outubro, às 19h, na Igreja Matriz, com coroação"></textarea></div>
-      <label style="font-size:14px;display:flex;gap:8px;align-items:center"><input type="checkbox" id="cri-lit"> Usar as referências da liturgia de hoje</label>
       <p class="note" id="cri-note" role="status" style="margin:0"></p>
       <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="ds-btn primary" type="submit" id="cri-go">Gerar conteúdo</button><button class="ds-btn ghost" type="button" id="cri-copiar-pedido">Copiar pedido</button></div>
     </form>
@@ -5232,7 +5079,7 @@ async function gerarConteudo() {
 }
 
 /* navegação do celular: barra inferior com cinco atalhos e menu com todos os assuntos */
-const BNAV_ABA = { inicio: "inicio", agenda: "agenda", liturgia: "liturgia", equipe: "equipe" };
+const BNAV_ABA = { inicio: "inicio", agenda: "agenda", formacao: "formacao", equipe: "equipe" };
 function marcarBnav() {
   $("bnav").querySelectorAll("[data-bnav]").forEach(b => { if (BNAV_ABA[b.dataset.bnav] === abaAtual) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
 }
@@ -5253,7 +5100,7 @@ renderCatalogo();
 iniciarAbas();
 renderHero(); renderPick(); renderMass(); setMassUI(false); renderQuote(); restartHero(); applyFilter(); renderEscalaCard();
 renderFormacao(); renderTimeline(); renderDocs(); onScroll();
-renderLiturgia(); renderAgenda(); renderFrases(); applyTeam();
+desenharCodigo(); renderAgenda(); renderFrases(); applyTeam();
 startData().then(openFromHash);
 iniciarConta();
 </script>

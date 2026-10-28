@@ -22,7 +22,7 @@ window.COMUNICAFE_FIREBASE = { apiKey: "teste", authDomain: "teste.firebaseapp.c
   // Firestore em memória com uma versão simplificada das regras de firestore.rules
   const subs = {};
   const papelDe = () => atual && docs["equipe/" + atual.uid] ? docs["equipe/" + atual.uid].papel : null;
-  const PUBLICAS = ["agenda", "escalas", "avisos", "liturgia", "frases", "formacao"], COORD = ["avisos", "membros", "equipe", "formacao"];
+  const PUBLICAS = ["agenda", "escalas", "avisos", "frases", "formacao"], COORD = ["avisos", "membros", "equipe", "formacao"];
   const podeLer = c => PUBLICAS.includes(c) || (c === "usuarios" ? !!atual : !!papelDe());
   const podeGravar = (c, id) => c === "usuarios" ? !!atual && atual.uid === id : COORD.includes(c) ? papelDe() === "coordenacao" : !!papelDe();
   const linhas = c => Object.entries(docs).filter(([k]) => k.startsWith(c + "/")).map(([k, d]) => ({ id: k.slice(c.length + 1), exists: true, data: () => d }));

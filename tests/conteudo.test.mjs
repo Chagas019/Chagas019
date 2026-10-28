@@ -20,9 +20,9 @@ const chamar = async (req, env = {}) => {
 await t("pedido exige tema", () => assert.equal(montarPedido({ tema: "curto" }), null));
 await t("pedido com tipo desconhecido vira legenda", () => assert.match(montarPedido({ tipo: "qualquer", tema: "Missa da padroeira, sábado" }), /Legenda para Instagram/));
 await t("pedido corta texto longo", () => assert.ok(montarPedido({ tema: "x".repeat(5000) }).length < 1600));
-await t("pedido leva só as referências da liturgia", () => {
-  const p = montarPedido({ tipo: "reels", tema: "Domingo da Palavra", liturgia: { primeira: "Ne 8,2-10", evangelho: "Lc 1,1-4", refrao: "Vossas palavras, Senhor, são espírito e vida." } });
-  assert.match(p, /Roteiro de Reels/); assert.match(p, /Ne 8,2-10/); assert.match(p, /Não transcreva o texto das leituras/);
+await t("pedido ignora o campo antigo de liturgia", () => {
+  const p = montarPedido({ tipo: "reels", tema: "Domingo da Palavra", liturgia: { primeira: "Ne 8,2-10", evangelho: "Lc 1,1-4" } });
+  assert.match(p, /Roteiro de Reels/); assert.ok(!/Ne 8,2-10|Liturgia/.test(p));
 });
 
 // token do Firebase

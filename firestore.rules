@@ -1,6 +1,6 @@
 rules_version = '2';
 // Regras do banco (Firestore) da Comunica+Fé.
-// - Agenda, escalas, avisos, liturgia e frases: qualquer pessoa lê; só a equipe publica.
+// - Agenda, escalas, avisos e frases: qualquer pessoa lê; só a equipe publica.
 // - Equipe: quem tem um documento em equipe/{uid}. O primeiro (papel "coordenacao") é criado à mão no console.
 // - Integrantes e coberturas: só a equipe vê. Avisos, integrantes e acessos: só a coordenação muda.
 // - Progresso de cada pessoa: usuarios/{uid}, só ela lê e grava.
@@ -34,10 +34,6 @@ service cloud.firestore {
       allow read: if true;
       allow create, update: if coord() && texto("titulo", 90) && texto("texto", 800);
       allow delete: if coord();
-    }
-    match /liturgia/{id} {
-      allow read: if true;
-      allow write: if daEquipe();
     }
     match /frases/{id} {
       allow read: if true;

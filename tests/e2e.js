@@ -54,7 +54,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
   {
     const p = await pagina(browser);
     check((await p.$$("h1")).length === 1, "um único h1");
-    for (const [aba, re] of [["liturgia", /Liturgia de/], ["agenda", /Agenda da comunidade/], ["frases", /Frases da equipe/], ["santos", /Carlo Acutis/]]) {
+    for (const [aba, re] of [["agenda", /Agenda da comunidade/], ["frases", /Frases da equipe/], ["santos", /Carlo Acutis/]]) {
       await p.click(`[data-tab=${aba}]`);
       check(await p.isVisible(`[data-painel=${aba}]`) && re.test(await p.textContent(`[data-painel=${aba}]`)), `aba "${aba}" mostra o assunto`);
       check(await p.getAttribute(`[data-tab=${aba}]`, "aria-selected") === "true" && await p.isHidden("[data-painel=inicio]"), `aba "${aba}" fica marcada e esconde as outras`);
@@ -74,11 +74,12 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     check(await p.textContent("#hero-name") !== nome1, "pontos do destaque trocam o santo");
     await p.click("#hero-open"); check(await aberto(p), "Ver história abre o santo"); await fechar(p);
     // filtro e setas do trilho
-    check(await p.textContent("#count") === "8", "contagem mostra 8 cards");
+    check(await p.textContent("#count") === "7", "contagem mostra 7 cards");
+    check(!(await p.$("#liturgia-painel")) && !(await p.$("[data-tab=liturgia]")) && !(await p.$("#filtro option[value=liturgia]")), "a liturgia saiu: sem card, sem aba e sem filtro");
     await p.selectOption("#filtro", "santos");
     check(await p.textContent("#count") === "2" && (await p.$$(".rail .card:not([hidden])")).length === 2, "filtro Santos mostra 2 cards");
     await p.selectOption("#filtro", "missas");
-    check(await p.isVisible("#esc-card") && await p.isHidden("#liturgia-painel"), "filtro Missas mostra a escala e esconde a liturgia");
+    check(await p.isVisible("#esc-card") && await p.isHidden("#hero"), "filtro Missas mostra a escala e esconde os santos");
     await p.selectOption("#filtro", "tudo");
     const x0 = await p.$eval("#rail", r => r.scrollLeft);
     await p.click("#rail-next"); await p.waitForTimeout(600);
@@ -152,10 +153,6 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     await p.click("#fr-form button[type=submit]"); await p.waitForTimeout(200);
     check(/Só o amor é criativo/.test(await p.textContent("#fr-box")), "frase publicada aparece");
     check(/Maximiliano/.test(await p.textContent("#play-sub")), "frase da equipe entra no player");
-    await p.click("#litu-add"); await p.click("#lit-form button[type=submit]");
-    check(/Preencha/.test(await p.textContent("#l-note")), "liturgia sem leituras é recusada");
-    await p.fill("#l-1", "Gl 3,7-14"); await p.fill("#l-e", "Lc 11,15-26"); await p.click("#lit-form button[type=submit]"); await p.waitForTimeout(200);
-    check(/Gl 3,7-14/.test(await p.textContent("#litu-body")), "liturgia publicada aparece");
     check(p.erros.length === 0, "sem erros no console", p.erros.join(" | "));
     await p.context().close();
   }
@@ -198,7 +195,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     await ed.context().close();
 
     const le = await pagina(browser, { mock: mockClaude({ can: false }) }); await le.waitForTimeout(400);
-    check(await le.isHidden("#ev-add") && await le.isHidden("#fr-add") && await le.isHidden("#litu-add"), "leitor não vê botões de publicar");
+    check(await le.isHidden("#ev-add") && await le.isHidden("#fr-add"), "leitor não vê botões de publicar");
     check(/Somente leitura/.test(await le.textContent("[data-mode]")), "leitor vê aviso de somente leitura");
     await le.click("[data-tab=agenda]");
     check(!(await le.$("#corpo-agenda [data-act]")), "leitor não vê 'Novo evento' nem 'Agendar missa' na aba Agenda");
@@ -220,26 +217,23 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
 
   console.log("5. Preenchimento automático (simulado)");
   {
-    const p = await pagina(browser, { mock: mockClaude({ can: true, sample: '{ primeira: "Gl 3,7-14", salmo: "Sl 110(111)", evangelho: "Lc 11,15-26", segunda: "Rm 1,1", refrao: "" }' }) });
+    const p = await pagina(browser, { mock: mockClaude({ can: true, sample: '{ texto: "Só o amor é criativo.", autor: "São Maximiliano Kolbe" }' }) });
     await p.waitForTimeout(400);
-    await p.click("#litu-add");
+    await p.click("#fr-add");
     check(!!(await p.$("#imp-go")), "botão 'Preencher automaticamente' aparece");
+    check(!/liturgia/i.test(await p.textContent("#imp")), "o importador não fala mais de liturgia");
     await p.click("#imp-go"); check(/Cole o texto/.test(await p.textContent("#imp-status")), "sem texto colado, pede o texto");
-    await p.fill("#imp-src", "Primeira leitura (Gl 3,7-14) ... Salmo (Sl 110(111)) ... Evangelho (Lc 11,15-26) texto longo para teste");
+    await p.fill("#imp-src", "Uma reflexão sobre São Maximiliano Kolbe, que disse: Só o amor é criativo. Texto longo para teste.");
     await p.click("#imp-go"); await p.waitForTimeout(200);
-    check(await p.inputValue("#l-1") === "Gl 3,7-14" && await p.inputValue("#l-e") === "Lc 11,15-26", "preenche referências encontradas");
-    check(await p.inputValue("#l-2") === "", "descarta referência que não está no texto");
-    await p.fill("#l-r", "O Senhor se lembra sempre da Aliança.");
-    await p.click("#lit-form button[type=submit]"); await p.waitForTimeout(300);
-    check(/Aliança/.test(await p.textContent("#fr-box")) && /Salmo responsorial/.test(await p.textContent("#fr-box")), "publicar liturgia também publica o refrão como frase do dia");
-    await p.click("#litu-add"); await p.click("#lit-form button[type=submit]"); await p.waitForTimeout(300);
-    await p.click("#fr-all"); check((await p.$$("#modal .m-list .m-item")).length === 1, "republicar a liturgia não duplica a frase do dia");
+    check(await p.inputValue("#f-t") === "Só o amor é criativo." && await p.inputValue("#f-a") === "São Maximiliano Kolbe", "preenche a frase e o autor encontrados no texto");
+    await p.click("#fr-form button[type=submit]"); await p.waitForTimeout(300);
+    check(/Só o amor é criativo/.test(await p.textContent("#fr-box")), "frase preenchida é publicada");
     await p.context().close();
   }
 
   console.log("6. Links diretos");
   {
-    for (const [hash, esperado] of [["#liturgia", /Liturgia de/], ["#agenda", /Agenda/], ["#frases", /Frases da equipe/], ["#galeria", /Santos da comunicação/], ["#participar", /Venha servir/], ["#santo-clara-de-assis", /Santa Clara/], ["#escalas", /Escala das missas/], ["#agendar", /Agendar missa/]]) {
+    for (const [hash, esperado] of [["#agenda", /Agenda/], ["#frases", /Frases da equipe/], ["#galeria", /Santos da comunicação/], ["#participar", /Venha servir/], ["#santo-clara-de-assis", /Santa Clara/], ["#escalas", /Escala das missas/], ["#agendar", /Agendar missa/]]) {
       const p = await pagina(browser, { hash });
       check(await aberto(p) && esperado.test(await p.textContent("#modal-body")), `link ${hash} abre a parte certa`);
       await p.context().close();
@@ -256,7 +250,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     await p.mouse.wheel(0, 1500); await p.waitForTimeout(200);
     check(await p.$eval("#bnav", e => Math.round(innerHeight - e.getBoundingClientRect().bottom)) === barra[1], "navegação inferior continua no lugar ao rolar a página");
     check(await p.$eval("#avatar", e => e.getBoundingClientRect().right <= innerWidth), "botão da conta cabe na tela");
-    for (const aba of ["agenda", "liturgia", "equipe"]) {
+    for (const aba of ["agenda", "formacao", "equipe"]) {
       await p.click(`[data-bnav=${aba}]`); await p.waitForTimeout(100);
       check(await p.isVisible(`[data-painel=${aba}]`) && await p.getAttribute(`[data-bnav=${aba}]`, "aria-current") === "page" && await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `celular: atalho "${aba}" abre a aba sem rolagem lateral`);
     }
@@ -432,7 +426,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
       check(r.fundo === "rgb(44, 44, 42)" && r.laranja === "rgb(255, 90, 31)" && r.destaque === "rgb(255, 90, 31)", `${w}px: cores do leiaute (grafite e laranja)`, JSON.stringify(r));
       check(!r.lateral, `${w}px: sem rolagem lateral`);
       await p.waitForTimeout(300);
-      check(/const liturgia_de_hoje/.test(await p.textContent("#bh-code")), `${w}px: quadro roxo mostra a liturgia de hoje`);
+      check(/const missao/.test(await p.textContent("#bh-code")) && !/liturgia/i.test(await p.textContent("#bh-code")), `${w}px: quadro da abertura mostra a missão`);
       await p.click('[data-hero="servir"]'); await p.waitForTimeout(150);
       check(/Venha servir/.test(await p.textContent("#modal-body")), `${w}px: botão do coração abre a inscrição`); await p.click("#modal [data-close]");
       await p.click('.bh [data-hero="share"]'); await p.waitForTimeout(150);
@@ -507,7 +501,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
   {
     const p = await pagina(browser);
     const abas = await p.$$eval("#tabs [role=tab]", bs => bs.map(b => b.dataset.tab));
-    check(abas.length === 14 && abas[0] === "inicio", "barra com 14 abas, começando pelo Início", abas.join(","));
+    check(abas.length === 13 && abas[0] === "inicio" && !abas.includes("liturgia"), "barra com 13 abas, começando pelo Início e sem Liturgia", abas.join(","));
     for (const aba of abas) {
       await p.click(`[data-tab=${aba}]`);
       const vis = await p.$$eval("[data-painel]", ps => ps.filter(e => !e.hidden).map(e => e.dataset.painel));
@@ -529,7 +523,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     check(await aberto(p) && /Carlo Acutis/.test(await p.textContent("#modal-body")), "aba Santos abre a história do santo"); await fechar(p);
     check(!p.erros.length, "abas sem erros", p.erros.join(" | "));
     await p.context().close();
-    for (const [hash, aba] of [["#aba-liturgia", "liturgia"], ["#camera", "camera"], ["#documentos", "documentos"]]) {
+    for (const [hash, aba] of [["#aba-agenda", "agenda"], ["#camera", "camera"], ["#documentos", "documentos"]]) {
       const q = await pagina(browser, { hash });
       check(await q.getAttribute(`[data-tab=${aba}]`, "aria-selected") === "true" && await q.isVisible(`[data-painel=${aba}]`), `link ${hash} abre a aba certa`);
       await q.context().close();
@@ -614,12 +608,12 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
     const d = new Date(), iso = x => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`;
     const amanha = iso(new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1));
     check(/Comunicação/.test(await p.textContent("#show-h")) && /evangeliza/.test(await p.textContent("#show-h")), "abertura com o título “Comunicação que evangeliza.”");
-    check(/Liturgia, agenda, formação e comunicação da comunidade em um só lugar/.test(await p.textContent(".bh-sub")), "abertura com a nova descrição");
+    check(/Agenda, escala, formação e comunicação da comunidade em um só lugar/.test(await p.textContent(".bh-sub")), "abertura com a nova descrição");
     check(/Acessar painel/.test(await p.textContent(".bh-cta")) && /Ver agenda/.test(await p.textContent(".bh-cta")), "abertura com os botões Acessar painel e Ver agenda");
     await p.click('.bh [data-ir="painel"]'); await p.waitForFunction(() => Math.abs(document.getElementById("painel").getBoundingClientRect().top) < 200, null, { timeout: 3000 }).catch(() => {});
     check(await p.evaluate(() => Math.abs(document.getElementById("painel").getBoundingClientRect().top) < 200), "Acessar painel leva ao painel");
     check((await p.$$("#quick .qcard")).length === 6, "acesso rápido com 6 cartões");
-    for (const [n, aba] of [[0, "agenda"], [1, "liturgia"], [2, "equipe"], [3, "cobertura"], [4, "formacao"], [5, "criador"]]) {
+    for (const [n, aba] of [[0, "agenda"], [1, "frases"], [2, "equipe"], [3, "cobertura"], [4, "formacao"], [5, "criador"]]) {
       await p.click("[data-tab=inicio]"); await p.click(`#quick .qcard >> nth=${n}`);
       check(await p.isVisible(`[data-painel=${aba}]`), `cartão ${n + 1} do acesso rápido abre "${aba}"`);
     }
@@ -812,6 +806,41 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
       check(!erros.length, `${nome}: sem erros`, erros.join(" | "));
       await ctx.close();
     }
+  }
+
+  console.log("20. Revisão geral: todas as abas e janelas, sem liturgia e sem erros");
+  for (const largura of [1280, 390]) {
+    const ctx = await browser.newContext({ viewport: { width: largura, height: 860 } });
+    await ctx.route(/\/api\//, r => r.fulfill({ status: 200, contentType: "application/json", body: "{}" }));
+    // quem tinha escolhido o filtro "Liturgia" antes volta a ver todos os cards
+    await ctx.addInitScript(() => { try { localStorage.setItem("comunicafe:filtro", JSON.stringify("liturgia")); } catch {} });
+    const p = await ctx.newPage(); const erros = [];
+    p.on("pageerror", e => erros.push(e.message));
+    p.on("console", m => { if (m.type() === "error" && !/fotos\//.test(m.location().url) && !/ERR_FILE_NOT_FOUND/.test(m.text())) erros.push(m.text()); });
+    await p.goto(URL); await p.waitForTimeout(500);
+    check(await p.inputValue("#filtro") === "tudo" && await p.textContent("#count") === "7", `${largura}px: filtro antigo "Liturgia" volta para Tudo`);
+    const abas = await p.evaluate(() => ABAS.map(a => a[0]));
+    for (const aba of abas) {
+      await p.evaluate(a => setTab(a), aba); await p.waitForTimeout(80);
+      const r = await p.evaluate(a => { const el = document.querySelector(`[data-painel="${a}"]`); return { ok: !!el && !el.hidden && el.textContent.trim().length > 40, lateral: document.documentElement.scrollWidth > innerWidth }; }, aba);
+      check(r.ok && !r.lateral, `${largura}px: aba "${aba}" abre com conteúdo e sem rolagem lateral`);
+    }
+    const links = await p.evaluate(() => Object.keys(DEEP));
+    check(!links.some(k => /liturg/.test(k)), `${largura}px: nenhum link direto de liturgia`);
+    for (const k of links) {
+      await p.evaluate(() => { const m = document.getElementById("modal"); if (m.open) m.close(); });
+      await p.evaluate(k => DEEP[k](), k); await p.waitForTimeout(80);
+    }
+    await p.evaluate(() => { const m = document.getElementById("modal"); if (m.open) m.close(); setTab("inicio"); });
+    for (const [k, abre] of [["agenda", "Agenda"], ["frase", ""], ["galeria", "Santos"], ["participar", "Venha servir"], ["buscar", "Buscar"], ["agendar", "Agendar missa"]]) {
+      await p.evaluate(k => { const m = document.getElementById("modal"); if (m.open) m.close(); DEEP[k](); }, k); await p.waitForTimeout(100);
+      if (abre) check(new RegExp(abre).test(await p.textContent("#modal-body")), `${largura}px: "${k}" abre a janela certa`);
+    }
+    await p.evaluate(() => { const m = document.getElementById("modal"); if (m.open) m.close(); });
+    const texto = await p.evaluate(() => document.body.innerText);
+    check(!/Liturgia do dia|Ler a liturgia|Leituras de hoje|liturgia_de_hoje/i.test(texto), `${largura}px: a página não mostra mais a função da liturgia`);
+    check(!erros.length, `${largura}px: revisão geral sem erros`, erros.join(" | "));
+    await ctx.close();
   }
 
   await browser.close();

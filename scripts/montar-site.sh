@@ -22,7 +22,7 @@ topo, corpo = src[:i], src[i:].strip()
 estilo = topo[topo.index("<style>"):]
 fontes = "\n".join(re.findall(r'<link [^>]*>', topo))
 
-TITULO = "Comunica+Fé | Comunicação que evangeliza: liturgia, agenda e formação"
+TITULO = "Comunica+Fé | Comunicação que evangeliza: agenda, escala e formação"
 DESC = re.search(r'<meta name="description" content="([^"]*)">', topo).group(1)
 IMG = "social/comunicafe-1200x630.jpg"
 img_url = (site + IMG) if site else IMG
@@ -54,7 +54,7 @@ meta = [
     f'<meta property="og:image" content="{img_url}">',
     '<meta property="og:image:width" content="1200">',
     '<meta property="og:image:height" content="630">',
-    '<meta property="og:image:alt" content="Comunica+Fé: comunicação que evangeliza. Liturgia, agenda, escala, formação e criação de conteúdo católico">',
+    '<meta property="og:image:alt" content="Comunica+Fé: comunicação que evangeliza. Agenda, escala, formação e criação de conteúdo católico">',
     '<meta name="twitter:card" content="summary_large_image">',
     f'<meta name="twitter:title" content="{TITULO}">',
     f'<meta name="twitter:description" content="{DESC}">',

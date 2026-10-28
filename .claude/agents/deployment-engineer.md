@@ -43,8 +43,8 @@ Rode `bash scripts/montar-site.sh` e depois `bash scripts/verificar-site.sh`. A 
 
 Só siga com a publicação se terminar com "Tudo certo".
 
-Depois rode os testes de ponta a ponta (navegação, inscrição, permissões, agenda, frases,
-liturgia, links diretos e celular): `NODE_PATH=$(npm root -g) node tests/e2e.js`. Precisa do
+Depois rode os testes de ponta a ponta (navegação, inscrição, permissões, agenda, escala, frases,
+links diretos e celular): `NODE_PATH=$(npm root -g) node tests/e2e.js`. Precisa do
 Playwright com Chromium. Não publique com falhas.
 
 ## Depois de publicar
@@ -64,6 +64,6 @@ e se cada ícone carrega.
 
 ## Limites a lembrar
 
-No GitHub Pages, agenda, frases e liturgia publicadas pela equipe ficam salvas só no
+No GitHub Pages, agenda, escalas e frases publicadas pela equipe ficam salvas só no
 aparelho de quem publicou (o site avisa "Modo local"). O compartilhamento entre todos
 funciona na versão hospedada no Claude.

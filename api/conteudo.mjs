@@ -26,13 +26,11 @@ export function montarPedido(b) {
   const tipo = TIPOS[b.tipo] ? b.tipo : "legenda";
   const tema = curto(b.tema, 1200);
   if (tema.length < 8) return null;
-  const l = b.liturgia && typeof b.liturgia === "object" ? b.liturgia : null;
-  const lit = l ? `\nLiturgia do dia (referências conferidas): 1ª leitura ${curto(l.primeira, 60) || "-"}; salmo ${curto(l.salmo, 80) || "-"}${l.refrao ? ` (refrão: “${curto(l.refrao, 220)}”)` : ""}; ${l.segunda ? `2ª leitura ${curto(l.segunda, 60)}; ` : ""}Evangelho ${curto(l.evangelho, 60) || "-"}. Não transcreva o texto das leituras; cite só as referências.` : "";
   return `Pedido: ${TIPOS[tipo]}, ${TAMANHOS[b.tamanho] || TAMANHOS.medio}, para ${curto(b.plataforma, 30) || "Instagram"}.
 Objetivo: ${curto(b.objetivo, 80) || "Evangelizar"}.
 Público: ${curto(b.publico, 80) || "Toda a comunidade"}.
 Tom: ${curto(b.tom, 30) || "Acolhedor"}.
-Tema e informações da comunidade: ${tema}${lit}`;
+Tema e informações da comunidade: ${tema}`;
 }
 
 /* login: confere o token do Firebase (assinatura do Google, projeto e validade) e se a pessoa é da equipe */
