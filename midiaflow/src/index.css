@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-bg font-sans text-ink antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  ::selection {
+    background: rgba(91, 255, 154, 0.3);
+  }
+  :focus-visible {
+    outline: 2px solid #5bff9a;
+    outline-offset: 2px;
+    border-radius: 10px;
+  }
+  input[type='date']::-webkit-calendar-picker-indicator,
+  input[type='time']::-webkit-calendar-picker-indicator {
+    filter: invert(0.7);
+    cursor: pointer;
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #252f3c transparent;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-3xl border border-line/70 bg-card shadow-card;
+  }
+  .glass {
+    @apply border border-white/[0.06] bg-white/[0.03] backdrop-blur-xl;
+  }
+  .text-gradient {
+    @apply bg-flow bg-clip-text text-transparent;
+  }
+  .input {
+    @apply h-11 w-full rounded-xl border border-line bg-surface px-3.5 text-sm text-ink placeholder:text-ink-muted/60 transition-colors focus:border-neon/60 focus:outline-none focus:ring-2 focus:ring-neon/15;
+  }
+  .label {
+    @apply mb-1.5 block text-xs font-medium uppercase tracking-wider text-ink-muted;
+  }
+}
+
+/* Brilho ambiente do fundo */
+.ambient::before {
+  content: '';
+  position: fixed;
+  inset: -20% -10% auto auto;
+  width: 60vw;
+  height: 60vw;
+  pointer-events: none;
+  background: radial-gradient(closest-side, rgba(85, 184, 255, 0.08), transparent 70%);
+  z-index: 0;
+}
+.ambient::after {
+  content: '';
+  position: fixed;
+  inset: auto auto -25% -10%;
+  width: 55vw;
+  height: 55vw;
+  pointer-events: none;
+  background: radial-gradient(closest-side, rgba(91, 255, 154, 0.06), transparent 70%);
+  z-index: 0;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #151c26;
+}
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent);
+  animation: shimmer 1.4s infinite;
+}
+
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .card {
+    border-color: #ccc !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+  .print-full {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
