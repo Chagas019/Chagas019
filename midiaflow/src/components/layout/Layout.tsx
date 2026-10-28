@@ -62,12 +62,12 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
 function Sidebar() {
   const { parish } = useStore();
   return (
-    <aside className="no-print fixed inset-y-0 left-0 z-30 hidden w-[264px] flex-col border-r border-line/60 bg-bg/80 px-5 py-6 backdrop-blur-xl lg:flex">
+    <aside className="no-print fixed inset-y-3 left-3 z-30 hidden w-[252px] flex-col rounded-[28px] border border-white/[0.07] bg-white/[0.025] px-5 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-2xl backdrop-saturate-150 lg:flex">
       <Logo />
       <div className="mt-8 flex-1 overflow-y-auto pr-1">
         <SidebarNav />
       </div>
-      <div className="card mt-4 p-4">
+      <div className="glass mt-4 rounded-2xl p-4">
         <p className="text-xs text-ink-muted">Paróquia</p>
         <p className="mt-0.5 text-sm font-semibold">{parish.name}</p>
         <p className="text-xs text-ink-muted">{parish.pascomName}</p>
@@ -153,7 +153,7 @@ function NotificationsMenu() {
   const unread = notifications.filter((n) => !n.read).length;
   return (
     <div className="relative">
-      <Button size="icon" variant="ghost" aria-label={`Notificações (${unread} não lidas)`} onClick={() => setOpen((o) => !o)} className="relative bg-surface">
+      <Button size="icon" variant="ghost" aria-label={`Notificações (${unread} não lidas)`} onClick={() => setOpen((o) => !o)} className="glass relative">
         <Bell className="h-[18px] w-[18px]" />
         {unread > 0 && <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-neon shadow-[0_0_8px_#5BFF9A]" />}
       </Button>
@@ -195,7 +195,7 @@ function ProfileMenu() {
   const demoUsers = [members.find((m) => m.access === 'admin'), members.find((m) => m.access === 'coordenador'), ...members.filter((m) => m.access === 'integrante' && m.status === 'ativo').slice(0, 3)].filter(Boolean);
   return (
     <div className="relative">
-      <button onClick={() => setOpen((o) => !o)} className="flex items-center gap-2.5 rounded-full border border-line bg-surface py-1 pl-1 pr-3 transition-colors hover:border-ink-muted/40" aria-haspopup="menu" aria-expanded={open}>
+      <button onClick={() => setOpen((o) => !o)} className="glass flex items-center gap-2.5 rounded-full border border-white/[0.07] py-1 pl-1 pr-3 transition-colors hover:bg-white/[0.06]" aria-haspopup="menu" aria-expanded={open}>
         <Avatar name={me.name} size={32} />
         <span className="hidden text-left leading-tight md:block">
           <span className="block max-w-[140px] truncate text-[13px] font-medium">{me.name}</span>
@@ -244,7 +244,7 @@ function Header({ onMenu }: { onMenu: () => void }) {
   const { can, parish } = useStore();
   const editor = useScheduleEditor();
   return (
-    <header className="no-print sticky top-0 z-20 border-b border-line/50 bg-bg/75 backdrop-blur-xl">
+    <header className="no-print sticky top-0 z-20 border-b border-white/[0.05] bg-bg/40 backdrop-blur-2xl backdrop-saturate-150">
       <div className="flex h-16 items-center gap-3 px-4 sm:px-6 lg:px-8">
         <button className="rounded-full p-2 text-ink-muted hover:bg-white/5 hover:text-ink lg:hidden" onClick={onMenu} aria-label="Abrir menu">
           <Menu className="h-5 w-5" />
@@ -254,7 +254,7 @@ function Header({ onMenu }: { onMenu: () => void }) {
         <div className="ml-auto flex items-center gap-2">
           <span className="hidden text-xs text-ink-muted xl:block">{parish.name}</span>
           <select aria-label="Período" value={period} onChange={(e) => setPeriod(e.target.value as PeriodKey)}
-            className="hidden h-10 rounded-full border border-line bg-surface px-3 text-[13px] text-ink sm:block">
+            className="glass hidden h-10 rounded-full border border-white/[0.07] px-3 text-[13px] text-ink sm:block [&>option]:bg-[#10151D]">
             {PERIODS.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
           </select>
           {can('manage:schedules') && (
@@ -276,7 +276,7 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
         <>
           <motion.div className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} />
           <motion.aside
-            className="fixed inset-y-0 left-0 z-50 flex w-[86%] max-w-[320px] flex-col border-r border-line bg-bg px-5 py-6 lg:hidden"
+            className="fixed inset-y-0 left-0 z-50 flex w-[86%] max-w-[320px] flex-col border-r border-white/10 bg-bg/60 px-5 py-6 backdrop-blur-2xl backdrop-saturate-150 lg:hidden"
             initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }} transition={{ type: 'spring', stiffness: 380, damping: 38 }}
           >
             <div className="mb-8 flex items-center justify-between">
@@ -302,7 +302,7 @@ function BottomBar() {
     { to: '/minhas-escalas', label: 'Minhas', icon: UserCheck },
   ];
   return (
-    <nav aria-label="Navegação rápida" className="no-print fixed inset-x-0 bottom-0 z-30 border-t border-line/60 bg-bg/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden">
+    <nav aria-label="Navegação rápida" className="no-print fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-30 rounded-[28px] border border-white/10 bg-bg/45 shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_20px_40px_-12px_rgba(0,0,0,0.8)] backdrop-blur-2xl backdrop-saturate-150 lg:hidden">
       <div className="relative mx-auto grid max-w-lg grid-cols-5">
         {items.slice(0, 2).map((n) => <BottomLink key={n.to} n={n} />)}
         <div className="flex items-center justify-center">
@@ -325,9 +325,9 @@ function BottomLink({ n }: { n: NavItem }) {
     <NavLink to={n.to} end={n.end} className="relative flex h-16 flex-col items-center justify-center gap-1 text-[11px]">
       {({ isActive }) => (
         <>
-          {isActive && <motion.span layoutId="bottom-active" className="absolute top-0 h-[3px] w-10 rounded-b-full bg-neon shadow-[0_0_10px_#5BFF9A]" />}
-          <n.icon className={cn('h-5 w-5', isActive ? 'text-neon' : 'text-ink-muted')} />
-          <span className={isActive ? 'font-medium text-neon' : 'text-ink-muted'}>{n.label}</span>
+          {isActive && <motion.span layoutId="bottom-active" className="absolute inset-x-1.5 inset-y-1.5 rounded-[22px] bg-white/[0.07] shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]" />}
+          <n.icon className={cn('relative h-5 w-5', isActive ? 'text-neon' : 'text-ink-muted')} />
+          <span className={cn('relative', isActive ? 'font-medium text-neon' : 'text-ink-muted')}>{n.label}</span>
         </>
       )}
     </NavLink>
@@ -355,7 +355,7 @@ export function Layout() {
     <div className="ambient min-h-dvh">
       <Sidebar />
       <MobileDrawer open={drawer} onClose={() => setDrawer(false)} />
-      <div className="relative z-10 lg:pl-[264px]">
+      <div className="relative z-10 lg:pl-[276px]">
         <DemoBanner />
         <Header onMenu={() => setDrawer(true)} />
         <main id="conteudo" className="print-full mx-auto max-w-[1400px] px-4 pb-28 pt-6 sm:px-6 lg:px-8 lg:pb-12">

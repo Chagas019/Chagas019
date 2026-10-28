@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { useScheduleDetail } from '@/components/schedule/ScheduleDetail';
 import { useScheduleEditor } from '@/components/schedule/ScheduleEditor';
 import { ScheduleStatusBadge } from '@/components/schedule/parts';
+import { ClockWidget, DotCalendarWidget, MissionsWidget, SwapsWidget } from '@/components/widgets';
 import { Avatar, Badge, Button, Card, EmptyState, Field, Input, Item, Modal, ProgressRing, RoleIcon, SectionTitle, Stagger, Textarea } from '@/components/ui';
 import { coverage, isOpenSlot, scheduleStatus } from '@/lib/domain';
 import { periodRange, usePeriod } from '@/lib/period';
@@ -54,12 +55,13 @@ export default function Dashboard() {
     return [...byDate.entries()].map(([d, v]) => ({ dia: fmt(d, 'dd/MM'), cobertura: v.total ? Math.round((v.filled / v.total) * 100) : 0 }));
   }, [inPeriod]);
 
+  const parishLine = `${store.parish.name} · ${store.parish.pascomName}`;
   const name = (id: string | null) => members.find((m) => m.id === id)?.name.split(' ')[0];
 
   return (
     <div className="space-y-6">
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-[2rem] border border-line/70 bg-card p-6 sm:p-8">
+      <section className="card relative overflow-hidden rounded-[2rem] p-6 sm:p-8">
         <div className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-electric/20 blur-[90px]" />
         <div className="pointer-events-none absolute -bottom-24 right-40 h-60 w-60 rounded-full bg-neon/15 blur-[90px]" />
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
@@ -96,6 +98,25 @@ export default function Dashboard() {
           </Item>
         ))}
       </Stagger>
+
+      {/* Painel em vidro: missões, calendário em pontos e relógio */}
+      <section aria-label="Painel da missão">
+        <p className="eyebrow mb-3 px-1">Painel da missão</p>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1.25fr]">
+          <div className="md:row-span-2 xl:row-span-1"><MissionsWidget /></div>
+          <DotCalendarWidget />
+          <div className="flex flex-col gap-4 md:col-start-2 xl:col-start-auto">
+            <ClockWidget />
+            <div className="card relative flex flex-1 flex-col justify-end overflow-hidden p-5">
+              <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-electric/25 blur-3xl" />
+              <div className="pointer-events-none absolute -bottom-12 left-6 h-32 w-32 rounded-full bg-neon/20 blur-3xl" />
+              <p className="relative text-sm text-ink-muted">{parishLine}</p>
+              <p className="relative mt-1 text-lg font-semibold leading-snug">Evangelizar com criatividade, uma celebração por vez.</p>
+              <span className="relative mt-4 w-fit rounded-full bg-neon px-3.5 py-1.5 text-sm font-medium text-bg shadow-[inset_0_1px_0_rgba(255,255,255,0.7)]">PASCOM</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
         {/* Próxima celebração */}
@@ -173,7 +194,7 @@ export default function Dashboard() {
             const sel = d === selectedDay;
             return (
               <button key={d} onClick={() => setSelectedDay(d)} aria-pressed={sel}
-                className={cn('relative flex flex-col items-center rounded-2xl border py-2.5 transition-all sm:py-3', sel ? 'border-neon bg-neon/[0.06] shadow-glow' : 'border-transparent bg-surface/70 hover:border-line', d === today && !sel && 'border-line')}>
+                className={cn('relative flex flex-col items-center rounded-2xl border py-2.5 transition-all sm:py-3', sel ? 'glass border-neon/70 shadow-glow' : 'border-white/[0.05] bg-white/[0.03] hover:border-white/15', d === today && !sel && 'border-line')}>
                 <span className="flex h-2 items-center gap-0.5">
                   {list.slice(0, 3).map((s) => {
                     const st = scheduleStatus(s);
@@ -257,6 +278,8 @@ export default function Dashboard() {
         </div>
       </Card>
 
+      {can('manage:schedules') && <SwapsWidget />}
+
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Próximas celebrações */}
         <Card>
@@ -316,7 +339,7 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      <Card className="flex flex-col items-start justify-between gap-4 bg-gradient-to-r from-neon/[0.10] via-card to-electric/[0.08] sm:flex-row sm:items-center">
+      <Card className="flex flex-col items-start justify-between gap-4 bg-gradient-to-r from-neon/[0.10] via-transparent to-electric/[0.08] sm:flex-row sm:items-center">
         <div className="flex items-center gap-3">
           <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-neon text-bg"><Users className="h-5 w-5" /></span>
           <div>

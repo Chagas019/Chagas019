@@ -28,6 +28,7 @@ Pelo menu do perfil (canto superior direito) dá para **ver o app como** Adminis
 - **Eventos:** cadastro, equipe necessária, status de cobertura, "montar escala deste evento" e checklist de produção.
 - **Minhas escalas:** o integrante confirma presença, informa que não poderá participar ou pede substituição. A vaga fica destacada para o coordenador, e **nenhuma substituição é feita automaticamente**.
 - **Relatórios:** escalas, cobertura, confirmações, vagas abertas, participação por função, eventos e auditoria, com exportação CSV (protegida contra injeção de fórmulas) e impressão. Os números são marcados como demonstrativos.
+- **Visual Liquid Glass:** cards, menus, modais, barra lateral e barra inferior flutuante em vidro translúcido (desfoque + saturação, borda especular e brilho no topo) sobre um fundo com luzes neon/azul, linhas verticais e grade de pontos. No painel: lista de missões com check, calendário em matriz de pontos, relógio digital com contagem até a próxima missa e a "troca líquida" (metaball) entre quem pediu substituição e quem está livre.
 - **Experiência:** animações de entrada, transição de páginas, modais, toasts, anéis de cobertura animados, estados vazios e de carregamento, respeito a `prefers-reduced-motion`, navegação por teclado (atalho `⌘K` / `/` para busca) e layout mobile-first com barra inferior.
 
 ## Estrutura

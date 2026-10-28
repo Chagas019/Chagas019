@@ -14,8 +14,8 @@ import { cn, initials } from '@/lib/utils';
 /* ---------- Button ---------- */
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline';
 const VARIANTS: Record<Variant, string> = {
-  primary: 'bg-neon text-bg hover:shadow-glow hover:brightness-105 font-semibold',
-  secondary: 'bg-surface text-ink border border-line hover:border-ink-muted/40',
+  primary: 'bg-neon text-bg font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.7),inset_0_-2px_6px_rgba(0,0,0,0.12)] hover:shadow-glow hover:brightness-105',
+  secondary: 'glass text-ink border border-white/[0.08] hover:bg-white/[0.06]',
   outline: 'border border-neon/40 text-neon hover:bg-neon-soft',
   ghost: 'text-ink-muted hover:text-ink hover:bg-white/5',
   danger: 'bg-danger/15 text-danger border border-danger/30 hover:bg-danger/25',
@@ -136,7 +136,7 @@ Textarea.displayName = 'Textarea';
 /* ---------- Segmented ---------- */
 export function Segmented<T extends string>({ value, onChange, options, className }: { value: T; onChange: (v: T) => void; options: { value: T; label: string; icon?: LucideIcon }[]; className?: string }) {
   return (
-    <div role="tablist" className={cn('inline-flex rounded-full border border-line bg-surface p-1', className)}>
+    <div role="tablist" className={cn('glass inline-flex rounded-full border border-white/[0.07] p-1', className)}>
       {options.map((o) => (
         <button
           key={o.value}
@@ -145,7 +145,7 @@ export function Segmented<T extends string>({ value, onChange, options, classNam
           onClick={() => onChange(o.value)}
           className={cn('relative flex h-8 items-center gap-1.5 rounded-full px-3 text-[13px] transition-colors', value === o.value ? 'text-bg' : 'text-ink-muted hover:text-ink')}
         >
-          {value === o.value && <motion.span layoutId={`seg-${options.map((x) => x.value).join()}`} className="absolute inset-0 rounded-full bg-neon" transition={{ type: 'spring', stiffness: 500, damping: 38 }} />}
+          {value === o.value && <motion.span layoutId={`seg-${options.map((x) => x.value).join()}`} className="absolute inset-0 rounded-full bg-neon shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_0_18px_-4px_#5BFF9A]" transition={{ type: 'spring', stiffness: 500, damping: 38 }} />}
           {o.icon && <o.icon className="relative h-3.5 w-3.5" />}
           <span className="relative font-medium">{o.label}</span>
         </button>
@@ -257,7 +257,7 @@ export function Modal({ open, onOpenChange, title, description, children, footer
         {open && (
           <Dialog.Portal forceMount>
             <Dialog.Overlay asChild forceMount>
-              <motion.div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
+              <motion.div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-md" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
             </Dialog.Overlay>
             <Dialog.Content asChild forceMount>
               <div
@@ -266,7 +266,7 @@ export function Modal({ open, onOpenChange, title, description, children, footer
               >
                 <motion.div
                   className={cn(
-                    'flex max-h-[92dvh] w-full flex-col rounded-t-3xl border border-line bg-card shadow-2xl sm:rounded-3xl',
+                    'flex max-h-[92dvh] w-full flex-col rounded-t-3xl border border-white/10 bg-card shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_40px_80px_-20px_rgba(0,0,0,0.9)] sm:rounded-3xl',
                     size === 'sm' && 'sm:max-w-md',
                     size === 'md' && 'sm:max-w-xl',
                     size === 'lg' && 'sm:max-w-3xl',

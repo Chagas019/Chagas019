@@ -5,7 +5,7 @@ export default {
     extend: {
       colors: {
         bg: '#07090D',
-        card: '#10151D',
+        card: 'rgba(18, 24, 34, 0.62)',
         surface: '#151C26',
         line: '#252F3C',
         neon: { DEFAULT: '#5BFF9A', soft: 'rgba(91,255,154,0.12)' },
@@ -16,6 +16,7 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
       borderRadius: { xl2: '1.25rem', '3xl': '1.75rem' },
       boxShadow: {
