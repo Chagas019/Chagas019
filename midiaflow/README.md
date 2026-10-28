@@ -36,25 +36,48 @@ Pelo menu do perfil (canto superior direito) dá para **ver o app como** Adminis
 
 ```
 src/
-  lib/        tipos, regras (domain.ts), dados demo, store, períodos, Supabase, CSV
+  lib/        tipos, regras (domain.ts), dados demo, store (demo e banco), remote.ts (Supabase), formação, CSV
   components/ ui (design system), layout (sidebar, header, barra mobile), schedule (editor, detalhe, confirmação)
   pages/      Visão geral, Escalas, Calendário, Equipe, Funções, Eventos, Relatórios, Notificações, Configurações, Minhas escalas, Login
-supabase/migrations/0001_midiaflow.sql   esquema + RLS
+supabase/migrations/0001_midiaflow.sql   banco: tabelas, RLS e funções
+supabase/tests/                          verificações de segurança do banco
+tests/e2e/                               testes no navegador + simulador do Supabase
+deploy/                                  publicação na Vercel sem integração GitHub
 ```
 
-## Supabase: o que está pronto e o que falta
+## Login e banco de dados (Supabase)
 
-**Pronto**
+Com as variáveis `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` configuradas, o MídiaFlow deixa o modo demonstração e passa a funcionar de verdade:
 
-- `supabase/migrations/0001_midiaflow.sql`: paróquias, perfis, integrantes, contatos (em tabela separada), funções, compatibilidades, disponibilidade, eventos, escalas, designações, notificações e auditoria. Inclui **Row Level Security** em todas as tabelas, separação por paróquia, os três níveis de acesso, validações no banco (`check`), a função `respond_assignment` (o integrante só altera a própria vaga) e triggers de auditoria.
-- **Login real e recuperação de senha:** com as variáveis configuradas, o app exige sessão e mostra a tela de login.
+- **Conta:** criar conta com e-mail e senha, entrar, “Esqueci minha senha” (link por e-mail e tela de nova senha), entrar com Google (se ativado no Supabase), alterar senha e sair.
+- **Primeiro acesso:** criar a paróquia (quem cria vira administrador) ou entrar com o **código de convite**. O link `https://seu-site/?convite=CODIGO` já preenche o código. Se a coordenação cadastrou a pessoa antes com o mesmo e-mail, a conta é ligada a esse cadastro, sem duplicar.
+- **Dados salvos no banco:** escalas, eventos, equipe, funções, avisos, notificações e histórico, com salvamento automático (indicador “Salvo/Salvando…”), atualização em tempo real e controle de versão (se duas pessoas editarem ao mesmo tempo, ninguém sobrescreve o outro sem aviso).
+- **Progresso da Formação** salvo na conta: acompanha a pessoa em qualquer aparelho.
+- **Segurança:** Row Level Security separa as paróquias. Integrante só responde às próprias vagas e só edita a própria disponibilidade; coordenador não muda níveis de acesso nem dados da paróquia; contatos (e-mail/telefone) ficam numa tabela separada, visível só para a coordenação e para o próprio integrante; o código de convite só é visível para a coordenação. Apenas a chave pública `anon` vai para o site.
 
-**Falta (depende de você / próximo passo)**
+### Ativar (uma vez)
 
-1. Criar um projeto no Supabase e rodar a migração (SQL Editor ou `supabase db push`).
-2. Copiar `.env.example` para `.env` e preencher `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` (apenas a chave **anon**; nunca a `service_role`).
-3. Criar a paróquia e o primeiro perfil admin.
-4. **Sincronizar os dados:** hoje as telas leem e gravam no store local (`src/lib/store.tsx`). Trocar essas funções por consultas às tabelas é o próximo passo, e enquanto isso a faixa do topo avisa que os dados ainda são locais.
+1. Crie um projeto gratuito em [supabase.com](https://supabase.com) (região São Paulo).
+2. Em **SQL Editor**, cole e rode o conteúdo de `supabase/migrations/0001_midiaflow.sql`.
+3. Em **Authentication → URL Configuration**, coloque a **Site URL** do site (ex.: `https://midiaflow-chagas7.vercel.app`) e adicione a mesma em **Redirect URLs**.
+4. (Opcional) **Authentication → Providers → Google** para o botão “Continuar com Google”.
+5. Em **Project Settings → API**, copie a **Project URL** e a chave **anon public**. Coloque como `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` nas variáveis do projeto na Vercel (ou no `.env` local) e publique de novo.
+
+## Bots de teste e revisão
+
+| Bot | O que faz | Onde |
+| --- | --- | --- |
+| **MídiaFlow — testes** | A cada push/PR: tipos, testes de unidade, build, auditoria de segurança das dependências, **30 verificações de segurança do banco** num PostgreSQL real e **20 testes no navegador** (computador, celular e login/banco com simulador do Supabase) | `.github/workflows/midiaflow-ci.yml` |
+| **MídiaFlow — revisão do Claude** | Lê cada pull request e comenta bugs, falhas de segurança, acessibilidade e coerência católica. Ative criando o segredo `ANTHROPIC_API_KEY` no repositório | `.github/workflows/midiaflow-claude-review.yml` |
+| **Dependabot** | Abre PRs semanais com atualizações e correções de segurança | `.github/dependabot.yml` |
+
+Rodar localmente:
+
+```bash
+npm run check      # tipos + testes de unidade + build
+npm run test:e2e   # testes no navegador (instale antes: npx playwright install chromium)
+npm run test:db    # banco: precisa de um PostgreSQL (PGHOST/PGUSER/PGPASSWORD)
+```
 
 ## Notificações por e-mail e WhatsApp
 

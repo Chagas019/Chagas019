@@ -160,7 +160,7 @@ export default function Dashboard() {
 
         {/* Gráfico */}
         <Card>
-          <SectionTitle title="Cobertura das escalas" subtitle="% de vagas preenchidas por dia no período · dados demonstrativos" />
+          <SectionTitle title="Cobertura das escalas" subtitle={`% de vagas preenchidas por dia no período${store.mode === 'demo' ? ' · dados demonstrativos' : ''}`} />
           {chart.length ? (
             <div className="h-[220px]">
               <ResponsiveContainer width="100%" height="100%">

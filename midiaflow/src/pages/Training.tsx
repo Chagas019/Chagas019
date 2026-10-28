@@ -5,6 +5,7 @@ import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { BlockView, CertificateButton } from '@/components/training/blocks';
 import { Bar, Button, Card, PageHeader, ProgressRing, Select } from '@/components/ui';
+import { fetchTraining, saveTraining } from '@/lib/remote';
 import { useStore } from '@/lib/store';
 import { MODULES, totalLessons, type TrainingModule } from '@/lib/training';
 import { cn, fmt, toISODate } from '@/lib/utils';
@@ -16,8 +17,13 @@ interface Progress {
   quiz?: { score: number; at: string };
 }
 
-/** Progresso da formação por integrante, salvo neste navegador. */
+/**
+ * Progresso da formação por integrante.
+ * Modo real: salvo no banco (acompanha a pessoa em qualquer aparelho).
+ * Demonstração: salvo neste navegador.
+ */
 function useProgress(userId: string) {
+  const { mode } = useStore();
   const key = `midiaflow:formacao:${userId}`;
   const read = (): Progress => {
     try {
@@ -26,11 +32,20 @@ function useProgress(userId: string) {
       return { done: [] };
     }
   };
-  const [p, setP] = useState<Progress>(read);
-  // Recarrega ao trocar de usuário na demonstração.
-  useEffect(() => setP(read()), [key]);
+  const [p, setP] = useState<Progress>(() => (mode === 'remote' ? { done: [] } : read()));
+  useEffect(() => {
+    if (mode === 'remote') {
+      fetchTraining()
+        .then((r) => setP({ done: r.done ?? [], quiz: r.quiz ?? undefined }))
+        .catch((e) => toast.error((e as Error).message));
+    } else setP(read());
+  }, [key, mode]);
   const save = (next: Progress) => {
     setP(next);
+    if (mode === 'remote') {
+      saveTraining({ done: next.done, quiz: next.quiz ?? null }).catch((e) => toast.error((e as Error).message));
+      return;
+    }
     try {
       localStorage.setItem(key, JSON.stringify(next));
     } catch {
@@ -61,7 +76,7 @@ export default function Training() {
 }
 
 function Overview() {
-  const { me, parish } = useStore();
+  const { me, parish, mode } = useStore();
   const { p } = useProgress(me.id);
   const pct = Math.round((p.done.length / totalLessons) * 100);
   const next = MODULES.flatMap((m) => m.lessons.map((l) => ({ m, l }))).find(({ m, l }) => !p.done.includes(`${m.id}/${l.id}`));
@@ -79,7 +94,7 @@ function Overview() {
               <p className="eyebrow">Seu progresso</p>
               <p className="mt-2 text-xl font-semibold">{p.done.length} de {totalLessons} lições concluídas</p>
               <p className="mt-1 text-sm text-ink-muted">
-                {MODULES.length} módulos · cerca de {Math.round(MODULES.reduce((a, m) => a + moduleMinutes(m), 0) / 60 * 10) / 10} h de conteúdo. O progresso fica salvo neste aparelho.
+                {MODULES.length} módulos · cerca de {Math.round(MODULES.reduce((a, m) => a + moduleMinutes(m), 0) / 60 * 10) / 10} h de conteúdo. {mode === 'remote' ? 'Seu progresso fica salvo na sua conta.' : 'O progresso fica salvo neste aparelho.'}
               </p>
             </div>
             {next && (

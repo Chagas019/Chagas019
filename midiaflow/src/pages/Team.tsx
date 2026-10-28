@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { useScheduleDetail } from '@/components/schedule/ScheduleDetail';
 import { Avatar, Badge, Button, Card, EmptyState, Field, Input, Modal, PageHeader, RoleIcon, Select } from '@/components/ui';
 import { isOpenSlot } from '@/lib/domain';
+import { getInviteCode } from '@/lib/remote';
 import { ACCESS_LABEL, useStore } from '@/lib/store';
 import type { AccessLevel, Member, Period } from '@/lib/types';
 import { capitalize, cn, fmt, overlaps, PERIOD_LABEL, periodOf, timeToMin, toISODate, uid, WEEKDAYS } from '@/lib/utils';
@@ -283,13 +284,25 @@ function InviteModal({ open, onOpenChange }: { open: boolean; onOpenChange: (o: 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [err, setErr] = useState('');
-  const submit = () => {
+  const submit = async () => {
     if (name.trim().length < 3) return setErr('Informe o nome.');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setErr('Informe um e-mail válido.');
     store.saveMember({ ...newMember(), name: name.trim(), email: email.trim(), status: 'convidado' });
-    const text = `Olá, ${name.split(' ')[0]}! Você foi convidado(a) para a ${store.parish.pascomName} no MídiaFlow.`;
+    let link = '';
+    if (store.mode === 'remote') {
+      try {
+        link = ` Crie sua conta com este e-mail (${email.trim()}) pelo link: ${location.origin}/?convite=${await getInviteCode()}`;
+      } catch (e) {
+        toast.error((e as Error).message);
+      }
+    }
+    const text = `Olá, ${name.split(' ')[0]}! Você foi convidado(a) para a ${store.parish.pascomName} no MídiaFlow.${link}`;
     navigator.clipboard?.writeText(text).catch(() => {});
-    toast.success('Convite registrado', { description: 'Texto do convite copiado. O envio automático por e-mail depende da integração (ver README).' });
+    toast.success('Convite registrado', {
+      description: store.mode === 'remote'
+        ? 'Mensagem com o link copiada: cole no WhatsApp ou no e-mail da pessoa. Ao criar a conta com esse e-mail, ela já entra vinculada.'
+        : 'Texto do convite copiado. O envio automático por e-mail depende da integração (ver README).',
+    });
     setName(''); setEmail(''); setErr(''); onOpenChange(false);
   };
   return (

@@ -8,7 +8,11 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "lint": "tsc -b --noEmit"
+    "lint": "tsc -b --noEmit",
+    "build:e2e": "vite build --outDir dist-e2e/demo && VITE_SUPABASE_URL=http://supabase.mock VITE_SUPABASE_ANON_KEY=mock-anon-key vite build --outDir dist-e2e/remote",
+    "test:e2e": "npm run build:e2e && playwright test",
+    "test:db": "sh supabase/tests/run.sh",
+    "check": "npm run lint && npm test && npm run build"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.2",
@@ -25,6 +29,7 @@
     "tailwind-merge": "^2.5.4"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@types/node": "^22.9.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",

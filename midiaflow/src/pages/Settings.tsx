@@ -1,9 +1,10 @@
-import { Database, Mail, MessageCircle, RotateCcw, ShieldCheck } from 'lucide-react';
+import { Copy, Database, KeyRound, LogOut, Mail, MessageCircle, RefreshCw, RotateCcw, ShieldCheck, UserRound } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Badge, Button, Card, ConfirmDialog, Field, Input, PageHeader, SectionTitle } from '@/components/ui';
 import { ACCESS_LABEL, useStore } from '@/lib/store';
-import { isSupabaseConfigured } from '@/lib/supabase';
+import { getInviteCode, regenerateInviteCode } from '@/lib/remote';
+import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import type { Period } from '@/lib/types';
 import { cn, PERIOD_LABEL, WEEKDAYS } from '@/lib/utils';
 
@@ -39,6 +40,9 @@ export default function Settings() {
         </div>
         <Button className="mt-4" variant="primary" size="sm" onClick={() => { store.saveMember({ ...me, availability: av }); toast.success('Disponibilidade atualizada.'); }}>Salvar disponibilidade</Button>
       </Card>
+
+      {store.mode === 'remote' && <AccountCard />}
+      {store.mode === 'remote' && can('manage:team') && <InviteCard isAdmin={can('manage:users')} />}
 
       <Card>
         <SectionTitle title="Paróquia" subtitle={can('manage:parish') ? 'Identificação exibida na plataforma' : 'Apenas administradores podem alterar'} />
@@ -82,7 +86,7 @@ export default function Settings() {
         <p className="mt-3 text-xs text-ink-muted">O README explica como conectar cada serviço. Nenhuma mensagem é enviada enquanto a integração não estiver configurada.</p>
       </Card>
 
-      {!isSupabaseConfigured && (
+      {store.mode === 'demo' && (
         <Card className="border-danger/20">
           <SectionTitle title="Dados da demonstração" subtitle="Os dados ficam apenas no armazenamento deste navegador" />
           <Button variant="danger" size="sm" icon={RotateCcw} onClick={() => setReset(true)}>Restaurar dados de exemplo</Button>
@@ -100,5 +104,61 @@ function Integration({ icon: Icon, name, ok, okText = 'Conectado', offText }: { 
       <span className="flex items-center gap-3 text-sm"><Icon className="h-4 w-4 text-ink-muted" />{name}</span>
       <Badge tone={ok ? 'neon' : 'muted'} dot>{ok ? okText : offText}</Badge>
     </li>
+  );
+}
+
+function AccountCard() {
+  const [email, setEmail] = useState('');
+  const [pw, setPw] = useState('');
+  const [saving, setSaving] = useState(false);
+  useEffect(() => {
+    supabase?.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? ''));
+  }, []);
+  return (
+    <Card>
+      <SectionTitle title="Minha conta" subtitle="Acesso com e-mail e senha" />
+      <p className="flex items-center gap-2 text-sm"><UserRound className="h-4 w-4 text-ink-muted" />{email || '…'}</p>
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+        <Input type="password" autoComplete="new-password" placeholder="Nova senha (mín. 8, letras e números)" value={pw} onChange={(e) => setPw(e.target.value)} className="sm:max-w-xs" />
+        <Button icon={KeyRound} loading={saving} onClick={async () => {
+          if (pw.length < 8 || !/\d/.test(pw) || !/[a-z]/i.test(pw)) return toast.error('A senha precisa ter pelo menos 8 caracteres, com letras e números.');
+          setSaving(true);
+          const { error } = (await supabase?.auth.updateUser({ password: pw })) ?? { error: null };
+          setSaving(false);
+          if (error) toast.error('Não foi possível alterar a senha. Entre novamente e tente de novo.');
+          else { setPw(''); toast.success('Senha alterada.'); }
+        }}>Alterar senha</Button>
+        <Button variant="danger" icon={LogOut} onClick={() => supabase?.auth.signOut()}>Sair</Button>
+      </div>
+    </Card>
+  );
+}
+
+function InviteCard({ isAdmin }: { isAdmin: boolean }) {
+  const [code, setCode] = useState('');
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    getInviteCode().then(setCode).catch((e) => toast.error((e as Error).message));
+  }, []);
+  const link = code ? `${location.origin}/?convite=${code}` : '';
+  const copy = (t: string) => navigator.clipboard?.writeText(t).then(() => toast.success('Copiado!')).catch(() => toast.error('Não foi possível copiar.'));
+  return (
+    <Card>
+      <SectionTitle title="Convite da equipe" subtitle="Envie o link (ou o código) para quem vai servir na PASCOM" />
+      <div className="flex flex-wrap items-center gap-3">
+        <span className="glass rounded-2xl border border-white/10 px-4 py-2 font-mono text-xl tracking-[0.3em]">{code || '········'}</span>
+        <Button size="sm" icon={Copy} disabled={!code} onClick={() => copy(code)}>Copiar código</Button>
+        <Button size="sm" variant="primary" icon={Copy} disabled={!code} onClick={() => copy(`Você foi convidado(a) para a equipe da PASCOM no MídiaFlow. Crie sua conta por este link: ${link}`)}>Copiar convite</Button>
+        {isAdmin && (
+          <Button size="sm" variant="ghost" icon={RefreshCw} loading={busy} onClick={async () => {
+            setBusy(true);
+            try { setCode(await regenerateInviteCode()); toast.success('Novo código gerado. O anterior deixou de valer.'); }
+            catch (e) { toast.error((e as Error).message); }
+            finally { setBusy(false); }
+          }}>Gerar novo código</Button>
+        )}
+      </div>
+      <p className="mt-3 text-xs text-ink-muted">Quem entra pelo convite começa como integrante. O administrador define coordenadores na tela Equipe.</p>
+    </Card>
   );
 }

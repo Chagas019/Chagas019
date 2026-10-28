@@ -1,0 +1,53 @@
+name: MídiaFlow — revisão do Claude
+
+# Bot de revisão: o Claude lê cada pull request que mexe no MídiaFlow e comenta
+# bugs, falhas de segurança e problemas de acessibilidade.
+# Para ativar: Settings → Secrets and variables → Actions → New repository secret
+#   ANTHROPIC_API_KEY = sua chave da API da Anthropic
+# Sem o segredo, o job termina sem fazer nada (não falha).
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
+    paths: ['midiaflow/**']
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  id-token: write
+
+jobs:
+  revisar:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      HAS_KEY: ${{ secrets.ANTHROPIC_API_KEY != '' }}
+    steps:
+      - name: Sem chave configurada
+        if: env.HAS_KEY != 'true'
+        run: echo "ANTHROPIC_API_KEY não configurada; revisão automática ignorada."
+      - uses: actions/checkout@v4
+        if: env.HAS_KEY == 'true'
+        with:
+          fetch-depth: 1
+      - uses: anthropics/claude-code-action@v1
+        if: env.HAS_KEY == 'true'
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            Revise este pull request do MídiaFlow (pasta midiaflow/), app de escalas da PASCOM
+            (React + TypeScript + Supabase). Responda em português.
+            Foque em:
+            - bugs e regressões nas regras de escala, conflitos de horário e confirmação de presença;
+            - segurança: RLS e funções SECURITY DEFINER em supabase/migrations, vazamento de
+              contatos de integrantes, chaves secretas no frontend;
+            - acessibilidade e uso no celular;
+            - linguagem e conteúdo coerentes com a Igreja Católica.
+            Comente nas linhas com problemas reais e faça um resumo curto no fim.
+            Não comente estilo nem preferências pessoais.
+          claude_args: >-
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"

@@ -266,7 +266,7 @@ export function Modal({ open, onOpenChange, title, description, children, footer
               >
                 <motion.div
                   className={cn(
-                    'flex max-h-[92dvh] w-full flex-col rounded-t-3xl border border-white/10 bg-card shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_40px_80px_-20px_rgba(0,0,0,0.9)] sm:rounded-3xl',
+                    'flex max-h-[92dvh] w-full min-w-0 max-w-full flex-col rounded-t-3xl border border-white/10 bg-card shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_40px_80px_-20px_rgba(0,0,0,0.9)] sm:rounded-3xl',
                     size === 'sm' && 'sm:max-w-md',
                     size === 'md' && 'sm:max-w-xl',
                     size === 'lg' && 'sm:max-w-3xl',
@@ -277,15 +277,15 @@ export function Modal({ open, onOpenChange, title, description, children, footer
                   transition={{ type: 'spring', stiffness: 380, damping: 32 }}
                 >
                   <div className="flex items-start justify-between gap-4 border-b border-line/60 px-5 py-4 sm:px-6">
-                    <div>
-                      <Dialog.Title className="text-lg font-semibold tracking-tight">{title}</Dialog.Title>
+                    <div className="min-w-0">
+                      <Dialog.Title className="break-words text-lg font-semibold tracking-tight">{title}</Dialog.Title>
                       <Dialog.Description className={description ? 'mt-0.5 text-sm text-ink-muted' : 'sr-only'}>{description ?? title}</Dialog.Description>
                     </div>
                     <Dialog.Close className="rounded-full p-2 text-ink-muted transition-colors hover:bg-white/5 hover:text-ink" aria-label="Fechar">
                       <X className="h-5 w-5" />
                     </Dialog.Close>
                   </div>
-                  <div className="flex-1 overflow-y-auto px-5 py-5 sm:px-6">{children}</div>
+                  <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5 sm:px-6">{children}</div>
                   {footer && <div className="flex flex-wrap justify-end gap-2 border-t border-line/60 px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">{footer}</div>}
                 </motion.div>
               </div>

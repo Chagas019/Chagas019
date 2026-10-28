@@ -1,17 +1,17 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Bell, CalendarDays, GraduationCap, ChevronDown, ClipboardList, FileBarChart, LayoutGrid, LogOut, Menu, Plus, Search, Settings, Shapes, Sparkles, Ticket, UserCheck, Users, X,
+  Bell, CalendarDays, Cloud, CloudOff, GraduationCap, Loader2, ChevronDown, ClipboardList, FileBarChart, LayoutGrid, LogOut, Menu, Plus, Search, Settings, Shapes, Sparkles, Ticket, UserCheck, Users, X,
   type LucideIcon,
 } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { PERIODS, usePeriod, type PeriodKey } from '@/lib/period';
 import { ACCESS_LABEL, useStore } from '@/lib/store';
-import { isSupabaseConfigured, supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import { cn, fmtDateShort } from '@/lib/utils';
 import { useScheduleEditor } from '../schedule/ScheduleEditor';
 import { useScheduleDetail } from '../schedule/ScheduleDetail';
-import { Avatar, Badge, Button } from '../ui';
+import { Avatar, Badge, Button, Skeleton } from '../ui';
 import { Logo } from './Logo';
 
 type NavItem = { to: string; label: string; icon: LucideIcon; end?: boolean; staffOnly?: boolean };
@@ -191,12 +191,12 @@ function NotificationsMenu() {
 }
 
 function ProfileMenu() {
-  const { me, members, switchUser, parish } = useStore();
+  const { me, members, switchUser, parish, mode } = useStore();
   const [open, setOpen] = useState(false);
   const demoUsers = [members.find((m) => m.access === 'admin'), members.find((m) => m.access === 'coordenador'), ...members.filter((m) => m.access === 'integrante' && m.status === 'ativo').slice(0, 3)].filter(Boolean);
   return (
     <div className="relative">
-      <button onClick={() => setOpen((o) => !o)} className="glass flex items-center gap-2.5 rounded-full border border-white/[0.07] py-1 pl-1 pr-3 transition-colors hover:bg-white/[0.06]" aria-haspopup="menu" aria-expanded={open}>
+      <button onClick={() => setOpen((o) => !o)} className="glass flex items-center gap-2.5 rounded-full border border-white/[0.07] py-1 pl-1 pr-3 transition-colors hover:bg-white/[0.06]" aria-haspopup="menu" aria-expanded={open} aria-label={`Perfil: ${me.name}`}>
         <Avatar name={me.name} size={32} />
         <span className="hidden text-left leading-tight md:block">
           <span className="block max-w-[140px] truncate text-[13px] font-medium">{me.name}</span>
@@ -214,7 +214,7 @@ function ProfileMenu() {
                 <p className="text-sm font-semibold">{me.name}</p>
                 <p className="text-xs text-ink-muted">{parish.name}</p>
               </div>
-              {(
+              {mode === 'demo' && (
                 <>
                   <p className="mt-1 border-t border-line/60 px-3 pb-1 pt-3 text-[11px] uppercase tracking-wider text-ink-muted">Demonstração · ver como</p>
                   {demoUsers.map((m) => m && (
@@ -227,7 +227,7 @@ function ProfileMenu() {
                   ))}
                 </>
               )}
-              {isSupabaseConfigured && supabase && (
+              {mode === 'remote' && supabase && (
                 <button role="menuitem" onClick={() => supabase?.auth.signOut()} className="mt-1 flex w-full items-center gap-2.5 rounded-2xl border-t border-line/60 px-3 py-2.5 text-left text-sm text-danger hover:bg-white/5">
                   <LogOut className="h-4 w-4" />Sair
                 </button>
@@ -261,6 +261,7 @@ function Header({ onMenu }: { onMenu: () => void }) {
           {can('manage:schedules') && (
             <Button variant="primary" size="sm" icon={Plus} className="hidden h-10 sm:inline-flex" onClick={() => editor.open()}>Criar escala</Button>
           )}
+          <SyncBadge />
           <NotificationsMenu />
           <ProfileMenu />
         </div>
@@ -336,14 +337,41 @@ function BottomLink({ n }: { n: NavItem }) {
 }
 
 function DemoBanner() {
+  const { mode } = useStore();
+  if (mode === 'remote') return null;
   return (
     <div className="no-print flex items-center justify-center gap-2 border-b border-electric/20 bg-electric/[0.06] px-4 py-1.5 text-center text-[12px] text-electric">
       <Sparkles className="h-3.5 w-3.5 shrink-0" />
-      <span>
-        {isSupabaseConfigured
-          ? 'Login real ativo. As escalas ainda são dados demonstrativos salvos neste navegador (sincronização com o banco pendente).'
-          : 'Modo demonstração: dados fictícios salvos apenas neste navegador. Nada é enviado a servidores.'}
-      </span>
+      <span>Modo demonstração: dados fictícios salvos apenas neste navegador. Nada é enviado a servidores.</span>
+    </div>
+  );
+}
+
+/** Mostra se as alterações já foram gravadas no banco. */
+function SyncBadge() {
+  const { sync, mode } = useStore();
+  if (mode !== 'remote') return null;
+  const map = {
+    saved: { label: 'Salvo', cls: 'text-neon', Icon: Cloud },
+    saving: { label: 'Salvando…', cls: 'text-ink-muted', Icon: Loader2 },
+    error: { label: 'Não salvo', cls: 'text-danger', Icon: CloudOff },
+    demo: { label: '', cls: '', Icon: Cloud },
+  } as const;
+  const m = map[sync];
+  return (
+    <span role="status" aria-live="polite" className={cn('hidden items-center gap-1.5 text-xs sm:flex', m.cls)} title={sync === 'error' ? 'Verifique a internet. Vamos tentar de novo.' : undefined}>
+      <m.Icon className={cn('h-3.5 w-3.5', sync === 'saving' && 'animate-spin')} />
+      {m.label}
+    </span>
+  );
+}
+
+function PageSkeleton() {
+  return (
+    <div className="space-y-4" aria-busy="true" aria-label="Carregando">
+      <Skeleton className="h-10 w-56" />
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-28" />)}</div>
+      <Skeleton className="h-64" />
     </div>
   );
 }
@@ -362,7 +390,9 @@ export function Layout() {
         <main id="conteudo" className="print-full mx-auto max-w-[1400px] px-4 pb-28 pt-6 sm:px-6 lg:px-8 lg:pb-12">
           <AnimatePresence mode="wait">
             <motion.div key={loc.pathname} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}>
-              <Outlet />
+              <Suspense fallback={<PageSkeleton />}>
+                <Outlet />
+              </Suspense>
             </motion.div>
           </AnimatePresence>
         </main>

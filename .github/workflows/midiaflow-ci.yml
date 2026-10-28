@@ -1,0 +1,91 @@
+name: MídiaFlow — testes
+
+# Bot de testes do MídiaFlow: roda a cada push e pull request que mexe em midiaflow/.
+on:
+  push:
+    paths: ['midiaflow/**', '.github/workflows/midiaflow-ci.yml']
+  pull_request:
+    paths: ['midiaflow/**', '.github/workflows/midiaflow-ci.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: midiaflow-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: midiaflow
+
+jobs:
+  verificar:
+    name: Tipos, testes de unidade e build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: midiaflow/package-lock.json
+      - run: npm ci
+      - name: Verificação de tipos
+        run: npm run lint
+      - name: Testes de unidade (regras de escala e conflitos)
+        run: npm test
+      - name: Build de produção
+        run: npm run build
+      - name: Auditoria de dependências (somente produção)
+        run: npm audit --omit=dev --audit-level=high
+
+  banco:
+    name: Segurança do banco (RLS e funções)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Migração + 30 verificações de segurança
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: postgres
+          PGPASSWORD: postgres
+        run: sh supabase/tests/run.sh
+
+  e2e:
+    name: Navegador (computador, celular e login)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: midiaflow/package-lock.json
+      - run: npm ci
+      - name: Instalar o Chromium do Playwright
+        run: npx playwright install --with-deps chromium
+      - name: Testes de ponta a ponta
+        run: npm run test:e2e
+      - name: Relatório dos testes
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-playwright
+          path: |
+            midiaflow/playwright-report
+            midiaflow/test-results
+          retention-days: 7

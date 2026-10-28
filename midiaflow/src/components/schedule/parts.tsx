@@ -28,7 +28,7 @@ export function ScheduleCard({ s, onClick, index = 0 }: { s: Schedule; onClick?:
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.04, duration: 0.35 }}
-      className="card group w-full p-4 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-neon/30"
+      className="card group w-full min-w-0 p-4 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-neon/30"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
