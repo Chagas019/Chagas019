@@ -61,4 +61,8 @@ supabase/migrations/0001_midiaflow.sql   esquema + RLS
 
 ## Publicação
 
-O `vercel.json` já redireciona as rotas para o `index.html` (SPA). Na Vercel, use `midiaflow` como diretório raiz, `npm run build` como comando de build e `dist` como pasta de saída.
+No ar em **https://midiaflow-chagas7.vercel.app** (projeto `midiaflow`, time *chagas* na Vercel).
+
+Como a integração GitHub da Vercel ainda não está ativa nesse time, a publicação é feita enviando à Vercel só o script `deploy/vercel-build.sh`: na hora do build ele baixa o código deste repositório (público) num commit fixo, roda `npm install` e `npm run build` e entrega `dist/`. Para publicar uma versão nova, troque o `SHA` no script pelo commit desejado e crie um novo deploy com ele.
+
+Quando a integração GitHub estiver instalada (Vercel → Settings → Git), basta conectar o repositório ao projeto com *Root Directory* `midiaflow`, comando `npm run build` e saída `dist`; o `vercel.json` já redireciona as rotas para o `index.html`. Aí cada push publica sozinho.
