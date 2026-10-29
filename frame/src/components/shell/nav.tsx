@@ -34,8 +34,8 @@ export function NavLinks({ aiEnabled }: { aiEnabled: boolean }) {
           href={l.href}
           aria-current={isActive(pathname, l.href) ? "page" : undefined}
           className={cn(
-            "rounded-full px-3 py-1.5 text-sm transition-colors",
-            isActive(pathname, l.href) ? "bg-white/[0.07] text-paper" : "text-fog-400 hover:text-paper",
+            "rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] transition-colors",
+            isActive(pathname, l.href) ? "text-volt-500" : "text-fog-300 hover:text-paper",
           )}
         >
           {l.label}

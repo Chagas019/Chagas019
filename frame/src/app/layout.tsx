@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Poppins } from "next/font/google";
+import { Anton, Poppins } from "next/font/google";
 import { Header } from "@/components/shell/header";
 import { Footer } from "@/components/shell/footer";
 import { ToastProvider } from "@/components/ui/toast";
 import "./globals.css";
 
+const display = Anton({ subsets: ["latin"], weight: "400", variable: "--font-anton", display: "swap" });
 const sans = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-poppins", display: "swap" });
 
 export const metadata: Metadata = {
@@ -22,7 +23,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" className={sans.variable}>
+    <html lang="pt-BR" className={`${sans.variable} ${display.variable}`}>
       <body className="film-grain font-sans">
         <a href="#conteudo" className="sr-only z-[200] rounded-full bg-paper px-4 py-2 text-ink-950 focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
           Pular para o conteúdo

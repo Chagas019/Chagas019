@@ -2,14 +2,15 @@
 
 /*
  * FRAME — design system
- * Cores: verde-limão #D5FF40 (destaque), grafite quase preto, cinza #C0C2B8 e branco.
- * Tipografia: Poppins (Regular, SemiBold, Bold).
+ * Cores: verde-limão #D5FF40 (destaque), azul elétrico #2734F0 (seções de impacto), grafite quase preto,
+ * cinza #C0C2B8, névoa clara #EBEBE6 (seções claras) e branco.
+ * Tipografia: Anton (títulos condensados em caixa alta) + Poppins (texto e interface).
  * Imagens são protagonistas: superfícies discretas, poucas bordas, destaque usado com parcimônia.
- * (Os nomes "volt"/"cobalt" ficaram por compatibilidade: volt = limão, cobalt = cinza-sálvia.)
+ * (Os nomes ficaram por compatibilidade: volt = limão, cobalt = azul elétrico.)
  */
 @theme {
   --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-anton), "Arial Narrow", Impact, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
 
   --color-ink-950: #0d0d0d;
@@ -30,8 +31,11 @@
   --color-volt-500: #d5ff40;
   --color-volt-600: #bde52e;
   --color-volt-700: #8aa81c;
-  --color-cobalt-400: #c0c2b8;
-  --color-cobalt-500: #a6a89e;
+  --color-cobalt-400: #6b74ff;
+  --color-cobalt-500: #2734f0;
+  --color-cobalt-600: #1d27c9;
+  --color-mist-100: #ebebe6;
+  --color-mist-200: #dcdcd5;
   --color-ember-400: #fbbf24;
   --color-mint-400: #5eead4;
   --color-danger-400: #f87171;
@@ -125,12 +129,34 @@ body {
   }
 }
 
-/* Títulos em Poppins: peso forte e espaçamento justo, como no design system. */
+/* Títulos condensados em caixa alta (Anton). */
 .font-display {
-  font-weight: 600;
-  letter-spacing: -0.025em;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+  line-height: 0.98;
 }
 .font-display em,
 h1 em {
   font-style: normal;
 }
+
+/* Faixa rolando (marquee). Pausa com movimento reduzido. */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee 32s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+}
+/* Texto vazado para o letreiro do rodapé. */
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgb(255 255 255 / 0.18);
+}
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+.spin-slow { animation: spin-slow 18s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .spin-slow { animation: none; } }

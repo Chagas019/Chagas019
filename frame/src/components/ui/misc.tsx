@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { cn, mediaUrl } from "@/lib/utils";
+import { Sparkle } from "./sparkle";
 
 export function Avatar({ mediaId, name, size = 36, className }: { mediaId: string | null | undefined; name: string; size?: number; className?: string }) {
   const initials = name
@@ -52,8 +53,13 @@ export function EmptyState({ icon, title, children, action }: { icon?: React.Rea
 export function SectionTitle({ eyebrow, title, children, className }: { eyebrow?: string; title: string; children?: React.ReactNode; className?: string }) {
   return (
     <div className={cn("space-y-2", className)}>
-      {eyebrow ? <p className="text-xs font-semibold uppercase tracking-[0.18em] text-volt-400">{eyebrow}</p> : null}
-      <h1 className="font-display text-4xl leading-[1.05] text-balance text-paper sm:text-5xl">{title}</h1>
+      {eyebrow ? (
+        <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-paper">
+          <Sparkle className="size-3.5 text-volt-500" />
+          {eyebrow}
+        </p>
+      ) : null}
+      <h1 className="font-display text-5xl text-balance text-paper sm:text-6xl">{title}</h1>
       {children ? <p className="max-w-2xl text-pretty text-fog-400">{children}</p> : null}
     </div>
   );
