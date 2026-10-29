@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
-import { ImageOff, RefreshCw } from "lucide-react";
+import Link from "next/link";
+import { ImageOff, Plus, RefreshCw } from "lucide-react";
+import { InviteButton } from "@/components/home/invite-button";
 import type { FeedPage } from "@/server/services/posts";
 import { loadFeedAction } from "@/server/actions/posts";
 import { Button, ButtonLink } from "@/components/ui/button";
@@ -52,9 +54,7 @@ export function Feed({ filter, initial, signedIn, viewerId = null, variant = "gr
         Siga criadores para ver os trabalhos deles aqui, em ordem cronológica.
       </EmptyState>
     ) : (
-      <EmptyState icon={<ImageOff className="size-6" />} title="Nada por aqui ainda" action={signedIn ? <ButtonLink href="/publicar">Publicar o primeiro</ButtonLink> : <ButtonLink href="/cadastro">Criar conta</ButtonLink>}>
-        Ainda não há trabalhos nesta seleção. Que tal ser a primeira pessoa a publicar?
-      </EmptyState>
+      <GrowthPanel signedIn={signedIn} empty />
     );
   }
 
@@ -83,9 +83,37 @@ export function Feed({ filter, initial, signedIn, viewerId = null, variant = "gr
             Carregar mais
           </Button>
         </div>
+      ) : items.length < 8 ? (
+        <GrowthPanel signedIn={signedIn} />
       ) : (
         <p className="mt-10 text-center text-sm text-fog-500">Você chegou ao fim. Volte mais tarde para novas inspirações.</p>
       )}
     </>
+  );
+}
+
+/** A comunidade está começando: convite claro para criar conta, publicar e chamar mais gente. */
+function GrowthPanel({ signedIn, empty }: { signedIn: boolean; empty?: boolean }) {
+  return (
+    <section className="tile mt-8 flex flex-col items-start gap-4 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8" style={{ ["--glow" as string]: "rgb(212 255 54 / 0.35)" }}>
+      <div className="max-w-xl space-y-1.5">
+        <p className="font-mono text-xs uppercase tracking-[0.2em] text-volt-500">{empty ? "Feed vazio por enquanto" : "A comunidade está começando"}</p>
+        <h3 className="text-pretty text-2xl font-medium text-paper">
+          {signedIn ? "Publique seu trabalho e chame quem cria com você — cada nova conta enche este feed." : "Crie sua conta grátis e publique o que você cria. Cada pessoa tem o próprio perfil e portfólio."}
+        </h3>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {signedIn ? (
+          <Link href="/publicar" className="inline-flex h-11 items-center gap-2 rounded-full bg-volt-500 px-5 font-semibold text-ink-950">
+            <Plus className="size-4" aria-hidden /> Publicar
+          </Link>
+        ) : (
+          <Link href="/cadastro" className="inline-flex h-11 items-center gap-2 rounded-full bg-volt-500 px-5 font-semibold text-ink-950">
+            Criar minha conta
+          </Link>
+        )}
+        <InviteButton />
+      </div>
+    </section>
   );
 }

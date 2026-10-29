@@ -7,6 +7,7 @@ import { LAB_CHALLENGES } from "@/lib/creative/lab-challenges";
 import { IconMask, IconSparks, IconStudio, IconVault, IconNodes } from "@/components/studio/icons";
 import { IdeaLauncher } from "@/components/studio/idea-launcher";
 import { HeroToggle } from "./hero-toggle";
+import { InviteButton } from "./invite-button";
 
 const pad = (n: number) => String(Math.max(0, Math.min(n, 999))).padStart(2, "0");
 
@@ -74,13 +75,26 @@ export async function Assistant({ minimized }: { minimized: boolean }) {
         </h1>
         <HeroToggle minimized={minimized} />
       </div>
+      <div className="flex flex-wrap gap-2">
+        {viewer ? null : (
+          <>
+            <Link href="/cadastro" className="inline-flex h-11 items-center rounded-full bg-volt-500 px-5 font-semibold text-ink-950 transition-transform hover:-translate-y-0.5">
+              Criar minha conta grátis
+            </Link>
+            <Link href="/entrar" className="inline-flex h-11 items-center rounded-full px-5 text-paper ring-1 ring-inset ring-white/20 hover:bg-white/[0.06]">
+              Já tenho conta
+            </Link>
+          </>
+        )}
+        {viewer ? <InviteButton label="Convidar para a FRAME" /> : null}
+      </div>
 
       {minimized ? null : (
         <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <li>
-            <Link href="/desafios" className="tile group flex aspect-square flex-col items-center justify-between p-4 sm:aspect-[5/4]" style={{ ["--glow" as string]: "rgb(255 90 31 / 0.95)" }}>
+            <Link href="/desafios" className="tile group flex aspect-square flex-col items-center justify-between p-4 sm:aspect-[5/4] lg:aspect-auto lg:h-44" style={{ ["--glow" as string]: "rgb(255 90 31 / 0.95)" }}>
               <span className="self-start font-mono text-[11px] uppercase tracking-[0.18em] text-fog-400">Desafio do dia</span>
-              <IconMask className="size-16 transition-transform duration-500 group-hover:-translate-y-1 sm:size-20 lg:size-24" />
+              <IconMask className="size-16 transition-transform duration-500 group-hover:-translate-y-1 sm:size-20 lg:size-16" />
               <span className="flex w-full items-end justify-between gap-2">
                 <span className="line-clamp-1 text-left text-sm text-paper">{daily.title}</span>
                 <span className="dot-num text-2xl text-paper" title="Participações públicas hoje">{pad(participants)}</span>
@@ -88,26 +102,26 @@ export async function Assistant({ minimized }: { minimized: boolean }) {
             </Link>
           </li>
           <li>
-            <div className="tile group flex aspect-square flex-col items-center justify-between p-4 sm:aspect-[5/4]" style={{ ["--glow" as string]: "rgb(212 255 54 / 0.7)" }}>
+            <div className="tile group flex aspect-square flex-col items-center justify-between p-4 sm:aspect-[5/4] lg:aspect-auto lg:h-44" style={{ ["--glow" as string]: "rgb(212 255 54 / 0.7)" }}>
               <span className="self-start font-mono text-[11px] uppercase tracking-[0.18em] text-fog-400">Ideia</span>
-              <IconSparks className="size-16 sm:size-20 lg:size-24" />
+              <IconSparks className="size-16 sm:size-20 lg:size-16" />
               <IdeaLauncher signedIn={!!viewer} variant="pill" />
             </div>
           </li>
           <li>
             {viewer ? (
-              <Link href="/estudio" className="tile group flex aspect-square flex-col items-center justify-between p-4 sm:aspect-[5/4]" style={{ ["--glow" as string]: "rgb(107 116 255 / 0.8)" }}>
+              <Link href="/estudio" className="tile group flex aspect-square flex-col items-center justify-between p-4 sm:aspect-[5/4] lg:aspect-auto lg:h-44" style={{ ["--glow" as string]: "rgb(107 116 255 / 0.8)" }}>
                 <span className="self-start font-mono text-[11px] uppercase tracking-[0.18em] text-fog-400">Meu estúdio</span>
-                <IconStudio className="size-16 transition-transform duration-500 group-hover:-translate-y-1 sm:size-20 lg:size-24" />
+                <IconStudio className="size-16 transition-transform duration-500 group-hover:-translate-y-1 sm:size-20 lg:size-16" />
                 <span className="flex w-full items-end justify-between gap-2">
                   <span className="text-sm text-paper">{progress && progress.total ? "Progresso" : "Projetos"}</span>
                   <span className="dot-num text-2xl text-paper">{progress && progress.total ? `${pct}%` : "--"}</span>
                 </span>
               </Link>
             ) : (
-              <Link href="/descobrir" className="tile group flex aspect-square flex-col items-center justify-between p-4 sm:aspect-[5/4]" style={{ ["--glow" as string]: "rgb(107 116 255 / 0.8)" }}>
+              <Link href="/descobrir" className="tile group flex aspect-square flex-col items-center justify-between p-4 sm:aspect-[5/4] lg:aspect-auto lg:h-44" style={{ ["--glow" as string]: "rgb(107 116 255 / 0.8)" }}>
                 <span className="self-start font-mono text-[11px] uppercase tracking-[0.18em] text-fog-400">Explorar</span>
-                <IconNodes className="size-16 transition-transform duration-500 group-hover:-translate-y-1 sm:size-20 lg:size-24" />
+                <IconNodes className="size-16 transition-transform duration-500 group-hover:-translate-y-1 sm:size-20 lg:size-16" />
                 <span className="flex w-full items-end justify-between gap-2">
                   <span className="text-sm text-paper">Trabalhos</span>
                   <span className="dot-num text-2xl text-paper">{pad(Number(stats?.totals.posts ?? 0))}</span>
@@ -116,9 +130,9 @@ export async function Assistant({ minimized }: { minimized: boolean }) {
             )}
           </li>
           <li>
-            <Link href="/lab" className="tile group flex aspect-square flex-col items-center justify-between p-4 sm:aspect-[5/4]" style={{ ["--glow" as string]: "rgb(255 170 60 / 0.8)" }}>
+            <Link href="/lab" className="tile group flex aspect-square flex-col items-center justify-between p-4 sm:aspect-[5/4] lg:aspect-auto lg:h-44" style={{ ["--glow" as string]: "rgb(255 170 60 / 0.8)" }}>
               <span className="self-start font-mono text-[11px] uppercase tracking-[0.18em] text-fog-400">LAB</span>
-              <IconVault className="size-16 transition-transform duration-500 group-hover:-translate-y-1 sm:size-20 lg:size-24" />
+              <IconVault className="size-16 transition-transform duration-500 group-hover:-translate-y-1 sm:size-20 lg:size-16" />
               <span className="flex w-full items-end justify-between gap-2">
                 <span className="text-sm text-paper">Missões</span>
                 <span className="dot-num text-2xl text-paper">{pad(LAB_CHALLENGES.length)}</span>

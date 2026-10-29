@@ -8,6 +8,7 @@ import { Feed } from "@/components/post/feed";
 import { FeedFilters } from "@/components/post/feed-filters";
 import { EditorialSkeleton } from "@/components/post/editorial-grid";
 import { Assistant } from "@/components/home/assistant";
+import { MembersStrip } from "@/components/home/members-strip";
 import { Container } from "@/components/ui/misc";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ f?: string }> }) {
@@ -20,6 +21,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
   return (
     <Container className="space-y-6 pt-4 sm:pt-6">
       <Assistant minimized={minimized} />
+      <Suspense fallback={null}>
+        <MembersStrip viewerId={viewer?.id ?? null} />
+      </Suspense>
       <section aria-label="Feed" className="space-y-5">
         <h2 className="sr-only">{viewer ? "Seu feed" : "Inspiração"}</h2>
         <FeedFilters active={filter} signedIn={!!viewer} />

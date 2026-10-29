@@ -163,3 +163,26 @@ export async function themedCollections(limit = 6) {
     order by items desc, c.created_at desc
     limit ${limit * 3}`).then((rows) => rows.filter((r) => Number(r.items) >= 3).slice(0, limit));
 }
+
+/** Membros que acabaram de chegar (perfis completos), para a comunidade se conhecer desde o início. */
+export async function recentMembers(viewerId: string | null, limit = 16) {
+  const hidden = viewerId ? await hiddenAuthorIds(viewerId) : [];
+  const exclude = viewerId ? [viewerId, ...hidden] : [];
+  return db
+    .select({
+      userId: profile.userId,
+      handle: profile.handle,
+      displayName: profile.displayName,
+      avatarMediaId: profile.avatarMediaId,
+      specialties: profile.specialties,
+      works: sql<number>`(select count(*)::int from post p where p.author_id = ${profile.userId} and p.status = 'published' and p.visibility = 'public')`,
+      following: viewerId
+        ? sql<boolean>`exists (select 1 from follow f where f.follower_id = ${viewerId} and f.following_id = ${profile.userId})`
+        : sql<boolean>`false`,
+    })
+    .from(profile)
+    .innerJoin(user, eq(user.id, profile.userId))
+    .where(and(sql`${profile.onboardedAt} is not null`, exclude.length ? notInArray(profile.userId, exclude) : undefined))
+    .orderBy(desc(profile.onboardedAt))
+    .limit(limit);
+}

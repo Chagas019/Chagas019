@@ -53,8 +53,9 @@ test("visitante vê o feed já na primeira tela e pode minimizar o hero", async 
   const feed = page.getByRole("navigation", { name: "Feed" });
   await expect(feed).toBeVisible();
   const vh = page.viewportSize()!.height;
-  expect((await feed.boundingBox())!.y).toBeLessThan(vh);
+  const before = (await feed.boundingBox())!.y;
+  expect(before).toBeLessThan(vh);
   await page.getByRole("button", { name: "Minimizar apresentação" }).click();
   await expect(page.getByRole("button", { name: "Mostrar apresentação" })).toBeVisible();
-  expect((await feed.boundingBox())!.y).toBeLessThan(400);
+  expect((await feed.boundingBox())!.y).toBeLessThan(before - 100);
 });
