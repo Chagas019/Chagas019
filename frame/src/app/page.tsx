@@ -6,7 +6,11 @@ import { FEED_FILTERS, type FeedFilter } from "@/lib/taxonomy";
 import { Feed } from "@/components/post/feed";
 import { FeedFilters } from "@/components/post/feed-filters";
 import { PostGridSkeleton } from "@/components/post/post-card";
+import { Plus } from "lucide-react";
 import { Landing } from "@/components/landing/landing";
+import { ButtonLink } from "@/components/ui/button";
+import { Marquee } from "@/components/ui/marquee";
+import { PageHero } from "@/components/ui/page-hero";
 import { Container } from "@/components/ui/misc";
 
 export default async function Home({
@@ -23,7 +27,24 @@ export default async function Home({
 
   return (
     <>
-      {!viewer ? <Landing /> : null}
+      {!viewer ? (
+        <Landing />
+      ) : (
+        <>
+          <PageHero
+            eyebrow="Inspiração"
+            title="Sua criatividade merece um mundo inteiro"
+            action={
+              <ButtonLink href="/publicar" size="lg">
+                <Plus className="size-4" aria-hidden /> Publicar trabalho
+              </ButtonLink>
+            }
+          >
+            Veja o que a comunidade está criando, salve referências e mostre o seu processo.
+          </PageHero>
+          <Marquee items={["Fotografia", "Vídeo", "Edição", "Color grading", "Design", "Motion", "Mobile", "Retrato"]} />
+        </>
+      )}
       <section id="inspiracao" className="scroll-mt-20">
         <Container className="pt-6 sm:pt-10">
           <div className="mb-6 flex flex-col gap-4 sm:mb-8">
