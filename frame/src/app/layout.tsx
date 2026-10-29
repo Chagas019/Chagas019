@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import { ConnectionStatus } from "@/components/shell/connection-status";
 import type { Metadata, Viewport } from "next";
 import { Anton, Poppins } from "next/font/google";
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ConnectionStatus />
           <main id="conteudo">{children}</main>
           <Footer />
+          <Analytics />
         </ToastProvider>
       </body>
     </html>

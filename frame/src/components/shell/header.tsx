@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Bell, MessageSquare, Plus } from "lucide-react";
-import { getViewer, isModerator } from "@/server/session";
+import { canSeeStats, getViewer, isModerator } from "@/server/session";
 import { unreadCount } from "@/server/services/notifications";
 import { unreadConversations } from "@/server/services/messages";
 import { ButtonLink } from "@/components/ui/button";
@@ -48,7 +48,7 @@ export async function Header() {
                     </span>
                   ) : null}
                 </Link>
-                <UserMenu handle={viewer.handle} name={viewer.displayName} avatar={viewer.avatarMediaId} isModerator={isModerator(viewer)} aiEnabled={features().ai} />
+                <UserMenu handle={viewer.handle} name={viewer.displayName} avatar={viewer.avatarMediaId} isModerator={isModerator(viewer)} aiEnabled={features().ai} canSeeStats={canSeeStats(viewer)} />
               </>
             ) : (
               <>

@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Bookmark, Briefcase, MessageSquare, GraduationCap, LogOut, Settings, Shield, Sparkles, Swords, User, Users, FilePen } from "lucide-react";
+import { Bookmark, Briefcase, MessageSquare, GraduationCap, LogOut, Settings, Shield, Sparkles, Swords, User, Users, FilePen, BarChart3 } from "lucide-react";
 import { Avatar } from "@/components/ui/misc";
 import { authClient } from "@/lib/auth-client";
 
-export function UserMenu({ handle, name, avatar, isModerator, aiEnabled }: { handle: string; name: string; avatar: string | null; isModerator: boolean; aiEnabled: boolean }) {
+export function UserMenu({ handle, name, avatar, isModerator, aiEnabled, canSeeStats = false }: { handle: string; name: string; avatar: string | null; isModerator: boolean; aiEnabled: boolean; canSeeStats?: boolean }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -37,6 +37,7 @@ export function UserMenu({ handle, name, avatar, isModerator, aiEnabled }: { han
     { href: "/collab", label: "Collab", icon: Briefcase, mobileOnly: true },
     ...(aiEnabled ? [{ href: "/ai", label: "FRAME AI", icon: Sparkles, mobileOnly: true }] : []),
     { href: "/configuracoes", label: "Configurações", icon: Settings },
+    ...(canSeeStats ? [{ href: "/painel", label: "Painel de números", icon: BarChart3 }] : []),
     ...(isModerator ? [{ href: "/moderacao", label: "Moderação", icon: Shield }] : []),
   ];
 

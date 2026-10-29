@@ -67,3 +67,14 @@ export async function requireViewerPage(next: string): Promise<Viewer> {
 export function isModerator(viewer: Pick<Viewer, "role"> | null): boolean {
   return viewer?.role === "moderator" || viewer?.role === "admin";
 }
+
+/** Quem vê o painel de números: admins/moderação e os e-mails em FRAME_OWNER_EMAILS (separados por vírgula). */
+export function canSeeStats(viewer: Pick<Viewer, "role" | "email"> | null): boolean {
+  if (!viewer) return false;
+  if (isModerator(viewer)) return true;
+  const owners = (process.env.FRAME_OWNER_EMAILS ?? "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  return owners.includes(viewer.email.toLowerCase());
+}
