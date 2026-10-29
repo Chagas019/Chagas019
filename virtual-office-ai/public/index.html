@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Escritório Virtual</title>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">VO</span><div><strong>Escritório Virtual</strong><small id="sub">Agência de marketing</small></div></div>
+  <nav id="nav">
+    <button data-view="escritorio" class="on">Escritório</button>
+    <button data-view="organograma">Organograma</button>
+    <button data-view="equipe">Equipe</button>
+    <button data-view="tarefas">Tarefas</button>
+    <button data-view="aprovacoes">Aprovações <b id="badge-aprov" class="badge" hidden></b></button>
+    <button data-view="conversas">Conversas</button>
+    <button data-view="clientes">Clientes</button>
+    <button data-view="rotinas">Rotinas</button>
+    <button data-view="integracoes">Integrações</button>
+    <button data-view="custos">Custos</button>
+    <button data-view="auditoria">Auditoria</button>
+  </nav>
+  <button id="notif" class="ghost" title="Notificações">🔔 <b id="badge-notif" class="badge" hidden></b></button>
+</header>
+<div id="status" class="statusbar"></div>
+<main id="main"></main>
+<div id="drawer" class="drawer" hidden><div class="drawer-inner"><button class="close" id="drawer-close" aria-label="Fechar">×</button><div id="drawer-body"></div></div></div>
+<dialog id="login">
+  <form method="dialog" id="login-form">
+    <h2>Acesso do proprietário</h2>
+    <p>Informe o token gerado pelo comando <code>npm run setup</code> (salvo em <code>.env</code>).</p>
+    <input id="token" type="password" autocomplete="current-password" placeholder="OWNER_TOKEN" required>
+    <button type="submit">Entrar</button>
+    <p id="login-erro" class="erro"></p>
+  </form>
+</dialog>
+<script type="module" src="/app.js"></script>
+</body>
+</html>
