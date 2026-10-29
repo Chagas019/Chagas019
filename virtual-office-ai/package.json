@@ -1,0 +1,16 @@
+{
+  "name": "virtual-office-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Escritório virtual de uma agência de marketing operada por 31 funcionários de IA",
+  "type": "module",
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "setup": "node --no-warnings scripts/setup.js",
+    "start": "node --no-warnings src/server.js",
+    "test": "node --no-warnings --test test/*.test.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.3.0"
+  }
+}
