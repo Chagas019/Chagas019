@@ -48,9 +48,9 @@ export default function Settings() {
       <Card>
         <SectionTitle title="Paróquia" subtitle={can('manage:parish') ? 'Identificação exibida na plataforma' : 'Apenas administradores podem alterar'} />
         <div className="grid gap-4 sm:grid-cols-3">
-          <Field label="Nome da paróquia"><Input disabled={!can('manage:parish')} value={p.name} onChange={(e) => setP({ ...p, name: e.target.value })} /></Field>
-          <Field label="Cidade"><Input disabled={!can('manage:parish')} value={p.city} onChange={(e) => setP({ ...p, city: e.target.value })} /></Field>
-          <Field label="Nome da PASCOM"><Input disabled={!can('manage:parish')} value={p.pascomName} onChange={(e) => setP({ ...p, pascomName: e.target.value })} /></Field>
+          <Field label="Nome da paróquia"><Input disabled={!can('manage:parish')} placeholder="Ex.: Paróquia São José" value={p.name} onChange={(e) => setP({ ...p, name: e.target.value })} /></Field>
+          <Field label="Cidade"><Input disabled={!can('manage:parish')} placeholder="Ex.: Belo Horizonte – MG" value={p.city} onChange={(e) => setP({ ...p, city: e.target.value })} /></Field>
+          <Field label="Nome da PASCOM"><Input disabled={!can('manage:parish')} placeholder="PASCOM" value={p.pascomName} onChange={(e) => setP({ ...p, pascomName: e.target.value })} /></Field>
         </div>
         {can('manage:parish') && (
           <Button className="mt-4" variant="primary" size="sm" onClick={() => {
@@ -80,7 +80,7 @@ export default function Settings() {
       <Card>
         <SectionTitle title="Integrações" subtitle="Status real das conexões externas" />
         <ul className="space-y-2.5">
-          <Integration icon={Database} name="Supabase (banco e login)" ok={isSupabaseConfigured} okText="Configurado" offText="Não configurado · modo demonstração" />
+          <Integration icon={Database} name="Supabase (banco e login)" ok={isSupabaseConfigured} okText="Configurado" offText="Não conectado · dados só neste aparelho" />
           <Integration icon={Mail} name="Notificações por e-mail" ok={false} offText="Não configurado" />
           <Integration icon={MessageCircle} name="Notificações por WhatsApp" ok={false} offText="Não configurado" />
         </ul>

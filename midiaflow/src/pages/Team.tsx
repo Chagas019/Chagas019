@@ -177,8 +177,8 @@ function MemberEditor({ member, onClose }: { member: Member; onClose: () => void
     <Modal open onOpenChange={(o) => !o && onClose()} title={isNew ? 'Cadastrar integrante' : `Editar ${member.name}`} size="lg"
       footer={<><Button variant="ghost" onClick={onClose}>Cancelar</Button><Button variant="primary" onClick={save}>Salvar</Button></>}>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Nome" error={errors.name} className="sm:col-span-2"><Input autoFocus value={m.name} invalid={!!errors.name} onChange={(e) => setM({ ...m, name: e.target.value })} /></Field>
-        <Field label="E-mail" error={errors.email} hint="Visível só para coordenação"><Input type="email" value={m.email} invalid={!!errors.email} onChange={(e) => setM({ ...m, email: e.target.value })} /></Field>
+        <Field label="Nome" error={errors.name} className="sm:col-span-2"><Input autoFocus placeholder="Ex.: Maria Clara Souza" value={m.name} invalid={!!errors.name} onChange={(e) => setM({ ...m, name: e.target.value })} /></Field>
+        <Field label="E-mail" error={errors.email} hint="Visível só para coordenação"><Input type="email" placeholder="nome@email.com" value={m.email} invalid={!!errors.email} onChange={(e) => setM({ ...m, email: e.target.value })} /></Field>
         <Field label="Telefone / WhatsApp" error={errors.phone}><Input inputMode="tel" value={m.phone} invalid={!!errors.phone} onChange={(e) => setM({ ...m, phone: e.target.value })} placeholder="(11) 90000-0000" /></Field>
         <Field label="Foto (opcional)" error={errors.photo} hint="Link https de uma imagem"><Input value={m.photo ?? ''} onChange={(e) => setM({ ...m, photo: e.target.value || undefined })} placeholder="https://…" /></Field>
         <Field label="Situação">
@@ -314,8 +314,8 @@ function InviteModal({ open, onOpenChange }: { open: boolean; onOpenChange: (o: 
     <Modal open={open} onOpenChange={onOpenChange} title="Convidar para a equipe" size="sm" description="A pessoa entra como “convidado” até aceitar."
       footer={<><Button variant="ghost" onClick={() => onOpenChange(false)}>Cancelar</Button><Button variant="primary" icon={Send} onClick={submit}>Registrar convite</Button></>}>
       <div className="space-y-4">
-        <Field label="Nome"><Input value={name} onChange={(e) => setName(e.target.value)} /></Field>
-        <Field label="E-mail" error={err}><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></Field>
+        <Field label="Nome"><Input placeholder="Nome de quem você vai convidar" value={name} onChange={(e) => setName(e.target.value)} /></Field>
+        <Field label="E-mail" error={err}><Input type="email" placeholder="nome@email.com" value={email} onChange={(e) => setEmail(e.target.value)} /></Field>
       </div>
     </Modal>
   );

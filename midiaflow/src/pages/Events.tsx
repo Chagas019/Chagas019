@@ -149,13 +149,13 @@ function EventEditor({ event, onClose }: { event: ParishEvent; onClose: () => vo
     <Modal open onOpenChange={(o) => !o && onClose()} title={isNew ? 'Novo evento' : 'Editar evento'} size="lg"
       footer={<><Button variant="ghost" onClick={onClose}>Cancelar</Button><Button variant="primary" onClick={save}>Salvar</Button></>}>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Nome" error={errors.title} className="sm:col-span-2"><Input autoFocus value={e.title} invalid={!!errors.title} onChange={(x) => setE({ ...e, title: x.target.value })} /></Field>
+        <Field label="Nome" error={errors.title} className="sm:col-span-2"><Input autoFocus placeholder="Ex.: Festa de São José" value={e.title} invalid={!!errors.title} onChange={(x) => setE({ ...e, title: x.target.value })} /></Field>
         <Field label="Tipo"><Select value={e.type} onChange={(x) => setE({ ...e, type: x.target.value as EventType })}>{EVENT_TYPES.map((t) => <option key={t}>{t}</option>)}</Select></Field>
         <Field label="Data" error={errors.date}><Input type="date" value={e.date} onChange={(x) => setE({ ...e, date: x.target.value })} /></Field>
         <Field label="Início" error={errors.time}><Input type="time" value={e.start} onChange={(x) => setE({ ...e, start: x.target.value })} /></Field>
         <Field label="Término"><Input type="time" value={e.end} onChange={(x) => setE({ ...e, end: x.target.value })} /></Field>
-        <Field label="Local" error={errors.location} className="sm:col-span-2"><Input value={e.location} invalid={!!errors.location} onChange={(x) => setE({ ...e, location: x.target.value })} /></Field>
-        <Field label="Descrição" className="sm:col-span-2"><Textarea value={e.description} onChange={(x) => setE({ ...e, description: x.target.value })} /></Field>
+        <Field label="Local" error={errors.location} className="sm:col-span-2"><Input placeholder="Ex.: Igreja Matriz, salão paroquial" value={e.location} invalid={!!errors.location} onChange={(x) => setE({ ...e, location: x.target.value })} /></Field>
+        <Field label="Descrição" className="sm:col-span-2"><Textarea placeholder="O que vai acontecer e o que a PASCOM precisa cobrir (opcional)" value={e.description} onChange={(x) => setE({ ...e, description: x.target.value })} /></Field>
       </div>
       <p className="label mt-6">Equipe necessária</p>
       <div className="flex flex-wrap gap-2">

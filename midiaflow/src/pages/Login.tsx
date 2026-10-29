@@ -134,11 +134,11 @@ export default function Login() {
           options={[{ value: 'entrar', label: 'Entrar' }, { value: 'criar', label: 'Criar conta' }]} />
       )}
       <form onSubmit={submit} className="space-y-4" noValidate>
-        {mode === 'criar' && <Field label="Nome completo"><Input autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} /></Field>}
-        <Field label="E-mail"><Input type="email" inputMode="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} /></Field>
+        {mode === 'criar' && <Field label="Nome completo"><Input autoComplete="name" placeholder="Ex.: Maria Clara Souza" value={name} onChange={(e) => setName(e.target.value)} /></Field>}
+        <Field label="E-mail"><Input type="email" inputMode="email" autoComplete="email" placeholder="nome@email.com" value={email} onChange={(e) => setEmail(e.target.value)} /></Field>
         {mode !== 'recuperar' && (
           <Field label="Senha" hint={mode === 'criar' ? 'Mínimo de 8 caracteres, com letras e números.' : undefined}>
-            <Input type="password" autoComplete={mode === 'criar' ? 'new-password' : 'current-password'} value={password} onChange={(e) => setPassword(e.target.value)} />
+            <Input type="password" placeholder={mode === 'criar' ? 'Mínimo 8, com letras e números' : 'Sua senha'} autoComplete={mode === 'criar' ? 'new-password' : 'current-password'} value={password} onChange={(e) => setPassword(e.target.value)} />
           </Field>
         )}
         {error && <p role="alert" className="rounded-xl border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
@@ -183,8 +183,8 @@ export function NewPassword({ onDone }: { onDone: () => void }) {
           onDone();
         }}
       >
-        <Field label="Nova senha"><Input type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} /></Field>
-        <Field label="Repita a senha"><Input type="password" autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} /></Field>
+        <Field label="Nova senha"><Input type="password" placeholder="Mínimo 8, com letras e números" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} /></Field>
+        <Field label="Repita a senha"><Input type="password" placeholder="Digite a mesma senha" autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} /></Field>
         {error && <p role="alert" className="text-sm text-danger">{error}</p>}
         <Button type="submit" variant="primary" className="w-full" loading={loading} icon={KeyRound}>Salvar senha</Button>
       </form>
@@ -228,16 +228,16 @@ export function Onboarding({ defaultName, email, onDone }: { defaultName: string
       <Segmented className="mb-5 w-full [&>button]:flex-1 [&>button]:justify-center" value={tab} onChange={(v) => { setTab(v); setError(''); }}
         options={[{ value: 'convite', label: 'Tenho um convite', icon: UserPlus }, { value: 'criar', label: 'Criar paróquia', icon: Church }]} />
       <form onSubmit={submit} className="space-y-4" noValidate>
-        <Field label="Seu nome completo"><Input autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} /></Field>
+        <Field label="Seu nome completo"><Input autoComplete="name" placeholder="Ex.: Maria Clara Souza" value={name} onChange={(e) => setName(e.target.value)} /></Field>
         {tab === 'convite' ? (
           <Field label="Código de convite" hint="Peça à coordenação da PASCOM. Ex.: 7F3K9QX2">
-            <Input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} className="font-mono tracking-widest" maxLength={12} />
+            <Input placeholder="7F3K9QX2" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} className="font-mono tracking-widest" maxLength={12} />
           </Field>
         ) : (
           <>
             <Field label="Nome da paróquia"><Input value={parish} onChange={(e) => setParish(e.target.value)} placeholder="Paróquia São José" /></Field>
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Cidade"><Input value={city} onChange={(e) => setCity(e.target.value)} /></Field>
+              <Field label="Cidade"><Input value={city} onChange={(e) => setCity(e.target.value)} placeholder="Ex.: Belo Horizonte – MG" /></Field>
               <Field label="Nome da PASCOM"><Input value={pascom} onChange={(e) => setPascom(e.target.value)} placeholder="PASCOM São José" /></Field>
             </div>
             <p className="text-xs text-ink-muted">Quem cria a paróquia vira administrador e pode convidar o restante da equipe.</p>

@@ -81,7 +81,7 @@ function RoleEditor({ role, onClose }: { role: Role; onClose: () => void }) {
       footer={<><Button variant="ghost" onClick={onClose}>Cancelar</Button><Button variant="primary" onClick={save}>Salvar</Button></>}>
       <div className="space-y-4">
         <Field label="Nome" error={err}><Input autoFocus value={r.name} onChange={(e) => setR({ ...r, name: e.target.value })} placeholder="Ex.: Drone" /></Field>
-        <Field label="Descrição"><Textarea value={r.description} onChange={(e) => setR({ ...r, description: e.target.value })} /></Field>
+        <Field label="Descrição"><Textarea placeholder="O que essa função faz na celebração" value={r.description} onChange={(e) => setR({ ...r, description: e.target.value })} /></Field>
         <div>
           <span className="label">Cor</span>
           <div className="flex flex-wrap gap-2">

@@ -30,10 +30,10 @@ export default function Setup({ onDone }: { onDone: (d: AppData) => void }) {
         <form onSubmit={submit} className="mt-6 space-y-4" noValidate>
           <Field label="Nome da paróquia"><Input autoFocus value={parish} onChange={(e) => setParish(e.target.value)} placeholder="Ex.: Paróquia São José" /></Field>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Cidade"><Input value={city} onChange={(e) => setCity(e.target.value)} /></Field>
+            <Field label="Cidade"><Input value={city} onChange={(e) => setCity(e.target.value)} placeholder="Ex.: Belo Horizonte – MG" /></Field>
             <Field label="Nome da PASCOM"><Input value={pascom} onChange={(e) => setPascom(e.target.value)} placeholder="Opcional" /></Field>
           </div>
-          <Field label="Seu nome completo" hint="Você será o administrador e poderá cadastrar a equipe."><Input autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} /></Field>
+          <Field label="Seu nome completo" hint="Você será o administrador e poderá cadastrar a equipe."><Input autoComplete="name" placeholder="Ex.: Maria Clara Souza" value={name} onChange={(e) => setName(e.target.value)} /></Field>
           {error && <p role="alert" className="rounded-xl border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
           <Button type="submit" variant="primary" className="w-full">Começar</Button>
         </form>

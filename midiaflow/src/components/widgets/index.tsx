@@ -1,6 +1,6 @@
 import { addDays, differenceInMinutes, endOfMonth, parseISO, startOfMonth } from 'date-fns';
 import { motion, useReducedMotion } from 'framer-motion';
-import { ArrowRight, Check } from 'lucide-react';
+import { ArrowRight, CalendarPlus, Check } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { checkAssignment, isOpenSlot, scheduleStatus } from '@/lib/domain';
@@ -15,8 +15,9 @@ import { Avatar } from '../ui';
 /* Missões — lista estilo "Planner" que esmaece no fim                 */
 /* ------------------------------------------------------------------ */
 export function MissionsWidget() {
-  const { schedules, roles, me, respond } = useStore();
+  const { schedules, roles, me, respond, can } = useStore();
   const detail = useScheduleDetail();
+  const editor = useScheduleEditor();
   const today = toISODate(new Date());
 
   const items = useMemo(() => {
@@ -74,8 +75,18 @@ export function MissionsWidget() {
             </li>
           );
         })}
-        {items.length === 0 && <li className="px-1 text-sm text-ink-muted">Nenhuma missão pela frente.</li>}
       </ul>
+      {items.length === 0 && (
+        <div className="flex flex-1 flex-col items-center justify-center gap-3 rounded-[20px] border border-dashed border-white/10 px-4 py-8 text-center">
+          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-neon/10 text-neon"><CalendarPlus className="h-5 w-5" /></span>
+          <p className="text-sm text-ink-muted">
+            {can('manage:schedules') ? 'Nenhuma missão ainda. Crie a primeira escala e ela aparece aqui.' : 'Quando você for escalado, sua missão aparece aqui.'}
+          </p>
+          {can('manage:schedules') && (
+            <button onClick={() => editor.open()} className="rounded-full bg-neon/15 px-4 py-2 text-sm font-medium text-neon hover:bg-neon/25">Criar escala</button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

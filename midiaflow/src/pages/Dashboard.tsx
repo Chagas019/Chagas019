@@ -180,7 +180,10 @@ export default function Dashboard() {
               </ResponsiveContainer>
             </div>
           ) : (
-            <p className="py-16 text-center text-sm text-ink-muted">Sem escalas no período selecionado.</p>
+            <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-electric/10 text-electric"><CalendarClock className="h-5 w-5" /></span>
+              <p className="max-w-xs text-sm text-ink-muted">Sem escalas no período. O gráfico mostra quantas vagas foram preenchidas assim que houver escalas.</p>
+            </div>
           )}
         </Card>
       </div>
@@ -372,8 +375,8 @@ function AnnouncementModal({ open, onOpenChange }: { open: boolean; onOpenChange
     <Modal open={open} onOpenChange={onOpenChange} title="Novo aviso" size="sm"
       footer={<><Button variant="ghost" onClick={() => onOpenChange(false)}>Cancelar</Button><Button variant="primary" onClick={submit}>Publicar</Button></>}>
       <div className="space-y-4">
-        <Field label="Título" error={err && !title.trim() ? err : undefined}><Input value={title} onChange={(e) => setTitle(e.target.value)} /></Field>
-        <Field label="Mensagem" error={err && title.trim() ? err : undefined}><Textarea value={body} onChange={(e) => setBody(e.target.value)} /></Field>
+        <Field label="Título" error={err && !title.trim() ? err : undefined}><Input placeholder="Ex.: Reunião da PASCOM no sábado" value={title} onChange={(e) => setTitle(e.target.value)} /></Field>
+        <Field label="Mensagem" error={err && title.trim() ? err : undefined}><Textarea placeholder="Escreva o recado para a equipe" value={body} onChange={(e) => setBody(e.target.value)} /></Field>
       </div>
     </Modal>
   );
