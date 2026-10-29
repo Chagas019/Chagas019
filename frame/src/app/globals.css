@@ -160,3 +160,86 @@ h1 em {
 @keyframes spin-slow { to { transform: rotate(360deg); } }
 .spin-slow { animation: spin-slow 18s linear infinite; }
 @media (prefers-reduced-motion: reduce) { .spin-slow { animation: none; } }
+
+/* ---------------- Creative Studio: botões 3D ---------------- */
+@keyframes node-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+@keyframes blink { 0%, 88%, 100% { transform: scaleY(1); } 92% { transform: scaleY(0.1); } }
+
+/* Corpo em grafite com borda metálica fina, reflexo superior e sombra profunda. */
+.btn-3d {
+  position: relative;
+  isolation: isolate;
+  border-radius: 28px;
+  background:
+    radial-gradient(120% 80% at 30% 0%, rgb(255 255 255 / 0.14), transparent 55%),
+    linear-gradient(180deg, #2a2b30 0%, #16171a 55%, #0e0f11 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    inset 0 -2px 0 rgb(0 0 0 / 0.6),
+    0 1px 0 rgb(255 255 255 / 0.04),
+    0 18px 30px -12px rgb(0 0 0 / 0.9),
+    0 6px 10px -6px rgb(0 0 0 / 0.8);
+  transition: transform 0.35s var(--ease-out-expo), box-shadow 0.35s var(--ease-out-expo);
+}
+/* Aro metálico (escovado) via máscara: prata com um brilho de cor discreto. */
+.btn-3d::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(160deg, #f4f5f8 0%, #8e919b 30%, #3a3c42 55%, #c9ccd4 80%, #6b74ff 92%, #ff6b2c 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.75;
+  pointer-events: none;
+}
+/* Luz que acompanha o hover. */
+.btn-3d::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(60% 50% at 50% 110%, rgb(39 52 240 / 0.45), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.35s var(--ease-out-expo);
+  z-index: -1;
+  pointer-events: none;
+}
+.btn-3d:hover, .group:hover > .btn-3d, .group:focus-visible > .btn-3d {
+  transform: translateY(-3px);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.3),
+    inset 0 -2px 0 rgb(0 0 0 / 0.6),
+    0 26px 40px -14px rgb(0 0 0 / 0.95),
+    0 0 0 1px rgb(255 255 255 / 0.04);
+}
+.btn-3d:hover::after, .group:hover > .btn-3d::after, .group:focus-visible > .btn-3d::after { opacity: 1; }
+.btn-3d[data-selected="true"] {
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.3),
+    inset 0 -2px 0 rgb(0 0 0 / 0.6),
+    0 0 0 2px rgb(213 255 64 / 0.85),
+    0 0 28px -4px rgb(213 255 64 / 0.45);
+}
+.btn-3d[data-tone="light"] {
+  background:
+    radial-gradient(120% 80% at 30% 0%, rgb(255 255 255 / 0.9), transparent 60%),
+    linear-gradient(180deg, #f1f2f5 0%, #c9ccd4 60%, #a9acb6 100%);
+}
+
+/* Botão-pílula de destaque (vidro + brilho laranja/azul), inspirado em interruptores. */
+.pill-3d {
+  position: relative;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #1d1e22, #0b0c0e);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), inset 0 -2px 0 rgb(0 0 0 / 0.7), 0 20px 36px -14px rgb(0 0 0 / 0.95);
+}
+.pill-3d__knob {
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.35), rgb(255 255 255 / 0.08)),
+    linear-gradient(90deg, #ff6b2c, #ff8f4d);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.6), 0 0 30px 2px rgb(255 107 44 / 0.55), 0 8px 18px -6px rgb(0 0 0 / 0.8);
+  backdrop-filter: blur(6px);
+}

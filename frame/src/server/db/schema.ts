@@ -749,3 +749,73 @@ export const message = pgTable(
   },
   (t) => [index("message_conversation_idx").on(t.conversationId, t.createdAt)],
 );
+
+/* ------------------------------------------------------------------ */
+/* Meu estúdio: projetos, ideias e exemplos salvos                     */
+/* ------------------------------------------------------------------ */
+
+export type StudioTask = { id: string; text: string; done: boolean };
+export type StudioLink = { label: string; url: string };
+/** Proposta criativa gerada pelo "Me dê uma ideia" (ou editada pelo usuário). */
+export type IdeaProposal = {
+  concept: string;
+  title: string;
+  visualReference: string;
+  structure: string[];
+  palette: string[];
+  framing: string;
+  editing: string;
+  caption: string;
+  cta: string;
+  inputs: { kind: string; goal: string; style: string; platform: string; time: string };
+};
+
+export const studioProjectStatus = pgEnum("studio_project_status", ["ideia", "producao", "edicao", "pronto"]);
+
+export const studioProject = pgTable(
+  "studio_project",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    description: text("description").notNull().default(""),
+    status: studioProjectStatus("status").notNull().default("ideia"),
+    tasks: jsonb("tasks").$type<StudioTask[]>().notNull().default([]),
+    links: jsonb("links").$type<StudioLink[]>().notNull().default([]),
+    /** De onde veio: ideia gerada, exemplo do laboratório ou referência do feed. */
+    sourceType: text("source_type", { enum: ["blank", "idea", "example", "post", "daily"] }).notNull().default("blank"),
+    sourceRef: text("source_ref"),
+    publishedPostId: uuid("published_post_id").references(() => post.id, { onDelete: "set null" }),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [index("studio_project_owner_idx").on(t.ownerId, t.updatedAt)],
+);
+
+export const studioIdea = pgTable(
+  "studio_idea",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    proposal: jsonb("proposal").$type<IdeaProposal>().notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [index("studio_idea_owner_idx").on(t.ownerId, t.createdAt)],
+);
+
+export const savedExample = pgTable(
+  "saved_example",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    slug: text("slug").notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.slug] })],
+);

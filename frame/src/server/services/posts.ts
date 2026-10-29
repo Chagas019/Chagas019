@@ -341,7 +341,13 @@ export async function listPopular(viewerId: string | null, days: number, limit: 
 }
 
 /** Busca em publicações: #hashtag exata ou texto em título, legenda e hashtags. */
-export async function searchPosts(viewerId: string | null, q: string, category: string | null, limit = 48): Promise<PostCard[]> {
+export async function searchPosts(
+  viewerId: string | null,
+  q: string,
+  category: string | null,
+  limit = 48,
+  opts: { format?: "foto" | "video" | null; order?: "recentes" | "populares" | null } = {},
+): Promise<PostCard[]> {
   const hidden = viewerId ? await hiddenAuthorIds(viewerId) : [];
   const term = q.trim();
   let match: SQL | undefined;
@@ -359,11 +365,16 @@ export async function searchPosts(viewerId: string | null, q: string, category: 
     and(
       match,
       category ? sql`${post.categories} @> array[${category}]::text[]` : undefined,
+      opts.format === "video"
+        ? sql`exists (select 1 from media m where m.post_id = ${post.id} and m.purpose = 'post' and m.kind = 'video')`
+        : opts.format === "foto"
+          ? sql`not exists (select 1 from media m where m.post_id = ${post.id} and m.purpose = 'post' and m.kind = 'video') and exists (select 1 from media m where m.post_id = ${post.id} and m.purpose = 'post')`
+          : undefined,
       hidden.length ? notInArray(post.authorId, hidden) : undefined,
       sql`${post.communityId} is null`,
       sql`${post.kind} <> 'discussion'`,
     ),
-    { limit },
+    { limit, orderBy: opts.order === "populares" ? [sql`(${post.likeCount} + 2 * ${post.commentCount} + 2 * ${post.saveCount}) desc`, desc(post.createdAt)] : undefined },
   );
   return rows.map(normalizeCard);
 }

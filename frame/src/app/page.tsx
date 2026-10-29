@@ -11,6 +11,7 @@ import { PostGridSkeleton } from "@/components/post/post-card";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/misc";
 import { Sparkle } from "@/components/ui/sparkle";
+import { StudioBar } from "@/components/studio/studio-bar";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ f?: string }> }) {
   const viewer = await getViewer();
@@ -48,6 +49,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
       ) : null}
       <Container className="pt-5 sm:pt-8">
         <h1 className="sr-only">{viewer ? "Seu feed" : "Inspiração"}</h1>
+        <Suspense>
+          <StudioBar compact className="mb-2" />
+        </Suspense>
         <div className="mb-5 sm:mb-7">
           <FeedFilters active={filter} signedIn={!!viewer} />
         </div>

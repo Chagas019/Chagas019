@@ -31,13 +31,25 @@ const splitList = (s: string) =>
     .map((x) => x.trim())
     .filter(Boolean);
 
-export function PublishForm({ initialKind, community, viewerId }: { initialKind: Kind; community: { id: string; name: string } | null; viewerId: string }) {
+export type PublishPrefill = { title: string; body: string; categories: CategorySlug[]; projectId: string | null };
+
+export function PublishForm({
+  initialKind,
+  community,
+  viewerId,
+  prefill,
+}: {
+  initialKind: Kind;
+  community: { id: string; name: string } | null;
+  viewerId: string;
+  prefill?: PublishPrefill;
+}) {
   const router = useRouter();
   const toast = useToast();
   const [kind, setKind] = useState<Kind>(initialKind);
   const [items, setItems] = useState<UploadedItem[]>([]);
   const [before, setBefore] = useState<UploadedItem[]>([]);
-  const [categories, setCategories] = useState<CategorySlug[]>([]);
+  const [categories, setCategories] = useState<CategorySlug[]>(prefill?.categories ?? []);
   const [visibility, setVisibility] = useState<"public" | "followers" | "private">("public");
   const [collab, setCollab] = useState(false);
   const [hideTech, setHideTech] = useState(false);
@@ -108,7 +120,7 @@ export function PublishForm({ initialKind, community, viewerId }: { initialKind:
     };
     setErrors({});
     start(async () => {
-      const r = await createPostAction(input, {
+      const r = await createPostAction({ ...input, projectId: prefill?.projectId ?? undefined }, {
         mediaIds: done.map((d) => d.mediaId!),
         beforeMediaId: kind === "showcase" ? (before.find((b) => b.status === "done")?.mediaId ?? null) : null,
       });
@@ -164,10 +176,10 @@ export function PublishForm({ initialKind, community, viewerId }: { initialKind:
 
       <section className="space-y-5">
         <Field label="Título" id="title" error={errors.title}>
-          <Input id="title" name="title" maxLength={140} required invalid={!!errors.title} />
+          <Input id="title" name="title" maxLength={140} required invalid={!!errors.title} defaultValue={prefill?.title} />
         </Field>
         <Field label={kind === "tutorial" ? "Introdução" : "Descrição"} id="body" optional error={errors.body}>
-          <Textarea id="body" name="body" maxLength={5000} rows={4} placeholder="Conte a história do trabalho. Use #hashtags e @mencione quem participou." />
+          <Textarea id="body" name="body" maxLength={5000} rows={4} defaultValue={prefill?.body} placeholder="Conte a história do trabalho. Use #hashtags e @mencione quem participou." />
         </Field>
         <div className="space-y-2">
           <p className="text-sm font-medium text-fog-200">Categorias <span className="text-xs font-normal text-fog-500">até 5</span></p>

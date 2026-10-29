@@ -276,3 +276,41 @@ export const startConversationSchema = z.object({
   title: trimmed(80).optional().transform((v) => (v ? v : null)),
   body: required(4000, "Mensagem"),
 });
+
+/* ---------------------------- Meu estúdio ---------------------------- */
+
+const studioUrl = z
+  .string()
+  .trim()
+  .max(500)
+  .refine((u) => /^https:\/\/[^\s]+$/i.test(u), "Use um link https://");
+
+export const studioProjectSchema = z.object({
+  title: required(120, "Título"),
+  description: trimmed(4000).default(""),
+  status: z.enum(["ideia", "producao", "edicao", "pronto"]).default("ideia"),
+  tasks: z
+    .array(z.object({ id: z.string().min(1).max(40), text: required(200, "Tarefa"), done: z.boolean() }))
+    .max(50)
+    .default([]),
+  links: z.array(z.object({ label: required(60, "Nome do link"), url: studioUrl })).max(12).default([]),
+});
+
+export const studioProjectCreateSchema = studioProjectSchema.extend({
+  sourceType: z.enum(["blank", "idea", "example", "post", "daily"]).default("blank"),
+  sourceRef: z.string().trim().max(100).nullable().default(null),
+});
+
+const shortText = (max: number) => z.string().trim().max(max);
+export const ideaProposalSchema = z.object({
+  title: required(140, "Título"),
+  concept: shortText(1000),
+  visualReference: shortText(1000),
+  structure: z.array(shortText(300)).max(12),
+  palette: z.array(z.string().regex(/^#[0-9a-f]{6}$/i)).max(6),
+  framing: shortText(500),
+  editing: shortText(500),
+  caption: shortText(600),
+  cta: shortText(300),
+  inputs: z.object({ kind: shortText(30), goal: shortText(30), style: shortText(30), platform: shortText(30), time: shortText(30) }),
+});

@@ -14,6 +14,11 @@ export const CATEGORIES = [
   { slug: "eventos", label: "Eventos e casamentos" },
   { slug: "street", label: "Rua e documental" },
   { slug: "natureza", label: "Natureza e paisagem" },
+  { slug: "cinematografica", label: "Fotografia cinematográfica" },
+  { slug: "religiosa", label: "Religiosa e documental" },
+  { slug: "identidade-visual", label: "Identidade visual" },
+  { slug: "reels", label: "Reels e vídeos curtos" },
+  { slug: "ia", label: "IA na criatividade" },
 ] as const;
 export type CategorySlug = (typeof CATEGORIES)[number]["slug"];
 export const CATEGORY_SLUGS = CATEGORIES.map((c) => c.slug) as [CategorySlug, ...CategorySlug[]];

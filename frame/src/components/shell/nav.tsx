@@ -15,12 +15,13 @@ const LINKS = [
   { href: "/desafios", label: t.nav.challenges },
   { href: "/comunidades", label: t.nav.communities },
   { href: "/collab", label: t.nav.collab },
+  { href: "/estudio-criativo", label: "Studio" },
 ];
 
 const AI_LINK = { href: "/ai", label: t.nav.ai };
 
 function isActive(pathname: string, href: string) {
-  return href === "/" ? pathname === "/" : pathname.startsWith(href);
+  return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 }
 
 export function NavLinks({ aiEnabled }: { aiEnabled: boolean }) {

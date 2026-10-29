@@ -16,17 +16,19 @@ import { cn } from "@/lib/utils";
 
 export const metadata = { title: "Descobrir" };
 
-export default async function Page({ searchParams }: { searchParams: Promise<{ esp?: string; q?: string; cat?: string }> }) {
+export default async function Page({ searchParams }: { searchParams: Promise<{ esp?: string; q?: string; cat?: string; formato?: string; ordem?: string }> }) {
   const sp = await searchParams;
   const specialty = SPECIALTIES.find((s) => s === sp.esp);
   const q = (sp.q ?? "").trim().slice(0, 80);
   const cat = CATEGORIES.find((c) => c.slug === sp.cat)?.slug ?? null;
   const viewer = await getViewer();
   const vid = viewer?.id ?? null;
-  const searching = !!q || !!cat;
+  const format = sp.formato === "foto" || sp.formato === "video" ? sp.formato : null;
+  const order = sp.ordem === "populares" || sp.ordem === "recentes" ? sp.ordem : null;
+  const searching = !!q || !!cat || !!format || !!order;
   const catWhere = cat ? sql`${post.categories} @> array[${cat}]::text[]` : undefined;
   const [results, people, tags, popular, recent, talents, suggested, bySpecialty, communities, challenges, collabs] = await Promise.all([
-    searching ? searchPosts(vid, q, cat) : Promise.resolve([]),
+    searching ? searchPosts(vid, q, cat, 48, { format, order }) : Promise.resolve([]),
     q ? searchPeople(vid, q) : Promise.resolve([]),
     trendingTags(7, 12),
     searching ? Promise.resolve([]) : listPopular(vid, 30, 12),
@@ -39,12 +41,13 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
     searching ? Promise.resolve([]) : listCards(vid, eq(post.isCollaborative, true), 8),
   ]);
   const openChallenges = challenges.filter((c) => c.phase === "open" || c.phase === "voting").slice(0, 3);
-  const catHref = (slug: string | null) => {
+  const link = (patch: Record<string, string | null>) => {
+    const cur: Record<string, string | null> = { q: q || null, cat, formato: format, ordem: order, ...patch };
     const p = new URLSearchParams();
-    if (q) p.set("q", q);
-    if (slug) p.set("cat", slug);
+    for (const [k, v] of Object.entries(cur)) if (v) p.set(k, v);
     return `/descobrir${p.size ? `?${p}` : ""}`;
   };
+  const catHref = (slug: string | null) => link({ cat: slug });
 
   return (
     <>
@@ -64,6 +67,18 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
               </Link>
             ))}
           </nav>
+          <div className="flex flex-wrap gap-2 text-sm" role="group" aria-label="Formato e ordem">
+            {[
+              { label: "Fotos", on: format === "foto", href: link({ formato: format === "foto" ? null : "foto" }) },
+              { label: "Vídeos", on: format === "video", href: link({ formato: format === "video" ? null : "video" }) },
+              { label: "Recentes", on: order === "recentes", href: link({ ordem: order === "recentes" ? null : "recentes" }) },
+              { label: "Populares", on: order === "populares", href: link({ ordem: order === "populares" ? null : "populares" }) },
+            ].map((o) => (
+              <Link key={o.label} href={o.href} aria-pressed={o.on} className={cn("rounded-full px-3 py-1 ring-1 ring-inset", o.on ? "bg-paper text-ink-950 ring-paper" : "text-paper ring-paper/40 hover:bg-white/10")}>
+                {o.label}
+              </Link>
+            ))}
+          </div>
         </Container>
       </section>
       <Container className="space-y-14 py-10">
@@ -100,7 +115,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
           ) : null}
           <section className="space-y-5">
             <h2 className="font-display text-3xl">
-              {q ? <>Resultados para “{q}”</> : "Trabalhos"}
+              {q ? <>Resultados para “{q}”</> : order === "populares" ? "Mais populares" : "Mais recentes"}
               {cat ? <span className="text-fog-500"> · {CATEGORIES.find((c) => c.slug === cat)?.label}</span> : null}
             </h2>
             {results.length ? (

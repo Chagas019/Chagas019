@@ -2,13 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { EyeOff, Flag, Link2, MoreHorizontal } from "lucide-react";
+import { EyeOff, Flag, FolderPlus, Link2, MoreHorizontal } from "lucide-react";
+import { createProjectAction } from "@/server/actions/studio";
 import { ReportButton } from "@/components/social/report-dialog";
 import { useToast } from "@/components/ui/toast";
 import { setMuteAction } from "@/server/actions/social";
 
 /** Ações rápidas do card: copiar link, denunciar e deixar de ver o autor. */
-export function CardMenu({ postId, authorId, authorHandle, signedIn, isOwn, onHide }: { postId: string; authorId: string; authorHandle: string; signedIn: boolean; isOwn: boolean; onHide?: (authorId: string) => void }) {
+export function CardMenu({ postId, postTitle, authorId, authorHandle, signedIn, isOwn, onHide }: { postId: string; postTitle: string; authorId: string; authorHandle: string; signedIn: boolean; isOwn: boolean; onHide?: (authorId: string) => void }) {
   const [open, setOpen] = useState(false);
   const [reporting, setReporting] = useState(false);
   const [pending, start] = useTransition();
@@ -54,6 +55,29 @@ export function CardMenu({ postId, authorId, authorHandle, signedIn, isOwn, onHi
           >
             <Link2 className="size-4" aria-hidden /> Copiar link
           </button>
+          {signedIn ? (
+            <button
+              role="menuitem"
+              type="button"
+              disabled={pending}
+              className={item}
+              onClick={() =>
+                start(async () => {
+                  const r = await createProjectAction({
+                    title: `Inspirado em: ${postTitle}`.slice(0, 120),
+                    description: `Referência: ${window.location.origin}/p/${postId} (de @${authorHandle}). Recrie com a sua identidade e dê o crédito da inspiração.`,
+                    sourceType: "post",
+                    sourceRef: postId,
+                  });
+                  setOpen(false);
+                  if (!r.ok) return toast.show(r.error, "error");
+                  router.push(`/estudio/projetos/${r.data.id}`);
+                })
+              }
+            >
+              <FolderPlus className="size-4" aria-hidden /> Virar projeto no meu estúdio
+            </button>
+          ) : null}
           {signedIn && !isOwn ? (
             <>
               <button

@@ -77,7 +77,7 @@ export function PostCard({ card, signedIn, priority, viewerId, onHide }: { card:
             {compactNumber(card.commentCount)}
           </span>
         ) : null}
-        <CardMenu postId={card.id} authorId={card.authorId} authorHandle={card.authorHandle} signedIn={signedIn} isOwn={!!viewerId && viewerId === card.authorId} onHide={onHide} />
+        <CardMenu postId={card.id} postTitle={card.title} authorId={card.authorId} authorHandle={card.authorHandle} signedIn={signedIn} isOwn={!!viewerId && viewerId === card.authorId} onHide={onHide} />
       </div>
     </article>
   );

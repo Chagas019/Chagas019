@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PageHero } from "@/components/ui/page-hero";
+import { DailyChallenge } from "@/components/studio/daily-challenge";
 import { Plus } from "lucide-react";
 import { getViewer, isModerator } from "@/server/session";
 import { listChallenges, type ChallengePhase } from "@/server/services/challenges";
@@ -41,6 +42,7 @@ export default async function Page() {
         Desafios semanais e mensais para iniciantes e profissionais. Valorizamos originalidade, evolução e participação — a votação, quando existe, tem regras públicas.
       </PageHero>
       <Container className="space-y-12 py-10">
+        <DailyChallenge signedIn={!!viewer} />
       {all.length === 0 ? <EmptyState title="Nenhum desafio publicado ainda" /> : null}
       {groups
         .filter((g) => g.items.length)

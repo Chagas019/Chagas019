@@ -6,12 +6,16 @@ import * as posts from "../services/posts";
 import { notifyCommunityPost } from "../services/posts";
 import type { FeedFilter } from "@/lib/taxonomy";
 import { FEED_FILTERS } from "@/lib/taxonomy";
+import { linkProjectPost } from "../services/studio";
 import { run } from "./run";
 
 export async function createPostAction(input: unknown, files: { mediaIds: string[]; beforeMediaId?: string | null }) {
   return run(async () => {
     const viewer = await requireViewer();
     const created = await posts.createPost(viewer, input, files);
+    // Publicação feita a partir de um projeto do estúdio: liga os dois (só se o projeto for da pessoa).
+    const projectId = (input as { projectId?: unknown })?.projectId;
+    if (typeof projectId === "string") await linkProjectPost(viewer.id, projectId, created.id).catch(() => {});
     const communityId = (input as { communityId?: string | null })?.communityId;
     if (communityId) await notifyCommunityPost(communityId, viewer.id, created.id);
     revalidatePath("/");
