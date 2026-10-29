@@ -153,6 +153,8 @@ export const profile = pgTable(
       .notNull()
       .default("nobody"),
     isIndexable: boolean("is_indexable").notNull().default(false),
+    /** Aprova automaticamente novos seguidores para conteúdo "só seguidores". Desligado por padrão. */
+    autoApproveFollowers: boolean("auto_approve_followers").notNull().default(false),
     accentColor: text("accent_color", { enum: ["violet", "blue", "ember", "mint"] })
       .notNull()
       .default("violet"),
@@ -366,6 +368,8 @@ export const follow = pgTable(
     followingId: text("following_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
+    /** Aprovado pelo perfil seguido: libera publicações "só seguidores". Seguir em si é instantâneo. */
+    approved: boolean("approved").notNull().default(false),
     createdAt: createdAt(),
   },
   (t) => [

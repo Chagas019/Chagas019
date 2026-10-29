@@ -1,5 +1,5 @@
 import "server-only";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { db } from "../db";
 import { block, collection, comment, follow, mute, post, reaction, report, savedItem, tutorial, tutorialRating, profile } from "../db/schema";
 import { AppError } from "../errors";
@@ -90,7 +90,13 @@ export async function setFollow(viewer: V, targetId: string, shouldFollow: boole
   await enforceRateLimit(`follow:${viewer.id}`, 60, 60);
   const changed = await db.transaction(async (tx) => {
     if (shouldFollow) {
-      const ins = await tx.insert(follow).values({ followerId: viewer.id, followingId: targetId }).onConflictDoNothing().returning({ f: follow.followerId });
+      const [target] = await tx.select({ auto: profile.autoApproveFollowers }).from(profile).where(eq(profile.userId, targetId)).limit(1);
+      if (!target) throw new AppError("NOT_FOUND");
+      const ins = await tx
+        .insert(follow)
+        .values({ followerId: viewer.id, followingId: targetId, approved: target.auto })
+        .onConflictDoNothing()
+        .returning({ f: follow.followerId });
       if (ins.length) {
         await tx.update(profile).set({ followerCount: sql`${profile.followerCount} + 1` }).where(eq(profile.userId, targetId));
         await tx.update(profile).set({ followingCount: sql`${profile.followingCount} + 1` }).where(eq(profile.userId, viewer.id));
@@ -105,10 +111,36 @@ export async function setFollow(viewer: V, targetId: string, shouldFollow: boole
     return del.length > 0;
   });
   if (shouldFollow && changed) {
-    await notify({ userId: targetId, actorId: viewer.id, type: "follow", message: "começou a seguir você" });
+    const [row] = await db.select({ approved: follow.approved }).from(follow).where(and(eq(follow.followerId, viewer.id), eq(follow.followingId, targetId))).limit(1);
+    await notify({
+      userId: targetId,
+      actorId: viewer.id,
+      type: "follow",
+      message: row?.approved ? "começou a seguir você" : "começou a seguir você — aprove em Configurações para liberar posts só para seguidores",
+    });
     await recordActivation(viewer.id, "first_follow");
   }
   return { following: shouldFollow };
+}
+
+/** Libera (ou revoga) o acesso de um seguidor às publicações "só seguidores". */
+export async function setFollowerApproval(owner: V, followerId: string, approved: boolean) {
+  const res = await db
+    .update(follow)
+    .set({ approved })
+    .where(and(eq(follow.followerId, followerId), eq(follow.followingId, owner.id)))
+    .returning({ f: follow.followerId });
+  if (!res.length) throw new AppError("NOT_FOUND");
+}
+
+export async function listFollowers(ownerId: string) {
+  return db
+    .select({ userId: follow.followerId, approved: follow.approved, handle: profile.handle, displayName: profile.displayName, avatar: profile.avatarMediaId, since: follow.createdAt })
+    .from(follow)
+    .innerJoin(profile, eq(profile.userId, follow.followerId))
+    .where(eq(follow.followingId, ownerId))
+    .orderBy(asc(follow.approved), desc(follow.createdAt))
+    .limit(500);
 }
 
 async function removeFollowBothWays(a: string, b: string) {

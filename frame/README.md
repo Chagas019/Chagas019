@@ -49,6 +49,7 @@ npm run build && npm run test:e2e   # Playwright contra o build, banco frame_tes
 - **Publicação**: imagens (até 10, carrossel), vídeo (MP4/MOV/WebM), texto alternativo, categorias, ferramentas, visibilidade (público/seguidores/só eu), projeto colaborativo.
 - **Showcase**: resultado + foto original com **slider antes/depois** (mouse, toque e teclado), processo, ficha técnica (câmera, lente, luz, apps, preset/LUT, parâmetros), créditos, link de portfólio, opção de ocultar a ficha.
 - **Feed Inspiração** com filtros (Para você, Seguindo, Fotografia, Vídeo, Edição, Color grading, Design, Tutoriais, Antes e depois, Colaborativos) e ranking documentado em `src/lib/ranking.ts`.
+- **Seguidores aprovados**: seguir é instantâneo, mas posts "Seguidores aprovados" só aparecem para quem você aprova em Configurações (ou ative a aprovação automática).
 - **Interações**: curtir, comentar/responder, excluir comentário, salvar, coleções, seguir, compartilhar, denunciar, bloquear, silenciar.
 - **FRAME LAB**: tutoriais com área, nível, tempo, app, etapas, materiais, avaliação de utilidade e filtro "meus salvos".
 - **Descobrir talentos**: novos talentos com critérios públicos e rotação diária, filtro por especialidade, exploração por interesse, projetos colaborativos.
@@ -65,7 +66,7 @@ npm run build && npm run test:e2e   # Playwright contra o build, banco frame_tes
 |---|---|
 | `tsc --noEmit` | sem erros |
 | `eslint .` | sem erros/avisos |
-| Vitest — 4 arquivos de unidade + 4 de integração (Postgres real) | 34 testes passando |
+| Vitest — 4 arquivos de unidade + 4 de integração (Postgres real) | 35 testes passando |
 | Playwright — 9 cenários (cadastro→onboarding→publicação, edição de perfil, curtida/comentário/follow persistidos, post privado e arquivo inacessíveis, notificações, Showcase + slider por teclado, envio a desafio, comunidade privada com aprovação, layout mobile sem overflow) | 9 passando |
 | `next build` | sem erros/avisos |
 
@@ -97,10 +98,9 @@ Sem `RESEND_API_KEY`, em desenvolvimento o link de redefinição de senha é imp
 
 ### Riscos conhecidos (revisão de segurança)
 
-Uma revisão estática por agente encontrou e o PR já corrigiu: open redirect com caracteres de controle no `?next=`, upload sem `Content-Length`, avatares/capas órfãos hospedados para sempre, cache longo de mídia, admin de comunidade agindo sobre outros admins, título de post invisível vazando em notificações, verificação de senha sem rate limit na exclusão de conta, exclusão de conta não atômica (e arquivos órfãos de comunidades), e cota de IA contornável abortando o stream.
+Uma revisão estática por agente encontrou e o PR já corrigiu: open redirect com caracteres de controle no `?next=`, upload sem `Content-Length`, avatares/capas órfãos hospedados para sempre, cache longo de mídia, admin de comunidade agindo sobre outros admins, título de post invisível vazando em notificações, verificação de senha sem rate limit na exclusão de conta, exclusão de conta não atômica (e arquivos órfãos de comunidades), cota de IA contornável abortando o stream, e posts "só seguidores" visíveis a qualquer conta (agora exigem seguidor aprovado; aprovação automática é opcional em Configurações).
 
 Ainda em aberto (decisões de produto ou infraestrutura):
-- **"Seguidores" não é privado**: seguir não exige aprovação, então qualquer conta pode seguir e ver. A interface avisa; o correto é implementar pedidos de follow aprovados.
 - **Vídeos mantêm metadados** (incluindo GPS) — requer ffmpeg (`-map_metadata -1`) ou serviço de mídia.
 - **Votação com contas falsas**: hoje a defesa é idade mínima de conta + rate limit de cadastro; exigir e-mail verificado para votar.
 

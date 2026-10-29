@@ -26,6 +26,7 @@ type ProfileData = {
   contactEmail: string | null;
   contactVisibility: "nobody" | "members" | "following";
   isIndexable: boolean;
+  autoApproveFollowers: boolean;
   accentColor: "violet" | "blue" | "ember" | "mint";
 };
 
@@ -37,7 +38,7 @@ export function ProfileForm({ profile }: { profile: ProfileData }) {
   const [specialties, setSpecialties] = useState(profile.specialties);
   const [interests, setInterests] = useState(profile.interests as CategorySlug[]);
   const [links, setLinks] = useState(profile.links);
-  const [flags, setFlags] = useState({ showLocation: profile.showLocation, availableForWork: profile.availableForWork, isIndexable: profile.isIndexable });
+  const [flags, setFlags] = useState({ showLocation: profile.showLocation, availableForWork: profile.availableForWork, isIndexable: profile.isIndexable, autoApproveFollowers: profile.autoApproveFollowers });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [pending, start] = useTransition();
 
@@ -156,6 +157,7 @@ export function ProfileForm({ profile }: { profile: ProfileData }) {
         </Field>
         <Switch checked={flags.showLocation} onChange={(v) => setFlags((f) => ({ ...f, showLocation: v }))} label="Mostrar localização no perfil" description="Desligado por padrão." />
         <Switch checked={flags.isIndexable} onChange={(v) => setFlags((f) => ({ ...f, isIndexable: v }))} label="Permitir que buscadores indexem meu portfólio" description="Seu perfil e trabalhos públicos poderão aparecer no Google e outros buscadores." />
+        <Switch checked={flags.autoApproveFollowers} onChange={(v) => setFlags((f) => ({ ...f, autoApproveFollowers: v }))} label="Aprovar novos seguidores automaticamente" description="Desligado: quem segue você só vê publicações “Seguidores aprovados” depois que você aprovar." />
       </section>
 
       <Button type="submit" size="lg" loading={pending}>

@@ -23,6 +23,16 @@ export async function isFollowing(followerId: string, followingId: string): Prom
 }
 
 /** IDs que nunca devem aparecer para o usuário: quem ele bloqueou, quem o bloqueou e quem ele silenciou. */
+/** Seguidor aprovado: pode ver publicações com visibilidade "só seguidores". */
+export async function isApprovedFollower(followerId: string, followingId: string): Promise<boolean> {
+  const rows = await db
+    .select({ x: sql<number>`1` })
+    .from(follow)
+    .where(and(eq(follow.followerId, followerId), eq(follow.followingId, followingId), eq(follow.approved, true)))
+    .limit(1);
+  return rows.length > 0;
+}
+
 export async function hiddenAuthorIds(viewerId: string): Promise<string[]> {
   const rows = await db.execute<{ id: string }>(sql`
     select blocked_id as id from block where blocker_id = ${viewerId}

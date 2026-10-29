@@ -308,7 +308,7 @@ export function PublishForm({ initialKind, community }: { initialKind: Kind; com
           {(
             [
               { v: "public", t: "Público", d: community ? "Membros que podem ver a comunidade" : "Qualquer pessoa, inclusive fora do FRAME" },
-              { v: "followers", t: "Seguidores", d: "Quem segue você. Seguir não exige aprovação — não use para conteúdo sigiloso." },
+              { v: "followers", t: "Seguidores aprovados", d: "Só seguidores que você aprovou em Configurações" },
               { v: "private", t: "Só eu", d: "Rascunho ou arquivo pessoal" },
             ] as const
           ).map((o) => (

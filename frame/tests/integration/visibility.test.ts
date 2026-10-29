@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { canViewPost } from "@/server/services/access";
 import { getFeed, getPostDetail, listUserCards } from "@/server/services/posts";
-import { setBlock, setFollow, setMute } from "@/server/services/social";
+import { setBlock, setFollow, setFollowerApproval, setMute } from "@/server/services/social";
 import { createCommunity, joinCommunity } from "@/server/services/communities";
 import { makePost, makeUser, resetDb } from "./helpers";
 
@@ -21,7 +21,11 @@ describe("visibilidade de publicações", () => {
     expect(await getPostDetail(bruno, priv.id)).toBeNull();
     expect(await getPostDetail(ana, priv.id)).not.toBeNull();
 
+    // Seguir sozinho não libera: a autora precisa aprovar.
     await setFollow(bruno, ana.id, true);
+    expect(await getPostDetail(bruno, fol.id)).toBeNull();
+    expect((await listUserCards(bruno.id, ana.id)).map((c) => c.title)).toEqual(["público"]);
+    await setFollowerApproval(ana, bruno.id, true);
     expect(await getPostDetail(bruno, fol.id)).not.toBeNull();
     expect(await getPostDetail(bruno, priv.id)).toBeNull();
 
@@ -90,5 +94,24 @@ describe("papéis em comunidades", () => {
     await moderateMember(dona, c.id, adm2.id, "promote");
     await expect(moderateMember(adm1, c.id, adm2.id, "ban")).rejects.toMatchObject({ code: "FORBIDDEN" });
     await moderateMember(dona, c.id, adm2.id, "ban");
+  });
+});
+
+describe("aprovação de seguidores", () => {
+  it("aprovação automática e revogação", async () => {
+    const { db } = await import("@/server/db");
+    const { profile } = await import("@/server/db/schema");
+    const { eq } = await import("drizzle-orm");
+    const ana = await makeUser("Ana");
+    const bruno = await makeUser("Bruno");
+    const fol = await makePost(ana, { visibility: "followers" });
+    await db.update(profile).set({ autoApproveFollowers: true }).where(eq(profile.userId, ana.id));
+    await setFollow(bruno, ana.id, true);
+    expect(await getPostDetail(bruno, fol.id)).not.toBeNull();
+    await setFollowerApproval(ana, bruno.id, false);
+    expect(await getPostDetail(bruno, fol.id)).toBeNull();
+    // Só se aprova quem de fato segue.
+    const carla = await makeUser("Carla");
+    await expect(setFollowerApproval(ana, carla.id, true)).rejects.toMatchObject({ code: "NOT_FOUND" });
   });
 });

@@ -135,7 +135,7 @@ export function visibleToViewer(viewerId: string | null): SQL {
   return sql`(${base} and ${community} and (
       ${post.authorId} = ${viewerId}
       or ${post.visibility} = 'public'
-      or (${post.visibility} = 'followers' and exists (select 1 from follow f where f.follower_id = ${viewerId} and f.following_id = ${post.authorId}))
+      or (${post.visibility} = 'followers' and exists (select 1 from follow f where f.follower_id = ${viewerId} and f.following_id = ${post.authorId} and f.approved))
     ) and not exists (
       select 1 from block b where (b.blocker_id = ${viewerId} and b.blocked_id = ${post.authorId}) or (b.blocker_id = ${post.authorId} and b.blocked_id = ${viewerId})
     ))`;

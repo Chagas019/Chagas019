@@ -58,6 +58,7 @@ export const profileSchema = z.object({
   contactEmail: z.union([z.string().trim().email("E-mail inválido."), z.literal("")]).optional().transform((v) => (v ? v : null)),
   contactVisibility: z.enum(["nobody", "members", "following"]).default("nobody"),
   isIndexable: z.boolean().default(false),
+  autoApproveFollowers: z.boolean().default(false),
   accentColor: z.enum(["violet", "blue", "ember", "mint"]).default("violet"),
 });
 export type ProfileInput = z.input<typeof profileSchema>;

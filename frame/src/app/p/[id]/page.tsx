@@ -91,7 +91,7 @@ export default async function PostPage({ params }: Props) {
               {post.kind === "work" ? <Badge>{labelOf(POST_FORMATS, post.format)}</Badge> : null}
               {post.visibility !== "public" ? (
                 <Badge tone="ember">
-                  <Lock className="size-3" aria-hidden /> {post.visibility === "followers" ? "Só seguidores" : "Privado"}
+                  <Lock className="size-3" aria-hidden /> {post.visibility === "followers" ? "Seguidores aprovados" : "Privado"}
                 </Badge>
               ) : null}
               {detail.community ? (

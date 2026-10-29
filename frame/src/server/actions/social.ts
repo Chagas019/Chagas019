@@ -36,6 +36,13 @@ export async function setFollowAction(targetId: string, follow: boolean) {
   return run(async () => social.setFollow(await requireViewer(), targetId, follow));
 }
 
+export async function setFollowerApprovalAction(followerId: string, approved: boolean) {
+  return run(async () => {
+    await social.setFollowerApproval(await requireViewer(), followerId, approved);
+    revalidatePath("/configuracoes");
+  }, approved ? "Acesso liberado às publicações só para seguidores." : "Acesso revogado.");
+}
+
 export async function setBlockAction(targetId: string, block: boolean) {
   return run(async () => {
     await social.setBlock(await requireViewer(), targetId, block);

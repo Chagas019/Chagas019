@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm";
 import { db } from "../db";
 import { community, communityMember, post } from "../db/schema";
 import type { Viewer } from "../session";
-import { isBlockedEitherWay, isFollowing } from "./relations";
+import { isApprovedFollower, isBlockedEitherWay } from "./relations";
 
 type PostLike = Pick<typeof post.$inferSelect, "authorId" | "visibility" | "status" | "communityId">;
 type ViewerLike = Pick<Viewer, "id" | "role"> | null;
@@ -45,7 +45,7 @@ export async function canViewPost(viewer: ViewerLike, p: PostLike): Promise<bool
   if (isAuthor || isMod) return true;
   if (viewer && (await isBlockedEitherWay(viewer.id, p.authorId))) return false;
   if (p.visibility === "private") return false;
-  if (p.visibility === "followers" && (!viewer || !(await isFollowing(viewer.id, p.authorId)))) return false;
+  if (p.visibility === "followers" && (!viewer || !(await isApprovedFollower(viewer.id, p.authorId)))) return false;
   if (p.communityId) {
     const c = await communityAccessFor(p.communityId, viewer?.id ?? null);
     if (!c || !canReadCommunityContent(c, false)) return false;

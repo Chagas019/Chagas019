@@ -24,7 +24,7 @@ export default async function Page() {
       {items.length ? (
         <ul className="divide-y divide-ink-700">
           {items.map((n) => {
-            const href = n.postId ? `/p/${n.postId}` : n.actorHandle && n.type === "follow" ? `/u/${n.actorHandle}` : n.challengeId ? "/desafios" : n.communityId ? "/comunidades" : "#";
+            const href = n.postId ? `/p/${n.postId}` : n.type === "follow" && n.message.includes("aprove") ? "/configuracoes#seguidores" : n.actorHandle && n.type === "follow" ? `/u/${n.actorHandle}` : n.challengeId ? "/desafios" : n.communityId ? "/comunidades" : "#";
             return (
               <li key={n.id}>
                 <Link href={href} className="flex items-start gap-3 py-4 hover:bg-white/[0.02]">
