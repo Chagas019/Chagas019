@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PageHero } from "@/components/ui/page-hero";
 import { eq } from "drizzle-orm";
 import { ArrowRight, Info } from "lucide-react";
 import { getViewer } from "@/server/session";
@@ -30,21 +31,12 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
   const openChallenges = challenges.filter((c) => c.phase === "open" || c.phase === "voting").slice(0, 3);
 
   return (
-    <Container className="space-y-16 py-10">
-      <SectionTitle eyebrow="Descobrir" title="Talentos, projetos e comunidades">
+    <>
+      <PageHero eyebrow="Descobrir" title="Talentos, projetos e comunidades"
+      >
         Explore por especialidade e interesse. Aqui ninguém aparece por ter mais seguidores — a rotação é diária e os critérios são públicos.
-      </SectionTitle>
-
-      <nav aria-label="Especialidades" className="scrollbar-none -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
-        <Link href="/descobrir" className={cn("shrink-0 rounded-full px-4 py-2 text-sm", !specialty ? "bg-volt-500 text-ink-950" : "bg-ink-850 text-fog-400 hover:text-paper")}>
-          Novos talentos
-        </Link>
-        {SPECIALTIES.map((s) => (
-          <Link key={s} href={`/descobrir?esp=${encodeURIComponent(s)}`} className={cn("shrink-0 rounded-full px-4 py-2 text-sm", specialty === s ? "bg-volt-500 text-ink-950" : "bg-ink-850 text-fog-400 hover:text-paper")}>
-            {s}
-          </Link>
-        ))}
-      </nav>
+      </PageHero>
+      <Container className="space-y-16 py-10">
 
       {specialty ? (
         <section className="space-y-5">
@@ -162,6 +154,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
           </ul>
         </section>
       </div>
-    </Container>
+      </Container>
+    </>
   );
 }

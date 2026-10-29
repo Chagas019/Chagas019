@@ -105,7 +105,7 @@ export default async function ProfilePage({ params, searchParams }: Props) {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
             <Avatar mediaId={p.avatarMediaId} name={p.displayName} size={128} className="ring-4 ring-ink-950" />
             <div className="space-y-2 pb-1">
-              <h1 className="font-display text-5xl leading-none">{p.displayName}</h1>
+              <h1 className="font-display text-5xl leading-none sm:text-7xl">{p.displayName}</h1>
               <p className="text-fog-400">@{p.handle}</p>
             </div>
           </div>

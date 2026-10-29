@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PageHero } from "@/components/ui/page-hero";
 import { Plus } from "lucide-react";
 import { getViewer, isModerator } from "@/server/session";
 import { listChallenges, type ChallengePhase } from "@/server/services/challenges";
@@ -25,17 +26,21 @@ export default async function Page() {
     { title: "Encerrados", items: all.filter((c) => c.phase === "closed") },
   ];
   return (
-    <Container className="space-y-12 py-10">
-      <div className="flex flex-wrap items-end justify-between gap-6">
-        <SectionTitle eyebrow="Creative Battles" title="Desafios que fazem você evoluir">
-          Desafios semanais e mensais para iniciantes e profissionais. Valorizamos originalidade, evolução e participação — a votação, quando existe, tem regras públicas.
-        </SectionTitle>
-        {isModerator(viewer) ? (
-          <ButtonLink href="/desafios/novo" size="lg">
-            <Plus className="size-4" aria-hidden /> Novo desafio
-          </ButtonLink>
-        ) : null}
-      </div>
+    <>
+      <PageHero
+        eyebrow="Creative Battles"
+        title="Desafios que fazem você evoluir"
+        action={
+          isModerator(viewer) ? (
+            <ButtonLink href="/desafios/novo" size="lg">
+              <Plus className="size-4" aria-hidden /> Novo desafio
+            </ButtonLink>
+          ) : null
+        }
+      >
+        Desafios semanais e mensais para iniciantes e profissionais. Valorizamos originalidade, evolução e participação — a votação, quando existe, tem regras públicas.
+      </PageHero>
+      <Container className="space-y-12 py-10">
       {all.length === 0 ? <EmptyState title="Nenhum desafio publicado ainda" /> : null}
       {groups
         .filter((g) => g.items.length)
@@ -67,6 +72,7 @@ export default async function Page() {
             </ul>
           </section>
         ))}
-    </Container>
+      </Container>
+    </>
   );
 }

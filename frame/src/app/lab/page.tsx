@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PageHero } from "@/components/ui/page-hero";
 import { and, eq, sql } from "drizzle-orm";
 import { GraduationCap, Plus } from "lucide-react";
 import { getViewer } from "@/server/session";
@@ -34,17 +35,21 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ a
   };
 
   return (
-    <Container className="space-y-10 py-10">
-      <div className="flex flex-wrap items-end justify-between gap-6">
-        <SectionTitle eyebrow="FRAME LAB" title="Aprenda com quem cria">
-          Tutoriais com contexto: nível, tempo, app e etapas. Avalie o que foi útil e salve para praticar depois.
-        </SectionTitle>
-        {viewer ? (
-          <ButtonLink href="/publicar?tipo=tutorial" size="lg">
-            <Plus className="size-4" aria-hidden /> Ensinar algo
-          </ButtonLink>
-        ) : null}
-      </div>
+    <>
+      <PageHero
+        eyebrow="FRAME LAB"
+        title="Aprenda com quem cria"
+        action={
+          viewer ? (
+            <ButtonLink href="/publicar?tipo=tutorial" size="lg">
+              <Plus className="size-4" aria-hidden /> Ensinar algo
+            </ButtonLink>
+          ) : null
+        }
+      >
+        Tutoriais com contexto: nível, tempo, app e etapas. Avalie o que foi útil e salve para praticar depois.
+      </PageHero>
+      <Container className="space-y-10 py-10">
 
       <div className="space-y-3">
         <nav aria-label="Áreas" className="scrollbar-none -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
@@ -78,6 +83,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ a
           {onlySaved ? "Use o botão Salvar nos tutoriais para montar sua trilha de estudo." : "Compartilhe o que você sabe — o FRAME LAB cresce com a comunidade."}
         </EmptyState>
       )}
-    </Container>
+      </Container>
+    </>
   );
 }

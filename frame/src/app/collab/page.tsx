@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PageHero } from "@/components/ui/page-hero";
 import { Briefcase, MapPin, Plus, Users } from "lucide-react";
 import { getViewer } from "@/server/session";
 import { listListings, myApplications } from "@/server/services/collab";
@@ -34,17 +35,21 @@ export default async function Page({ searchParams }: { searchParams: Promise<SP>
   const chip = (active: boolean) => cn("shrink-0 rounded-full px-3 py-1.5 text-sm", active ? "bg-volt-500 text-ink-950" : "bg-ink-850 text-fog-400 hover:text-paper");
 
   return (
-    <Container className="space-y-8 py-10">
-      <div className="flex flex-wrap items-end justify-between gap-6">
-        <SectionTitle eyebrow="Collab" title="Encontre gente para criar junto">
-          Fotógrafos, videomakers, editores, coloristas e designers procurando parceiros. O contato só é liberado quando a candidatura é aceita.
-        </SectionTitle>
-        {viewer ? (
-          <ButtonLink href="/collab/nova" size="lg">
-            <Plus className="size-4" aria-hidden /> Publicar oportunidade
-          </ButtonLink>
-        ) : null}
-      </div>
+    <>
+      <PageHero
+        eyebrow="Collab"
+        title="Encontre gente para criar junto"
+        action={
+          viewer ? (
+            <ButtonLink href="/collab/nova" size="lg">
+              <Plus className="size-4" aria-hidden /> Publicar oportunidade
+            </ButtonLink>
+          ) : null
+        }
+      >
+        Fotógrafos, videomakers, editores, coloristas e designers procurando parceiros. O contato só é liberado quando a candidatura é aceita.
+      </PageHero>
+      <Container className="space-y-8 py-10">
 
       {viewer ? (
         <nav aria-label="Seções do Collab" className="scrollbar-none flex gap-1 overflow-x-auto border-b border-ink-700">
@@ -137,6 +142,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<SP>
           Procurando modelo, editor, colorista ou fotógrafo? Publique e receba candidaturas.
         </EmptyState>
       )}
-    </Container>
+      </Container>
+    </>
   );
 }

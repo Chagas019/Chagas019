@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PageHero } from "@/components/ui/page-hero";
 import { Globe, Lock, Mail, Plus, Users } from "lucide-react";
 import { getViewer } from "@/server/session";
 import { listCommunities } from "@/server/services/communities";
@@ -19,17 +20,21 @@ export default async function Page() {
   const [all, mine] = await Promise.all([listCommunities(viewer?.id ?? null), viewer ? listCommunities(viewer.id, { mine: true }) : Promise.resolve([])]);
   const mineIds = new Set(mine.map((m) => m.id));
   return (
-    <Container className="space-y-10 py-10">
-      <div className="flex flex-wrap items-end justify-between gap-6">
-        <SectionTitle eyebrow="Comunidades" title="Grupos para trocar, aprender e criar junto">
-          Fotografia mobile, casamentos, color grading, equipamentos acessíveis… Encontre sua turma ou crie uma.
-        </SectionTitle>
-        {viewer ? (
-          <ButtonLink href="/comunidades/nova" size="lg">
-            <Plus className="size-4" aria-hidden /> Criar comunidade
-          </ButtonLink>
-        ) : null}
-      </div>
+    <>
+      <PageHero
+        eyebrow="Comunidades"
+        title="Grupos para trocar, aprender e criar junto"
+        action={
+          viewer ? (
+            <ButtonLink href="/comunidades/nova" size="lg">
+              <Plus className="size-4" aria-hidden /> Criar comunidade
+            </ButtonLink>
+          ) : null
+        }
+      >
+        Fotografia mobile, casamentos, color grading, equipamentos acessíveis… Encontre sua turma ou crie uma.
+      </PageHero>
+      <Container className="space-y-10 py-10">
 
       {mine.length ? (
         <section className="space-y-4">
@@ -75,6 +80,7 @@ export default async function Page() {
       ) : (
         <EmptyState title="Nenhuma comunidade ainda" action={viewer ? <ButtonLink href="/comunidades/nova">Criar a primeira</ButtonLink> : undefined} />
       )}
-    </Container>
+      </Container>
+    </>
   );
 }

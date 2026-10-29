@@ -1,18 +1,20 @@
 import { Logo } from "@/components/shell/logo";
+import { Sparkle } from "@/components/ui/sparkle";
 
 export function AuthCard({ title, subtitle, children, footer }: { title: string; subtitle?: string; children: React.ReactNode; footer?: React.ReactNode }) {
   return (
     <div className="grid min-h-[calc(100dvh-4rem)] lg:grid-cols-[1.1fr_1fr]">
-      <div className="relative hidden overflow-hidden lg:block" aria-hidden>
-        <div className="absolute inset-0 bg-[radial-gradient(800px_500px_at_30%_30%,rgb(213_255_64/0.16),transparent_60%),radial-gradient(700px_500px_at_80%_80%,rgb(192_194_184/0.10),transparent_60%)]" />
-        <div className="absolute inset-10 rounded-[var(--radius-xl)] border border-white/10" />
-        <div className="absolute inset-x-16 bottom-16">
-          <p className="font-display text-6xl leading-[0.95] text-paper">
-            Sua criatividade
-            <br />
-            <em className="text-volt-300">merece um mundo inteiro.</em>
+      <div className="relative hidden overflow-hidden bg-cobalt-500 lg:block" aria-hidden>
+        <Sparkle className="spin-slow absolute right-12 top-12 size-16 text-volt-500" />
+        <div className="absolute inset-x-12 bottom-14">
+          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-paper">
+            <Sparkle className="size-3.5 text-volt-500" /> A rede social dos criadores visuais
           </p>
-          <p className="mt-6 max-w-md text-fog-400">Mostre o resultado e o processo. Aprenda com quem cria. Encontre parceiros e desafios que fazem você evoluir.</p>
+          <p className="mt-4 font-display text-[clamp(4rem,7vw,7.5rem)] leading-[0.86] text-volt-500">
+            Sua criatividade
+            <span className="block text-paper">merece um mundo inteiro</span>
+          </p>
+          <p className="mt-6 max-w-md text-paper/85">Mostre o resultado e o processo. Aprenda com quem cria. Encontre parceiros e desafios que fazem você evoluir.</p>
         </div>
       </div>
       <div className="flex items-center justify-center px-4 py-12">
@@ -20,7 +22,7 @@ export function AuthCard({ title, subtitle, children, footer }: { title: string;
           <div className="mb-8 lg:hidden">
             <Logo />
           </div>
-          <h1 className="font-display text-4xl text-paper">{title}</h1>
+          <h1 className="font-display text-5xl text-paper">{title}</h1>
           {subtitle ? <p className="mt-2 text-fog-400">{subtitle}</p> : null}
           <div className="mt-8">{children}</div>
           {footer ? <div className="mt-8 text-sm text-fog-400">{footer}</div> : null}

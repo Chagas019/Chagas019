@@ -12,6 +12,7 @@ import { SubmitPanel, VoteButton, WithdrawButton } from "@/components/challenge/
 import { ShareButton } from "@/components/post/post-actions";
 import { ButtonLink } from "@/components/ui/button";
 import { Avatar, Badge, Container, EmptyState } from "@/components/ui/misc";
+import { Sparkle } from "@/components/ui/sparkle";
 import { CATEGORIES, labelOf } from "@/lib/taxonomy";
 import { formatDate, mediaUrl } from "@/lib/utils";
 
@@ -52,19 +53,19 @@ export default async function ChallengePage({ params }: Props) {
 
   return (
     <div>
-      <section className="relative overflow-hidden">
-        <div aria-hidden className="absolute inset-0" style={{ background: `radial-gradient(700px 380px at 15% 0%, ${palette[0]}55, transparent 70%), radial-gradient(600px 380px at 95% 100%, ${palette[palette.length - 1]}40, transparent 70%)` }} />
+      <section className="relative overflow-hidden bg-cobalt-500">
+        <Sparkle className="spin-slow absolute -right-6 -top-6 size-28 text-volt-500/90 sm:right-10 sm:top-8 sm:size-14" />
         <Container className="relative py-14 sm:py-20">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-fog-300">
-            Creative Battle · {c.cadence === "mensal" ? "Mensal" : "Semanal"} · {labelOf(CATEGORIES, c.category)}
+          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-paper">
+            <Sparkle className="size-3.5 text-volt-500" /> Creative Battle · {c.cadence === "mensal" ? "Mensal" : "Semanal"} · {labelOf(CATEGORIES, c.category)}
           </p>
-          <h1 className="mt-4 max-w-4xl font-display text-5xl leading-[0.95] text-balance sm:text-7xl">{c.title}</h1>
-          <p className="mt-4 max-w-2xl text-xl text-fog-200">{c.theme}</p>
+          <h1 className="mt-4 max-w-5xl font-display text-[clamp(2.8rem,8vw,6.5rem)] leading-[0.88] text-balance text-volt-500">{c.title}</h1>
+          <p className="mt-4 max-w-2xl text-xl text-paper">{c.theme}</p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
-            <Badge tone={phase === "open" ? "volt" : phase === "voting" ? "cobalt" : "neutral"}>
+            <Badge className={phase === "open" || phase === "voting" ? "bg-volt-500 text-ink-950" : "bg-ink-950/40 text-paper"}>
               {phase === "open" ? "Recebendo trabalhos" : phase === "voting" ? "Votação aberta" : phase === "upcoming" ? "Em breve" : "Encerrado"}
             </Badge>
-            <span className="inline-flex items-center gap-1.5 text-sm text-fog-300">
+            <span className="inline-flex items-center gap-1.5 text-sm text-paper/85">
               <CalendarClock className="size-4" aria-hidden />
               {phase === "upcoming" ? `Começa ${formatDate(c.startsAt)}` : phase === "open" ? `Envios até ${formatDate(c.submissionDeadline)}` : phase === "voting" && c.votingEndsAt ? `Votação até ${formatDate(c.votingEndsAt)}` : "Resultados publicados"}
             </span>
