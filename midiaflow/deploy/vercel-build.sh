@@ -1,7 +1,7 @@
 #!/bin/sh
 # Baixa o MídiaFlow do GitHub (commit fixo) e gera o site em dist/.
 set -e
-SHA=dfbfad678c0749da56ae26ac4baafaa4fdcae614
+SHA=b1b6c091521a289b5ba821f085cc41df77b71ba6
 rm -rf src dist
 mkdir src
 curl -fsSL "https://codeload.github.com/Chagas019/Chagas019/tar.gz/$SHA" | tar xz -C src --strip-components=2 --wildcards '*/midiaflow/*'
