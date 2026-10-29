@@ -563,16 +563,6 @@ export async function notifyCommunityPost(communityId: string, authorId: string,
   await Promise.all(admins.map((a) => notify({ userId: a.userId, actorId: authorId, type: "community", communityId, postId, message: "publicou na sua comunidade" })));
 }
 
-/** Capas públicas recentes para compor o hero (só conteúdo real). */
-export async function recentPublicCovers(limit = 3) {
-  return db
-    .select({ id: media.id, postId: post.id, title: post.title, alt: media.alt })
-    .from(media)
-    .innerJoin(post, eq(post.id, media.postId))
-    .where(and(eq(media.kind, "image"), eq(media.purpose, "post"), eq(media.position, 0), eq(post.status, "published"), eq(post.visibility, "public"), isNull(post.communityId)))
-    .orderBy(desc(post.createdAt))
-    .limit(limit);
-}
 
 /** Original (se for remix) e remixes publicados desta publicação, respeitando visibilidade. */
 export async function remixRelations(viewerId: string | null, p: { id: string; remixOfId: string | null }) {

@@ -1,7 +1,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import { ConnectionStatus } from "@/components/shell/connection-status";
 import type { Metadata, Viewport } from "next";
-import { Anton, Poppins } from "next/font/google";
+import { Anton, Doto, Geist_Mono, Poppins } from "next/font/google";
 import { cookies } from "next/headers";
 import { Header } from "@/components/shell/header";
 import { Footer } from "@/components/shell/footer";
@@ -9,6 +9,8 @@ import { ToastProvider } from "@/components/ui/toast";
 import "./globals.css";
 
 const display = Anton({ subsets: ["latin"], weight: "400", variable: "--font-anton", display: "swap" });
+const dot = Doto({ subsets: ["latin"], weight: ["700", "900"], variable: "--font-doto", display: "swap" });
+const mono = Geist_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-geist-mono", display: "swap" });
 const sans = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-poppins", display: "swap" });
 
 export const metadata: Metadata = {
@@ -28,7 +30,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const nav = (await cookies()).get("frame_nav")?.value === "collapsed" ? "collapsed" : "expanded";
   return (
-    <html lang="pt-BR" data-nav={nav} className={`${sans.variable} ${display.variable}`}>
+    <html lang="pt-BR" data-nav={nav} className={`${sans.variable} ${display.variable} ${dot.variable} ${mono.variable}`}>
       <body className="film-grain font-sans">
         <a href="#conteudo" className="sr-only z-[200] rounded-full bg-paper px-4 py-2 text-ink-950 focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
           Pular para o conteúdo

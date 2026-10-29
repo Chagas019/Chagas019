@@ -56,7 +56,7 @@ export function EditorialCard({ card, slot, signedIn, viewerId, onHide, priority
   const big = slot.shape === "feature" || slot.shape === "wide";
   return (
     <article className={cn("group flex min-w-0 flex-col", slot.grid)}>
-      <Link href={`/p/${card.id}`} aria-label={`${card.title}, por ${card.authorName}`} className={cn("relative block overflow-hidden rounded-[22px] bg-ink-850 lg:min-h-0 lg:flex-1", slot.aspect, "lg:aspect-auto")}>
+      <Link href={`/p/${card.id}`} aria-label={`${card.title}, por ${card.authorName}`} className={cn("relative block overflow-hidden rounded-[30px] bg-ink-850 shadow-[inset_0_1px_0_rgb(255_255_255/0.05)] lg:min-h-0 lg:flex-1", slot.aspect, "lg:aspect-auto")}>
         {card.coverId && card.coverKind === "image" ? (
           <Image
             src={mediaUrl(card.coverId, big ? "display" : "thumb")}
@@ -96,8 +96,10 @@ export function EditorialCard({ card, slot, signedIn, viewerId, onHide, priority
             <span className={cn("block truncate text-fog-400 hover:text-paper", big ? "text-sm" : "text-xs")}>{card.authorName}</span>
           </span>
         </Link>
-        <LikeButton postId={card.id} initialLiked={card.liked} initialCount={card.likeCount} signedIn={signedIn} compact />
-        <Link href={`/p/${card.id}#comentarios`} className="inline-flex items-center gap-1 rounded-full p-2 text-sm text-fog-400 hover:text-paper" aria-label={`${card.commentCount} comentários`}>
+        <span className="dot-num text-[15px]">
+          <LikeButton postId={card.id} initialLiked={card.liked} initialCount={card.likeCount} signedIn={signedIn} compact />
+        </span>
+        <Link href={`/p/${card.id}#comentarios`} className="dot-num inline-flex items-center gap-1 rounded-full p-2 text-[15px] text-fog-400 hover:text-paper" aria-label={`${card.commentCount} comentários`}>
           <MessageCircle className="size-[18px]" aria-hidden />
           {card.commentCount ? compactNumber(card.commentCount) : null}
         </Link>
@@ -128,7 +130,7 @@ export function EditorialSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:auto-rows-[5.25rem] lg:grid-cols-12" aria-busy="true" aria-label="Carregando trabalhos">
       {SLOTS.slice(0, 5).map((s, i) => (
-        <div key={i} className={cn("skeleton rounded-[22px]", s.grid, s.aspect, "lg:aspect-auto")} />
+        <div key={i} className={cn("skeleton rounded-[30px]", s.grid, s.aspect, "lg:aspect-auto")} />
       ))}
     </div>
   );

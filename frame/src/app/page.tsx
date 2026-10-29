@@ -7,7 +7,7 @@ import { FEED_FILTERS, type FeedFilter } from "@/lib/taxonomy";
 import { Feed } from "@/components/post/feed";
 import { FeedFilters } from "@/components/post/feed-filters";
 import { EditorialSkeleton } from "@/components/post/editorial-grid";
-import { Hero } from "@/components/home/hero";
+import { Assistant } from "@/components/home/assistant";
 import { Container } from "@/components/ui/misc";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ f?: string }> }) {
@@ -15,13 +15,11 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
   if (viewer && !viewer.onboarded) redirect("/onboarding");
   const { f } = await searchParams;
   const filter = (FEED_FILTERS.some((x) => x.slug === f) ? f : "para-voce") as FeedFilter;
-  // Quem já conhece a FRAME (logado) vê o hero minimizado por padrão; dá para expandir.
-  const pref = (await cookies()).get("frame_hero")?.value;
-  const minimized = pref ? pref === "min" : !!viewer;
+  const minimized = (await cookies()).get("frame_hero")?.value === "min";
 
   return (
     <Container className="space-y-6 pt-4 sm:pt-6">
-      <Hero minimized={minimized} signedIn={!!viewer} />
+      <Assistant minimized={minimized} />
       <section aria-label="Feed" className="space-y-5">
         <h2 className="sr-only">{viewer ? "Seu feed" : "Inspiração"}</h2>
         <FeedFilters active={filter} signedIn={!!viewer} />

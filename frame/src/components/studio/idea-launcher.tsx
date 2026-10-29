@@ -24,7 +24,7 @@ const CATS = [
  * Botão + experiência em tela cheia do "Me dê uma ideia" (missões criativas).
  * `variant` muda só o gatilho; a experiência é a mesma em todo o site.
  */
-export function IdeaLauncher({ signedIn, variant = "inline", className }: { signedIn: boolean; variant?: "inline" | "fab" | "nav" | "sheet"; className?: string }) {
+export function IdeaLauncher({ signedIn, variant = "inline", className }: { signedIn: boolean; variant?: "inline" | "fab" | "nav" | "sheet" | "pill"; className?: string }) {
   const [open, setOpen] = useState(false);
   const [cat, setCat] = useState<string | undefined>(undefined);
   const [mission, setMission] = useState<Mission | null>(null);
@@ -70,6 +70,13 @@ export function IdeaLauncher({ signedIn, variant = "inline", className }: { sign
         <Sparkles className="size-5 shrink-0 text-volt-500 transition-transform duration-500 group-hover:rotate-90" aria-hidden />
         <span className="nav-label truncate">Me dê uma ideia</span>
       </button>
+    ) : variant === "pill" ? (
+      <button type="button" onClick={launch} aria-label="Me dê uma ideia" className={cn("group flex h-11 w-full max-w-[150px] items-center rounded-full bg-ink-950 p-1 ring-1 ring-white/10", className)}>
+        <span className="grid size-9 place-items-center rounded-full text-fog-500 transition-opacity group-hover:opacity-0" aria-hidden>
+          <span className="size-2 rounded-full ring-2 ring-current" />
+        </span>
+        <span className="ml-auto flex h-9 items-center rounded-full bg-ink-700 px-3 font-mono text-xs uppercase tracking-[0.15em] text-paper transition-colors group-hover:bg-volt-500 group-hover:text-ink-950">Gerar</span>
+      </button>
     ) : variant === "sheet" ? (
       <button type="button" onClick={launch} className={cn("flex w-full items-center gap-3 rounded-[var(--radius-md)] bg-volt-500 px-4 py-3.5 text-left font-semibold text-ink-950", className)}>
         <Sparkles className="size-5" aria-hidden /> Me dê uma ideia
@@ -89,6 +96,22 @@ export function IdeaLauncher({ signedIn, variant = "inline", className }: { sign
         aria-label="Me dê uma ideia"
         className="m-0 h-[100dvh] max-h-none w-screen max-w-none bg-transparent p-0 text-paper backdrop:bg-ink-950/90 backdrop:backdrop-blur-md"
       >
+        {/* Fundo "lareira": manchas de cor desfocadas que respiram (paradas com movimento reduzido). */}
+        <div aria-hidden className="pointer-events-none fixed inset-0 overflow-hidden bg-ink-950">
+          <div className="flame-a absolute -bottom-[20%] left-[5%] h-[85%] w-[70%] rounded-full bg-[radial-gradient(closest-side,#ff5a1f,transparent)] opacity-80 blur-[70px]" />
+          <div className="flame-b absolute -bottom-[25%] right-[0%] h-[75%] w-[60%] rounded-full bg-[radial-gradient(closest-side,#d93a0b,transparent)] opacity-80 blur-[80px]" />
+          <div className="flame-a absolute -bottom-[30%] left-[25%] h-[55%] w-[55%] rounded-full bg-[radial-gradient(closest-side,#ffd27a,transparent)] opacity-70 blur-[60px] [animation-delay:-4s]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-ink-950 via-ink-950/70 to-transparent" />
+        </div>
+        {mission ? (
+          <ol aria-hidden className="pointer-events-none fixed right-4 top-1/2 hidden -translate-y-1/2 flex-col items-end gap-3 sm:flex">
+            {[90, 60, 45, 30, 20].map((m) => (
+              <li key={m} className={cn("dot-num transition-all duration-500", m === mission.minutes ? "text-5xl text-paper" : "text-2xl text-paper/30")}>
+                {m}′
+              </li>
+            ))}
+          </ol>
+        ) : null}
         <div className="relative mx-auto flex min-h-full max-w-5xl flex-col px-5 pb-[calc(env(safe-area-inset-bottom)+24px)] pt-[calc(env(safe-area-inset-top)+20px)] sm:px-8">
           <div className="flex items-center justify-between gap-3">
             <p className="font-mono text-xs uppercase tracking-[0.3em] text-volt-500">Gerador de missões · FRAME LAB</p>
@@ -165,7 +188,7 @@ export function IdeaLauncher({ signedIn, variant = "inline", className }: { sign
             ) : null}
           </AnimatePresence>
 
-          <div className="sticky bottom-0 flex flex-wrap gap-2 border-t border-white/[0.08] bg-ink-950/80 pt-4 backdrop-blur">
+          <div className="sticky bottom-0 flex flex-wrap gap-2 rounded-[28px] bg-[#1b1c1a]/90 p-3 backdrop-blur-xl">
             <button type="button" onClick={() => roll()} className="inline-flex h-12 items-center gap-2 rounded-full bg-paper px-5 font-semibold text-ink-950">
               <RefreshCw className="size-4" aria-hidden /> Gerar outra ideia
             </button>

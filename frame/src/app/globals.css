@@ -11,7 +11,8 @@
 @theme {
   --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-anton), "Arial Narrow", Impact, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  --font-dot: var(--font-doto), var(--font-geist-mono), ui-monospace, monospace;
 
   --color-ink-950: #080908;
   --color-ink-900: #101110;
@@ -37,6 +38,9 @@
   --color-mist-100: #ebebe6;
   --color-mist-200: #dcdcd5;
   --color-ember-400: #fbbf24;
+  --color-flame-400: #ff8a3d;
+  --color-flame-500: #ff5a1f;
+  --color-flame-600: #d93a0b;
   --color-mint-400: #5eead4;
   --color-danger-400: #f87171;
   --color-danger-500: #ef4444;
@@ -280,3 +284,51 @@ h1 em {
 .live-dot { animation: live-dot 2.2s ease-out infinite; }
 /* Imagens entram sem salto: fundo reservado pelo aspect-ratio + fade. */
 .img-fade { animation: rise 0.6s var(--ease-out-expo) both; }
+
+/* ---------------- Linguagem "assistente" (referência smart home) ---------------- */
+/* Etiqueta monoespaçada embutida no texto: VACUUM CLEANER → DESAFIO DO DIA */
+.chip-mono {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 10px;
+  padding: 0.05em 0.45em 0.1em;
+  margin: 0 0.1em;
+  background: #222420;
+  color: #d7d8d2;
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  vertical-align: 0.06em;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05);
+  transition: background var(--duration-fast), color var(--duration-fast);
+}
+a.chip-mono:hover { background: #2c2f2a; color: var(--color-volt-500); }
+/* Números em matriz de pontos */
+.dot-num { font-family: var(--font-dot); font-weight: 900; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
+/* Bloco com luz saindo de baixo (como os aparelhos acesos) */
+.tile {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 30px;
+  background: #121311;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05), 0 20px 40px -24px rgb(0 0 0 / 0.9);
+}
+.tile::after {
+  content: "";
+  position: absolute;
+  inset: auto -10% -12% -10%;
+  height: 78%;
+  background: radial-gradient(50% 70% at 50% 100%, var(--glow, transparent) 0%, color-mix(in srgb, var(--glow, transparent) 45%, transparent) 45%, transparent 80%);
+  filter: blur(12px);
+  opacity: 1;
+  z-index: -1;
+  transition: opacity var(--duration-base), transform var(--duration-slow) var(--ease-out-expo);
+}
+.tile:hover::after { transform: translateY(-8%) scale(1.05); }
+/* Fogo/aurora imersivo: gradientes desfocados que respiram */
+@keyframes flame-a { 0%, 100% { transform: translate3d(-6%, 4%, 0) scale(1); } 50% { transform: translate3d(5%, -6%, 0) scale(1.12); } }
+@keyframes flame-b { 0%, 100% { transform: translate3d(6%, 0, 0) scale(1.05); } 50% { transform: translate3d(-4%, -8%, 0) scale(0.95); } }
+.flame-a { animation: flame-a 9s ease-in-out infinite; }
+.flame-b { animation: flame-b 12s ease-in-out infinite; }

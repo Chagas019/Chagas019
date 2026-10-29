@@ -38,14 +38,20 @@ export function CreateMenu({ signedIn, isModerator, variant }: { signedIn: boole
     variant === "bar" ? (
       signedIn ? (
         <button type="button" onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open} aria-label="Criar" className="flex flex-col items-center gap-1 py-1.5">
-          <motion.span animate={{ rotate: open ? 45 : 0 }} transition={{ type: "spring", stiffness: 400, damping: 20 }} className="grid size-12 place-items-center rounded-2xl bg-volt-500 text-ink-950 shadow-[0_10px_24px_-8px_rgb(212_255_54/0.6)]">
-            <Plus className="size-6" aria-hidden />
+          <motion.span animate={{ scale: open ? 0.9 : 1 }} whileTap={{ scale: 0.88 }} transition={{ type: "spring", stiffness: 420, damping: 18 }} className="grid place-items-center">
+            <svg viewBox="0 0 56 52" className="h-11 w-12 drop-shadow-[0_8px_18px_rgb(255_255_255/0.18)]" aria-hidden>
+            <path d="M28 4c4.5 0 7.6 3 10.6 8.2l11.3 19.6c3.4 5.9 1.4 13.2-5.3 15.4C39.5 48.9 34 49.5 28 49.5s-11.5-.6-16.6-2.3C4.7 45 2.7 37.7 6.1 31.8L17.4 12.2C20.4 7 23.5 4 28 4z" fill="#f5f5f0" />
+            <path d="M28 21v14M21 28h14" stroke="#080908" strokeWidth="3" strokeLinecap="round" />
+          </svg>
           </motion.span>
         </button>
       ) : (
         <Link href="/cadastro" aria-label="Criar conta para publicar" className="flex flex-col items-center gap-1 py-1.5">
-          <span className="grid size-12 place-items-center rounded-2xl bg-volt-500 text-ink-950">
-            <Plus className="size-6" aria-hidden />
+          <span className="grid place-items-center">
+            <svg viewBox="0 0 56 52" className="h-11 w-12 drop-shadow-[0_8px_18px_rgb(255_255_255/0.18)]" aria-hidden>
+            <path d="M28 4c4.5 0 7.6 3 10.6 8.2l11.3 19.6c3.4 5.9 1.4 13.2-5.3 15.4C39.5 48.9 34 49.5 28 49.5s-11.5-.6-16.6-2.3C4.7 45 2.7 37.7 6.1 31.8L17.4 12.2C20.4 7 23.5 4 28 4z" fill="#f5f5f0" />
+            <path d="M28 21v14M21 28h14" stroke="#080908" strokeWidth="3" strokeLinecap="round" />
+          </svg>
           </span>
         </Link>
       )
