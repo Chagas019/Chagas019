@@ -48,6 +48,14 @@ npm run build && npm run test:e2e   # Playwright contra o build, banco frame_tes
 - **Perfil/portfólio**: avatar, capa, bio, especialidades, interesses, links, equipamento, disponibilidade, contato com visibilidade configurável, cor de destaque, abas (trabalhos por categoria, Showcases, tutoriais, coleções), indexação opcional.
 - **Publicação**: imagens (até 10, carrossel), vídeo (MP4/MOV/WebM), texto alternativo, categorias, ferramentas, visibilidade (público/seguidores/só eu), projeto colaborativo.
 - **Showcase**: resultado + foto original com **slider antes/depois** (mouse, toque e teclado), processo, ficha técnica (câmera, lente, luz, apps, preset/LUT, parâmetros), créditos, link de portfólio, opção de ocultar a ficha.
+- **Home = feed**: quem entra vê o conteúdo da comunidade de cara (abas Para você / Seguindo + áreas). A apresentação institucional fica em `/sobre`. Carregamento progressivo automático, estado de erro com "Tentar de novo" e aviso de "sem conexão".
+- **Rascunhos e edição**: "Salvar rascunho" e "Pré-visualizar" ao publicar; `/rascunhos`; edição de título, legenda, categorias, créditos, texto alternativo, visibilidade e comentários em `/p/[id]/editar` (a mídia não muda depois de publicada). Rascunho só é visível ao autor e não aceita interações.
+- **Hashtags e menções**: `#hashtag` e `@usuario` na legenda e nos comentários viram links; hashtags são indexadas (`post.tags`, índice GIN); menções e marcações nos créditos geram notificação, só para quem pode ver a publicação.
+- **Colaboradores**: créditos (nome, função e @perfil opcional) em qualquer trabalho; marcar um perfil ativa "projeto colaborativo".
+- **Feedback opcional**: o autor pode desativar comentários por publicação (validado no servidor).
+- **Portfólio**: até 6 trabalhos fixados aparecem como vitrine no topo do perfil. Abas novas: Vídeos e Curtidas (curtidas só visíveis para a própria pessoa). Coleções públicas têm página própria (`/colecoes/[id]`).
+- **Menu dos cards**: copiar link, "não ver mais @autor" (silenciar) e denunciar.
+- **Descobrir**: busca por pessoas (@, nome, especialidade), projetos (título, legenda, ferramentas) e `#hashtags`; filtro por área (incluindo Ilustração); histórico de buscas salvo só no aparelho, com "Limpar histórico"; "Em alta" calculado com contagem real de hashtags dos últimos 7 dias (some se não houver); "Projetos em destaque" por curtidas + comentários + salvos dos últimos 30 dias (só com interação real); recentes; criadores sugeridos por interesse.
 - **Feed Inspiração** com filtros (Para você, Seguindo, Fotografia, Vídeo, Edição, Color grading, Design, Tutoriais, Antes e depois, Colaborativos) e ranking documentado em `src/lib/ranking.ts`.
 - **Seguidores aprovados**: seguir é instantâneo, mas posts "Seguidores aprovados" só aparecem para quem você aprova em Configurações (ou ative a aprovação automática).
 - **Interações**: curtir, comentar/responder, excluir comentário, salvar, coleções, seguir, compartilhar, denunciar, bloquear, silenciar.
@@ -68,8 +76,8 @@ npm run build && npm run test:e2e   # Playwright contra o build, banco frame_tes
 |---|---|
 | `tsc --noEmit` | sem erros |
 | `eslint .` | sem erros/avisos |
-| Vitest — 4 arquivos de unidade + 8 de integração (Postgres real) | 48 testes passando |
-| Playwright — 10 cenários (Collab + mensagens ponta a ponta, cadastro→onboarding→publicação, edição de perfil, curtida/comentário/follow persistidos, post privado e arquivo inacessíveis, notificações, Showcase + slider por teclado, envio a desafio, comunidade privada com aprovação, layout mobile sem overflow) | 10 passando |
+| Vitest — 5 arquivos de unidade + 9 de integração (Postgres real), incluindo rascunhos, edição só pelo autor, comentários desativados, menções sem vazar posts privados, hashtags/busca, portfólio e destaques | 62 testes passando |
+| Playwright — 12 cenários (rascunho → pré-visualização → publicar → hashtag na busca → portfólio; feed visível de cara para visitantes; Collab + mensagens ponta a ponta, cadastro→onboarding→publicação, edição de perfil, curtida/comentário/follow persistidos, post privado e arquivo inacessíveis, notificações, Showcase + slider por teclado, envio a desafio, comunidade privada com aprovação, layout mobile sem overflow) | 12 passando |
 | `next build` | sem erros/avisos |
 
 **Não testado automaticamente**: FRAME AI com provedor real (sem chave no ambiente), Vercel Blob (sem token), envio de e-mail real (sem provedor), upload de vídeos grandes, leitores de tela reais.
@@ -115,6 +123,7 @@ Ainda em aberto (decisões de produto ou infraestrutura):
 - **Documentos**: Termos de uso, Política de privacidade (LGPD) e Diretrizes da comunidade em `/termos`, `/privacidade` e `/diretrizes`, com rodapé em todas as páginas. Recomenda-se revisão jurídica.
 - **Site limpo**: os dados de demonstração foram removidos (contas, posts, arquivos e comunidades). Resta só o desafio aberto "Uma foto, três edições".
 - O projeto ainda não está ligado ao Git: novas versões são publicadas manualmente (ou conecte o repositório em Settings → Git).
+- **Migrações**: o script `vercel-build` roda `npm run db:migrate` antes do `next build` **somente** em produção (`VERCEL_ENV=production`). As migrações são aditivas; revise qualquer migração nova antes de publicar.
 
 ## O que falta para produção
 
@@ -122,11 +131,12 @@ Ainda em aberto (decisões de produto ou infraestrutura):
 2. **Vídeo**: o envio vai direto do navegador para o Blob privado (`NEXT_PUBLIC_DIRECT_UPLOAD=1`), sem o limite de ~4,5 MB das funções; o servidor valida a assinatura binária e reprocessa imagens. Ainda não há transcodificação, pôster nem remoção de metadados de vídeo (requer ffmpeg/serviço dedicado).
 3. **Verificação de e-mail** no cadastro (Better Auth suporta; depende do provedor de e-mail).
 4. **Suspensão de contas** pela moderação (hoje a moderação remove conteúdo, não bloqueia login) e moderação automática de imagens.
-5. **Tempo real**: mensagens atualizam a cada 5 s; notificações a cada navegação. Para push/WebSocket, plugar um serviço (Ably, Pusher, Supabase Realtime) no `Thread`.
-6. **Escala do feed "Para você"**: ranqueia até 400 candidatos recentes em memória por requisição — adequado ao MVP; depois, materializar scores.
-7. **Observabilidade**: logs estruturados, Sentry/OpenTelemetry e painel de métricas de ativação (dados já em `activation_event`).
-8. **Revisão jurídica** de `/termos` e política de privacidade; fluxo formal de notificação de direitos autorais (DMCA/LGPD).
-9. **i18n**: estrutura em `src/i18n/` (navegação já usa o dicionário); a maioria dos textos ainda está nos componentes.
+5. **Visualizações**: não há contagem de visualizações (contar sem inflar exige deduplicação por pessoa/sessão); nenhuma tela mostra esse número.
+6. **Tempo real**: mensagens atualizam a cada 5 s; notificações a cada navegação. Para push/WebSocket, plugar um serviço (Ably, Pusher, Supabase Realtime) no `Thread`.
+7. **Escala do feed "Para você"**: ranqueia até 400 candidatos recentes em memória por requisição — adequado ao MVP; depois, materializar scores.
+8. **Observabilidade**: logs estruturados, Sentry/OpenTelemetry e painel de métricas de ativação (dados já em `activation_event`).
+9. **Revisão jurídica** de `/termos` e política de privacidade; fluxo formal de notificação de direitos autorais (DMCA/LGPD).
+10. **i18n**: estrutura em `src/i18n/` (navegação já usa o dicionário); a maioria dos textos ainda está nos componentes.
 
 ### Fora do MVP (planejado, não implementado)
 
