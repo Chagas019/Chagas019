@@ -105,6 +105,15 @@ Ainda em aberto (decisões de produto ou infraestrutura):
 - **Vídeos mantêm metadados** (incluindo GPS) — requer ffmpeg (`-map_metadata -1`) ou serviço de mídia.
 - **Votação com contas falsas**: hoje a defesa é idade mínima de conta + rate limit de cadastro; exigir e-mail verificado para votar.
 
+## Publicação atual
+
+- **Site**: https://frame-rede-criativa.vercel.app (projeto Vercel `frame-rede-criativa`, root `frame/`).
+- **Banco**: Neon criado via `neon.new`. **Precisa ser reivindicado na conta Neon em até 72h** pelo link de claim (enviado ao dono do projeto), senão é apagado.
+- **Mídia**: Vercel Blob privado `frame-midia`.
+- **E-mail**: sem provedor ainda — `FRAME_ALLOW_LOG_MAIL=1` faz os links de redefinição de senha irem para os logs da Vercel. Configure `RESEND_API_KEY` e remova essa variável.
+- **Dados de demonstração** (contas `@demo.frame.local`) foram carregados para teste; apague-os antes de um lançamento público.
+- O projeto ainda não está ligado ao Git: novas versões são publicadas manualmente (ou conecte o repositório em Settings → Git).
+
 ## O que falta para produção
 
 1. **Infra**: provisionar Postgres gerenciado, Vercel Blob privado, Resend; configurar variáveis; rodar `npm run db:migrate` no deploy.
