@@ -1,0 +1,5 @@
+{
+  "name": "midiaflow-deploy",
+  "private": true,
+  "scripts": { "build": "sh vercel-build.sh" }
+}

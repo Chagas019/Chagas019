@@ -1,0 +1,199 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    /* Ao rolar até um campo/botão, ele não fica atrás do cabeçalho nem da barra flutuante do celular. */
+    scroll-padding-top: 5rem;
+    scroll-padding-bottom: 7rem;
+  }
+  @media (min-width: 1024px) {
+    html {
+      scroll-padding-bottom: 1rem;
+    }
+  }
+  body {
+    @apply font-sans text-ink antialiased;
+    background-color: #07090d;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  ::selection {
+    background: rgba(91, 255, 154, 0.3);
+  }
+  :focus-visible {
+    outline: 2px solid #5bff9a;
+    outline-offset: 2px;
+    border-radius: 10px;
+  }
+  input[type='date']::-webkit-calendar-picker-indicator,
+  input[type='time']::-webkit-calendar-picker-indicator {
+    filter: invert(0.7);
+    cursor: pointer;
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #252f3c transparent;
+  }
+}
+
+@layer components {
+  /* Liquid Glass: vidro translúcido com borda especular e brilho no topo */
+  .card {
+    @apply relative rounded-3xl;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.075) 0%, rgba(255, 255, 255, 0.02) 38%, rgba(255, 255, 255, 0.01) 100%),
+      rgba(16, 21, 29, 0.42);
+    -webkit-backdrop-filter: blur(26px) saturate(170%);
+    backdrop-filter: blur(26px) saturate(170%);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.03),
+      inset 0 0 22px rgba(255, 255, 255, 0.015),
+      0 24px 60px -28px rgba(0, 0, 0, 0.85);
+  }
+  .card::before,
+  .glass::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    background: linear-gradient(150deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.04) 28%, transparent 55%, rgba(85, 184, 255, 0.16) 85%, rgba(91, 255, 154, 0.22));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+  .glass {
+    @apply relative;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.025));
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    backdrop-filter: blur(22px) saturate(180%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 10px 30px -14px rgba(0, 0, 0, 0.7);
+  }
+  .glass-pill {
+    @apply rounded-full;
+  }
+  .eyebrow {
+    @apply text-[10.5px] font-medium uppercase text-ink-muted;
+    letter-spacing: 0.42em;
+  }
+  .text-gradient {
+    @apply bg-flow bg-clip-text text-transparent;
+  }
+  .input {
+    @apply h-11 w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md text-sm text-ink placeholder:text-ink-muted/60 transition-colors focus:border-neon/60 focus:outline-none focus:ring-2 focus:ring-neon/15;
+  }
+  .input option {
+    background: #10151d;
+  }
+  .label {
+    @apply mb-1.5 block text-xs font-medium uppercase tracking-wider text-ink-muted;
+  }
+}
+
+/* Popovers e modais em vidro */
+.bg-card {
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  backdrop-filter: blur(30px) saturate(180%);
+}
+
+/* Fundo: luzes coloridas + linhas verticais finas + grade de pontos (o que o vidro refrata) */
+.ambient::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(38vw 38vw at 82% 8%, rgba(85, 184, 255, 0.2), transparent 70%),
+    radial-gradient(34vw 34vw at 12% 92%, rgba(91, 255, 154, 0.16), transparent 70%),
+    radial-gradient(26vw 26vw at 55% 55%, rgba(85, 184, 255, 0.07), transparent 70%),
+    radial-gradient(20vw 20vw at 30% 18%, rgba(91, 255, 154, 0.07), transparent 70%);
+  animation: drift 26s ease-in-out infinite alternate;
+}
+.ambient::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1.2px);
+  background-size: 120px 100%, 22px 22px;
+  -webkit-mask-image: linear-gradient(180deg, #000, rgba(0, 0, 0, 0.35));
+  mask-image: linear-gradient(180deg, #000, rgba(0, 0, 0, 0.35));
+}
+@keyframes drift {
+  to {
+    transform: translate3d(-3vw, 2vh, 0) scale(1.06);
+  }
+}
+
+/* Dígitos listrados, estilo display de relógio */
+.digital {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-weight: 200;
+  letter-spacing: -0.04em;
+  background: repeating-linear-gradient(180deg, #f5f7fa 0 2px, transparent 2px 4px);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 14px rgba(91, 255, 154, 0.18));
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #151c26;
+}
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent);
+  animation: shimmer 1.4s infinite;
+}
+
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .card {
+    border-color: #ccc !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+  .print-full {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
