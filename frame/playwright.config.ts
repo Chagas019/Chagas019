@@ -1,3 +1,5 @@
+import os from "node:os";
+import path from "node:path";
 import { defineConfig, devices } from "@playwright/test";
 
 const PORT = 3100;
@@ -41,6 +43,8 @@ export default defineConfig({
       FRAME_DISABLE_AUTH_RATE_LIMIT: "1",
       FRAME_DISABLE_APP_RATE_LIMIT: "1",
       FRAME_ALLOW_LOG_MAIL: "1",
+      // "Caixa de entrada" dos testes: os e-mails viram arquivos para o teste abrir o link de acesso.
+      FRAME_MAIL_FILE_SINK: path.join(os.tmpdir(), "frame-e2e-mail"),
     },
   },
 });

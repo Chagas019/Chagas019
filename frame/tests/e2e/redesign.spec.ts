@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { fixtureImage, signUp, uniqueUser } from "./helpers";
+import { fixtureImage, signUp, signIn, uniqueUser } from "./helpers";
 
 test.describe.configure({ mode: "serial" });
 const dora = uniqueUser("dora");
@@ -33,11 +33,7 @@ test("Me dê uma ideia: missão com tema, regras e resultado; gera outra", async
 });
 
 test("autora permite remix e publica um projeto", async ({ page }) => {
-  await page.goto("/entrar");
-  await page.getByLabel("E-mail").fill(dora.email);
-  await page.getByLabel("Senha").fill(dora.password);
-  await page.getByRole("button", { name: "Entrar" }).click();
-  await expect(page).not.toHaveURL(/\/entrar/);
+  await signIn(page, dora);
   await page.goto("/publicar?tipo=showcase");
   await page.locator('input[type="file"]').first().setInputFiles(await fixtureImage("dora-1", "#d4ff36"));
   await expect(page.getByRole("button", { name: "Publicar", exact: true })).toBeEnabled({ timeout: 20_000 });
@@ -66,11 +62,7 @@ test("outra pessoa remixa com crédito automático e vínculo nos dois lados", a
 });
 
 test("LAB: aceitar missão cria projeto com as etapas", async ({ page }) => {
-  await page.goto("/entrar");
-  await page.getByLabel("E-mail").fill(enzo.email);
-  await page.getByLabel("Senha").fill(enzo.password);
-  await page.getByRole("button", { name: "Entrar" }).click();
-  await expect(page).not.toHaveURL(/\/entrar/);
+  await signIn(page, enzo);
   await page.goto("/lab/tres-planos-10s");
   await page.getByRole("button", { name: "Participar" }).click();
   await expect(page).toHaveURL(/\/estudio\/projetos\//, { timeout: 20_000 });

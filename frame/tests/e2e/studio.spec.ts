@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { fixtureImage, signUp, uniqueUser } from "./helpers";
+import { fixtureImage, signUp, signIn, uniqueUser } from "./helpers";
 
 test.describe.configure({ mode: "serial" });
 const caio = uniqueUser("caio");
@@ -41,10 +41,7 @@ test("ideia → projeto → tarefa → publicação ligada ao projeto", async ({
 });
 
 test("exemplo do laboratório: salvar inspiração e criar minha versão", async ({ page }) => {
-  await page.goto("/entrar");
-  await page.getByLabel("E-mail").fill(caio.email);
-  await page.getByLabel("Senha").fill(caio.password);
-  await page.getByRole("button", { name: "Entrar" }).click();
+  await signIn(page, caio);
   await expect(page).not.toHaveURL(/entrar/);
   await page.goto("/laboratorio/luz-lateral-profundidade");
   await page.getByRole("button", { name: "Salvar inspiração" }).click();

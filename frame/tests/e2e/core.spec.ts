@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { fixtureImage, publishWork, signUp, sqlClient, uniqueUser } from "./helpers";
+import { fixtureImage, publishWork, signUp, sqlClient, signIn, uniqueUser } from "./helpers";
 
 test.describe.configure({ mode: "serial" });
 
@@ -34,10 +34,7 @@ test("cadastro, onboarding, publicação e perfil", async ({ page }) => {
 });
 
 test("editar perfil persiste no banco", async ({ page }) => {
-  await page.goto("/entrar");
-  await page.getByLabel("E-mail").fill(ana.email);
-  await page.getByLabel("Senha").fill(ana.password);
-  await page.getByRole("button", { name: "Entrar" }).click();
+  await signIn(page, ana);
   await page.waitForURL((u) => !u.pathname.startsWith("/entrar"));
   await page.goto("/configuracoes");
   await page.getByLabel("Biografia").fill("Fotógrafa de retratos com luz natural.");
@@ -82,10 +79,7 @@ test("outra pessoa curte, comenta e segue — e não vê o post privado", async 
 });
 
 test("autora recebe notificações reais", async ({ page }) => {
-  await page.goto("/entrar");
-  await page.getByLabel("E-mail").fill(ana.email);
-  await page.getByLabel("Senha").fill(ana.password);
-  await page.getByRole("button", { name: "Entrar" }).click();
+  await signIn(page, ana);
   await page.waitForURL((u) => !u.pathname.startsWith("/entrar"));
   await page.goto("/notificacoes");
   await expect(page.getByText("começou a seguir você")).toBeVisible();

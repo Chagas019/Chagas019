@@ -2,9 +2,11 @@ import "server-only";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
+import { magicLink } from "better-auth/plugins/magic-link";
+import { eq, sql } from "drizzle-orm";
 import { db } from "./db";
 import * as schema from "./db/schema";
-import { sendMail } from "./mail";
+import { accessLinkEmail, sendMail } from "./mail";
 import { createProfileForUser } from "./services/profiles";
 
 const adminEmails = (process.env.FRAME_ADMIN_EMAILS ?? "")
@@ -58,6 +60,7 @@ export const auth = betterAuth({
       "/sign-in/email": { window: 60, max: 8 },
       "/sign-up/email": { window: 300, max: 5 },
       "/request-password-reset": { window: 300, max: 3 },
+      "/sign-in/magic-link": { window: 300, max: 5 },
     },
   },
   telemetry: { enabled: false },
@@ -73,5 +76,17 @@ export const auth = betterAuth({
       },
     },
   },
-  plugins: [nextCookies()],
+  plugins: [
+    // Login sem senha: a pessoa recebe um link de acesso no e-mail. Se ainda não tem conta, ela é criada no clique.
+    magicLink({
+      expiresIn: 60 * 15,
+      storeToken: "hashed",
+      sendMagicLink: async ({ email, url }) => {
+        const [existing] = await db.select({ id: schema.user.id }).from(schema.user).where(eq(sql`lower(${schema.user.email})`, email.toLowerCase())).limit(1);
+        const m = accessLinkEmail(url, !existing);
+        await sendMail({ to: email, ...m });
+      },
+    }),
+    nextCookies(),
+  ],
 });
