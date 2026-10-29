@@ -47,7 +47,7 @@ export default async function Page() {
                 <li key={c.id}>
                   <Link href={`/desafios/${c.slug}`} className="group relative flex h-full min-h-64 flex-col overflow-hidden rounded-[var(--radius-lg)] bg-ink-850 p-6 shadow-[var(--shadow-card)]">
                     <div aria-hidden className="absolute inset-x-0 top-0 flex h-1.5">
-                      {(c.palette.length ? c.palette : ["#8b5cf6", "#3b82f6"]).map((hex) => (
+                      {(c.palette.length ? c.palette : ["#d5ff40", "#c0c2b8"]).map((hex) => (
                         <span key={hex} className="flex-1" style={{ background: hex }} />
                       ))}
                     </div>

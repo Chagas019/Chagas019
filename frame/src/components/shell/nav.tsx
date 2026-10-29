@@ -62,7 +62,7 @@ export function MobileNav({ handle }: { handle: string | null }) {
             <li key={it.label}>
               <Link href={it.href} aria-current={active ? "page" : undefined} className="flex flex-col items-center gap-1 py-2.5 text-[11px]">
                 {"primary" in it && it.primary ? (
-                  <span className="grid size-9 place-items-center rounded-full bg-paper text-ink-950">
+                  <span className="grid size-9 place-items-center rounded-full bg-volt-500 text-ink-950">
                     <Icon className="size-5" aria-hidden />
                   </span>
                 ) : (

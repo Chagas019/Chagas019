@@ -9,7 +9,7 @@ export function Avatar({ mediaId, name, size = 36, className }: { mediaId: strin
     .join("");
   return (
     <span
-      className={cn("relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-volt-700 to-cobalt-500 text-paper", className)}
+      className={cn("relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-ink-700 text-volt-500 ring-1 ring-inset ring-white/5", className)}
       style={{ width: size, height: size, fontSize: Math.max(11, size * 0.36) }}
       aria-hidden={mediaId ? undefined : true}
     >

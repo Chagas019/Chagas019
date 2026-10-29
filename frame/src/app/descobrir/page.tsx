@@ -36,11 +36,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
       </SectionTitle>
 
       <nav aria-label="Especialidades" className="scrollbar-none -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
-        <Link href="/descobrir" className={cn("shrink-0 rounded-full px-4 py-2 text-sm", !specialty ? "bg-paper text-ink-950" : "bg-ink-850 text-fog-400 hover:text-paper")}>
+        <Link href="/descobrir" className={cn("shrink-0 rounded-full px-4 py-2 text-sm", !specialty ? "bg-volt-500 text-ink-950" : "bg-ink-850 text-fog-400 hover:text-paper")}>
           Novos talentos
         </Link>
         {SPECIALTIES.map((s) => (
-          <Link key={s} href={`/descobrir?esp=${encodeURIComponent(s)}`} className={cn("shrink-0 rounded-full px-4 py-2 text-sm", specialty === s ? "bg-paper text-ink-950" : "bg-ink-850 text-fog-400 hover:text-paper")}>
+          <Link key={s} href={`/descobrir?esp=${encodeURIComponent(s)}`} className={cn("shrink-0 rounded-full px-4 py-2 text-sm", specialty === s ? "bg-volt-500 text-ink-950" : "bg-ink-850 text-fog-400 hover:text-paper")}>
             {s}
           </Link>
         ))}

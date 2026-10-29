@@ -30,7 +30,7 @@ export function ChipGroup<T extends string>({
             }}
             className={cn(
               "rounded-full px-3.5 py-1.5 text-sm transition-all duration-200",
-              active ? "bg-paper text-ink-950" : "bg-ink-800 text-fog-300 ring-1 ring-inset ring-ink-700 hover:text-paper hover:ring-ink-600",
+              active ? "bg-volt-500 text-ink-950" : "bg-ink-800 text-fog-300 ring-1 ring-inset ring-ink-700 hover:text-paper hover:ring-ink-600",
             )}
           >
             {o.label}

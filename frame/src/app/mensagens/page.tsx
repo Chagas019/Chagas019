@@ -34,7 +34,7 @@ export default async function Page() {
                     </span>
                     <span className={`block truncate text-sm ${c.unread ? "text-fog-200" : "text-fog-500"}`}>{c.preview}</span>
                   </span>
-                  {c.unread ? <span className="grid min-w-5 place-items-center rounded-full bg-volt-500 px-1.5 text-[11px] font-semibold text-white">{c.unread}</span> : null}
+                  {c.unread ? <span className="grid min-w-5 place-items-center rounded-full bg-volt-500 px-1.5 text-[11px] font-semibold text-ink-950">{c.unread}</span> : null}
                 </Link>
               </li>
             );

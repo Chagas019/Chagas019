@@ -122,7 +122,7 @@ export function PublishForm({ initialKind, community, viewerId }: { initialKind:
               onClick={() => setKind(k.slug)}
               className={cn(
                 "flex flex-col items-start gap-2 rounded-[var(--radius-md)] p-4 text-left transition-all",
-                kind === k.slug ? "bg-paper text-ink-950" : "bg-ink-850 text-fog-300 hover:bg-ink-800",
+                kind === k.slug ? "bg-volt-500 text-ink-950" : "bg-ink-850 text-fog-300 hover:bg-ink-800",
               )}
             >
               <k.icon className={cn("size-5", kind === k.slug ? "text-volt-600" : "text-volt-300")} />

@@ -30,7 +30,7 @@ export async function Header() {
                 >
                   <MessageSquare className="size-5" aria-hidden />
                   {unreadDm > 0 ? (
-                    <span className="absolute right-1.5 top-1.5 grid min-w-4 place-items-center rounded-full bg-volt-500 px-1 text-[10px] font-semibold leading-4 text-white">
+                    <span className="absolute right-1.5 top-1.5 grid min-w-4 place-items-center rounded-full bg-volt-500 px-1 text-[10px] font-semibold leading-4 text-ink-950">
                       {unreadDm > 99 ? "99+" : unreadDm}
                     </span>
                   ) : null}
@@ -42,7 +42,7 @@ export async function Header() {
                 >
                   <Bell className="size-5" aria-hidden />
                   {unread > 0 ? (
-                    <span className="absolute right-1.5 top-1.5 grid min-w-4 place-items-center rounded-full bg-volt-500 px-1 text-[10px] font-semibold leading-4 text-white">
+                    <span className="absolute right-1.5 top-1.5 grid min-w-4 place-items-center rounded-full bg-volt-500 px-1 text-[10px] font-semibold leading-4 text-ink-950">
                       {unread > 99 ? "99+" : unread}
                     </span>
                   ) : null}

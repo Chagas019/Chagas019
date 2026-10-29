@@ -203,7 +203,7 @@ export default async function ProfilePage({ params, searchParams }: Props) {
               key={t.slug}
               href={`/u/${p.handle}${t.slug === "trabalhos" ? "" : `?aba=${t.slug}`}`}
               aria-current={aba === t.slug ? "page" : undefined}
-              className={cn("-mb-px shrink-0 border-b-2 px-4 py-3 text-sm transition-colors", aba === t.slug ? "border-paper text-paper" : "border-transparent text-fog-500 hover:text-paper")}
+              className={cn("-mb-px shrink-0 border-b-2 px-4 py-3 text-sm transition-colors", aba === t.slug ? "border-volt-500 text-paper" : "border-transparent text-fog-500 hover:text-paper")}
             >
               {t.label}
             </Link>
@@ -213,11 +213,11 @@ export default async function ProfilePage({ params, searchParams }: Props) {
         <div className="py-8">
           {aba === "trabalhos" && usedCats.length > 1 ? (
             <div className="scrollbar-none mb-6 flex gap-2 overflow-x-auto">
-              <Link href={`/u/${p.handle}`} className={cn("shrink-0 rounded-full px-3 py-1.5 text-sm", !cat ? "bg-paper text-ink-950" : "bg-ink-850 text-fog-400")}>
+              <Link href={`/u/${p.handle}`} className={cn("shrink-0 rounded-full px-3 py-1.5 text-sm", !cat ? "bg-volt-500 text-ink-950" : "bg-ink-850 text-fog-400")}>
                 Tudo
               </Link>
               {usedCats.map((c) => (
-                <Link key={c.slug} href={`/u/${p.handle}?cat=${c.slug}`} className={cn("shrink-0 rounded-full px-3 py-1.5 text-sm", cat === c.slug ? "bg-paper text-ink-950" : "bg-ink-850 text-fog-400")}>
+                <Link key={c.slug} href={`/u/${p.handle}?cat=${c.slug}`} className={cn("shrink-0 rounded-full px-3 py-1.5 text-sm", cat === c.slug ? "bg-volt-500 text-ink-950" : "bg-ink-850 text-fog-400")}>
                   {labelOf(CATEGORIES, c.slug)}
                 </Link>
               ))}

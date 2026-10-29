@@ -90,7 +90,7 @@ export function ListingForm() {
         <p className="text-sm font-medium text-fog-200">Modalidade</p>
         <div role="radiogroup" aria-label="Modalidade" className="flex flex-wrap gap-2">
           {COLLAB_MODES.map((m) => (
-            <button key={m.slug} type="button" role="radio" aria-checked={mode === m.slug} onClick={() => setMode(m.slug)} className={cn("rounded-full px-4 py-2 text-sm ring-1 ring-inset", mode === m.slug ? "bg-paper text-ink-950 ring-paper" : "bg-ink-850 text-fog-300 ring-ink-700")}>
+            <button key={m.slug} type="button" role="radio" aria-checked={mode === m.slug} onClick={() => setMode(m.slug)} className={cn("rounded-full px-4 py-2 text-sm ring-1 ring-inset", mode === m.slug ? "bg-volt-500 text-ink-950 ring-paper" : "bg-ink-850 text-fog-300 ring-ink-700")}>
               {m.label}
             </button>
           ))}

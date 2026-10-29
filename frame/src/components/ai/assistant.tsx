@@ -37,7 +37,7 @@ export function Assistant({ tools, quota }: { tools: Tool[]; quota: { used: numb
               setMessages([]);
             }}
             aria-pressed={tool === t.slug}
-            className={cn("shrink-0 rounded-[var(--radius-sm)] px-4 py-2.5 text-left text-sm transition", tool === t.slug ? "bg-paper text-ink-950" : "bg-ink-850 text-fog-300 hover:text-paper")}
+            className={cn("shrink-0 rounded-[var(--radius-sm)] px-4 py-2.5 text-left text-sm transition", tool === t.slug ? "bg-volt-500 text-ink-950" : "bg-ink-850 text-fog-300 hover:text-paper")}
           >
             {t.label}
           </button>

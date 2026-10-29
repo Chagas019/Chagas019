@@ -2,34 +2,36 @@
 
 /*
  * FRAME — design system
- * Base: preto profundo e grafite; destaque: roxo elétrico e azul (usados com parcimônia).
- * Imagens são protagonistas: superfícies discretas, poucas bordas, tipografia expressiva.
+ * Cores: verde-limão #D5FF40 (destaque), grafite quase preto, cinza #C0C2B8 e branco.
+ * Tipografia: Poppins (Regular, SemiBold, Bold).
+ * Imagens são protagonistas: superfícies discretas, poucas bordas, destaque usado com parcimônia.
+ * (Os nomes "volt"/"cobalt" ficaram por compatibilidade: volt = limão, cobalt = cinza-sálvia.)
  */
 @theme {
-  --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
 
-  --color-ink-950: #060608;
-  --color-ink-900: #0b0b0f;
-  --color-ink-850: #101016;
-  --color-ink-800: #16161d;
-  --color-ink-750: #1c1c25;
-  --color-ink-700: #24242f;
-  --color-ink-600: #32323f;
-  --color-fog-500: #6e6e7c;
-  --color-fog-400: #9a9aa8;
-  --color-fog-300: #bcbcc8;
-  --color-fog-200: #dcdce4;
-  --color-paper: #f4f3ef;
+  --color-ink-950: #0d0d0d;
+  --color-ink-900: #121212;
+  --color-ink-850: #1a1a1a;
+  --color-ink-800: #202020;
+  --color-ink-750: #272727;
+  --color-ink-700: #2f2f2f;
+  --color-ink-600: #3b3b3b;
+  --color-fog-500: #75776f;
+  --color-fog-400: #a2a49b;
+  --color-fog-300: #c0c2b8;
+  --color-fog-200: #dedfd8;
+  --color-paper: #ffffff;
 
-  --color-volt-300: #c4b5fd;
-  --color-volt-400: #a78bfa;
-  --color-volt-500: #8b5cf6;
-  --color-volt-600: #7c3aed;
-  --color-volt-700: #6d28d9;
-  --color-cobalt-400: #60a5fa;
-  --color-cobalt-500: #3b82f6;
+  --color-volt-300: #e7ff8f;
+  --color-volt-400: #ddff66;
+  --color-volt-500: #d5ff40;
+  --color-volt-600: #bde52e;
+  --color-volt-700: #8aa81c;
+  --color-cobalt-400: #c0c2b8;
+  --color-cobalt-500: #a6a89e;
   --color-ember-400: #fbbf24;
   --color-mint-400: #5eead4;
   --color-danger-400: #f87171;
@@ -44,7 +46,7 @@
 
   --shadow-card: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 20px 40px -24px rgb(0 0 0 / 0.8);
   --shadow-pop: 0 24px 64px -16px rgb(0 0 0 / 0.75), 0 0 0 1px rgb(255 255 255 / 0.06);
-  --shadow-glow: 0 0 0 1px rgb(139 92 246 / 0.5), 0 8px 32px -8px rgb(139 92 246 / 0.45);
+  --shadow-glow: 0 0 0 1px rgb(213 255 64 / 0.5), 0 8px 32px -8px rgb(213 255 64 / 0.35);
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
@@ -75,15 +77,14 @@ html {
 body {
   min-height: 100dvh;
   background:
-    radial-gradient(1200px 600px at 85% -10%, rgb(124 58 237 / 0.10), transparent 60%),
-    radial-gradient(900px 500px at -10% 10%, rgb(59 130 246 / 0.06), transparent 60%),
+    radial-gradient(1200px 520px at 50% 115%, rgb(213 255 64 / 0.07), transparent 65%),
     var(--color-ink-950);
   background-attachment: fixed;
 }
 
 ::selection {
-  background: rgb(139 92 246 / 0.45);
-  color: white;
+  background: rgb(213 255 64 / 0.85);
+  color: #0d0d0d;
 }
 
 :focus-visible {
@@ -122,4 +123,14 @@ body {
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Títulos em Poppins: peso forte e espaçamento justo, como no design system. */
+.font-display {
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+.font-display em,
+h1 em {
+  font-style: normal;
 }

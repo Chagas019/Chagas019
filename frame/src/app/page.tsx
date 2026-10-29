@@ -20,7 +20,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
     <Container className="pt-6 sm:pt-10">
       {!viewer ? (
         <section className="relative mb-12 overflow-hidden rounded-[var(--radius-xl)] px-6 py-14 sm:px-12 sm:py-20">
-          <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(700px_380px_at_15%_20%,rgb(124_58_237/0.35),transparent_65%),radial-gradient(600px_400px_at_90%_90%,rgb(59_130_246/0.22),transparent_60%)]" />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(700px_380px_at_15%_20%,rgb(213_255_64/0.16),transparent_65%),radial-gradient(600px_400px_at_90%_90%,rgb(192_194_184/0.08),transparent_60%)]" />
           <div aria-hidden className="absolute inset-3 -z-10 rounded-[calc(var(--radius-xl)-6px)] border border-white/[0.07]" />
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-volt-300">Fotografia · Vídeo · Edição · Design</p>
           <h1 className="mt-4 max-w-4xl font-display text-5xl leading-[0.95] text-balance text-paper sm:text-7xl">

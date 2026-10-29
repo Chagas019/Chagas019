@@ -31,7 +31,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<SP>
     const s = p.toString();
     return s ? `/collab?${s}` : "/collab";
   };
-  const chip = (active: boolean) => cn("shrink-0 rounded-full px-3 py-1.5 text-sm", active ? "bg-paper text-ink-950" : "bg-ink-850 text-fog-400 hover:text-paper");
+  const chip = (active: boolean) => cn("shrink-0 rounded-full px-3 py-1.5 text-sm", active ? "bg-volt-500 text-ink-950" : "bg-ink-850 text-fog-400 hover:text-paper");
 
   return (
     <Container className="space-y-8 py-10">
@@ -47,13 +47,13 @@ export default async function Page({ searchParams }: { searchParams: Promise<SP>
       </div>
 
       {viewer ? (
-        <nav aria-label="Seções do Collab" className="flex gap-1 border-b border-ink-700">
+        <nav aria-label="Seções do Collab" className="scrollbar-none flex gap-1 overflow-x-auto border-b border-ink-700">
           {[
             { slug: "abertas", label: "Oportunidades" },
             { slug: "minhas", label: "Minhas oportunidades" },
             { slug: "candidaturas", label: "Minhas candidaturas" },
           ].map((t) => (
-            <Link key={t.slug} href={t.slug === "abertas" ? "/collab" : `/collab?aba=${t.slug}`} aria-current={tab === t.slug ? "page" : undefined} className={cn("-mb-px shrink-0 border-b-2 px-4 py-3 text-sm", tab === t.slug ? "border-paper text-paper" : "border-transparent text-fog-500 hover:text-paper")}>
+            <Link key={t.slug} href={t.slug === "abertas" ? "/collab" : `/collab?aba=${t.slug}`} aria-current={tab === t.slug ? "page" : undefined} className={cn("-mb-px shrink-0 border-b-2 px-4 py-3 text-sm", tab === t.slug ? "border-volt-500 text-paper" : "border-transparent text-fog-500 hover:text-paper")}>
               {t.label}
             </Link>
           ))}

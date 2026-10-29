@@ -25,7 +25,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ s
       </SectionTitle>
       <nav className="flex gap-2">
         {(["open", "resolved", "dismissed"] as const).map((x) => (
-          <Link key={x} href={x === "open" ? "/moderacao" : `/moderacao?status=${x}`} className={cn("rounded-full px-4 py-2 text-sm", status === x ? "bg-paper text-ink-950" : "bg-ink-850 text-fog-400")}>
+          <Link key={x} href={x === "open" ? "/moderacao" : `/moderacao?status=${x}`} className={cn("rounded-full px-4 py-2 text-sm", status === x ? "bg-volt-500 text-ink-950" : "bg-ink-850 text-fog-400")}>
             {x === "open" ? "Abertas" : x === "resolved" ? "Resolvidas" : "Arquivadas"}
           </Link>
         ))}

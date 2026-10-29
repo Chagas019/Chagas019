@@ -39,7 +39,7 @@ export function SubmitPanel({ challengeId, slug, myPosts }: { challengeId: strin
             >
               {p.coverId ? <Image src={mediaUrl(p.coverId, "thumb")} alt="" fill unoptimized sizes="120px" className="object-cover" /> : <span className="p-2 text-xs">{p.title}</span>}
               {selected === p.id ? (
-                <span className="absolute right-1.5 top-1.5 grid size-6 place-items-center rounded-full bg-volt-500 text-white">
+                <span className="absolute right-1.5 top-1.5 grid size-6 place-items-center rounded-full bg-volt-500 text-ink-950">
                   <Check className="size-3.5" />
                 </span>
               ) : null}
@@ -111,7 +111,7 @@ export function VoteButton({ submissionId, initial, disabled }: { submissionId: 
       }
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition disabled:opacity-50",
-        voted ? "bg-volt-500 text-white" : "bg-ink-750 text-fog-200 hover:bg-ink-700",
+        voted ? "bg-volt-500 text-ink-950" : "bg-ink-750 text-fog-200 hover:bg-ink-700",
       )}
     >
       <Vote className="size-4" aria-hidden /> {voted ? "Votado" : "Votar"}

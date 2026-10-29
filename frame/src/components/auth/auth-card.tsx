@@ -4,7 +4,7 @@ export function AuthCard({ title, subtitle, children, footer }: { title: string;
   return (
     <div className="grid min-h-[calc(100dvh-4rem)] lg:grid-cols-[1.1fr_1fr]">
       <div className="relative hidden overflow-hidden lg:block" aria-hidden>
-        <div className="absolute inset-0 bg-[radial-gradient(800px_500px_at_30%_30%,rgb(124_58_237/0.35),transparent_60%),radial-gradient(700px_500px_at_80%_80%,rgb(59_130_246/0.25),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(800px_500px_at_30%_30%,rgb(213_255_64/0.16),transparent_60%),radial-gradient(700px_500px_at_80%_80%,rgb(192_194_184/0.10),transparent_60%)]" />
         <div className="absolute inset-10 rounded-[var(--radius-xl)] border border-white/10" />
         <div className="absolute inset-x-16 bottom-16">
           <p className="font-display text-6xl leading-[0.95] text-paper">

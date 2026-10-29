@@ -47,7 +47,7 @@ export default async function ChallengePage({ params }: Props) {
           .orderBy(desc(post.createdAt))
           .limit(24)
       : [];
-  const palette = c.palette.length ? c.palette : ["#8b5cf6", "#3b82f6"];
+  const palette = c.palette.length ? c.palette : ["#d5ff40", "#c0c2b8"];
   const winners = phase === "closed" && c.votingEnabled ? submissions.slice(0, 3).filter((s) => (s.voteCount ?? 0) > 0) : [];
 
   return (

@@ -57,7 +57,7 @@ export function BeforeAfter({ beforeId, afterId, alt, ratio }: { beforeId: strin
             else return;
             e.preventDefault();
           }}
-          className="absolute top-1/2 grid size-11 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize place-items-center rounded-full bg-paper text-ink-950 shadow-[var(--shadow-pop)]"
+          className="absolute top-1/2 grid size-11 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize place-items-center rounded-full bg-volt-500 text-ink-950 shadow-[var(--shadow-pop)]"
           style={{ left: `${pos}%` }}
         >
           <MoveHorizontal className="size-5" aria-hidden />

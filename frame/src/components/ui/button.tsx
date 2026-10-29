@@ -10,18 +10,18 @@ const base =
   "inline-flex items-center justify-center gap-2 font-medium whitespace-nowrap select-none transition-[background,color,box-shadow,transform] duration-200 ease-[var(--ease-out-expo)] active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-paper text-ink-950 hover:bg-white shadow-[0_8px_24px_-12px_rgb(255_255_255/0.4)]",
-  secondary: "bg-ink-750 text-paper hover:bg-ink-700",
-  outline: "bg-transparent text-paper ring-1 ring-inset ring-ink-600 hover:ring-fog-500 hover:bg-white/[0.03]",
+  primary: "bg-volt-500 text-ink-950 font-semibold hover:bg-volt-400 shadow-[0_8px_24px_-12px_rgb(213_255_64/0.45)]",
+  secondary: "bg-ink-750 text-paper ring-1 ring-inset ring-ink-600 hover:bg-ink-700",
+  outline: "bg-transparent text-volt-500 ring-1 ring-inset ring-volt-500/60 hover:ring-volt-500 hover:bg-volt-500/[0.06]",
   ghost: "bg-transparent text-fog-300 hover:text-paper hover:bg-white/[0.05]",
   danger: "bg-danger-500/15 text-danger-400 hover:bg-danger-500/25",
 };
 
 const sizes: Record<Size, string> = {
-  sm: "h-8 px-3 text-sm rounded-full",
-  md: "h-10 px-4 text-sm rounded-full",
-  lg: "h-12 px-6 text-base rounded-full",
-  icon: "h-10 w-10 rounded-full",
+  sm: "h-8 px-3 text-sm rounded-[var(--radius-xs)]",
+  md: "h-10 px-4 text-sm rounded-[var(--radius-sm)]",
+  lg: "h-12 px-6 text-base rounded-[var(--radius-sm)]",
+  icon: "h-10 w-10 rounded-[var(--radius-sm)]",
 };
 
 export function buttonClass(variant: Variant = "primary", size: Size = "md", className?: string) {

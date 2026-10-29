@@ -70,7 +70,7 @@ export default async function CommunityPage({ params, searchParams }: Props) {
   return (
     <div>
       <div className="relative overflow-hidden border-b border-ink-700">
-        <div aria-hidden className="absolute inset-0 bg-[radial-gradient(600px_300px_at_10%_0%,rgb(124_58_237/0.25),transparent_70%),radial-gradient(500px_300px_at_100%_100%,rgb(59_130_246/0.15),transparent_70%)]" />
+        <div aria-hidden className="absolute inset-0 bg-[radial-gradient(600px_300px_at_10%_0%,rgb(213_255_64/0.12),transparent_70%),radial-gradient(500px_300px_at_100%_100%,rgb(192_194_184/0.07),transparent_70%)]" />
         <Container className="relative space-y-5 py-12">
           <div className="flex flex-wrap gap-2">
             <Badge>
@@ -134,7 +134,7 @@ export default async function CommunityPage({ params, searchParams }: Props) {
               key={t.slug}
               href={`/comunidades/${c.slug}${t.slug === "publicacoes" ? "" : `?aba=${t.slug}`}`}
               aria-current={aba === t.slug ? "page" : undefined}
-              className={cn("-mb-px shrink-0 border-b-2 px-4 py-3 text-sm", aba === t.slug ? "border-paper text-paper" : "border-transparent text-fog-500 hover:text-paper")}
+              className={cn("-mb-px shrink-0 border-b-2 px-4 py-3 text-sm", aba === t.slug ? "border-volt-500 text-paper" : "border-transparent text-fog-500 hover:text-paper")}
             >
               {t.label}
             </Link>

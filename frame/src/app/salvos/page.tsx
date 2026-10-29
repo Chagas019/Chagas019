@@ -26,11 +26,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ c
         Só você vê seus salvos. Coleções podem ser públicas e aparecer no seu portfólio.
       </SectionTitle>
       <div className="flex flex-wrap items-center gap-2">
-        <Link href="/salvos" className={cn("rounded-full px-4 py-2 text-sm", !active ? "bg-paper text-ink-950" : "bg-ink-850 text-fog-400 hover:text-paper")}>
+        <Link href="/salvos" className={cn("rounded-full px-4 py-2 text-sm", !active ? "bg-volt-500 text-ink-950" : "bg-ink-850 text-fog-400 hover:text-paper")}>
           Tudo
         </Link>
         {collections.map((c) => (
-          <Link key={c.id} href={`/salvos?colecao=${c.id}`} className={cn("rounded-full px-4 py-2 text-sm", active?.id === c.id ? "bg-paper text-ink-950" : "bg-ink-850 text-fog-400 hover:text-paper")}>
+          <Link key={c.id} href={`/salvos?colecao=${c.id}`} className={cn("rounded-full px-4 py-2 text-sm", active?.id === c.id ? "bg-volt-500 text-ink-950" : "bg-ink-850 text-fog-400 hover:text-paper")}>
             {c.name} <span className="opacity-60">{c.count}</span>
           </Link>
         ))}

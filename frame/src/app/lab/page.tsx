@@ -48,11 +48,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ a
 
       <div className="space-y-3">
         <nav aria-label="Áreas" className="scrollbar-none -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
-          <Link href={qs({ area: undefined })} className={cn("shrink-0 rounded-full px-4 py-2 text-sm", !topic ? "bg-paper text-ink-950" : "bg-ink-850 text-fog-400 hover:text-paper")}>
+          <Link href={qs({ area: undefined })} className={cn("shrink-0 rounded-full px-4 py-2 text-sm", !topic ? "bg-volt-500 text-ink-950" : "bg-ink-850 text-fog-400 hover:text-paper")}>
             Todas as áreas
           </Link>
           {LAB_TOPICS.map((t) => (
-            <Link key={t.slug} href={qs({ area: t.slug })} className={cn("shrink-0 rounded-full px-4 py-2 text-sm", topic === t.slug ? "bg-paper text-ink-950" : "bg-ink-850 text-fog-400 hover:text-paper")}>
+            <Link key={t.slug} href={qs({ area: t.slug })} className={cn("shrink-0 rounded-full px-4 py-2 text-sm", topic === t.slug ? "bg-volt-500 text-ink-950" : "bg-ink-850 text-fog-400 hover:text-paper")}>
               {t.label}
             </Link>
           ))}

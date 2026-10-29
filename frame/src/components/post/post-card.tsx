@@ -38,7 +38,7 @@ export function PostCard({ card, signedIn, priority }: { card: Card; signedIn: b
           ) : card.coverId && card.coverKind === "video" ? (
             <video src={mediaUrl(card.coverId)} muted playsInline preload="metadata" className="absolute inset-0 size-full object-cover" aria-label={card.title} />
           ) : (
-            <div className="absolute inset-0 flex flex-col justify-end bg-[radial-gradient(400px_300px_at_20%_10%,rgb(124_58_237/0.35),transparent_70%),linear-gradient(160deg,var(--color-ink-800),var(--color-ink-900))] p-4">
+            <div className="absolute inset-0 flex flex-col justify-end bg-[radial-gradient(400px_300px_at_20%_10%,rgb(213_255_64/0.16),transparent_70%),linear-gradient(160deg,var(--color-ink-800),var(--color-ink-900))] p-4">
               {card.kind === "tutorial" && card.tutorialTopic ? (
                 <span className="mb-2 text-xs uppercase tracking-[0.16em] text-volt-300">{labelOf(LAB_TOPICS, card.tutorialTopic)}</span>
               ) : null}

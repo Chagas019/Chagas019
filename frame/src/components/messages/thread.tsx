@@ -76,7 +76,7 @@ export function Thread({ conversationId, viewerId, members, initial, blocked: in
           return (
             <div key={m.id} className={cn("flex flex-col", mine ? "items-end" : "items-start")}>
               {!mine && members.length > 2 ? <span className="mb-0.5 text-xs text-fog-500">{m.senderId ? (names.get(m.senderId) ?? "Alguém") : "Conta excluída"}</span> : null}
-              <div className={cn("max-w-[85%] whitespace-pre-wrap break-words rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed", mine ? "bg-volt-600 text-white" : "bg-ink-750 text-paper")}>
+              <div className={cn("max-w-[85%] whitespace-pre-wrap break-words rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed", mine ? "bg-volt-500 text-ink-950" : "bg-ink-750 text-paper")}>
                 <Body text={m.body} />
                 {m.sharedPostId ? (
                   <Link href={`/p/${m.sharedPostId}`} className="mt-2 block rounded-lg bg-black/25 px-3 py-2 text-sm underline-offset-2 hover:underline">
