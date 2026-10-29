@@ -68,3 +68,17 @@ export async function deleteAccountAction(input: { password: string; confirmatio
     await auth.api.signOut({ headers: await headers() }).catch(() => undefined);
   });
 }
+
+/** Depois de confirmar o e-mail pelo link, a pessoa cria a própria senha. */
+export async function createPasswordAction(password: string, confirm: string) {
+  return run(async () => {
+    const viewer = await requireViewer();
+    if (typeof password !== "string" || password.length < 8 || password.length > 128) {
+      throw new AppError("VALIDATION", "Use uma senha de 8 a 128 caracteres.", { password: "Use uma senha de 8 a 128 caracteres." });
+    }
+    if (password !== confirm) throw new AppError("VALIDATION", "As senhas não são iguais.", { confirm: "As senhas não são iguais." });
+    if (await profiles.hasPassword(viewer.id)) throw new AppError("VALIDATION", "Sua conta já tem senha. Para trocar, use Configurações.");
+    await enforceRateLimit(`set-password:${viewer.id}`, 10, 3600);
+    await auth.api.setPassword({ body: { newPassword: password }, headers: await headers() });
+  }, "Senha criada. Bem-vinda(o) à FRAME!");
+}

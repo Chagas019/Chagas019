@@ -13,7 +13,7 @@ export default async function Page() {
   return (
     <AuthCard
       title="Crie seu FRAME"
-      subtitle={features().mail ? "Digite seu e-mail e receba seu link de acesso. Depois você escolhe seu nome de usuário e interesses." : "Leva menos de um minuto. Depois você escolhe seus interesses."}
+      subtitle={features().mail ? "Digite seu e-mail. Você recebe uma mensagem para confirmar o endereço e criar sua senha." : "Leva menos de um minuto. Depois você escolhe seus interesses."}
       footer={
         <>
           Já tem conta?{" "}
@@ -24,15 +24,7 @@ export default async function Page() {
       }
     >
       {features().mail ? (
-        <div className="space-y-6">
-          <MagicLinkForm mode="signup" />
-          <details className="rounded-[var(--radius-md)] bg-ink-900/60 p-4 ring-1 ring-white/[0.06]">
-            <summary className="cursor-pointer text-sm text-fog-400 hover:text-paper">Prefiro criar com senha</summary>
-            <div className="mt-4">
-              <SignUpForm />
-            </div>
-          </details>
-        </div>
+        <MagicLinkForm mode="signup" />
       ) : (
         <SignUpForm />
       )}

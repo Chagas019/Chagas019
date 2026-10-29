@@ -30,7 +30,7 @@ export function MagicLinkForm({ mode, next }: { mode: "signin" | "signup"; next?
       email,
       name: name || undefined,
       callbackURL: safeNext(next),
-      newUserCallbackURL: "/onboarding",
+      newUserCallbackURL: "/criar-senha",
       errorCallbackURL: "/entrar?link=invalido",
     });
     setLoading(false);
@@ -47,7 +47,7 @@ export function MagicLinkForm({ mode, next }: { mode: "signin" | "signup"; next?
         <MailCheck className="size-8 text-volt-500" aria-hidden />
         <p className="text-xl font-medium text-paper">Confira seu e-mail</p>
         <p className="text-fog-300">
-          Mandamos um link de acesso para <span className="chip-mono">{sentTo}</span>. Toque nele para {mode === "signup" ? "criar sua conta e entrar" : "entrar"}. Ele vale por 15 minutos.
+          Mandamos um link para <span className="chip-mono">{sentTo}</span>. {mode === "signup" ? "Toque nele para confirmar seu e-mail e criar sua senha." : "Toque nele para entrar."} Ele vale por 15 minutos.
         </p>
         <p className="text-sm text-fog-500">Não chegou? Olhe a caixa de spam ou promoções.</p>
         <button type="button" onClick={() => setSentTo(null)} className="text-sm text-volt-500 underline underline-offset-4">
@@ -81,9 +81,11 @@ export function MagicLinkForm({ mode, next }: { mode: "signin" | "signup"; next?
         </p>
       ) : null}
       <Button type="submit" className="w-full" size="lg" loading={loading}>
-        {mode === "signup" ? "Receber link de acesso" : "Enviar link para entrar"}
+        {mode === "signup" ? "Continuar" : "Enviar link para entrar"}
       </Button>
-      <p className="text-center text-xs text-fog-500">Sem senha: você recebe um link no e-mail e entra com um toque.</p>
+      <p className="text-center text-xs text-fog-500">
+        {mode === "signup" ? "Você vai receber um e-mail para confirmar o endereço e criar sua senha." : "Esqueceu a senha? Receba um link e entre com um toque."}
+      </p>
     </form>
   );
 }

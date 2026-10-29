@@ -27,11 +27,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ n
     >
       {features().mail ? (
         <div className="space-y-6">
-          <MagicLinkForm mode="signin" next={sp.next} />
-          <details className="group rounded-[var(--radius-md)] bg-ink-900/60 p-4 ring-1 ring-white/[0.06]">
-            <summary className="cursor-pointer text-sm text-fog-400 hover:text-paper">Prefiro entrar com senha</summary>
+          <SignInForm next={sp.next} />
+          <details className="rounded-[var(--radius-md)] bg-ink-900/60 p-4 ring-1 ring-white/[0.06]" open={sp.link === "invalido"}>
+            <summary className="cursor-pointer text-sm text-fog-400 hover:text-paper">Entrar com um link no e-mail</summary>
             <div className="mt-4">
-              <SignInForm next={sp.next} />
+              <MagicLinkForm mode="signin" next={sp.next} />
             </div>
           </details>
         </div>

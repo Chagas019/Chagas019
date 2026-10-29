@@ -73,8 +73,9 @@ const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&
 
 /** E-mail do link de acesso: preto e limão, botão grande, funciona em qualquer cliente de e-mail. */
 export function accessLinkEmail(url: string, isNew: boolean) {
-  const title = isNew ? "Seu acesso à FRAME" : "Seu link para entrar na FRAME";
-  const lead = isNew ? "Toque no botão para criar sua conta e entrar na FRAME." : "Toque no botão para entrar na sua conta.";
+  const title = isNew ? "Confirme seu e-mail e crie sua senha" : "Seu link para entrar na FRAME";
+  const lead = isNew ? "Falta pouco! Toque no botão para confirmar seu e-mail e criar a senha da sua conta na FRAME." : "Toque no botão para entrar na sua conta.";
+  const cta = isNew ? "Criar minha senha" : "Entrar na FRAME";
   const text = `${title}\n\n${lead}\n\n${url}\n\nO link vale por 15 minutos e só funciona uma vez. Se você não pediu, ignore este e-mail — ninguém entra na sua conta sem ele.`;
   const html = `<!doctype html><html lang="pt-BR"><body style="margin:0;background:#080908;padding:32px 16px;font-family:Arial,Helvetica,sans-serif;color:#f5f5f0">
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center">
@@ -82,7 +83,7 @@ export function accessLinkEmail(url: string, isNew: boolean) {
       <tr><td style="font-size:13px;letter-spacing:4px;font-weight:bold;color:#f5f5f0">▣ FRAME</td></tr>
       <tr><td style="padding-top:24px;font-size:26px;font-weight:bold;line-height:1.2">${esc(title)}</td></tr>
       <tr><td style="padding-top:12px;font-size:16px;line-height:1.5;color:#c0c2b8">${esc(lead)}</td></tr>
-      <tr><td style="padding-top:28px"><a href="${esc(url)}" style="display:inline-block;background:#d4ff36;color:#080908;text-decoration:none;font-weight:bold;font-size:16px;padding:14px 28px;border-radius:999px">Entrar na FRAME</a></td></tr>
+      <tr><td style="padding-top:28px"><a href="${esc(url)}" style="display:inline-block;background:#d4ff36;color:#080908;text-decoration:none;font-weight:bold;font-size:16px;padding:14px 28px;border-radius:999px">${esc(cta)}</a></td></tr>
       <tr><td style="padding-top:28px;font-size:13px;line-height:1.5;color:#85877f">O link vale por 15 minutos e só funciona uma vez. Se você não pediu, ignore este e-mail — ninguém entra na sua conta sem ele.</td></tr>
       <tr><td style="padding-top:16px;font-size:12px;line-height:1.5;color:#5d5f58;word-break:break-all">Se o botão não funcionar, copie: ${esc(url)}</td></tr>
     </table>

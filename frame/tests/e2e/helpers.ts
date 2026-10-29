@@ -25,22 +25,11 @@ export async function fixtureImage(name: string, color: string, w = 1200, h = 90
 /** Cadastro + onboarding completo pela interface. */
 export const MAIL_DIR = path.join(os.tmpdir(), "frame-e2e-mail");
 
-/** Abre o formulário com senha quando o acesso por link está ativo (fica recolhido em "Prefiro…"). */
-async function passwordScope(page: Page) {
-  const toggle = page.getByText(/^Prefiro (criar|entrar) com senha$/);
-  if (await toggle.isVisible().catch(() => false)) {
-    await toggle.click();
-    return page.locator("details");
-  }
-  return page.locator("body");
-}
-
 export async function signIn(page: Page, u: ReturnType<typeof uniqueUser>) {
   await page.goto("/entrar");
-  const f = await passwordScope(page);
-  await f.getByLabel("E-mail").fill(u.email);
-  await f.getByLabel("Senha").fill(u.password);
-  await f.getByRole("button", { name: "Entrar" }).click();
+  await page.locator("#email").fill(u.email);
+  await page.locator("#password").fill(u.password);
+  await page.getByRole("button", { name: "Entrar", exact: true }).click();
   await expect(page).not.toHaveURL(/\/entrar/);
 }
 
@@ -57,14 +46,21 @@ export async function lastMailTo(to: string): Promise<{ subject: string; text: s
   throw new Error(`Nenhum e-mail para ${to}`);
 }
 
+export const linkIn = (text: string) => text.match(/https?:\/\/\S+/)![0];
+
+/** Cadastro completo como uma pessoa real: e-mail → link na caixa de entrada → criar senha → onboarding. */
 export async function signUp(page: Page, u: ReturnType<typeof uniqueUser>) {
   await page.goto("/cadastro");
-  const f = await passwordScope(page);
-  await f.getByLabel("Nome", { exact: true }).fill(u.name);
-  await f.getByLabel("E-mail").fill(u.email);
-  await f.getByLabel("Senha").fill(u.password);
-  await f.getByRole("checkbox").check();
-  await f.getByRole("button", { name: "Criar minha conta" }).click();
+  await page.getByLabel("Seu nome").fill(u.name);
+  await page.locator("#ml-email").fill(u.email);
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Continuar" }).click();
+  await expect(page.getByText("Confira seu e-mail")).toBeVisible();
+  await page.goto(linkIn((await lastMailTo(u.email)).text));
+  await expect(page).toHaveURL(/\/criar-senha/);
+  await page.getByLabel("Crie sua senha").fill(u.password);
+  await page.getByLabel("Repita a senha").fill(u.password);
+  await page.getByRole("button", { name: "Criar senha e entrar" }).click();
   await expect(page).toHaveURL(/\/onboarding/);
   await page.getByLabel("Identificador").fill(u.handle);
   const interests = page.getByRole("group", { name: "Interesses" });

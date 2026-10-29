@@ -95,3 +95,9 @@ export async function setProfileImage(userId: string, which: "avatar" | "cover",
     await deleteMediaRows(old);
   }
 }
+
+/** A conta já tem senha? (contas criadas pelo link do e-mail começam sem). */
+export async function hasPassword(userId: string): Promise<boolean> {
+  const rows = await db.execute<{ x: number }>(sql`select 1 as x from account where user_id = ${userId} and provider_id = 'credential' and password is not null limit 1`);
+  return rows.length > 0;
+}
