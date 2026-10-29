@@ -1,7 +1,7 @@
 import "server-only";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { db } from "../db";
-import { comment, community, moderationLog, post, profile, report } from "../db/schema";
+import { collabListing, comment, community, moderationLog, post, profile, report } from "../db/schema";
 import { AppError } from "../errors";
 import { isModerator, type Viewer } from "../session";
 
@@ -41,6 +41,9 @@ export async function listReports(viewer: V, status: "open" | "resolved" | "dism
       } else if (r.targetType === "user") {
         const [u] = await db.select({ handle: profile.handle }).from(profile).where(eq(profile.userId, r.targetId)).limit(1);
         if (u) preview = { label: `@${u.handle}`, href: `/u/${u.handle}` };
+      } else if (r.targetType === "collab") {
+        const [l] = await db.select({ title: collabListing.title, status: collabListing.status }).from(collabListing).where(eq(collabListing.id, r.targetId)).limit(1);
+        if (l) preview = { label: l.title, href: `/collab/${r.targetId}`, status: l.status };
       } else {
         const [c] = await db.select({ name: community.name, slug: community.slug, status: community.status }).from(community).where(eq(community.id, r.targetId)).limit(1);
         if (c) preview = { label: c.name, href: `/comunidades/${c.slug}`, status: c.status };
@@ -65,6 +68,7 @@ export async function resolveReport(viewer: V, reportId: string, action: "remove
         const [c] = await tx.update(comment).set({ status: "removed" }).where(and(eq(comment.id, r.targetId), eq(comment.status, "published"))).returning({ postId: comment.postId });
         if (c) await tx.update(post).set({ commentCount: sql`greatest(0, ${post.commentCount} - 1)` }).where(eq(post.id, c.postId));
       } else if (r.targetType === "community") await tx.update(community).set({ status: "removed" }).where(eq(community.id, r.targetId));
+      else if (r.targetType === "collab") await tx.update(collabListing).set({ status: "removed" }).where(eq(collabListing.id, r.targetId));
       else if (r.targetType === "user") {
         // Remove todo o conteúdo público do perfil denunciado (suspensão de conta: ver pendências no README).
         await tx.update(post).set({ status: "removed" }).where(eq(post.authorId, r.targetId));

@@ -51,3 +51,23 @@ describe("validação de entradas", () => {
     expect(safeNext("/u/lia?aba=showcases")).toBe("/u/lia?aba=showcases");
   });
 });
+
+describe("Collab", () => {
+  it("prazo vazio não vira data antiga", async () => {
+    const { collabListingSchema } = await import("@/lib/validation");
+    const base = { title: "T", description: "D", skills: ["Colorista"], projectType: "video", compensation: "R$ 100", mode: "remoto", contact: "x" };
+    for (const deadline of ["", null, undefined]) {
+      const r = collabListingSchema.safeParse({ ...base, deadline });
+      expect(r.success).toBe(true);
+      if (r.success) expect(r.data.deadline).toBeNull();
+    }
+  });
+});
+
+describe("Collab — campos ausentes", () => {
+  it("aceita local nulo em oportunidade remota", async () => {
+    const { collabListingSchema } = await import("@/lib/validation");
+    const r = collabListingSchema.safeParse({ title: "T", description: "D", skills: ["Colorista"], projectType: "video", compensation: "R$ 100", mode: "remoto", contact: "x", location: null, deadline: null });
+    expect(r.success).toBe(true);
+  });
+});

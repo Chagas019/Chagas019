@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Bookmark, GraduationCap, LogOut, Settings, Shield, Sparkles, Swords, User, Users } from "lucide-react";
+import { Bookmark, Briefcase, GraduationCap, LogOut, Settings, Shield, Sparkles, Swords, User, Users } from "lucide-react";
 import { Avatar } from "@/components/ui/misc";
 import { authClient } from "@/lib/auth-client";
 
@@ -32,6 +32,7 @@ export function UserMenu({ handle, name, avatar, isModerator }: { handle: string
     { href: "/lab", label: "FRAME LAB", icon: GraduationCap, mobileOnly: true },
     { href: "/comunidades", label: "Comunidades", icon: Users, mobileOnly: true },
     { href: "/desafios", label: "Desafios", icon: Swords, mobileOnly: true },
+    { href: "/collab", label: "Collab", icon: Briefcase, mobileOnly: true },
     { href: "/ai", label: "FRAME AI", icon: Sparkles, mobileOnly: true },
     { href: "/configuracoes", label: "Configurações", icon: Settings },
     ...(isModerator ? [{ href: "/moderacao", label: "Moderação", icon: Shield }] : []),

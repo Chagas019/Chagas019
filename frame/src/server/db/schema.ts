@@ -111,6 +111,7 @@ export const appRateLimit = pgTable("app_rate_limit", {
 
 export type ProfileLink = { label: string; url: string };
 export type NotificationPrefs = {
+  collab?: boolean;
   follow: boolean;
   comment: boolean;
   reply: boolean;
@@ -506,6 +507,7 @@ export const notificationType = pgEnum("notification_type", [
   "like",
   "challenge",
   "community",
+  "collab",
 ]);
 
 export const notification = pgTable(
@@ -527,7 +529,7 @@ export const notification = pgTable(
   (t) => [index("notification_user_idx").on(t.userId, t.createdAt)],
 );
 
-export const reportTarget = pgEnum("report_target", ["post", "comment", "user", "community"]);
+export const reportTarget = pgEnum("report_target", ["post", "comment", "user", "community", "collab"]);
 export const reportReason = pgEnum("report_reason", [
   "spam",
   "harassment",
@@ -631,9 +633,62 @@ export const activationEvent = pgTable(
         "first_tutorial_saved",
         "first_challenge_submission",
         "first_community_join",
+        "first_collab_started",
       ],
     }).notNull(),
     createdAt: createdAt(),
   },
   (t) => [primaryKey({ columns: [t.userId, t.event] })],
+);
+
+/* ------------------------------------------------------------------ */
+/* Collab — oportunidades de colaboração                               */
+/* ------------------------------------------------------------------ */
+
+export const collabListing = pgTable(
+  "collab_listing",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    authorId: text("author_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    skills: text("skills").array().notNull().default(sql`'{}'::text[]`),
+    projectType: text("project_type", { enum: ["ensaio", "video", "edicao", "design", "evento", "comercial", "pessoal", "outro"] }).notNull(),
+    compensation: text("compensation"),
+    isVolunteer: boolean("is_volunteer").notNull().default(false),
+    /** Cidade/região apenas — nunca endereço. */
+    location: text("location"),
+    mode: text("mode", { enum: ["remoto", "presencial", "hibrido"] }).notNull(),
+    deadline: timestamp("deadline", { withTimezone: true }),
+    /** Pública: aparece na listagem. Privada: só por link com código. */
+    access: text("access", { enum: ["public", "private"] }).notNull().default("public"),
+    accessCode: text("access_code").notNull(),
+    /** Contato revelado apenas a quem tiver a candidatura aceita. */
+    contact: text("contact").notNull(),
+    status: text("status", { enum: ["open", "closed", "removed"] }).notNull().default("open"),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [index("collab_listing_status_idx").on(t.status, t.access, t.createdAt), index("collab_listing_author_idx").on(t.authorId)],
+);
+
+export const collabApplication = pgTable(
+  "collab_application",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    listingId: uuid("listing_id")
+      .notNull()
+      .references(() => collabListing.id, { onDelete: "cascade" }),
+    applicantId: text("applicant_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    message: text("message").notNull(),
+    portfolioUrl: text("portfolio_url"),
+    status: text("status", { enum: ["pending", "accepted", "declined"] }).notNull().default("pending"),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [uniqueIndex("collab_application_unique").on(t.listingId, t.applicantId), index("collab_application_applicant_idx").on(t.applicantId)],
 );

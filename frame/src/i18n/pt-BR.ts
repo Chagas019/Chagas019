@@ -5,6 +5,7 @@ export const ptBR = {
     lab: "FRAME LAB",
     challenges: "Desafios",
     communities: "Comunidades",
+    collab: "Collab",
     ai: "FRAME AI",
     publish: "Publicar",
     profile: "Perfil",

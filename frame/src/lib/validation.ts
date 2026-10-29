@@ -24,7 +24,7 @@ export const handleSchema = z
   .refine((h) => !RESERVED_HANDLES.has(h), "Este identificador está reservado.");
 
 export const RESERVED_HANDLES = new Set([
-  "admin", "api", "frame", "entrar", "cadastro", "configuracoes", "descobrir", "lab", "desafios",
+  "collab", "admin", "api", "frame", "entrar", "cadastro", "configuracoes", "descobrir", "lab", "desafios",
   "comunidades", "publicar", "notificacoes", "moderacao", "salvos", "ai", "suporte", "ajuda",
 ]);
 
@@ -70,6 +70,7 @@ export const notificationPrefsSchema = z.object({
   like: z.boolean(),
   challenge: z.boolean(),
   community: z.boolean(),
+  collab: z.boolean().optional(),
 });
 
 export const showcaseSchema = z.object({
@@ -128,7 +129,7 @@ export const commentSchema = z.object({
 });
 
 export const reportSchema = z.object({
-  targetType: z.enum(["post", "comment", "user", "community"]),
+  targetType: z.enum(["post", "comment", "user", "community", "collab"]),
   targetId: z.string().min(1).max(100),
   reason: z.enum(["spam", "harassment", "hate", "nudity", "violence", "copyright", "fraud", "impersonation", "other"]),
   details: trimmed(2000).default(""),
@@ -183,3 +184,47 @@ export function fieldErrors(error: z.ZodError): Record<string, string> {
   }
   return out;
 }
+
+export const COLLAB_PROJECT_TYPES = [
+  { slug: "ensaio", label: "Ensaio fotográfico" },
+  { slug: "video", label: "Vídeo / filmagem" },
+  { slug: "edicao", label: "Edição / pós-produção" },
+  { slug: "design", label: "Design / motion" },
+  { slug: "evento", label: "Evento" },
+  { slug: "comercial", label: "Trabalho comercial" },
+  { slug: "pessoal", label: "Projeto pessoal" },
+  { slug: "outro", label: "Outro" },
+] as const;
+
+export const COLLAB_MODES = [
+  { slug: "remoto", label: "Remoto" },
+  { slug: "presencial", label: "Presencial" },
+  { slug: "hibrido", label: "Híbrido" },
+] as const;
+
+export const collabListingSchema = z
+  .object({
+    title: required(120, "Título"),
+    description: required(4000, "Descrição"),
+    skills: z.array(z.enum(SPECIALTIES)).min(1, "Escolha pelo menos uma habilidade.").max(6),
+    projectType: z.enum(["ensaio", "video", "edicao", "design", "evento", "comercial", "pessoal", "outro"]),
+    compensation: trimmed(120).nullish().transform((v) => (v ? v : null)),
+    isVolunteer: z.boolean().default(false),
+    location: trimmed(80).nullish().transform((v) => (v ? v : null)),
+    mode: z.enum(["remoto", "presencial", "hibrido"]),
+    // Vazio/ausente vira null ANTES da coerção (senão null viraria 01/01/1970).
+    deadline: z.preprocess((v) => (v === "" || v === undefined ? null : v), z.coerce.date().nullable()),
+    access: z.enum(["public", "private"]).default("public"),
+    contact: required(300, "Contato"),
+  })
+  .superRefine((v, ctx) => {
+    if (v.mode !== "remoto" && !v.location) ctx.addIssue({ code: "custom", path: ["location"], message: "Informe a cidade ou região (sem endereço)." });
+    if (!v.isVolunteer && !v.compensation) ctx.addIssue({ code: "custom", path: ["compensation"], message: "Informe a remuneração ou marque como voluntário." });
+    if (v.deadline && v.deadline.getTime() < Date.now() - 86_400_000) ctx.addIssue({ code: "custom", path: ["deadline"], message: "O prazo já passou." });
+  });
+
+export const collabApplicationSchema = z.object({
+  listingId: z.string().uuid(),
+  message: required(1500, "Mensagem"),
+  portfolioUrl: optionalUrl,
+});

@@ -55,6 +55,7 @@ npm run build && npm run test:e2e   # Playwright contra o build, banco frame_tes
 - **Descobrir talentos**: novos talentos com critérios públicos e rotação diária, filtro por especialidade, exploração por interesse, projetos colaborativos.
 - **Comunidades**: públicas, privadas (aprovação) e por convite (link regenerável), papéis, banimento, remoção de posts, discussões, notificações por comunidade.
 - **Creative Battles**: desafios semanais/mensais com briefing, regras, paleta, galeria, envio, retirada, votação com regras anti-abuso (sem voto próprio, limite por pessoa, idade mínima de conta, contagem oculta até o fim) e resultados.
+- **Collab**: oportunidades abertas ou privadas (por link), habilidades, tipo de projeto, remuneração ou voluntariado, modalidade, cidade/região (nunca endereço), prazo, candidaturas com aceite/recusa, **contato liberado só para aceitos**, filtros, denúncia de oferta fraudulenta e moderação.
 - **Notificações** reais (seguidores, comentários, respostas, comunidade, desafios) com preferências.
 - **Moderação**: fila de denúncias priorizada (direitos autorais/assédio/ódio primeiro), remoção, arquivamento, restauração, log.
 - **Privacidade/LGPD**: exportação JSON dos dados, exclusão definitiva da conta (incluindo arquivos), EXIF/GPS removidos, localização oculta por padrão.
@@ -66,8 +67,8 @@ npm run build && npm run test:e2e   # Playwright contra o build, banco frame_tes
 |---|---|
 | `tsc --noEmit` | sem erros |
 | `eslint .` | sem erros/avisos |
-| Vitest — 4 arquivos de unidade + 4 de integração (Postgres real) | 35 testes passando |
-| Playwright — 9 cenários (cadastro→onboarding→publicação, edição de perfil, curtida/comentário/follow persistidos, post privado e arquivo inacessíveis, notificações, Showcase + slider por teclado, envio a desafio, comunidade privada com aprovação, layout mobile sem overflow) | 9 passando |
+| Vitest — 4 arquivos de unidade + 5 de integração (Postgres real) | 41 testes passando |
+| Playwright — 10 cenários (Collab ponta a ponta, cadastro→onboarding→publicação, edição de perfil, curtida/comentário/follow persistidos, post privado e arquivo inacessíveis, notificações, Showcase + slider por teclado, envio a desafio, comunidade privada com aprovação, layout mobile sem overflow) | 10 passando |
 | `next build` | sem erros/avisos |
 
 **Não testado automaticamente**: FRAME AI com provedor real (sem chave no ambiente), Vercel Blob (sem token), envio de e-mail real (sem provedor), upload de vídeos grandes, leitores de tela reais.
@@ -118,7 +119,7 @@ Ainda em aberto (decisões de produto ou infraestrutura):
 
 ### Fora do MVP (planejado, não implementado)
 
-Creative Assets/marketplace (presets, LUTs, pagamentos), Collab (oportunidades e candidaturas), mensagens diretas/grupos. O schema e as camadas foram pensados para recebê-los sem refatoração estrutural; nenhuma tela finge que eles existem.
+Creative Assets/marketplace (presets, LUTs, pagamentos), mensagens diretas/grupos. O schema e as camadas foram pensados para recebê-los sem refatoração estrutural; nenhuma tela finge que eles existem.
 
 ## Estrutura
 

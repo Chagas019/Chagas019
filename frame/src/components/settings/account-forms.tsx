@@ -17,6 +17,7 @@ const PREF_LABELS: { key: keyof NotificationPrefs; label: string; description: s
   { key: "like", label: "Curtidas", description: "Desligado por padrão para evitar ruído." },
   { key: "challenge", label: "Desafios", description: "Início da votação e resultados dos desafios em que você participa." },
   { key: "community", label: "Comunidades", description: "Pedidos de entrada e aprovações." },
+  { key: "collab", label: "Collab", description: "Candidaturas às suas oportunidades e respostas às suas." },
 ];
 
 export function NotificationPrefsForm({ initial }: { initial: NotificationPrefs }) {
@@ -29,7 +30,7 @@ export function NotificationPrefsForm({ initial }: { initial: NotificationPrefs 
       <p className="text-sm text-fog-500">O FRAME não envia notificações artificiais para aumentar seu tempo de tela.</p>
       <div className="divide-y divide-ink-700">
         {PREF_LABELS.map((p) => (
-          <Switch key={p.key} checked={prefs[p.key]} onChange={(v) => setPrefs((s) => ({ ...s, [p.key]: v }))} label={p.label} description={p.description} />
+          <Switch key={p.key} checked={prefs[p.key] ?? true} onChange={(v) => setPrefs((s) => ({ ...s, [p.key]: v }))} label={p.label} description={p.description} />
         ))}
       </div>
       <Button

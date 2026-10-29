@@ -14,6 +14,7 @@ const LINKS = [
   { href: "/lab", label: t.nav.lab },
   { href: "/desafios", label: t.nav.challenges },
   { href: "/comunidades", label: t.nav.communities },
+  { href: "/collab", label: t.nav.collab },
   { href: "/ai", label: t.nav.ai },
 ];
 

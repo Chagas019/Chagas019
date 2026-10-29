@@ -6,6 +6,8 @@ import {
   aiUsage,
   block,
   challengeSubmission,
+  collabApplication,
+  collabListing,
   challengeVote,
   collection,
   comment,
@@ -57,6 +59,8 @@ export async function exportUserData(userId: string) {
     mutes: await db.select({ userId: mute.mutedId }).from(mute).where(eq(mute.muterId, userId)),
     aiUsage: await db.select({ feature: aiUsage.feature, createdAt: aiUsage.createdAt, inputTokens: aiUsage.inputTokens, outputTokens: aiUsage.outputTokens }).from(aiUsage).where(eq(aiUsage.userId, userId)),
     activation: await db.select().from(activationEvent).where(eq(activationEvent.userId, userId)),
+    collabListings: await db.select().from(collabListing).where(eq(collabListing.authorId, userId)),
+    collabApplications: await db.select().from(collabApplication).where(eq(collabApplication.applicantId, userId)),
   };
 }
 

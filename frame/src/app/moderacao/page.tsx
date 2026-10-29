@@ -10,7 +10,7 @@ import { cn, timeAgo } from "@/lib/utils";
 
 export const metadata = { title: "Moderação", robots: { index: false } };
 
-const TARGET = { post: "Publicação", comment: "Comentário", user: "Perfil", community: "Comunidade" } as const;
+const TARGET = { post: "Publicação", comment: "Comentário", user: "Perfil", community: "Comunidade", collab: "Oportunidade (Collab)" } as const;
 
 export default async function Page({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
   const viewer = await requireViewerPage("/moderacao");

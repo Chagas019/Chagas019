@@ -54,7 +54,7 @@ export async function setMuteAction(targetId: string, mute: boolean) {
   return run(async () => social.setMute(await requireViewer(), targetId, mute), mute ? "Perfil silenciado no seu feed." : "Silenciamento removido.");
 }
 
-export async function reportAction(input: { targetType: "post" | "comment" | "user" | "community"; targetId: string; reason: string; details: string }) {
+export async function reportAction(input: { targetType: "post" | "comment" | "user" | "community" | "collab"; targetId: string; reason: string; details: string }) {
   return run(async () => {
     await social.createReport(await requireViewer(), input);
   }, "Denúncia enviada. A moderação vai analisar — obrigado por cuidar da comunidade.");

@@ -9,7 +9,7 @@ import { useToast } from "@/components/ui/toast";
 import { reportAction } from "@/server/actions/social";
 import { REPORT_REASONS } from "@/lib/taxonomy";
 
-export function ReportButton({ targetType, targetId, label = "Denunciar", compact }: { targetType: "post" | "comment" | "user" | "community"; targetId: string; label?: string; compact?: boolean }) {
+export function ReportButton({ targetType, targetId, label = "Denunciar", compact }: { targetType: "post" | "comment" | "user" | "community" | "collab"; targetId: string; label?: string; compact?: boolean }) {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("spam");
   const [error, setError] = useState<string | null>(null);
