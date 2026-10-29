@@ -16,7 +16,7 @@ test("Creative Studio: botões levam a telas reais", async ({ page }) => {
 test("ideia → projeto → tarefa → publicação ligada ao projeto", async ({ page }) => {
   await signUp(page, caio);
   await page.goto("/estudio-criativo");
-  await page.getByRole("button", { name: "Me dê uma ideia" }).click();
+  await page.locator("#ideia").getByRole("button", { name: "Me dê uma ideia" }).click();
   await expect(page.getByRole("heading", { name: "Roteiro / estrutura" })).toBeVisible();
   await page.getByRole("button", { name: "Transformar em projeto" }).click();
   await expect(page).toHaveURL(/\/estudio\/projetos\/[0-9a-f-]{36}$/, { timeout: 20_000 });

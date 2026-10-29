@@ -48,9 +48,13 @@ test("rascunho, pré-visualização, publicação, hashtag na busca e portfólio
   await expect(page.getByRole("heading", { name: "Portfólio" })).toBeVisible();
 });
 
-test("visitante vê o feed logo de cara, sem banner de tela cheia", async ({ page }) => {
+test("visitante vê o feed já na primeira tela e pode minimizar o hero", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("navigation", { name: "Feed" })).toBeVisible();
-  const box = await page.getByRole("navigation", { name: "Feed" }).boundingBox();
-  expect(box!.y).toBeLessThan(400);
+  const feed = page.getByRole("navigation", { name: "Feed" });
+  await expect(feed).toBeVisible();
+  const vh = page.viewportSize()!.height;
+  expect((await feed.boundingBox())!.y).toBeLessThan(vh);
+  await page.getByRole("button", { name: "Minimizar apresentação" }).click();
+  await expect(page.getByRole("button", { name: "Mostrar apresentação" })).toBeVisible();
+  expect((await feed.boundingBox())!.y).toBeLessThan(260);
 });

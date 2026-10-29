@@ -4,15 +4,16 @@ import { Sparkle } from "@/components/ui/sparkle";
 export function AuthCard({ title, subtitle, children, footer }: { title: string; subtitle?: string; children: React.ReactNode; footer?: React.ReactNode }) {
   return (
     <div className="grid min-h-[calc(100dvh-4rem)] lg:grid-cols-[1.1fr_1fr]">
-      <div className="relative hidden overflow-hidden bg-cobalt-500 lg:block" aria-hidden>
+      <div className="relative m-3 hidden overflow-hidden rounded-[32px] bg-ink-900 ring-1 ring-white/[0.06] lg:block" aria-hidden>
+        <div className="absolute inset-0 bg-[radial-gradient(600px_400px_at_80%_10%,rgb(212_255_54/0.10),transparent_70%)]" />
         <Sparkle className="spin-slow absolute right-12 top-12 size-16 text-volt-500" />
         <div className="absolute inset-x-12 bottom-14">
           <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-paper">
-            <Sparkle className="size-3.5 text-volt-500" /> A rede social dos criadores visuais
+            <Sparkle className="size-3.5 text-volt-500" /> Ideias em movimento
           </p>
           <p className="mt-4 font-display text-[clamp(4rem,7vw,7.5rem)] leading-[0.86] text-volt-500">
-            Sua criatividade
-            <span className="block text-paper">merece um mundo inteiro</span>
+            Seu próximo
+            <span className="block text-paper">projeto começa aqui</span>
           </p>
           <p className="mt-6 max-w-md text-paper/85">Mostre o resultado e o processo. Aprenda com quem cria. Encontre parceiros e desafios que fazem você evoluir.</p>
         </div>

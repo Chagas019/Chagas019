@@ -6,6 +6,7 @@ import { AppError } from "../errors";
 import { enforceRateLimit } from "../rate-limit";
 import { fieldErrors, ideaProposalSchema, studioProjectCreateSchema, studioProjectSchema } from "@/lib/validation";
 import { getExample } from "@/lib/creative/examples";
+import { getLabChallenge } from "@/lib/creative/lab-challenges";
 import { canViewPost } from "./access";
 
 const MAX_PROJECTS = 200;
@@ -25,6 +26,7 @@ export async function createProject(ownerId: string, input: unknown) {
   const [c] = await db.select({ n: sql<number>`count(*)::int` }).from(studioProject).where(eq(studioProject.ownerId, ownerId));
   if ((c?.n ?? 0) >= MAX_PROJECTS) throw new AppError("VALIDATION", "Limite de projetos atingido. Conclua ou apague alguns.");
   if (data.sourceType === "example" && (!data.sourceRef || !getExample(data.sourceRef))) throw new AppError("VALIDATION", "Exemplo não encontrado.");
+  if (data.sourceType === "lab" && (!data.sourceRef || !getLabChallenge(data.sourceRef))) throw new AppError("VALIDATION", "Desafio não encontrado.");
   if (data.sourceType === "post") {
     // Só referências que a pessoa consegue ver.
     const [ref] = data.sourceRef && /^[0-9a-f-]{36}$/i.test(data.sourceRef) ? await db.select().from(post).where(eq(post.id, data.sourceRef)).limit(1) : [];
@@ -171,4 +173,24 @@ export async function dailyPublicCount(tag: string): Promise<number> {
       and tags @> array['desafiodiario', ${tag}]::text[]
       and created_at > now() - interval '36 hours'`);
   return Number(r?.n ?? 0);
+}
+
+/** Progresso criativo: tarefas concluídas nos projetos não finalizados. */
+export async function projectProgress(userId: string): Promise<{ done: number; total: number }> {
+  const [r] = await db.execute<{ done: number; total: number }>(sql`
+    select coalesce(sum((select count(*) from jsonb_array_elements(tasks) t where (t->>'done')::boolean)), 0)::int as done,
+           coalesce(sum(jsonb_array_length(tasks)), 0)::int as total
+    from studio_project where owner_id = ${userId} and status <> 'pronto'`);
+  return { done: Number(r?.done ?? 0), total: Number(r?.total ?? 0) };
+}
+
+/** Pessoas diferentes que publicaram publicamente com a hashtag de um desafio do LAB. */
+export async function labParticipantCounts(tags: string[]): Promise<Record<string, number>> {
+  if (!tags.length) return {};
+  const rows = await db.execute<{ tag: string; n: number }>(sql`
+    select t.tag, count(distinct p.author_id)::int as n
+    from post p, unnest(p.tags) as t(tag)
+    where p.status = 'published' and p.visibility = 'public' and p.community_id is null and t.tag = any(${sql.param(tags)}::text[])
+    group by t.tag`);
+  return Object.fromEntries(rows.map((r) => [r.tag, Number(r.n)]));
 }

@@ -33,7 +33,7 @@ export function UserMenu({ handle, name, avatar, isModerator, aiEnabled, canSeeS
     { href: "/salvos", label: "Salvos e coleções", icon: Bookmark },
     { href: "/rascunhos", label: "Rascunhos", icon: FilePen },
     { href: "/mensagens", label: "Mensagens", icon: MessageSquare },
-    { href: "/lab", label: "FRAME LAB", icon: GraduationCap, mobileOnly: true },
+    { href: "/lab", label: "LAB", icon: GraduationCap, mobileOnly: true },
     { href: "/comunidades", label: "Comunidades", icon: Users, mobileOnly: true },
     { href: "/desafios", label: "Desafios", icon: Swords, mobileOnly: true },
     { href: "/collab", label: "Collab", icon: Briefcase, mobileOnly: true },

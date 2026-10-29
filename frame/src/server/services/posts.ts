@@ -42,7 +42,17 @@ export async function createPost(
     }
   }
 
-  const credits = await resolveCredits(data.credits);
+  // Remix: só de publicações visíveis cujo autor permite reutilização; o original é creditado.
+  let remixOf: { id: string; authorId: string; handle: string; name: string } | null = null;
+  if (data.remixOfId) {
+    const [orig] = await db.select().from(post).where(eq(post.id, data.remixOfId)).limit(1);
+    if (!orig || orig.status !== "published" || !(await canViewPost({ id: viewer.id, role: "user" }, orig))) throw new AppError("NOT_FOUND", "Publicação original não encontrada.");
+    if (!orig.allowRemix) throw new AppError("FORBIDDEN", "O autor não permite remixes deste trabalho.");
+    const [a] = await db.select({ handle: profile.handle, name: profile.displayName }).from(profile).where(eq(profile.userId, orig.authorId)).limit(1);
+    remixOf = { id: orig.id, authorId: orig.authorId, handle: a!.handle, name: a!.name };
+  }
+  const resolved = await resolveCredits(data.credits);
+  const credits = remixOf && !resolved.some((c) => c.handle === remixOf.handle) ? [{ name: remixOf.name, role: "Obra original", handle: remixOf.handle }, ...resolved].slice(0, 20) : resolved;
   const isDraft = data.draft && !data.communityId;
 
   const postId = await db.transaction(async (tx) => {
@@ -72,6 +82,9 @@ export async function createPost(
         credits,
         commentsEnabled: data.commentsEnabled,
         status: isDraft ? "draft" : "published",
+        allowRemix: data.allowRemix,
+        remixOfId: remixOf?.id ?? null,
+        projectInfo: data.projectInfo,
       })
       .returning({ id: post.id });
     const id = created!.id;
@@ -102,7 +115,8 @@ export async function createPost(
 
   if (!isDraft) {
     await recordActivation(viewer.id, "first_post");
-    await notifyMentions(viewer.id, postId, data.body, credits);
+    await notifyMentions(viewer.id, postId, data.body, credits.filter((c) => c.handle !== remixOf?.handle));
+    if (remixOf) await notify({ userId: remixOf.authorId, actorId: viewer.id, type: "mention", postId, message: "fez um remix do seu trabalho" });
   }
   return { id: postId };
 }
@@ -163,6 +177,8 @@ export async function updatePost(viewer: Pick<Viewer, "id">, postId: string, inp
         isCollaborative: data.isCollaborative || credits.some((c) => c.handle),
         credits,
         commentsEnabled: data.commentsEnabled,
+        allowRemix: data.allowRemix,
+        projectInfo: data.projectInfo,
         tags: extractHashtags(data.title, data.body),
         ...(publishing ? { status: "published" as const, createdAt: new Date() } : {}),
       })
@@ -545,4 +561,24 @@ export async function notifyCommunityPost(communityId: string, authorId: string,
     .from(communityMember)
     .where(and(eq(communityMember.communityId, communityId), inArray(communityMember.role, ["owner", "admin"]), eq(communityMember.notify, true)));
   await Promise.all(admins.map((a) => notify({ userId: a.userId, actorId: authorId, type: "community", communityId, postId, message: "publicou na sua comunidade" })));
+}
+
+/** Capas públicas recentes para compor o hero (só conteúdo real). */
+export async function recentPublicCovers(limit = 3) {
+  return db
+    .select({ id: media.id, postId: post.id, title: post.title, alt: media.alt })
+    .from(media)
+    .innerJoin(post, eq(post.id, media.postId))
+    .where(and(eq(media.kind, "image"), eq(media.purpose, "post"), eq(media.position, 0), eq(post.status, "published"), eq(post.visibility, "public"), isNull(post.communityId)))
+    .orderBy(desc(post.createdAt))
+    .limit(limit);
+}
+
+/** Original (se for remix) e remixes publicados desta publicação, respeitando visibilidade. */
+export async function remixRelations(viewerId: string | null, p: { id: string; remixOfId: string | null }) {
+  const [original, remixes] = await Promise.all([
+    p.remixOfId ? listCards(viewerId, eq(post.id, p.remixOfId), 1) : Promise.resolve([]),
+    listCards(viewerId, eq(post.remixOfId, p.id), 12),
+  ]);
+  return { original: original[0] ?? null, remixes };
 }

@@ -2,7 +2,9 @@ import Link from "next/link";
 import { and, eq, sql } from "drizzle-orm";
 import { ArrowRight, Hash, Info, TrendingUp } from "lucide-react";
 import { getViewer } from "@/server/session";
-import { creatorsBySpecialty, NEW_TALENT_CRITERIA, newTalents, searchPeople, suggestedCreators, trendingTags } from "@/server/services/discovery";
+import { creatorsBySpecialty, NEW_TALENT_CRITERIA, newTalents, popularTools, searchPeople, suggestedCreators, themedCollections, trendingTags } from "@/server/services/discovery";
+import { mediaUrl } from "@/lib/utils";
+import Image from "next/image";
 import { listCommunities } from "@/server/services/communities";
 import { listChallenges } from "@/server/services/challenges";
 import { listCards, listPopular, searchPosts } from "@/server/services/posts";
@@ -40,6 +42,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
     searching ? Promise.resolve([]) : listChallenges(),
     searching ? Promise.resolve([]) : listCards(vid, eq(post.isCollaborative, true), 8),
   ]);
+  const [tools, themed] = searching ? [[], []] : await Promise.all([popularTools(), themedCollections()]);
   const openChallenges = challenges.filter((c) => c.phase === "open" || c.phase === "voting").slice(0, 3);
   const link = (patch: Record<string, string | null>) => {
     const cur: Record<string, string | null> = { q: q || null, cat, formato: format, ordem: order, ...patch };
@@ -51,18 +54,21 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
 
   return (
     <>
-      <section className="overflow-x-clip bg-cobalt-500">
-        <Container className="space-y-5 py-8 sm:py-10">
-          <h1 className="font-display text-[clamp(2.6rem,7vw,5rem)] leading-[0.9] text-volt-500">Descobrir</h1>
+      <section className="overflow-x-clip">
+        <Container className="space-y-5 pb-4 pt-6 sm:pt-10">
+          <p className="font-mono text-[11px] uppercase tracking-[0.32em] text-fog-400">Um universo de criadores</p>
+          <h1 className="font-display text-[clamp(3rem,10vw,7.5rem)] leading-[0.85]">
+            Explorar<span className="text-volt-500">.</span>
+          </h1>
           <div className="max-w-2xl">
             <SearchBox initial={q} category={cat} />
           </div>
           <nav aria-label="Áreas criativas" className="scrollbar-none -mx-4 flex min-w-0 gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
-            <Link href={catHref(null)} aria-current={!cat ? "page" : undefined} className={cn("shrink-0 rounded-full px-3.5 py-1.5 text-sm", !cat ? "bg-volt-500 text-ink-950" : "bg-ink-950/30 text-paper hover:bg-ink-950/50")}>
+            <Link href={catHref(null)} aria-current={!cat ? "page" : undefined} className={cn("shrink-0 rounded-full px-3.5 py-1.5 text-sm", !cat ? "bg-volt-500 text-ink-950" : "bg-ink-850 text-fog-300 ring-1 ring-inset ring-white/[0.06] hover:text-paper")}>
               Tudo
             </Link>
             {CATEGORIES.map((c) => (
-              <Link key={c.slug} href={catHref(c.slug)} aria-current={cat === c.slug ? "page" : undefined} className={cn("shrink-0 rounded-full px-3.5 py-1.5 text-sm", cat === c.slug ? "bg-volt-500 text-ink-950" : "bg-ink-950/30 text-paper hover:bg-ink-950/50")}>
+              <Link key={c.slug} href={catHref(c.slug)} aria-current={cat === c.slug ? "page" : undefined} className={cn("shrink-0 rounded-full px-3.5 py-1.5 text-sm", cat === c.slug ? "bg-volt-500 text-ink-950" : "bg-ink-850 text-fog-300 ring-1 ring-inset ring-white/[0.06] hover:text-paper")}>
                 {c.label}
               </Link>
             ))}
@@ -74,7 +80,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
               { label: "Recentes", on: order === "recentes", href: link({ ordem: order === "recentes" ? null : "recentes" }) },
               { label: "Populares", on: order === "populares", href: link({ ordem: order === "populares" ? null : "populares" }) },
             ].map((o) => (
-              <Link key={o.label} href={o.href} aria-pressed={o.on} className={cn("rounded-full px-3 py-1 ring-1 ring-inset", o.on ? "bg-paper text-ink-950 ring-paper" : "text-paper ring-paper/40 hover:bg-white/10")}>
+              <Link key={o.label} href={o.href} aria-pressed={o.on} className={cn("rounded-full px-3 py-1 font-mono text-xs uppercase tracking-[0.14em] ring-1 ring-inset", o.on ? "bg-paper text-ink-950 ring-paper" : "text-fog-300 ring-white/15 hover:text-paper")}>
                 {o.label}
               </Link>
             ))}
@@ -85,7 +91,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
       {tags.length ? (
         <section className="space-y-3" aria-labelledby="em-alta">
           <h2 id="em-alta" className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-fog-400">
-            <TrendingUp className="size-4 text-volt-500" aria-hidden /> Em alta nos últimos 7 dias
+            <TrendingUp className="size-4 text-volt-500" aria-hidden /> Técnicas e temas em alta · 7 dias
           </h2>
           <ul className="flex flex-wrap gap-2">
             {tags.map((t) => (
@@ -195,6 +201,49 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
         <section className="space-y-5">
           <h2 className="font-display text-3xl">Recentes</h2>
           <PostGrid cards={recent} signedIn={!!viewer} viewerId={vid} />
+        </section>
+      ) : null}
+
+      {themed.length ? (
+        <section className="space-y-5">
+          <h2 className="font-display text-3xl">Coleções temáticas</h2>
+          <p className="-mt-3 text-sm text-fog-500">Curadorias públicas feitas por criadores da comunidade.</p>
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {themed.map((c) => (
+              <li key={c.id}>
+                <Link href={`/colecoes/${c.id}`} className="group block overflow-hidden rounded-[24px] bg-ink-900 ring-1 ring-white/[0.06] hover:ring-volt-500/50">
+                  <div className="grid h-40 grid-cols-3 gap-0.5">
+                    {c.covers.map((m) => (
+                      <div key={m} className="relative">
+                        <Image src={mediaUrl(m, "thumb")} alt="" fill unoptimized sizes="200px" className="object-cover" />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="p-4">
+                    <p className="font-display text-2xl leading-tight">{c.name}</p>
+                    <p className="text-xs text-fog-500">
+                      {c.items} trabalhos · por @{c.owner_handle}
+                    </p>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {tools.length ? (
+        <section className="space-y-4">
+          <h2 className="font-display text-3xl">Projetos por ferramenta</h2>
+          <ul className="flex flex-wrap gap-2">
+            {tools.map((t) => (
+              <li key={t.tool}>
+                <Link href={`/descobrir?q=${encodeURIComponent(t.tool)}`} className="inline-flex items-center gap-2 rounded-full bg-ink-850 px-4 py-2 text-sm ring-1 ring-inset ring-white/[0.06] hover:ring-volt-500/60">
+                  {t.tool} <span className="font-mono text-xs text-fog-500">{t.posts}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </section>
       ) : null}
 

@@ -35,7 +35,7 @@ export async function Landing() {
   return (
     <div>
       {/* HERO — azul elétrico */}
-      <section className="relative overflow-hidden bg-cobalt-500">
+      <section className="relative overflow-hidden bg-ink-900">
         <div className="mx-auto grid max-w-[1440px] gap-10 px-4 pb-14 pt-10 sm:px-6 lg:grid-cols-[200px_1fr] lg:px-10 lg:pb-20 lg:pt-14">
           <div className="order-2 flex gap-8 lg:order-1 lg:flex-col lg:justify-end lg:gap-6">
             {numbers.map((n) => (

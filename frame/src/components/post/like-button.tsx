@@ -53,7 +53,7 @@ export function LikeButton({ postId, initialLiked, initialCount, signedIn, compa
   );
 }
 
-export function SaveButton({ postId, initialSaved, signedIn }: { postId: string; initialSaved: boolean; signedIn: boolean }) {
+export function SaveButton({ postId, initialSaved, signedIn, compact }: { postId: string; initialSaved: boolean; signedIn: boolean; compact?: boolean }) {
   const [saved, setSaved] = useState(initialSaved);
   const [, start] = useTransition();
   const toast = useToast();
@@ -77,10 +77,10 @@ export function SaveButton({ postId, initialSaved, signedIn }: { postId: string;
           } else toast.show(r.data.saved ? "Salvo na sua biblioteca." : "Removido dos salvos.");
         });
       }}
-      className={cn("inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm transition-colors hover:bg-white/5", saved ? "text-cobalt-400" : "text-fog-300 hover:text-paper")}
+      className={cn("inline-flex items-center gap-1.5 rounded-full text-sm transition-colors hover:bg-white/5", compact ? "p-2" : "px-3 py-2", saved ? "text-volt-500" : "text-fog-300 hover:text-paper")}
     >
-      <Bookmark className={cn("size-[18px]", saved && "fill-current")} aria-hidden />
-      <span>{saved ? "Salvo" : "Salvar"}</span>
+      <Bookmark className={cn("size-[18px] transition-transform duration-300", saved && "scale-110 fill-current")} aria-hidden />
+      {compact ? null : <span>{saved ? "Salvo" : "Salvar"}</span>}
     </button>
   );
 }

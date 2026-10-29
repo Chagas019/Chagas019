@@ -7,8 +7,9 @@ import { loadFeedAction } from "@/server/actions/posts";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/misc";
 import { PostGrid, PostGridSkeleton } from "./post-card";
+import { EditorialGrid, EditorialSkeleton } from "./editorial-grid";
 
-export function Feed({ filter, initial, signedIn, viewerId = null }: { filter: string; initial: FeedPage; signedIn: boolean; viewerId?: string | null }) {
+export function Feed({ filter, initial, signedIn, viewerId = null, variant = "grid" }: { filter: string; initial: FeedPage; signedIn: boolean; viewerId?: string | null; variant?: "grid" | "editorial" }) {
   const [items, setItems] = useState(initial.items);
   const [cursor, setCursor] = useState(initial.nextCursor);
   const [error, setError] = useState<string | null>(null);
@@ -59,7 +60,11 @@ export function Feed({ filter, initial, signedIn, viewerId = null }: { filter: s
 
   return (
     <>
-      <PostGrid cards={items} signedIn={signedIn} viewerId={viewerId} onHide={(authorId) => setItems((prev) => prev.filter((p) => p.authorId !== authorId))} />
+      {variant === "editorial" ? (
+        <EditorialGrid cards={items} signedIn={signedIn} viewerId={viewerId} onHide={(authorId) => setItems((prev) => prev.filter((p) => p.authorId !== authorId))} />
+      ) : (
+        <PostGrid cards={items} signedIn={signedIn} viewerId={viewerId} onHide={(authorId) => setItems((prev) => prev.filter((p) => p.authorId !== authorId))} />
+      )}
       <div ref={sentinel} aria-hidden />
       {error ? (
         <div role="alert" className="mt-8 flex flex-col items-center gap-3 text-center">
@@ -70,7 +75,7 @@ export function Feed({ filter, initial, signedIn, viewerId = null }: { filter: s
         </div>
       ) : pending ? (
         <div className="mt-5" aria-live="polite">
-          <PostGridSkeleton count={4} />
+          {variant === "editorial" ? <EditorialSkeleton /> : <PostGridSkeleton count={4} />}
         </div>
       ) : cursor ? (
         <div className="mt-8 flex justify-center">

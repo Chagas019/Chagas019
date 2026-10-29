@@ -29,6 +29,7 @@ type ProfileData = {
   autoApproveFollowers: boolean;
   messagesFrom: "everyone" | "following" | "nobody";
   accentColor: "violet" | "blue" | "ember" | "mint";
+  portfolioLayout: "editorial" | "grade";
 };
 
 const specialtyOptions = SPECIALTIES.map((s) => ({ slug: s, label: s }));
@@ -64,6 +65,7 @@ export function ProfileForm({ profile }: { profile: ProfileData }) {
             contactVisibility: fd.get("contactVisibility"),
             messagesFrom: fd.get("messagesFrom"),
             accentColor: fd.get("accentColor"),
+            portfolioLayout: fd.get("portfolioLayout"),
             ...flags,
           });
           if (!r.ok) {
@@ -111,6 +113,12 @@ export function ProfileForm({ profile }: { profile: ProfileData }) {
             <option value="blue">Azul</option>
             <option value="ember">Âmbar</option>
             <option value="mint">Menta</option>
+          </Select>
+        </Field>
+        <Field label="Layout da galeria" id="portfolioLayout" hint="Editorial mistura tamanhos como uma revista; grade é um mosaico contínuo.">
+          <Select id="portfolioLayout" name="portfolioLayout" defaultValue={profile.portfolioLayout}>
+            <option value="editorial">Editorial</option>
+            <option value="grade">Grade</option>
           </Select>
         </Field>
         <div className="space-y-2">

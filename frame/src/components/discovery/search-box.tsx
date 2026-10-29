@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { History, Search, X } from "lucide-react";
 
 const KEY = "frame:search-history";
@@ -30,6 +30,11 @@ export function SearchBox({ initial, category }: { initial: string; category: st
   const [q, setQ] = useState(initial);
   const [history, setHistory] = useState<string[]>([]);
   const [focused, setFocused] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  // Vindo do botão de busca do cabeçalho (#busca): já abre com o cursor no campo.
+  useEffect(() => {
+    if (window.location.hash === "#busca") inputRef.current?.focus();
+  }, []);
 
   function go(term: string) {
     const t = term.trim().slice(0, 80);
@@ -61,6 +66,7 @@ export function SearchBox({ initial, category }: { initial: string; category: st
           <Search className="size-5 shrink-0 text-ink-600" aria-hidden />
           <input
             id="busca"
+            ref={inputRef}
             name="q"
             type="search"
             value={q}

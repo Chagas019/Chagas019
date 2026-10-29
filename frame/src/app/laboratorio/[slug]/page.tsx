@@ -86,10 +86,10 @@ export default async function ExamplePage({ params }: Props) {
         </ul>
       </section>
 
-      <section className="flex flex-col gap-4 rounded-[var(--radius-lg)] bg-cobalt-500 p-6 sm:flex-row sm:items-center sm:justify-between">
+      <section className="flex flex-col gap-4 rounded-[var(--radius-lg)] bg-ink-900 p-6 ring-1 ring-volt-500/30 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="font-display text-3xl text-volt-500">Fez a sua versão?</h2>
-          <p className="text-paper/85">Publique o resultado na comunidade — de preferência mostrando o antes e depois.</p>
+          <p className="text-fog-300">Publique o resultado na comunidade — de preferência mostrando o antes e depois.</p>
         </div>
         <ButtonLink href={viewer ? publishHref : `/entrar?next=${encodeURIComponent(publishHref)}`}>
           <Send className="size-4" aria-hidden /> Publicar resultado

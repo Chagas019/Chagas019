@@ -28,6 +28,8 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
           credits: p.credits,
           commentsEnabled: p.commentsEnabled,
           isDraft: p.status === "draft",
+          allowRemix: p.allowRemix,
+          projectInfo: p.projectInfo,
           alts: detail.media.map((m) => ({ id: m.id, alt: m.alt, isImage: m.kind === "image" })),
         }}
       />

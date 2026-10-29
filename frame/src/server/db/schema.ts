@@ -14,6 +14,7 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
+  type AnyPgColumn,
 } from "drizzle-orm/pg-core";
 
 const createdAt = () => timestamp("created_at", { withTimezone: true }).notNull().defaultNow();
@@ -164,6 +165,8 @@ export const profile = pgTable(
     accentColor: text("accent_color", { enum: ["violet", "blue", "ember", "mint"] })
       .notNull()
       .default("violet"),
+    /** Layout da galeria do portfólio: editorial (assimétrico) ou grade (mosaico). */
+    portfolioLayout: text("portfolio_layout", { enum: ["editorial", "grade"] }).notNull().default("editorial"),
     notificationPrefs: jsonb("notification_prefs")
       .$type<NotificationPrefs>()
       .notNull()
@@ -240,6 +243,12 @@ export const post = pgTable(
     commentsEnabled: boolean("comments_enabled").notNull().default(true),
     /** Fixado no portfólio do autor (destaques do perfil). */
     pinnedAt: timestamp("pinned_at", { withTimezone: true }),
+    /** O autor permite remixes (pode desligar a qualquer momento). */
+    allowRemix: boolean("allow_remix").notNull().default(false),
+    /** Esta publicação é um remix de outra (o vínculo e o crédito ficam registrados). */
+    remixOfId: uuid("remix_of_id").references((): AnyPgColumn => post.id, { onDelete: "set null" }),
+    /** Campos opcionais de projeto: objetivo, técnicas, resultado e referências autorizadas. */
+    projectInfo: jsonb("project_info").$type<ProjectInfo>().notNull().default({}),
     likeCount: integer("like_count").notNull().default(0),
     commentCount: integer("comment_count").notNull().default(0),
     saveCount: integer("save_count").notNull().default(0),
@@ -252,6 +261,7 @@ export const post = pgTable(
     index("post_community_idx").on(t.communityId, t.createdAt),
     index("post_categories_idx").using("gin", t.categories),
     index("post_tags_idx").using("gin", t.tags),
+    index("post_remix_idx").on(t.remixOfId),
   ],
 );
 
@@ -285,6 +295,7 @@ export const media = pgTable(
 
 /** Crédito de um projeto; `handle` marca um criador do FRAME (gera notificação e link). */
 export type Credit = { name: string; role: string; handle?: string };
+export type ProjectInfo = { goal?: string; techniques?: string; result?: string; references?: string };
 
 export const showcase = pgTable("showcase", {
   postId: uuid("post_id")
@@ -785,7 +796,7 @@ export const studioProject = pgTable(
     tasks: jsonb("tasks").$type<StudioTask[]>().notNull().default([]),
     links: jsonb("links").$type<StudioLink[]>().notNull().default([]),
     /** De onde veio: ideia gerada, exemplo do laboratório ou referência do feed. */
-    sourceType: text("source_type", { enum: ["blank", "idea", "example", "post", "daily"] }).notNull().default("blank"),
+    sourceType: text("source_type", { enum: ["blank", "idea", "example", "post", "daily", "lab"] }).notNull().default("blank"),
     sourceRef: text("source_ref"),
     publishedPostId: uuid("published_post_id").references(() => post.id, { onDelete: "set null" }),
     createdAt: createdAt(),

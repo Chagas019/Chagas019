@@ -53,8 +53,8 @@ export default async function ChallengePage({ params }: Props) {
 
   return (
     <div>
-      <section className="relative overflow-hidden bg-cobalt-500">
-        <Sparkle className="spin-slow absolute -right-6 -top-6 size-28 text-volt-500/90 sm:right-10 sm:top-8 sm:size-14" />
+      <section className="relative overflow-hidden bg-ink-900">
+        <Sparkle className="spin-slow absolute -right-6 -top-6 size-28 text-volt-500/40 sm:right-10 sm:top-8 sm:size-14" />
         <Container className="relative py-14 sm:py-20">
           <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-paper">
             <Sparkle className="size-3.5 text-volt-500" /> Creative Battle · {c.cadence === "mensal" ? "Mensal" : "Semanal"} · {labelOf(CATEGORIES, c.category)}

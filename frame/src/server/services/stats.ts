@@ -34,3 +34,11 @@ export async function platformStats() {
     order by d`);
   return { totals: totals ?? {}, daily: daily.map((r) => ({ day: r.day, signups: Number(r.signups), posts: Number(r.posts) })) };
 }
+
+/** Criadores que publicaram algo público nas últimas 24h (indicador do cabeçalho/hero). */
+export async function activeCreators24h(): Promise<number> {
+  const [r] = await db.execute<{ n: number }>(sql`
+    select count(distinct author_id)::int as n from post
+    where status = 'published' and visibility = 'public' and community_id is null and created_at > now() - interval '24 hours'`);
+  return Number(r?.n ?? 0);
+}

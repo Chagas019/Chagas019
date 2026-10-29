@@ -31,7 +31,7 @@ const splitList = (s: string) =>
     .map((x) => x.trim())
     .filter(Boolean);
 
-export type PublishPrefill = { title: string; body: string; categories: CategorySlug[]; projectId: string | null };
+export type PublishPrefill = { title: string; body: string; categories: CategorySlug[]; projectId: string | null; remixOf?: { id: string; title: string; authorName: string; authorHandle: string } | null };
 
 export function PublishForm({
   initialKind,
@@ -55,6 +55,7 @@ export function PublishForm({
   const [hideTech, setHideTech] = useState(false);
   const [credits, setCredits] = useState<CreditDraft[]>([]);
   const [commentsEnabled, setCommentsEnabled] = useState(true);
+  const [allowRemix, setAllowRemix] = useState(false);
   const [preview, setPreview] = useState<{ title: string; body: string } | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const draftRef = useRef(false);
@@ -91,6 +92,17 @@ export function PublishForm({
       credits: cleanCredits(credits),
       commentsEnabled,
       draft: asDraft,
+      allowRemix: kind === "discussion" ? false : allowRemix,
+      remixOfId: prefill?.remixOf?.id ?? null,
+      projectInfo:
+        kind === "showcase"
+          ? {
+              goal: String(fd.get("goal") ?? ""),
+              techniques: String(fd.get("techniques") ?? ""),
+              result: String(fd.get("result") ?? ""),
+              references: String(fd.get("references") ?? ""),
+            }
+          : {},
       showcase:
         kind === "showcase"
           ? {
@@ -136,6 +148,14 @@ export function PublishForm({
 
   return (
     <form ref={formRef} onSubmit={submit} className="space-y-10" noValidate>
+      {prefill?.remixOf ? (
+        <div className="flex items-start gap-3 rounded-[var(--radius-md)] bg-volt-500/10 p-4 text-sm ring-1 ring-inset ring-volt-500/40">
+          <span className="font-mono text-xs uppercase tracking-[0.2em] text-volt-500">Remix</span>
+          <p className="text-fog-200">
+            Você está criando uma versão de “{prefill.remixOf.title}”, de {prefill.remixOf.authorName} (@{prefill.remixOf.authorHandle}). O crédito e o link para o original são adicionados automaticamente.
+          </p>
+        </div>
+      ) : null}
       <fieldset>
         <legend className="mb-3 text-sm font-medium text-fog-300">O que você vai publicar?</legend>
         <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
@@ -214,6 +234,20 @@ export function PublishForm({
             <div className="w-full sm:w-72">
               <Switch checked={hideTech} onChange={setHideTech} label="Ocultar ficha técnica" description="Mostra só o resultado e o processo." />
             </div>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Objetivo" id="goal" optional>
+              <Textarea id="goal" name="goal" rows={2} maxLength={500} placeholder="O que você queria comunicar ou resolver?" />
+            </Field>
+            <Field label="Técnicas" id="techniques" optional>
+              <Textarea id="techniques" name="techniques" rows={2} maxLength={500} placeholder="Luz de recorte, dodge & burn, match cut…" />
+            </Field>
+            <Field label="Resultado final" id="result" optional>
+              <Textarea id="result" name="result" rows={2} maxLength={1000} placeholder="O que deu certo, o que mudaria" />
+            </Field>
+            <Field label="Referências autorizadas" id="references" optional hint="Cite obras e autores que inspiraram, com permissão quando necessário">
+              <Textarea id="references" name="references" rows={2} maxLength={1000} />
+            </Field>
           </div>
           <Field label="Como foi construído" id="process" optional>
             <Textarea id="process" name="process" rows={5} maxLength={4000} placeholder="Ideia, referências, decisões de luz e de edição…" />
@@ -337,6 +371,14 @@ export function PublishForm({
         </div>
         {kind !== "discussion" ? (
           <Switch checked={collab} onChange={setCollab} label="Projeto colaborativo" description="Aparece no filtro de projetos colaborativos. Marcar colaboradores com @ ativa automaticamente." />
+        ) : null}
+        {kind !== "discussion" ? (
+          <Switch
+            checked={allowRemix}
+            onChange={setAllowRemix}
+            label="Permitir remix"
+            description="Outras pessoas podem criar versões a partir deste trabalho, sempre com crédito e link para o original. Dá para desligar depois."
+          />
         ) : null}
         <Switch
           checked={commentsEnabled}

@@ -137,3 +137,29 @@ export async function searchPeople(viewerId: string | null, q: string, limit = 1
     .limit(limit);
   return rows;
 }
+
+/** Ferramentas mais citadas em trabalhos públicos (contagem real). */
+export async function popularTools(limit = 14): Promise<{ tool: string; posts: number }[]> {
+  const rows = await db.execute<{ tool: string; posts: number }>(sql`
+    select min(t.tool) as tool, count(*)::int as posts
+    from post p, unnest(p.tools) as t(tool)
+    where p.status = 'published' and p.visibility = 'public' and p.community_id is null
+    group by lower(t.tool)
+    order by posts desc
+    limit ${limit}`);
+  return rows.map((r) => ({ tool: r.tool, posts: Number(r.posts) }));
+}
+
+/** Coleções públicas com pelo menos 3 trabalhos públicos — curadoria feita pela comunidade. */
+export async function themedCollections(limit = 6) {
+  return db.execute<{ id: string; name: string; description: string; owner_handle: string; owner_name: string; items: number; covers: string[] }>(sql`
+    select c.id, c.name, c.description, pr.handle as owner_handle, pr.display_name as owner_name,
+      (select count(*)::int from saved_item s join post p on p.id = s.post_id where s.collection_id = c.id and p.status = 'published' and p.visibility = 'public') as items,
+      array(select m.id from saved_item s join post p on p.id = s.post_id join media m on m.post_id = p.id
+            where s.collection_id = c.id and p.status = 'published' and p.visibility = 'public' and m.purpose = 'post' and m.kind = 'image' and m.position = 0
+            order by s.created_at desc limit 3) as covers
+    from collection c join profile pr on pr.user_id = c.owner_id
+    where c.is_public
+    order by items desc, c.created_at desc
+    limit ${limit * 3}`).then((rows) => rows.filter((r) => Number(r.items) >= 3).slice(0, limit));
+}

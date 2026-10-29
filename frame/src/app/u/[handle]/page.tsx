@@ -13,6 +13,7 @@ import { listCollections } from "@/server/services/social";
 import { isBlockedEitherWay, isFollowing, relationshipState } from "@/server/services/relations";
 import { canMessage } from "@/server/services/messages";
 import { PostGrid } from "@/components/post/post-card";
+import { EditorialGrid } from "@/components/post/editorial-grid";
 import { UserSafetyMenu, ShareButton } from "@/components/post/post-actions";
 import { FollowButton } from "@/components/social/follow-button";
 import { Avatar, Badge, Container, EmptyState } from "@/components/ui/misc";
@@ -96,6 +97,7 @@ export default async function ProfilePage({ params, searchParams }: Props) {
     db
       .select({
         works: sql<number>`(select count(*)::int from post where author_id = ${p.userId} and status = 'published' and visibility = 'public' and kind <> 'discussion')`,
+        challenges: sql<number>`((select count(*)::int from challenge_submission where user_id = ${p.userId}) + (select count(*)::int from post where author_id = ${p.userId} and status = 'published' and visibility = 'public' and (tags @> array['desafiodiario']::text[] or exists (select 1 from unnest(tags) t where t like 'lab%'))))`,
         since: user.createdAt,
       })
       .from(user)
@@ -150,6 +152,15 @@ export default async function ProfilePage({ params, searchParams }: Props) {
         <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_320px]">
           <div className="space-y-4">
             {p.bio ? <RichText text={p.bio} className="max-w-2xl text-pretty text-lg text-fog-200" /> : isOwner ? <p className="text-fog-500">Conte um pouco sobre você e seu trabalho em Configurações.</p> : null}
+            {p.tools.length ? (
+              <ul className="flex flex-wrap gap-1.5" aria-label="Ferramentas">
+                {p.tools.slice(0, 12).map((t) => (
+                  <li key={t} className="rounded-full bg-ink-850 px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.12em] text-fog-300 ring-1 ring-inset ring-white/[0.06]">
+                    {t}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
             <div className="flex flex-wrap gap-2">
               {p.availableForWork ? (
                 <Badge tone="mint">
@@ -179,6 +190,14 @@ export default async function ProfilePage({ params, searchParams }: Props) {
                   <span className="font-semibold text-paper">{counts?.works ?? 0}</span> <span className="text-fog-500">trabalhos públicos</span>
                 </dd>
               </div>
+              {Number(counts?.challenges ?? 0) > 0 ? (
+                <div>
+                  <dt className="sr-only">Desafios</dt>
+                  <dd>
+                    <span className="font-semibold text-volt-500">{counts?.challenges}</span> <span className="text-fog-500">desafios concluídos</span>
+                  </dd>
+                </div>
+              ) : null}
             </dl>
           </div>
           <aside className="space-y-3 text-sm">
@@ -209,7 +228,6 @@ export default async function ProfilePage({ params, searchParams }: Props) {
               <details className="rounded-[var(--radius-md)] bg-ink-850 p-3">
                 <summary className="cursor-pointer text-fog-300">Equipamento e ferramentas</summary>
                 {p.gear ? <p className="mt-2 whitespace-pre-line text-fog-400">{p.gear}</p> : null}
-                {p.tools.length ? <p className="mt-2 text-fog-500">{p.tools.join(" · ")}</p> : null}
               </details>
             ) : null}
           </aside>
@@ -290,7 +308,11 @@ export default async function ProfilePage({ params, searchParams }: Props) {
               <EmptyState title="Nenhuma coleção pública">Coleções reúnem referências e inspirações.</EmptyState>
             )
           ) : cards.length ? (
-            <PostGrid cards={cards} signedIn={!!viewer} viewerId={viewer?.id ?? null} />
+            p.portfolioLayout === "editorial" && aba !== "curtidas" ? (
+              <EditorialGrid cards={cards} signedIn={!!viewer} viewerId={viewer?.id ?? null} />
+            ) : (
+              <PostGrid cards={cards} signedIn={!!viewer} viewerId={viewer?.id ?? null} />
+            )
           ) : aba === "curtidas" && !isOwner ? (
             <EmptyState title="Curtidas são privadas">Só a própria pessoa vê o que curtiu.</EmptyState>
           ) : (

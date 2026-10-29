@@ -25,7 +25,7 @@ export default async function Page() {
   const steps = [
     { key: "first_post", label: "Publique seu primeiro trabalho", href: "/publicar", icon: ImagePlus },
     { key: "first_follow", label: "Siga um criador que inspira você", href: "/descobrir", icon: UserPlus },
-    { key: "first_tutorial_saved", label: "Salve um tutorial no FRAME LAB", href: "/lab", icon: GraduationCap },
+    { key: "first_tutorial_saved", label: "Salve um tutorial no FRAME LAB", href: "/lab/tutoriais", icon: GraduationCap },
     { key: "first_challenge_submission", label: "Participe de um desafio", href: "/desafios", icon: Swords },
     { key: "first_community_join", label: "Entre em uma comunidade", href: "/comunidades", icon: Users },
   ] as const;

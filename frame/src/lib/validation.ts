@@ -61,6 +61,7 @@ export const profileSchema = z.object({
   autoApproveFollowers: z.boolean().default(false),
   messagesFrom: z.enum(["everyone", "following", "nobody"]).default("following"),
   accentColor: z.enum(["violet", "blue", "ember", "mint"]).default("violet"),
+  portfolioLayout: z.enum(["editorial", "grade"]).default("editorial"),
 });
 export type ProfileInput = z.input<typeof profileSchema>;
 
@@ -91,6 +92,15 @@ export const creditsSchema = z
   )
   .max(20)
   .default([]);
+
+export const projectInfoSchema = z
+  .object({
+    goal: trimmed(500).optional(),
+    techniques: trimmed(500).optional(),
+    result: trimmed(1000).optional(),
+    references: trimmed(1000).optional(),
+  })
+  .default({});
 
 export const showcaseSchema = z.object({
   process: trimmed(4000).default(""),
@@ -135,6 +145,9 @@ export const postSchema = z
     credits: creditsSchema,
     commentsEnabled: z.boolean().default(true),
     draft: z.boolean().default(false),
+    allowRemix: z.boolean().default(false),
+    remixOfId: z.string().uuid().nullable().default(null),
+    projectInfo: projectInfoSchema,
     showcase: showcaseSchema.optional(),
     tutorial: tutorialSchema.optional(),
   })
@@ -156,6 +169,8 @@ export const postUpdateSchema = z.object({
   commentsEnabled: z.boolean().default(true),
   alts: z.array(trimmed(300)).max(10).optional(),
   publish: z.boolean().default(false),
+  allowRemix: z.boolean().default(false),
+  projectInfo: projectInfoSchema,
 });
 
 export const commentSchema = z.object({
@@ -297,7 +312,7 @@ export const studioProjectSchema = z.object({
 });
 
 export const studioProjectCreateSchema = studioProjectSchema.extend({
-  sourceType: z.enum(["blank", "idea", "example", "post", "daily"]).default("blank"),
+  sourceType: z.enum(["blank", "idea", "example", "post", "daily", "lab"]).default("blank"),
   sourceRef: z.string().trim().max(100).nullable().default(null),
 });
 

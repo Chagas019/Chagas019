@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { AlertTriangle, Clock, ExternalLink, FilePen, GraduationCap, Lock, Sparkles } from "lucide-react";
+import { AlertTriangle, Clock, ExternalLink, FilePen, GitBranch, GraduationCap, Lock, Sparkles } from "lucide-react";
 import { RichText } from "@/components/ui/rich-text";
 import { ButtonLink } from "@/components/ui/button";
 import { getViewer } from "@/server/session";
-import { getPostDetail, listComments } from "@/server/services/posts";
+import { getPostDetail, listComments, remixRelations } from "@/server/services/posts";
+import { PostGrid } from "@/components/post/post-card";
 import { relationshipState } from "@/server/services/relations";
 import { BeforeAfter } from "@/components/post/before-after";
 import { Comments } from "@/components/post/comments";
@@ -41,7 +42,18 @@ export default async function PostPage({ params }: Props) {
   const detail = await getPostDetail(viewer, id);
   if (!detail) notFound();
   const { post, author, showcase, tutorial } = detail;
-  const [comments, collections] = await Promise.all([listComments(viewer, post.id), viewer ? listCollections(viewer.id, false) : Promise.resolve([])]);
+  const [comments, collections, remix] = await Promise.all([
+    listComments(viewer, post.id),
+    viewer ? listCollections(viewer.id, false) : Promise.resolve([]),
+    remixRelations(viewer?.id ?? null, post),
+  ]);
+  const info = post.projectInfo;
+  const infoRows = ([
+    ["Objetivo", info.goal],
+    ["Técnicas", info.techniques],
+    ["Resultado", info.result],
+    ["Referências", info.references],
+  ] as const).filter(([, v]) => v);
   const isOwner = viewer?.id === post.authorId;
   const rel = viewer && !isOwner ? await relationshipState(viewer.id, author.id) : null;
   const after = detail.media[0];
@@ -112,6 +124,13 @@ export default async function PostPage({ params }: Props) {
                 </Link>
               ) : null}
             </div>
+            {remix.original ? (
+              <Link href={`/p/${remix.original.id}`} className="inline-flex items-center gap-2 rounded-full bg-volt-500/10 px-3 py-1.5 text-sm text-volt-500 ring-1 ring-inset ring-volt-500/40 hover:bg-volt-500/15">
+                <GitBranch className="size-4" aria-hidden /> Remix de “{remix.original.title}” · @{remix.original.authorHandle}
+              </Link>
+            ) : post.remixOfId ? (
+              <p className="inline-flex items-center gap-2 text-sm text-fog-500"><GitBranch className="size-4" aria-hidden /> Remix de uma publicação que não está mais disponível</p>
+            ) : null}
             <h1 className="font-display text-4xl leading-[1.05] text-balance sm:text-5xl">{post.title}</h1>
             {post.body ? <RichText text={post.body} className="max-w-3xl text-pretty text-lg leading-relaxed text-fog-300" /> : null}
             {post.tags.length ? (
@@ -130,9 +149,26 @@ export default async function PostPage({ params }: Props) {
               <SaveButton postId={post.id} initialSaved={detail.saved} signedIn={!!viewer} />
               {viewer ? <CollectionPicker postId={post.id} collections={collections} /> : null}
               <ShareButton title={post.title} path={`/p/${post.id}`} />
+              {post.allowRemix && post.status === "published" && !isOwner ? (
+                <Link href={viewer ? `/publicar?remix=${post.id}` : `/entrar?next=${encodeURIComponent(`/publicar?remix=${post.id}`)}`} className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm text-volt-500 hover:bg-volt-500/10">
+                  <GitBranch className="size-[18px]" aria-hidden /> Remixar
+                </Link>
+              ) : null}
               <div className="ml-auto">{isOwner ? <OwnerControls postId={post.id} visibility={post.visibility} pinned={!!post.pinnedAt} canPin={post.status === "published" && post.visibility === "public" && post.kind !== "discussion"} /> : viewer ? <ReportButton targetType="post" targetId={post.id} /> : null}</div>
             </div>
           </header>
+
+          {infoRows.length ? (
+            <section className="grid gap-4 rounded-[24px] bg-ink-900 p-5 ring-1 ring-white/[0.06] sm:grid-cols-2 sm:p-6">
+              <h2 className="font-display text-3xl sm:col-span-2">Sobre o projeto</h2>
+              {infoRows.map(([k, v]) => (
+                <div key={k}>
+                  <h3 className="font-mono text-[11px] uppercase tracking-[0.25em] text-volt-500">{k}</h3>
+                  <p className="mt-1 whitespace-pre-line text-pretty text-fog-200">{v}</p>
+                </div>
+              ))}
+            </section>
+          ) : null}
 
           {showcase && showcase.process ? (
             <section className="space-y-3">
@@ -173,6 +209,15 @@ export default async function PostPage({ params }: Props) {
                 Técnicas dependem do material de origem. Teste em uma cópia, adapte ao seu contexto e compartilhe nos comentários o que funcionou para você.
               </p>
               <HelpfulRating postId={post.id} initial={detail.helpfulVote} count={tutorial.helpfulCount} canRate={!!viewer && !isOwner} />
+            </section>
+          ) : null}
+
+          {remix.remixes.length ? (
+            <section className="space-y-4">
+              <h2 className="flex items-center gap-2 font-display text-3xl">
+                <GitBranch className="size-6 text-volt-500" aria-hidden /> Outras versões ({remix.remixes.length})
+              </h2>
+              <PostGrid cards={remix.remixes} signedIn={!!viewer} viewerId={viewer?.id ?? null} />
             </section>
           ) : null}
 

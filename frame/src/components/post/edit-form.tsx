@@ -22,6 +22,8 @@ export type EditablePost = {
   credits: CreditDraft[];
   commentsEnabled: boolean;
   isDraft: boolean;
+  allowRemix: boolean;
+  projectInfo: { goal?: string; techniques?: string; result?: string; references?: string };
   alts: { id: string; alt: string; isImage: boolean }[];
 };
 
@@ -32,6 +34,7 @@ export function EditPostForm({ post }: { post: EditablePost }) {
   const [visibility, setVisibility] = useState(post.visibility);
   const [collab, setCollab] = useState(post.isCollaborative);
   const [comments, setComments] = useState(post.commentsEnabled);
+  const [remix, setRemix] = useState(post.allowRemix);
   const [credits, setCredits] = useState<CreditDraft[]>(post.credits);
   const [alts, setAlts] = useState(post.alts.map((a) => a.alt));
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -53,6 +56,13 @@ export function EditPostForm({ post }: { post: EditablePost }) {
       commentsEnabled: comments,
       alts,
       publish,
+      allowRemix: remix,
+      projectInfo: {
+        goal: String(fd.get("goal") ?? ""),
+        techniques: String(fd.get("techniques") ?? ""),
+        result: String(fd.get("result") ?? ""),
+        references: String(fd.get("references") ?? ""),
+      },
     };
     setErrors({});
     start(async () => {
@@ -123,6 +133,16 @@ export function EditPostForm({ post }: { post: EditablePost }) {
       </div>
       <Switch checked={collab} onChange={setCollab} label="Projeto colaborativo" />
       <Switch checked={comments} onChange={setComments} label="Aceitar comentários e feedback" />
+      <Switch checked={remix} onChange={setRemix} label="Permitir remix" description="Remixes já publicados continuam com o crédito; desligar impede novos." />
+      <details className="rounded-[var(--radius-md)] bg-ink-850 p-4" open={Object.values(post.projectInfo).some(Boolean)}>
+        <summary className="cursor-pointer text-sm font-medium text-fog-200">Detalhes do projeto (opcional)</summary>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <Field label="Objetivo" id="goal" optional><Textarea id="goal" name="goal" rows={2} maxLength={500} defaultValue={post.projectInfo.goal} /></Field>
+          <Field label="Técnicas" id="techniques" optional><Textarea id="techniques" name="techniques" rows={2} maxLength={500} defaultValue={post.projectInfo.techniques} /></Field>
+          <Field label="Resultado final" id="result" optional><Textarea id="result" name="result" rows={2} maxLength={1000} defaultValue={post.projectInfo.result} /></Field>
+          <Field label="Referências autorizadas" id="references" optional><Textarea id="references" name="references" rows={2} maxLength={1000} defaultValue={post.projectInfo.references} /></Field>
+        </div>
+      </details>
       <p className="text-xs text-fog-500">As imagens e vídeos não podem ser trocados depois de publicados. Para isso, exclua e publique de novo.</p>
       {errors.form ? <p role="alert" className="text-sm text-danger-400">{errors.form}</p> : null}
       <div className="flex flex-wrap justify-end gap-2 border-t border-ink-700 pt-6">

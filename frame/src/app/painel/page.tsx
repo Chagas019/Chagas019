@@ -8,10 +8,10 @@ export const dynamic = "force-dynamic";
 
 function Stat({ label, value, hint, accent }: { label: string; value: number; hint?: string; accent?: boolean }) {
   return (
-    <div className={accent ? "rounded-[var(--radius-md)] bg-cobalt-500 p-5" : "rounded-[var(--radius-md)] bg-ink-850 p-5 ring-1 ring-inset ring-white/[0.06]"}>
-      <p className={accent ? "text-xs font-semibold uppercase tracking-[0.14em] text-paper/80" : "text-xs font-semibold uppercase tracking-[0.14em] text-fog-400"}>{label}</p>
-      <p className={accent ? "mt-2 font-display text-5xl text-volt-500" : "mt-2 font-display text-5xl"}>{value.toLocaleString("pt-BR")}</p>
-      {hint ? <p className={accent ? "mt-1 text-xs text-paper/80" : "mt-1 text-xs text-fog-500"}>{hint}</p> : null}
+    <div className={accent ? "rounded-[var(--radius-md)] bg-volt-500 p-5 text-ink-950" : "rounded-[var(--radius-md)] bg-ink-850 p-5 ring-1 ring-inset ring-white/[0.06]"}>
+      <p className={accent ? "text-xs font-semibold uppercase tracking-[0.14em] text-ink-950/70" : "text-xs font-semibold uppercase tracking-[0.14em] text-fog-400"}>{label}</p>
+      <p className={accent ? "mt-2 font-display text-5xl text-ink-950" : "mt-2 font-display text-5xl"}>{value.toLocaleString("pt-BR")}</p>
+      {hint ? <p className={accent ? "mt-1 text-xs text-ink-950/70" : "mt-1 text-xs text-fog-500"}>{hint}</p> : null}
     </div>
   );
 }
