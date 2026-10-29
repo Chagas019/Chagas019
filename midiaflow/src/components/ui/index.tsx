@@ -28,19 +28,23 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: LucideIcon;
 }
 
+/** Mesmo visual do Button, para links (<a>) que parecem botão. */
+export const buttonClass = (variant: Variant = 'secondary', size: ButtonProps['size'] = 'md', className?: string) =>
+  cn(
+    'inline-flex select-none items-center justify-center gap-2 rounded-full text-sm transition-all duration-200 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50',
+    size === 'sm' && 'h-9 px-3.5 text-[13px]',
+    size === 'md' && 'h-11 px-5',
+    size === 'icon' && 'h-11 w-11',
+    VARIANTS[variant],
+    className,
+  );
+
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ variant = 'secondary', size = 'md', loading, icon: Icon, className, children, disabled, ...rest }, ref) => (
     <button
       ref={ref}
       disabled={disabled || loading}
-      className={cn(
-        'inline-flex select-none items-center justify-center gap-2 rounded-full text-sm transition-all duration-200 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50',
-        size === 'sm' && 'h-9 px-3.5 text-[13px]',
-        size === 'md' && 'h-11 px-5',
-        size === 'icon' && 'h-11 w-11',
-        VARIANTS[variant],
-        className,
-      )}
+      className={buttonClass(variant, size, className)}
       {...rest}
     >
       {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : Icon ? <Icon className="h-4 w-4" /> : null}

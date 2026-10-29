@@ -1,11 +1,12 @@
-import { CalendarSearch, Lock, Mail, Pencil, Phone, Plus, Search, Send, UserPlus } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { CalendarSearch, Copy, ExternalLink, Lock, Mail, MessageCircle, Pencil, Phone, Plus, Search, Send, Smartphone, UserPlus } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useScheduleDetail } from '@/components/schedule/ScheduleDetail';
-import { Avatar, Badge, Button, Card, EmptyState, Field, Input, Modal, PageHeader, RoleIcon, Select } from '@/components/ui';
+import { Avatar, Badge, Button, buttonClass, Card, EmptyState, Field, Input, Modal, PageHeader, RoleIcon, Select } from '@/components/ui';
 import { isOpenSlot } from '@/lib/domain';
 import { getInviteCode } from '@/lib/remote';
+import { buildSnapshot, servoLink } from '@/lib/servo';
 import { ACCESS_LABEL, useStore } from '@/lib/store';
 import type { AccessLevel, Member, Period } from '@/lib/types';
 import { capitalize, cn, fmt, overlaps, PERIOD_LABEL, periodOf, timeToMin, toISODate, uid, WEEKDAYS } from '@/lib/utils';
@@ -250,6 +251,7 @@ function MemberEditor({ member, onClose }: { member: Member; onClose: () => void
 function MemberProfile({ member, onClose, onEdit }: { member: Member; onClose: () => void; onEdit: () => void }) {
   const { schedules, roles, can } = useStore();
   const detail = useScheduleDetail();
+  const [sending, setSending] = useState(false);
   const today = toISODate(new Date());
   const mine = schedules
     .flatMap((s) => s.slots.filter((x) => x.memberId === member.id).map((sl) => ({ s, sl })))
@@ -264,7 +266,10 @@ function MemberProfile({ member, onClose, onEdit }: { member: Member; onClose: (
   );
   return (
     <Modal open onOpenChange={(o) => !o && onClose()} title={member.name} description={`Na equipe desde ${fmt(member.joinedAt, 'MMMM yyyy')}`} size="md"
-      footer={<Button icon={Pencil} onClick={onEdit}>Editar</Button>}>
+      footer={<>
+        {can('manage:team') && <Button variant="primary" icon={Smartphone} onClick={() => setSending(true)}>Enviar escalas ao celular</Button>}
+        <Button icon={Pencil} onClick={onEdit}>Editar</Button>
+      </>}>
       <div className="flex items-center gap-4">
         <Avatar name={member.name} photo={member.photo} size={64} />
         <div className="space-y-1 text-sm">
@@ -280,6 +285,43 @@ function MemberProfile({ member, onClose, onEdit }: { member: Member; onClose: (
       {future.length ? <div className="-mx-3">{future.map((x) => <Row key={x.sl.id} {...x} />)}</div> : <p className="text-sm text-ink-muted">Nenhuma escala futura.</p>}
       <p className="label mt-6">Histórico de participações ({past.length})</p>
       {past.length ? <div className="-mx-3 max-h-56 overflow-y-auto">{past.map((x) => <Row key={x.sl.id} {...x} />)}</div> : <p className="text-sm text-ink-muted">Sem participações registradas.</p>}
+      {sending && <ServoLinkModal member={member} onClose={() => setSending(false)} />}
+    </Modal>
+  );
+}
+
+/** Link com as escalas do servo: ele abre no celular, instala o app e vê tudo, até sem internet. */
+function ServoLinkModal({ member, onClose }: { member: Member; onClose: () => void }) {
+  const store = useStore();
+  const snap = useMemo(() => buildSnapshot(store, member.id), [store, member.id]);
+  const [link, setLink] = useState('');
+  useEffect(() => {
+    let alive = true;
+    servoLink(snap).then((l) => alive && setLink(l));
+    return () => { alive = false; };
+  }, [snap]);
+  const first = member.name.split(' ')[0];
+  const text = `Olá, ${first}! Aqui estão suas escalas na ${store.parish.pascomName || 'PASCOM'}. Abra no celular e toque em "Instalar app" para ter sempre à mão:\n${link}`;
+  const phone = member.phone.replace(/\D/g, '');
+  const wa = `https://wa.me/${phone.length >= 10 && phone.length <= 11 ? `55${phone}` : phone.length > 11 ? phone : ''}?text=${encodeURIComponent(text)}`;
+  return (
+    <Modal open onOpenChange={(o) => !o && onClose()} title="Enviar escalas ao celular" size="sm"
+      description={`${first} recebe um link com ${snap.s.length} ${snap.s.length === 1 ? 'escala futura' : 'escalas futuras'}, sem precisar de cadastro.`}>
+      <div className="space-y-3">
+        <a href={wa} target="_blank" rel="noopener noreferrer" aria-disabled={!link} className={buttonClass('primary', 'md', cn('w-full', !link && 'pointer-events-none opacity-50'))}>
+          <MessageCircle className="h-4 w-4" />Enviar pelo WhatsApp
+        </a>
+        <div className="grid grid-cols-2 gap-2">
+          <Button icon={Copy} disabled={!link} onClick={() => navigator.clipboard?.writeText(link).then(() => toast.success('Link copiado!')).catch(() => toast.error('Não foi possível copiar.'))}>Copiar link</Button>
+          <a href={link || undefined} target="_blank" rel="noopener noreferrer" className={buttonClass('secondary', 'md', cn(!link && 'pointer-events-none opacity-50'))}><ExternalLink className="h-4 w-4" />Ver como fica</a>
+        </div>
+        <ul className="space-y-1.5 rounded-2xl border border-line bg-surface/40 p-3 text-xs text-ink-muted">
+          <li>• O link mostra só as escalas de {first}: celebração, função, horário, local e quem serve junto.</li>
+          <li>• Mudou alguma escala? Envie o link de novo para atualizar o celular.</li>
+          <li>• A confirmação de presença chega pelo WhatsApp de quem é responsável pela escala.</li>
+          {!store.me.phone.trim() && <li className="text-warn">• Cadastre o seu telefone na Equipe para as confirmações chegarem direto no seu WhatsApp.</li>}
+        </ul>
+      </div>
     </Modal>
   );
 }

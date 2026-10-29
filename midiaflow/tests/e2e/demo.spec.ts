@@ -185,3 +185,30 @@ test('primeiro acesso: site vazio, sem dados de exemplo', async ({ page }) => {
   expect(download.suggestedFilename()).toMatch(/^midiaflow-copia-.*\.json$/);
   expect(errors).toEqual([]);
 });
+
+test('servo recebe o link e vê as escalas no celular, mesmo depois de fechar', async ({ page, browser }) => {
+  await page.goto('/equipe');
+  await page.locator('main .card.cursor-pointer').first().click();
+  await page.getByRole('button', { name: 'Enviar escalas ao celular' }).click();
+  const modal = page.getByRole('dialog', { name: 'Enviar escalas ao celular' });
+  const preview = modal.getByRole('link', { name: 'Ver como fica' });
+  await expect(preview).toHaveAttribute('href', /\/servo#d=[zj]/);
+  const href = (await preview.getAttribute('href'))!;
+  await expect(modal.getByRole('link', { name: 'Enviar pelo WhatsApp' })).toHaveAttribute('href', /^https:\/\/wa\.me\//);
+
+  // outro aparelho, sem nada salvo
+  const phone = await browser.newContext({ viewport: { width: 390, height: 844 }, baseURL: new URL(page.url()).origin });
+  const servo = await phone.newPage();
+  const errors = watchErrors(servo);
+  await servo.goto('/servo');
+  await expect(servo.getByText('Suas escalas aparecem aqui')).toBeVisible();
+  await servo.goto(href.replace(/^https?:\/\/[^/]+/, ''));
+  await expect(servo.getByRole('heading', { name: /Olá,/ })).toBeVisible();
+  await expect(servo.locator('link[rel="manifest"]')).toHaveAttribute('href', '/servo.webmanifest');
+  await servo.goto('/servo');
+  await expect(servo.getByRole('heading', { name: /Olá,/ })).toBeVisible();
+  const overflow = await servo.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(overflow).toBeLessThanOrEqual(1);
+  expect(errors).toEqual([]);
+  await phone.close();
+});

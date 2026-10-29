@@ -25,6 +25,7 @@ const Training = lazy(() => import('./pages/Training'));
 const Reports = lazy(() => import('./pages/Reports'));
 const Notifications = lazy(() => import('./pages/Notifications'));
 const Settings = lazy(() => import('./pages/Settings'));
+const Servo = lazy(() => import('./pages/Servo'));
 
 const TITLES: Record<string, string> = {
   '': 'Visão geral', 'minhas-escalas': 'Minhas escalas', escalas: 'Escalas', calendario: 'Calendário', equipe: 'Equipe',
@@ -202,15 +203,24 @@ export default function App() {
       <ErrorBoundary>
         <BrowserRouter>
           <Suspense fallback={<FullLoading />}>
-            {supabase ? (
-              <RemoteApp />
-            ) : (
-              <StoreProvider setup={(done) => <Setup onDone={done} />}>
-                <PeriodProvider>
-                  <AppRoutes />
-                </PeriodProvider>
-              </StoreProvider>
-            )}
+            <Routes>
+              {/* Tela do servo: abre pelo link da coordenação, sem cadastro e sem login. */}
+              <Route path="/servo" element={<Servo />} />
+              <Route
+                path="*"
+                element={
+                  supabase ? (
+                    <RemoteApp />
+                  ) : (
+                    <StoreProvider setup={(done) => <Setup onDone={done} />}>
+                      <PeriodProvider>
+                        <AppRoutes />
+                      </PeriodProvider>
+                    </StoreProvider>
+                  )
+                }
+              />
+            </Routes>
           </Suspense>
         </BrowserRouter>
       </ErrorBoundary>
