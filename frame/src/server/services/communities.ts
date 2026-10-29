@@ -126,7 +126,7 @@ async function requireCommunityAdmin(viewer: V, communityId: string) {
 }
 
 export async function moderateMember(viewer: V, communityId: string, userId: string, action: "approve" | "reject" | "ban" | "promote" | "demote") {
-  await requireCommunityAdmin(viewer, communityId);
+  const actor = await requireCommunityAdmin(viewer, communityId);
   const [m] = await db
     .select()
     .from(communityMember)
@@ -134,6 +134,10 @@ export async function moderateMember(viewer: V, communityId: string, userId: str
     .limit(1);
   if (!m) throw new AppError("NOT_FOUND");
   if (m.role === "owner") throw new AppError("FORBIDDEN", "A pessoa criadora da comunidade não pode ser alterada.");
+  const isPlatformMod = viewer.role === "admin" || viewer.role === "moderator";
+  if ((m.role === "admin" || action === "promote") && actor.role !== "owner" && !isPlatformMod) {
+    throw new AppError("FORBIDDEN", "Só a pessoa criadora pode promover ou alterar administradores.");
+  }
   await db.transaction(async (tx) => {
     const where = and(eq(communityMember.communityId, communityId), eq(communityMember.userId, userId));
     const dec = sql`greatest(0, ${community.memberCount} - 1)`;

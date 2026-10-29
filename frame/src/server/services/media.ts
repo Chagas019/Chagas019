@@ -1,6 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { and, eq, inArray, isNull, lt } from "drizzle-orm";
+import { and, eq, inArray, isNull, lt, or, sql } from "drizzle-orm";
 import sharp, { type Metadata, type Sharp } from "sharp";
 import { db } from "../db";
 import { media } from "../db/schema";
@@ -135,7 +135,17 @@ export async function cleanupOrphanMedia(): Promise<number> {
   const rows = await db
     .select({ id: media.id, storageKey: media.storageKey, thumbKey: media.thumbKey })
     .from(media)
-    .where(and(isNull(media.postId), inArray(media.purpose, ["post", "showcase_before", "showcase_after"]), lt(media.createdAt, cutoff)))
+    .where(
+      and(
+        isNull(media.postId),
+        lt(media.createdAt, cutoff),
+        or(
+          inArray(media.purpose, ["post", "showcase_before", "showcase_after"]),
+          // Avatar/capa enviados mas nunca usados (ou substituídos) não ficam hospedados para sempre.
+          sql`${media.purpose} in ('avatar', 'cover') and not exists (select 1 from profile p where p.avatar_media_id = ${media.id} or p.cover_media_id = ${media.id})`,
+        ),
+      ),
+    )
     .limit(500);
   await deleteMediaRows(rows);
   return rows.length;

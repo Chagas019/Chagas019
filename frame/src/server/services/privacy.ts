@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, eq, inArray, ne, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, ne, or, sql } from "drizzle-orm";
 import { db } from "../db";
 import {
   activationEvent,
@@ -22,7 +22,7 @@ import {
   tutorial,
   user,
 } from "../db/schema";
-import { deleteMediaRows } from "./media";
+import { storage } from "../storage";
 
 /** Exportação de dados pessoais (LGPD, art. 18). Retorna JSON legível com tudo que é do usuário. */
 export async function exportUserData(userId: string) {
@@ -66,32 +66,49 @@ export async function exportUserData(userId: string) {
  * Denúncias feitas por ela ficam anonimizadas (reporter_id = null) para histórico de moderação.
  */
 export async function deleteAccount(userId: string): Promise<void> {
-  const owned = await db.select({ id: community.id }).from(community).where(eq(community.ownerId, userId));
-  for (const c of owned) {
-    const [heir] = await db
-      .select({ userId: communityMember.userId })
-      .from(communityMember)
-      .where(and(eq(communityMember.communityId, c.id), ne(communityMember.userId, userId), eq(communityMember.status, "active")))
-      .orderBy(sql`case ${communityMember.role} when 'admin' then 0 else 1 end`, asc(communityMember.joinedAt))
-      .limit(1);
-    if (heir) {
-      await db.update(community).set({ ownerId: heir.userId }).where(eq(community.id, c.id));
-      await db.update(communityMember).set({ role: "owner" }).where(and(eq(communityMember.communityId, c.id), eq(communityMember.userId, heir.userId)));
-    } else {
-      await db.delete(community).where(eq(community.id, c.id));
+  // Arquivos a apagar: os da pessoa + os de posts de comunidades que serão excluídas por falta de herdeiro.
+  const files = await db.transaction(async (tx) => {
+    const orphanCommunities: string[] = [];
+    const owned = await tx.select({ id: community.id }).from(community).where(eq(community.ownerId, userId));
+    for (const c of owned) {
+      const [heir] = await tx
+        .select({ userId: communityMember.userId })
+        .from(communityMember)
+        .where(and(eq(communityMember.communityId, c.id), ne(communityMember.userId, userId), eq(communityMember.status, "active")))
+        .orderBy(sql`case ${communityMember.role} when 'admin' then 0 else 1 end`, asc(communityMember.joinedAt))
+        .limit(1);
+      if (heir) {
+        await tx.update(community).set({ ownerId: heir.userId }).where(eq(community.id, c.id));
+        await tx.update(communityMember).set({ role: "owner" }).where(and(eq(communityMember.communityId, c.id), eq(communityMember.userId, heir.userId)));
+      } else {
+        orphanCommunities.push(c.id);
+      }
     }
-  }
 
-  // Ajusta contadores de quem a pessoa seguia / era seguida.
-  await db.execute(sql`update profile set follower_count = greatest(0, follower_count - 1) where user_id in (select following_id from follow where follower_id = ${userId})`);
-  await db.execute(sql`update profile set following_count = greatest(0, following_count - 1) where user_id in (select follower_id from follow where following_id = ${userId})`);
-  await db.execute(sql`update post set like_count = greatest(0, like_count - 1) where id in (select post_id from reaction where user_id = ${userId})`);
-  await db.execute(sql`update post set save_count = greatest(0, save_count - 1) where id in (select post_id from saved_item where user_id = ${userId})`);
-  await db.execute(sql`update community set member_count = greatest(0, member_count - 1) where id in (select community_id from community_member where user_id = ${userId} and status = 'active')`);
-  await db.execute(sql`update challenge_submission set vote_count = greatest(0, vote_count - 1) where id in (select submission_id from challenge_vote where voter_id = ${userId})`);
-  await db.execute(sql`update post set comment_count = greatest(0, comment_count - sub.n) from (select post_id, count(*)::int n from comment where author_id = ${userId} and status = 'published' group by post_id) sub where post.id = sub.post_id`);
+    const doomed = await tx
+      .select({ id: media.id, storageKey: media.storageKey, thumbKey: media.thumbKey })
+      .from(media)
+      .where(
+        orphanCommunities.length
+          ? or(eq(media.ownerId, userId), inArray(media.postId, tx.select({ id: post.id }).from(post).where(inArray(post.communityId, orphanCommunities))))
+          : eq(media.ownerId, userId),
+      );
 
-  const files = await db.select({ id: media.id, storageKey: media.storageKey, thumbKey: media.thumbKey }).from(media).where(eq(media.ownerId, userId));
-  await deleteMediaRows(files);
-  await db.delete(user).where(eq(user.id, userId));
+    // Ajusta contadores de quem a pessoa seguia / era seguida e do conteúdo em que interagiu.
+    await tx.execute(sql`update profile set follower_count = greatest(0, follower_count - 1) where user_id in (select following_id from follow where follower_id = ${userId})`);
+    await tx.execute(sql`update profile set following_count = greatest(0, following_count - 1) where user_id in (select follower_id from follow where following_id = ${userId})`);
+    await tx.execute(sql`update post set like_count = greatest(0, like_count - 1) where id in (select post_id from reaction where user_id = ${userId})`);
+    await tx.execute(sql`update post set save_count = greatest(0, save_count - 1) where id in (select post_id from saved_item where user_id = ${userId})`);
+    await tx.execute(sql`update community set member_count = greatest(0, member_count - 1) where id in (select community_id from community_member where user_id = ${userId} and status = 'active')`);
+    await tx.execute(sql`update challenge_submission set vote_count = greatest(0, vote_count - 1) where id in (select submission_id from challenge_vote where voter_id = ${userId})`);
+    await tx.execute(sql`update post set comment_count = greatest(0, comment_count - sub.n) from (select post_id, count(*)::int n from comment where author_id = ${userId} and status = 'published' group by post_id) sub where post.id = sub.post_id`);
+
+    if (orphanCommunities.length) await tx.delete(community).where(inArray(community.id, orphanCommunities));
+    await tx.delete(user).where(eq(user.id, userId));
+    return doomed;
+  });
+
+  // Arquivos só são apagados depois que o banco confirmou a exclusão.
+  const keys = files.flatMap((f) => (f.thumbKey ? [f.storageKey, f.thumbKey] : [f.storageKey]));
+  if (keys.length) await storage().delete(keys);
 }

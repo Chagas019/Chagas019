@@ -10,6 +10,7 @@ import { markAllRead } from "../services/notifications";
 import { deleteAccount } from "../services/privacy";
 import { notificationPrefsSchema } from "@/lib/validation";
 import { AppError } from "../errors";
+import { enforceRateLimit } from "../rate-limit";
 import { run } from "./run";
 
 export async function completeOnboardingAction(input: unknown) {
@@ -56,6 +57,7 @@ export async function markNotificationsReadAction() {
 export async function deleteAccountAction(input: { password: string; confirmation: string }) {
   return run(async () => {
     const viewer = await requireViewer();
+    await enforceRateLimit(`delete-account:${viewer.id}`, 5, 900);
     if (input.confirmation.trim().toUpperCase() !== "EXCLUIR") throw new AppError("VALIDATION", "Digite EXCLUIR para confirmar.");
     const ok = await auth.api
       .verifyPassword({ body: { password: input.password }, headers: await headers() })

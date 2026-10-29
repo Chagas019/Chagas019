@@ -65,7 +65,7 @@ npm run build && npm run test:e2e   # Playwright contra o build, banco frame_tes
 |---|---|
 | `tsc --noEmit` | sem erros |
 | `eslint .` | sem erros/avisos |
-| Vitest — 4 arquivos de unidade + 4 de integração (Postgres real) | 32 testes passando |
+| Vitest — 4 arquivos de unidade + 4 de integração (Postgres real) | 34 testes passando |
 | Playwright — 9 cenários (cadastro→onboarding→publicação, edição de perfil, curtida/comentário/follow persistidos, post privado e arquivo inacessíveis, notificações, Showcase + slider por teclado, envio a desafio, comunidade privada com aprovação, layout mobile sem overflow) | 9 passando |
 | `next build` | sem erros/avisos |
 
@@ -94,6 +94,15 @@ Sem `RESEND_API_KEY`, em desenvolvimento o link de redefinição de senha é imp
 - Rate limit em banco (funciona com várias instâncias) para login/cadastro/reset, curtidas, comentários, follows, denúncias, uploads, exportação e IA.
 - Cabeçalhos: CSP, `X-Frame-Options: DENY`, `nosniff`, HSTS, `Referrer-Policy`, `Permissions-Policy`.
 - Proteção contra open redirect no `?next=`; códigos de convite comparados em tempo constante.
+
+### Riscos conhecidos (revisão de segurança)
+
+Uma revisão estática por agente encontrou e o PR já corrigiu: open redirect com caracteres de controle no `?next=`, upload sem `Content-Length`, avatares/capas órfãos hospedados para sempre, cache longo de mídia, admin de comunidade agindo sobre outros admins, título de post invisível vazando em notificações, verificação de senha sem rate limit na exclusão de conta, exclusão de conta não atômica (e arquivos órfãos de comunidades), e cota de IA contornável abortando o stream.
+
+Ainda em aberto (decisões de produto ou infraestrutura):
+- **"Seguidores" não é privado**: seguir não exige aprovação, então qualquer conta pode seguir e ver. A interface avisa; o correto é implementar pedidos de follow aprovados.
+- **Vídeos mantêm metadados** (incluindo GPS) — requer ffmpeg (`-map_metadata -1`) ou serviço de mídia.
+- **Votação com contas falsas**: hoje a defesa é idade mínima de conta + rate limit de cadastro; exigir e-mail verificado para votar.
 
 ## O que falta para produção
 

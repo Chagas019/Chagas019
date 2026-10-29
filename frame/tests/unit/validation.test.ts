@@ -44,5 +44,10 @@ describe("validação de entradas", () => {
     expect(safeNext("//evil.com")).toBe("/");
     expect(safeNext("https://evil.com")).toBe("/");
     expect(safeNext("/\\evil.com")).toBe("/");
+    // Navegadores removem tab/quebra de linha: "/\t/evil.com" viraria "//evil.com".
+    expect(safeNext("/\t/evil.com")).toBe("/");
+    expect(safeNext("/%09/evil.com")).toBe("/%09/evil.com");
+    expect(safeNext("/\n/evil.com")).toBe("/");
+    expect(safeNext("/u/lia?aba=showcases")).toBe("/u/lia?aba=showcases");
   });
 });

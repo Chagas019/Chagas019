@@ -75,3 +75,20 @@ describe("visibilidade de publicações", () => {
     expect((await joinCommunity(conv, c.id, c.inviteCode)).status).toBe("active");
   });
 });
+
+describe("papéis em comunidades", () => {
+  it("admin não pode banir outro admin; só a criadora pode", async () => {
+    const { moderateMember } = await import("@/server/services/communities");
+    const dona = await makeUser("Dona");
+    const adm1 = await makeUser("Adm1");
+    const adm2 = await makeUser("Adm2");
+    const c = await createCommunity(dona, { name: "Papéis", access: "public" });
+    await joinCommunity(adm1, c.id);
+    await joinCommunity(adm2, c.id);
+    await moderateMember(dona, c.id, adm1.id, "promote");
+    await expect(moderateMember(adm1, c.id, adm2.id, "promote")).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await moderateMember(dona, c.id, adm2.id, "promote");
+    await expect(moderateMember(adm1, c.id, adm2.id, "ban")).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await moderateMember(dona, c.id, adm2.id, "ban");
+  });
+});

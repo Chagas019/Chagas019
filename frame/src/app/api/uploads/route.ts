@@ -13,7 +13,9 @@ export async function POST(req: Request) {
   try {
     const viewer = await requireViewer();
     await enforceRateLimit(`upload:${viewer.id}`, 60, 600);
-    const length = Number(req.headers.get("content-length") ?? 0);
+    // Sem Content-Length (corpo em chunks) não dá para limitar antes de ler: recusamos.
+    const length = Number(req.headers.get("content-length"));
+    if (!Number.isFinite(length) || length <= 0) throw new AppError("VALIDATION", "Envio inválido: tamanho do arquivo não informado.");
     if (length > VIDEO_MAX_BYTES + 1024 * 1024) throw new AppError("VALIDATION", "Arquivo grande demais.");
     const form = await req.formData();
     const file = form.get("file");

@@ -52,3 +52,18 @@ describe("mídia e privacidade", () => {
     expect(await db.select().from(post).where(eq(post.id, p.id))).toHaveLength(0);
   });
 });
+
+describe("exclusão de conta com comunidade sem herdeiro", () => {
+  it("apaga a comunidade e os arquivos dos posts dela", async () => {
+    const { createCommunity } = await import("@/server/services/communities");
+    const dona = await makeUser("Dona");
+    const c = await createCommunity(dona, { name: "Solo", access: "public" });
+    const p = await makePost(dona, { communityId: c.id });
+    const [row] = await db.select().from(media).where(eq(media.postId, p.id));
+    const file = path.join(TEST_STORAGE_DIR, row!.storageKey);
+    expect(existsSync(file)).toBe(true);
+    await deleteAccount(dona.id);
+    expect(existsSync(file)).toBe(false);
+    expect(await db.select().from(media).where(eq(media.id, row!.id))).toHaveLength(0);
+  });
+});

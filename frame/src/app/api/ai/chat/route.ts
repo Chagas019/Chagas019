@@ -3,7 +3,7 @@ import { z } from "zod";
 import { AppError, httpStatus, toActionError } from "@/server/errors";
 import { enforceRateLimit } from "@/server/rate-limit";
 import { requireViewer } from "@/server/session";
-import { AI_TOOLS, assertAiAllowed, recordAiUsage, systemPromptFor, type AiTool } from "@/server/services/ai";
+import { AI_TOOLS, assertAiAllowed, reserveAiUsage, settleAiUsage, systemPromptFor, type AiTool } from "@/server/services/ai";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -25,24 +25,32 @@ export async function POST(req: Request) {
     if (totalChars > 24_000) throw new AppError("VALIDATION", "A conversa ficou longa demais. Comece uma nova.");
     const cfg = await assertAiAllowed(viewer.id);
 
+    const MAX_OUTPUT = 1200;
+    const usageId = await reserveAiUsage({
+      userId: viewer.id,
+      feature: parsed.data.tool,
+      model: cfg.modelId,
+      estimatedInput: Math.ceil(totalChars / 3),
+      maxOutput: MAX_OUTPUT,
+    });
+
     const result = streamText({
       model: cfg.model!,
       system: systemPromptFor(parsed.data.tool),
       messages: await convertToModelMessages(messages),
-      maxOutputTokens: 1200,
+      maxOutputTokens: MAX_OUTPUT,
+      abortSignal: req.signal,
       onEnd: async (event) => {
-        await recordAiUsage({
-          userId: viewer.id,
-          feature: parsed.data.tool,
-          model: cfg.modelId,
+        await settleAiUsage(usageId, {
           inputTokens: event.totalUsage.inputTokens ?? 0,
           outputTokens: event.totalUsage.outputTokens ?? 0,
           status: "ok",
         });
       },
       onError: async () => {
-        await recordAiUsage({ userId: viewer.id, feature: parsed.data.tool, model: cfg.modelId, inputTokens: 0, outputTokens: 0, status: "error" });
+        await settleAiUsage(usageId, { inputTokens: 0, outputTokens: 0, status: "error" });
       },
+      // Abortado pelo cliente: a reserva (pior caso) permanece contando na cota e no custo.
     });
     return createUIMessageStreamResponse({ stream: toUIMessageStream({ stream: result.stream }) });
   } catch (err) {

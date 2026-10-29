@@ -58,7 +58,7 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
     "Content-Disposition": "inline",
     "Accept-Ranges": row.kind === "video" ? "bytes" : "none",
     // Conteúdo não público nunca vai para caches compartilhados.
-    "Cache-Control": isPublic ? "public, max-age=300, s-maxage=300, stale-while-revalidate=600" : "private, max-age=300",
+    "Cache-Control": isPublic ? "public, max-age=60, s-maxage=60" : "private, no-cache",
     "Cross-Origin-Resource-Policy": "same-origin",
   });
   if (obj.size !== null) headers.set("Content-Length", String(obj.size));

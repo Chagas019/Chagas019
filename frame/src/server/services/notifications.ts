@@ -3,6 +3,7 @@ import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import { db } from "../db";
 import { notification, post, profile, type NotificationPrefs } from "../db/schema";
 import { isBlockedEitherWay } from "./relations";
+import { visibleToViewer } from "./posts";
 
 type NotificationType = (typeof notification.$inferInsert)["type"];
 
@@ -60,7 +61,7 @@ export async function listNotifications(userId: string, limit = 50) {
       readAt: notification.readAt,
       createdAt: notification.createdAt,
       postId: notification.postId,
-      postTitle: post.title,
+      postTitle: sql<string | null>`case when ${visibleToViewer(userId)} then ${post.title} end`,
       challengeId: notification.challengeId,
       communityId: notification.communityId,
       actorHandle: profile.handle,

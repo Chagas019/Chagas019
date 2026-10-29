@@ -308,7 +308,7 @@ export function PublishForm({ initialKind, community }: { initialKind: Kind; com
           {(
             [
               { v: "public", t: "Público", d: community ? "Membros que podem ver a comunidade" : "Qualquer pessoa, inclusive fora do FRAME" },
-              { v: "followers", t: "Seguidores", d: "Só quem segue você" },
+              { v: "followers", t: "Seguidores", d: "Quem segue você. Seguir não exige aprovação — não use para conteúdo sigiloso." },
               { v: "private", t: "Só eu", d: "Rascunho ou arquivo pessoal" },
             ] as const
           ).map((o) => (
@@ -331,7 +331,7 @@ export function PublishForm({ initialKind, community }: { initialKind: Kind; com
       </section>
 
       <div className="flex flex-col gap-3 border-t border-ink-700 pt-6 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs text-fog-500">Ao publicar, você confirma ter direito de compartilhar este conteúdo. Metadados de localização (GPS) são removidos das fotos.</p>
+        <p className="text-xs text-fog-500">Ao publicar, você confirma ter direito de compartilhar este conteúdo. Metadados de localização (GPS) são removidos das fotos; em vídeos ainda não — remova antes de enviar se necessário.</p>
         {errors.form ? <p role="alert" className="text-sm text-danger-400">{errors.form}</p> : null}
         <Button type="submit" size="lg" loading={pending} disabled={uploading}>
           {uploading ? "Aguardando envio…" : "Publicar"}

@@ -113,8 +113,33 @@ export async function assertAiAllowed(userId: string) {
   return cfg;
 }
 
-export async function recordAiUsage(input: { userId: string; feature: string; model: string; inputTokens: number; outputTokens: number; status: "ok" | "error" }) {
+function estimateCost(inputTokens: number, outputTokens: number) {
   const cfg = aiConfig();
-  const cost = (input.inputTokens * cfg.priceInput + input.outputTokens * cfg.priceOutput) / 1_000_000;
-  await db.insert(aiUsage).values({ ...input, costUsd: cost.toFixed(6) });
+  return ((inputTokens * cfg.priceInput + outputTokens * cfg.priceOutput) / 1_000_000).toFixed(6);
+}
+
+/**
+ * Reserva o uso ANTES de chamar o modelo: a cota conta mesmo se o stream for abortado.
+ * O custo é estimado com o pior caso (maxOutputTokens) e corrigido ao terminar.
+ */
+export async function reserveAiUsage(input: { userId: string; feature: string; model: string; estimatedInput: number; maxOutput: number }) {
+  const [row] = await db
+    .insert(aiUsage)
+    .values({
+      userId: input.userId,
+      feature: input.feature,
+      model: input.model,
+      inputTokens: input.estimatedInput,
+      outputTokens: input.maxOutput,
+      costUsd: estimateCost(input.estimatedInput, input.maxOutput),
+    })
+    .returning({ id: aiUsage.id });
+  return row!.id;
+}
+
+export async function settleAiUsage(id: string, result: { inputTokens: number; outputTokens: number; status: "ok" | "error" }) {
+  await db
+    .update(aiUsage)
+    .set({ ...result, costUsd: estimateCost(result.inputTokens, result.outputTokens) })
+    .where(eq(aiUsage.id, id));
 }
