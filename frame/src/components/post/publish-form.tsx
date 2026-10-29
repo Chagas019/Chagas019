@@ -27,7 +27,7 @@ const splitList = (s: string) =>
     .map((x) => x.trim())
     .filter(Boolean);
 
-export function PublishForm({ initialKind, community }: { initialKind: Kind; community: { id: string; name: string } | null }) {
+export function PublishForm({ initialKind, community, viewerId }: { initialKind: Kind; community: { id: string; name: string } | null; viewerId: string }) {
   const router = useRouter();
   const toast = useToast();
   const [kind, setKind] = useState<Kind>(initialKind);
@@ -136,7 +136,7 @@ export function PublishForm({ initialKind, community }: { initialKind: Kind; com
       {kind !== "discussion" ? (
         <section className="space-y-3">
           <h2 className="font-display text-2xl">{kind === "showcase" ? "Resultado final" : kind === "tutorial" ? "Imagens ou vídeo (opcional)" : "Mídia"}</h2>
-          <MediaUploader items={items} setItems={setItems} />
+          <MediaUploader items={items} setItems={setItems} ownerId={viewerId} />
           {errors.media ? <p role="alert" className="text-sm text-danger-400">{errors.media}</p> : null}
         </section>
       ) : null}
@@ -145,7 +145,7 @@ export function PublishForm({ initialKind, community }: { initialKind: Kind; com
         <section className="space-y-3">
           <h2 className="font-display text-2xl">Antes da edição</h2>
           <p className="text-sm text-fog-500">Opcional. Envie a foto original para ativar a comparação com controle deslizante.</p>
-          <MediaUploader items={before} setItems={setBefore} max={1} purpose="showcase_before" imagesOnly label="Adicionar foto original" />
+          <MediaUploader items={before} setItems={setBefore} max={1} purpose="showcase_before" imagesOnly label="Adicionar foto original" ownerId={viewerId} />
         </section>
       ) : null}
 

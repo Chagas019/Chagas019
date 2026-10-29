@@ -9,7 +9,8 @@ const csp = [
   "img-src 'self' data: blob:",
   "media-src 'self' blob:",
   "font-src 'self'",
-  "connect-src 'self'",
+  // Envio direto do navegador para o Vercel Blob.
+  "connect-src 'self' https://vercel.com https://*.blob.vercel-storage.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",

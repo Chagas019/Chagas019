@@ -56,6 +56,7 @@ npm run build && npm run test:e2e   # Playwright contra o build, banco frame_tes
 - **Comunidades**: públicas, privadas (aprovação) e por convite (link regenerável), papéis, banimento, remoção de posts, discussões, notificações por comunidade.
 - **Creative Battles**: desafios semanais/mensais com briefing, regras, paleta, galeria, envio, retirada, votação com regras anti-abuso (sem voto próprio, limite por pessoa, idade mínima de conta, contagem oculta até o fim) e resultados.
 - **Collab**: oportunidades abertas ou privadas (por link), habilidades, tipo de projeto, remuneração ou voluntariado, modalidade, cidade/região (nunca endereço), prazo, candidaturas com aceite/recusa, **contato liberado só para aceitos**, filtros, denúncia de oferta fraudulenta e moderação.
+- **Mensagens diretas** (individuais e em grupo de até 10): por padrão só quem você segue pode iniciar conversa (configurável: todos / quem eu sigo / ninguém); colaborações aceitas no Collab sempre liberam; bloqueio encerra a conversa; indicador de não lidas no topo; atualização a cada 5 s com a aba visível (sem infraestrutura de tempo real).
 - **Notificações** reais (seguidores, comentários, respostas, comunidade, desafios) com preferências.
 - **Moderação**: fila de denúncias priorizada (direitos autorais/assédio/ódio primeiro), remoção, arquivamento, restauração, log.
 - **Privacidade/LGPD**: exportação JSON dos dados, exclusão definitiva da conta (incluindo arquivos), EXIF/GPS removidos, localização oculta por padrão.
@@ -67,8 +68,8 @@ npm run build && npm run test:e2e   # Playwright contra o build, banco frame_tes
 |---|---|
 | `tsc --noEmit` | sem erros |
 | `eslint .` | sem erros/avisos |
-| Vitest — 4 arquivos de unidade + 5 de integração (Postgres real) | 41 testes passando |
-| Playwright — 10 cenários (Collab ponta a ponta, cadastro→onboarding→publicação, edição de perfil, curtida/comentário/follow persistidos, post privado e arquivo inacessíveis, notificações, Showcase + slider por teclado, envio a desafio, comunidade privada com aprovação, layout mobile sem overflow) | 10 passando |
+| Vitest — 4 arquivos de unidade + 8 de integração (Postgres real) | 48 testes passando |
+| Playwright — 10 cenários (Collab + mensagens ponta a ponta, cadastro→onboarding→publicação, edição de perfil, curtida/comentário/follow persistidos, post privado e arquivo inacessíveis, notificações, Showcase + slider por teclado, envio a desafio, comunidade privada com aprovação, layout mobile sem overflow) | 10 passando |
 | `next build` | sem erros/avisos |
 
 **Não testado automaticamente**: FRAME AI com provedor real (sem chave no ambiente), Vercel Blob (sem token), envio de e-mail real (sem provedor), upload de vídeos grandes, leitores de tela reais.
@@ -117,10 +118,10 @@ Ainda em aberto (decisões de produto ou infraestrutura):
 ## O que falta para produção
 
 1. **Infra**: provisionar Postgres gerenciado, Vercel Blob privado, Resend; configurar variáveis; rodar `npm run db:migrate` no deploy.
-2. **Upload de vídeo em serverless**: funções da Vercel limitam o corpo a ~4,5 MB. Para vídeos/imagens grandes é preciso upload direto do navegador para o Blob (`@vercel/blob/client` + token emitido pelo servidor). A interface `Storage` já isola essa troca. Não há transcodificação nem pôster de vídeo (requer ffmpeg/serviço dedicado).
+2. **Vídeo**: o envio vai direto do navegador para o Blob privado (`NEXT_PUBLIC_DIRECT_UPLOAD=1`), sem o limite de ~4,5 MB das funções; o servidor valida a assinatura binária e reprocessa imagens. Ainda não há transcodificação, pôster nem remoção de metadados de vídeo (requer ffmpeg/serviço dedicado).
 3. **Verificação de e-mail** no cadastro (Better Auth suporta; depende do provedor de e-mail).
 4. **Suspensão de contas** pela moderação (hoje a moderação remove conteúdo, não bloqueia login) e moderação automática de imagens.
-5. **Tempo real**: notificações são persistidas e lidas a cada navegação; não há push/WebSocket.
+5. **Tempo real**: mensagens atualizam a cada 5 s; notificações a cada navegação. Para push/WebSocket, plugar um serviço (Ably, Pusher, Supabase Realtime) no `Thread`.
 6. **Escala do feed "Para você"**: ranqueia até 400 candidatos recentes em memória por requisição — adequado ao MVP; depois, materializar scores.
 7. **Observabilidade**: logs estruturados, Sentry/OpenTelemetry e painel de métricas de ativação (dados já em `activation_event`).
 8. **Revisão jurídica** de `/termos` e política de privacidade; fluxo formal de notificação de direitos autorais (DMCA/LGPD).
@@ -128,7 +129,7 @@ Ainda em aberto (decisões de produto ou infraestrutura):
 
 ### Fora do MVP (planejado, não implementado)
 
-Creative Assets/marketplace (presets, LUTs, pagamentos), mensagens diretas/grupos. O schema e as camadas foram pensados para recebê-los sem refatoração estrutural; nenhuma tela finge que eles existem.
+Creative Assets/marketplace (presets, LUTs, pagamentos). O schema e as camadas foram pensados para recebê-los sem refatoração estrutural; nenhuma tela finge que eles existem.
 
 ## Estrutura
 

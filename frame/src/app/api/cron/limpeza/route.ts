@@ -1,7 +1,7 @@
 import { and, gte, lt, sql } from "drizzle-orm";
 import { db } from "@/server/db";
 import { challenge } from "@/server/db/schema";
-import { cleanupOrphanMedia } from "@/server/services/media";
+import { cleanupAbandonedIncoming, cleanupOrphanMedia } from "@/server/services/media";
 import { notifyChallengeParticipants } from "@/server/services/challenges";
 
 export const runtime = "nodejs";
@@ -19,6 +19,8 @@ export async function GET(req: Request) {
     return new Response("Não autorizado", { status: 401 });
   }
   const removed = await cleanupOrphanMedia();
+  // Envios diretos abandonados (nunca finalizados) ficam em incoming/ — removidos pelo ciclo de vida abaixo.
+  const abandoned = await cleanupAbandonedIncoming();
   const windowHours = Number(process.env.CRON_WINDOW_HOURS ?? 24);
   const hourAgo = new Date(Date.now() - windowHours * 60 * 60 * 1000);
   const now = new Date();
@@ -29,5 +31,5 @@ export async function GET(req: Request) {
   const closed = await db.select().from(challenge).where(and(gte(challenge.votingEndsAt, hourAgo), lt(challenge.votingEndsAt, now)));
   for (const c of closed) await notifyChallengeParticipants(c, `Resultados de "${c.title}" publicados.`);
   await db.execute(sql`delete from app_rate_limit where window_start < now() - interval '1 day'`);
-  return Response.json({ removedMedia: removed, challengeUpdates: toVoting.length + closed.length });
+  return Response.json({ removedMedia: removed, abandonedUploads: abandoned, challengeUpdates: toVoting.length + closed.length });
 }

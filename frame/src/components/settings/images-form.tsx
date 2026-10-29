@@ -8,7 +8,7 @@ import { useToast } from "@/components/ui/toast";
 import { uploadFile } from "@/components/post/uploader";
 import { setProfileImageAction } from "@/server/actions/profile";
 
-export function ImagesForm({ name, avatar, cover }: { name: string; avatar: string | null; cover: string | null }) {
+export function ImagesForm({ name, avatar, cover, ownerId }: { name: string; avatar: string | null; cover: string | null; ownerId: string }) {
   const [busy, setBusy] = useState<"avatar" | "cover" | null>(null);
   const avatarRef = useRef<HTMLInputElement>(null);
   const coverRef = useRef<HTMLInputElement>(null);
@@ -19,7 +19,7 @@ export function ImagesForm({ name, avatar, cover }: { name: string; avatar: stri
     if (!file) return;
     setBusy(which);
     try {
-      const { id } = await uploadFile(file, which, () => {});
+      const { id } = await uploadFile(file, which, () => {}, ownerId);
       const r = await setProfileImageAction(which, id);
       toast.show(r.ok ? (r.message ?? "Atualizado.") : r.error, r.ok ? "success" : "error");
       router.refresh();

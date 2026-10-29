@@ -11,6 +11,7 @@ import { getProfileByHandle } from "@/server/services/profiles";
 import { listCards } from "@/server/services/posts";
 import { listCollections } from "@/server/services/social";
 import { isBlockedEitherWay, isFollowing, relationshipState } from "@/server/services/relations";
+import { canMessage } from "@/server/services/messages";
 import { PostGrid } from "@/components/post/post-card";
 import { UserSafetyMenu, ShareButton } from "@/components/post/post-actions";
 import { FollowButton } from "@/components/social/follow-button";
@@ -114,7 +115,14 @@ export default async function ProfilePage({ params, searchParams }: Props) {
                 <Settings className="size-4" aria-hidden /> Editar perfil
               </ButtonLink>
             ) : (
-              <FollowButton targetId={p.userId} initial={rel?.following ?? false} signedIn={!!viewer} size="md" />
+              <>
+                <FollowButton targetId={p.userId} initial={rel?.following ?? false} signedIn={!!viewer} size="md" />
+                {viewer && (await canMessage(viewer.id, p.userId)) ? (
+                  <ButtonLink href={`/mensagens/nova?para=${p.handle}`} variant="outline">
+                    Mensagem
+                  </ButtonLink>
+                ) : null}
+              </>
             )}
             <ShareButton title={`${p.displayName} no FRAME`} path={`/u/${p.handle}`} />
             {viewer && !isOwner && rel ? <UserSafetyMenu userId={p.userId} handle={p.handle} muted={rel.muted} blocked={rel.blocked} /> : null}

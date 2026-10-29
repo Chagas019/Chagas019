@@ -18,8 +18,42 @@ export type UploadedItem = {
 const ACCEPT = "image/jpeg,image/png,image/webp,image/avif,video/mp4,video/quicktime,video/webm";
 const IMAGE_ONLY = "image/jpeg,image/png,image/webp,image/avif";
 
-/** Envia um arquivo para /api/uploads com progresso real (XHR). */
-export function uploadFile(file: File, purpose: string, onProgress: (p: number) => void): Promise<{ id: string }> {
+const DIRECT = process.env.NEXT_PUBLIC_DIRECT_UPLOAD === "1";
+
+/**
+ * Envia um arquivo. Em produção (Vercel Blob) vai direto do navegador para o storage,
+ * sem o limite de corpo das funções; depois o servidor valida e processa.
+ */
+export async function uploadFile(file: File, purpose: string, onProgress: (p: number) => void, ownerId?: string): Promise<{ id: string }> {
+  if (DIRECT && ownerId) {
+    const { upload } = await import("@vercel/blob/client");
+    const ext = (file.name.split(".").pop() ?? "bin").toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 5) || "bin";
+    let blob;
+    try {
+      blob = await upload(`incoming/${ownerId}/${crypto.randomUUID()}.${ext}`, file, {
+        access: "private",
+        handleUploadUrl: "/api/uploads/direct",
+        multipart: file.size > 20 * 1024 * 1024,
+        onUploadProgress: (e) => onProgress(Math.min(95, Math.round(e.percentage))),
+      });
+    } catch {
+      throw new Error("Falha no envio. Verifique o formato (JPEG, PNG, WebP, AVIF, MP4, MOV, WebM) e o tamanho.");
+    }
+    const res = await fetch("/api/uploads/finalize", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pathname: blob.pathname, purpose }),
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok || !body.ok) throw new Error(body.error ?? "Falha ao processar o arquivo.");
+    onProgress(100);
+    return { id: body.media.id };
+  }
+  return uploadViaServer(file, purpose, onProgress);
+}
+
+/** Envio pelo servidor (desenvolvimento/self-host), com progresso real (XHR). */
+function uploadViaServer(file: File, purpose: string, onProgress: (p: number) => void): Promise<{ id: string }> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     const fd = new FormData();
@@ -48,6 +82,7 @@ export function MediaUploader({
   purpose = "post",
   imagesOnly,
   label = "Adicionar imagens ou vídeos",
+  ownerId,
 }: {
   items: UploadedItem[];
   setItems: React.Dispatch<React.SetStateAction<UploadedItem[]>>;
@@ -55,6 +90,8 @@ export function MediaUploader({
   purpose?: string;
   imagesOnly?: boolean;
   label?: string;
+  /** Necessário para o envio direto ao Blob em produção. */
+  ownerId?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -69,7 +106,7 @@ export function MediaUploader({
         const kind: "image" | "video" = file.type.startsWith("video") ? "video" : "image";
         const item: UploadedItem = { localId, previewUrl: URL.createObjectURL(file), kind, status: "uploading", progress: 0, alt: "" };
         setItems((prev) => [...prev, item]);
-        uploadFile(file, purpose, (p) => setItems((prev) => prev.map((i) => (i.localId === localId ? { ...i, progress: p } : i))))
+        uploadFile(file, purpose, (p) => setItems((prev) => prev.map((i) => (i.localId === localId ? { ...i, progress: p } : i))), ownerId)
           .then(({ id }) => setItems((prev) => prev.map((i) => (i.localId === localId ? { ...i, status: "done", mediaId: id, progress: 100 } : i))))
           .catch((err: Error) => setItems((prev) => prev.map((i) => (i.localId === localId ? { ...i, status: "error", error: err.message } : i))));
       });

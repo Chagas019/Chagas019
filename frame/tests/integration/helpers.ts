@@ -10,7 +10,7 @@ import { createPost } from "@/server/services/posts";
 export type TestUser = { id: string; role: "user" | "moderator" | "admin"; createdAt: Date; handle: string };
 
 export async function resetDb() {
-  await db.execute(sql`truncate table "user", community, challenge, app_rate_limit, report, collab_listing cascade`);
+  await db.execute(sql`truncate table "user", community, challenge, app_rate_limit, report, collab_listing, conversation cascade`);
 }
 
 export async function makeUser(name = "Pessoa", role: TestUser["role"] = "user"): Promise<TestUser> {

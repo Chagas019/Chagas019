@@ -74,11 +74,19 @@ class BlobStorage implements Storage {
     await put(key, data, { access: "private", contentType, addRandomSuffix: false, allowOverwrite: false });
   }
 
-  async get(key: string): Promise<StoredObject | null> {
+  async get(key: string, range?: { start: number; end?: number }): Promise<StoredObject | null> {
     assertKey(key);
-    const res = await get(key, { access: "private" }).catch(() => null);
+    const headers = range ? { Range: `bytes=${range.start}-${range.end ?? ""}` } : undefined;
+    const res = await get(key, { access: "private", headers, useCache: !range }).catch(() => null);
     if (!res || !res.stream) return null;
-    return { body: res.stream, size: res.blob.size ?? null, contentType: res.blob.contentType ?? null };
+    const contentRange = res.headers.get("content-range");
+    const m = contentRange ? /^bytes (\d+)-(\d+)\/(\d+)$/.exec(contentRange) : null;
+    return {
+      body: res.stream,
+      size: res.blob.size ?? null,
+      contentType: res.blob.contentType ?? null,
+      range: m ? { start: Number(m[1]), end: Number(m[2]), total: Number(m[3]) } : undefined,
+    };
   }
 
   async delete(keys: string[]) {

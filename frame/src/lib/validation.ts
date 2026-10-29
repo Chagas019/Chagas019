@@ -24,7 +24,7 @@ export const handleSchema = z
   .refine((h) => !RESERVED_HANDLES.has(h), "Este identificador está reservado.");
 
 export const RESERVED_HANDLES = new Set([
-  "collab", "admin", "api", "frame", "entrar", "cadastro", "configuracoes", "descobrir", "lab", "desafios",
+  "collab", "mensagens", "admin", "api", "frame", "entrar", "cadastro", "configuracoes", "descobrir", "lab", "desafios",
   "comunidades", "publicar", "notificacoes", "moderacao", "salvos", "ai", "suporte", "ajuda",
 ]);
 
@@ -59,6 +59,7 @@ export const profileSchema = z.object({
   contactVisibility: z.enum(["nobody", "members", "following"]).default("nobody"),
   isIndexable: z.boolean().default(false),
   autoApproveFollowers: z.boolean().default(false),
+  messagesFrom: z.enum(["everyone", "following", "nobody"]).default("following"),
   accentColor: z.enum(["violet", "blue", "ember", "mint"]).default("violet"),
 });
 export type ProfileInput = z.input<typeof profileSchema>;
@@ -227,4 +228,16 @@ export const collabApplicationSchema = z.object({
   listingId: z.string().uuid(),
   message: required(1500, "Mensagem"),
   portfolioUrl: optionalUrl,
+});
+
+export const messageSchema = z.object({
+  conversationId: z.string().uuid(),
+  body: required(4000, "Mensagem"),
+  sharedPostId: z.string().uuid().nullable().default(null),
+});
+
+export const startConversationSchema = z.object({
+  participantIds: z.array(z.string().min(1).max(100)).min(1, "Escolha pelo menos uma pessoa.").max(9, "Grupos têm até 10 pessoas."),
+  title: trimmed(80).optional().transform((v) => (v ? v : null)),
+  body: required(4000, "Mensagem"),
 });

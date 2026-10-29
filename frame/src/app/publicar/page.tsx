@@ -24,7 +24,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ t
         Publique o resultado — e, se quiser, o caminho até ele.
       </SectionTitle>
       <div className="mt-10">
-        <PublishForm initialKind={initial === "discussion" && !community ? "work" : initial} community={community} />
+        <PublishForm initialKind={initial === "discussion" && !community ? "work" : initial} community={community} viewerId={viewer.id} />
       </div>
     </Container>
   );

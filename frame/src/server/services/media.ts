@@ -155,3 +155,111 @@ export async function getMediaRow(id: string) {
   const [row] = await db.select().from(media).where(eq(media.id, id)).limit(1);
   return row ?? null;
 }
+
+/* ------------------------------------------------------------------ */
+/* Envio direto do navegador para o Vercel Blob (sem limite de 4,5 MB) */
+/* ------------------------------------------------------------------ */
+
+/** Prefixo onde o navegador pode gravar; cada pessoa só no seu. */
+export function incomingPrefix(ownerId: string) {
+  return `incoming/${ownerId.replace(/[^a-zA-Z0-9_-]/g, "")}/`;
+}
+
+async function readAll(stream: ReadableStream<Uint8Array>, limit: number): Promise<Buffer> {
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  const reader = stream.getReader();
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.length;
+    if (total > limit) {
+      await reader.cancel();
+      throw new AppError("VALIDATION", "Arquivo grande demais.");
+    }
+    chunks.push(value);
+  }
+  return Buffer.concat(chunks);
+}
+
+async function readHead(stream: ReadableStream<Uint8Array>, bytes = 64): Promise<Buffer> {
+  const reader = stream.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  while (total < bytes) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+    total += value.length;
+  }
+  await reader.cancel().catch(() => undefined);
+  return Buffer.concat(chunks);
+}
+
+/**
+ * Conclui um envio direto: valida o arquivo pela assinatura binária.
+ * Imagens são reprocessadas (sem EXIF, WebP) e o original é apagado.
+ * Vídeos ficam onde foram gravados e são registrados como mídia do usuário.
+ */
+export async function finalizeDirectUpload(params: { ownerId: string; pathname: string; purpose: MediaPurpose; alt?: string }): Promise<UploadedMedia> {
+  if (!params.pathname.startsWith(incomingPrefix(params.ownerId)) || params.pathname.includes("..")) {
+    throw new AppError("FORBIDDEN");
+  }
+  const head = await storage().get(params.pathname);
+  if (!head) throw new AppError("NOT_FOUND", "Arquivo não encontrado. Envie novamente.");
+  const sniffed = sniffMime(await readHead(head.body));
+  const discard = () => storage().delete([params.pathname]).catch(() => undefined);
+  if (!sniffed) {
+    await discard();
+    throw new AppError("VALIDATION", "Formato não suportado. Envie JPEG, PNG, WebP, AVIF, MP4, MOV ou WebM.");
+  }
+  if (sniffed.kind === "image") {
+    const full = await storage().get(params.pathname);
+    if (!full) throw new AppError("NOT_FOUND");
+    const data = await readAll(full.body, IMAGE_MAX_BYTES).catch(async (e) => {
+      await discard();
+      throw e;
+    });
+    try {
+      return await storeUpload({ ownerId: params.ownerId, purpose: params.purpose, data, alt: params.alt, allowVideo: false });
+    } finally {
+      await discard();
+    }
+  }
+  if (params.purpose !== "post") {
+    await discard();
+    throw new AppError("VALIDATION", "Aqui só aceitamos imagens.");
+  }
+  const size = head.size ?? 0;
+  if (size > VIDEO_MAX_BYTES) {
+    await discard();
+    throw new AppError("VALIDATION", "Vídeos podem ter até 200 MB.");
+  }
+  const id = randomUUID();
+  await db.insert(media).values({
+    id,
+    ownerId: params.ownerId,
+    purpose: params.purpose,
+    kind: "video",
+    mimeType: sniffed.mime,
+    storageKey: params.pathname,
+    sizeBytes: size,
+    alt: params.alt ?? "",
+  });
+  return { id, kind: "video", width: null, height: null };
+}
+
+/** Remove envios diretos que nunca foram finalizados (> 24h) e não viraram mídia. */
+export async function cleanupAbandonedIncoming(): Promise<number> {
+  if (process.env.STORAGE_DRIVER !== "blob") return 0;
+  const { list } = await import("@vercel/blob");
+  const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+  const { blobs } = await list({ prefix: "incoming/", limit: 1000 });
+  const old = blobs.filter((b) => new Date(b.uploadedAt).getTime() < cutoff).map((b) => b.pathname);
+  if (!old.length) return 0;
+  const used = await db.select({ key: media.storageKey }).from(media).where(inArray(media.storageKey, old));
+  const usedSet = new Set(used.map((u) => u.key));
+  const toDelete = old.filter((k) => !usedSet.has(k));
+  await storage().delete(toDelete);
+  return toDelete.length;
+}

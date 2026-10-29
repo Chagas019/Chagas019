@@ -27,6 +27,7 @@ type ProfileData = {
   contactVisibility: "nobody" | "members" | "following";
   isIndexable: boolean;
   autoApproveFollowers: boolean;
+  messagesFrom: "everyone" | "following" | "nobody";
   accentColor: "violet" | "blue" | "ember" | "mint";
 };
 
@@ -61,6 +62,7 @@ export function ProfileForm({ profile }: { profile: ProfileData }) {
             links: links.filter((l) => l.label || l.url),
             contactEmail: fd.get("contactEmail"),
             contactVisibility: fd.get("contactVisibility"),
+            messagesFrom: fd.get("messagesFrom"),
             accentColor: fd.get("accentColor"),
             ...flags,
           });
@@ -156,6 +158,13 @@ export function ProfileForm({ profile }: { profile: ProfileData }) {
           <Input id="location" name="location" defaultValue={profile.location ?? ""} maxLength={80} />
         </Field>
         <Switch checked={flags.showLocation} onChange={(v) => setFlags((f) => ({ ...f, showLocation: v }))} label="Mostrar localização no perfil" description="Desligado por padrão." />
+        <Field label="Quem pode iniciar conversa com você" id="messagesFrom" hint="Parceiros de colaborações aceitas no Collab sempre podem.">
+          <Select id="messagesFrom" name="messagesFrom" defaultValue={profile.messagesFrom}>
+            <option value="following">Só quem eu sigo</option>
+            <option value="everyone">Qualquer pessoa no FRAME</option>
+            <option value="nobody">Ninguém</option>
+          </Select>
+        </Field>
         <Switch checked={flags.isIndexable} onChange={(v) => setFlags((f) => ({ ...f, isIndexable: v }))} label="Permitir que buscadores indexem meu portfólio" description="Seu perfil e trabalhos públicos poderão aparecer no Google e outros buscadores." />
         <Switch checked={flags.autoApproveFollowers} onChange={(v) => setFlags((f) => ({ ...f, autoApproveFollowers: v }))} label="Aprovar novos seguidores automaticamente" description="Desligado: quem segue você só vê publicações “Seguidores aprovados” depois que você aprovar." />
       </section>

@@ -32,4 +32,21 @@ test("Collab: publicar, candidatar-se, aceitar e liberar contato", async ({ brow
   await b.reload();
   await expect(b.getByText("Contato liberado")).toBeVisible();
   await expect(b.getByText("caio@contato.test")).toBeVisible();
+
+  // Colaboração aceita libera mensagens diretas.
+  await b.getByRole("link", { name: "Mandar mensagem no FRAME" }).click();
+  await expect(b).toHaveURL(/\/mensagens\/nova/);
+  await b.getByLabel("Mensagem").fill("Oi! Posso começar amanhã.");
+  await b.getByRole("button", { name: "Enviar" }).click();
+  await expect(b).toHaveURL(/\/mensagens\/[0-9a-f-]{36}/);
+  await expect(b.getByText("Oi! Posso começar amanhã.")).toBeVisible();
+
+  await a.goto("/mensagens");
+  await expect(a.getByText("Oi! Posso começar amanhã.")).toBeVisible();
+  await a.getByText("Oi! Posso começar amanhã.").click();
+  await a.getByLabel("Mensagem").fill("Perfeito, te mando o material.");
+  await a.getByRole("button", { name: "Enviar" }).click();
+  await expect(a.getByText("Perfeito, te mando o material.")).toBeVisible();
+  // A outra pessoa recebe pela atualização periódica, sem recarregar.
+  await expect(b.getByText("Perfeito, te mando o material.")).toBeVisible({ timeout: 15_000 });
 });

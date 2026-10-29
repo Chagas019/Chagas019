@@ -24,7 +24,7 @@ export default async function Page() {
   return (
     <Container className="max-w-3xl space-y-16 py-10">
       <SectionTitle eyebrow="Conta" title="Configurações" />
-      <ImagesForm name={p.displayName} avatar={p.avatarMediaId} cover={p.coverMediaId} />
+      <ImagesForm name={p.displayName} avatar={p.avatarMediaId} cover={p.coverMediaId} ownerId={viewer.id} />
       <ProfileForm profile={p} />
       <div id="notificacoes"><NotificationPrefsForm initial={p.notificationPrefs} /></div>
       <section id="seguidores" className="space-y-4">

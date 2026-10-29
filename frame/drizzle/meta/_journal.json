@@ -29,6 +29,13 @@
       "when": 1793262352030,
       "tag": "0003_rate_limit_bigint",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793263275263,
+      "tag": "0004_messages",
+      "breakpoints": true
     }
   ]
 }

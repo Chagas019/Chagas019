@@ -75,7 +75,18 @@ export default async function Page({ params, searchParams }: Props) {
                             <span className="text-xs text-fog-500">{a.specialties.slice(0, 2).join(" · ") || `@${a.handle}`} · {timeAgo(a.createdAt)}</span>
                           </span>
                         </Link>
-                        {a.status === "pending" ? <DecisionButtons applicationId={a.id} /> : <Badge tone={a.status === "accepted" ? "mint" : "neutral"}>{APP_STATUS[a.status]}</Badge>}
+                        {a.status === "pending" ? (
+                          <DecisionButtons applicationId={a.id} />
+                        ) : a.status === "accepted" ? (
+                          <span className="flex items-center gap-2">
+                            <Badge tone="mint">{APP_STATUS[a.status]}</Badge>
+                            <ButtonLink href={`/mensagens/nova?para=${a.handle}`} size="sm" variant="outline">
+                              Mensagem
+                            </ButtonLink>
+                          </span>
+                        ) : (
+                          <Badge tone="neutral">{APP_STATUS[a.status]}</Badge>
+                        )}
                       </div>
                       <p className="whitespace-pre-line text-sm text-fog-300">{a.message}</p>
                       {a.portfolioUrl ? (
@@ -135,6 +146,9 @@ export default async function Page({ params, searchParams }: Props) {
                   <div className="rounded-[var(--radius-sm)] bg-mint-400/10 p-3">
                     <p className="text-xs uppercase tracking-[0.14em] text-mint-400">Contato liberado</p>
                     <p className="mt-1 break-words text-sm text-paper">{d.contact}</p>
+                    <ButtonLink href={`/mensagens/nova?para=${l.authorHandle}`} size="sm" variant="outline" className="mt-3">
+                      Mandar mensagem no FRAME
+                    </ButtonLink>
                   </div>
                 ) : (
                   <p className="text-xs text-fog-500">O contato aparece aqui se a candidatura for aceita.</p>

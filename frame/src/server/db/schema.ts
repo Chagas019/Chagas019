@@ -158,6 +158,8 @@ export const profile = pgTable(
     isIndexable: boolean("is_indexable").notNull().default(false),
     /** Aprova automaticamente novos seguidores para conteúdo "só seguidores". Desligado por padrão. */
     autoApproveFollowers: boolean("auto_approve_followers").notNull().default(false),
+    /** Quem pode iniciar conversa: todos, quem eu sigo, ou ninguém (colaborações aceitas sempre podem). */
+    messagesFrom: text("messages_from", { enum: ["everyone", "following", "nobody"] }).notNull().default("following"),
     accentColor: text("accent_color", { enum: ["violet", "blue", "ember", "mint"] })
       .notNull()
       .default("violet"),
@@ -693,4 +695,47 @@ export const collabApplication = pgTable(
     updatedAt: updatedAt(),
   },
   (t) => [uniqueIndex("collab_application_unique").on(t.listingId, t.applicantId), index("collab_application_applicant_idx").on(t.applicantId)],
+);
+
+/* ------------------------------------------------------------------ */
+/* Mensagens                                                           */
+/* ------------------------------------------------------------------ */
+
+export const conversation = pgTable("conversation", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: text("title"),
+  isGroup: boolean("is_group").notNull().default(false),
+  createdById: text("created_by_id").references(() => user.id, { onDelete: "set null" }),
+  lastMessageAt: timestamp("last_message_at", { withTimezone: true }).notNull().defaultNow(),
+  createdAt: createdAt(),
+});
+
+export const conversationMember = pgTable(
+  "conversation_member",
+  {
+    conversationId: uuid("conversation_id")
+      .notNull()
+      .references(() => conversation.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    lastReadAt: timestamp("last_read_at", { withTimezone: true }).notNull().defaultNow(),
+    joinedAt: createdAt(),
+  },
+  (t) => [primaryKey({ columns: [t.conversationId, t.userId] }), index("conversation_member_user_idx").on(t.userId)],
+);
+
+export const message = pgTable(
+  "message",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    conversationId: uuid("conversation_id")
+      .notNull()
+      .references(() => conversation.id, { onDelete: "cascade" }),
+    senderId: text("sender_id").references(() => user.id, { onDelete: "set null" }),
+    body: text("body").notNull(),
+    sharedPostId: uuid("shared_post_id").references(() => post.id, { onDelete: "set null" }),
+    createdAt: createdAt(),
+  },
+  (t) => [index("message_conversation_idx").on(t.conversationId, t.createdAt)],
 );
