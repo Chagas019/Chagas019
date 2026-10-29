@@ -54,7 +54,7 @@ export interface RemoteSnapshot {
   version: number;
 }
 
-type StoredData = Omit<AppData, 'currentUserId' | 'demo'>;
+type StoredData = Omit<AppData, 'currentUserId' | 'example'>;
 
 export async function fetchProfile(): Promise<Profile | null> {
   const s = db();
@@ -89,13 +89,12 @@ export async function fetchParish(profile: Profile): Promise<RemoteSnapshot> {
       audit: stored.audit ?? [],
       announcements: stored.announcements ?? [],
       currentUserId: profile.member_id,
-      demo: true,
     },
   };
 }
 
 export async function saveParish(data: AppData, version: number): Promise<number> {
-  const { currentUserId: _c, demo: _d, ...rest } = data;
+  const { currentUserId: _c, example: _d, ...rest } = data;
   void _c;
   void _d;
   const payload: StoredData = { ...rest, members: rest.members.map((m) => ({ ...m, email: '', phone: '' })) };

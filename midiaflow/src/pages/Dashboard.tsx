@@ -160,7 +160,7 @@ export default function Dashboard() {
 
         {/* Gráfico */}
         <Card>
-          <SectionTitle title="Cobertura das escalas" subtitle={`% de vagas preenchidas por dia no período${store.mode === 'demo' ? ' · dados demonstrativos' : ''}`} />
+          <SectionTitle title="Cobertura das escalas" subtitle={`% de vagas preenchidas por dia no período${store.example ? ' · dados fictícios do exemplo' : ''}`} />
           {chart.length ? (
             <div className="h-[220px]">
               <ResponsiveContainer width="100%" height="100%">
@@ -284,6 +284,7 @@ export default function Dashboard() {
         {/* Próximas celebrações */}
         <Card>
           <SectionTitle title="Próximas celebrações" />
+          {upcoming.length === 0 && <p className="text-sm text-ink-muted">As próximas escalas aparecem aqui.</p>}
           <ul className="space-y-1">
             {upcoming.slice(0, 5).map((s) => {
               const c = coverage(s);
@@ -309,6 +310,7 @@ export default function Dashboard() {
         {/* Atividades recentes */}
         <Card>
           <SectionTitle title="Atividades recentes" />
+          {audit.length === 0 && <p className="text-sm text-ink-muted">O que a equipe fizer (escalas criadas, confirmações) aparece aqui.</p>}
           <ol className="space-y-3.5">
             {audit.slice(0, 5).map((a) => (
               <li key={a.id} className="flex gap-3">
@@ -343,7 +345,7 @@ export default function Dashboard() {
         <div className="flex items-center gap-3">
           <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-neon text-bg"><Users className="h-5 w-5" /></span>
           <div>
-            <p className="font-semibold">{members.filter((m) => m.status === 'ativo').length} integrantes ativos</p>
+            <p className="font-semibold">{(() => { const n = members.filter((m) => m.status === 'ativo').length; return `${n} ${n === 1 ? 'integrante ativo' : 'integrantes ativos'}`; })()}</p>
             <p className="text-sm text-ink-muted">Encontre quem está disponível para a próxima celebração.</p>
           </div>
         </div>

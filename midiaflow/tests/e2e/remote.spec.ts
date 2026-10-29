@@ -48,6 +48,7 @@ test('cria conta, cria a par√≥quia e salva uma escala no banco', async ({ page }
   await page.locator('header').getByRole('button', { name: 'Criar escala' }).click();
   const d = page.getByRole('dialog');
   await d.getByPlaceholder('Ex.: Missa da Juventude').fill('Missa do Domingo');
+  await d.getByPlaceholder('Ex.: Igreja Matriz').fill('Igreja Matriz');
   await d.getByRole('button', { name: /Criar escala/ }).click();
   await expect(page.getByText('Escala criada!')).toBeVisible();
   await expect(page.getByRole('status').filter({ hasText: 'Salvo' })).toBeVisible();
@@ -136,6 +137,7 @@ test('conflito: outra pessoa salvou antes, o app recarrega sem perder a consist√
 
   await page.locator('header').getByRole('button', { name: 'Criar escala' }).click();
   await page.getByRole('dialog').getByPlaceholder('Ex.: Missa da Juventude').fill('Escala em conflito');
+  await page.getByRole('dialog').getByPlaceholder('Ex.: Igreja Matriz').fill('Igreja Matriz');
   await page.getByRole('dialog').getByRole('button', { name: /Criar escala/ }).click();
   await expect(page.getByText(/Outra pessoa alterou os dados/)).toBeVisible();
   await expect(page.getByText('Aviso de outra pessoa')).toBeVisible();

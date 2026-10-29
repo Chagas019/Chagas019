@@ -1,11 +1,11 @@
-import { Copy, Database, KeyRound, LogOut, Mail, MessageCircle, RefreshCw, RotateCcw, ShieldCheck, UserRound } from 'lucide-react';
+import { Copy, Database, Download, KeyRound, LogOut, Mail, MessageCircle, RefreshCw, RotateCcw, ShieldCheck, Upload, UserRound } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Badge, Button, Card, ConfirmDialog, Field, Input, PageHeader, SectionTitle } from '@/components/ui';
 import { ACCESS_LABEL, useStore } from '@/lib/store';
 import { getInviteCode, regenerateInviteCode } from '@/lib/remote';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
-import type { Period } from '@/lib/types';
+import type { AppData, Period } from '@/lib/types';
 import { cn, PERIOD_LABEL, WEEKDAYS } from '@/lib/utils';
 
 export default function Settings() {
@@ -87,13 +87,43 @@ export default function Settings() {
       </Card>
 
       {store.mode === 'demo' && (
-        <Card className="border-danger/20">
-          <SectionTitle title="Dados da demonstração" subtitle="Os dados ficam apenas no armazenamento deste navegador" />
-          <Button variant="danger" size="sm" icon={RotateCcw} onClick={() => setReset(true)}>Restaurar dados de exemplo</Button>
+        <Card>
+          <SectionTitle title="Dados deste aparelho" subtitle="Sem conta online, tudo fica salvo só neste navegador. Faça cópias de segurança com frequência." />
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" icon={Download} onClick={() => {
+              const { example: _e, ...rest } = store;
+              void _e;
+              const payload = JSON.stringify({ app: 'midiaflow', version: 1, savedAt: new Date().toISOString(), data: pickData(rest) }, null, 2);
+              const a = document.createElement('a');
+              a.href = URL.createObjectURL(new Blob([payload], { type: 'application/json' }));
+              a.download = `midiaflow-copia-${new Date().toISOString().slice(0, 10)}.json`;
+              a.click();
+              setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+              toast.success('Cópia de segurança baixada.');
+            }}>Baixar cópia de segurança</Button>
+            <label className="glass inline-flex h-9 cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] px-3.5 text-[13px] hover:bg-white/[0.06]">
+              <Upload className="h-4 w-4" />Restaurar cópia
+              <input type="file" accept="application/json,.json" className="sr-only" onChange={async (e) => {
+                const f = e.target.files?.[0];
+                e.target.value = '';
+                if (!f) return;
+                try {
+                  const parsed = JSON.parse(await f.text());
+                  const d = parsed?.data;
+                  if (parsed?.app !== 'midiaflow' || !Array.isArray(d?.schedules) || !Array.isArray(d?.members) || !d?.currentUserId) throw new Error('arquivo');
+                  store.importData(d);
+                  toast.success('Cópia restaurada.');
+                } catch {
+                  toast.error('Arquivo inválido. Use uma cópia baixada pelo MídiaFlow.');
+                }
+              }} />
+            </label>
+            <Button variant="danger" size="sm" icon={RotateCcw} onClick={() => setReset(true)}>Apagar tudo e recomeçar</Button>
+          </div>
         </Card>
       )}
-      <ConfirmDialog open={reset} onOpenChange={setReset} title="Restaurar demonstração?" body="Todas as alterações feitas neste navegador serão substituídas pelos dados de exemplo." confirmLabel="Restaurar"
-        onConfirm={() => { store.resetDemo(); toast.success('Dados de exemplo restaurados.'); }} />
+      <ConfirmDialog open={reset} onOpenChange={setReset} title="Apagar tudo?" body="Escalas, eventos, equipe e configurações deste aparelho serão apagados. Baixe uma cópia antes, se quiser guardar." confirmLabel="Apagar tudo"
+        onConfirm={() => store.resetDemo()} />
     </div>
   );
 }
@@ -162,3 +192,8 @@ function InviteCard({ isAdmin }: { isAdmin: boolean }) {
     </Card>
   );
 }
+
+const pickData = (s: AppData): AppData => ({
+  parish: s.parish, roles: s.roles, members: s.members, schedules: s.schedules, events: s.events,
+  notifications: s.notifications, audit: s.audit, announcements: s.announcements, currentUserId: s.currentUserId,
+});

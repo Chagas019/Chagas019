@@ -35,7 +35,7 @@ function blank(date: string | undefined, coordinatorId: string): Schedule {
     date: date ?? toISODate(new Date()),
     start: '19:00',
     end: '20:15',
-    location: 'Matriz São José',
+    location: '',
     coordinatorId,
     notes: '',
     createdAt: new Date().toISOString(),
@@ -49,7 +49,9 @@ function ScheduleEditor({ open, onOpenChange, arg }: { open: boolean; onOpenChan
   const editing = !!arg.schedule;
   const [draft, setDraft] = useState<Schedule>(() => {
     if (arg.schedule) return structuredClone(arg.schedule);
-    const b = blank(arg.date, store.me.id);
+    const last = [...store.schedules].sort((x, y) => y.createdAt.localeCompare(x.createdAt))[0];
+    // Sugere o último local usado: quase sempre é a mesma igreja.
+    const b = { ...blank(arg.date, store.me.id), location: last?.location ?? '' };
     const ev = events.find((e) => e.id === arg.eventId);
     if (ev) {
       return {
@@ -168,7 +170,7 @@ function ScheduleEditor({ open, onOpenChange, arg }: { open: boolean; onOpenChan
             <Input type="time" value={draft.end} invalid={!!errors.time} onChange={(e) => set('end', e.target.value)} />
           </Field>
           <Field label="Local" error={errors.location}>
-            <Input value={draft.location} invalid={!!errors.location} onChange={(e) => set('location', e.target.value)} />
+            <Input value={draft.location} invalid={!!errors.location} onChange={(e) => set('location', e.target.value)} placeholder="Ex.: Igreja Matriz" />
           </Field>
           <Field label="Responsável pela escala">
             <Select value={draft.coordinatorId} onChange={(e) => set('coordinatorId', e.target.value)}>

@@ -43,6 +43,37 @@ const rand = () => {
   return (seed - 1) / 2147483646;
 };
 
+/** Paróquia nova, sem nenhum dado: como se o app tivesse acabado de ser instalado. */
+export function buildEmptyData(p: { parish: string; city: string; pascom: string; name: string }): AppData {
+  const id = 'm_' + Math.random().toString(36).slice(2, 10);
+  const now = new Date().toISOString();
+  return {
+    parish: { name: p.parish, city: p.city, pascomName: p.pascom || 'PASCOM' },
+    roles: DEFAULT_ROLES,
+    members: [
+      {
+        id,
+        name: p.name,
+        roleIds: ['coord'],
+        availability: { weekdays: [0, 6], periods: ['manha', 'noite'], unavailableDates: [] },
+        email: '',
+        phone: '',
+        status: 'ativo',
+        access: 'admin',
+        joinedAt: toISODate(new Date()),
+      },
+    ],
+    schedules: [],
+    events: [],
+    notifications: [
+      { id: 'n_boas_vindas', kind: 'sistema', title: 'Bem-vindo ao MídiaFlow', body: 'Comece cadastrando a equipe e criando a primeira escala.', createdAt: now, read: false },
+    ],
+    audit: [],
+    announcements: [],
+    currentUserId: id,
+  };
+}
+
 export function buildDemoData(today = new Date()): AppData {
   seed = 7;
   const members: Member[] = NAMES.map(([name, roleIds, weekdays], i) => ({
@@ -143,7 +174,7 @@ export function buildDemoData(today = new Date()): AppData {
 
   const now = today.getTime();
   return {
-    demo: true,
+    example: true,
     parish: { name: 'Paróquia São José', city: 'São Paulo — SP', pascomName: 'PASCOM São José' },
     roles: DEFAULT_ROLES,
     members: [admin, ...members],

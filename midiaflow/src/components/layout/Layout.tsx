@@ -6,7 +6,7 @@ import {
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { PERIODS, usePeriod, type PeriodKey } from '@/lib/period';
-import { ACCESS_LABEL, useStore } from '@/lib/store';
+import { ACCESS_LABEL, exitExample, useStore } from '@/lib/store';
 import { supabase } from '@/lib/supabase';
 import { cn, fmtDateShort } from '@/lib/utils';
 import { useScheduleEditor } from '../schedule/ScheduleEditor';
@@ -191,7 +191,8 @@ function NotificationsMenu() {
 }
 
 function ProfileMenu() {
-  const { me, members, switchUser, parish, mode } = useStore();
+  const data = useStore();
+  const { me, members, switchUser, parish, mode } = data;
   const [open, setOpen] = useState(false);
   const demoUsers = [members.find((m) => m.access === 'admin'), members.find((m) => m.access === 'coordenador'), ...members.filter((m) => m.access === 'integrante' && m.status === 'ativo').slice(0, 3)].filter(Boolean);
   return (
@@ -214,7 +215,7 @@ function ProfileMenu() {
                 <p className="text-sm font-semibold">{me.name}</p>
                 <p className="text-xs text-ink-muted">{parish.name}</p>
               </div>
-              {mode === 'demo' && (
+              {mode === 'demo' && data.example && (
                 <>
                   <p className="mt-1 border-t border-line/60 px-3 pb-1 pt-3 text-[11px] uppercase tracking-wider text-ink-muted">Demonstração · ver como</p>
                   {demoUsers.map((m) => m && (
@@ -336,13 +337,14 @@ function BottomLink({ n }: { n: NavItem }) {
   );
 }
 
+/** Só aparece no exemplo com dados fictícios (aberto com ?exemplo). */
 function DemoBanner() {
-  const { mode } = useStore();
-  if (mode === 'remote') return null;
+  const { example } = useStore();
+  if (!example) return null;
   return (
-    <div className="no-print flex items-center justify-center gap-2 border-b border-electric/20 bg-electric/[0.06] px-4 py-1.5 text-center text-[12px] text-electric">
-      <Sparkles className="h-3.5 w-3.5 shrink-0" />
-      <span>Modo demonstração: dados fictícios salvos apenas neste navegador. Nada é enviado a servidores.</span>
+    <div className="no-print flex flex-wrap items-center justify-center gap-x-3 gap-y-1 border-b border-electric/20 bg-electric/[0.06] px-4 py-1.5 text-center text-[12px] text-electric">
+      <span className="flex items-center gap-2"><Sparkles className="h-3.5 w-3.5 shrink-0" />Exemplo com nomes e escalas fictícios.</span>
+      <button onClick={exitExample} className="font-semibold underline underline-offset-2">Sair do exemplo e começar a minha</button>
     </div>
   );
 }

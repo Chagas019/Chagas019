@@ -14,9 +14,9 @@ npm test          # regras de escala e conflitos
 npm run build     # verificação de tipos + build de produção em dist/
 ```
 
-Sem configurar nada, o app abre em **modo demonstração**: os dados são fictícios, gerados a partir da data de hoje e salvos apenas no `localStorage` do navegador. Uma faixa no topo deixa isso claro. Em **Configurações → Restaurar dados de exemplo** você volta ao estado inicial.
+Sem conta online configurada, o app abre **vazio**, como recém-instalado: a primeira tela pede o nome da paróquia e o seu nome (você vira administrador), e tudo fica salvo neste navegador. Em **Configurações** há cópia de segurança (baixar/restaurar) e “Apagar tudo e recomeçar”. Para ver o app cheio de dados fictícios, abra `/?exemplo` (o botão “Ver um exemplo antes” na primeira tela faz isso).
 
-Pelo menu do perfil (canto superior direito) dá para **ver o app como** Administrador, Coordenador ou Integrante e testar as permissões.
+No exemplo, o menu do perfil permite **ver o app como** Administrador, Coordenador ou Integrante para testar as permissões.
 
 ## Funcionalidades
 

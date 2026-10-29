@@ -13,7 +13,7 @@ import { fmt } from '@/lib/utils';
 const tip = { contentStyle: { background: '#10151D', border: '1px solid #252F3C', borderRadius: 14, fontSize: 12 }, cursor: { fill: 'rgba(255,255,255,0.03)' } };
 
 export default function Reports() {
-  const { schedules, roles, events, audit, members, can, parish, mode } = useStore();
+  const { schedules, roles, events, audit, members, can, parish, example: store_example } = useStore();
   const { period, setPeriod } = usePeriod();
   const { from, to } = periodRange(period);
   const list = useMemo(() => schedules.filter((s) => s.date >= from && s.date <= to).sort((a, b) => a.date.localeCompare(b.date)), [schedules, from, to]);
@@ -77,10 +77,10 @@ export default function Reports() {
         <Button icon={Printer} onClick={() => window.print()}>Imprimir</Button>
       </>} />
 
-      {mode === 'demo' && (
+      {store_example && (
       <div className="mb-5 flex items-start gap-2.5 rounded-2xl border border-electric/25 bg-electric/[0.05] p-3 text-sm text-electric">
         <Info className="mt-0.5 h-4 w-4 shrink-0" />
-        Dados demonstrativos: os números abaixo são calculados a partir das escalas fictícias desta demonstração, não de uma paróquia real.
+        Exemplo: os números abaixo vêm de escalas fictícias, não de uma paróquia real.
       </div>
       )}
 

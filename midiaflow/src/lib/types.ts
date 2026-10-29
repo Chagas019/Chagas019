@@ -135,6 +135,6 @@ export interface AppData {
   audit: AuditEntry[];
   announcements: Announcement[];
   currentUserId: string;
-  /** Marca de origem: tudo gerado pelo seed é demonstrativo. */
-  demo: true;
+  /** true quando são os dados fictícios de exemplo (abertos com ?exemplo). */
+  example?: boolean;
 }

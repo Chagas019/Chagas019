@@ -12,6 +12,7 @@ import { StoreProvider, type RemoteSession } from './lib/store';
 import { supabase } from './lib/supabase';
 import Dashboard from './pages/Dashboard';
 import Login, { NewPassword, Onboarding, rememberInviteFromUrl } from './pages/Login';
+import Setup from './pages/Setup';
 
 // Páginas carregadas sob demanda: o primeiro acesso fica mais leve.
 const MySchedules = lazy(() => import('./pages/MySchedules'));
@@ -204,7 +205,7 @@ export default function App() {
             {supabase ? (
               <RemoteApp />
             ) : (
-              <StoreProvider>
+              <StoreProvider setup={(done) => <Setup onDone={done} />}>
                 <PeriodProvider>
                   <AppRoutes />
                 </PeriodProvider>

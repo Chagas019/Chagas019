@@ -95,7 +95,12 @@ export default function Team() {
       </Card>
 
       {list.length === 0 ? (
-        <EmptyState icon={Search} title="Ninguém encontrado" body={availDate ? 'Nenhum integrante disponível nesse dia e horário com os filtros atuais.' : 'Ajuste os filtros ou cadastre um novo integrante.'} />
+        members.filter((m) => m.access !== 'admin').length === 0 ? (
+          <EmptyState icon={UserPlus} title="Cadastre a sua equipe" body="Adicione fotógrafos, videomakers, stories, social media e quem mais serve na PASCOM. Depois é só escalar."
+            action={<Button variant="primary" icon={UserPlus} onClick={() => setEditing(newMember())}>Cadastrar integrante</Button>} />
+        ) : (
+          <EmptyState icon={Search} title="Ninguém encontrado" body={availDate ? 'Nenhum integrante disponível nesse dia e horário com os filtros atuais.' : 'Ajuste os filtros ou cadastre um novo integrante.'} />
+        )
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {list.map((m) => (

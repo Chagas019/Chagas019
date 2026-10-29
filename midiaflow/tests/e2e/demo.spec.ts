@@ -18,10 +18,11 @@ async function openCreate(page: Page) {
   await expect(page.getByRole('dialog')).toBeVisible();
 }
 
-test.beforeEach(async ({ page }) => {
-  await page.goto('/');
+test.beforeEach(async ({ page }, info) => {
+  if (info.title.startsWith('primeiro acesso')) return;
+  await page.goto('/?exemplo');
   await page.evaluate(() => localStorage.clear());
-  await page.goto('/');
+  await page.goto('/?exemplo');
   await expect(page.getByRole('heading', { name: /equipe!/ })).toBeVisible();
 });
 
@@ -29,7 +30,7 @@ test('painel carrega sem erros e sem rolagem lateral', async ({ page }) => {
   const errors = watchErrors(page);
   await page.reload();
   await expect(page.getByText('Painel da missão')).toBeVisible();
-  await expect(page.getByText('Modo demonstração')).toBeVisible();
+  await expect(page.getByText('Exemplo com nomes e escalas fictícios.')).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(overflow).toBeLessThanOrEqual(1);
   expect(errors).toEqual([]);
@@ -143,4 +144,42 @@ test('página inexistente mostra 404', async ({ page }) => {
   await page.goto('/pagina-que-nao-existe');
   await expect(page.getByText('Página não encontrada')).toBeVisible();
   await expect(page).toHaveTitle(/MídiaFlow/);
+});
+
+test('primeiro acesso: site vazio, sem dados de exemplo', async ({ page }) => {
+  const errors = watchErrors(page);
+  await page.goto('/');
+  await page.evaluate(() => { localStorage.clear(); sessionStorage.clear(); });
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'Bem-vindo ao MídiaFlow' })).toBeVisible();
+  await page.getByRole('button', { name: 'Começar' }).click();
+  await expect(page.getByText('Informe o nome da paróquia.')).toBeVisible();
+  await page.getByLabel('Nome da paróquia').fill('Paróquia Santo Antônio');
+  await page.getByLabel('Seu nome completo').fill('Joana Coordenadora');
+  await page.getByRole('button', { name: 'Começar' }).click();
+  await expect(page.getByRole('heading', { name: /equipe!/ })).toBeVisible();
+  await expect(page.getByText('Exemplo com nomes')).toHaveCount(0);
+  await expect(page.locator('body')).not.toContainText(/Ana Beatriz|Lucas Ferreira|Matriz São José/);
+  await expect(page.getByText('Nenhuma celebração futura')).toBeVisible();
+
+  // equipe começa vazia, com orientação
+  await page.goto('/equipe');
+  await expect(page.getByText('Cadastre a sua equipe')).toBeVisible();
+  await page.getByRole('button', { name: 'Cadastrar integrante' }).first().click();
+  await page.getByRole('dialog').locator('input').first().fill('Pedro Fotógrafo');
+  await page.getByRole('dialog').getByRole('button', { name: 'Fotografia' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Salvar' }).click();
+  await expect(page.getByText('Pedro Fotógrafo')).toBeVisible();
+
+  // os dados ficam salvos ao recarregar
+  await page.reload();
+  await expect(page.getByText('Pedro Fotógrafo')).toBeVisible();
+  await page.goto('/escalas');
+  await expect(page.getByText('Nenhuma escala encontrada')).toBeVisible();
+
+  // cópia de segurança
+  await page.goto('/configuracoes');
+  const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Baixar cópia de segurança' }).click()]);
+  expect(download.suggestedFilename()).toMatch(/^midiaflow-copia-.*\.json$/);
+  expect(errors).toEqual([]);
 });

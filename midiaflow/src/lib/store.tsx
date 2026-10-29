@@ -17,16 +17,47 @@ import type {
 } from './types';
 import { uid } from './utils';
 
-const KEY = 'midiaflow:demo:v1';
+const KEY = 'midiaflow:local:v2';
+const EXAMPLE_KEY = 'midiaflow:exemplo:v2';
+const MODE_KEY = 'midiaflow:modo';
 
-function load(): AppData {
+/** Exemplo com dados fictícios: só quando aberto com ?exemplo (fica ativo nesta aba). */
+export function isExampleMode() {
   try {
-    const raw = localStorage.getItem(KEY);
+    if (new URLSearchParams(location.search).has('exemplo')) sessionStorage.setItem(MODE_KEY, 'exemplo');
+    return sessionStorage.getItem(MODE_KEY) === 'exemplo';
+  } catch {
+    return false;
+  }
+}
+
+export function exitExample() {
+  try {
+    sessionStorage.removeItem(MODE_KEY);
+  } catch {
+    /* ok */
+  }
+  location.assign('/');
+}
+
+/** Dados deste aparelho; null = primeiro acesso (mostra a configuração inicial). */
+function load(): AppData | null {
+  const example = isExampleMode();
+  try {
+    const raw = localStorage.getItem(example ? EXAMPLE_KEY : KEY);
     if (raw) return JSON.parse(raw) as AppData;
   } catch {
-    /* armazenamento indisponível: segue com dados novos */
+    /* armazenamento indisponível */
   }
-  return buildDemoData();
+  return example ? buildDemoData() : null;
+}
+
+export function clearLocalData() {
+  try {
+    localStorage.removeItem(isExampleMode() ? EXAMPLE_KEY : KEY);
+  } catch {
+    /* ok */
+  }
 }
 
 export type Permission =
@@ -92,18 +123,26 @@ interface Store extends AppData {
   switchUser: (memberId: string) => void;
   updateParish: (p: Parish) => void;
   resetDemo: () => void;
+  importData: (d: AppData) => void;
 }
 
 const Ctx = createContext<Store | null>(null);
 
-export function StoreProvider({ children, remote }: { children: ReactNode; remote?: RemoteSession }) {
-  const [data, setData] = useState<AppData>(() => (remote ? withRead(remote.initial.data, readIds(remote.profile.member_id)) : load()));
+export function StoreProvider({ children, remote, setup }: { children: ReactNode; remote?: RemoteSession; setup?: (done: (d: AppData) => void) => ReactNode }) {
+  const [local, setLocal] = useState<AppData | null>(() => (remote ? null : load()));
+  if (remote) return <StoreInner remote={remote}>{children}</StoreInner>;
+  if (!local) return <>{setup?.(setLocal)}</>;
+  return <StoreInner initialLocal={local}>{children}</StoreInner>;
+}
+
+function StoreInner({ children, remote, initialLocal }: { children: ReactNode; remote?: RemoteSession; initialLocal?: AppData }) {
+  const [data, setData] = useState<AppData>(() => (remote ? withRead(remote.initial.data, readIds(remote.profile.member_id)) : initialLocal!));
   const [sync, setSync] = useState<SyncState>(remote ? 'saved' : 'demo');
 
   useEffect(() => {
     if (remote) return;
     try {
-      localStorage.setItem(KEY, JSON.stringify(data));
+      localStorage.setItem(data.example ? EXAMPLE_KEY : KEY, JSON.stringify(data));
     } catch {
       /* sem persistência local: os dados valem até recarregar a página */
     }
@@ -423,7 +462,15 @@ export function StoreProvider({ children, remote }: { children: ReactNode; remot
       updateParish: (p) =>
         mutate((d) => ({ ...d, parish: p }), { action: 'editou', entity: 'configuração', entityId: '', summary: 'Atualizou os dados da paróquia.' }),
 
-      resetDemo: () => { if (!remote) setData(buildDemoData()); },
+      resetDemo: () => {
+        if (remote) return;
+        clearLocalData();
+        location.assign('/');
+      },
+      importData: (d) => {
+        if (remote) return;
+        setData({ ...d, example: data.example });
+      },
     };
   }, [data, me, mutate, remote, sync, refresh, flush, isStaff]);
 
