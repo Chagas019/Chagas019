@@ -1,5 +1,6 @@
 "use client";
 
+import { RichText } from "@/components/ui/rich-text";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -61,7 +62,7 @@ function CommentForm({ postId, parentId, onDone, autoFocus }: { postId: string; 
   );
 }
 
-export function Comments({ postId, comments, viewerId, postAuthorId }: { postId: string; comments: CommentItem[]; viewerId: string | null; postAuthorId: string }) {
+export function Comments({ postId, comments, viewerId, postAuthorId, enabled = true }: { postId: string; comments: CommentItem[]; viewerId: string | null; postAuthorId: string; enabled?: boolean }) {
   const [replyTo, setReplyTo] = useState<string | null>(null);
   const [, start] = useTransition();
   const toast = useToast();
@@ -83,10 +84,10 @@ export function Comments({ postId, comments, viewerId, postAuthorId }: { postId:
             </Link>{" "}
             <span className="text-xs text-fog-500">{timeAgo(new Date(c.createdAt))}</span>
           </p>
-          <p className="mt-1 whitespace-pre-line text-pretty text-[15px] text-fog-200">{c.body}</p>
+          <RichText text={c.body} className="mt-1 text-pretty text-[15px] text-fog-200" />
           <div className="mt-1.5 flex gap-4">
-            {viewerId && !nested ? (
-              <button className="text-xs text-fog-500 hover:text-paper" onClick={() => setReplyTo(replyTo === c.id ? null : c.id)}>
+            {viewerId && !nested && enabled ? (
+              <button type="button" className="text-xs text-fog-500 hover:text-paper" onClick={() => setReplyTo(replyTo === c.id ? null : c.id)}>
                 Responder
               </button>
             ) : null}
@@ -124,7 +125,9 @@ export function Comments({ postId, comments, viewerId, postAuthorId }: { postId:
       <h2 id="comentarios" className="flex items-center gap-2 font-display text-3xl">
         Conversa <span className="text-base text-fog-500">({comments.length})</span>
       </h2>
-      {viewerId ? (
+      {!enabled ? (
+        <p className="rounded-[var(--radius-md)] bg-ink-850 p-4 text-sm text-fog-400">O autor desativou os comentários nesta publicação.</p>
+      ) : viewerId ? (
         <CommentForm postId={postId} />
       ) : (
         <p className="rounded-[var(--radius-md)] bg-ink-850 p-4 text-sm text-fog-400">
@@ -134,13 +137,13 @@ export function Comments({ postId, comments, viewerId, postAuthorId }: { postId:
           para comentar e fazer perguntas ao autor.
         </p>
       )}
-      {comments.length === 0 ? (
+      {comments.length === 0 && enabled ? (
         <p className="flex items-center gap-2 py-6 text-sm text-fog-500">
           <MessageCircle className="size-4" aria-hidden /> Seja a primeira pessoa a comentar.
         </p>
-      ) : (
+      ) : comments.length ? (
         <ul>{roots.map((c) => render(c))}</ul>
-      )}
+      ) : null}
     </section>
   );
 }

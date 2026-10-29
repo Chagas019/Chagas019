@@ -2,10 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { Ban, Check, Link2, MoreHorizontal, Share2, Trash2, VolumeX, ThumbsUp, ThumbsDown } from "lucide-react";
+import Link from "next/link";
+import { Ban, Check, Link2, MoreHorizontal, Pencil, Pin, PinOff, Share2, Trash2, VolumeX, ThumbsUp, ThumbsDown } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 import { Select } from "@/components/ui/field";
-import { deletePostAction, updateVisibilityAction } from "@/server/actions/posts";
+import { deletePostAction, setPinnedAction, updateVisibilityAction } from "@/server/actions/posts";
 import { rateTutorialAction, setBlockAction, setMuteAction } from "@/server/actions/social";
 import { ReportButton } from "@/components/social/report-dialog";
 import { cn } from "@/lib/utils";
@@ -39,12 +40,32 @@ export function ShareButton({ title, path }: { title: string; path: string }) {
   );
 }
 
-export function OwnerControls({ postId, visibility }: { postId: string; visibility: "public" | "followers" | "private" }) {
+export function OwnerControls({ postId, visibility, pinned, canPin }: { postId: string; visibility: "public" | "followers" | "private"; pinned?: boolean; canPin?: boolean }) {
   const [pending, start] = useTransition();
   const toast = useToast();
   const router = useRouter();
   return (
     <div className="flex flex-wrap items-center gap-2">
+      <Link href={`/p/${postId}/editar`} className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm text-fog-300 hover:bg-white/5 hover:text-paper">
+        <Pencil className="size-4" aria-hidden /> Editar
+      </Link>
+      {canPin ? (
+        <button
+          type="button"
+          disabled={pending}
+          aria-pressed={pinned}
+          onClick={() =>
+            start(async () => {
+              const r = await setPinnedAction(postId, !pinned);
+              toast.show(r.ok ? (r.message ?? "Atualizado.") : r.error, r.ok ? "success" : "error");
+              router.refresh();
+            })
+          }
+          className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm text-fog-300 hover:bg-white/5 hover:text-paper"
+        >
+          {pinned ? <PinOff className="size-4" aria-hidden /> : <Pin className="size-4" aria-hidden />} {pinned ? "Tirar do portfólio" : "Fixar no portfólio"}
+        </button>
+      ) : null}
       <label className="sr-only" htmlFor="vis">
         Visibilidade
       </label>

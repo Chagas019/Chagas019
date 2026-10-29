@@ -9,18 +9,36 @@ import { useToast } from "@/components/ui/toast";
 import { reportAction } from "@/server/actions/social";
 import { REPORT_REASONS } from "@/lib/taxonomy";
 
-export function ReportButton({ targetType, targetId, label = "Denunciar", compact }: { targetType: "post" | "comment" | "user" | "community" | "collab"; targetId: string; label?: string; compact?: boolean }) {
-  const [open, setOpen] = useState(false);
+export function ReportButton({
+  targetType,
+  targetId,
+  label = "Denunciar",
+  compact,
+  open: controlledOpen,
+  onOpenChange,
+}: {
+  targetType: "post" | "comment" | "user" | "community" | "collab";
+  targetId: string;
+  label?: string;
+  compact?: boolean;
+  /** Controlado por fora (ex.: item de menu): não renderiza o botão. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}) {
+  const [innerOpen, setInnerOpen] = useState(false);
+  const controlled = controlledOpen !== undefined;
+  const open = controlled ? controlledOpen : innerOpen;
+  const setOpen = (v: boolean) => (controlled ? onOpenChange?.(v) : setInnerOpen(v));
   const [reason, setReason] = useState("spam");
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
   const toast = useToast();
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} className={compact ? "text-xs text-fog-500 hover:text-paper" : "inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm text-fog-400 hover:bg-white/5 hover:text-paper"}>
+      {controlled ? null : <button type="button" onClick={() => setOpen(true)} className={compact ? "text-xs text-fog-500 hover:text-paper" : "inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm text-fog-400 hover:bg-white/5 hover:text-paper"}>
         {compact ? null : <Flag className="size-4" aria-hidden />}
         {label}
-      </button>
+      </button>}
       <Dialog open={open} onClose={() => setOpen(false)} title="Denunciar">
         <form
           className="space-y-4"

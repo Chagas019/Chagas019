@@ -7,6 +7,7 @@ export const CATEGORIES = [
   { slug: "color-grading", label: "Color grading" },
   { slug: "design", label: "Design" },
   { slug: "motion", label: "Motion design" },
+  { slug: "ilustracao", label: "Ilustração" },
   { slug: "arte-digital", label: "Arte digital" },
   { slug: "mobile", label: "Criação mobile" },
   { slug: "retrato", label: "Retrato" },

@@ -26,7 +26,7 @@ export function Dialog({ open, onClose, title, children }: { open: boolean; onCl
         <h2 id="dialog-title" className="text-base font-semibold">
           {title}
         </h2>
-        <button onClick={onClose} className="rounded-full p-1.5 text-fog-400 hover:bg-white/5 hover:text-paper" aria-label="Fechar">
+        <button type="button" onClick={onClose} className="rounded-full p-1.5 text-fog-400 hover:bg-white/5 hover:text-paper" aria-label="Fechar">
           <X className="size-4" />
         </button>
       </div>

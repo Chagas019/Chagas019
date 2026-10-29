@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Bookmark, Briefcase, MessageSquare, GraduationCap, LogOut, Settings, Shield, Sparkles, Swords, User, Users } from "lucide-react";
+import { Bookmark, Briefcase, MessageSquare, GraduationCap, LogOut, Settings, Shield, Sparkles, Swords, User, Users, FilePen } from "lucide-react";
 import { Avatar } from "@/components/ui/misc";
 import { authClient } from "@/lib/auth-client";
 
@@ -29,6 +29,7 @@ export function UserMenu({ handle, name, avatar, isModerator, aiEnabled }: { han
   const items = [
     { href: `/u/${handle}`, label: "Meu portfólio", icon: User },
     { href: "/salvos", label: "Salvos e coleções", icon: Bookmark },
+    { href: "/rascunhos", label: "Rascunhos", icon: FilePen },
     { href: "/mensagens", label: "Mensagens", icon: MessageSquare },
     { href: "/lab", label: "FRAME LAB", icon: GraduationCap, mobileOnly: true },
     { href: "/comunidades", label: "Comunidades", icon: Users, mobileOnly: true },

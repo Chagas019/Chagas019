@@ -114,6 +114,7 @@ export const appRateLimit = pgTable("app_rate_limit", {
 export type ProfileLink = { label: string; url: string };
 export type NotificationPrefs = {
   collab?: boolean;
+  mention?: boolean;
   follow: boolean;
   comment: boolean;
   reply: boolean;
@@ -194,7 +195,7 @@ export const postFormat = pgEnum("post_format", [
   "text",
 ]);
 export const visibility = pgEnum("visibility", ["public", "followers", "private"]);
-export const contentStatus = pgEnum("content_status", ["published", "removed"]);
+export const contentStatus = pgEnum("content_status", ["published", "removed", "draft"]);
 
 export const community = pgTable(
   "community",
@@ -233,6 +234,12 @@ export const post = pgTable(
     status: contentStatus("status").notNull().default("published"),
     isCollaborative: boolean("is_collaborative").notNull().default(false),
     communityId: uuid("community_id").references(() => community.id, { onDelete: "cascade" }),
+    /** Hashtags extraídas do título e da legenda, sem "#", em minúsculas. */
+    tags: text("tags").array().notNull().default(sql`'{}'::text[]`),
+    credits: jsonb("credits").$type<Credit[]>().notNull().default([]),
+    commentsEnabled: boolean("comments_enabled").notNull().default(true),
+    /** Fixado no portfólio do autor (destaques do perfil). */
+    pinnedAt: timestamp("pinned_at", { withTimezone: true }),
     likeCount: integer("like_count").notNull().default(0),
     commentCount: integer("comment_count").notNull().default(0),
     saveCount: integer("save_count").notNull().default(0),
@@ -244,6 +251,7 @@ export const post = pgTable(
     index("post_author_idx").on(t.authorId, t.createdAt),
     index("post_community_idx").on(t.communityId, t.createdAt),
     index("post_categories_idx").using("gin", t.categories),
+    index("post_tags_idx").using("gin", t.tags),
   ],
 );
 
@@ -275,7 +283,8 @@ export const media = pgTable(
   (t) => [index("media_post_idx").on(t.postId, t.position), index("media_owner_idx").on(t.ownerId)],
 );
 
-export type Credit = { name: string; role: string };
+/** Crédito de um projeto; `handle` marca um criador do FRAME (gera notificação e link). */
+export type Credit = { name: string; role: string; handle?: string };
 
 export const showcase = pgTable("showcase", {
   postId: uuid("post_id")
@@ -512,6 +521,7 @@ export const notificationType = pgEnum("notification_type", [
   "challenge",
   "community",
   "collab",
+  "mention",
 ]);
 
 export const notification = pgTable(

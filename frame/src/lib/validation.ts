@@ -74,6 +74,24 @@ export const notificationPrefsSchema = z.object({
   collab: z.boolean().optional(),
 });
 
+/** Créditos: nome e função; `handle` (opcional) marca um perfil do FRAME. */
+export const creditsSchema = z
+  .array(
+    z.object({
+      name: required(80, "Nome"),
+      role: required(60, "Função"),
+      handle: z
+        .string()
+        .trim()
+        .toLowerCase()
+        .transform((h) => h.replace(/^@/, ""))
+        .pipe(z.union([z.literal(""), z.string().regex(/^[a-z0-9_.]{3,30}$/, "Usuário inválido.")]))
+        .optional(),
+    }),
+  )
+  .max(20)
+  .default([]);
+
 export const showcaseSchema = z.object({
   process: trimmed(4000).default(""),
   camera: trimmed(120).default(""),
@@ -114,6 +132,9 @@ export const postSchema = z
     isCollaborative: z.boolean().default(false),
     communityId: z.string().uuid().nullable().default(null),
     alts: z.array(trimmed(300)).max(10).default([]),
+    credits: creditsSchema,
+    commentsEnabled: z.boolean().default(true),
+    draft: z.boolean().default(false),
     showcase: showcaseSchema.optional(),
     tutorial: tutorialSchema.optional(),
   })
@@ -122,6 +143,20 @@ export const postSchema = z
     if (v.kind === "showcase" && !v.showcase) ctx.addIssue({ code: "custom", path: ["showcase"], message: "Preencha os dados do Showcase." });
   });
 export type PostInput = z.input<typeof postSchema>;
+
+/** Edição de uma publicação existente (mídia não muda). */
+export const postUpdateSchema = z.object({
+  title: required(140, "Título"),
+  body: trimmed(5000).default(""),
+  categories: categoriesSchema,
+  tools: tagList(10),
+  visibility: z.enum(["public", "followers", "private"]),
+  isCollaborative: z.boolean().default(false),
+  credits: creditsSchema,
+  commentsEnabled: z.boolean().default(true),
+  alts: z.array(trimmed(300)).max(10).optional(),
+  publish: z.boolean().default(false),
+});
 
 export const commentSchema = z.object({
   postId: z.string().uuid(),

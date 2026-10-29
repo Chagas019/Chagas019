@@ -1,3 +1,4 @@
+import { ConnectionStatus } from "@/components/shell/connection-status";
 import type { Metadata, Viewport } from "next";
 import { Anton, Poppins } from "next/font/google";
 import { Header } from "@/components/shell/header";
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <ToastProvider>
           <Header />
+          <ConnectionStatus />
           <main id="conteudo">{children}</main>
           <Footer />
         </ToastProvider>

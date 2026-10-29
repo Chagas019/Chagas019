@@ -8,7 +8,7 @@ import { isApprovedFollower, isBlockedEitherWay } from "./relations";
 type PostLike = Pick<typeof post.$inferSelect, "authorId" | "visibility" | "status" | "communityId">;
 type ViewerLike = Pick<Viewer, "id" | "role"> | null;
 
-export type CommunityAccess = { access: "public" | "private" | "invite"; status: "published" | "removed"; memberStatus: "active" | "pending" | "banned" | null; role: "owner" | "admin" | "member" | null };
+export type CommunityAccess = { access: "public" | "private" | "invite"; status: "published" | "removed" | "draft"; memberStatus: "active" | "pending" | "banned" | null; role: "owner" | "admin" | "member" | null };
 
 export async function communityAccessFor(communityId: string, viewerId: string | null): Promise<CommunityAccess | null> {
   const [c] = await db.select({ access: community.access, status: community.status }).from(community).where(eq(community.id, communityId)).limit(1);
@@ -29,7 +29,7 @@ export async function communityAccessFor(communityId: string, viewerId: string |
 
 export function canReadCommunityContent(c: CommunityAccess, isMod: boolean): boolean {
   if (isMod) return true;
-  if (c.status === "removed") return false;
+  if (c.status !== "published") return false;
   if (c.memberStatus === "banned") return false;
   return c.access === "public" || c.memberStatus === "active";
 }
@@ -41,6 +41,7 @@ export function canReadCommunityContent(c: CommunityAccess, isMod: boolean): boo
 export async function canViewPost(viewer: ViewerLike, p: PostLike): Promise<boolean> {
   const isMod = viewer?.role === "admin" || viewer?.role === "moderator";
   const isAuthor = viewer?.id === p.authorId;
+  if (p.status === "draft") return isAuthor;
   if (p.status === "removed") return isAuthor || isMod;
   if (isAuthor || isMod) return true;
   if (viewer && (await isBlockedEitherWay(viewer.id, p.authorId))) return false;
@@ -55,6 +56,6 @@ export async function canViewPost(viewer: ViewerLike, p: PostLike): Promise<bool
 
 /** Interações (curtir, comentar…) exigem poder ver o post e não estar removido. */
 export async function canInteractWithPost(viewer: ViewerLike, p: PostLike): Promise<boolean> {
-  if (!viewer || p.status === "removed") return false;
+  if (!viewer || p.status !== "published") return false;
   return canViewPost(viewer, p);
 }

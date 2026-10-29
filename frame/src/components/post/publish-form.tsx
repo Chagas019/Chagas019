@@ -1,8 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import { GraduationCap, ImageIcon, MessagesSquare, Plus, Sparkles, Trash2 } from "lucide-react";
+import { useRef, useState, useTransition } from "react";
+import { Eye, GraduationCap, ImageIcon, MessagesSquare, Plus, Sparkles, Trash2 } from "lucide-react";
+import { Dialog } from "@/components/ui/dialog";
+import { RichText } from "@/components/ui/rich-text";
+import { extractHashtags } from "@/lib/text";
+import { CreditsEditor, cleanCredits, type CreditDraft } from "./credits-editor";
 import { Button } from "@/components/ui/button";
 import { ChipGroup } from "@/components/ui/chips";
 import { Field, Input, Select, Switch, Textarea } from "@/components/ui/field";
@@ -37,7 +41,11 @@ export function PublishForm({ initialKind, community, viewerId }: { initialKind:
   const [visibility, setVisibility] = useState<"public" | "followers" | "private">("public");
   const [collab, setCollab] = useState(false);
   const [hideTech, setHideTech] = useState(false);
-  const [credits, setCredits] = useState<{ name: string; role: string }[]>([]);
+  const [credits, setCredits] = useState<CreditDraft[]>([]);
+  const [commentsEnabled, setCommentsEnabled] = useState(true);
+  const [preview, setPreview] = useState<{ title: string; body: string } | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const draftRef = useRef(false);
   const [steps, setSteps] = useState<{ title: string; body: string }[]>([{ title: "", body: "" }]);
   const [resources, setResources] = useState<{ label: string; url: string }[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -49,6 +57,8 @@ export function PublishForm({ initialKind, community, viewerId }: { initialKind:
 
   function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const asDraft = draftRef.current;
+    draftRef.current = false;
     const fd = new FormData(e.currentTarget);
     const done = items.filter((i) => i.status === "done" && i.mediaId);
     if (needsMedia && done.length === 0) return setErrors({ media: "Adicione pelo menos uma imagem ou vídeo." });
@@ -66,6 +76,9 @@ export function PublishForm({ initialKind, community, viewerId }: { initialKind:
       isCollaborative: collab,
       communityId: community?.id ?? null,
       alts: done.map((d) => d.alt),
+      credits: cleanCredits(credits),
+      commentsEnabled,
+      draft: asDraft,
       showcase:
         kind === "showcase"
           ? {
@@ -76,7 +89,7 @@ export function PublishForm({ initialKind, community, viewerId }: { initialKind:
               software: splitList(String(fd.get("software") ?? "")),
               presetName: String(fd.get("presetName") ?? ""),
               editParams: String(fd.get("editParams") ?? ""),
-              credits: credits.filter((c) => c.name && c.role),
+              credits: [],
               portfolioUrl: String(fd.get("portfolioUrl") ?? ""),
               hideTechnical: hideTech,
             }
@@ -104,13 +117,13 @@ export function PublishForm({ initialKind, community, viewerId }: { initialKind:
         toast.show(r.error, "error");
         return;
       }
-      toast.show(r.message ?? "Publicado!");
-      router.push(`/p/${r.data.id}`);
+      toast.show(asDraft ? "Rascunho salvo. Só você vê." : "Publicado! Seu trabalho já está no FRAME.");
+      router.push(asDraft ? "/rascunhos" : `/p/${r.data.id}`);
     });
   }
 
   return (
-    <form onSubmit={submit} className="space-y-10" noValidate>
+    <form ref={formRef} onSubmit={submit} className="space-y-10" noValidate>
       <fieldset>
         <legend className="mb-3 text-sm font-medium text-fog-300">O que você vai publicar?</legend>
         <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
@@ -154,7 +167,7 @@ export function PublishForm({ initialKind, community, viewerId }: { initialKind:
           <Input id="title" name="title" maxLength={140} required invalid={!!errors.title} />
         </Field>
         <Field label={kind === "tutorial" ? "Introdução" : "Descrição"} id="body" optional error={errors.body}>
-          <Textarea id="body" name="body" maxLength={5000} rows={4} />
+          <Textarea id="body" name="body" maxLength={5000} rows={4} placeholder="Conte a história do trabalho. Use #hashtags e @mencione quem participou." />
         </Field>
         <div className="space-y-2">
           <p className="text-sm font-medium text-fog-200">Categorias <span className="text-xs font-normal text-fog-500">até 5</span></p>
@@ -216,21 +229,6 @@ export function PublishForm({ initialKind, community, viewerId }: { initialKind:
           <Field label="Parâmetros de edição" id="editParams" optional hint="Ex.: exposição +0,3; curvas em S suave; HSL laranja -10">
             <Textarea id="editParams" name="editParams" rows={3} maxLength={2000} />
           </Field>
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-fog-200">Créditos</p>
-            {credits.map((c, i) => (
-              <div key={i} className="flex gap-2">
-                <Input aria-label="Nome" placeholder="Nome" value={c.name} onChange={(e) => setCredits((cs) => cs.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)))} />
-                <Input aria-label="Função" placeholder="Função (modelo, assistente…)" value={c.role} onChange={(e) => setCredits((cs) => cs.map((x, j) => (j === i ? { ...x, role: e.target.value } : x)))} />
-                <Button type="button" variant="ghost" size="icon" aria-label="Remover crédito" onClick={() => setCredits((cs) => cs.filter((_, j) => j !== i))}>
-                  <Trash2 className="size-4" />
-                </Button>
-              </div>
-            ))}
-            <Button type="button" variant="outline" size="sm" onClick={() => setCredits((cs) => [...cs, { name: "", role: "" }])}>
-              <Plus className="size-4" aria-hidden /> Adicionar crédito
-            </Button>
-          </div>
         </section>
       ) : null}
 
@@ -326,17 +324,80 @@ export function PublishForm({ initialKind, community, viewerId }: { initialKind:
           ))}
         </div>
         {kind !== "discussion" ? (
-          <Switch checked={collab} onChange={setCollab} label="Projeto colaborativo" description="Aparece no filtro de projetos colaborativos. Credite as pessoas envolvidas." />
+          <Switch checked={collab} onChange={setCollab} label="Projeto colaborativo" description="Aparece no filtro de projetos colaborativos. Marcar colaboradores com @ ativa automaticamente." />
         ) : null}
+        <Switch
+          checked={commentsEnabled}
+          onChange={setCommentsEnabled}
+          label="Aceitar comentários e feedback"
+          description="Desligue se quiser só mostrar o trabalho, sem conversa."
+        />
       </section>
+
+      {kind !== "discussion" ? (
+        <section>
+          <CreditsEditor value={credits} onChange={setCredits} error={errors.credits} />
+        </section>
+      ) : null}
 
       <div className="flex flex-col gap-3 border-t border-ink-700 pt-6 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs text-fog-500">Ao publicar, você confirma ter direito de compartilhar este conteúdo. Metadados de localização (GPS) são removidos das fotos; em vídeos ainda não — remova antes de enviar se necessário.</p>
         {errors.form ? <p role="alert" className="text-sm text-danger-400">{errors.form}</p> : null}
-        <Button type="submit" size="lg" loading={pending} disabled={uploading}>
-          {uploading ? "Aguardando envio…" : "Publicar"}
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            type="button"
+            variant="ghost"
+            size="lg"
+            onClick={() => {
+              const fd = new FormData(formRef.current!);
+              setPreview({ title: String(fd.get("title") ?? ""), body: String(fd.get("body") ?? "") });
+            }}
+          >
+            <Eye className="size-4" aria-hidden /> Pré-visualizar
+          </Button>
+          {!community ? (
+            <Button type="submit" variant="secondary" size="lg" disabled={pending || uploading} onClick={() => (draftRef.current = true)}>
+              Salvar rascunho
+            </Button>
+          ) : null}
+          <Button type="submit" size="lg" loading={pending} disabled={uploading}>
+            {uploading ? "Aguardando envio…" : "Publicar"}
+          </Button>
+        </div>
       </div>
+
+      <Dialog open={!!preview} onClose={() => setPreview(null)} title="Pré-visualização">
+        {preview ? (
+          <div className="space-y-4">
+            {items[0] ? (
+              <div className="overflow-hidden rounded-[var(--radius-md)] bg-ink-800">
+                {items[0].kind === "image" ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={items[0].previewUrl} alt={items[0].alt} className="max-h-[50vh] w-full object-contain" />
+                ) : (
+                  <video src={items[0].previewUrl} className="max-h-[50vh] w-full" controls muted />
+                )}
+                {items.length > 1 ? <p className="px-3 py-2 text-xs text-fog-400">+{items.length - 1} na galeria</p> : null}
+              </div>
+            ) : null}
+            <h3 className="font-display text-3xl">{preview.title || "Sem título"}</h3>
+            {preview.body ? <RichText text={preview.body} className="text-sm text-fog-300" /> : null}
+            {extractHashtags(preview.title, preview.body).length ? (
+              <p className="text-xs text-fog-500">Hashtags: {extractHashtags(preview.title, preview.body).map((t) => `#${t}`).join(" ")}</p>
+            ) : null}
+            {cleanCredits(credits).length ? (
+              <ul className="text-sm text-fog-300">
+                {cleanCredits(credits).map((c, i) => (
+                  <li key={i}>
+                    {c.role}: {c.name} {c.handle ? <span className="text-volt-500">@{c.handle}</span> : null}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            <p className="text-xs text-fog-500">{commentsEnabled ? "Comentários abertos" : "Comentários desativados"} · {visibility === "public" ? "Público" : visibility === "followers" ? "Seguidores aprovados" : "Só você"}</p>
+          </div>
+        ) : null}
+      </Dialog>
     </form>
   );
 }

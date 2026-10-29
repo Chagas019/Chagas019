@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Compass, Home, Plus, Swords, User, Users } from "lucide-react";
+import { Compass, Home, Plus, Swords, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getDictionary } from "@/i18n";
 
@@ -48,11 +48,11 @@ export function NavLinks({ aiEnabled }: { aiEnabled: boolean }) {
 export function MobileNav({ handle }: { handle: string | null }) {
   const pathname = usePathname();
   const items = [
-    { href: "/", label: t.nav.inspiration, icon: Home },
+    { href: "/", label: "Início", icon: Home },
     { href: "/descobrir", label: t.nav.discover, icon: Compass },
     { href: handle ? "/publicar" : "/cadastro", label: t.nav.publish, icon: Plus, primary: true },
     { href: "/desafios", label: t.nav.challenges, icon: Swords },
-    handle ? { href: `/u/${handle}`, label: t.nav.profile, icon: User } : { href: "/comunidades", label: t.nav.communities, icon: Users },
+    handle ? { href: `/u/${handle}`, label: t.nav.profile, icon: User } : { href: "/entrar", label: "Entrar", icon: User },
   ];
   return (
     <nav aria-label="Navegação rápida" className="fixed inset-x-0 bottom-0 z-50 border-t border-white/[0.06] bg-ink-950/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl sm:hidden">

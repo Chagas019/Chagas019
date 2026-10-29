@@ -1,43 +1,141 @@
 import Link from "next/link";
-import { PageHero } from "@/components/ui/page-hero";
-import { eq } from "drizzle-orm";
-import { ArrowRight, Info } from "lucide-react";
+import { and, eq, sql } from "drizzle-orm";
+import { ArrowRight, Hash, Info, TrendingUp } from "lucide-react";
 import { getViewer } from "@/server/session";
-import { creatorsBySpecialty, NEW_TALENT_CRITERIA, newTalents } from "@/server/services/discovery";
+import { creatorsBySpecialty, NEW_TALENT_CRITERIA, newTalents, searchPeople, suggestedCreators, trendingTags } from "@/server/services/discovery";
 import { listCommunities } from "@/server/services/communities";
 import { listChallenges } from "@/server/services/challenges";
-import { listCards } from "@/server/services/posts";
+import { listCards, listPopular, searchPosts } from "@/server/services/posts";
 import { post } from "@/server/db/schema";
 import { CreatorCard } from "@/components/discovery/creator-card";
+import { SearchBox } from "@/components/discovery/search-box";
 import { PostGrid } from "@/components/post/post-card";
 import { Container, EmptyState, SectionTitle } from "@/components/ui/misc";
 import { CATEGORIES, SPECIALTIES } from "@/lib/taxonomy";
 import { cn } from "@/lib/utils";
 
-export const metadata = { title: "Descobrir talentos" };
+export const metadata = { title: "Descobrir" };
 
-export default async function Page({ searchParams }: { searchParams: Promise<{ esp?: string }> }) {
-  const { esp } = await searchParams;
-  const specialty = SPECIALTIES.find((s) => s === esp);
+export default async function Page({ searchParams }: { searchParams: Promise<{ esp?: string; q?: string; cat?: string }> }) {
+  const sp = await searchParams;
+  const specialty = SPECIALTIES.find((s) => s === sp.esp);
+  const q = (sp.q ?? "").trim().slice(0, 80);
+  const cat = CATEGORIES.find((c) => c.slug === sp.cat)?.slug ?? null;
   const viewer = await getViewer();
   const vid = viewer?.id ?? null;
-  const [talents, bySpecialty, communities, challenges, collabs] = await Promise.all([
-    newTalents(vid, 9),
+  const searching = !!q || !!cat;
+  const catWhere = cat ? sql`${post.categories} @> array[${cat}]::text[]` : undefined;
+  const [results, people, tags, popular, recent, talents, suggested, bySpecialty, communities, challenges, collabs] = await Promise.all([
+    searching ? searchPosts(vid, q, cat) : Promise.resolve([]),
+    q ? searchPeople(vid, q) : Promise.resolve([]),
+    trendingTags(7, 12),
+    searching ? Promise.resolve([]) : listPopular(vid, 30, 12),
+    searching ? Promise.resolve([]) : listCards(vid, and(sql`${post.communityId} is null`, sql`${post.kind} <> 'discussion'`, catWhere), 12),
+    searching ? Promise.resolve([]) : newTalents(vid, 6),
+    vid && !searching ? suggestedCreators(vid, 6) : Promise.resolve([]),
     specialty ? creatorsBySpecialty(vid, specialty) : Promise.resolve([]),
-    listCommunities(vid),
-    listChallenges(),
-    listCards(vid, eq(post.isCollaborative, true), 8),
+    searching ? Promise.resolve([]) : listCommunities(vid),
+    searching ? Promise.resolve([]) : listChallenges(),
+    searching ? Promise.resolve([]) : listCards(vid, eq(post.isCollaborative, true), 8),
   ]);
   const openChallenges = challenges.filter((c) => c.phase === "open" || c.phase === "voting").slice(0, 3);
+  const catHref = (slug: string | null) => {
+    const p = new URLSearchParams();
+    if (q) p.set("q", q);
+    if (slug) p.set("cat", slug);
+    return `/descobrir${p.size ? `?${p}` : ""}`;
+  };
 
   return (
     <>
-      <PageHero eyebrow="Descobrir" title="Talentos, projetos e comunidades"
-      >
-        Explore por especialidade e interesse. Aqui ninguém aparece por ter mais seguidores — a rotação é diária e os critérios são públicos.
-      </PageHero>
-      <Container className="space-y-16 py-10">
+      <section className="overflow-x-clip bg-cobalt-500">
+        <Container className="space-y-5 py-8 sm:py-10">
+          <h1 className="font-display text-[clamp(2.6rem,7vw,5rem)] leading-[0.9] text-volt-500">Descobrir</h1>
+          <div className="max-w-2xl">
+            <SearchBox initial={q} category={cat} />
+          </div>
+          <nav aria-label="Áreas criativas" className="scrollbar-none -mx-4 flex min-w-0 gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
+            <Link href={catHref(null)} aria-current={!cat ? "page" : undefined} className={cn("shrink-0 rounded-full px-3.5 py-1.5 text-sm", !cat ? "bg-volt-500 text-ink-950" : "bg-ink-950/30 text-paper hover:bg-ink-950/50")}>
+              Tudo
+            </Link>
+            {CATEGORIES.map((c) => (
+              <Link key={c.slug} href={catHref(c.slug)} aria-current={cat === c.slug ? "page" : undefined} className={cn("shrink-0 rounded-full px-3.5 py-1.5 text-sm", cat === c.slug ? "bg-volt-500 text-ink-950" : "bg-ink-950/30 text-paper hover:bg-ink-950/50")}>
+                {c.label}
+              </Link>
+            ))}
+          </nav>
+        </Container>
+      </section>
+      <Container className="space-y-14 py-10">
+      {tags.length ? (
+        <section className="space-y-3" aria-labelledby="em-alta">
+          <h2 id="em-alta" className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-fog-400">
+            <TrendingUp className="size-4 text-volt-500" aria-hidden /> Em alta nos últimos 7 dias
+          </h2>
+          <ul className="flex flex-wrap gap-2">
+            {tags.map((t) => (
+              <li key={t.tag}>
+                <Link href={`/descobrir?q=${encodeURIComponent("#" + t.tag)}`} className="inline-flex items-center gap-1.5 rounded-full bg-ink-850 px-3.5 py-2 text-sm ring-1 ring-inset ring-white/[0.06] hover:ring-volt-500/60">
+                  <Hash className="size-3.5 text-cobalt-400" aria-hidden />
+                  <span className="font-medium">{t.tag}</span>
+                  <span className="text-xs text-fog-500">{t.posts} {t.posts === 1 ? "publicação" : "publicações"}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
+      {searching ? (
+        <>
+          {people.length ? (
+            <section className="space-y-5">
+              <h2 className="font-display text-3xl">Pessoas</h2>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {people.map((c) => (
+                  <CreatorCard key={c.userId} c={c} signedIn={!!viewer} />
+                ))}
+              </div>
+            </section>
+          ) : null}
+          <section className="space-y-5">
+            <h2 className="font-display text-3xl">
+              {q ? <>Resultados para “{q}”</> : "Trabalhos"}
+              {cat ? <span className="text-fog-500"> · {CATEGORIES.find((c) => c.slug === cat)?.label}</span> : null}
+            </h2>
+            {results.length ? (
+              <PostGrid cards={results} signedIn={!!viewer} viewerId={vid} />
+            ) : (
+              <EmptyState title="Nada encontrado" action={<Link href="/descobrir" className="text-sm text-volt-500 hover:underline">Limpar busca</Link>}>
+                Tente outra palavra, uma #hashtag ou outra área.
+              </EmptyState>
+            )}
+          </section>
+        </>
+      ) : null}
+
+      {!searching && popular.length ? (
+        <section className="space-y-5">
+          <h2 className="font-display text-3xl">Projetos em destaque</h2>
+          <p className="-mt-3 text-sm text-fog-500">Mais curtidos, comentados e salvos nos últimos 30 dias.</p>
+          <PostGrid cards={popular} signedIn={!!viewer} viewerId={vid} />
+        </section>
+      ) : null}
+
+      {suggested.length ? (
+        <section className="space-y-5">
+          <h2 className="font-display text-3xl">Criadores para você</h2>
+          <p className="-mt-3 text-sm text-fog-500">Com base nos interesses que você escolheu.</p>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {suggested.map((c) => (
+              <CreatorCard key={c.userId} c={c} signedIn={!!viewer} />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {!searching ? (
+      <>
       {specialty ? (
         <section className="space-y-5">
           <h2 className="font-display text-3xl">{specialty}</h2>
@@ -78,26 +176,12 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
         </section>
       )}
 
-      <section className="space-y-5">
-        <h2 className="font-display text-3xl">Explorar por interesse</h2>
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          {CATEGORIES.map((c, i) => (
-            <li key={c.slug}>
-              <Link
-                href={`/?f=${c.slug}`}
-                className="group relative flex h-28 items-end overflow-hidden rounded-[var(--radius-md)] bg-ink-850 p-4 transition-colors hover:bg-ink-800"
-              >
-                <span
-                  aria-hidden
-                  className="absolute -right-6 -top-6 size-24 rounded-full opacity-40 blur-2xl transition-opacity group-hover:opacity-70"
-                  style={{ background: i % 2 ? "var(--color-cobalt-500)" : "var(--color-volt-500)" }}
-                />
-                <span className="relative font-display text-xl">{c.label}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {recent.length ? (
+        <section className="space-y-5">
+          <h2 className="font-display text-3xl">Recentes</h2>
+          <PostGrid cards={recent} signedIn={!!viewer} viewerId={vid} />
+        </section>
+      ) : null}
 
       {collabs.length ? (
         <section className="space-y-5">
@@ -106,7 +190,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
         </section>
       ) : null}
 
-      <div className="grid gap-12 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 [&>*]:min-w-0">
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="font-display text-3xl">Comunidades</h2>
@@ -154,6 +238,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ e
           </ul>
         </section>
       </div>
+      </>
+      ) : null}
       </Container>
     </>
   );

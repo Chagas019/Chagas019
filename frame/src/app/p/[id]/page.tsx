@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { AlertTriangle, Clock, ExternalLink, GraduationCap, Lock, Sparkles } from "lucide-react";
+import { AlertTriangle, Clock, ExternalLink, FilePen, GraduationCap, Lock, Sparkles } from "lucide-react";
+import { RichText } from "@/components/ui/rich-text";
+import { ButtonLink } from "@/components/ui/button";
 import { getViewer } from "@/server/session";
 import { getPostDetail, listComments } from "@/server/services/posts";
 import { relationshipState } from "@/server/services/relations";
@@ -62,6 +64,16 @@ export default async function PostPage({ params }: Props) {
           Esta publicação foi removida pela moderação por violar as diretrizes. Só você e a moderação conseguem vê-la.
         </div>
       ) : null}
+      {post.status === "draft" ? (
+        <div role="status" className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-md)] bg-cobalt-500/15 p-4 text-sm text-paper">
+          <span className="flex items-center gap-2">
+            <FilePen className="size-4 shrink-0 text-volt-500" aria-hidden /> Rascunho — só você vê esta publicação.
+          </span>
+          <ButtonLink href={`/p/${post.id}/editar`} size="sm">
+            Revisar e publicar
+          </ButtonLink>
+        </div>
+      ) : null}
 
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-8">
@@ -101,13 +113,24 @@ export default async function PostPage({ params }: Props) {
               ) : null}
             </div>
             <h1 className="font-display text-4xl leading-[1.05] text-balance sm:text-5xl">{post.title}</h1>
-            {post.body ? <p className="max-w-3xl whitespace-pre-line text-pretty text-lg leading-relaxed text-fog-300">{post.body}</p> : null}
+            {post.body ? <RichText text={post.body} className="max-w-3xl text-pretty text-lg leading-relaxed text-fog-300" /> : null}
+            {post.tags.length ? (
+              <ul className="flex flex-wrap gap-x-3 gap-y-1 text-sm" aria-label="Hashtags">
+                {post.tags.map((t) => (
+                  <li key={t}>
+                    <Link href={`/descobrir?q=${encodeURIComponent("#" + t)}`} className="text-cobalt-400 hover:text-volt-500">
+                      #{t}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
             <div className="flex flex-wrap items-center gap-1 border-y border-ink-700 py-2">
               <LikeButton postId={post.id} initialLiked={detail.liked} initialCount={post.likeCount} signedIn={!!viewer} />
               <SaveButton postId={post.id} initialSaved={detail.saved} signedIn={!!viewer} />
               {viewer ? <CollectionPicker postId={post.id} collections={collections} /> : null}
               <ShareButton title={post.title} path={`/p/${post.id}`} />
-              <div className="ml-auto">{isOwner ? <OwnerControls postId={post.id} visibility={post.visibility} /> : viewer ? <ReportButton targetType="post" targetId={post.id} /> : null}</div>
+              <div className="ml-auto">{isOwner ? <OwnerControls postId={post.id} visibility={post.visibility} pinned={!!post.pinnedAt} canPin={post.status === "published" && post.visibility === "public" && post.kind !== "discussion"} /> : viewer ? <ReportButton targetType="post" targetId={post.id} /> : null}</div>
             </div>
           </header>
 
@@ -153,7 +176,7 @@ export default async function PostPage({ params }: Props) {
             </section>
           ) : null}
 
-          <Comments postId={post.id} comments={comments} viewerId={viewer?.id ?? null} postAuthorId={post.authorId} />
+          <Comments postId={post.id} comments={comments} viewerId={viewer?.id ?? null} postAuthorId={post.authorId} enabled={post.commentsEnabled && post.status === "published"} />
         </div>
 
         <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
@@ -197,6 +220,26 @@ export default async function PostPage({ params }: Props) {
                   <p className="mt-2 whitespace-pre-line font-mono text-xs leading-relaxed text-fog-400">{showcase.editParams}</p>
                 </details>
               ) : null}
+            </div>
+          ) : null}
+
+          {post.credits.length ? (
+            <div className="rounded-[var(--radius-lg)] bg-ink-850 p-5">
+              <h2 className="text-sm font-semibold uppercase tracking-[0.14em] text-fog-400">Quem fez</h2>
+              <ul className="mt-3 space-y-2 text-sm">
+                {post.credits.map((c, i) => (
+                  <li key={i} className="flex items-baseline justify-between gap-3">
+                    {c.handle ? (
+                      <Link href={`/u/${c.handle}`} className="font-medium text-paper hover:text-volt-500">
+                        {c.name} <span className="text-xs text-volt-500">@{c.handle}</span>
+                      </Link>
+                    ) : (
+                      <span className="text-fog-200">{c.name}</span>
+                    )}
+                    <span className="shrink-0 text-xs uppercase tracking-[0.1em] text-fog-500">{c.role}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           ) : null}
 

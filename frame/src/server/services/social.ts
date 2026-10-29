@@ -1,11 +1,12 @@
 import "server-only";
-import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { db } from "../db";
 import { block, collection, comment, follow, mute, post, reaction, report, savedItem, tutorial, tutorialRating, profile } from "../db/schema";
 import { AppError } from "../errors";
 import type { Viewer } from "../session";
 import { collectionSchema, commentSchema, fieldErrors, reportSchema } from "@/lib/validation";
-import { canInteractWithPost } from "./access";
+import { canInteractWithPost, canViewPost } from "./access";
+import { extractMentions } from "@/lib/text";
 import { recordActivation } from "./activation";
 import { notify } from "./notifications";
 import { isBlockedEitherWay } from "./relations";
@@ -44,6 +45,7 @@ export async function addComment(viewer: V, input: unknown) {
   if (!parsed.success) throw new AppError("VALIDATION", undefined, fieldErrors(parsed.error));
   const { postId, parentId, body } = parsed.data;
   const p = await loadInteractablePost(viewer, postId);
+  if (!p.commentsEnabled) throw new AppError("FORBIDDEN", "O autor desativou os comentários desta publicação.");
   await enforceRateLimit(`comment:${viewer.id}`, 20, 60);
 
   let parentAuthor: string | null = null;
@@ -62,6 +64,17 @@ export async function addComment(viewer: V, input: unknown) {
   await notify({ userId: p.authorId, actorId: viewer.id, type: "comment", postId, message: "comentou no seu trabalho" });
   if (parentAuthor && parentAuthor !== p.authorId) {
     await notify({ userId: parentAuthor, actorId: viewer.id, type: "reply", postId, message: "respondeu ao seu comentário" });
+  }
+  const mentioned = extractMentions(body).slice(0, 10);
+  if (mentioned.length) {
+    const rows = await db.select({ userId: profile.userId }).from(profile).where(inArray(profile.handle, mentioned));
+    for (const r of rows) {
+      if (r.userId === p.authorId || r.userId === parentAuthor) continue; // já avisados acima
+      // Só avisa quem consegue ver a publicação.
+      if (await canViewPost({ id: r.userId, role: "user" }, p)) {
+        await notify({ userId: r.userId, actorId: viewer.id, type: "mention", postId, message: "mencionou você em um comentário" });
+      }
+    }
   }
   return created;
 }
@@ -247,4 +260,18 @@ export async function rateTutorial(viewer: V, postId: string, helpful: boolean) 
       .set({ helpfulCount: sql`(select count(*)::int from tutorial_rating where post_id = ${postId} and helpful)` })
       .where(eq(tutorial.postId, postId));
   });
+}
+
+/** Coleção visível para o dono ou, se pública, para todos. */
+export async function getCollection(viewerId: string | null, id: string) {
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
+  const [c] = await db
+    .select({ id: collection.id, name: collection.name, description: collection.description, isPublic: collection.isPublic, ownerId: collection.ownerId, ownerHandle: profile.handle, ownerName: profile.displayName })
+    .from(collection)
+    .innerJoin(profile, eq(profile.userId, collection.ownerId))
+    .where(eq(collection.id, id))
+    .limit(1);
+  if (!c || (!c.isPublic && c.ownerId !== viewerId)) return null;
+  if (viewerId && viewerId !== c.ownerId && (await isBlockedEitherWay(viewerId, c.ownerId))) return null;
+  return c;
 }

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Layers, MessageCircle, Play, SplitSquareHorizontal, GraduationCap, Sparkles, Lock, Users } from "lucide-react";
 import type { PostCard as Card } from "@/server/services/posts";
 import { Avatar } from "@/components/ui/misc";
+import { CardMenu } from "./card-menu";
 import { LikeButton } from "./like-button";
 import { compactNumber, mediaUrl } from "@/lib/utils";
 import { labelOf, LAB_TOPICS, LEVELS } from "@/lib/taxonomy";
@@ -18,7 +19,7 @@ function Tag({ icon: Icon, children }: { icon: React.ComponentType<{ className?:
   );
 }
 
-export function PostCard({ card, signedIn, priority }: { card: Card; signedIn: boolean; priority?: boolean }) {
+export function PostCard({ card, signedIn, priority, viewerId, onHide }: { card: Card; signedIn: boolean; priority?: boolean; viewerId?: string | null; onHide?: (authorId: string) => void }) {
   const ratio = card.coverWidth && card.coverHeight ? card.coverWidth / card.coverHeight : card.kind === "tutorial" ? 4 / 3 : 4 / 5;
   const clamped = Math.min(Math.max(ratio, 0.6), 1.8);
   return (
@@ -64,28 +65,29 @@ export function PostCard({ card, signedIn, priority }: { card: Card; signedIn: b
           </div>
         </div>
       </Link>
-      <div className="mt-2 flex items-center gap-2 px-0.5">
+      <div className="mt-2 flex items-center gap-1.5 px-0.5 sm:gap-2">
         <Link href={`/u/${card.authorHandle}`} className="flex min-w-0 flex-1 items-center gap-2 text-sm text-fog-300 hover:text-paper">
           <Avatar mediaId={card.authorAvatar} name={card.authorName} size={22} />
           <span className="truncate">{card.authorName}</span>
         </Link>
         <LikeButton postId={card.id} initialLiked={card.liked} initialCount={card.likeCount} signedIn={signedIn} compact />
         {card.commentCount > 0 ? (
-          <span className="inline-flex items-center gap-1 text-sm text-fog-500" aria-label={`${card.commentCount} comentários`}>
+          <span className="hidden items-center gap-1 text-sm text-fog-500 sm:inline-flex" aria-label={`${card.commentCount} comentários`}>
             <MessageCircle className="size-4" aria-hidden />
             {compactNumber(card.commentCount)}
           </span>
         ) : null}
+        <CardMenu postId={card.id} authorId={card.authorId} authorHandle={card.authorHandle} signedIn={signedIn} isOwn={!!viewerId && viewerId === card.authorId} onHide={onHide} />
       </div>
     </article>
   );
 }
 
-export function PostGrid({ cards, signedIn }: { cards: Card[]; signedIn: boolean }) {
+export function PostGrid({ cards, signedIn, viewerId, onHide }: { cards: Card[]; signedIn: boolean; viewerId?: string | null; onHide?: (authorId: string) => void }) {
   return (
     <div className="columns-2 gap-4 sm:gap-5 md:columns-3 xl:columns-4 2xl:columns-5">
       {cards.map((c, i) => (
-        <PostCard key={c.id} card={c} signedIn={signedIn} priority={i < 4} />
+        <PostCard key={c.id} card={c} signedIn={signedIn} priority={i < 4} viewerId={viewerId} onHide={onHide} />
       ))}
     </div>
   );

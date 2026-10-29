@@ -89,3 +89,51 @@ export async function suggestedCreators(viewerId: string, limit = 9) {
   const [p] = await db.select({ interests: profile.interests }).from(profile).where(eq(profile.userId, viewerId)).limit(1);
   return creators(viewerId, { interests: p?.interests ?? [], limit });
 }
+
+/** Hashtags mais usadas em publicações públicas no período (contagem real, nunca estimada). */
+export async function trendingTags(days = 7, limit = 12): Promise<{ tag: string; posts: number }[]> {
+  const rows = await db.execute<{ tag: string; posts: number }>(sql`
+    select t.tag, count(*)::int as posts
+    from post p, unnest(p.tags) as t(tag)
+    where p.status = 'published' and p.visibility = 'public' and p.community_id is null
+      and p.created_at > now() - make_interval(days => ${days})
+    group by t.tag
+    order by posts desc, max(p.created_at) desc
+    limit ${limit}`);
+  return rows.map((r) => ({ tag: r.tag, posts: Number(r.posts) }));
+}
+
+/** Busca de pessoas por @usuário, nome ou especialidade. */
+export async function searchPeople(viewerId: string | null, q: string, limit = 12): Promise<CreatorCard[]> {
+  const term = q.trim().replace(/^@/, "");
+  if (term.length < 2 || term.startsWith("#")) return [];
+  const hidden = viewerId ? await hiddenAuthorIds(viewerId) : [];
+  const like = `%${term.replace(/[\\%_]/g, (c) => "\\" + c)}%`;
+  const rows = await db
+    .select({
+      userId: profile.userId,
+      handle: profile.handle,
+      displayName: profile.displayName,
+      avatarMediaId: profile.avatarMediaId,
+      specialties: profile.specialties,
+      followerCount: profile.followerCount,
+      availableForWork: profile.availableForWork,
+      isNew: sql<boolean>`(${user.createdAt} > now() - interval '45 days' or ${profile.followerCount} < 50)`,
+      previews: sql<string[]>`array(select m.id from media m join post p on p.id = m.post_id where p.author_id = ${profile.userId} and p.status = 'published' and p.visibility = 'public' and p.community_id is null and m.purpose = 'post' and m.kind = 'image' and m.position = 0 order by p.created_at desc limit 3)`,
+      following: viewerId
+        ? sql<boolean>`exists (select 1 from follow f where f.follower_id = ${viewerId} and f.following_id = ${profile.userId})`
+        : sql<boolean>`false`,
+    })
+    .from(profile)
+    .innerJoin(user, eq(user.id, profile.userId))
+    .where(
+      and(
+        sql`${profile.onboardedAt} is not null`,
+        sql`(${profile.handle} ilike ${like} or ${profile.displayName} ilike ${like} or array_to_string(${profile.specialties}, ' ') ilike ${like})`,
+        hidden.length ? notInArray(profile.userId, hidden) : undefined,
+      ),
+    )
+    .orderBy(sql`(${profile.handle} = ${term.toLowerCase()}) desc`, sql`(${profile.handle} ilike ${term.toLowerCase() + "%"}) desc`, desc(profile.followerCount))
+    .limit(limit);
+  return rows;
+}

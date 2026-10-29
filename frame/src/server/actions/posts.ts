@@ -17,7 +17,7 @@ export async function createPostAction(input: unknown, files: { mediaIds: string
     revalidatePath("/");
     revalidatePath(`/u/${viewer.handle}`);
     return created;
-  }, "Publicado! Seu trabalho já está no FRAME.");
+  });
 }
 
 export async function deletePostAction(postId: string) {
@@ -41,4 +41,25 @@ export async function loadFeedAction(filter: string, cursor: string | null) {
     const f = (FEED_FILTERS.some((x) => x.slug === filter) ? filter : "para-voce") as FeedFilter;
     return posts.getFeed(await getViewer(), f, cursor);
   });
+}
+
+export async function updatePostAction(postId: string, input: unknown) {
+  return run(async () => {
+    const viewer = await requireViewer();
+    const r = await posts.updatePost(viewer, postId, input);
+    revalidatePath(`/p/${postId}`);
+    revalidatePath("/");
+    revalidatePath(`/u/${viewer.handle}`);
+    return r;
+  }, "Alterações salvas.");
+}
+
+export async function setPinnedAction(postId: string, pinned: boolean) {
+  return run(async () => {
+    const viewer = await requireViewer();
+    const r = await posts.setPinned(viewer, postId, pinned);
+    revalidatePath(`/u/${viewer.handle}`);
+    revalidatePath(`/p/${postId}`);
+    return r;
+  }, pinned ? "Fixado no seu portfólio." : "Removido do portfólio.");
 }

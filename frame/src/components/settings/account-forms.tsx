@@ -14,6 +14,7 @@ const PREF_LABELS: { key: keyof NotificationPrefs; label: string; description: s
   { key: "follow", label: "Novos seguidores", description: "Quando alguém começa a seguir você." },
   { key: "comment", label: "Comentários", description: "Comentários nos seus trabalhos." },
   { key: "reply", label: "Respostas", description: "Respostas aos seus comentários." },
+  { key: "mention", label: "Menções e marcações", description: "Quando alguém cita você com @ ou marca você nos créditos." },
   { key: "like", label: "Curtidas", description: "Desligado por padrão para evitar ruído." },
   { key: "challenge", label: "Desafios", description: "Início da votação e resultados dos desafios em que você participa." },
   { key: "community", label: "Comunidades", description: "Pedidos de entrada e aprovações." },

@@ -1,10 +1,11 @@
 import "server-only";
 import { and, asc, desc, eq, gt, inArray, isNull, lt, lte, notInArray, sql, type SQL } from "drizzle-orm";
 import { db } from "../db";
-import { comment, community, communityMember, media, post, profile, showcase, tutorial, user } from "../db/schema";
+import { comment, community, communityMember, media, post, profile, showcase, tutorial, user, type Credit } from "../db/schema";
 import { AppError } from "../errors";
 import type { Viewer } from "../session";
-import { fieldErrors, postSchema } from "@/lib/validation";
+import { fieldErrors, postSchema, postUpdateSchema } from "@/lib/validation";
+import { extractHashtags, extractMentions, normalizeTag } from "@/lib/text";
 import { rankFeed, type RankCandidate } from "@/lib/ranking";
 import type { FeedFilter } from "@/lib/taxonomy";
 import { canViewPost, communityAccessFor } from "./access";
@@ -41,6 +42,9 @@ export async function createPost(
     }
   }
 
+  const credits = await resolveCredits(data.credits);
+  const isDraft = data.draft && !data.communityId;
+
   const postId = await db.transaction(async (tx) => {
     // Só aceita mídias do próprio usuário que ainda não pertencem a nenhum post.
     if (allIds.length) {
@@ -62,8 +66,12 @@ export async function createPost(
         categories: data.categories,
         tools: data.tools,
         visibility: data.visibility,
-        isCollaborative: data.isCollaborative,
+        isCollaborative: data.isCollaborative || credits.some((c) => c.handle),
         communityId: data.communityId,
+        tags: extractHashtags(data.title, data.body),
+        credits,
+        commentsEnabled: data.commentsEnabled,
+        status: isDraft ? "draft" : "published",
       })
       .returning({ id: post.id });
     const id = created!.id;
@@ -92,8 +100,112 @@ export async function createPost(
     return id;
   });
 
-  await recordActivation(viewer.id, "first_post");
+  if (!isDraft) {
+    await recordActivation(viewer.id, "first_post");
+    await notifyMentions(viewer.id, postId, data.body, credits);
+  }
   return { id: postId };
+}
+
+/** Mantém só créditos com perfis existentes marcados; o resto vira crédito em texto. */
+async function resolveCredits(input: Credit[]): Promise<Credit[]> {
+  const handles = [...new Set(input.map((c) => c.handle).filter((h): h is string => !!h))];
+  const found = handles.length
+    ? new Set((await db.select({ handle: profile.handle }).from(profile).where(inArray(profile.handle, handles))).map((r) => r.handle))
+    : new Set<string>();
+  return input.map((c) => ({ name: c.name, role: c.role, ...(c.handle && found.has(c.handle) ? { handle: c.handle } : {}) }));
+}
+
+/** Notifica quem foi @mencionado na legenda ou marcado nos créditos (uma vez por pessoa). */
+export async function notifyMentions(actorId: string, postId: string, text: string, credits: Credit[] = [], already: string[] = []) {
+  const handles = [...new Set([...extractMentions(text), ...credits.map((c) => c.handle).filter((h): h is string => !!h)])].filter(
+    (h) => !already.includes(h),
+  );
+  if (!handles.length) return;
+  const rows = await db.select({ userId: profile.userId, handle: profile.handle }).from(profile).where(inArray(profile.handle, handles.slice(0, 20)));
+  const [p] = await db.select().from(post).where(eq(post.id, postId)).limit(1);
+  if (!p) return;
+  const allowed = [];
+  for (const r of rows) if (await canViewPost({ id: r.userId, role: "user" }, p)) allowed.push(r); // não vaza posts privados
+  await Promise.all(
+    allowed.map((r) =>
+      notify({
+        userId: r.userId,
+        actorId,
+        type: "mention",
+        postId,
+        message: credits.some((c) => c.handle === r.handle) ? "marcou você nos créditos de um projeto" : "mencionou você em uma publicação",
+      }),
+    ),
+  );
+}
+
+/** Edita texto, categorias, créditos e visibilidade; publica um rascunho quando `publish`. */
+export async function updatePost(viewer: Pick<Viewer, "id">, postId: string, input: unknown) {
+  const parsed = postUpdateSchema.safeParse(input);
+  if (!parsed.success) throw new AppError("VALIDATION", undefined, fieldErrors(parsed.error));
+  const data = parsed.data;
+  const [p] = await db.select().from(post).where(eq(post.id, postId)).limit(1);
+  if (!p) throw new AppError("NOT_FOUND");
+  if (p.authorId !== viewer.id) throw new AppError("FORBIDDEN");
+  if (p.status === "removed") throw new AppError("FORBIDDEN", "Esta publicação foi removida pela moderação.");
+  const credits = await resolveCredits(data.credits);
+  const publishing = p.status === "draft" && data.publish;
+  await db.transaction(async (tx) => {
+    await tx
+      .update(post)
+      .set({
+        title: data.title,
+        body: data.body,
+        categories: data.categories,
+        tools: data.tools,
+        visibility: data.visibility,
+        isCollaborative: data.isCollaborative || credits.some((c) => c.handle),
+        credits,
+        commentsEnabled: data.commentsEnabled,
+        tags: extractHashtags(data.title, data.body),
+        ...(publishing ? { status: "published" as const, createdAt: new Date() } : {}),
+      })
+      .where(eq(post.id, postId));
+    if (data.alts) {
+      const files = await tx.select({ id: media.id }).from(media).where(and(eq(media.postId, postId), eq(media.purpose, "post"))).orderBy(asc(media.position));
+      for (const [i, f] of files.entries()) if (data.alts[i] !== undefined) await tx.update(media).set({ alt: data.alts[i]! }).where(eq(media.id, f.id));
+    }
+  });
+  if (publishing) {
+    await recordActivation(viewer.id, "first_post");
+    await notifyMentions(viewer.id, postId, data.body, credits);
+  } else if (p.status === "published") {
+    // Só avisa quem foi mencionado/marcado agora, não quem já tinha sido.
+    const before = [...extractMentions(p.body), ...p.credits.map((c) => c.handle).filter((h): h is string => !!h)];
+    await notifyMentions(viewer.id, postId, data.body, credits, before);
+  }
+  return { id: postId, published: publishing || p.status === "published" };
+}
+
+export async function listDrafts(viewerId: string) {
+  return db
+    .select({ id: post.id, title: post.title, updatedAt: post.updatedAt, coverId: coverIdSql, coverKind: coverKindSql })
+    .from(post)
+    .where(and(eq(post.authorId, viewerId), eq(post.status, "draft")))
+    .orderBy(desc(post.updatedAt))
+    .limit(100);
+}
+
+const MAX_PINNED = 6;
+
+/** Fixa/desafixa no portfólio (até 6 destaques). Só posts publicados e públicos. */
+export async function setPinned(viewer: Pick<Viewer, "id">, postId: string, pinned: boolean) {
+  const [p] = await db.select({ authorId: post.authorId, status: post.status, visibility: post.visibility }).from(post).where(eq(post.id, postId)).limit(1);
+  if (!p) throw new AppError("NOT_FOUND");
+  if (p.authorId !== viewer.id) throw new AppError("FORBIDDEN");
+  if (pinned) {
+    if (p.status !== "published" || p.visibility !== "public") throw new AppError("VALIDATION", "Só trabalhos publicados e públicos entram no portfólio.");
+    const [c] = await db.select({ n: sql<number>`count(*)::int` }).from(post).where(and(eq(post.authorId, viewer.id), sql`${post.pinnedAt} is not null`, sql`${post.id} <> ${postId}`));
+    if ((c?.n ?? 0) >= MAX_PINNED) throw new AppError("VALIDATION", `O portfólio tem no máximo ${MAX_PINNED} destaques. Remova um antes.`);
+  }
+  await db.update(post).set({ pinnedAt: pinned ? new Date() : null }).where(eq(post.id, postId));
+  return { pinned };
 }
 
 export async function deletePost(viewer: Pick<Viewer, "id" | "role">, postId: string) {
@@ -167,6 +279,8 @@ function cardSelect(viewerId: string | null) {
     tools: post.tools,
     visibility: post.visibility,
     isCollaborative: post.isCollaborative,
+    tags: post.tags,
+    pinnedAt: post.pinnedAt,
     likeCount: post.likeCount,
     commentCount: post.commentCount,
     saveCount: post.saveCount,
@@ -194,7 +308,7 @@ function cardSelect(viewerId: string | null) {
 
 export type PostCard = Awaited<ReturnType<typeof queryCards>>[number];
 
-async function queryCards(viewerId: string | null, where: SQL | undefined, opts: { limit: number; order?: "recent" | "none" }) {
+async function queryCards(viewerId: string | null, where: SQL | undefined, opts: { limit: number; order?: "recent" | "none"; orderBy?: SQL[] }) {
   const q = db
     .select(cardSelect(viewerId))
     .from(post)
@@ -203,7 +317,55 @@ async function queryCards(viewerId: string | null, where: SQL | undefined, opts:
     .leftJoin(tutorial, eq(tutorial.postId, post.id))
     .where(and(visibleToViewer(viewerId), where))
     .limit(opts.limit);
+  if (opts.orderBy) return q.orderBy(...opts.orderBy);
   return opts.order === "none" ? q : q.orderBy(desc(post.createdAt), desc(post.id));
+}
+
+/** Destaques: mais interação (curtidas + 2×comentários + 2×salvos) no período, com ao menos uma interação. */
+export async function listPopular(viewerId: string | null, days: number, limit: number, where?: SQL): Promise<PostCard[]> {
+  const hidden = viewerId ? await hiddenAuthorIds(viewerId) : [];
+  const score = sql`(${post.likeCount} + 2 * ${post.commentCount} + 2 * ${post.saveCount})`;
+  const rows = await queryCards(
+    viewerId,
+    and(
+      where,
+      hidden.length ? notInArray(post.authorId, hidden) : undefined,
+      sql`${post.communityId} is null`,
+      sql`${post.kind} <> 'discussion'`,
+      sql`${post.createdAt} > now() - make_interval(days => ${days})`,
+      sql`${score} > 0`,
+    ),
+    { limit, orderBy: [sql`${score} desc`, desc(post.createdAt)] },
+  );
+  return rows.map(normalizeCard);
+}
+
+/** Busca em publicações: #hashtag exata ou texto em título, legenda e hashtags. */
+export async function searchPosts(viewerId: string | null, q: string, category: string | null, limit = 48): Promise<PostCard[]> {
+  const hidden = viewerId ? await hiddenAuthorIds(viewerId) : [];
+  const term = q.trim();
+  let match: SQL | undefined;
+  if (term.startsWith("#")) {
+    const tag = normalizeTag(term);
+    if (!tag) return [];
+    match = sql`${post.tags} @> array[${tag}]::text[]`;
+  } else if (term) {
+    const like = `%${term.replace(/[\\%_]/g, (c) => "\\" + c)}%`;
+    const tag = normalizeTag(term);
+    match = sql`(${post.title} ilike ${like} or ${post.body} ilike ${like} or ${post.tools}::text ilike ${like}${tag ? sql` or ${post.tags} @> array[${tag}]::text[]` : sql``})`;
+  }
+  const rows = await queryCards(
+    viewerId,
+    and(
+      match,
+      category ? sql`${post.categories} @> array[${category}]::text[]` : undefined,
+      hidden.length ? notInArray(post.authorId, hidden) : undefined,
+      sql`${post.communityId} is null`,
+      sql`${post.kind} <> 'discussion'`,
+    ),
+    { limit },
+  );
+  return rows.map(normalizeCard);
 }
 
 export async function listCards(viewerId: string | null, where: SQL | undefined, limit = 30): Promise<PostCard[]> {
