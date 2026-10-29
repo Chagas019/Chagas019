@@ -179,7 +179,9 @@ test('primeiro acesso: site vazio, sem dados de exemplo', async ({ page }) => {
 
   // cópia de segurança
   await page.goto('/configuracoes');
-  const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Baixar cópia de segurança' }).click()]);
+  const backup = page.getByRole('button', { name: 'Baixar cópia de segurança' });
+  await backup.evaluate((el) => el.scrollIntoView({ block: 'center' }));
+  const [download] = await Promise.all([page.waitForEvent('download', { timeout: 20_000 }), backup.click()]);
   expect(download.suggestedFilename()).toMatch(/^midiaflow-copia-.*\.json$/);
   expect(errors).toEqual([]);
 });

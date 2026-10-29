@@ -9,6 +9,14 @@
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
+    /* Ao rolar até um campo/botão, ele não fica atrás do cabeçalho nem da barra flutuante do celular. */
+    scroll-padding-top: 5rem;
+    scroll-padding-bottom: 7rem;
+  }
+  @media (min-width: 1024px) {
+    html {
+      scroll-padding-bottom: 1rem;
+    }
   }
   body {
     @apply font-sans text-ink antialiased;
