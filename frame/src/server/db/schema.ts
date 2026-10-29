@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  bigint,
   boolean,
   check,
   index,
@@ -95,7 +96,8 @@ export const rateLimit = pgTable("rate_limit", {
   id: text("id").primaryKey(),
   key: text("key").notNull().unique(),
   count: integer("count").notNull(),
-  lastRequest: integer("last_request").notNull().$type<number>(),
+  /** Timestamp em milissegundos (não cabe em integer). */
+  lastRequest: bigint("last_request", { mode: "number" }).notNull(),
 });
 
 /** Rate limit das ações da aplicação (janela fixa). */

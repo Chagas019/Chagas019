@@ -22,6 +22,13 @@
       "when": 1793242468007,
       "tag": "0002_collab",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793262352030,
+      "tag": "0003_rate_limit_bigint",
+      "breakpoints": true
     }
   ]
 }
