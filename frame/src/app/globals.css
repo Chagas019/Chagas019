@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+/*
+ * FRAME — design system
+ * Base: preto profundo e grafite; destaque: roxo elétrico e azul (usados com parcimônia).
+ * Imagens são protagonistas: superfícies discretas, poucas bordas, tipografia expressiva.
+ */
+@theme {
+  --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+
+  --color-ink-950: #060608;
+  --color-ink-900: #0b0b0f;
+  --color-ink-850: #101016;
+  --color-ink-800: #16161d;
+  --color-ink-750: #1c1c25;
+  --color-ink-700: #24242f;
+  --color-ink-600: #32323f;
+  --color-fog-500: #6e6e7c;
+  --color-fog-400: #9a9aa8;
+  --color-fog-300: #bcbcc8;
+  --color-fog-200: #dcdce4;
+  --color-paper: #f4f3ef;
+
+  --color-volt-300: #c4b5fd;
+  --color-volt-400: #a78bfa;
+  --color-volt-500: #8b5cf6;
+  --color-volt-600: #7c3aed;
+  --color-volt-700: #6d28d9;
+  --color-cobalt-400: #60a5fa;
+  --color-cobalt-500: #3b82f6;
+  --color-ember-400: #fbbf24;
+  --color-mint-400: #5eead4;
+  --color-danger-400: #f87171;
+  --color-danger-500: #ef4444;
+  --color-success-400: #4ade80;
+
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+
+  --shadow-card: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 20px 40px -24px rgb(0 0 0 / 0.8);
+  --shadow-pop: 0 24px 64px -16px rgb(0 0 0 / 0.75), 0 0 0 1px rgb(255 255 255 / 0.06);
+  --shadow-glow: 0 0 0 1px rgb(139 92 246 / 0.5), 0 8px 32px -8px rgb(139 92 246 / 0.45);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-rise: rise 0.5s var(--ease-out-expo) both;
+
+  @keyframes shimmer {
+    from { background-position: -200% 0; }
+    to { background-position: 200% 0; }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  background: var(--color-ink-950);
+  color: var(--color-paper);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100dvh;
+  background:
+    radial-gradient(1200px 600px at 85% -10%, rgb(124 58 237 / 0.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 10%, rgb(59 130 246 / 0.06), transparent 60%),
+    var(--color-ink-950);
+  background-attachment: fixed;
+}
+
+::selection {
+  background: rgb(139 92 246 / 0.45);
+  color: white;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-volt-400);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Grão de filme sutil — reforça a identidade cinematográfica sem pesar. */
+.film-grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--color-ink-800) 0%, var(--color-ink-750) 50%, var(--color-ink-800) 100%);
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
+}
+
+.text-balance { text-wrap: balance; }
+.text-pretty { text-wrap: pretty; }
+
+.scrollbar-none { scrollbar-width: none; }
+.scrollbar-none::-webkit-scrollbar { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

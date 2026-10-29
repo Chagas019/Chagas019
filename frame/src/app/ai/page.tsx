@@ -1,0 +1,27 @@
+import { Sparkles } from "lucide-react";
+import { requireViewerPage } from "@/server/session";
+import { AI_TOOLS, aiConfig, aiQuota } from "@/server/services/ai";
+import { Assistant } from "@/components/ai/assistant";
+import { Container, EmptyState, SectionTitle } from "@/components/ui/misc";
+
+export const metadata = { title: "FRAME AI — assistente criativo" };
+
+export default async function Page() {
+  const viewer = await requireViewerPage("/ai");
+  const cfg = aiConfig();
+  const tools = Object.entries(AI_TOOLS).map(([slug, t]) => ({ slug, label: t.label, hint: t.hint }));
+  return (
+    <Container className="space-y-8 py-10">
+      <SectionTitle eyebrow="FRAME AI" title="Um assistente para pensar, não para criar por você">
+        Ideias de ensaio, roteiros, shot lists, briefings e mais. Não editamos suas imagens com IA — o FRAME AI trabalha com texto.
+      </SectionTitle>
+      {cfg.enabled ? (
+        <Assistant tools={tools} quota={await aiQuota(viewer.id)} />
+      ) : (
+        <EmptyState icon={<Sparkles className="size-6" />} title="FRAME AI ainda não está ativo aqui">
+          A plataforma precisa de uma chave de provedor de IA configurada no servidor (AI_GATEWAY_API_KEY, ANTHROPIC_API_KEY ou OPENAI_API_KEY).
+        </EmptyState>
+      )}
+    </Container>
+  );
+}
