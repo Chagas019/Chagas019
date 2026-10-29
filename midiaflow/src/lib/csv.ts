@@ -13,11 +13,23 @@ export function toCSV(rows: (string | number)[][]) {
     .join('\n');
 }
 
-export function downloadCSV(filename: string, rows: (string | number)[][]) {
-  const blob = new Blob(['﻿' + toCSV(rows)], { type: 'text/csv;charset=utf-8' });
+/** Baixa um arquivo gerado no navegador. O link fica no documento e o endereço só é
+ * liberado depois de um tempo: celulares lentos e o Safari do iPhone precisam disso. */
+export function downloadBlob(filename: string, blob: Blob) {
+  const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
+  a.href = url;
   a.download = filename;
+  a.rel = 'noopener';
+  a.style.display = 'none';
+  document.body.appendChild(a);
   a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  setTimeout(() => {
+    a.remove();
+    URL.revokeObjectURL(url);
+  }, 60_000);
+}
+
+export function downloadCSV(filename: string, rows: (string | number)[][]) {
+  downloadBlob(filename, new Blob(['﻿' + toCSV(rows)], { type: 'text/csv;charset=utf-8' }));
 }

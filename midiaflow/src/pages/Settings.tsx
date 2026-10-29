@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Badge, Button, Card, ConfirmDialog, Field, Input, PageHeader, SectionTitle } from '@/components/ui';
 import { ACCESS_LABEL, useStore } from '@/lib/store';
+import { downloadBlob } from '@/lib/csv';
 import { getInviteCode, regenerateInviteCode } from '@/lib/remote';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import type { AppData, Period } from '@/lib/types';
@@ -94,11 +95,7 @@ export default function Settings() {
               const { example: _e, ...rest } = store;
               void _e;
               const payload = JSON.stringify({ app: 'midiaflow', version: 1, savedAt: new Date().toISOString(), data: pickData(rest) }, null, 2);
-              const a = document.createElement('a');
-              a.href = URL.createObjectURL(new Blob([payload], { type: 'application/json' }));
-              a.download = `midiaflow-copia-${new Date().toISOString().slice(0, 10)}.json`;
-              a.click();
-              setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+              downloadBlob(`midiaflow-copia-${new Date().toISOString().slice(0, 10)}.json`, new Blob([payload], { type: 'application/json' }));
               toast.success('Cópia de segurança baixada.');
             }}>Baixar cópia de segurança</Button>
             <label className="glass inline-flex h-9 cursor-pointer items-center gap-2 rounded-full border border-white/[0.08] px-3.5 text-[13px] hover:bg-white/[0.06]">
