@@ -56,7 +56,7 @@ export function SignUpForm() {
       <label className="flex items-start gap-3 text-sm text-fog-400">
         <input type="checkbox" name="terms" className="mt-0.5 size-4 accent-[var(--color-volt-500)]" />
         <span>
-          Li e aceito os <Link href="/termos" className="text-paper underline underline-offset-4">termos de uso e a política de privacidade</Link>. Só publico o que tenho direito de compartilhar.
+          Li e aceito os <Link href="/termos" className="text-paper underline underline-offset-4">termos de uso</Link>, a <Link href="/privacidade" className="text-paper underline underline-offset-4">política de privacidade</Link> e as <Link href="/diretrizes" className="text-paper underline underline-offset-4">diretrizes</Link>. Só publico o que tenho direito de compartilhar.
         </span>
       </label>
       {errors.terms ? <p className="text-sm text-danger-400">{errors.terms}</p> : null}

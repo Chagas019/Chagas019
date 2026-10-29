@@ -111,7 +111,8 @@ Ainda em aberto (decisões de produto ou infraestrutura):
 - **Site**: https://frame-rede-criativa.vercel.app (projeto Vercel `frame-rede-criativa`, root `frame/`).
 - **Banco**: Neon criado via `neon.new`. **Precisa ser reivindicado na conta Neon em até 72h** pelo link de claim (enviado ao dono do projeto), senão é apagado.
 - **Mídia**: Vercel Blob privado `frame-midia`.
-- **E-mail**: sem provedor ainda — `FRAME_ALLOW_LOG_MAIL=1` faz os links de redefinição de senha irem para os logs da Vercel. Configure `RESEND_API_KEY` e remova essa variável.
+- **E-mail**: sem provedor ainda. Enquanto `RESEND_API_KEY` não existir, a página de recuperação de senha avisa que o recurso não está disponível e orienta a falar com a equipe (`FRAME_CONTACT_EMAIL`). Recursos não configurados (FRAME AI, e-mail) somem da interface em vez de aparecerem quebrados.
+- **Documentos**: Termos de uso, Política de privacidade (LGPD) e Diretrizes da comunidade em `/termos`, `/privacidade` e `/diretrizes`, com rodapé em todas as páginas. Recomenda-se revisão jurídica.
 - **Site limpo**: os dados de demonstração foram removidos (contas, posts, arquivos e comunidades). Resta só o desafio aberto "Uma foto, três edições".
 - O projeto ainda não está ligado ao Git: novas versões são publicadas manualmente (ou conecte o repositório em Settings → Git).
 

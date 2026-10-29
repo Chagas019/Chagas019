@@ -7,7 +7,7 @@ import { Bookmark, Briefcase, MessageSquare, GraduationCap, LogOut, Settings, Sh
 import { Avatar } from "@/components/ui/misc";
 import { authClient } from "@/lib/auth-client";
 
-export function UserMenu({ handle, name, avatar, isModerator }: { handle: string; name: string; avatar: string | null; isModerator: boolean }) {
+export function UserMenu({ handle, name, avatar, isModerator, aiEnabled }: { handle: string; name: string; avatar: string | null; isModerator: boolean; aiEnabled: boolean }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -34,7 +34,7 @@ export function UserMenu({ handle, name, avatar, isModerator }: { handle: string
     { href: "/comunidades", label: "Comunidades", icon: Users, mobileOnly: true },
     { href: "/desafios", label: "Desafios", icon: Swords, mobileOnly: true },
     { href: "/collab", label: "Collab", icon: Briefcase, mobileOnly: true },
-    { href: "/ai", label: "FRAME AI", icon: Sparkles, mobileOnly: true },
+    ...(aiEnabled ? [{ href: "/ai", label: "FRAME AI", icon: Sparkles, mobileOnly: true }] : []),
     { href: "/configuracoes", label: "Configurações", icon: Settings },
     ...(isModerator ? [{ href: "/moderacao", label: "Moderação", icon: Shield }] : []),
   ];

@@ -15,18 +15,20 @@ const LINKS = [
   { href: "/desafios", label: t.nav.challenges },
   { href: "/comunidades", label: t.nav.communities },
   { href: "/collab", label: t.nav.collab },
-  { href: "/ai", label: t.nav.ai },
 ];
+
+const AI_LINK = { href: "/ai", label: t.nav.ai };
 
 function isActive(pathname: string, href: string) {
   return href === "/" ? pathname === "/" : pathname.startsWith(href);
 }
 
-export function NavLinks() {
+export function NavLinks({ aiEnabled }: { aiEnabled: boolean }) {
   const pathname = usePathname();
+  const links = aiEnabled ? [...LINKS, AI_LINK] : LINKS;
   return (
     <nav aria-label="Principal" className="hidden items-center gap-1 lg:flex">
-      {LINKS.map((l) => (
+      {links.map((l) => (
         <Link
           key={l.href}
           href={l.href}

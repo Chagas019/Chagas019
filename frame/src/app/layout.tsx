@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import { Header } from "@/components/shell/header";
+import { Footer } from "@/components/shell/footer";
 import { ToastProvider } from "@/components/ui/toast";
 import "./globals.css";
 
@@ -28,9 +29,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <ToastProvider>
           <Header />
-          <main id="conteudo" className="pb-24 sm:pb-12">
-            {children}
-          </main>
+          <main id="conteudo">{children}</main>
+          <Footer />
         </ToastProvider>
       </body>
     </html>
