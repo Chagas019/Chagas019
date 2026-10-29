@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Bell, CalendarDays, Cloud, CloudOff, GraduationCap, Loader2, ChevronDown, ClipboardList, FileBarChart, LayoutGrid, LogOut, Menu, Plus, Search, Settings, Shapes, Sparkles, Ticket, UserCheck, Users, X,
+  Bell, CalendarDays, Cloud, CloudOff, GraduationCap, Loader2, ChevronDown, ClipboardList, FileBarChart, LayoutGrid, LogOut, Menu, Plus, Search, Settings, Shapes, Sparkles, SquareKanban, Ticket, UserCheck, Users, X,
   type LucideIcon,
 } from 'lucide-react';
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
@@ -20,6 +20,7 @@ export const NAV: NavItem[] = [
   { to: '/minhas-escalas', label: 'Minhas escalas', icon: UserCheck },
   { to: '/escalas', label: 'Escalas', icon: ClipboardList },
   { to: '/calendario', label: 'Calendário', icon: CalendarDays },
+  { to: '/quadro', label: 'Quadro de tarefas', icon: SquareKanban },
   { to: '/equipe', label: 'Equipe', icon: Users, staffOnly: true },
   { to: '/funcoes', label: 'Funções', icon: Shapes },
   { to: '/eventos', label: 'Eventos', icon: Ticket },

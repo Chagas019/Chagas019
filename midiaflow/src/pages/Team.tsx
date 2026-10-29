@@ -306,7 +306,7 @@ function ServoLinkModal({ member, onClose }: { member: Member; onClose: () => vo
   const wa = `https://wa.me/${phone.length >= 10 && phone.length <= 11 ? `55${phone}` : phone.length > 11 ? phone : ''}?text=${encodeURIComponent(text)}`;
   return (
     <Modal open onOpenChange={(o) => !o && onClose()} title="Enviar escalas ao celular" size="sm"
-      description={`${first} recebe um link com ${snap.s.length} ${snap.s.length === 1 ? 'escala futura' : 'escalas futuras'}, sem precisar de cadastro.`}>
+      description={`${first} recebe um link com ${snap.s.length} ${snap.s.length === 1 ? 'escala futura' : 'escalas futuras'}${snap.tk?.length ? ` e ${snap.tk.length} ${snap.tk.length === 1 ? 'tarefa' : 'tarefas'}` : ''}, sem precisar de cadastro.`}>
       <div className="space-y-3">
         <a href={wa} target="_blank" rel="noopener noreferrer" aria-disabled={!link} className={buttonClass('primary', 'md', cn('w-full', !link && 'pointer-events-none opacity-50'))}>
           <MessageCircle className="h-4 w-4" />Enviar pelo WhatsApp

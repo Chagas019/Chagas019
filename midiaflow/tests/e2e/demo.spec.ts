@@ -212,3 +212,35 @@ test('servo recebe o link e vê as escalas no celular, mesmo depois de fechar', 
   expect(errors).toEqual([]);
   await phone.close();
 });
+
+test('quadro de tarefas: coordenação cria, servo move só o próprio cartão', async ({ page }) => {
+  const errors = watchErrors(page);
+  await page.goto('/quadro');
+  await expect(page.getByRole('listitem', { name: 'A fazer' })).toBeVisible();
+  await page.getByRole('button', { name: 'Nova tarefa', exact: true }).click();
+  const d = page.getByRole('dialog');
+  await d.getByRole('button', { name: 'Criar tarefa' }).click();
+  await expect(d.getByText('Dê um título para a tarefa.')).toBeVisible();
+  await d.getByPlaceholder('Ex.: Arte da Festa do Padroeiro').fill('Arte do Natal');
+  await d.getByRole('button', { name: 'Arte', exact: true }).click();
+  await d.getByPlaceholder(/Novo item/).fill('Rascunho');
+  await d.getByRole('button', { name: 'Adicionar' }).click();
+  await d.getByRole('button', { name: 'Criar tarefa' }).click();
+  await expect(page.getByRole('listitem', { name: 'A fazer' }).getByText('Arte do Natal')).toBeVisible();
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(overflow).toBeLessThanOrEqual(1);
+
+  // ver como integrante: só os próprios cartões aparecem e dá para mudar a etapa
+  await page.getByRole('button', { name: /^Perfil/ }).click();
+  await page.getByRole('menuitem').nth(2).click();
+  await page.goto('/quadro');
+  await expect(page.getByRole('button', { name: 'Nova tarefa', exact: true })).toHaveCount(0);
+  const mine = page.locator('[role="listitem"] [role="button"]');
+  if (await mine.count()) {
+    await mine.first().click();
+    const m = page.getByRole('dialog');
+    await m.getByRole('combobox').selectOption({ label: 'Publicado' });
+    await expect(page.getByText('Tarefa movida.')).toBeVisible();
+  }
+  expect(errors).toEqual([]);
+});

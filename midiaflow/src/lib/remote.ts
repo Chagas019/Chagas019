@@ -1,3 +1,4 @@
+import { normalizeBoard } from './board';
 import { DEFAULT_ROLES } from './demo-data';
 import { supabase } from './supabase';
 import type { AccessLevel, AppData, Member } from './types';
@@ -18,6 +19,7 @@ const ERRORS: Record<string, string> = {
   member_with_account_removed: 'Não é possível remover um integrante que tem conta. Marque como inativo.',
   not_found: 'Escala não encontrada.',
   not_your_slot: 'Esta vaga não é sua.',
+  not_your_card: 'Esta tarefa não é sua.',
   invalid_status: 'Resposta inválida.',
 };
 
@@ -88,6 +90,7 @@ export async function fetchParish(profile: Profile): Promise<RemoteSnapshot> {
       notifications: stored.notifications ?? [],
       audit: stored.audit ?? [],
       announcements: stored.announcements ?? [],
+      board: normalizeBoard(stored.board),
       currentUserId: profile.member_id,
     },
   };
@@ -110,6 +113,12 @@ export async function saveContact(parishId: string, memberId: string, email: str
 
 export async function respondRemote(scheduleId: string, slotId: string, status: string, note?: string): Promise<number> {
   const { data, error } = await db().rpc('respond_assignment', { p_schedule_id: scheduleId, p_slot_id: slotId, p_status: status, p_note: note ?? null });
+  if (error) fail(error);
+  return data as number;
+}
+
+export async function updateMyCard(cardId: string, columnId: string, checklist: { id: string; done: boolean }[]): Promise<number> {
+  const { data, error } = await db().rpc('update_my_card', { p_card_id: cardId, p_column_id: columnId, p_checklist: checklist.map((k) => ({ id: k.id, done: k.done })) });
   if (error) fail(error);
   return data as number;
 }

@@ -12,6 +12,8 @@ export interface ServoSnapshot {
   /** Quando o link foi gerado */
   at: string;
   s: ServoItem[];
+  /** Tarefas do quadro ainda não concluídas: título, etapa e prazo */
+  tk?: { t: string; col: string; due?: string }[];
 }
 
 export interface ServoItem {
@@ -29,7 +31,7 @@ export interface ServoItem {
 
 export const SERVO_KEY = 'midiaflow:servo:v1';
 
-export function buildSnapshot(data: Pick<AppData, 'parish' | 'members' | 'roles' | 'schedules'>, memberId: string): ServoSnapshot {
+export function buildSnapshot(data: Pick<AppData, 'parish' | 'members' | 'roles' | 'schedules'> & Partial<Pick<AppData, 'board'>>, memberId: string): ServoSnapshot {
   const today = toISODate(new Date());
   const member = data.members.find((m) => m.id === memberId);
   const name = (id: string | null) => data.members.find((m) => m.id === id)?.name ?? '';
@@ -55,7 +57,14 @@ export function buildSnapshot(data: Pick<AppData, 'parish' | 'members' | 'roles'
         }),
     )
     .sort((a, b) => (a.d + a.st).localeCompare(b.d + b.st));
-  return { v: 1, p: data.parish.name, pc: data.parish.pascomName, n: member?.name ?? '', at: new Date().toISOString(), s: items };
+  const cols = data.board?.columns ?? [];
+  const last = cols[cols.length - 1]?.id;
+  const tk = (data.board?.cards ?? [])
+    .filter((c) => c.assigneeIds.includes(memberId) && c.columnId !== last)
+    .map((c) => ({ t: c.title, col: cols.find((x) => x.id === c.columnId)?.title ?? '', ...(c.due ? { due: c.due } : {}) }));
+  const snap: ServoSnapshot = { v: 1, p: data.parish.name, pc: data.parish.pascomName, n: member?.name ?? '', at: new Date().toISOString(), s: items };
+  if (tk.length) snap.tk = tk;
+  return snap;
 }
 
 const toB64url = (bytes: Uint8Array) => {

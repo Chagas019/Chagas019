@@ -192,5 +192,5 @@ function InviteCard({ isAdmin }: { isAdmin: boolean }) {
 
 const pickData = (s: AppData): AppData => ({
   parish: s.parish, roles: s.roles, members: s.members, schedules: s.schedules, events: s.events,
-  notifications: s.notifications, audit: s.audit, announcements: s.announcements, currentUserId: s.currentUserId,
+  notifications: s.notifications, audit: s.audit, announcements: s.announcements, board: s.board, currentUserId: s.currentUserId,
 });

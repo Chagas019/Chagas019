@@ -1,11 +1,14 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { toast } from 'sonner';
+import { moveCard, normalizeBoard } from './board';
 import { buildDemoData } from './demo-data';
-import { fetchParish, RemoteError, respondRemote, saveContact, saveParish, subscribeParish, updateMyAvailability, type Profile, type RemoteSnapshot } from './remote';
+import { fetchParish, RemoteError, respondRemote, saveContact, saveParish, subscribeParish, updateMyAvailability, updateMyCard, type Profile, type RemoteSnapshot } from './remote';
 import type {
   AccessLevel,
   Announcement,
   AppData,
+  BoardCard,
+  BoardColumn,
   AppNotification,
   AuditEntry,
   Member,
@@ -45,7 +48,10 @@ function load(): AppData | null {
   const example = isExampleMode();
   try {
     const raw = localStorage.getItem(example ? EXAMPLE_KEY : KEY);
-    if (raw) return JSON.parse(raw) as AppData;
+    if (raw) {
+      const d = JSON.parse(raw) as AppData;
+      return { ...d, board: normalizeBoard(d.board) };
+    }
   } catch {
     /* armazenamento indisponível */
   }
@@ -67,11 +73,12 @@ export type Permission =
   | 'manage:team'
   | 'manage:events'
   | 'view:contacts'
-  | 'view:reports';
+  | 'view:reports'
+  | 'manage:board';
 
 const MATRIX: Record<AccessLevel, Permission[]> = {
-  admin: ['manage:parish', 'manage:users', 'manage:schedules', 'manage:team', 'manage:events', 'view:contacts', 'view:reports'],
-  coordenador: ['manage:schedules', 'manage:team', 'manage:events', 'view:contacts', 'view:reports'],
+  admin: ['manage:parish', 'manage:users', 'manage:schedules', 'manage:team', 'manage:events', 'view:contacts', 'view:reports', 'manage:board'],
+  coordenador: ['manage:schedules', 'manage:team', 'manage:events', 'view:contacts', 'view:reports', 'manage:board'],
   integrante: [],
 };
 
@@ -120,6 +127,13 @@ interface Store extends AppData {
   markAllRead: () => void;
   markRead: (id: string) => void;
   addAnnouncement: (a: Omit<Announcement, 'id' | 'createdAt' | 'author'>) => void;
+  /** Quadro: a coordenação edita tudo; o integrante move e marca o checklist dos próprios cartões. */
+  canWorkOn: (card: BoardCard) => boolean;
+  saveCard: (c: BoardCard) => void;
+  deleteCard: (id: string) => void;
+  moveCard: (cardId: string, columnId: string, index: number) => void;
+  toggleCardItem: (cardId: string, itemId: string) => void;
+  saveColumns: (cols: BoardColumn[]) => void;
   switchUser: (memberId: string) => void;
   updateParish: (p: Parish) => void;
   resetDemo: () => void;
@@ -457,6 +471,66 @@ function StoreInner({ children, remote, initialLocal }: { children: ReactNode; r
           { kind: 'aviso', title: a.title, body: a.body },
         ),
 
+      canWorkOn: (card) => isStaff || card.assigneeIds.includes(me.id),
+
+      saveCard: (c) => {
+        if (!isStaff) return;
+        const exists = data.board.cards.some((x) => x.id === c.id);
+        mutate(
+          (d) => ({ ...d, board: { ...d.board, cards: exists ? d.board.cards.map((x) => (x.id === c.id ? c : x)) : [...d.board.cards, c] } }),
+          { action: exists ? 'editou' : 'criou', entity: 'quadro', entityId: c.id, summary: `${exists ? 'Editou' : 'Criou'} a tarefa “${c.title}”.` },
+          exists || !c.assigneeIds.length ? undefined : { kind: 'sistema', title: 'Nova tarefa no quadro', body: `${c.title} — ${c.assigneeIds.map(memberName).join(', ')}` },
+        );
+      },
+
+      deleteCard: (id) => {
+        if (!isStaff) return;
+        const c = data.board.cards.find((x) => x.id === id);
+        mutate((d) => ({ ...d, board: { ...d.board, cards: d.board.cards.filter((x) => x.id !== id) } }), {
+          action: 'excluiu', entity: 'quadro', entityId: id, summary: `Excluiu a tarefa “${c?.title ?? id}”.`,
+        });
+      },
+
+      moveCard: (cardId, columnId, index) => {
+        const c = data.board.cards.find((x) => x.id === cardId);
+        if (!c || !(isStaff || c.assigneeIds.includes(me.id))) return;
+        const col = data.board.columns.find((x) => x.id === columnId)?.title ?? '';
+        const log = c.columnId !== columnId ? { action: 'editou' as const, entity: 'quadro' as const, entityId: cardId, summary: `Moveu “${c.title}” para ${col}.` } : undefined;
+        if (remote && !isStaff) {
+          mutate((d) => ({ ...d, board: moveCard(d.board, cardId, columnId, index) }), undefined, undefined, false);
+          const next = data.board.cards.find((x) => x.id === cardId)!;
+          void updateMyCard(cardId, columnId, next.checklist)
+            .then((v) => { versionRef.current = v; return refresh(); })
+            .catch(async (e) => { toast.error((e as Error).message); await refresh(); });
+          return;
+        }
+        mutate((d) => ({ ...d, board: moveCard(d.board, cardId, columnId, index) }), log);
+      },
+
+      toggleCardItem: (cardId, itemId) => {
+        const c = data.board.cards.find((x) => x.id === cardId);
+        if (!c || !(isStaff || c.assigneeIds.includes(me.id))) return;
+        const checklist = c.checklist.map((k) => (k.id === itemId ? { ...k, done: !k.done } : k));
+        const apply = (d: AppData) => ({ ...d, board: { ...d.board, cards: d.board.cards.map((x) => (x.id === cardId ? { ...x, checklist } : x)) } });
+        if (remote && !isStaff) {
+          mutate(apply, undefined, undefined, false);
+          void updateMyCard(cardId, c.columnId, checklist)
+            .then((v) => { versionRef.current = v; return refresh(); })
+            .catch(async (e) => { toast.error((e as Error).message); await refresh(); });
+          return;
+        }
+        mutate(apply);
+      },
+
+      saveColumns: (cols) => {
+        if (!isStaff || !cols.length) return;
+        const ids = new Set(cols.map((c) => c.id));
+        mutate(
+          (d) => ({ ...d, board: { ...d.board, columns: cols, cards: d.board.cards.map((c) => (ids.has(c.columnId) ? c : { ...c, columnId: cols[0].id })) } }),
+          { action: 'editou', entity: 'quadro', entityId: '', summary: 'Alterou as colunas do quadro.' },
+        );
+      },
+
       switchUser: (memberId) => { if (!remote) setData((d) => ({ ...d, currentUserId: memberId })); },
 
       updateParish: (p) =>
@@ -469,7 +543,7 @@ function StoreInner({ children, remote, initialLocal }: { children: ReactNode; r
       },
       importData: (d) => {
         if (remote) return;
-        setData({ ...d, example: data.example });
+        setData({ ...d, board: normalizeBoard(d.board), example: data.example });
       },
     };
   }, [data, me, mutate, remote, sync, refresh, flush, isStaff]);

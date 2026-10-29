@@ -1,5 +1,6 @@
 import { addDays, startOfWeek, subDays } from 'date-fns';
 import type { AppData, Member, ParishEvent, Role, Schedule, Slot, SlotStatus } from './types';
+import { emptyBoard } from './board';
 import { toISODate } from './utils';
 
 /**
@@ -70,6 +71,7 @@ export function buildEmptyData(p: { parish: string; city: string; pascom: string
     ],
     audit: [],
     announcements: [],
+    board: emptyBoard(),
     currentUserId: id,
   };
 }
@@ -181,6 +183,16 @@ export function buildDemoData(today = new Date()): AppData {
     schedules,
     events,
     currentUserId: 'm1',
+    board: {
+      ...emptyBoard(),
+      cards: [
+        { id: 'bc1', columnId: 'col_fazer', title: 'Arte de divulgação da Festa do Padroeiro', description: 'Formato feed e stories. Usar a imagem de São José da sacristia.', assigneeIds: ['m5'], labelIds: ['lb_arte', 'lb_urgente'], due: toISODate(addDays(today, 2)), checklist: [{ id: 'k1', label: 'Rascunho', done: true }, { id: 'k2', label: 'Aprovação do pároco', done: false }, { id: 'k3', label: 'Publicar', done: false }], createdAt: today.toISOString() },
+        { id: 'bc2', columnId: 'col_fazer', title: 'Legenda com a leitura do domingo', description: '', assigneeIds: ['m6'], labelIds: ['lb_post'], due: toISODate(addDays(today, 3)), checklist: [], createdAt: today.toISOString() },
+        { id: 'bc3', columnId: 'col_fazendo', title: 'Tratar fotos da Missa das Famílias', description: 'Selecionar 20 melhores, ajuste leve de luz, sem filtros fortes.', assigneeIds: ['m2'], labelIds: ['lb_foto'], due: toISODate(addDays(today, 1)), checklist: [{ id: 'k4', label: 'Seleção', done: true }, { id: 'k5', label: 'Edição', done: false }], createdAt: today.toISOString() },
+        { id: 'bc4', columnId: 'col_revisao', title: 'Vídeo resumo do Retiro de Jovens', description: 'Até 60 segundos, com música livre de direitos.', assigneeIds: ['m3', 'm4'], labelIds: ['lb_video', 'lb_stories'], checklist: [], createdAt: today.toISOString() },
+        { id: 'bc5', columnId: 'col_publicado', title: 'Post da Campanha do Agasalho', description: '', assigneeIds: ['m6'], labelIds: ['lb_post'], checklist: [], createdAt: today.toISOString() },
+      ],
+    },
     announcements: [
       { id: 'a1', title: 'Reunião mensal da PASCOM', body: 'Sábado após a Missa da Vigília, no salão paroquial.', author: 'Ana Beatriz Souza', createdAt: new Date(now - 864e5).toISOString(), pinned: true },
       { id: 'a2', title: 'Novo padrão de legendas', body: 'Usar sempre a hashtag da paróquia e citar a leitura do dia.', author: 'Isabela Rocha', createdAt: new Date(now - 3 * 864e5).toISOString() },

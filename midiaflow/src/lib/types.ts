@@ -105,7 +105,7 @@ export interface AuditEntry {
   at: string;
   actor: string;
   action: 'criou' | 'editou' | 'excluiu' | 'duplicou' | 'designou' | 'respondeu' | 'removeu';
-  entity: 'escala' | 'evento' | 'integrante' | 'função' | 'aviso' | 'configuração';
+  entity: 'escala' | 'evento' | 'integrante' | 'função' | 'aviso' | 'configuração' | 'quadro';
   entityId: string;
   summary: string;
 }
@@ -125,6 +125,40 @@ export interface Parish {
   pascomName: string;
 }
 
+/* Quadro de tarefas da PASCOM (estilo Trello) */
+export interface BoardColumn {
+  id: string;
+  title: string;
+}
+
+export interface BoardLabel {
+  id: string;
+  name: string;
+  color: string;
+}
+
+export interface BoardCard {
+  id: string;
+  columnId: string;
+  title: string;
+  description: string;
+  assigneeIds: string[];
+  labelIds: string[];
+  due?: string; // yyyy-MM-dd
+  checklist: ChecklistItem[];
+  /** Escala ou evento a que a tarefa se refere (opcional). */
+  scheduleId?: string;
+  eventId?: string;
+  createdAt: string;
+}
+
+export interface Board {
+  columns: BoardColumn[];
+  labels: BoardLabel[];
+  /** A ordem do array é a ordem dos cartões dentro de cada coluna. */
+  cards: BoardCard[];
+}
+
 export interface AppData {
   parish: Parish;
   roles: Role[];
@@ -134,6 +168,7 @@ export interface AppData {
   notifications: AppNotification[];
   audit: AuditEntry[];
   announcements: Announcement[];
+  board: Board;
   currentUserId: string;
   /** true quando são os dados fictícios de exemplo (abertos com ?exemplo). */
   example?: boolean;

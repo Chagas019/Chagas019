@@ -315,6 +315,31 @@ begin
   return v_new;
 end $$;
 
+-- Quadro de tarefas: integrante move e marca o checklist só dos cartões em que é responsável --------
+create or replace function update_my_card(p_card_id text, p_column_id text, p_checklist jsonb)
+returns bigint language plpgsql security definer set search_path = public as $$
+declare v_parish uuid := my_parish(); v_member text := my_member_id(); v_data jsonb; ci int; v_new bigint;
+begin
+  if v_parish is null then raise exception 'not_member'; end if;
+  if jsonb_typeof(p_checklist) <> 'array' then raise exception 'invalid_data'; end if;
+  select data into v_data from parish_data where parish_id = v_parish for update;
+  select (i - 1)::int into ci from jsonb_array_elements(v_data #> '{board,cards}') with ordinality t(e, i)
+   where e ->> 'id' = p_card_id and (e -> 'assigneeIds') ? v_member;
+  if ci is null then raise exception 'not_your_card'; end if;
+  if not exists (select 1 from jsonb_array_elements(v_data #> '{board,columns}') c where c ->> 'id' = p_column_id) then
+    raise exception 'invalid_data';
+  end if;
+  -- Só a coluna e o "feito" de cada item: título, responsáveis e o resto ficam como a coordenação deixou.
+  v_data := jsonb_set(v_data, array['board', 'cards', ci::text], (v_data #> array['board', 'cards', ci::text]) || jsonb_build_object(
+    'columnId', p_column_id,
+    'checklist', coalesce((
+      select jsonb_agg(k || jsonb_build_object('done', coalesce((select (n ->> 'done')::boolean from jsonb_array_elements(p_checklist) n where n ->> 'id' = k ->> 'id' limit 1), (k ->> 'done')::boolean)) order by ord)
+      from jsonb_array_elements(v_data #> array['board', 'cards', ci::text, 'checklist']) with ordinality t(k, ord)), '[]'::jsonb)));
+  update parish_data set data = v_data, version = version + 1, updated_at = now(), updated_by = auth.uid()
+   where parish_id = v_parish returning version into v_new;
+  return v_new;
+end $$;
+
 -- Código de convite ---------------------------------------------------------------------------
 create or replace function get_invite_code() returns text
 language plpgsql stable security definer set search_path = public as $$
@@ -336,10 +361,10 @@ end $$;
 -- Permissões das funções ------------------------------------------------------------------------
 revoke all on function create_parish(text, text, text, text, jsonb), join_parish(text, text),
   save_parish_data(jsonb, bigint), respond_assignment(text, text, text, text), update_my_availability(jsonb),
-  get_invite_code(), regenerate_invite_code(), _new_member(text, text, access_level), _push(jsonb, jsonb, int) from public, anon;
+  update_my_card(text, text, jsonb), get_invite_code(), regenerate_invite_code(), _new_member(text, text, access_level), _push(jsonb, jsonb, int) from public, anon;
 grant execute on function create_parish(text, text, text, text, jsonb), join_parish(text, text),
   save_parish_data(jsonb, bigint), respond_assignment(text, text, text, text), update_my_availability(jsonb),
-  get_invite_code(), regenerate_invite_code() to authenticated;
+  update_my_card(text, text, jsonb), get_invite_code(), regenerate_invite_code() to authenticated;
 
 -- Tempo real: a coordenação vê as confirmações assim que chegam (respeita o RLS).
 do $$ begin

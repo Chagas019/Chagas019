@@ -179,6 +179,20 @@ function Agenda({ snap, install, onWipe }: { snap: ServoSnapshot; install: Retur
         </section>
       )}
 
+      {snap.tk && snap.tk.length > 0 && (
+        <section className="card p-4" aria-label="Minhas tarefas">
+          <h2 className="px-1 text-sm font-semibold">Minhas tarefas</h2>
+          <ul className="mt-2 divide-y divide-white/[0.06]">
+            {snap.tk.map((k, i) => (
+              <li key={i} className="flex items-center justify-between gap-3 px-1 py-2.5 text-sm">
+                <span className="min-w-0"><span className="block truncate">{k.t}</span><span className="text-xs text-ink-muted">{k.col}</span></span>
+                {k.due && <Badge tone={k.due < today ? 'danger' : 'muted'}>{k.due < today ? 'Atrasada' : fmt(k.due, 'dd/MM')}</Badge>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       {items.length > 0 && (
         <Button className="w-full" icon={CalendarPlus} onClick={() => downloadBlob('minhas-escalas.ics', new Blob([toICS({ ...snap, s: items })], { type: 'text/calendar;charset=utf-8' }))}>
           Colocar na agenda do celular

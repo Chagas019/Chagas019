@@ -62,6 +62,25 @@ select pg_temp.expect_error($q$select respond_assignment('e1','s1','pendente')$q
 select data #>> '{schedules,0,slots,0,status}' = 'confirmado' as status_gravado, data #>> '{notifications,0,kind}' = 'confirmacao' as notificou from parish_data;
 select update_my_availability('{"weekdays":[0],"periods":["noite"],"unavailableDates":["2026-12-25"]}') > 0 as disponibilidade;
 
+-- 10. Quadro: Beto cria um cartão da Carla e um dele; Carla só mexe no dela, e só em coluna e checklist
+select pg_temp.as_user('00000000-0000-0000-0000-0000000000b2');
+select data as d, version as v from parish_data \gset
+select save_parish_data(jsonb_set(:'d'::jsonb, '{board}', jsonb_build_object(
+  'columns', '[{"id":"col_fazer","title":"A fazer"},{"id":"col_feito","title":"Feito"}]'::jsonb, 'labels', '[]'::jsonb,
+  'cards', jsonb_build_array(
+    jsonb_build_object('id','c1','columnId','col_fazer','title','Arte','assigneeIds', jsonb_build_array((select member_id from profiles where full_name='Carla')),
+      'checklist','[{"id":"k1","label":"Rascunho","done":false}]'::jsonb),
+    jsonb_build_object('id','c2','columnId','col_fazer','title','Vídeo','assigneeIds', jsonb_build_array((select member_id from profiles where full_name='Beto')), 'checklist','[]'::jsonb)))), :v) > 0 as quadro_criado;
+select pg_temp.as_user('00000000-0000-0000-0000-0000000000c3');
+select update_my_card('c1', 'col_feito', '[{"id":"k1","done":true,"label":"HACK"},{"id":"novo","label":"extra","done":true}]') > 0 as carla_moveu;
+select data #>> '{board,cards,0,columnId}' = 'col_feito' as coluna_gravada,
+       data #>> '{board,cards,0,checklist,0,done}' = 'true' as item_marcado,
+       data #>> '{board,cards,0,checklist,0,label}' = 'Rascunho' as texto_preservado,
+       jsonb_array_length(data #> '{board,cards,0,checklist}') = 1 as nao_criou_item,
+       data #>> '{board,cards,0,title}' = 'Arte' as titulo_preservado from parish_data;
+select pg_temp.expect_error($q$select update_my_card('c2', 'col_feito', '[]')$q$, 'not_your_card');
+select pg_temp.expect_error($q$select update_my_card('c1', 'col_inventada', '[]')$q$, 'invalid_data');
+
 -- 11. Contatos: Carla só vê o seu; Beto (staff) vê todos
 select count(*) = 1 as carla_ve_1_contato from member_contacts;
 with u as (update member_contacts set phone = '1' where email = 'ana@x.org' returning 1) select count(*) = 0 as carla_nao_altera_contato_alheio from u;

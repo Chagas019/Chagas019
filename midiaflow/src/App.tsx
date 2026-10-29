@@ -26,9 +26,10 @@ const Reports = lazy(() => import('./pages/Reports'));
 const Notifications = lazy(() => import('./pages/Notifications'));
 const Settings = lazy(() => import('./pages/Settings'));
 const Servo = lazy(() => import('./pages/Servo'));
+const BoardPage = lazy(() => import('./pages/Board'));
 
 const TITLES: Record<string, string> = {
-  '': 'Visão geral', 'minhas-escalas': 'Minhas escalas', escalas: 'Escalas', calendario: 'Calendário', equipe: 'Equipe',
+  '': 'Visão geral', 'minhas-escalas': 'Minhas escalas', escalas: 'Escalas', calendario: 'Calendário', quadro: 'Quadro de tarefas', equipe: 'Equipe',
   funcoes: 'Funções', eventos: 'Eventos', formacao: 'Formação', relatorios: 'Relatórios', notificacoes: 'Notificações', configuracoes: 'Configurações',
 };
 
@@ -103,6 +104,7 @@ function AppRoutes() {
             <Route path="minhas-escalas" element={<MySchedules />} />
             <Route path="escalas" element={<Schedules />} />
             <Route path="calendario" element={<CalendarPage />} />
+            <Route path="quadro" element={<BoardPage />} />
             <Route path="equipe" element={<Team />} />
             <Route path="funcoes" element={<Roles />} />
             <Route path="eventos" element={<Events />} />
