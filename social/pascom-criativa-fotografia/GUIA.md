@@ -1,6 +1,6 @@
 # PASCOM CRIATIVA — Fotografia na Igreja
 
-Coleção de 10 carrosséis para Instagram (1080×1350, 4:5). Texto, direção de arte, fotos sugeridas, legenda e pergunta de cada post. Este arquivo é gerado a partir de `posts.js` com `node guia.js`.
+Coleção de 10 carrosséis de 8 slides para Instagram (1080×1350, 4:5). Texto, direção de arte, fotos sugeridas, legenda e pergunta de cada post. Este arquivo é gerado a partir de `posts.js` com `node guia.js`.
 
 ## Identidade visual
 
@@ -8,7 +8,8 @@ Coleção de 10 carrosséis para Instagram (1080×1350, 4:5). Texto, direção d
 - **Cores:** preto profundo `#0D0D0C`, papel `#E8E4DA`, amarelo `#FFC21A` (destaque, marca-texto, marcações) e cinza `#8F8B82` (informação secundária). Os três fundos se alternam dentro de cada carrossel para dar ritmo.
 - **Tipografia:** Anton (títulos, condensada pesada), Archivo Narrow (texto), Instrument Serif (frases de respiro, em itálico) e JetBrains Mono (anotações técnicas, rótulos, leituras do visor).
 - **Linguagem gráfica:** cópias fotográficas com cantos de visor e leitura de exposição, plantas baixas, réguas de zoom, fotômetro, diagramas de luz e de movimento, caneta amarela de revisão (círculos, setas, X), comparações ASSIM NÃO / ASSIM SIM, granulação e dobra de papel.
-- **Assinatura:** marca de visor com ponto amarelo + **PASCOM CRIATIVA** no topo de todo slide; assinatura completa (*Fotografia • Comunicação • Evangelização*) só no último slide de cada post.
+- **Toque humano:** círculos, setas e X desenhados à mão (traço torto de verdade), rótulos em letra de caneta (Caveat), comentários curtos em primeira pessoa, fita adesiva nas fotos e dobra de papel. É o que tira a cara de template.
+- **Assinatura:** marca de visor com ponto amarelo + **PASCOM CRIATIVA** no topo de todo slide, ao lado de @chagas_catolico; assinatura completa (*Fotografia • Comunicação • Evangelização*) só no último slide de cada post.
 - **Imagens:** as cenas são ilustrações documentais em SVG (não fotos inventadas) e funcionam sozinhas. Para a versão com fotos reais, siga a pauta de cada post.
 
 ---
@@ -92,6 +93,18 @@ Conta nos comentários. Vamos montar um mapa de boas práticas.
 
 > **Direção de arte:** Fundo amarelo, pergunta em condensada preta, campo de comentário desenhado, assinatura PASCOM CRIATIVA.
 
+### Slide 8 · siga para mais dicas
+
+_Antes de ir embora_
+
+**curtiu? ME SEGUE PRA MAIS DICAS DE FOTOGRAFIA NA IGREJA.**
+
+Cartão do perfil: foto, Chagas | Pascom, @chagas_catolico, botão Seguir.
+
+Próximo da coleção → Nº02 · 5 ângulos que transformam suas fotos
+
+> **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.
+
 ### Fotos sugeridas (para fotografar na sua paróquia)
 
 - Fotógrafo agachado no fim de um banco lateral, de costas, fotografando a entrada (bastidor)
@@ -173,6 +186,18 @@ Responde com o número: 01, 02, 03, 04 ou 05.
 Respostas rápidas: 01 baixo · 02 aberto · 03 detalhe · 04 médio · 05 perspectiva
 
 > **Direção de arte:** CTA escuro com chips numerados, que viram resposta pronta nos comentários.
+
+### Slide 8 · siga para mais dicas
+
+_Antes de ir embora_
+
+**curtiu? ME SEGUE PRA MAIS DICAS DE FOTOGRAFIA NA IGREJA.**
+
+Cartão do perfil: foto, Chagas | Pascom, @chagas_catolico, botão Seguir.
+
+Próximo da coleção → Nº03 · Como fotografar a Adoração ao Santíssimo
+
+> **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.
 
 ### Fotos sugeridas (para fotografar na sua paróquia)
 
@@ -273,6 +298,18 @@ O que é mais difícil para você na adoração?
 
 > **Direção de arte:** CTA amarelo, pergunta curta em condensada.
 
+### Slide 8 · siga para mais dicas
+
+_Antes de ir embora_
+
+**curtiu? ME SEGUE PRA MAIS DICAS DE FOTOGRAFIA NA IGREJA.**
+
+Cartão do perfil: foto, Chagas | Pascom, @chagas_catolico, botão Seguir.
+
+Próximo da coleção → Nº04 · Pare de usar o zoom digital
+
+> **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.
+
 ### Fotos sugeridas (para fotografar na sua paróquia)
 
 - Ostensório iluminado com o resto da capela no escuro
@@ -371,6 +408,18 @@ Respostas rápidas: 2× · 5× · 10× · 30× 😬
 
 > **Direção de arte:** CTA escuro com chips de resposta rápida.
 
+### Slide 8 · siga para mais dicas
+
+_Antes de ir embora_
+
+**curtiu? ME SEGUE PRA MAIS DICAS DE FOTOGRAFIA NA IGREJA.**
+
+Cartão do perfil: foto, Chagas | Pascom, @chagas_catolico, botão Seguir.
+
+Próximo da coleção → Nº05 · Como fotografar a procissão
+
+> **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.
+
 ### Fotos sugeridas (para fotografar na sua paróquia)
 
 - Mesma cena em 1× aproximado e em 10× de longe, lado a lado
@@ -467,6 +516,18 @@ _Sua vez_
 Marca a cidade e a data nos comentários.
 
 > **Direção de arte:** CTA amarelo.
+
+### Slide 8 · siga para mais dicas
+
+_Antes de ir embora_
+
+**curtiu? ME SEGUE PRA MAIS DICAS DE FOTOGRAFIA NA IGREJA.**
+
+Cartão do perfil: foto, Chagas | Pascom, @chagas_catolico, botão Seguir.
+
+Próximo da coleção → Nº06 · 3 erros que todo fotógrafo da Pascom comete
+
+> **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.
 
 ### Fotos sugeridas (para fotografar na sua paróquia)
 
@@ -567,6 +628,18 @@ Respostas rápidas: 01 · 02 · 03 · todos 🙃
 
 > **Direção de arte:** CTA amarelo com chips de número.
 
+### Slide 8 · siga para mais dicas
+
+_Antes de ir embora_
+
+**curtiu? ME SEGUE PRA MAIS DICAS DE FOTOGRAFIA NA IGREJA.**
+
+Cartão do perfil: foto, Chagas | Pascom, @chagas_catolico, botão Seguir.
+
+Próximo da coleção → Nº07 · Como fotografar a Santa Eucaristia
+
+> **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.
+
 ### Fotos sugeridas (para fotografar na sua paróquia)
 
 - Foto propositalmente tremida do altar, para o slide de erro
@@ -660,6 +733,18 @@ _Troca de experiência_
 Conta como vocês combinaram isso com o padre.
 
 > **Direção de arte:** CTA amarelo.
+
+### Slide 8 · siga para mais dicas
+
+_Antes de ir embora_
+
+**curtiu? ME SEGUE PRA MAIS DICAS DE FOTOGRAFIA NA IGREJA.**
+
+Cartão do perfil: foto, Chagas | Pascom, @chagas_catolico, botão Seguir.
+
+Próximo da coleção → Nº08 · Fotografia com celular: configurações que você precisa conhecer
+
+> **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.
 
 ### Fotos sugeridas (para fotografar na sua paróquia)
 
@@ -760,6 +845,18 @@ Eu respondo com a primeira configuração que você deveria mudar.
 
 > **Direção de arte:** CTA amarelo.
 
+### Slide 8 · siga para mais dicas
+
+_Antes de ir embora_
+
+**curtiu? ME SEGUE PRA MAIS DICAS DE FOTOGRAFIA NA IGREJA.**
+
+Cartão do perfil: foto, Chagas | Pascom, @chagas_catolico, botão Seguir.
+
+Próximo da coleção → Nº09 · Como contar uma história através de uma fotografia
+
+> **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.
+
 ### Fotos sugeridas (para fotografar na sua paróquia)
 
 - Print da câmera do celular com foco travado e exposição ajustada
@@ -856,6 +953,18 @@ _Em uma frase_
 Descreve nos comentários. As melhores viram post.
 
 > **Direção de arte:** CTA amarelo.
+
+### Slide 8 · siga para mais dicas
+
+_Antes de ir embora_
+
+**curtiu? ME SEGUE PRA MAIS DICAS DE FOTOGRAFIA NA IGREJA.**
+
+Cartão do perfil: foto, Chagas | Pascom, @chagas_catolico, botão Seguir.
+
+Próximo da coleção → Nº10 · Não fotografe apenas o altar
+
+> **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.
 
 ### Fotos sugeridas (para fotografar na sua paróquia)
 
@@ -954,6 +1063,18 @@ _Marca aqui_
 Marca essa pessoa nos comentários.
 
 > **Direção de arte:** CTA amarelo.
+
+### Slide 8 · siga para mais dicas
+
+_Antes de ir embora_
+
+**curtiu? ME SEGUE PRA MAIS DICAS DE FOTOGRAFIA NA IGREJA.**
+
+Cartão do perfil: foto, Chagas | Pascom, @chagas_catolico, botão Seguir.
+
+Presets que dão vida às suas fotos: @chagas_photon_
+
+> **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.
 
 ### Fotos sugeridas (para fotografar na sua paróquia)
 

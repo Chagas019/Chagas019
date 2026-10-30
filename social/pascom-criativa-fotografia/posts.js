@@ -6,7 +6,7 @@ const POSTS = [
   question: 'Na sua paróquia, de onde a Pascom pode fotografar a consagração?',
   photos: ['Fotógrafo agachado no fim de um banco lateral, de costas, fotografando a entrada (bastidor)', 'Plano aberto do coro, com a assembleia inteira e o altar ao fundo', 'Detalhe do folheto, do cálice ou das mãos do leitor'],
   slides: [
-  { L: 'cover', c: 'c01', th: 'paper', art: 'Planta baixa técnica da igreja girada, sangrando à direita, com as posições do fotógrafo em amarelo. Título enorme em condensada preta, frase final em serifada itálica.' },
+  { L: 'cover', c: 'c01', th: 'paper', note: 'salva antes de domingo', noteStyle: 'left:640px;top:1110px', art: 'Planta baixa técnica da igreja girada, sangrando à direita, com as posições do fotógrafo em amarelo. Título enorme em condensada preta, frase final em serifada itálica.' },
   { L: 'list', th: 'dark', k: 'Antes de tocar na câmera', h: 'A foto começa *30 minutos* antes da missa.',
     items: [['Chegue cedo', 'Ande pela igreja vazia e veja de onde vem a luz em cada horário.'], ['Fale com o padre ou o cerimoniário', 'Pergunte onde você pode ficar e se pode fotografar a consagração. Não presuma.'], ['Silencie tudo', 'Obturador eletrônico ou modo silencioso. Celular sem som de clique.'], ['Roupa escura e sapato macio', 'Quem fotografa missa não pode ser a coisa mais chamativa da igreja.']],
     art: 'Lista numerada em mono amarelo, tipografia grande à esquerda, muito preto em volta. Sensação de checklist de produção.' },
@@ -21,9 +21,9 @@ const POSTS = [
     bad: { f: { s: 'nave', o: { blocker: true }, m: [{ t: 'circle', x: 450, y: 330, r: 150, l: 'NO CORREDOR CENTRAL', lx: 600, ly: 150 }] }, notes: ['Em pé no corredor central', 'Na frente de quem está rezando'] },
     good: { f: { s: 'nave', o: {}, m: [{ t: 'arrow', x1: 120, y1: 560, x2: 360, y2: 330, l: 'DO FIM DO BANCO, AGACHADO', ly: 520, lx: 60 }] }, notes: ['Na lateral, na altura dos bancos', 'Some na assembleia'] },
     art: 'Duas cópias fotográficas empilhadas, marcação amarela tipo caneta de revisão, etiquetas ASSIM NÃO / ASSIM SIM.' },
-  { L: 'statement', th: 'dark', k: 'Regra de ouro', q: 'Se ficou em dúvida se pode clicar, _não clica._', body: 'Uma foto a menos não estraga a cobertura. Um flash na consagração estraga a missa de muita gente, e a confiança do padre na Pascom.',
+  { L: 'statement', th: 'dark', k: 'Regra de ouro', q: 'Se ficou em dúvida se pode clicar, _não clica._', note: 'sério. na dúvida, não.', body: 'Uma foto a menos não estraga a cobertura. Um flash na consagração estraga a missa de muita gente, e a confiança do padre na Pascom.',
     art: 'Frase em serifada enorme ocupando o slide, texto de apoio pequeno no rodapé. Respiro absoluto.' },
-  { L: 'cta', th: 'yellow', k: 'Sua vez', q: 'De onde a Pascom pode fotografar a consagração na sua paróquia?', sub: 'Conta nos comentários. Vamos montar um mapa de boas práticas.', art: 'Fundo amarelo, pergunta em condensada preta, campo de comentário desenhado, assinatura PASCOM CRIATIVA.' }
+  { L: 'cta', th: 'yellow', k: 'Sua vez', q: 'De onde a Pascom pode fotografar a consagração na sua paróquia?', note: 'vou ler todos', sub: 'Conta nos comentários. Vamos montar um mapa de boas práticas.', art: 'Fundo amarelo, pergunta em condensada preta, campo de comentário desenhado, assinatura PASCOM CRIATIVA.' }
   ] },
 
 /* ============================== 02 ============================== */
@@ -48,7 +48,7 @@ const POSTS = [
   { L: 'split', th: 'dark', n: '05', h: 'Perspectiva', hgt: 1, f: { s: 'nave', o: { people: true }, vf: 'ISO 3200 · 1/125 · ƒ2.8', m: [{ t: 'line', x1: 0, y1: 600, x2: 420, y2: 330 }, { t: 'line', x1: 900, y1: 600, x2: 480, y2: 330 }, { t: 'circle', x: 450, y: 310, r: 44, l: 'TUDO LEVA AQUI', lx: 520, ly: 250 }] },
     body: 'As linhas dos bancos, do piso e das colunas levam o olho até o altar. Fique na ponta do banco, não no meio do corredor durante a celebração.',
     art: 'Linhas de fuga desenhadas em amarelo sobre a cena.' },
-  { L: 'cta', th: 'dark', k: 'Teste no domingo', q: 'Qual desses ângulos você nunca tentou?', sub: 'Responde com o número: 01, 02, 03, 04 ou 05.', chips: ['01 baixo', '02 aberto', '03 detalhe', '04 médio', '05 perspectiva'], art: 'CTA escuro com chips numerados, que viram resposta pronta nos comentários.' }
+  { L: 'cta', th: 'dark', k: 'Teste no domingo', q: 'Qual desses ângulos você nunca tentou?', note: 'o 03 é o mais subestimado', sub: 'Responde com o número: 01, 02, 03, 04 ou 05.', chips: ['01 baixo', '02 aberto', '03 detalhe', '04 médio', '05 perspectiva'], art: 'CTA escuro com chips numerados, que viram resposta pronta nos comentários.' }
   ] },
 
 /* ============================== 03 ============================== */
@@ -58,7 +58,7 @@ const POSTS = [
   photos: ['Ostensório iluminado com o resto da capela no escuro', 'Silhueta de alguém ajoelhado contra a luz do altar', 'Vela em primeiro plano desfocada com o ostensório ao fundo'],
   slides: [
   { L: 'cover', c: 'c03', th: 'dark', art: 'Cena da adoração sangrando o slide inteiro, fotômetro técnico sobreposto marcando −1, frase em serifada.' },
-  { L: 'statement', th: 'dark', k: 'Primeira virada de chave', q: 'Não lute contra o escuro. _Exponha para a luz._', body: 'Toque no ostensório (ou na vela) para medir a luz ali. O que estiver fora dela pode ficar preto, e está tudo bem.', f: { s: 'meter', o: { v: -1, l: 'EXPONHA AQUI: −1' }, meet: true },
+  { L: 'statement', th: 'dark', k: 'Primeira virada de chave', q: 'Não lute contra o escuro. _Exponha para a luz._', note: 'testa na próxima adoração', body: 'Toque no ostensório (ou na vela) para medir a luz ali. O que estiver fora dela pode ficar preto, e está tudo bem.', f: { s: 'meter', o: { v: -1, l: 'EXPONHA AQUI: −1' }, meet: true },
     art: 'Frase grande e um fotômetro técnico desenhado em linha, com marcador amarelo em −1.' },
   { L: 'table', th: 'paper', k: 'Configurações de partida', h: 'Anota e testa antes de começar.',
     cols: [{ t: 'Câmera', rows: [['Modo', 'Manual (M)'], ['Abertura', 'ƒ1.8 a ƒ2.8'], ['Velocidade', '1/100 s'], ['ISO', '1600 a 6400'], ['Balanço', '3200 K / tungstênio']] },
@@ -75,7 +75,7 @@ const POSTS = [
   { L: 'list', th: 'dark', k: 'Respeito ao momento', h: 'Dez fotos boas valem mais que *trezentas*.',
     items: [['Sem flash e sem lanterna', 'Nem a luzinha de foco do celular. Desative nas configurações.'], ['Não fique entre o povo e o Santíssimo', 'Fotografe das laterais e do fundo.'], ['Clique pouco', 'Escolha o momento, respire, um clique. Rajada faz barulho.'], ['Reze também', 'Você está numa adoração. A câmera pode descansar no colo.']],
     art: 'Lista em fundo preto, números em mono amarelo.' },
-  { L: 'cta', th: 'yellow', k: 'Conta pra gente', q: 'Luz, barulho ou coragem de se aproximar?', sub: 'O que é mais difícil para você na adoração?', art: 'CTA amarelo, pergunta curta em condensada.' }
+  { L: 'cta', th: 'yellow', k: 'Conta pra gente', q: 'Luz, barulho ou coragem de se aproximar?', note: 'pode responder com sinceridade', sub: 'O que é mais difícil para você na adoração?', art: 'CTA amarelo, pergunta curta em condensada.' }
   ] },
 
 /* ============================== 04 ============================== */
@@ -95,12 +95,12 @@ const POSTS = [
     bad: { f: { s: 'altar', o: { elevate: false }, px: { block: 26 } }, notes: ['10× do fundo da igreja', 'Borrado e sem detalhe'] },
     good: { f: { s: 'altar', o: {} }, notes: ['1× ou 2×, a cinco bancos do altar', 'Nítido, com textura'] },
     art: 'Pixelado real (gerado no navegador) contra a cena nítida.' },
-  { L: 'statement', th: 'yellow', k: 'Regra prática', q: 'Precisa de mais de 3×? _Mude de lugar ou mude a foto._', body: 'Na missa nem sempre dá para andar. Então troque o retrato fechado por um plano médio com contexto. Uma foto aberta e nítida é melhor que uma fechada e borrada.',
+  { L: 'statement', th: 'yellow', k: 'Regra prática', q: 'Precisa de mais de 3×? _Mude de lugar ou mude a foto._', note: 'anota isso', body: 'Na missa nem sempre dá para andar. Então troque o retrato fechado por um plano médio com contexto. Uma foto aberta e nítida é melhor que uma fechada e borrada.',
     art: 'Frase-regra em fundo amarelo, tipografia preta.' },
   { L: 'list', th: 'paper', k: 'Para quem usa câmera', h: 'Zoom óptico pode. *Recorte*, com moderação.',
     items: [['Lente fixa 50 mm', 'Ela obriga você a andar, e isso melhora o enquadramento.'], ['Tele 70–200 mm', 'Para a consagração do fundo da igreja, sem se mover.'], ['Recorte depois', 'No Lightroom, até uns 30%. Mais que isso, a foto perde força.']],
     art: 'Lista em fundo papel, tom de manual de equipamento.' },
-  { L: 'cta', th: 'dark', k: 'Confessa', q: 'Qual o máximo de zoom que você já usou numa missa?', sub: 'Sem julgamento. Todo mundo já fez 10×.', chips: ['2×', '5×', '10×', '30× 😬'], art: 'CTA escuro com chips de resposta rápida.' }
+  { L: 'cta', th: 'dark', k: 'Confessa', q: 'Qual o máximo de zoom que você já usou numa missa?', note: 'não vale mentir', sub: 'Sem julgamento. Todo mundo já fez 10×.', chips: ['2×', '5×', '10×', '30× 😬'], art: 'CTA escuro com chips de resposta rápida.' }
   ] },
 
 /* ============================== 05 ============================== */
@@ -109,7 +109,7 @@ const POSTS = [
   question: 'Qual procissão da sua cidade todo fotógrafo deveria registrar uma vez na vida?',
   photos: ['Cruz processional abrindo a procissão, vista de frente', 'Rostos iluminados por velas', 'O andor ou o Santíssimo sob o pálio', 'Pés, velas e flores no chão'],
   slides: [
-  { L: 'cover', c: 'c05', th: 'dark', art: 'Procissão noturna em perspectiva, seta amarela gigante indicando o movimento, título em condensada cortando a cena.' },
+  { L: 'cover', c: 'c05', th: 'dark', note: 'corre por fora!', noteStyle: 'left:620px;top:120px;color:#ffc21a', art: 'Procissão noturna em perspectiva, seta amarela gigante indicando o movimento, título em condensada cortando a cena.' },
   { L: 'diagram', th: 'paper', k: 'Antecipação', h: 'Fotografe a procissão *vindo*, não indo.',
     d: { s: 'route', o: {}, meet: true }, notes: [['Antes', 'Pegue o trajeto com a coordenação.'], ['Durante', 'Corra por uma rua paralela e espere na próxima esquina.'], ['Posições', '1, 2 e 3 sempre à frente da cruz.']],
     art: 'Mapa técnico de ruas com o trajeto tracejado e posições numeradas.' },
@@ -126,7 +126,7 @@ const POSTS = [
   { L: 'list', th: 'dark', k: 'Altura muda tudo', h: 'Suba ou *desça*. Nunca fique só na altura dos olhos.',
     items: [['Suba num degrau, muro ou escada', 'Mostra o tamanho da multidão e o caminho de velas.'], ['Agache na calçada', 'O andor fica contra o céu, maior e mais limpo.'], ['Cuidado com a segurança', 'Nada de ficar no meio da rua de costas para a procissão.']],
     art: 'Lista curta com muito respiro.' },
-  { L: 'cta', th: 'yellow', k: 'Sua vez', q: 'Qual procissão da sua cidade todo fotógrafo deveria registrar uma vez na vida?', sub: 'Marca a cidade e a data nos comentários.', art: 'CTA amarelo.' }
+  { L: 'cta', th: 'yellow', k: 'Sua vez', q: 'Qual procissão da sua cidade todo fotógrafo deveria registrar uma vez na vida?', note: 'quero conhecer!', sub: 'Marca a cidade e a data nos comentários.', art: 'CTA amarelo.' }
   ] },
 
 /* ============================== 06 ============================== */
@@ -152,7 +152,7 @@ const POSTS = [
   { L: 'list', th: 'dark', k: 'Checklist de 5 segundos', h: 'Antes de cada clique:',
     items: [['O foco está no olho (ou no ponto principal)?', ''], ['O horizonte está reto?', ''], ['O fundo está limpo?', ''], ['Tem alguém cortado na borda?', ''], ['Essa foto conta alguma coisa?', '']],
     art: 'Checklist com caixinhas, tamanho grande, para print.' },
-  { L: 'cta', th: 'yellow', k: 'Sem vergonha', q: 'Qual desses você mais comete?', sub: '01 tremida · 02 zoom · 03 sem intenção', chips: ['01', '02', '03', 'todos 🙃'], art: 'CTA amarelo com chips de número.' }
+  { L: 'cta', th: 'yellow', k: 'Sem vergonha', q: 'Qual desses você mais comete?', note: 'eu já cometi os 3', sub: '01 tremida · 02 zoom · 03 sem intenção', chips: ['01', '02', '03', 'todos 🙃'], art: 'CTA amarelo com chips de número.' }
   ] },
 
 /* ============================== 07 ============================== */
@@ -161,7 +161,7 @@ const POSTS = [
   question: 'Na sua paróquia, a Pascom fotografa a consagração? Como vocês combinaram isso?',
   photos: ['Elevação da hóstia vista do fundo, com tele, muito espaço escuro em volta', 'Mãos do sacerdote sobre o cálice', 'Mãos recebendo a comunhão, sem rosto'],
   slides: [
-  { L: 'cover', c: 'c07', th: 'dark', art: 'Cena pequena no centro de um campo preto, quadrado de foco amarelo na hóstia, serifada elegante.' },
+  { L: 'cover', c: 'c07', th: 'dark', note: 'calma. respira. um clique.', noteStyle: 'left:600px;top:150px', art: 'Cena pequena no centro de um campo preto, quadrado de foco amarelo na hóstia, serifada elegante.' },
   { L: 'list', th: 'paper', k: 'Antes de tudo', h: 'Combine com o padre. *Toda vez.*',
     items: [['Pergunte se pode fotografar a consagração', 'Muitas paróquias preferem só do fundo, ou não fotografar.'], ['Pergunte de onde', 'Fundo, lateral, coro. Respeite a resposta.'], ['Avise a equipe', 'Só uma pessoa fotografa esse momento. Não três.']],
     art: 'Lista em papel, tom de combinado.' },
@@ -177,8 +177,8 @@ const POSTS = [
     bad: { f: { s: 'faces', o: { focus: 2 }, m: [{ t: 'circle', x: 450, y: 330, r: 110, l: 'ROSTO EM PRIMEIRO PLANO', lx: 30, ly: 50 }] }, notes: ['Tira a pessoa do momento', 'Muitas pessoas não querem aparecer'] },
     good: { f: { s: 'hands', o: {}, m: [{ t: 'circle', x: 470, y: 370, r: 90 }] }, notes: ['Mãos, a hóstia, o gesto', 'Da lateral, longe da fila'] },
     art: 'Comparação com marcação.' },
-  { L: 'statement', th: 'dark', k: 'Durante a consagração', q: 'Pare de andar. Sem flash. Sem barulho. _Se tiver dúvida, reza._', body: 'Você também está na missa.', art: 'Frase em serifada, respiro total.' },
-  { L: 'cta', th: 'yellow', k: 'Troca de experiência', q: 'A Pascom fotografa a consagração na sua paróquia?', sub: 'Conta como vocês combinaram isso com o padre.', art: 'CTA amarelo.' }
+  { L: 'statement', th: 'dark', k: 'Durante a consagração', q: 'Pare de andar. Sem flash. Sem barulho. _Se tiver dúvida, reza._', note: 'isso também é servir', body: 'Você também está na missa.', art: 'Frase em serifada, respiro total.' },
+  { L: 'cta', th: 'yellow', k: 'Troca de experiência', q: 'A Pascom fotografa a consagração na sua paróquia?', note: 'quero aprender com vocês', sub: 'Conta como vocês combinaram isso com o padre.', art: 'CTA amarelo.' }
   ] },
 
 /* ============================== 08 ============================== */
@@ -206,7 +206,7 @@ const POSTS = [
     d: { s: 'phone', o: { scene: 'altar', vb: '150 0 600 600', grid: true, focus: [300, 330], sun: 20 }, meet: true },
     notes: [['Repare', 'Ponto principal no cruzamento da grade.'], ['E mais', 'Nada de zoom: você deu cinco passos para frente.']],
     art: 'Celular com a cena do altar e a grade.' },
-  { L: 'cta', th: 'yellow', k: 'Me conta', q: 'Qual celular você usa na Pascom?', sub: 'Eu respondo com a primeira configuração que você deveria mudar.', art: 'CTA amarelo.' }
+  { L: 'cta', th: 'yellow', k: 'Me conta', q: 'Qual celular você usa na Pascom?', note: 'manda o modelo aí', sub: 'Eu respondo com a primeira configuração que você deveria mudar.', art: 'CTA amarelo.' }
   ] },
 
 /* ============================== 09 ============================== */
@@ -215,7 +215,7 @@ const POSTS = [
   question: 'Qual foto você já tirou que conta uma história? Descreve em uma frase.',
   photos: ['A mãe ajeitando a gola da criança antes da Primeira Eucaristia', 'Criança de olhos fechados na comunhão (com autorização)', 'Abraço na porta da igreja depois', 'Mãos calejadas segurando o terço'],
   slides: [
-  { L: 'cover', c: 'c09', th: 'paper', art: 'Folha de contato com 20 quadros, X amarelos e um círculo de lápis graxa na foto escolhida. Título em condensada + serifada.' },
+  { L: 'cover', c: 'c09', th: 'paper', note: 'essa!', noteStyle: 'left:250px;top:1150px', art: 'Folha de contato com 20 quadros, X amarelos e um círculo de lápis graxa na foto escolhida. Título em condensada + serifada.' },
   { L: 'list', th: 'dark', k: 'Antes de clicar', h: 'Responda *quatro perguntas*.',
     items: [['Quem?', 'Quem é a pessoa central da cena?'], ['O quê?', 'O que está acontecendo de verdade?'], ['Onde?', 'O lugar aparece? Precisa aparecer?'], ['Qual emoção?', 'Alegria, espera, silêncio, cansaço, fé?']],
     art: 'Perguntas em condensada gigante, respostas pequenas.' },
@@ -228,9 +228,9 @@ const POSTS = [
   { L: 'grid', th: 'dark', k: 'Detalhes que contam', h: 'O que ninguém repara, *a foto guarda*.', cols: 2,
     cells: [{ f: { s: 'hands', o: { type: 'rosary' } }, n: 'A', t: 'Mãos no terço' }, { f: { s: 'detail', o: { type: 'shoes' } }, n: 'B', t: 'O sapato do coroinha' }, { f: { s: 'detail', o: { type: 'book' } }, n: 'C', t: 'O folheto amassado' }, { f: { s: 'hands', o: { type: 'candle' } }, n: 'D', t: 'A vela do batismo' }],
     art: 'Grade 2×2 de detalhes.' },
-  { L: 'statement', th: 'paper', k: 'Exemplo real · Primeira Eucaristia', q: 'Em vez de 40 fotos iguais da fila, _conte uma história._', body: 'Antes: a mãe ajeitando a gola. Durante: a criança de olhos fechados. Depois: o abraço na porta. Três fotos. Uma família inteira guarda para sempre.',
+  { L: 'statement', th: 'paper', k: 'Exemplo real · Primeira Eucaristia', q: 'Em vez de 40 fotos iguais da fila, _conte uma história._', note: 'vale pra batizado e crisma também', body: 'Antes: a mãe ajeitando a gola. Durante: a criança de olhos fechados. Depois: o abraço na porta. Três fotos. Uma família inteira guarda para sempre.',
     art: 'Frase em serifada sobre papel.' },
-  { L: 'cta', th: 'yellow', k: 'Em uma frase', q: 'Qual foto sua conta uma história?', sub: 'Descreve nos comentários. As melhores viram post.', art: 'CTA amarelo.' }
+  { L: 'cta', th: 'yellow', k: 'Em uma frase', q: 'Qual foto sua conta uma história?', note: 'pode ser foto de celular!', sub: 'Descreve nos comentários. As melhores viram post.', art: 'CTA amarelo.' }
   ] },
 
 /* ============================== 10 ============================== */
@@ -240,7 +240,7 @@ const POSTS = [
   photos: ['Mãos dadas no Pai-Nosso', 'Abraço da paz', 'Senhora arrumando as flores antes da missa', 'Acolhida na porta da igreja'],
   slides: [
   { L: 'cover', c: 'c10', th: 'dark', art: 'Visor apontado para o altar com X, seta curva amarela de 180° girando para a comunidade. Título “VIRA A CÂMERA”.' },
-  { L: 'statement', th: 'paper', k: 'Faça o teste', q: 'Abre a pasta da última missa. _Quantas fotos são do altar?_', body: 'O altar é sempre igual. As pessoas não. Tenta dividir meio a meio no próximo domingo.', art: 'Pergunta em serifada sobre papel, como uma provocação.' },
+  { L: 'statement', th: 'paper', k: 'Faça o teste', q: 'Abre a pasta da última missa. _Quantas fotos são do altar?_', note: 'faz o teste agora', body: 'O altar é sempre igual. As pessoas não. Tenta dividir meio a meio no próximo domingo.', art: 'Pergunta em serifada sobre papel, como uma provocação.' },
   { L: 'diagram', th: 'dark', k: 'Para onde olhar', h: 'Fotografe a igreja *inteira*.',
     d: { s: 'floorplan', o: { dots: [{ x: 640, y: 120, l: 'CORAL' }, { x: 300, y: 560, l: 'FAMÍLIAS' }, { x: 600, y: 760, l: 'IDOSOS' }, { x: 450, y: 940, l: 'ACOLHIDA' }, { x: 230, y: 380, l: 'CRIANÇAS' }, { x: 700, y: 520, l: 'MINISTROS' }] }, meet: true },
     notes: [['Coral e músicos', 'Ninguém fotografa e todo mundo ama ver.'], ['Acolhida', 'Quem abre a porta e entrega o folheto.'], ['Quem serve', 'Quem limpa, arruma, organiza.']],
@@ -254,7 +254,7 @@ const POSTS = [
   { L: 'grid', th: 'dark', k: 'Pequenos detalhes', h: 'A celebração começa *antes* da missa.', cols: 2,
     cells: [{ f: { s: 'detail', o: { type: 'flowers' } }, n: 'A', t: 'As flores sendo arrumadas' }, { f: { s: 'detail', o: { type: 'key' } }, n: 'B', t: 'A chave da igreja' }, { f: { s: 'detail', o: { type: 'book' } }, n: 'C', t: 'O folheto' }, { f: { s: 'detail', o: { type: 'shoes' } }, n: 'D', t: 'Os pés na fila' }],
     art: 'Grade de detalhes.' },
-  { L: 'cta', th: 'yellow', k: 'Marca aqui', q: 'Quem da sua comunidade merece aparecer mais nas fotos?', sub: 'Marca essa pessoa nos comentários.', art: 'CTA amarelo.' }
+  { L: 'cta', th: 'yellow', k: 'Marca aqui', q: 'Quem da sua comunidade merece aparecer mais nas fotos?', note: 'bora valorizar quem serve', sub: 'Marca essa pessoa nos comentários.', art: 'CTA amarelo.' }
   ] }
 ];
 if (typeof module !== 'undefined') module.exports = POSTS;

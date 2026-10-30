@@ -9,6 +9,7 @@
 @font-face{font-family:"Archivo Narrow";src:url(fonts/archivo-narrow.woff2) format("woff2");font-weight:400 700;font-display:block}
 @font-face{font-family:"Instrument Serif";src:url(fonts/instrument-serif.woff2) format("woff2");font-display:block}
 @font-face{font-family:"Instrument Serif";src:url(fonts/instrument-serif-italic.woff2) format("woff2");font-style:italic;font-display:block}
+@font-face{font-family:"Caveat";src:url(fonts/caveat.woff2) format("woff2");font-weight:400 700;font-display:block}
 @font-face{font-family:"JB Mono";src:url(fonts/jetbrains-mono.woff2) format("woff2");font-weight:400 700;font-display:block}
 
 :root{--yellow:#ffc21a;--ink:#0d0d0c;--pad:72px;
@@ -58,6 +59,26 @@ body.render .fr{width:auto;height:auto;--s:1}body.render .fr>.slide{transform:no
 .ph{position:relative;overflow:hidden;background:#191917}
 .ph>svg,.ph>img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover}
 .ph>img{image-rendering:pixelated}
+.cmp .ph::after,.gr .ph::after,.cv .ph::after{content:"";position:absolute;top:-6px;left:22px;width:130px;height:34px;background:rgba(236,231,218,.72);transform:rotate(-5deg);z-index:3;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.gr .cell:nth-child(even) .ph::after{left:auto;right:22px;transform:rotate(4deg)}
+.hand{font-family:"Caveat",cursive;font-weight:700;color:var(--acc);line-height:1;letter-spacing:.005em}
+.t-paper .hand{color:#1b1a18}
+.note{font-family:"Caveat",cursive;font-weight:700;font-size:66px;line-height:1;color:var(--acc);transform:rotate(-3deg);align-self:flex-end;margin-top:34px;display:flex;align-items:flex-end;gap:10px}
+.t-paper .note{color:#1b1a18}
+.note svg{width:70px;height:56px;flex:0 0 70px}
+/* follow */
+.follow .hand{font-size:140px;transform:rotate(-4deg);transform-origin:left;margin-top:10px}
+.follow .big{margin-top:10px;font-size:100px}
+.card{margin-top:44px;display:grid;grid-template-columns:250px 1fr;gap:40px;align-items:center;padding:44px;border:2px solid var(--line);border-radius:28px;background:rgba(255,255,255,.03)}
+.card img{width:250px;height:250px;border-radius:50%;box-shadow:0 0 0 6px var(--bg),0 0 0 11px var(--yellow)}
+.card .nm{font-weight:700;font-size:52px;letter-spacing:-.01em;display:flex;align-items:center;gap:12px}
+.card .nm svg{width:34px;height:34px}
+.card .at{font-family:var(--mono);font-size:24px;color:var(--sub);margin-top:6px}
+.card .bio{font-size:28px;margin-top:12px;font-weight:500}
+.card .btn{display:inline-flex;align-items:center;gap:12px;margin-top:26px;background:var(--yellow);color:var(--ink);font-family:var(--display);font-size:42px;text-transform:uppercase;padding:12px 34px 10px;border-radius:14px}
+.nx{margin-top:34px;margin-bottom:34px;display:flex;gap:20px;align-items:baseline;border-top:1.5px solid var(--line);padding-top:24px}
+.nx b{font-family:var(--mono);font-size:16px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);flex:0 0 auto}
+.nx span{font-size:38px;font-weight:700;line-height:1.1}
 .fig{position:relative;min-height:0}
 .fig>svg{position:absolute;inset:0;width:100%;height:100%}
 .vf{position:absolute;inset:0;pointer-events:none;font-family:var(--mono);font-size:15px;color:#fff;letter-spacing:.06em}
@@ -192,6 +213,9 @@ function frame(f, style = ''){
   return `<div class="ph" style="${style}">${svg}${vf(f.vf)}</div>`;
 }
 const kick = k => `<p class="kick"><i></i>${k}</p>`;
+const ARROW = `<svg viewBox="0 0 70 56" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><path d="M64 6C40 4 18 16 10 44M2 30l8 16 14-10"/></svg>`;
+const note = s => s.note ? `<p class="note">${ARROW}${s.note}</p>` : '';
+const VERIF = `<svg viewBox="0 0 24 24"><path fill="#3897f0" d="M12 1l2.6 2.2 3.4-.4.9 3.3 3 1.7-1.3 3.2 1.3 3.2-3 1.7-.9 3.3-3.4-.4L12 23l-2.6-2.2-3.4.4-.9-3.3-3-1.7L3.4 12 2.1 8.8l3-1.7.9-3.3 3.4.4z"/><path d="M7.5 12.2l3 3 6-6.2" fill="none" stroke="#fff" stroke-width="2.2"/></svg>`;
 
 /* ---------------- layouts ---------------- */
 const LAY = {
@@ -206,7 +230,7 @@ const LAY = {
       <div class="rw ok">${frame(s.good.f)}<div><span class="tag">✓ Assim sim</span><ul>${s.good.notes.map(n => `<li>${fmt(n)}</li>`).join('')}</ul></div></div></div></div>`,
   split: s => `<div class="L split"><div class="top"><span class="num">${s.n}</span><h2 class="h">${fmt(s.h)}</h2></div>${frame(s.f)}
       <div class="bt"><p>${fmt(s.body)}</p>${frame({ s: 'height', o: { level: s.hgt } })}</div></div>`,
-  statement: s => `<div class="L statement">${kick(s.k)}<p class="q">${fmt(s.q)}</p><p class="body">${fmt(s.body)}</p>${s.f ? frame(s.f, s.f.s === 'meter' ? 'flex:0 0 200px;margin-top:auto' : '') : ''}</div>`,
+  statement: s => `<div class="L statement">${kick(s.k)}<p class="q">${fmt(s.q)}</p><p class="body">${fmt(s.body)}</p>${note(s)}${s.f ? frame(s.f, s.f.s === 'meter' ? 'flex:0 0 200px;margin-top:auto' : '') : ''}</div>`,
   table: s => `<div class="L table">${kick(s.k)}<h2 class="h">${fmt(s.h)}</h2><div class="tbl">${s.cols.map(c =>
       `<div><h4>${c.t}</h4><dl>${c.rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${fmt(v)}</dd></div>`).join('')}</dl></div>`).join('')}</div>${s.note ? `<p class="nt">${fmt(s.note)}</p>` : ''}</div>`,
   grid: s => `<div class="L grid">${kick(s.k)}<h2 class="h">${fmt(s.h)}</h2><div class="gr" style="grid-template-columns:repeat(${s.cols},1fr)">${s.cells.map(c =>
@@ -214,8 +238,16 @@ const LAY = {
   timeline: s => `<div class="L timeline">${kick(s.k)}<h2 class="h">${fmt(s.h)}</h2><div class="tl">${s.steps.map(([m, t, g]) => {
       const stop = g === 'stop' || g === 'O óbvio', lbl = g === 'stop' ? 'Pare' : g === 'go' ? 'Circule' : g;
       return `<div class="st ${stop ? 'stop' : ''}"><span class="m">${m}</span><span class="dot"></span><div class="tx"><span class="chip">${lbl}</span><p>${fmt(t)}</p></div></div>`; }).join('')}</div></div>`,
+  follow: (s, p) => {
+    const nxt = POSTS[POSTS.indexOf(p) + 1];
+    return `<div class="L follow">${kick('Antes de ir embora')}<p class="hand">curtiu?</p>
+      <p class="h big">Me segue pra mais dicas de <span class="hl">fotografia na Igreja.</span></p>
+      <div class="card"><img src="img/avatar.png" alt=""><div><p class="nm">Chagas | Pascom ${VERIF}</p><p class="at">@chagas_catolico</p><p class="bio">Católico · Comunicador · Pascom</p><span class="btn">Seguir</span></div></div>
+      <div class="nx">${nxt ? `<b>Próximo da coleção →</b><span>Nº${nxt.n} · ${nxt.title}</span>` : `<b>Presets →</b><span>Presets que dão vida às suas fotos: @chagas_photon_</span>`}</div>
+      <div class="sig"><div class="nm">${LOGO}<div><b>PASCOM CRIATIVA</b><small>Fotografia • Comunicação • Evangelização</small></div></div><div class="sv">${BOOK}Salve e envie pra sua Pascom</div></div></div>`;
+  },
   cta: s => `<div class="L cta">${kick(s.k)}<p class="q">${fmt(s.q)}</p><p class="sub">${fmt(s.sub)}</p>
-      <div class="box"><i></i><span>Adicione um comentário</span></div>${s.chips ? `<div class="chips">${s.chips.map(c => `<span>${c}</span>`).join('')}</div>` : ''}
+      <div class="box"><i></i><span>Adicione um comentário</span></div>${s.chips ? `<div class="chips">${s.chips.map(c => `<span>${c}</span>`).join('')}</div>` : ''}${note(s)}
       <div class="sig"><div class="nm">${LOGO}<div><b>PASCOM CRIATIVA</b><small>Fotografia • Comunicação • Evangelização</small></div></div><div class="sv">${BOOK}Salve para a próxima missa</div></div></div>`
 };
 
@@ -276,10 +308,10 @@ const COV = {
 const app = document.getElementById('app');
 const only = new URLSearchParams(location.search).get('post');
 POSTS.filter(p => !only || p.n === only).forEach(p => {
-  const N = p.slides.length;
-  const html = p.slides.map((s, i) => {
-    const hd = `<header class="hd"><span class="lg">${LOGO}Pascom Criativa</span><span class="rt"><span>Nº${p.n} · ${p.short}</span><span>${i + 1}/${N}</span></span></header>`;
-    const body = s.L === 'cover' ? COV[s.c](p) : LAY[s.L](s);
+  const slides = [...p.slides, { L: 'follow', th: 'dark' }], N = slides.length;
+  const html = slides.map((s, i) => {
+    const hd = `<header class="hd"><span class="lg">${LOGO}Pascom Criativa</span><span class="rt"><span>@chagas_catolico</span><span>Nº${p.n} · ${p.short}</span><span>${i + 1}/${N}</span></span></header>`;
+    const body = s.L === 'cover' ? COV[s.c](p) + (s.note ? `<p class="note cv" style="${s.noteStyle}">${ARROW}${s.note}</p>` : '') : LAY[s.L](s, p);
     return `<div class="fr"><section class="slide t-${s.th}" data-post="${p.n}" data-i="${i + 1}">${hd}${body}${s.th !== 'dark' ? '<div class="fold"></div>' : ''}<div class="grain"></div></section></div>`;
   }).join('');
   app.insertAdjacentHTML('beforeend', `<section class="post"><h3>Nº${p.n} — ${p.title}</h3><div class="row">${html}</div></section>`);

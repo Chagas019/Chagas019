@@ -354,19 +354,37 @@ S.shake = () => {
   return s;
 };
 
-/* ---------------- marcações ---------------- */
+/* ---------------- marcações (à mão, caneta amarela) ---------------- */
+let SEED = 7;
+const rnd = () => { SEED = (SEED * 9301 + 49297) % 233280; return SEED / 233280; };
+function handCircle(x, y, r) {
+  const a0 = rnd() * 6.28, turn = 6.28 * (1.08 + rnd() * .08), k = 2 + rnd(), ph = rnd() * 6;
+  let d = '';
+  for (let i = 0; i <= 48; i++) {
+    const a = a0 + turn * i / 48, rr = r * (1 + .05 * Math.sin(k * a + ph) + .025 * i / 48);
+    d += (i ? 'L' : 'M') + r1(x + rr * 1.06 * Math.cos(a)) + ' ' + r1(y + rr * .94 * Math.sin(a));
+  }
+  return `<path d="${d}"/>`;
+}
+function handArrow(x1, y1, x2, y2) {
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy), b = (rnd() > .5 ? 1 : -1) * L * .14;
+  const cx = (x1 + x2) / 2 - dy / L * b, cy = (y1 + y2) / 2 + dx / L * b;
+  const tx = x2 - cx, ty = y2 - cy, tl = Math.hypot(tx, ty), ux = tx / tl, uy = ty / tl, h = 26;
+  const w1 = [x2 - h * (ux * .87 - uy * .5), y2 - h * (uy * .87 + ux * .5)], w2 = [x2 - h * (ux * .87 + uy * .5), y2 - h * (uy * .87 - ux * .5)];
+  return `<path d="M${x1} ${y1}Q${r1(cx)} ${r1(cy)} ${x2} ${y2}M${r1(w1[0])} ${r1(w1[1])}L${x2} ${y2}L${r1(w2[0])} ${r1(w2[1])}"/>`;
+}
 function marks(list = [], vb = '0 0 900 600') {
   const [, , W, H] = vb.split(' ').map(Number);
-  const lab = (x, y, t, a = 'start') => `<text x="${x}" y="${y}" fill="${C.acc}" font-family="JB Mono, monospace" font-size="24" font-weight="700" letter-spacing="1.5" text-anchor="${a}" paint-order="stroke" stroke="#000" stroke-width="7" stroke-linejoin="round">${t}</text>`;
-  let s = `<defs><marker id="ah" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="${C.acc}"/></marker></defs><g stroke="${C.acc}" fill="none" stroke-width="5" stroke-linecap="round">`;
+  const lab = (x, y, t, a = 'start') => `<text x="${x}" y="${y}" fill="${C.acc}" font-family="Caveat, cursive" font-size="44" font-weight="700" text-anchor="${a}" paint-order="stroke" stroke="#000" stroke-width="7" stroke-linejoin="round" transform="rotate(${r1(rnd() * 4 - 3)} ${x} ${y})">${t.charAt(0) + t.slice(1).toLowerCase()}</text>`;
+  let s = `<g stroke="${C.acc}" fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">`;
   let t = '';
   list.forEach(m => {
-    if (m.t === 'thirds') s += `<g stroke-width="2" opacity=".8">${[1, 2].map(i => `<line x1="${W * i / 3}" y1="0" x2="${W * i / 3}" y2="${H}"/><line x1="0" y1="${H * i / 3}" x2="${W}" y2="${H * i / 3}"/>`).join('')}</g>`;
-    if (m.t === 'circle') { s += `<circle cx="${m.x}" cy="${m.y}" r="${m.r}"/>`; if (m.l) t += lab(m.lx ?? m.x + m.r + 14, m.ly ?? m.y + 8, m.l, m.a); }
-    if (m.t === 'arrow') { s += `<line x1="${m.x1}" y1="${m.y1}" x2="${m.x2}" y2="${m.y2}" marker-end="url(#ah)"/>`; if (m.l) t += lab(m.lx ?? m.x1, m.ly ?? m.y1 - 14, m.l, m.a); }
-    if (m.t === 'x') { const k = m.s || 26; s += `<path d="M${m.x - k} ${m.y - k}L${m.x + k} ${m.y + k}M${m.x + k} ${m.y - k}L${m.x - k} ${m.y + k}" stroke-width="7"/>`; if (m.l) t += lab(m.x + k + 12, m.y + 8, m.l, m.a); }
-    if (m.t === 'box') { s += `<rect x="${m.x}" y="${m.y}" width="${m.w}" height="${m.h}" ${m.dash ? 'stroke-dasharray="14 10"' : ''}/>`; if (m.l) t += lab(m.x, m.y - 14, m.l); }
-    if (m.t === 'line') { s += `<line x1="${m.x1}" y1="${m.y1}" x2="${m.x2}" y2="${m.y2}" ${m.dash ? 'stroke-dasharray="12 10"' : ''}/>`; if (m.l) t += lab(m.lx ?? m.x2, m.ly ?? m.y2 - 14, m.l, m.a); }
+    if (m.t === 'thirds') s += `<g stroke-width="2" opacity=".75" stroke-dasharray="3 9">${[1, 2].map(i => `<line x1="${W * i / 3}" y1="0" x2="${W * i / 3}" y2="${H}"/><line x1="0" y1="${H * i / 3}" x2="${W}" y2="${H * i / 3}"/>`).join('')}</g>`;
+    if (m.t === 'circle') { s += handCircle(m.x, m.y, m.r); if (m.l) t += lab(m.lx ?? m.x + m.r + 14, m.ly ?? m.y + 8, m.l, m.a); }
+    if (m.t === 'arrow') { s += handArrow(m.x1, m.y1, m.x2, m.y2); if (m.l) t += lab(m.lx ?? m.x1, m.ly ?? m.y1 - 16, m.l, m.a); }
+    if (m.t === 'x') { const k = m.s || 26; s += `<path d="M${m.x - k} ${m.y - k * .9}Q${m.x + 4} ${m.y - 6} ${m.x + k} ${m.y + k}M${m.x + k * .9} ${m.y - k}Q${m.x - 6} ${m.y + 4} ${m.x - k} ${m.y + k * 1.05}" stroke-width="8"/>`; if (m.l) t += lab(m.x + k + 12, m.y + 8, m.l, m.a); }
+    if (m.t === 'box') { const j = () => r1(rnd() * 6 - 3); s += `<path d="M${m.x + j()} ${m.y + j()}L${m.x + m.w + j()} ${m.y + j()}L${m.x + m.w + j()} ${m.y + m.h + j()}L${m.x + j()} ${m.y + m.h + j()}Z" ${m.dash ? 'stroke-dasharray="16 12"' : ''}/>`; if (m.l) t += lab(m.x, m.y - 16, m.l); }
+    if (m.t === 'line') { s += `<path d="M${m.x1} ${m.y1}Q${r1((m.x1 + m.x2) / 2)} ${r1((m.y1 + m.y2) / 2 + 6)} ${m.x2} ${m.y2}" ${m.dash ? 'stroke-dasharray="14 12"' : ''}/>`; if (m.l) t += lab(m.lx ?? m.x2, m.ly ?? m.y2 - 16, m.l, m.a); }
     if (m.t === 'text') t += lab(m.x, m.y, m.l, m.a);
   });
   return s + '</g>' + t;

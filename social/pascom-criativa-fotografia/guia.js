@@ -32,7 +32,7 @@ const COVERS = {
 
 let md = `# PASCOM CRIATIVA — Fotografia na Igreja
 
-Coleção de 10 carrosséis para Instagram (1080×1350, 4:5). Texto, direção de arte, fotos sugeridas, legenda e pergunta de cada post. Este arquivo é gerado a partir de \`posts.js\` com \`node guia.js\`.
+Coleção de 10 carrosséis de 8 slides para Instagram (1080×1350, 4:5). Texto, direção de arte, fotos sugeridas, legenda e pergunta de cada post. Este arquivo é gerado a partir de \`posts.js\` com \`node guia.js\`.
 
 ## Identidade visual
 
@@ -40,7 +40,7 @@ Coleção de 10 carrosséis para Instagram (1080×1350, 4:5). Texto, direção d
 - **Cores:** preto profundo \`#0D0D0C\`, papel \`#E8E4DA\`, amarelo \`#FFC21A\` (destaque, marca-texto, marcações) e cinza \`#8F8B82\` (informação secundária). Os três fundos se alternam dentro de cada carrossel para dar ritmo.
 - **Tipografia:** Anton (títulos, condensada pesada), Archivo Narrow (texto), Instrument Serif (frases de respiro, em itálico) e JetBrains Mono (anotações técnicas, rótulos, leituras do visor).
 - **Linguagem gráfica:** cópias fotográficas com cantos de visor e leitura de exposição, plantas baixas, réguas de zoom, fotômetro, diagramas de luz e de movimento, caneta amarela de revisão (círculos, setas, X), comparações ASSIM NÃO / ASSIM SIM, granulação e dobra de papel.
-- **Assinatura:** marca de visor com ponto amarelo + **PASCOM CRIATIVA** no topo de todo slide; assinatura completa (*Fotografia • Comunicação • Evangelização*) só no último slide de cada post.
+- **Toque humano:** círculos, setas e X desenhados à mão (traço torto de verdade), rótulos em letra de caneta (Caveat), comentários curtos em primeira pessoa, fita adesiva nas fotos e dobra de papel. É o que tira a cara de template.\n- **Assinatura:** marca de visor com ponto amarelo + **PASCOM CRIATIVA** no topo de todo slide, ao lado de @chagas_catolico; assinatura completa (*Fotografia • Comunicação • Evangelização*) só no último slide de cada post.
 - **Imagens:** as cenas são ilustrações documentais em SVG (não fotos inventadas) e funcionam sozinhas. Para a versão com fotos reais, siga a pauta de cada post.
 
 `;
@@ -50,6 +50,8 @@ POSTS.forEach(p => {
     md += `### Slide ${i + 1}${s.L === 'cover' ? ' · capa' : ''}\n\n`;
     md += (s.L === 'cover' ? `**${COVERS[p.n]}**` : (s.k ? `_${s.k}_\n\n` : '') + text(s)) + `\n\n> **Direção de arte:** ${s.art}\n\n`;
   });
+  const nxt = POSTS[POSTS.indexOf(p) + 1];
+  md += `### Slide ${p.slides.length + 1} · siga para mais dicas\n\n_Antes de ir embora_\n\n**curtiu? ME SEGUE PRA MAIS DICAS DE FOTOGRAFIA NA IGREJA.**\n\nCartão do perfil: foto, Chagas | Pascom, @chagas_catolico, botão Seguir.\n\n${nxt ? `Próximo da coleção → Nº${nxt.n} · ${nxt.title}` : 'Presets que dão vida às suas fotos: @chagas_photon_'}\n\n> **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.\n\n`;
   md += `### Fotos sugeridas (para fotografar na sua paróquia)\n\n${p.photos.map(f => `- ${f}`).join('\n')}\n\n`;
   md += `### Legenda\n\n${p.caption.split('\n').map(l => l ? `> ${l}` : '>').join('\n')}\n>\n> #Pascom #PascomCriativa #FotografiaCatólica #ComunicaçãoCatólica #Evangelização\n\n`;
   md += `### Pergunta para os comentários\n\n**${p.question}**\n\n`;
