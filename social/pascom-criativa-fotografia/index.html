@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pascom Criativa — Fotografia</title>
+<style>
+@font-face{font-family:"Anton";src:url(fonts/anton.woff2) format("woff2");font-display:block}
+@font-face{font-family:"Archivo Narrow";src:url(fonts/archivo-narrow.woff2) format("woff2");font-weight:400 700;font-display:block}
+@font-face{font-family:"Instrument Serif";src:url(fonts/instrument-serif.woff2) format("woff2");font-display:block}
+@font-face{font-family:"Instrument Serif";src:url(fonts/instrument-serif-italic.woff2) format("woff2");font-style:italic;font-display:block}
+@font-face{font-family:"JB Mono";src:url(fonts/jetbrains-mono.woff2) format("woff2");font-weight:400 700;font-display:block}
+
+:root{--yellow:#ffc21a;--ink:#0d0d0c;--pad:72px;
+  --display:"Anton",Impact,sans-serif;--narrow:"Archivo Narrow","Arial Narrow",sans-serif;--serif:"Instrument Serif",Georgia,serif;--mono:"JB Mono",ui-monospace,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#161615;color:#eee}
+body{font-family:var(--narrow);-webkit-font-smoothing:antialiased}
+
+/* ---------- preview ---------- */
+.post{padding:36px 16px 8px}
+.post h3{font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#9a968c;margin-bottom:14px}
+.row{display:flex;gap:24px;overflow-x:auto;padding-bottom:16px;scroll-snap-type:x mandatory}
+.fr{flex:0 0 auto;width:calc(1080px*var(--s));height:calc(1350px*var(--s));--s:.3;scroll-snap-align:start}
+.fr>.slide{transform:scale(var(--s));transform-origin:0 0}
+@media (max-width:600px){.fr{--s:.27}}
+body.render .post{padding:0}body.render .post h3{display:none}body.render .row{display:block;overflow:visible;padding:0}
+body.render .fr{width:auto;height:auto;--s:1}body.render .fr>.slide{transform:none}
+
+/* ---------- slide + temas ---------- */
+.slide{position:relative;width:1080px;height:1350px;overflow:hidden;isolation:isolate;background:var(--bg);color:var(--fg)}
+.t-dark{--bg:#0d0d0c;--fg:#f1eee6;--sub:#8f8b82;--acc:var(--yellow);--line:rgba(241,238,230,.18)}
+.t-paper{--bg:#e8e4da;--fg:#121211;--sub:#6b675f;--acc:var(--yellow);--line:rgba(18,18,17,.22)}
+.t-yellow{--bg:#ffc21a;--fg:#0d0d0c;--sub:#5a4610;--acc:#0d0d0c;--line:rgba(13,13,12,.25)}
+.grain{position:absolute;inset:0;pointer-events:none;z-index:60;opacity:.3;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.t-paper .grain,.t-yellow .grain{mix-blend-mode:multiply;opacity:.22}
+.fold{position:absolute;top:0;bottom:0;left:540px;width:1px;background:rgba(0,0,0,.08);box-shadow:1px 0 0 rgba(255,255,255,.35);z-index:59}
+
+.hd{position:absolute;left:var(--pad);right:var(--pad);top:50px;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:15px;letter-spacing:.1em;text-transform:uppercase;z-index:40}
+.hd .lg{display:flex;align-items:center;gap:12px;font-weight:700}
+.hd .lg svg{width:26px;height:26px}
+.hd .rt{display:flex;gap:26px;opacity:.7}
+
+.hl{color:var(--acc)}
+.t-paper .hl{color:inherit;background:linear-gradient(transparent 30%,var(--yellow) 30%,var(--yellow) 96%,transparent 96%);padding:0 .1em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.t-yellow .hl{color:var(--yellow);background:linear-gradient(transparent 30%,var(--ink) 30%,var(--ink) 96%,transparent 96%);padding:0 .1em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.sf{font-family:var(--serif);font-style:italic;text-transform:none;letter-spacing:-.01em}
+.fit{display:block;white-space:nowrap;font-family:var(--display);line-height:.9;text-transform:uppercase}
+
+.L{position:absolute;left:var(--pad);right:var(--pad);top:132px;bottom:92px;display:flex;flex-direction:column}
+.kick{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:17px;letter-spacing:.14em;text-transform:uppercase;color:var(--sub)}
+.kick i{width:14px;height:14px;background:var(--acc);flex:0 0 14px}
+.t-yellow .kick{color:var(--fg)}
+.h{font-family:var(--display);font-weight:400;font-size:88px;line-height:.95;text-transform:uppercase;margin-top:20px;letter-spacing:.002em}
+
+/* fotos ilustradas e diagramas */
+.ph{position:relative;overflow:hidden;background:#191917}
+.ph>svg,.ph>img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover}
+.ph>img{image-rendering:pixelated}
+.fig{position:relative;min-height:0}
+.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+.vf{position:absolute;inset:0;pointer-events:none;font-family:var(--mono);font-size:15px;color:#fff;letter-spacing:.06em}
+.vf b{position:absolute;width:30px;height:30px;border:2.5px solid #fff}
+.vf b:nth-child(1){left:16px;top:16px;border-right:0;border-bottom:0}.vf b:nth-child(2){right:16px;top:16px;border-left:0;border-bottom:0}
+.vf b:nth-child(3){left:16px;bottom:16px;border-right:0;border-top:0}.vf b:nth-child(4){right:16px;bottom:16px;border-left:0;border-top:0}
+.vf span{position:absolute;left:0;right:0;bottom:24px;text-align:center}
+.vf em{position:absolute;left:30px;top:26px;font-style:normal;display:flex;gap:8px;align-items:center}
+.vf em::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--yellow)}
+
+/* list */
+.list ol{list-style:none;margin-top:44px;flex:1;display:flex;flex-direction:column}
+.list li{flex:1;align-content:center;display:grid;grid-template-columns:110px 1fr;padding:24px 0;border-top:1.5px solid var(--line)}
+.list li:last-child{border-bottom:1.5px solid var(--line)}
+.list .n{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--acc);padding-top:8px}
+.t-paper .list .n{color:var(--fg)}
+.list b{display:block;font-weight:700;font-size:50px;line-height:1.05;letter-spacing:-.01em}
+.list p{font-size:33px;line-height:1.2;color:var(--sub);margin-top:8px;font-weight:500}
+.list li.ck{grid-template-columns:86px 1fr;align-items:center;padding:30px 0}
+.list li.ck .n{width:46px;height:46px;border:3px solid var(--acc);padding:0}
+.list li.ck b{font-size:54px}
+
+/* diagram */
+.diagram .fig,.diagram .ph{flex:1;margin:30px 0 28px}
+.diagram .duo{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:22px;margin:30px 0 28px;min-height:0}
+.diagram .duo>*{margin:0}
+.notes{display:grid;gap:28px;border-top:1.5px solid var(--line);padding-top:22px}
+.notes div b{display:block;font-family:var(--mono);font-size:16px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);margin-bottom:8px}
+.t-paper .notes div b{color:var(--fg)}
+.t-paper .notes div b::before{content:"";display:inline-block;width:10px;height:10px;background:var(--yellow);margin-right:8px}
+.notes div p{font-size:27px;line-height:1.18;font-weight:500}
+
+/* compare */
+.compare .h{font-size:76px}
+.cmp{flex:1;display:flex;flex-direction:column;gap:26px;margin-top:32px}
+.cmp .rw{flex:1;display:grid;grid-template-columns:560px 1fr;gap:30px;min-height:0}
+.cmp .tag{display:inline-flex;align-items:center;gap:10px;font-family:var(--display);font-size:34px;text-transform:uppercase;padding:8px 14px 6px;border:3px solid var(--fg);line-height:1}
+.cmp .ok .tag{background:var(--yellow);border-color:var(--yellow);color:var(--ink)}
+.cmp ul{list-style:none;margin-top:22px}
+.cmp li{font-size:29px;line-height:1.18;font-weight:500;padding:12px 0;border-top:1.5px solid var(--line)}
+.cmp .bad .ph{filter:saturate(.7)}
+
+/* split */
+.split .top{display:flex;align-items:flex-end;gap:28px}
+.split .num{font-family:var(--display);font-size:250px;line-height:.78;color:transparent;-webkit-text-stroke:2.5px var(--fg)}
+.split .h{font-size:120px;margin:0 0 4px}
+.split .ph{flex:1;margin:36px 0 30px}
+.split .bt{display:grid;grid-template-columns:1fr 150px;gap:30px;align-items:end}
+.split .bt p{font-size:33px;line-height:1.2;font-weight:500}
+.split .bt .fig{height:210px}
+
+/* statement */
+.statement:not(:has(.fig,.ph)){justify-content:center;padding-bottom:60px}
+.statement .q{font-family:var(--serif);font-size:118px;line-height:.98;letter-spacing:-.025em;margin-top:44px}
+.statement .q .sf{color:var(--acc)}
+.t-paper .statement .q .sf{color:var(--fg);background:linear-gradient(transparent 22%,var(--yellow) 22%,var(--yellow) 96%,transparent 96%);padding:0 .06em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.t-yellow .statement .q .sf{color:var(--fg);text-decoration:underline;text-decoration-thickness:6px;text-underline-offset:10px}
+.statement .body{font-size:34px;line-height:1.22;color:var(--sub);font-weight:500;margin-top:40px;max-width:840px}
+.t-yellow .statement .body{color:var(--fg)}
+.statement .fig,.statement .ph{flex:1;margin-top:40px}
+
+/* table */
+.tbl{display:grid;grid-template-columns:1fr 1fr;gap:44px;margin-top:44px}
+.tbl h4{font-family:var(--display);font-weight:400;font-size:44px;text-transform:uppercase;padding-bottom:12px;border-bottom:5px solid var(--yellow)}
+.tbl dl div{padding:22px 0;border-bottom:1.5px solid var(--line)}
+.tbl dt{font-family:var(--mono);font-size:16px;letter-spacing:.12em;text-transform:uppercase;color:var(--sub)}
+.tbl dd{font-weight:700;font-size:44px;line-height:1.08;margin-top:4px;letter-spacing:-.01em}
+.table .nt{margin-top:auto;font-family:var(--serif);font-style:italic;font-size:46px;line-height:1.05;letter-spacing:-.015em}
+
+/* grid */
+.gr{flex:1;display:grid;gap:22px;margin-top:36px;min-height:0}
+.gr .cell{display:flex;flex-direction:column;min-height:0}
+.gr .ph{flex:1}
+.gr .cap{display:flex;gap:14px;align-items:baseline;margin-top:12px}
+.gr .cap b{font-family:var(--mono);font-size:17px;color:var(--acc);font-weight:700}
+.t-paper .gr .cap b{color:var(--fg);background:var(--yellow);padding:0 6px}
+.gr .cap span{font-weight:700;font-size:28px;line-height:1.1}
+
+/* timeline */
+.tl{flex:1;display:flex;flex-direction:column;justify-content:space-between;margin-top:36px}
+.tl .st{display:grid;grid-template-columns:260px 44px 1fr;gap:20px;align-items:start;position:relative;flex:1}
+.tl .st::before{content:"";position:absolute;left:281px;top:16px;bottom:-16px;width:2px;background:var(--line)}
+.tl .st:last-child::before{display:none}
+.tl .m{font-family:var(--display);font-size:46px;line-height:1;text-transform:uppercase}
+.tl .dot{width:22px;height:22px;border-radius:50%;border:3px solid var(--fg);margin:10px 0 0 11px;background:var(--bg);position:relative;z-index:1}
+.tl .st.stop .dot{background:var(--yellow);border-color:var(--yellow)}
+.tl .tx p{font-size:33px;line-height:1.2;font-weight:500}
+.tl .chip{display:inline-block;font-family:var(--mono);font-size:15px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border:2px solid var(--fg);margin-bottom:10px}
+.tl .st.stop .chip{background:var(--yellow);border-color:var(--yellow);color:var(--ink)}
+
+/* cta */
+.cta .q{font-family:var(--display);font-size:132px;line-height:.93;text-transform:uppercase;margin-top:40px}
+.cta .sub{font-size:36px;line-height:1.2;font-weight:500;margin-top:30px;max-width:860px}
+.cta .box{margin-top:48px;display:flex;align-items:center;gap:22px;border:3px solid var(--fg);border-radius:22px;padding:24px 28px}
+.cta .box i{flex:0 0 58px;height:58px;border-radius:50%;background:var(--fg);opacity:.85}
+.cta .box span{font-size:34px;opacity:.6;font-weight:500}
+.cta .box span::after{content:"";display:inline-block;width:3px;height:36px;background:currentColor;vertical-align:-6px;margin-left:6px}
+.cta .chips{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+.cta .chips span{font-family:var(--mono);font-size:21px;font-weight:700;padding:10px 18px;border:2.5px solid var(--fg);border-radius:999px}
+.sig{margin-top:auto;display:flex;align-items:flex-end;justify-content:space-between;border-top:2px solid var(--fg);padding-top:24px}
+.sig .nm{display:flex;align-items:center;gap:16px}
+.sig .nm svg{width:46px;height:46px}
+.sig .nm b{display:block;font-family:var(--display);font-weight:400;font-size:40px;line-height:1;letter-spacing:.02em}
+.sig .nm small{display:block;font-family:var(--mono);font-size:15px;letter-spacing:.12em;text-transform:uppercase;margin-top:6px}
+.sig .sv{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:15px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.sig .sv svg{width:22px;height:28px}
+
+/* capas */
+.cv{position:absolute}
+.cv-k{position:absolute;left:var(--pad);top:132px;z-index:20}
+.swipe{position:absolute;right:var(--pad);bottom:56px;font-family:var(--mono);font-size:16px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;z-index:20;display:flex;gap:10px;align-items:center}
+.swipe::after{content:"→";font-size:22px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="scenes.js"></script>
+<script src="posts.js"></script>
+<script>
+const TECH = new Set(['floorplan','camera','phone','lensbar','meter','route','panning','silho','height','sensor','shake','contact']);
+const PX = {}; let FID = 0;
+const fmt = s => (s || '').replace(/\*(.+?)\*/g, '<span class="hl">$1</span>').replace(/_(.+?)_/g, '<i class="sf">$1</i>');
+const LOGO = `<svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M1 8V1h7M18 1h7v7M25 18v7h-7M8 25H1v-7"/><circle cx="13" cy="13" r="3.6" fill="var(--yellow)" stroke="none"/></svg>`;
+const BOOK = `<svg viewBox="0 0 22 28" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M2 2h18v24l-9-6-9 6z"/></svg>`;
+
+function vf(t){ return t ? `<div class="vf"><b></b><b></b><b></b><b></b><em>AF-S</em><span>${t}</span></div>` : ''; }
+function frame(f, style = ''){
+  const id = ++FID;
+  if (TECH.has(f.s)) return `<div class="fig" style="${style}">${sceneSvg(f.s, f.o || {}, f.m || [], { meet: true, id })}</div>`;
+  const svg = sceneSvg(f.s, f.o || {}, f.m || [], { shake: f.shake, tilt: f.tilt, id, meet: f.meet });
+  if (f.px) { PX[id] = { svg, block: f.px.block }; return `<div class="ph" style="${style}"><img data-px="${id}" alt="">${vf(f.vf)}</div>`; }
+  return `<div class="ph" style="${style}">${svg}${vf(f.vf)}</div>`;
+}
+const kick = k => `<p class="kick"><i></i>${k}</p>`;
+
+/* ---------------- layouts ---------------- */
+const LAY = {
+  list: s => `<div class="L list">${kick(s.k)}<h2 class="h">${fmt(s.h)}</h2><ol>${s.items.map(([b, p], i) =>
+      p ? `<li><span class="n">${String(i + 1).padStart(2, '0')}</span><div><b>${fmt(b)}</b><p>${fmt(p)}</p></div></li>`
+        : `<li class="ck"><span class="n"></span><div><b>${fmt(b)}</b></div></li>`).join('')}</ol></div>`,
+  diagram: s => `<div class="L diagram">${kick(s.k)}<h2 class="h">${fmt(s.h)}</h2>${
+      s.f2 ? `<div class="duo">${frame(s.d)}${frame(s.f2)}</div>` : frame(s.d)}
+    <div class="notes" style="grid-template-columns:repeat(${s.notes.length},1fr)">${s.notes.map(([b, p]) => `<div><b>${b}</b><p>${fmt(p)}</p></div>`).join('')}</div></div>`,
+  compare: s => `<div class="L compare">${kick(s.k)}<h2 class="h">${fmt(s.h)}</h2><div class="cmp">
+      <div class="rw bad">${frame(s.bad.f)}<div><span class="tag">✕ Assim não</span><ul>${s.bad.notes.map(n => `<li>${fmt(n)}</li>`).join('')}</ul></div></div>
+      <div class="rw ok">${frame(s.good.f)}<div><span class="tag">✓ Assim sim</span><ul>${s.good.notes.map(n => `<li>${fmt(n)}</li>`).join('')}</ul></div></div></div></div>`,
+  split: s => `<div class="L split"><div class="top"><span class="num">${s.n}</span><h2 class="h">${fmt(s.h)}</h2></div>${frame(s.f)}
+      <div class="bt"><p>${fmt(s.body)}</p>${frame({ s: 'height', o: { level: s.hgt } })}</div></div>`,
+  statement: s => `<div class="L statement">${kick(s.k)}<p class="q">${fmt(s.q)}</p><p class="body">${fmt(s.body)}</p>${s.f ? frame(s.f, s.f.s === 'meter' ? 'flex:0 0 200px;margin-top:auto' : '') : ''}</div>`,
+  table: s => `<div class="L table">${kick(s.k)}<h2 class="h">${fmt(s.h)}</h2><div class="tbl">${s.cols.map(c =>
+      `<div><h4>${c.t}</h4><dl>${c.rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${fmt(v)}</dd></div>`).join('')}</dl></div>`).join('')}</div>${s.note ? `<p class="nt">${fmt(s.note)}</p>` : ''}</div>`,
+  grid: s => `<div class="L grid">${kick(s.k)}<h2 class="h">${fmt(s.h)}</h2><div class="gr" style="grid-template-columns:repeat(${s.cols},1fr)">${s.cells.map(c =>
+      `<div class="cell">${frame(c.f)}<div class="cap"><b>${c.n}</b><span>${fmt(c.t)}</span></div></div>`).join('')}</div></div>`,
+  timeline: s => `<div class="L timeline">${kick(s.k)}<h2 class="h">${fmt(s.h)}</h2><div class="tl">${s.steps.map(([m, t, g]) => {
+      const stop = g === 'stop' || g === 'O óbvio', lbl = g === 'stop' ? 'Pare' : g === 'go' ? 'Circule' : g;
+      return `<div class="st ${stop ? 'stop' : ''}"><span class="m">${m}</span><span class="dot"></span><div class="tx"><span class="chip">${lbl}</span><p>${fmt(t)}</p></div></div>`; }).join('')}</div></div>`,
+  cta: s => `<div class="L cta">${kick(s.k)}<p class="q">${fmt(s.q)}</p><p class="sub">${fmt(s.sub)}</p>
+      <div class="box"><i></i><span>Adicione um comentário</span></div>${s.chips ? `<div class="chips">${s.chips.map(c => `<span>${c}</span>`).join('')}</div>` : ''}
+      <div class="sig"><div class="nm">${LOGO}<div><b>PASCOM CRIATIVA</b><small>Fotografia • Comunicação • Evangelização</small></div></div><div class="sv">${BOOK}Salve para a próxima missa</div></div></div>`
+};
+
+/* ---------------- capas ---------------- */
+const COV = {
+  c01: p => `${frame({ s: 'floorplan', o: { cams: [{ x: 175, y: 470, a: -62, l: 'A' }, { x: 450, y: 930, a: -90, l: 'B' }, { x: 720, y: 330, a: -150, l: 'C' }], zones: [{ x: 160, y: 70, w: 580, h: 225 }] } }, 'position:absolute;right:-150px;top:150px;width:820px;height:911px;transform:rotate(-6deg);opacity:.9')}
+    <div class="cv-k">${kick('Nº 01 — Como fotografar durante a Santa Missa')}</div>
+    <div class="cv" style="left:72px;top:250px;width:640px"><span class="fit" data-fit>A melhor</span><span class="fit" data-fit>foto da</span><span class="fit" data-fit>missa</span></div>
+    <p class="cv sf" style="left:72px;top:930px;width:720px;font-size:92px;line-height:.95">é a que ninguém <span style="background:var(--yellow);padding:0 .1em">viu você</span> tirar.</p>
+    <span class="swipe">Arraste</span>`,
+  c02: p => `<span class="cv" style="left:-30px;top:-170px;font-family:var(--display);font-size:1560px;line-height:1;color:transparent;-webkit-text-stroke:3px rgba(241,238,230,.5)">5</span>
+    ${[['procession', {}, 'BAIXO', 560, 140, -4], ['nave', {}, 'ABERTO', 110, 300, 3], ['hands', { type: 'rosary' }, 'DETALHE', 590, 420, 5], ['reader', {}, 'MÉDIO', 150, 560, -3], ['nave', { people: true }, 'PERSPECTIVA', 500, 640, -2]].map(([s, o, l, x, y, r], i) =>
+      `<div class="cv" style="left:${x}px;top:${y}px;width:400px;transform:rotate(${r}deg);box-shadow:0 20px 50px rgba(0,0,0,.6);z-index:${5 + i}">${frame({ s, o }, 'height:267px')}<p style="background:#f1eee6;color:#0d0d0c;font-family:var(--mono);font-size:16px;font-weight:700;letter-spacing:.12em;padding:8px 12px">0${i + 1} · ${l}</p></div>`).join('')}
+    <div class="cv-k">${kick('Nº 02')}</div>
+    <p class="cv" style="left:72px;right:72px;top:975px;z-index:20;font-family:var(--display);font-size:112px;line-height:.92;text-transform:uppercase">Ângulos que<br>transformam <span class="hl">suas fotos</span></p>`,
+  c03: p => `${frame({ s: 'monstrance', o: {} }, 'position:absolute;inset:0')}
+    <div class="cv-k">${kick('Nº 03 — Adoração ao Santíssimo')}</div>
+    <p class="cv" style="left:72px;right:72px;top:900px;font-family:var(--serif);font-size:118px;line-height:.95;letter-spacing:-.025em;z-index:10">Na adoração, <i style="color:var(--yellow)">o escuro</i> também é a foto.</p>
+    ${frame({ s: 'meter', o: { v: -1, l: 'EXPONHA PARA A LUZ' } }, 'position:absolute;left:72px;right:72px;top:150px;height:150px;z-index:10;color:#f1eee6;margin-top:30px')}`,
+  c04: p => `${frame({ s: 'nave', o: {}, px: { block: 30 } }, 'position:absolute;left:72px;right:72px;top:200px;height:690px')}
+    <p class="cv" style="left:72px;top:128px;font-size:32px;font-weight:700">Ele não aproxima. Ele recorta e estraga a foto.</p>
+    <span class="cv" style="left:56px;top:470px;font-family:var(--display);font-size:470px;line-height:.8;color:var(--ink);z-index:5">10×</span>
+    <div class="cv" style="left:72px;right:72px;top:925px"><span class="fit" data-fit>Pare de usar o</span><span class="fit" data-fit>zoom digital.</span></div>
+`,
+  c05: p => `${frame({ s: 'procession', o: {} }, 'position:absolute;left:0;right:0;top:0;height:880px')}
+    <svg class="cv" viewBox="0 0 1080 880" style="left:0;top:0;width:1080px;height:880px;z-index:5"><path d="M540 300C560 480 700 600 880 700" fill="none" stroke="#ffc21a" stroke-width="22" stroke-linecap="round"/><path d="M900 640l40 90-98-6z" fill="#ffc21a"/></svg>
+    <div class="cv-k">${kick('Nº 05 — Procissão')}</div>
+    <div class="cv" style="left:72px;right:72px;top:920px"><span class="fit" data-fit>Quem chega atrasado</span><span class="fit" data-fit>fotografa <span class="hl">costas.</span></span></div>`,
+  c06: p => `<span class="cv" style="right:-60px;top:-160px;font-family:var(--display);font-size:1380px;line-height:1;color:transparent;-webkit-text-stroke:3px #121211;opacity:.6">3</span>
+    <div class="cv" style="left:72px;top:250px;width:700px;transform:rotate(-3.5deg);box-shadow:0 30px 60px rgba(0,0,0,.35);border:14px solid #f6f3ec;border-bottom-width:60px">
+      ${frame({ s: 'altar', o: {}, shake: true, tilt: 4, m: [{ t: 'x', x: 450, y: 140, s: 40, l: 'TREMIDA' }, { t: 'arrow', x1: 120, y1: 80, x2: 260, y2: 470, l: 'HORIZONTE TORTO', lx: 30, ly: 60 }, { t: 'circle', x: 720, y: 470, r: 80, l: 'SEM INTENÇÃO', lx: 520, ly: 590 }] }, 'height:448px')}</div>
+    <div class="cv-k">${kick('Nº 06')}</div>
+    <div class="cv" style="left:72px;right:72px;top:900px"><span class="fit" data-fit>Erros que todo fotógrafo</span><span class="fit" data-fit>da Pascom comete</span></div>
+    <p class="cv sf" style="left:72px;bottom:52px;font-size:48px">(inclusive eu)</p>`,
+  c07: p => `<div class="cv-k">${kick('Nº 07 — A Santa Eucaristia')}</div>
+    ${frame({ s: 'altar', o: { elevate: true }, m: [{ t: 'box', x: 405, y: 60, w: 90, h: 90 }], vf: 'ISO 3200 · 1/200 · ƒ2.8' }, 'position:absolute;left:230px;width:620px;top:260px;height:413px')}
+    <p class="cv" style="left:72px;right:72px;top:770px;text-align:center;font-family:var(--serif);font-size:92px;line-height:.98;letter-spacing:-.02em">O momento mais importante da missa pede o <i style="color:var(--yellow)">clique mais discreto.</i></p>`,
+  c08: p => `<div class="cv-k">${kick('Nº 08 — Fotografia com celular')}</div>
+    <div class="cv" style="left:72px;right:72px;top:200px"><span class="fit" data-fit>Seu celular tem</span><span class="fit" data-fit>configurações</span><span class="fit" data-fit>que você nunca abriu.</span></div>
+    ${frame({ s: 'phone', o: { focus: [300, 360], sun: 30, lock: true, hdr: true } }, 'position:absolute;left:560px;top:620px;width:470px;height:783px')}
+    <svg class="cv" viewBox="0 0 1080 1350" style="inset:0;width:1080px;height:1350px;z-index:5" fill="none" stroke="#0d0d0c" stroke-width="3">
+      <path d="M340 717H673"/><circle cx="673" cy="717" r="8" fill="#0d0d0c"/><path d="M340 900H780"/><circle cx="780" cy="900" r="8" fill="#0d0d0c"/><path d="M340 1250H765"/><circle cx="765" cy="1250" r="8" fill="#0d0d0c"/></svg>
+    ${[['HDR', 'quando ligar', 700], ['Foco + exposição', 'travar e escurecer', 883], ['Lente', 'qual é a real', 1233]].map(([a, b, y]) => `<div class="cv" style="left:72px;top:${y - 22}px;width:260px"><p style="font-family:var(--display);font-size:40px;line-height:1;text-transform:uppercase">${a}</p><p style="font-family:var(--mono);font-size:15px;letter-spacing:.1em;text-transform:uppercase;margin-top:6px">${b}</p></div>`).join('')}`,
+  c09: p => `<div class="cv-k">${kick('Nº 09 — Narrativa visual')}</div>
+    <div class="cv" style="left:72px;right:72px;top:190px"><span class="fit" data-fit>Uma foto bonita mostra.</span></div>
+    ${frame({ s: 'contact', o: { x: [0, 5, 7, 12, 14], pick: 8 } }, 'position:absolute;left:60px;top:390px;width:640px;height:711px;transform:rotate(-2.5deg);box-shadow:0 30px 60px rgba(0,0,0,.35)')}
+    <p class="cv" style="left:740px;right:60px;top:560px;font-family:var(--serif);font-size:118px;line-height:.92;letter-spacing:-.03em">Uma foto boa <i style="background:var(--yellow);padding:0 .06em">conta.</i></p>
+    <span class="swipe">Arraste</span>`,
+  c10: p => `<div class="cv-k">${kick('Nº 10 — Além do altar')}</div>
+    ${frame({ s: 'altar', o: {}, m: [{ t: 'x', x: 450, y: 300, s: 90 }], vf: 'SÓ O ALTAR, DE NOVO' }, 'position:absolute;left:72px;top:200px;width:560px;height:373px;filter:grayscale(1) brightness(.7)')}
+    <p class="cv" style="left:670px;right:72px;top:210px;font-family:var(--serif);font-size:66px;line-height:.98;letter-spacing:-.02em">A missa também acontece <i style="color:var(--yellow)">nos bancos.</i></p>
+    <svg class="cv" viewBox="0 0 1080 1350" style="inset:0;width:1080px;height:1350px;z-index:5" fill="none"><path d="M200 600C120 760 200 880 360 880" stroke="#ffc21a" stroke-width="20" stroke-linecap="round"/><path d="M350 840l70 42-70 40z" fill="#ffc21a"/></svg>
+    ${frame({ s: 'faces', o: { focus: 2 }, m: [{ t: 'circle', x: 450, y: 420, r: 120 }], vf: 'A COMUNIDADE' }, 'position:absolute;left:448px;top:660px;width:560px;height:373px')}
+    <div class="cv" style="left:72px;right:72px;top:1080px"><span class="fit" data-fit>Vira a câmera.</span></div>`
+};
+
+/* ---------------- montagem ---------------- */
+const app = document.getElementById('app');
+const only = new URLSearchParams(location.search).get('post');
+POSTS.filter(p => !only || p.n === only).forEach(p => {
+  const N = p.slides.length;
+  const html = p.slides.map((s, i) => {
+    const hd = `<header class="hd"><span class="lg">${LOGO}Pascom Criativa</span><span class="rt"><span>Nº${p.n} · ${p.short}</span><span>${i + 1}/${N}</span></span></header>`;
+    const body = s.L === 'cover' ? COV[s.c](p) : LAY[s.L](s);
+    return `<div class="fr"><section class="slide t-${s.th}" data-post="${p.n}" data-i="${i + 1}">${hd}${body}${s.th !== 'dark' ? '<div class="fold"></div>' : ''}<div class="grain"></div></section></div>`;
+  }).join('');
+  app.insertAdjacentHTML('beforeend', `<section class="post"><h3>Nº${p.n} — ${p.title}</h3><div class="row">${html}</div></section>`);
+});
+
+(async () => {
+  if (new URLSearchParams(location.search).has('render')) document.body.classList.add('render');
+  await Promise.all([...document.querySelectorAll('img[data-px]')].map(async img => {
+    const { svg, block } = PX[img.dataset.px];
+    const src = new Image();
+    src.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    await src.decode();
+    const small = document.createElement('canvas');
+    small.width = Math.ceil(900 / block); small.height = Math.ceil(600 / block);
+    small.getContext('2d').drawImage(src, 0, 0, small.width, small.height);
+    const big = document.createElement('canvas');
+    big.width = 900; big.height = 600;
+    const ctx = big.getContext('2d'); ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(small, 0, 0, 900, 600);
+    img.src = big.toDataURL();
+  }));
+  await document.fonts.ready;
+  document.querySelectorAll('[data-fit]').forEach(el => {
+    const w = el.parentElement.offsetWidth;
+    el.style.display = 'inline-block'; el.style.fontSize = '100px';
+    el.style.fontSize = 100 * w / el.offsetWidth + 'px'; el.style.display = '';
+  });
+  document.body.dataset.ready = '1';
+})();
+</script>
+</body>
+</html>
