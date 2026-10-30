@@ -26,28 +26,32 @@ body.render .post{padding:0}body.render .post h3{display:none}body.render .row{d
 body.render .fr{width:auto;height:auto;--s:1}body.render .fr>.slide{transform:none}
 
 .slide{position:relative;width:1080px;height:1350px;overflow:hidden;isolation:isolate;background:var(--bg);color:var(--fg);font-stretch:100%}
-.t-sky{--bg:linear-gradient(180deg,#2b6a89 0%,#47879f 55%,#86b6c6 100%);--fg:#f6f6f2;--sub:rgba(246,246,242,.78);--acc:var(--yel)}
+.t-sky{--bg:radial-gradient(rgba(255,255,255,.07) 1.2px,transparent 1.6px) 0 0/7px 7px,#3c7c99;--fg:#f6f6f2;--sub:rgba(246,246,242,.78);--acc:var(--yel)}
 .t-wht{--bg:#ecebe6;--fg:var(--ink);--sub:#5f5e59;--acc:var(--red)}
 .t-yel{--bg:var(--yel);--fg:var(--ink);--sub:#5a4610;--acc:var(--red)}
 .t-wall{--bg:#222;--fg:var(--ink);--sub:#5f5e59;--acc:var(--red)}
 .wall{position:absolute;inset:0;z-index:0}
-.grain{position:absolute;inset:0;pointer-events:none;z-index:60;opacity:.18;mix-blend-mode:overlay;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.grain{position:absolute;inset:0;pointer-events:none;z-index:60;opacity:.42;mix-blend-mode:overlay;
+  background-size:180px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
 
 .hd{position:absolute;left:var(--pad);right:var(--pad);top:44px;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:15px;letter-spacing:.1em;text-transform:uppercase;z-index:40}
 .chip{position:relative;display:inline-block;background:var(--yel);color:var(--ink);font-family:var(--wide);font-weight:900;font-stretch:125%;font-size:15px;letter-spacing:.06em;padding:9px 14px 7px;border-radius:4px;box-shadow:inset 0 -4px 0 rgba(0,0,0,.18)}
 .hd .rt{display:flex;gap:22px;opacity:.85}
 
+/* sujeira de scan */
+.dust{position:absolute;inset:0;width:1080px;height:1350px;z-index:61;pointer-events:none}
+.t-sky .dust g{fill:#fff;stroke:#fff;opacity:.3}
+.vig{position:absolute;inset:0;z-index:59;pointer-events:none;box-shadow:inset 0 0 160px rgba(0,0,0,.22)}
 /* blocos */
 .brk{--c:var(--wht);--t:var(--ink);position:relative;background:var(--c);color:var(--t);border-radius:6px;padding:30px 34px 34px;
-  box-shadow:inset 0 -12px 0 rgba(0,0,0,.17),inset 0 3px 0 rgba(255,255,255,.3),0 10px 18px rgba(0,0,0,.14)}
+  box-shadow:inset 0 -12px 0 rgba(0,0,0,.17),inset 0 3px 0 rgba(255,255,255,.3),7px 9px 0 rgba(0,0,0,.22)}
 .brk::before{content:"";position:absolute;left:14px;right:14px;top:-17px;height:18px;background:var(--c);filter:brightness(1.06);
   -webkit-mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='84' height='18'><rect x='18' y='0' width='48' height='24' rx='6'/></svg>") repeat-x left top/84px 18px;
   mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='84' height='18'><rect x='18' y='0' width='48' height='24' rx='6'/></svg>") repeat-x left top/84px 18px}
 .c-red{--c:var(--red);--t:#fff}.c-blue{--c:var(--blue);--t:#fff}.c-yel{--c:var(--yel);--t:var(--ink)}.c-grn{--c:var(--grn);--t:#fff}.c-wht{--c:var(--wht);--t:var(--ink)}.c-blk{--c:var(--blk);--t:#fff}
 
-.hl{background:var(--yel);color:var(--ink);padding:0 .14em;border-radius:4px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
-.t-yel .hl,.t-wall .hl{background:var(--red);color:#fff}
+.hl{background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 24' preserveAspectRatio='none'><path d='M3 13C40 6 82 16 121 9S181 14 198 7L196 19C151 22 92 15 52 20S12 18 4 21Z' fill='%23f6c21b'/></svg>") no-repeat 0 92%/100% 46%;padding:0 .06em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.t-yel .hl,.t-wall .hl{background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 24' preserveAspectRatio='none'><path d='M3 13C40 6 82 16 121 9S181 14 198 7L196 19C151 22 92 15 52 20S12 18 4 21Z' fill='%23d0261d'/></svg>") no-repeat 0 92%/100% 46%}
 .sf{color:var(--acc);font-style:normal}
 .t-sky .sf{color:var(--yel)}
 .W{font-weight:900;font-stretch:125%;text-transform:uppercase;letter-spacing:-.01em;line-height:.9}
@@ -124,7 +128,7 @@ body.render .fr{width:auto;height:auto;--s:1}body.render .fr>.slide{transform:no
 .gr .brk span{font-weight:800;font-size:36px;line-height:1.08}
 
 /* statement */
-.st .q{font-weight:900;font-stretch:118%;font-size:84px;line-height:.98;text-transform:uppercase;letter-spacing:-.015em;margin-top:40px}
+.st .q{text-shadow:-4px 3px 0 rgba(208,38,29,.4);font-weight:900;font-stretch:118%;font-size:84px;line-height:.98;text-transform:uppercase;letter-spacing:-.015em;margin-top:40px}
 .st .body{font-weight:500;font-size:32px;line-height:1.22;margin-top:34px;max-width:860px;color:var(--sub)}
 .st .board{margin-top:40px;padding:26px 30px 32px}
 .st .board .fig{height:160px;position:relative}
@@ -146,14 +150,15 @@ body.render .fr{width:auto;height:auto;--s:1}body.render .fr>.slide{transform:no
 
 /* capas e seguir */
 .hill{position:absolute;left:0;bottom:0;width:1080px;height:430px;z-index:20}
-.title{position:absolute;left:var(--pad);right:var(--pad);bottom:358px;display:flex;flex-direction:column;align-items:center;z-index:10;color:#f4f4f1}
+.title{position:absolute;left:60px;right:40px;bottom:358px;display:flex;flex-direction:column;align-items:flex-start;z-index:10;color:#f4f4f1}
+.title span{text-shadow:-5px 4px 0 rgba(208,38,29,.5)}
 .title span{display:block;white-space:nowrap;font-weight:900;font-stretch:125%;text-transform:uppercase;letter-spacing:-.01em;line-height:.86}
-.obj{position:absolute;left:420px;top:868px;width:240px;height:180px;z-index:30}
-.under{position:absolute;left:var(--pad);right:var(--pad);bottom:150px;z-index:30;text-align:center;color:#fff;font-weight:700;font-size:34px;line-height:1.2}
+.obj{position:absolute;left:600px;top:872px;width:240px;height:180px;z-index:30}
+.under{position:absolute;left:var(--pad);right:300px;bottom:140px;z-index:30;text-align:left;color:#fff;font-weight:700;font-size:34px;line-height:1.2}
 .under small{display:block;font-family:var(--mono);font-size:15px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-top:14px;opacity:.85}
-.kick-top{position:absolute;left:var(--pad);right:var(--pad);top:120px;text-align:center;font-family:var(--mono);font-size:17px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.85);z-index:10}
-.ava{position:absolute;left:470px;top:880px;width:140px;height:140px;border-radius:50%;z-index:30;box-shadow:0 0 0 8px #f4f4f1,0 24px 30px rgba(0,0,0,.25)}
-.fol{position:absolute;left:var(--pad);right:var(--pad);bottom:56px;z-index:30;text-align:center;color:#fff}
+.kick-top{position:absolute;left:var(--pad);right:var(--pad);top:120px;text-align:left;font-family:var(--mono);font-size:17px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.85);z-index:10}
+.ava{position:absolute;left:650px;top:884px;width:140px;height:140px;border-radius:50%;z-index:30;box-shadow:0 0 0 8px #f4f4f1,0 24px 30px rgba(0,0,0,.25)}
+.fol{position:absolute;left:var(--pad);right:var(--pad);bottom:56px;z-index:30;text-align:left;color:#fff}
 .fol .at{font-weight:900;font-stretch:125%;font-size:44px}
 .fol .btn{display:inline-block;margin-top:22px;font-weight:900;font-stretch:125%;font-size:34px;text-transform:uppercase;padding:16px 46px 22px}
 .fol p{font-weight:600;font-size:26px;margin-top:26px;line-height:1.25;opacity:.92}
@@ -199,7 +204,7 @@ const OBJ = {
   pixels: () => { let s = shadow(200, 120); const g = ['#3b3b3a', '#6a6a67', '#9c9c98', '#c9c9c5', '#4d6d8f', '#2f4a68'];
     for (let r = 0; r < 5; r++) for (let c = 0; c < 6; c++) s += `<rect x="${86 + c * 38}" y="${92 + r * 38}" width="38" height="38" fill="${g[(r * 7 + c * 5 + r * c) % g.length]}" stroke="rgba(0,0,0,.15)"/>`;
     for (let c = 0; c < 6; c++) s += `<ellipse cx="${105 + c * 38}" cy="88" rx="11" ry="4" fill="#ddd"/>`;
-    return s + `<text x="330" y="140" font-family="Archivo" font-weight="900" font-size="52" fill="#fff" style="font-stretch:125%">10×</text>`; },
+    return s + `<text x="294" y="136" font-family="Archivo" font-weight="900" font-size="44" fill="#fff" style="font-stretch:125%">10×</text>`; },
   procession: () => shadow(200, 170) + ['wht', 'red', 'blue', 'yel', 'grn', 'wht'].map((c, i) => brick(40 + i * 56, 196 + (i % 2) * 6, 1, 84 - (i % 2) * 6, c, false) + flame(60 + i * 56, 180 + (i % 2) * 6, .5)).join(''),
   three: () => shadow(200, 140) + brick(80, 232, 3, 48, 'red') + brick(80, 184, 3, 48, 'blue') + `<g transform="rotate(24 300 250)">${brick(230, 232, 3, 48, 'yel')}</g>`,
   host: () => shadow(200, 90) + brick(130, 232, 3, 48, 'gold') + brick(150, 184, 2, 48, 'gold') +
@@ -211,9 +216,9 @@ const OBJ = {
 };
 const objSvg = k => `<svg class="obj" viewBox="0 0 400 300">${OBJ[k]()}</svg>`;
 const HILL = `<svg class="hill" viewBox="0 0 1080 430" preserveAspectRatio="none"><defs><pattern id="st" width="38" height="22" patternUnits="userSpaceOnUse"><ellipse cx="19" cy="11" rx="10" ry="4" fill="#3da24f"/></pattern>
-  <clipPath id="dome"><path d="M-80 430Q540 -230 1160 430Z"/></clipPath></defs>
-  <path d="M-80 430Q540 -230 1160 430Z" fill="#2c8a3b"/><rect width="1080" height="430" fill="url(#st)" opacity=".55" clip-path="url(#dome)"/>
-  <path d="M-80 430Q540 -230 1160 430" fill="none" stroke="#45ad57" stroke-width="5" opacity=".7"/><rect y="330" width="1080" height="100" fill="#287e36"/><rect y="330" width="1080" height="100" fill="url(#st)" opacity=".4"/></svg>`;
+  <clipPath id="dome"><path d="M-80 430Q760 -230 1160 430Z"/></clipPath></defs>
+  <path d="M-80 430Q760 -230 1160 430Z" fill="#2c8a3b"/><rect width="1080" height="430" fill="url(#st)" opacity=".55" clip-path="url(#dome)"/>
+  <path d="M-80 430Q760 -230 1160 430" fill="none" stroke="#45ad57" stroke-width="5" opacity=".7"/><rect y="330" width="1080" height="100" fill="#287e36"/><rect y="330" width="1080" height="100" fill="url(#st)" opacity=".4"/></svg>`;
 
 /* muro de blocos (vista de cima) para o fundo do CTA */
 function wall() {
@@ -275,12 +280,12 @@ const COV = {
   '01': [['A melhor', 'foto da', 'missa'], 'é a que ninguém viu você tirar.', 'camera'],
   '02': [['5 ângulos'], 'que transformam suas fotos (e nenhum exige câmera nova)', 'stairs'],
   '03': [['O escuro', 'também', 'é a foto'], 'Como fotografar a Adoração ao Santíssimo', 'candle'],
-  '04': [['Pare de usar', 'o zoom', 'digital'], 'Ele não aproxima. Ele recorta.', 'pixels'],
+  '04': [['Pare de usar', 'o zoom', 'digital'], 'Ele só corta a foto e estica o pedaço.', 'pixels'],
   '05': [['Quem chega', 'atrasado', 'fotografa', 'costas'], 'Como fotografar a procissão', 'procession'],
   '06': [['3 erros'], 'que todo fotógrafo da Pascom comete (inclusive eu)', 'three'],
   '07': [['O clique', 'mais', 'discreto'], 'Como fotografar a Santa Eucaristia', 'host'],
-  '08': [['Seu celular', 'esconde', 'segredos'], 'Configurações que você nunca abriu', 'phone'],
-  '09': [['Uma foto', 'boa conta'], 'Uma foto bonita só mostra.', 'stack3'],
+  '08': [['Seu celular', 'faz mais', 'que isso'], 'As configurações que quase ninguém abre', 'phone'],
+  '09': [['Foto que', 'conta', 'história'], 'Dá pra fazer com 3 cliques. Bora?', 'stack3'],
   '10': [['Vira a', 'câmera'], 'A missa também acontece nos bancos.', 'cameraBack']
 };
 const cover = p => { const [lines, sub, o] = COV[p.n];
@@ -313,6 +318,17 @@ POSTS.filter(p => !only || p.n === only).forEach(p => {
     spans.forEach(s => { s.style.display = ''; s.style.fontSize = size + 'px'; });
     const maxh = 560;
     if (t.offsetHeight > maxh) { size *= maxh / t.offsetHeight; spans.forEach(s => s.style.fontSize = size + 'px'); }
+  });
+  let seed = 5; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  document.querySelectorAll('.stack .brk,.tls .brk,.nts .brk,.gr .brk,.cmp .brk,.tbl .brk,.chips .brk,.sp .brk,.dg .board').forEach(b => {
+    const big = b.matches('.board,.cmp .brk,.gr .brk');
+    b.style.transform = `translate(${((rnd() - .5) * (big ? 10 : 26)).toFixed(1)}px,${((rnd() - .5) * 6).toFixed(1)}px) rotate(${((rnd() - .5) * (big ? 1.4 : 2.6)).toFixed(2)}deg)`;
+  });
+  document.querySelectorAll('.slide').forEach((sl, k) => {
+    let d = '';
+    for (let i = 0; i < 46; i++) d += `<circle cx="${(rnd() * 1080).toFixed(0)}" cy="${(rnd() * 1350).toFixed(0)}" r="${(rnd() * 1.8 + .4).toFixed(1)}"/>`;
+    for (let i = 0; i < 3; i++) { const x = rnd() * 1000, y = rnd() * 1300; d += `<path d="M${x.toFixed(0)} ${y.toFixed(0)}q${(rnd() * 30).toFixed(0)} ${(rnd() * 20 - 10).toFixed(0)} ${(20 + rnd() * 40).toFixed(0)} ${(rnd() * 30 - 15).toFixed(0)}" fill="none" stroke-width="1.2"/>`; }
+    sl.insertAdjacentHTML('beforeend', `<svg class="dust" viewBox="0 0 1080 1350"><g fill="#000" stroke="#000" opacity=".35">${d}</g></svg><div class="vig"></div>`);
   });
   document.body.dataset.ready = '1';
 })();

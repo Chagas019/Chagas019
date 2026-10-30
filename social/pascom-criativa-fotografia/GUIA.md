@@ -26,7 +26,7 @@ Coleção de 10 carrosséis de 8 slides para Instagram (1080×1350, 4:5). Texto,
 
 _Antes de tocar na câmera_
 
-**A foto começa 30 minutos antes da missa.**
+**Chega 30 minutos antes. Sério.**
 
 1. **Chegue cedo** — Ande pela igreja vazia e veja de onde vem a luz em cada horário.
 2. **Fale com o padre ou o cerimoniário** — Pergunte onde você pode ficar e se pode fotografar a consagração. Não presuma.
@@ -66,7 +66,7 @@ _O ritmo da missa_
 
 _Discrição_
 
-**Você não pode ser a pessoa mais vista da missa.**
+**Se todo mundo tá olhando pra você, deu ruim.**
 
 - ✕ Assim não: Em pé no corredor central; Na frente de quem está rezando
 - ✓ Assim sim: Na lateral, na altura dos bancos; Some na assembleia
@@ -233,7 +233,7 @@ Próximo da coleção → Nº03 · Como fotografar a Adoração ao Santíssimo
 
 _Primeira virada de chave_
 
-**Não lute contra o escuro. Exponha para a luz.**
+**Deixa o escuro quieto. Mede a luz e pronto.**
 
 Toque no ostensório (ou na vela) para medir a luz ali. O que estiver fora dela pode ficar preto, e está tudo bem.
 
@@ -268,7 +268,7 @@ _Silhueta_
 
 _Exposição_
 
-**Clarear tudo mata o clima.**
+**Clareou tudo? Perdeu o clima.**
 
 - ✕ Assim não: Modo automático puxando para o claro; O ponto principal virou branco
 - ✓ Assim sim: Exposição −1 medida na luz; O escuro fica escuro
@@ -279,7 +279,7 @@ _Exposição_
 
 _Respeito ao momento_
 
-**Dez fotos boas valem mais que trezentas.**
+**Dez fotos boas ganham de trezentas.**
 
 1. **Sem flash e sem lanterna** — Nem a luzinha de foco do celular. Desative nas configurações.
 2. **Não fique entre o povo e o Santíssimo** — Fotografe das laterais e do fundo.
@@ -344,7 +344,7 @@ Próximo da coleção → Nº04 · Pare de usar o zoom digital
 
 _O que acontece_
 
-**No 10× digital, o celular usa 1% da foto.**
+**No 10× digital, o celular usa só 1% da foto.**
 
 - **Na prática:** Ele pega um pedacinho do sensor e estica para o tamanho da foto.
 - **Resultado:** Menos detalhe, mais ruído, pele de cera.
@@ -585,7 +585,7 @@ _Erro 01 · correção_
 
 _Erro 02 · excesso de zoom_
 
-**Zoom digital não aproxima. Ele recorta.**
+**Zoom digital é só um recorte esticado.**
 
 Se você precisa de mais de 3× no celular, mude de lugar ou mude a foto. A gente explicou tudo no post 04 da coleção.
 
