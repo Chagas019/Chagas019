@@ -32,3 +32,22 @@ Anton (display), Archivo Narrow (texto), Instrument Serif itálico (respiro) e J
 > Desafio da semana: crie algo que leve alguém mais perto de Deus. Comenta aqui qual talento você quer colocar a serviço do Reino. 👇
 >
 > #CriatividadeDoReino #ComunicaçãoCatólica #PastoralDaComunicação #Evangelização #FéECriatividade
+
+## Versão interativa — identidade @chagas_catolico
+
+`interativo.html` segue a linguagem do feed: foto escura em tela cheia com serifada fina, pôster laranja com condensada pesada, assinatura `-chagas_catolico` e faixa "Salve este post". PNGs em `png/criatividade-missao-interativo-*.png`, exportados com `node render.js interativo`.
+
+Cada slide pede uma ação nativa do Instagram:
+
+| Slide | Interação |
+|---|---|
+| 01 | "Arrasta e responde →" |
+| 02 | Toque duas vezes se você já pensou nisso (curtida) |
+| 03 | Marque quem da sua equipe é a câmera, o vídeo, o design e a ideia |
+| 04 | Enquete: comente 01, 02 ou 03 |
+| 05 | Envie para sua equipe (compartilhamento) |
+| 06 | Comente seu talento + salve o post |
+
+No navegador, as interações funcionam de verdade: duplo clique curte, os quadros recebem @, a enquete marca a opção, o botão abre o compartilhar do celular e os talentos podem ser escolhidos.
+
+Fotos desta versão: `i01-noite.jpg` (encontro de jovens à noite, luzes amarelas), `i03-camera.jpg`, `i03-video.jpg`, `i03-design.jpg` e `i05-pascom.jpg` (equipe trabalhando na missa ou num encontro, sem pose).
