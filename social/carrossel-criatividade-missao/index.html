@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Criatividade é Missão</title>
+<style>
+@font-face{font-family:"Anton";src:url(fonts/anton.woff2) format("woff2");font-display:block}
+@font-face{font-family:"Archivo Narrow";src:url(fonts/archivo-narrow.woff2) format("woff2");font-weight:400 700;font-display:block}
+@font-face{font-family:"Instrument Serif";src:url(fonts/instrument-serif-italic.woff2) format("woff2");font-style:italic;font-display:block}
+@font-face{font-family:"JB Mono";src:url(fonts/jetbrains-mono.woff2) format("woff2");font-weight:400 700;font-display:block}
+
+:root{
+  --ink:#0d0d0d; --paper:#e8e6e0; --grey:#8a8a86; --grey-2:#3a3a38; --grey-3:#1c1c1b;
+  --orange:#ff4f12; --white:#f4f3ef;
+  --W:1080px; --H:1350px; --pad:64px;
+  --display:"Anton",Impact,sans-serif;
+  --narrow:"Archivo Narrow","Arial Narrow",sans-serif;
+  --serif:"Instrument Serif",Georgia,serif;
+  --mono:"JB Mono","JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#111;color:var(--white)}
+body{font-family:var(--narrow);-webkit-font-smoothing:antialiased}
+
+/* ---------- preview shell ---------- */
+.deck{display:flex;gap:40px;overflow-x:auto;padding:48px 16px 64px;scroll-snap-type:x mandatory}
+.frame{flex:0 0 auto;width:calc(var(--W)*var(--s));height:calc(var(--H)*var(--s));scroll-snap-align:center;--s:.42}
+.frame>.slide{transform:scale(var(--s));transform-origin:0 0}
+.intro{padding:40px 16px 0;font-family:var(--mono);font-size:13px;color:#9a9a96;letter-spacing:.04em;max-width:1080px}
+.intro b{color:var(--white);font-weight:700}
+@media (max-width:600px){.frame{--s:.31}}
+body.render{background:#000}
+body.render .intro{display:none}
+body.render .deck{display:block;padding:0;overflow:visible}
+body.render .frame{width:auto;height:auto;--s:1}
+body.render .frame>.slide{transform:none}
+body.render *,body.render *::before,body.render *::after{animation:none!important;transition:none!important}
+
+/* ---------- slide base ---------- */
+.slide{position:relative;width:var(--W);height:var(--H);overflow:hidden;isolation:isolate}
+.dark{background:var(--ink);color:var(--white)}
+.light{background:var(--paper);color:var(--ink)}
+.grain{position:absolute;inset:0;pointer-events:none;z-index:50;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.dark .grain{mix-blend-mode:screen;opacity:.13}
+.light .grain{mix-blend-mode:multiply;opacity:.32}
+/* xerox toner streak */
+.streak{position:absolute;z-index:49;pointer-events:none;left:0;right:0;height:3px;background:currentColor;opacity:.06}
+
+.folio{position:absolute;left:var(--pad);right:var(--pad);top:48px;display:flex;justify-content:space-between;
+  font-family:var(--mono);font-size:15px;letter-spacing:.08em;text-transform:uppercase;z-index:40}
+.folio span{opacity:.75}
+.foot{position:absolute;left:var(--pad);right:var(--pad);bottom:44px;display:flex;justify-content:space-between;align-items:flex-end;
+  font-family:var(--mono);font-size:15px;letter-spacing:.08em;text-transform:uppercase;z-index:40}
+.mark{position:absolute;width:22px;height:22px;z-index:45;opacity:.5}
+.mark::before,.mark::after{content:"";position:absolute;background:currentColor}
+.mark::before{left:10px;top:0;width:1.5px;height:22px}
+.mark::after{top:10px;left:0;height:1.5px;width:22px}
+.m-tl{left:22px;top:22px}.m-tr{right:22px;top:22px}.m-bl{left:22px;bottom:22px}.m-br{right:22px;bottom:22px}
+
+.fit{display:block;white-space:nowrap;font-family:var(--display);line-height:.86;text-transform:uppercase;letter-spacing:-.005em}
+.mono{font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.o{color:var(--orange)}
+.tape{position:absolute;background:var(--orange);z-index:30}
+
+/* ---------- photo slots ---------- */
+.ph{position:absolute;overflow:hidden;background:#232322}
+.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.35) brightness(.92)}
+.ph::after{content:"";position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;opacity:.35;
+  background-image:radial-gradient(circle,#000 .9px,transparent 1.3px);background-size:5px 5px}
+.ph .note{display:none}
+.ph.empty{background:#262625}
+.ph.empty::before{content:"";position:absolute;inset:0;opacity:.55;mix-blend-mode:screen;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='4' seed='7'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncR type='linear' slope='.6' intercept='-.1'/><feFuncG type='linear' slope='.6' intercept='-.1'/><feFuncB type='linear' slope='.6' intercept='-.1'/></feComponentTransfer></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");background-size:cover}
+.ph.empty .note{display:block;position:absolute;left:18px;bottom:16px;right:18px;font-family:var(--mono);font-size:13px;line-height:1.45;
+  letter-spacing:.06em;text-transform:uppercase;color:#bdbdb8;z-index:2}
+.ph.empty .note b{color:var(--orange);font-weight:700}
+
+/* ---------- animations (digital version only) ---------- */
+@keyframes up{from{opacity:0;transform:translateY(28px)}}
+@keyframes wipe{from{clip-path:inset(0 100% 0 0)}}
+@keyframes blink{50%{opacity:0}}
+@keyframes drift{from{transform:translateX(0)}to{transform:translateX(220px)}}
+@keyframes slowzoom{from{transform:scale(1.08)}}
+.a-up{animation:up .9s cubic-bezier(.2,.7,.1,1) both}
+.a-wipe{animation:wipe .7s cubic-bezier(.7,0,.2,1) both}
+.d1{animation-delay:.15s}.d2{animation-delay:.3s}.d3{animation-delay:.45s}.d4{animation-delay:.6s}.d5{animation-delay:.8s}.d6{animation-delay:1s}
+
+/* =================== 01 CAPA =================== */
+.s1 .kicker{position:absolute;left:var(--pad);top:132px;font-family:var(--narrow);font-weight:700;font-size:58px;letter-spacing:-.01em;text-transform:uppercase}
+.s1 .kicker small{font-family:var(--mono);font-weight:400;font-size:15px;letter-spacing:.08em;vertical-align:middle;margin-left:18px;opacity:.6}
+.s1 .crea{position:absolute;left:var(--pad);top:206px;width:952px;mix-blend-mode:difference;color:#fff;z-index:20}
+.s1 .crea .fit+.fit{margin-top:6px}
+.s1 .ph{left:596px;top:560px;width:420px;height:400px;transform:rotate(1.6deg)}
+.s1 .nao{position:absolute;left:var(--pad);top:762px;font-family:var(--display);font-size:132px;line-height:.9;text-transform:uppercase}
+.s1 .nao .tape{left:-16px;top:58px;width:196px;height:30px;transform:rotate(-4deg);box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.s1 .missao{position:absolute;left:var(--pad);top:900px;width:952px;mix-blend-mode:difference;color:#fff;z-index:20}
+.s1 .side{position:absolute;right:30px;top:420px;writing-mode:vertical-rl;font-family:var(--mono);font-size:13px;letter-spacing:.2em;opacity:.55;text-transform:uppercase}
+
+/* =================== 02 PROVOCAÇÃO =================== */
+.s2 .ph{left:var(--pad);top:124px;width:640px;height:630px}
+.vf{position:absolute;inset:0;z-index:3;font-family:var(--mono);font-size:15px;color:#fff;letter-spacing:.06em}
+.vf .br{position:absolute;width:42px;height:42px;border:2.5px solid #fff}
+.vf .b1{left:22px;top:22px;border-right:0;border-bottom:0}.vf .b2{right:22px;top:22px;border-left:0;border-bottom:0}
+.vf .b3{left:22px;bottom:22px;border-right:0;border-top:0}.vf .b4{right:22px;bottom:22px;border-left:0;border-top:0}
+.vf .rec{position:absolute;left:44px;top:40px;display:flex;align-items:center;gap:10px;font-weight:700}
+.vf .rec i{width:14px;height:14px;border-radius:50%;background:var(--orange);animation:blink 1.2s steps(1) infinite}
+.vf .tc{position:absolute;right:44px;top:40px}
+.vf .ex{position:absolute;left:44px;bottom:40px;right:44px;display:flex;justify-content:space-between;opacity:.9}
+.vf .focus{position:absolute;left:50%;top:46%;width:120px;height:90px;margin:-45px 0 0 -60px;border:2px solid var(--orange)}
+.vf .focus::before,.vf .focus::after{content:"";position:absolute;background:var(--orange)}
+.vf .focus::before{left:50%;top:-14px;width:2px;height:12px}.vf .focus::after{top:50%;left:-14px;height:2px;width:12px}
+.s2 .stat{position:absolute;left:740px;top:124px;width:276px}
+.s2 .stat .mono{font-size:14px;opacity:.7;line-height:1.5}
+.s2 .stat .big{font-family:var(--display);font-size:150px;line-height:.86;margin:14px 0 10px;letter-spacing:-.01em}
+.s2 .stat .rule{height:2px;background:var(--ink);margin:22px 0}
+.s2 .stat ul{list-style:none;font-family:var(--mono);font-size:15px;line-height:2;letter-spacing:.05em;text-transform:uppercase}
+.s2 .stat li{display:flex;justify-content:space-between}
+.s2 .stat li s{opacity:.55}
+.s2 .lead{position:absolute;left:var(--pad);top:790px;width:720px;font-size:46px;line-height:1.08;font-weight:500;letter-spacing:-.01em}
+.s2 .punch{position:absolute;left:var(--pad);top:930px;width:952px;font-family:var(--display);font-size:98px;line-height:.95;text-transform:uppercase;letter-spacing:-.005em}
+.s2 .hl{position:relative;display:inline-block;padding:0 12px;margin-left:-4px;z-index:0}
+.s2 .hl::before{content:"";position:absolute;left:0;right:0;top:8%;bottom:2%;background:var(--orange);z-index:-1;transform:rotate(-1deg)}
+.fold{position:absolute;top:0;bottom:0;width:1px;background:rgba(0,0,0,.12);box-shadow:1px 0 0 rgba(255,255,255,.5);z-index:48}
+
+/* =================== 03 REFLEXÃO =================== */
+.s3 .row{position:absolute;left:var(--pad);right:var(--pad)}
+.s3 .lab{font-family:var(--mono);font-size:14px;letter-spacing:.1em;color:var(--grey);text-transform:uppercase;margin-bottom:12px}
+.s3 .lab b{color:var(--orange);font-weight:700;margin-right:10px}
+.s3 .say{font-family:var(--narrow);font-weight:700;font-size:48px;line-height:1.02;letter-spacing:-.01em}
+.s3 .r1{top:124px;height:360px}
+.s3 .film{position:absolute;left:0;top:0;width:560px;height:360px;background:#000;padding:30px 0}
+.s3 .film .ph{position:relative;width:100%;height:100%}
+.s3 .film::before,.s3 .film::after{content:"";position:absolute;left:0;right:0;height:14px;
+  background-image:linear-gradient(90deg,#000 0 14px,#d9d8d2 14px 32px,#000 32px);background-size:46px 14px;opacity:.9}
+.s3 .film::before{top:8px}.s3 .film::after{bottom:8px}
+.s3 .film .num{position:absolute;right:10px;bottom:-2px;font-family:var(--mono);font-size:12px;color:var(--orange);z-index:3}
+.s3 .r1 .txt{position:absolute;left:600px;top:20px;width:352px}
+.s3 .r2{top:534px;height:200px}
+.s3 .r2 .txt{position:absolute;left:0;top:0;width:340px}
+.tl{position:absolute;left:380px;top:0;width:572px;height:200px;border:1.5px solid var(--grey-2);background:#141413;font-family:var(--mono);font-size:12px;color:var(--grey)}
+.tl .ruler{height:28px;border-bottom:1.5px solid var(--grey-2);display:flex;justify-content:space-between;padding:6px 10px 0 64px}
+.tl .trk{position:relative;height:52px;border-bottom:1px solid #262624}
+.tl .trk span.n{position:absolute;left:12px;top:18px}
+.tl .clip{position:absolute;top:9px;height:34px;background:#4a4a47;border:1px solid #6a6a66}
+.tl .clip.w{background:#d9d8d2;border-color:#fff}
+.tl .clip.au{background:transparent;border-color:#5a5a56;
+  background-image:repeating-linear-gradient(90deg,#6a6a66 0 2px,transparent 2px 5px);background-size:auto 60%;background-repeat:repeat-x;background-position:0 50%}
+.tl .head{position:absolute;top:0;bottom:0;left:300px;width:2px;background:var(--orange);z-index:2;animation:drift 6s linear infinite alternate}
+.tl .head::before{content:"";position:absolute;top:0;left:-7px;border:8px solid transparent;border-top:10px solid var(--orange)}
+.s3 .r3{top:784px;height:190px}
+.sw{position:absolute;left:0;top:0;display:flex;gap:10px}
+.sw div{width:120px;height:190px;padding:10px;font-family:var(--mono);font-size:12px;display:flex;flex-direction:column;justify-content:flex-end;letter-spacing:.04em}
+.sw .c1{background:var(--white);color:var(--ink)}.sw .c2{background:var(--grey);color:var(--ink)}.sw .c3{background:var(--orange);color:var(--ink)}
+.spec{position:absolute;left:400px;top:-10px;font-family:var(--display);font-size:200px;line-height:.9;color:transparent;-webkit-text-stroke:1.5px var(--grey)}
+.spec::after{content:"";position:absolute;left:0;right:0;top:56%;height:1px;background:var(--orange)}
+.s3 .r3 .txt{position:absolute;left:600px;top:20px;width:352px}
+.s3 .r4{top:1030px}
+.s3 .r4 .fit{color:var(--white)}
+.s3 .r4 .serif{font-family:var(--serif);font-style:italic;font-size:92px;line-height:1;color:var(--orange);margin-top:10px;letter-spacing:-.015em}
+.s3 .hr{position:absolute;left:var(--pad);right:var(--pad);height:1px;background:var(--grey-2)}
+
+/* =================== 04 INTERAÇÃO =================== */
+.s4 .q{position:absolute;left:var(--pad);top:120px;width:952px}
+.s4 .q .fit+.fit{margin-top:4px}
+.s4 .opts{position:absolute;left:var(--pad);right:var(--pad);top:752px;border-top:3px solid var(--ink)}
+.s4 .opt{display:grid;grid-template-columns:250px 1fr 64px;align-items:center;height:150px;border-bottom:1.5px solid var(--ink)}
+.s4 .opt .n{font-family:var(--display);font-size:168px;line-height:1;color:transparent;-webkit-text-stroke:2px var(--ink);margin-top:-6px;letter-spacing:-.02em}
+.s4 .opt .t{font-family:var(--narrow);font-weight:700;font-size:66px;letter-spacing:-.015em}
+.s4 .opt .box{width:52px;height:52px;border:3px solid var(--ink);justify-self:end}
+.s4 .opt.k .n{color:var(--orange);-webkit-text-stroke:0}
+.s4 .opt.k .t{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:84px;letter-spacing:0}
+
+/* =================== 05 MISSÃO =================== */
+.s5 .ph{left:0;top:0;width:1080px;height:610px}
+.s5 .ph img{animation:slowzoom 9s ease-out both}
+.s5 .ph.empty .note{left:var(--pad);bottom:auto;top:150px;width:520px}
+.s5 .tag{position:absolute;left:var(--pad);top:120px;z-index:10;display:flex;gap:14px;align-items:center;font-family:var(--mono);font-size:14px;letter-spacing:.08em;text-transform:uppercase}
+.s5 .tag b{background:var(--orange);color:var(--ink);padding:6px 10px}
+.s5 .l1{position:absolute;left:var(--pad);top:372px;width:700px;font-family:var(--narrow);font-weight:700;font-size:52px;line-height:1.04;letter-spacing:-.01em;z-index:10;text-shadow:0 0 30px rgba(0,0,0,.5)}
+.s5 .ghost{position:absolute;left:var(--pad);top:500px;width:640px;z-index:10;color:transparent;-webkit-text-stroke:2px rgba(244,243,239,.75)}
+.s5 .l2{width:900px;margin:22px 0 26px;font-family:var(--narrow);font-weight:500;font-size:46px;line-height:1.05;letter-spacing:-.01em}
+.s5 .low{position:absolute;left:var(--pad);right:var(--pad);bottom:60px}
+.s5 .solid{width:952px}
+.s5 .solid .fit+.fit{margin-top:6px}
+.s5 .bar{width:120px;height:6px;background:var(--orange)}
+
+/* =================== 06 DESAFIO =================== */
+.s6 .lbl{position:absolute;left:52px;top:122px;background:var(--orange);color:var(--ink);font-family:var(--display);font-size:78px;line-height:1;padding:10px 22px 8px;text-transform:uppercase;transform:rotate(-2.2deg);z-index:5}
+.s6 .ch{position:absolute;left:var(--pad);top:262px;width:952px}
+.s6 .ch .fit+.fit{margin-top:8px}
+.s6 .cm{position:absolute;left:var(--pad);right:var(--pad);top:1030px;border:2px solid var(--white);display:flex;gap:22px;align-items:center;padding:22px 26px}
+.s6 .cm .av{flex:0 0 58px;height:58px;border-radius:50%;background:var(--grey-2);border:2px solid var(--grey)}
+.s6 .cm p{font-family:var(--narrow);font-weight:500;font-size:36px;line-height:1.12;letter-spacing:-.005em}
+.s6 .cm p i{display:inline-block;width:4px;height:38px;background:var(--orange);vertical-align:-7px;margin-left:6px;animation:blink 1s steps(1) infinite}
+.s6 .cm .send{position:absolute;right:20px;top:-14px;background:var(--ink);padding:0 10px;font-family:var(--mono);font-size:13px;letter-spacing:.1em;color:var(--grey)}
+.s6 .chips{position:absolute;left:var(--pad);top:1196px;display:flex;flex-wrap:wrap;gap:10px;width:700px}
+.s6 .chips span{font-family:var(--mono);font-size:14px;letter-spacing:.08em;border:1.5px solid var(--grey-2);padding:6px 10px;color:#bdbdb8}
+.sig{display:flex;align-items:center;gap:12px;font-family:var(--display);font-size:30px;letter-spacing:.02em;text-transform:uppercase}
+.sig i{width:22px;height:22px;background:var(--orange)}
+.s6 .sig{position:absolute;right:var(--pad);bottom:44px;z-index:40}
+</style>
+</head>
+<body>
+<p class="intro"><b>QUEM DISSE QUE CRIATIVIDADE NÃO É MISSÃO?</b> — carrossel 6 × 1080×1350. Arraste para o lado. Fotos: coloque arquivos em <b>fotos/</b> com os nomes indicados em cada quadro e rode <b>node render.js</b>.</p>
+
+<main class="deck">
+
+<!-- 01 — CAPA -->
+<div class="frame"><section class="slide dark s1">
+  <div class="mark m-tl"></div><div class="mark m-tr"></div><div class="mark m-bl"></div><div class="mark m-br"></div>
+  <header class="folio"><span>Criatividade do Reino</span><span>Ed. 01 — Talento &amp; Missão</span><span>01/06</span></header>
+  <div class="kicker a-up">Quem disse que <small>— pergunta séria</small></div>
+  <div class="crea" data-maxh="530">
+    <span class="fit a-up d1" data-fit>Criati</span>
+    <span class="fit a-up d2" data-fit>vidade</span>
+  </div>
+  <div class="ph a-up d3" data-src="fotos/01-capa-lente.jpg"><span class="note"><b>01-capa-lente.jpg</b><br>close de mão ajustando o foco da lente. luz dura, de lado.</span></div>
+  <div class="nao a-up d3">não é<span class="tape a-wipe d5"></span></div>
+  <div class="missao a-up d4" data-maxh="300"><span class="fit" data-fit>Missão?</span></div>
+  <div class="side">fotografia / vídeo / design / comunicação</div>
+  <footer class="foot"><span>Arraste →</span><span>Um ensaio sobre talento e Reino</span></footer>
+  <div class="streak" style="top:612px"></div>
+  <div class="grain"></div>
+</section></div>
+
+<!-- 02 — PROVOCAÇÃO -->
+<div class="frame"><section class="slide light s2">
+  <div class="fold" style="left:704px"></div>
+  <header class="folio"><span>Criatividade do Reino</span><span>Provocação</span><span>02/06</span></header>
+  <div class="ph a-up" data-src="fotos/02-camera.jpg"><span class="note" style="top:70px;bottom:auto"><b>02-camera.jpg</b><br>alguém editando ou operando câmera. rosto fora de foco, mãos em foco.</span>
+    <div class="vf"><div class="br b1"></div><div class="br b2"></div><div class="br b3"></div><div class="br b4"></div>
+      <div class="rec"><i></i>REC</div><div class="tc">00:47:12:08</div><div class="focus"></div>
+      <div class="ex"><span>ISO 800</span><span>1/50</span><span>F2.8</span><span>4K 24P</span></div></div>
+  </div>
+  <div class="stat a-up d1">
+    <div class="mono">Tempo de tela<br>criando hoje</div>
+    <div class="big">4h37</div>
+    <div class="mono">para ganhar atenção</div>
+    <div class="rule"></div>
+    <ul><li><s>curtidas</s><span>2.481</span></li><li><s>views</s><span>18,2 mil</span></li><li><s>seguidores</s><span>+64</span></li><li><span>vidas tocadas</span><span class="o">?</span></li></ul>
+  </div>
+  <p class="lead a-up d2">Você pode passar horas criando algo para ganhar atenção.</p>
+  <p class="punch a-up d3">Mas já pensou em criar algo que leve alguém <span class="hl">até Cristo?</span></p>
+  <footer class="foot"><span>Atenção ≠ propósito</span><span>→</span></footer>
+  <div class="grain"></div>
+</section></div>
+
+<!-- 03 — REFLEXÃO -->
+<div class="frame"><section class="slide dark s3">
+  <header class="folio"><span>Criatividade do Reino</span><span>Reflexão — 4 ferramentas</span><span>03/06</span></header>
+  <div class="row r1">
+    <div class="film a-up"><div class="ph" data-src="fotos/03-momento.jpg"><span class="note"><b>03-momento.jpg</b><br>um momento real: abraço, riso, oração em grupo. sem pose.</span></div><span class="num">▸ 14A</span></div>
+    <div class="txt a-up d1"><div class="lab"><b>01</b>Câmera</div><p class="say">Uma câmera pode registrar momentos.</p></div>
+  </div>
+  <div class="hr" style="top:509px"></div>
+  <div class="row r2">
+    <div class="txt a-up d2"><div class="lab"><b>02</b>Vídeo</div><p class="say">Um vídeo pode tocar corações.</p></div>
+    <div class="tl a-up d2">
+      <div class="ruler"><span>00:00</span><span>00:15</span><span>00:30</span><span>00:45</span><span>01:00</span></div>
+      <div class="trk"><span class="n">V1</span><div class="clip" style="left:56px;width:150px"></div><div class="clip w" style="left:212px;width:120px"></div><div class="clip" style="left:338px;width:200px"></div></div>
+      <div class="trk"><span class="n">V2</span><div class="clip" style="left:150px;width:90px;opacity:.7"></div><div class="clip" style="left:420px;width:80px;opacity:.7"></div></div>
+      <div class="trk" style="border:0"><span class="n">A1</span><div class="clip au" style="left:56px;width:482px"></div></div>
+      <div class="head"></div>
+    </div>
+  </div>
+  <div class="hr" style="top:759px"></div>
+  <div class="row r3">
+    <div class="sw a-up d3"><div class="c1">#F4F3EF<br>papel</div><div class="c2">#8A8A86<br>ruído</div><div class="c3">#FF4F12<br>sinal</div></div>
+    <div class="spec a-up d3">Aa</div>
+    <div class="txt a-up d3"><div class="lab"><b>03</b>Design</div><p class="say">Um design pode transmitir uma mensagem.</p></div>
+  </div>
+  <div class="hr" style="top:1004px"></div>
+  <div class="row r4">
+    <div class="lab a-up d4"><b>04</b>Ideia</div>
+    <span class="fit a-up d4" data-fit>E uma ideia pode alcançar alguém</span>
+    <p class="serif a-up d5">que você nunca conheceria.</p>
+  </div>
+  <div class="grain"></div>
+</section></div>
+
+<!-- 04 — INTERAÇÃO -->
+<div class="frame"><section class="slide light s4">
+  <header class="folio"><span>Criatividade do Reino</span><span>Responda com sinceridade</span><span>04/06</span></header>
+  <div class="q">
+    <span class="fit a-up" data-fit>Seu talento</span>
+    <span class="fit a-up d1" data-fit>está servindo</span>
+    <span class="fit a-up d2" data-fit>a quem?</span>
+  </div>
+  <div class="opts">
+    <div class="opt a-up d3"><span class="n">01</span><span class="t">Ao meu ego.</span><span class="box"></span></div>
+    <div class="opt a-up d4"><span class="n">02</span><span class="t">À minha imagem.</span><span class="box"></span></div>
+    <div class="opt k a-up d5"><span class="n">03</span><span class="t">Ao Reino.</span><span class="box"></span></div>
+  </div>
+  <footer class="foot"><span>Comente: 01, 02 ou 03</span><span>Sem filtro.</span></footer>
+  <div class="grain"></div>
+</section></div>
+
+<!-- 05 — MISSÃO -->
+<div class="frame"><section class="slide dark s5">
+  <div class="ph" data-src="fotos/05-equipe.jpg"><span class="note"><b>05-equipe.jpg</b><br>equipe de comunicação da sua igreja em ação: mesa de som, câmera no tripé, alguém no notebook. registro documental, sem pose.</span></div>
+  <header class="folio"><span>Criatividade do Reino</span><span>Missão</span><span>05/06</span></header>
+  <div class="tag a-up"><b>Bastidores</b><span>registro documental — sem pose</span></div>
+  <p class="l1 a-up d1">Não precisamos de mais criadores querendo</p>
+  <div class="ghost a-up d2"><span class="fit" data-fit>aparecer.</span></div>
+  <div class="low">
+  <div class="bar a-wipe d3"></div>
+  <p class="l2 a-up d3">Precisamos de criadores dispostos a fazer</p>
+  <div class="solid" data-maxh="470">
+    <span class="fit a-up d4" data-fit>Cristo</span>
+    <span class="fit a-up d5" data-fit>aparecer.</span>
+  </div>
+  </div>
+  <div class="grain"></div>
+</section></div>
+
+<!-- 06 — DESAFIO -->
+<div class="frame"><section class="slide dark s6">
+  <div class="mark m-tl"></div><div class="mark m-tr"></div>
+  <header class="folio"><span>Criatividade do Reino</span><span>Desafio</span><span>06/06</span></header>
+  <div class="lbl a-wipe">Desafio:</div>
+  <div class="ch" data-maxh="730">
+    <span class="fit a-up d1" data-fit>Crie algo</span>
+    <span class="fit a-up d2" data-fit>que leve alguém</span>
+    <span class="fit a-up d3" data-fit>mais perto</span>
+    <span class="fit a-up d4" data-fit>de Deus<span class="o">.</span></span>
+  </div>
+  <div class="cm a-up d5"><div class="av"></div><p>Comente qual talento você quer colocar a serviço do Reino.<i></i></p><span class="send">Publicar</span></div>
+  <div class="chips a-up d6"><span>Fotografia</span><span>Vídeo</span><span>Design</span><span>Escrita</span><span>Música</span><span>Edição</span></div>
+  <div class="sig"><i></i>Criatividade do Reino.</div>
+  <div class="grain"></div>
+</section></div>
+
+</main>
+
+<script>
+(async () => {
+  const render = new URLSearchParams(location.search).has('render');
+  if (render) document.body.classList.add('render');
+
+  // photo slots: real image if the file exists, art-direction plate otherwise
+  await Promise.all([...document.querySelectorAll('.ph[data-src]')].map(el => new Promise(res => {
+    const img = new Image();
+    img.onload = () => { el.prepend(img); res(); };
+    img.onerror = () => { el.classList.add('empty'); res(); };
+    img.src = el.dataset.src;
+  })));
+
+  // fit each display line to its container width
+  await document.fonts.ready;
+  document.querySelectorAll('[data-fit]').forEach(el => {
+    const w = el.parentElement.offsetWidth;
+    el.style.display = 'inline-block';
+    el.style.fontSize = '100px';
+    const size = 100 * w / el.offsetWidth;
+    el.style.fontSize = Math.min(size, +(el.dataset.max || 999)) + 'px';
+    el.style.display = '';
+  });
+  document.querySelectorAll('[data-maxh]').forEach(box => {
+    const r = +box.dataset.maxh / box.offsetHeight;
+    if (r < 1) box.querySelectorAll('[data-fit]').forEach(el => el.style.fontSize = parseFloat(el.style.fontSize) * r + 'px');
+  });
+  document.body.dataset.ready = '1';
+})();
+</script>
+</body>
+</html>
