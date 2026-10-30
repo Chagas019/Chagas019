@@ -198,6 +198,8 @@ S.backlit = () => {
   return s;
 };
 
+S.blank = () => `<rect width="900" height="600" fill="#151514"/><g stroke="#3a3936" stroke-width="1.5"><line x1="430" y1="300" x2="470" y2="300"/><line x1="450" y1="280" x2="450" y2="320"/></g>`;
+
 /* ---------------- diagramas técnicos (currentColor) ---------------- */
 const T = (x, y, t, o = {}) =>
   `<text x="${x}" y="${y}" fill="${o.fill || 'currentColor'}" font-family="JB Mono, monospace" font-size="${o.size || 20}" letter-spacing="1.5" text-anchor="${o.anchor || 'start'}" ${o.w ? `font-weight="${o.w}"` : ''}>${t}</text>`;
@@ -238,7 +240,7 @@ S.camera = () => {
 S.phone = (o = {}) => {
   let s = `<rect x="60" y="20" width="480" height="960" rx="64" fill="none" stroke="currentColor" stroke-width="5"/>`;
   s += `<rect x="82" y="42" width="436" height="916" rx="46" fill="#0d0d0c"/><rect x="250" y="62" width="100" height="26" rx="13" fill="#000"/>`;
-  s += `<svg x="82" y="150" width="436" height="600" viewBox="${o.vb || '150 0 600 600'}" preserveAspectRatio="xMidYMid slice">${(S[o.scene || 'nave'])(o.so || {})}</svg>`;
+  s += `<rect x="82" y="150" width="436" height="600" fill="#1c1c1a"/>`;
   s += `<rect x="112" y="104" width="64" height="30" rx="15" fill="none" stroke="${o.hdr ? C.acc : '#888'}" stroke-width="2"/>` + T(144, 125, 'HDR', { anchor: 'middle', size: 15, fill: o.hdr ? C.acc : '#bbb' });
   s += `<rect x="424" y="104" width="64" height="30" rx="15" fill="none" stroke="#888" stroke-width="2"/>` + T(456, 125, 'RAW', { anchor: 'middle', size: 15, fill: '#bbb' });
   const lenses = o.lenses || ['.5', '1×', '2', '3'];
@@ -321,7 +323,7 @@ S.height = (o = {}) => {
 };
 
 S.sensor = () => {
-  let s = `<svg x="60" y="40" width="780" height="520" viewBox="0 0 900 600" preserveAspectRatio="none">${S.nave()}</svg>`;
+  let s = `<rect x="60" y="40" width="780" height="520" fill="currentColor" opacity=".08"/>`;
   s += `<rect x="60" y="40" width="780" height="520" fill="none" stroke="currentColor" stroke-width="3"/>`;
   s += `<rect x="411" y="262" width="78" height="52" fill="none" stroke="${C.acc}" stroke-width="4"/>`;
   s += `<rect x="60" y="40" width="780" height="520" fill="#000" opacity=".35"/><rect x="411" y="262" width="78" height="52" fill="none" stroke="${C.acc}" stroke-width="4"/>`;

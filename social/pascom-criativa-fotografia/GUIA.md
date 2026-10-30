@@ -7,10 +7,10 @@ Coleção de 10 carrosséis de 8 slides para Instagram (1080×1350, 4:5). Texto,
 - **Conceito:** revista de fotografia + manual técnico de câmera. Cada post parece uma página de revista independente com anotações de revisor por cima.
 - **Cores:** preto profundo `#0D0D0C`, papel `#E8E4DA`, amarelo `#FFC21A` (destaque, marca-texto, marcações) e cinza `#8F8B82` (informação secundária). Os três fundos se alternam dentro de cada carrossel para dar ritmo.
 - **Tipografia:** Anton (títulos, condensada pesada), Archivo Narrow (texto), Instrument Serif (frases de respiro, em itálico) e JetBrains Mono (anotações técnicas, rótulos, leituras do visor).
-- **Linguagem gráfica:** cópias fotográficas com cantos de visor e leitura de exposição, plantas baixas, réguas de zoom, fotômetro, diagramas de luz e de movimento, caneta amarela de revisão (círculos, setas, X), comparações ASSIM NÃO / ASSIM SIM, granulação e dobra de papel.
+- **Linguagem gráfica:** leituras de visor, plantas baixas, réguas de zoom, fotômetro, diagramas de luz e de movimento, caneta amarela de revisão (círculos, setas, X), comparações ASSIM NÃO / ASSIM SIM, granulação e dobra de papel.
 - **Toque humano:** círculos, setas e X desenhados à mão (traço torto de verdade), rótulos em letra de caneta (Caveat), comentários curtos em primeira pessoa, fita adesiva nas fotos e dobra de papel. É o que tira a cara de template.
 - **Assinatura:** marca de visor com ponto amarelo + **PASCOM CRIATIVA** no topo de todo slide, ao lado de @chagas_catolico; assinatura completa (*Fotografia • Comunicação • Evangelização*) só no último slide de cada post.
-- **Imagens:** as cenas são ilustrações documentais em SVG (não fotos inventadas) e funcionam sozinhas. Para a versão com fotos reais, siga a pauta de cada post.
+- **Imagens:** nenhuma imagem de exemplo. Os posts são só dicas: tipografia, diagramas técnicos e anotações à mão.
 
 ---
 
@@ -71,7 +71,7 @@ _Discrição_
 - ✕ Assim não: Em pé no corredor central; Na frente de quem está rezando
 - ✓ Assim sim: Na lateral, na altura dos bancos; Some na assembleia
 
-> **Direção de arte:** Duas cópias fotográficas empilhadas, marcação amarela tipo caneta de revisão, etiquetas ASSIM NÃO / ASSIM SIM.
+> **Direção de arte:** Bloco ASSIM NÃO em contorno, com o texto riscado em amarelo, e bloco ASSIM SIM em amarelo sólido. Só tipografia, sem imagem.
 
 ### Slide 6
 
@@ -105,7 +105,7 @@ Próximo da coleção → Nº02 · 5 ângulos que transformam suas fotos
 
 > **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.
 
-### Fotos sugeridas (para fotografar na sua paróquia)
+### Pauta de fotos (opcional, se um dia quiser usar fotos suas)
 
 - Fotógrafo agachado no fim de um banco lateral, de costas, fotografando a entrada (bastidor)
 - Plano aberto do coro, com a assembleia inteira e o altar ao fundo
@@ -133,7 +133,7 @@ Próximo da coleção → Nº02 · 5 ângulos que transformam suas fotos
 
 **5 · ÂNGULOS QUE TRANSFORMAM SUAS FOTOS**
 
-> **Direção de arte:** Um 5 gigante vazado ocupando o slide, com cinco cópias fotográficas pequenas flutuando sobre ele, cada uma com seu ângulo.
+> **Direção de arte:** Um 5 gigante vazado ao fundo, os cinco ângulos listados em condensada com números em mono amarelo e uma nota à mão: “nenhum exige câmera nova”.
 
 ### Slide 2
 
@@ -141,7 +141,7 @@ Próximo da coleção → Nº02 · 5 ângulos que transformam suas fotos
 
 Agache na altura do banco ou do chão. A entrada da missa, a cruz processional e os coroinhas ganham grandeza. Teste na procissão de entrada.
 
-> **Direção de arte:** Número vazado gigante, visor de câmera sobre a cena, mini diagrama lateral mostrando a altura da câmera.
+> **Direção de arte:** Número vazado gigante, título, configuração de partida num quadro como leitura de visor, observação escrita à mão e diagrama da altura da câmera.
 
 ### Slide 3
 
@@ -149,7 +149,7 @@ Agache na altura do banco ou do chão. A entrada da missa, a cruz processional e
 
 Do coro ou do fundo, mostre a igreja cheia. Faça 1 ou 2 por celebração, bem feitos, com o horizonte reto. É a foto que abre o álbum.
 
-> **Direção de arte:** Mesma estrutura do slide anterior em fundo papel, para criar ritmo claro/escuro.
+> **Direção de arte:** Número vazado gigante, título, configuração de partida num quadro como leitura de visor, observação escrita à mão e diagrama da altura da câmera.
 
 ### Slide 4
 
@@ -157,7 +157,7 @@ Do coro ou do fundo, mostre a igreja cheia. Faça 1 ou 2 por celebração, bem f
 
 Mãos no terço, o cálice, a vela, o folheto amassado. Use 2× no celular ou uma 50 mm. O detalhe conta o que o plano aberto não alcança.
 
-> **Direção de arte:** Close quente, círculo de caneta amarela, muito preto.
+> **Direção de arte:** Número vazado gigante, título, configuração de partida num quadro como leitura de visor, observação escrita à mão e diagrama da altura da câmera.
 
 ### Slide 5
 
@@ -165,7 +165,7 @@ Mãos no terço, o cálice, a vela, o folheto amassado. Use 2× no celular ou um
 
 Da cintura para cima: expressão e contexto na mesma foto. Leitor no ambão, ministro, quem canta no coral. Corte nas articulações, nunca no meio delas.
 
-> **Direção de arte:** Linha de corte tracejada como guia de enquadramento.
+> **Direção de arte:** Número vazado gigante, título, configuração de partida num quadro como leitura de visor, observação escrita à mão e diagrama da altura da câmera.
 
 ### Slide 6
 
@@ -173,7 +173,7 @@ Da cintura para cima: expressão e contexto na mesma foto. Leitor no ambão, min
 
 As linhas dos bancos, do piso e das colunas levam o olho até o altar. Fique na ponta do banco, não no meio do corredor durante a celebração.
 
-> **Direção de arte:** Linhas de fuga desenhadas em amarelo sobre a cena.
+> **Direção de arte:** Número vazado gigante, título, configuração de partida num quadro como leitura de visor, observação escrita à mão e diagrama da altura da câmera.
 
 ### Slide 7
 
@@ -199,7 +199,7 @@ Próximo da coleção → Nº03 · Como fotografar a Adoração ao Santíssimo
 
 > **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.
 
-### Fotos sugeridas (para fotografar na sua paróquia)
+### Pauta de fotos (opcional, se um dia quiser usar fotos suas)
 
 - Entrada fotografada do chão, coroinhas contra o teto
 - Igreja inteira vista do coro
@@ -227,7 +227,7 @@ Próximo da coleção → Nº03 · Como fotografar a Adoração ao Santíssimo
 
 **Na adoração, o escuro também é a foto.**
 
-> **Direção de arte:** Cena da adoração sangrando o slide inteiro, fotômetro técnico sobreposto marcando −1, frase em serifada.
+> **Direção de arte:** Fotômetro técnico no topo marcando −1, um “−1” gigante em contorno amarelo, nota à mão e a frase em serifada.
 
 ### Slide 2
 
@@ -262,7 +262,7 @@ _Silhueta_
 - **Exposição:** Para a luz. A pessoa vira desenho.
 - **Respeito:** Silhueta preserva quem reza: ninguém é identificado.
 
-> **Direção de arte:** Diagrama técnico de luz + cópia fotográfica do resultado lado a lado.
+> **Direção de arte:** Diagrama técnico de luz: fonte de luz, pessoa e a posição do fotógrafo.
 
 ### Slide 5
 
@@ -273,7 +273,7 @@ _Exposição_
 - ✕ Assim não: Modo automático puxando para o claro; O ponto principal virou branco
 - ✓ Assim sim: Exposição −1 medida na luz; O escuro fica escuro
 
-> **Direção de arte:** Comparação clara/escura empilhada com anotações de revisor.
+> **Direção de arte:** Bloco ASSIM NÃO em contorno, com o texto riscado em amarelo, e bloco ASSIM SIM em amarelo sólido. Só tipografia, sem imagem.
 
 ### Slide 6
 
@@ -310,7 +310,7 @@ Próximo da coleção → Nº04 · Pare de usar o zoom digital
 
 > **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.
 
-### Fotos sugeridas (para fotografar na sua paróquia)
+### Pauta de fotos (opcional, se um dia quiser usar fotos suas)
 
 - Ostensório iluminado com o resto da capela no escuro
 - Silhueta de alguém ajoelhado contra a luz do altar
@@ -338,7 +338,7 @@ Próximo da coleção → Nº04 · Pare de usar o zoom digital
 
 **Ele não aproxima. Ele recorta e estraga a foto. / 10× / PARE DE USAR O ZOOM DIGITAL.**
 
-> **Direção de arte:** Imagem pixelada de verdade ocupando o slide, 10× gigante por cima, faixa preta com o título.
+> **Direção de arte:** Régua de zoom com as lentes reais em amarelo, “10×” gigante riscado à mão e o título em condensada preta sobre amarelo.
 
 ### Slide 2
 
@@ -367,12 +367,12 @@ _Conheça seu celular_
 
 _Na prática_
 
-**Mesma cena. Escolha a sua.**
+**10× de longe ou 2× de perto?**
 
 - ✕ Assim não: 10× do fundo da igreja; Borrado e sem detalhe
 - ✓ Assim sim: 1× ou 2×, a cinco bancos do altar; Nítido, com textura
 
-> **Direção de arte:** Pixelado real (gerado no navegador) contra a cena nítida.
+> **Direção de arte:** Bloco ASSIM NÃO em contorno, com o texto riscado em amarelo, e bloco ASSIM SIM em amarelo sólido. Só tipografia, sem imagem.
 
 ### Slide 5
 
@@ -420,7 +420,7 @@ Próximo da coleção → Nº05 · Como fotografar a procissão
 
 > **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.
 
-### Fotos sugeridas (para fotografar na sua paróquia)
+### Pauta de fotos (opcional, se um dia quiser usar fotos suas)
 
 - Mesma cena em 1× aproximado e em 10× de longe, lado a lado
 - Fotógrafo mudando de posição na lateral
@@ -445,7 +445,7 @@ Próximo da coleção → Nº05 · Como fotografar a procissão
 
 **QUEM CHEGA ATRASADO FOTOGRAFA COSTAS.**
 
-> **Direção de arte:** Procissão noturna em perspectiva, seta amarela gigante indicando o movimento, título em condensada cortando a cena.
+> **Direção de arte:** Mapa técnico do trajeto da procissão com as posições 1, 2 e 3, nota à mão “corre por fora!” e o título cortando a parte de baixo.
 
 ### Slide 2
 
@@ -470,7 +470,7 @@ _Sequência_
 - 03 · O centro: andor ou Santíssimo
 - 04 · O detalhe: pés, velas, flores
 
-> **Direção de arte:** Grade 2×2 de cópias fotográficas, como prova de contato organizada.
+> **Direção de arte:** Blocos tipográficos numerados com contorno, sem imagem.
 
 ### Slide 4
 
@@ -493,7 +493,7 @@ _Enquadramento_
 - ✕ Assim não: Pessoa colada na borda; Parece que vai sair da foto
 - ✓ Assim sim: Pessoa no terço esquerdo; Respiro na direção do movimento
 
-> **Direção de arte:** Comparação com marcações de revisão.
+> **Direção de arte:** Bloco ASSIM NÃO em contorno, com o texto riscado em amarelo, e bloco ASSIM SIM em amarelo sólido. Só tipografia, sem imagem.
 
 ### Slide 6
 
@@ -529,7 +529,7 @@ Próximo da coleção → Nº06 · 3 erros que todo fotógrafo da Pascom comete
 
 > **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.
 
-### Fotos sugeridas (para fotografar na sua paróquia)
+### Pauta de fotos (opcional, se um dia quiser usar fotos suas)
 
 - Cruz processional abrindo a procissão, vista de frente
 - Rostos iluminados por velas
@@ -556,7 +556,7 @@ Próximo da coleção → Nº06 · 3 erros que todo fotógrafo da Pascom comete
 
 **3 · ERROS QUE TODO FOTÓGRAFO DA PASCOM COMETE (inclusive eu)**
 
-> **Direção de arte:** Cópia fotográfica torta e tremida, com X e setas amarelas apontando erros, 3 vazado gigante.
+> **Direção de arte:** 3 gigante vazado, os três erros listados com X desenhados à mão, título em condensada e “(inclusive eu)” em serifada.
 
 ### Slide 2
 
@@ -567,7 +567,7 @@ _Erro 01 · foto tremida_
 - ✕ Assim não: Velocidade baixa no automático; Braço esticado segurando o celular
 - ✓ Assim sim: Mínimo 1/125 s com gente se mexendo; Suba o ISO, abra o diafragma
 
-> **Direção de arte:** Tremido real (duplo deslocado + desfoque) contra a versão nítida.
+> **Direção de arte:** Bloco ASSIM NÃO em contorno, com o texto riscado em amarelo, e bloco ASSIM SIM em amarelo sólido. Só tipografia, sem imagem.
 
 ### Slide 3
 
@@ -589,7 +589,7 @@ _Erro 02 · excesso de zoom_
 
 Se você precisa de mais de 3× no celular, mude de lugar ou mude a foto. A gente explicou tudo no post 04 da coleção.
 
-> **Direção de arte:** Cópia pixelada de verdade como prova do erro, frase em serifada.
+> **Direção de arte:** Frase grande em serifada e texto curto de apoio, sem imagem.
 
 ### Slide 5
 
@@ -600,7 +600,7 @@ _Erro 03 · clique sem intenção_
 - **Antes de clicar:** Pergunte: o que essa foto conta?
 - **Sem resposta:** Não clique. Procure outro ângulo.
 
-> **Direção de arte:** Foto torta com anotações de revisor apontando cada problema.
+> **Direção de arte:** Dicas em linhas grandes e pontos de atenção escritos à mão, sem imagem.
 
 ### Slide 6
 
@@ -640,7 +640,7 @@ Próximo da coleção → Nº07 · Como fotografar a Santa Eucaristia
 
 > **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.
 
-### Fotos sugeridas (para fotografar na sua paróquia)
+### Pauta de fotos (opcional, se um dia quiser usar fotos suas)
 
 - Foto propositalmente tremida do altar, para o slide de erro
 - Foto de registro com cabeças cortadas e fundo bagunçado vs. a mesma cena bem enquadrada
@@ -665,7 +665,7 @@ Próximo da coleção → Nº07 · Como fotografar a Santa Eucaristia
 
 **O momento mais importante da missa pede o clique mais discreto.**
 
-> **Direção de arte:** Cena pequena no centro de um campo preto, quadrado de foco amarelo na hóstia, serifada elegante.
+> **Direção de arte:** Visor de câmera vazio no centro do preto, só com o quadrado de foco amarelo e a leitura de exposição, e a frase em serifada.
 
 ### Slide 2
 
@@ -688,7 +688,7 @@ _Composição da elevação_
 - **Enquadramento:** Vertical funciona muito bem. Hóstia no terço superior.
 - **Ângulo:** Do eixo central (de longe) ou a 45° na lateral.
 
-> **Direção de arte:** Cena do altar com grade de terços e marcações.
+> **Direção de arte:** Dicas em linhas grandes e pontos de atenção escritos à mão, sem imagem.
 
 ### Slide 4
 
@@ -712,7 +712,7 @@ _Comunhão_
 - ✕ Assim não: Tira a pessoa do momento; Muitas pessoas não querem aparecer
 - ✓ Assim sim: Mãos, a hóstia, o gesto; Da lateral, longe da fila
 
-> **Direção de arte:** Comparação com marcação.
+> **Direção de arte:** Bloco ASSIM NÃO em contorno, com o texto riscado em amarelo, e bloco ASSIM SIM em amarelo sólido. Só tipografia, sem imagem.
 
 ### Slide 6
 
@@ -746,7 +746,7 @@ Próximo da coleção → Nº08 · Fotografia com celular: configurações que v
 
 > **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.
 
-### Fotos sugeridas (para fotografar na sua paróquia)
+### Pauta de fotos (opcional, se um dia quiser usar fotos suas)
 
 - Elevação da hóstia vista do fundo, com tele, muito espaço escuro em volta
 - Mãos do sacerdote sobre o cálice
@@ -857,7 +857,7 @@ Próximo da coleção → Nº09 · Como contar uma história através de uma fot
 
 > **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.
 
-### Fotos sugeridas (para fotografar na sua paróquia)
+### Pauta de fotos (opcional, se um dia quiser usar fotos suas)
 
 - Print da câmera do celular com foco travado e exposição ajustada
 - Vitral com HDR ligado vs. desligado
@@ -882,7 +882,7 @@ Próximo da coleção → Nº09 · Como contar uma história através de uma fot
 
 **UMA FOTO BONITA MOSTRA. / Uma foto boa conta.**
 
-> **Direção de arte:** Folha de contato com 20 quadros, X amarelos e um círculo de lápis graxa na foto escolhida. Título em condensada + serifada.
+> **Direção de arte:** Tira de filme desenhada com três quadros vazios (contexto, personagem, detalhe), o último circulado a lápis amarelo, e a frase em serifada.
 
 ### Slide 2
 
@@ -907,7 +907,7 @@ _Estrutura de 3 fotos_
 - 02 · Personagem: quem
 - 03 · Detalhe: o que sente
 
-> **Direção de arte:** Tríptico em fileira, como sequência de revista.
+> **Direção de arte:** Blocos tipográficos numerados com contorno, sem imagem.
 
 ### Slide 4
 
@@ -932,7 +932,7 @@ _Detalhes que contam_
 - C · O folheto amassado
 - D · A vela do batismo
 
-> **Direção de arte:** Grade 2×2 de detalhes.
+> **Direção de arte:** Blocos tipográficos numerados com contorno, sem imagem.
 
 ### Slide 6
 
@@ -966,7 +966,7 @@ Próximo da coleção → Nº10 · Não fotografe apenas o altar
 
 > **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.
 
-### Fotos sugeridas (para fotografar na sua paróquia)
+### Pauta de fotos (opcional, se um dia quiser usar fotos suas)
 
 - A mãe ajeitando a gola da criança antes da Primeira Eucaristia
 - Criança de olhos fechados na comunhão (com autorização)
@@ -993,7 +993,7 @@ Próximo da coleção → Nº10 · Não fotografe apenas o altar
 
 **A missa também acontece nos bancos. / VIRA A CÂMERA.**
 
-> **Direção de arte:** Visor apontado para o altar com X, seta curva amarela de 180° girando para a comunidade. Título “VIRA A CÂMERA”.
+> **Direção de arte:** Dois visores vazios: o de cima, “o altar. de novo.”, riscado com um X; uma seta amarela de 180° leva ao de baixo, “as pessoas”, circulado. Título VIRA A CÂMERA.
 
 ### Slide 2
 
@@ -1027,7 +1027,7 @@ _Expressões_
 - 02 · Abraço da paz
 - 03 · Canto final
 
-> **Direção de arte:** Tríptico de rostos.
+> **Direção de arte:** Blocos tipográficos numerados com contorno, sem imagem.
 
 ### Slide 5
 
@@ -1052,7 +1052,7 @@ _Pequenos detalhes_
 - C · O folheto
 - D · Os pés na fila
 
-> **Direção de arte:** Grade de detalhes.
+> **Direção de arte:** Blocos tipográficos numerados com contorno, sem imagem.
 
 ### Slide 7
 
@@ -1076,7 +1076,7 @@ Presets que dão vida às suas fotos: @chagas_photon_
 
 > **Direção de arte:** “curtiu?” escrito à mão em amarelo, chamada em condensada, cartão do perfil com anel amarelo e um gancho para o próximo post da coleção, que puxa a pessoa para o seu feed.
 
-### Fotos sugeridas (para fotografar na sua paróquia)
+### Pauta de fotos (opcional, se um dia quiser usar fotos suas)
 
 - Mãos dadas no Pai-Nosso
 - Abraço da paz

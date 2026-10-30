@@ -91,7 +91,7 @@ const POSTS = [
   { L: 'diagram', th: 'paper', k: 'Conheça seu celular', h: 'Só os *pontos amarelos* são lentes de verdade.',
     d: { s: 'lensbar', o: {}, meet: true }, notes: [['Lentes', 'Na maioria dos celulares: 0,5×, 1× e mais uma tele (2×, 3× ou 5×).'], ['Entre elas', 'Qualquer valor intermediário é recorte da lente anterior.'], ['Teste', 'Toque nos números da câmera: eles pulam direto para as lentes reais.']],
     art: 'Régua técnica de zoom, lentes como pontos amarelos, área digital hachurada.' },
-  { L: 'compare', th: 'dark', k: 'Na prática', h: 'Mesma cena. Escolha a sua.',
+  { L: 'compare', th: 'dark', k: 'Na prática', h: '10× de longe ou *2× de perto*?',
     bad: { f: { s: 'altar', o: { elevate: false }, px: { block: 26 } }, notes: ['10× do fundo da igreja', 'Borrado e sem detalhe'] },
     good: { f: { s: 'altar', o: {} }, notes: ['1× ou 2×, a cinco bancos do altar', 'Nítido, com textura'] },
     art: 'Pixelado real (gerado no navegador) contra a cena nítida.' },
