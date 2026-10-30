@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pascom Criativa — Blocos</title>
+<style>
+@font-face{font-family:"Archivo";src:url(fonts/archivo-var.woff2) format("woff2");font-weight:100 900;font-stretch:62% 125%;font-display:block}
+@font-face{font-family:"Caveat";src:url(fonts/caveat.woff2) format("woff2");font-weight:400 700;font-display:block}
+@font-face{font-family:"JB Mono";src:url(fonts/jetbrains-mono.woff2) format("woff2");font-weight:400 700;font-display:block}
+
+/* "Cada dica é uma peça": céu, colina e blocos de montar em cores primárias */
+:root{--red:#d0261d;--blue:#1f6fc5;--yel:#f6c21b;--grn:#1e8a3c;--wht:#f2f2ee;--blk:#222221;--ink:#151514;--pad:72px;
+  --wide:"Archivo",sans-serif;--mono:"JB Mono",ui-monospace,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#161615;color:#eee}
+body{font-family:var(--wide);-webkit-font-smoothing:antialiased}
+
+.post{padding:36px 16px 8px}
+.post h3{font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#9a968c;margin-bottom:14px}
+.row{display:flex;gap:24px;overflow-x:auto;padding-bottom:16px;scroll-snap-type:x mandatory}
+.fr{flex:0 0 auto;width:calc(1080px*var(--s));height:calc(1350px*var(--s));--s:.3;scroll-snap-align:start}
+.fr>.slide{transform:scale(var(--s));transform-origin:0 0}
+@media (max-width:600px){.fr{--s:.27}}
+body.render .post{padding:0}body.render .post h3{display:none}body.render .row{display:block;overflow:visible;padding:0}
+body.render .fr{width:auto;height:auto;--s:1}body.render .fr>.slide{transform:none}
+
+.slide{position:relative;width:1080px;height:1350px;overflow:hidden;isolation:isolate;background:var(--bg);color:var(--fg);font-stretch:100%}
+.t-sky{--bg:radial-gradient(rgba(255,255,255,.07) 1.2px,transparent 1.6px) 0 0/7px 7px,#3c7c99;--fg:#f6f6f2;--sub:rgba(246,246,242,.78);--acc:var(--yel)}
+.t-wht{--bg:#ecebe6;--fg:var(--ink);--sub:#5f5e59;--acc:var(--red)}
+.t-yel{--bg:var(--yel);--fg:var(--ink);--sub:#5a4610;--acc:var(--red)}
+.t-wall{--bg:#222;--fg:var(--ink);--sub:#5f5e59;--acc:var(--red)}
+.wall{position:absolute;inset:0;z-index:0}
+.grain{position:absolute;inset:0;pointer-events:none;z-index:60;opacity:.42;mix-blend-mode:overlay;
+  background-size:180px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+
+.hd{position:absolute;left:var(--pad);right:var(--pad);top:44px;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:15px;letter-spacing:.1em;text-transform:uppercase;z-index:40}
+.chip{position:relative;display:inline-block;background:var(--yel);color:var(--ink);font-family:var(--wide);font-weight:900;font-stretch:125%;font-size:15px;letter-spacing:.06em;padding:9px 14px 7px;border-radius:4px;box-shadow:inset 0 -4px 0 rgba(0,0,0,.18)}
+.hd .rt{display:flex;gap:22px;opacity:.85}
+
+/* sujeira de scan */
+.dust{position:absolute;inset:0;width:1080px;height:1350px;z-index:61;pointer-events:none}
+.t-sky .dust g{fill:#fff;stroke:#fff;opacity:.3}
+.vig{position:absolute;inset:0;z-index:59;pointer-events:none;box-shadow:inset 0 0 160px rgba(0,0,0,.22)}
+/* blocos */
+.brk{--c:var(--wht);--t:var(--ink);position:relative;background:var(--c);color:var(--t);border-radius:6px;padding:30px 34px 34px;
+  box-shadow:inset 0 -12px 0 rgba(0,0,0,.17),inset 0 3px 0 rgba(255,255,255,.3),7px 9px 0 rgba(0,0,0,.22)}
+.brk::before{content:"";position:absolute;left:14px;right:14px;top:-17px;height:18px;background:var(--c);filter:brightness(1.06);
+  -webkit-mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='84' height='18'><rect x='18' y='0' width='48' height='24' rx='6'/></svg>") repeat-x left top/84px 18px;
+  mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='84' height='18'><rect x='18' y='0' width='48' height='24' rx='6'/></svg>") repeat-x left top/84px 18px}
+.c-red{--c:var(--red);--t:#fff}.c-blue{--c:var(--blue);--t:#fff}.c-yel{--c:var(--yel);--t:var(--ink)}.c-grn{--c:var(--grn);--t:#fff}.c-wht{--c:var(--wht);--t:var(--ink)}.c-blk{--c:var(--blk);--t:#fff}
+
+.hl{background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 24' preserveAspectRatio='none'><path d='M3 13C40 6 82 16 121 9S181 14 198 7L196 19C151 22 92 15 52 20S12 18 4 21Z' fill='%23f6c21b'/></svg>") no-repeat 0 92%/100% 46%;padding:0 .06em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.t-yel .hl,.t-wall .hl{background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 24' preserveAspectRatio='none'><path d='M3 13C40 6 82 16 121 9S181 14 198 7L196 19C151 22 92 15 52 20S12 18 4 21Z' fill='%23d0261d'/></svg>") no-repeat 0 92%/100% 46%}
+.sf{color:var(--acc);font-style:normal}
+.t-sky .sf{color:var(--yel)}
+.W{font-weight:900;font-stretch:125%;text-transform:uppercase;letter-spacing:-.01em;line-height:.9}
+
+.L{position:absolute;left:var(--pad);right:var(--pad);top:124px;bottom:84px;display:flex;flex-direction:column;z-index:10}
+.kick{font-family:var(--mono);font-size:17px;letter-spacing:.14em;text-transform:uppercase;color:var(--sub)}
+.h{font-weight:900;font-stretch:125%;font-size:70px;line-height:.95;text-transform:uppercase;letter-spacing:-.015em;margin-top:16px}
+.note{font-family:"Caveat",cursive;font-weight:700;font-size:62px;line-height:1;color:var(--acc);transform:rotate(-3deg);align-self:flex-end;margin-top:30px}
+.t-sky .note{color:#fff}
+
+/* list */
+.stack{flex:1;display:flex;flex-direction:column;justify-content:space-evenly;gap:34px;margin-top:40px}
+.stack .brk{display:grid;grid-template-columns:96px 1fr;gap:10px;align-items:center}
+.stack .brk:nth-child(4n+2){margin-left:70px}.stack .brk:nth-child(4n+3){margin-right:50px}.stack .brk:nth-child(4n){margin-left:30px;margin-right:20px}
+.stack .n{font-weight:900;font-stretch:125%;font-size:54px;line-height:1;opacity:.9}
+.stack b{display:block;font-weight:800;font-size:40px;line-height:1.05;letter-spacing:-.01em}
+.stack p{font-weight:500;font-size:28px;line-height:1.2;margin-top:8px;opacity:.88}
+.stack .ck .n{width:44px;height:44px;border:4px solid currentColor;border-radius:6px}
+
+/* timeline */
+.tls{flex:1;display:flex;flex-direction:column;justify-content:space-evenly;gap:26px;margin-top:36px}
+.tls .brk{display:grid;grid-template-columns:280px 1fr;gap:20px;align-items:center;padding-top:22px;padding-bottom:28px}
+.tls .m{font-weight:900;font-stretch:125%;font-size:34px;line-height:1;text-transform:uppercase}
+.tls .m small{display:block;font-family:var(--mono);font-size:14px;letter-spacing:.12em;font-weight:700;margin-top:10px;opacity:.85}
+.tls p{font-weight:500;font-size:28px;line-height:1.18}
+
+/* table */
+.tbl{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:44px;align-content:start}
+.tbl .col{display:flex;flex-direction:column;gap:26px}
+.tbl .hd2{font-weight:900;font-stretch:125%;font-size:36px;text-transform:uppercase;padding:20px 26px 26px}
+.tbl .brk.r{padding:16px 24px 24px}
+.tbl dt{font-family:var(--mono);font-size:14px;letter-spacing:.12em;text-transform:uppercase;opacity:.7}
+.tbl dd{font-weight:800;font-size:33px;line-height:1.08;margin-top:4px}
+.tnote{margin-top:30px;font-weight:700;font-size:32px;line-height:1.15}
+
+/* diagram */
+.dg .board{flex:1;margin:40px 0 0;display:flex;padding:30px;min-height:0}
+.dg .board .fig{flex:1;position:relative}
+.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+.nts{display:grid;gap:20px;margin-top:34px}
+.nts .brk{padding:22px 24px 28px}
+.nts b{display:block;font-family:var(--mono);font-size:14px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;opacity:.85}
+.nts p{font-weight:600;font-size:25px;line-height:1.16}
+.nts.rows{flex:1;display:flex;flex-direction:column;justify-content:space-evenly;gap:34px}
+.nts.rows p{font-size:38px;font-weight:700}
+.hn{font-family:"Caveat",cursive;font-weight:700;font-size:54px;color:var(--acc);margin-top:28px;transform:rotate(-1.5deg)}
+.t-sky .hn{color:#fff}
+
+/* compare */
+.cmp{flex:1;display:flex;flex-direction:column;gap:46px;margin-top:50px}
+.cmp .brk{flex:1;display:flex;flex-direction:column;justify-content:center}
+.cmp .tag{font-weight:900;font-stretch:125%;font-size:44px;text-transform:uppercase}
+.cmp li{list-style:none;font-weight:700;font-size:42px;line-height:1.1;padding-top:14px}
+.cmp .c-red li{text-decoration:line-through;text-decoration-thickness:4px;text-decoration-color:rgba(255,255,255,.7)}
+
+/* split */
+.sp .top{display:flex;align-items:flex-end;gap:26px}
+.sp .num{font-weight:900;font-stretch:125%;font-size:200px;line-height:.78;letter-spacing:-.04em}
+.sp .h{font-size:58px;margin:0 0 8px;min-width:0;overflow-wrap:anywhere}
+.sp .mid{flex:1;display:grid;grid-template-columns:1fr 250px;gap:36px;align-items:center;margin-top:40px}
+.sp .bd{font-weight:600;font-size:40px;line-height:1.16}
+.sp .spec{margin-top:40px;display:inline-block;font-family:var(--mono);font-size:26px;font-weight:700;padding:20px 24px 26px}
+.sp .spec b{display:block;font-size:13px;letter-spacing:.14em;text-transform:uppercase;opacity:.7;margin-bottom:6px}
+.sp .hgt{padding:24px 18px 30px}
+.sp .hgt .fig{height:330px}
+.sp .hgt p{font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;text-align:center;margin-bottom:8px}
+.hand2{margin-top:34px;font-family:"Caveat",cursive;font-weight:700;font-size:60px;line-height:1;color:#fff;transform:rotate(-3deg)}
+.t-wht .hand2{color:var(--red)}
+
+/* grid */
+.gr{flex:1;display:grid;gap:44px 22px;margin-top:56px}
+.gr .brk{display:flex;flex-direction:column;justify-content:space-between}
+.gr .brk b{font-weight:900;font-stretch:125%;font-size:110px;line-height:.85}
+.gr .brk span{font-weight:800;font-size:36px;line-height:1.08}
+
+/* statement */
+.st .q{text-shadow:-4px 3px 0 rgba(208,38,29,.4);font-weight:900;font-stretch:118%;font-size:84px;line-height:.98;text-transform:uppercase;letter-spacing:-.015em;margin-top:40px}
+.st .body{font-weight:500;font-size:32px;line-height:1.22;margin-top:34px;max-width:860px;color:var(--sub)}
+.st .board{margin-top:40px;padding:26px 30px 32px}
+.st .board .fig{height:160px;position:relative}
+
+/* cta */
+.panel{position:absolute;left:56px;right:56px;top:130px;bottom:120px;z-index:10;display:flex;flex-direction:column;padding:56px 52px 50px}
+.panel .q{font-weight:900;font-stretch:118%;font-size:84px;line-height:.95;text-transform:uppercase;letter-spacing:-.015em;margin-top:22px}
+.panel .sub{font-weight:600;font-size:32px;line-height:1.2;margin-top:24px}
+.cbox{margin-top:40px;display:flex;align-items:center;gap:20px;border:3px solid var(--ink);border-radius:18px;padding:20px 24px}
+.cbox i{flex:0 0 52px;height:52px;border-radius:50%;background:var(--ink)}
+.cbox span{font-size:30px;opacity:.6;font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:30px 14px;margin-top:40px}
+.chips .brk{padding:12px 18px 18px;font-weight:900;font-stretch:115%;font-size:24px;text-transform:uppercase}
+.chips .brk::before{left:8px;right:8px}
+.sig{margin-top:auto;display:flex;justify-content:space-between;align-items:center;border-top:3px solid var(--ink);padding-top:22px}
+.sig b{font-weight:900;font-stretch:125%;font-size:30px}
+.sig small{display:block;font-family:var(--mono);font-size:14px;letter-spacing:.12em;text-transform:uppercase;margin-top:6px}
+.sig span{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+
+/* capas e seguir */
+.hill{position:absolute;left:0;bottom:0;width:1080px;height:430px;z-index:20}
+.title{position:absolute;left:60px;right:40px;bottom:358px;display:flex;flex-direction:column;align-items:flex-start;z-index:10;color:#f4f4f1}
+.title span{text-shadow:-5px 4px 0 rgba(208,38,29,.5)}
+.title span{display:block;white-space:nowrap;font-weight:900;font-stretch:125%;text-transform:uppercase;letter-spacing:-.01em;line-height:.86}
+.obj{position:absolute;left:600px;top:872px;width:240px;height:180px;z-index:30}
+.under{position:absolute;left:var(--pad);right:300px;bottom:140px;z-index:30;text-align:left;color:#fff;font-weight:700;font-size:34px;line-height:1.2}
+.under small{display:block;font-family:var(--mono);font-size:15px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-top:14px;opacity:.85}
+.kick-top{position:absolute;left:var(--pad);right:var(--pad);top:120px;text-align:left;font-family:var(--mono);font-size:17px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.85);z-index:10}
+.ava{position:absolute;left:650px;top:884px;width:140px;height:140px;border-radius:50%;z-index:30;box-shadow:0 0 0 8px #f4f4f1,0 24px 30px rgba(0,0,0,.25)}
+.fol{position:absolute;left:var(--pad);right:var(--pad);bottom:56px;z-index:30;text-align:left;color:#fff}
+.fol .at{font-weight:900;font-stretch:125%;font-size:44px}
+.fol .btn{display:inline-block;margin-top:22px;font-weight:900;font-stretch:125%;font-size:34px;text-transform:uppercase;padding:16px 46px 22px}
+.fol p{font-weight:600;font-size:26px;margin-top:26px;line-height:1.25;opacity:.92}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="scenes.js"></script>
+<script src="posts.js"></script>
+<script>
+const TECH = new Set(['floorplan','camera','phone','lensbar','meter','route','panning','silho','height','sensor','shake']);
+const fmt = s => (s || '').replace(/\*(.+?)\*/g, '<span class="hl">$1</span>').replace(/_(.+?)_/g, '<i class="sf">$1</i>');
+const tips = f => ((f && f.m) || []).filter(m => m.l).map(m => m.l.charAt(0) + m.l.slice(1).toLowerCase());
+const fig = (f, style = '') => TECH.has(f.s) ? `<div class="fig" style="${style}">${sceneSvg(f.s, f.o || {}, f.m || [], { meet: true })}</div>` : '';
+const CYC = ['red', 'blue', 'yel', 'grn'];
+const kick = k => `<p class="kick">${k}</p>`;
+
+/* ---------- desenho de blocos (vista frontal com topo) ---------- */
+const COL = { red: '#d0261d', blue: '#1f6fc5', yel: '#f6c21b', grn: '#1e8a3c', wht: '#f2f2ee', blk: '#262625', gry: '#9c9c98', gold: '#e0a82e' };
+function shade(hex, f) {
+  const n = parseInt(hex.slice(1), 16), t = f < 0 ? 0 : 255, p = Math.abs(f);
+  return 'rgb(' + [n >> 16, n >> 8 & 255, n & 255].map(v => Math.round((t - v) * p + v)).join(',') + ')';
+}
+const U = 40, D = 14;
+function brick(x, y, cols, h, c, studs = true) {
+  const w = cols * U, col = COL[c] || c;
+  let s = `<path d="M${x} ${y}L${x + D} ${y - D}H${x + w + D}L${x + w} ${y}Z" fill="${shade(col, .22)}"/>`;
+  s += `<path d="M${x + w} ${y}L${x + w + D} ${y - D}V${y + h - D}L${x + w} ${y + h}Z" fill="${shade(col, -.32)}"/>`;
+  s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${col}"/><rect x="${x}" y="${y + h - 6}" width="${w}" height="6" fill="${shade(col, -.15)}"/>`;
+  if (studs) for (let i = 0; i < cols; i++) {
+    const cx = x + U * i + U / 2 + D / 2, top = y - D / 2 - 9;
+    s += `<rect x="${cx - 12}" y="${top}" width="24" height="9" fill="${shade(col, -.12)}"/><ellipse cx="${cx}" cy="${top}" rx="12" ry="4.2" fill="${shade(col, .38)}"/>`;
+  }
+  return s;
+}
+const shadow = (cx, w) => `<ellipse cx="${cx}" cy="283" rx="${w}" ry="9" fill="#000" opacity=".22"/>`;
+const flame = (x, y, k = 1) => `<circle cx="${x}" cy="${y}" r="${46 * k}" fill="#ffd46b" opacity=".18"/><circle cx="${x}" cy="${y}" r="${26 * k}" fill="#ffd46b" opacity=".3"/><path d="M${x} ${y - 24 * k}C${x + 13 * k} ${y - 6 * k} ${x + 12 * k} ${y + 12 * k} ${x} ${y + 14 * k}C${x - 12 * k} ${y + 12 * k} ${x - 13 * k} ${y - 6 * k} ${x} ${y - 24 * k}Z" fill="#ffb21f"/>`;
+const OBJ = {
+  camera: () => shadow(200, 110) + brick(120, 180, 4, 100, 'blk') + brick(167, 152, 2, 28, 'blk') + brick(127, 162, 1, 18, 'red') +
+    `<circle cx="200" cy="230" r="40" fill="#8e8e8a"/><circle cx="200" cy="230" r="30" fill="#1b1b1a"/><circle cx="200" cy="230" r="15" fill="#3d4a5c"/><circle cx="190" cy="220" r="6" fill="#fff" opacity=".6"/>`,
+  stairs: () => shadow(200, 130) + ['red', 'blue', 'yel', 'grn', 'wht'].map((c, i) => { let s = ''; for (let k = 0; k <= i; k++) s += brick(90 + i * 44, 232 - k * 48, 1, 48, c); return s; }).join(''),
+  candle: () => shadow(200, 80) + brick(140, 250, 3, 30, 'gold') + brick(180, 110, 1, 140, 'wht', false) + flame(200, 70),
+  pixels: () => { let s = shadow(200, 120); const g = ['#3b3b3a', '#6a6a67', '#9c9c98', '#c9c9c5', '#4d6d8f', '#2f4a68'];
+    for (let r = 0; r < 5; r++) for (let c = 0; c < 6; c++) s += `<rect x="${86 + c * 38}" y="${92 + r * 38}" width="38" height="38" fill="${g[(r * 7 + c * 5 + r * c) % g.length]}" stroke="rgba(0,0,0,.15)"/>`;
+    for (let c = 0; c < 6; c++) s += `<ellipse cx="${105 + c * 38}" cy="88" rx="11" ry="4" fill="#ddd"/>`;
+    return s + `<text x="294" y="136" font-family="Archivo" font-weight="900" font-size="44" fill="#fff" style="font-stretch:125%">10×</text>`; },
+  procession: () => shadow(200, 170) + ['wht', 'red', 'blue', 'yel', 'grn', 'wht'].map((c, i) => brick(40 + i * 56, 196 + (i % 2) * 6, 1, 84 - (i % 2) * 6, c, false) + flame(60 + i * 56, 180 + (i % 2) * 6, .5)).join(''),
+  three: () => shadow(200, 140) + brick(80, 232, 3, 48, 'red') + brick(80, 184, 3, 48, 'blue') + `<g transform="rotate(24 300 250)">${brick(230, 232, 3, 48, 'yel')}</g>`,
+  host: () => shadow(200, 90) + brick(130, 232, 3, 48, 'gold') + brick(150, 184, 2, 48, 'gold') +
+    `<circle cx="200" cy="120" r="86" fill="#fff" opacity=".18"/><circle cx="200" cy="120" r="52" fill="#fff" opacity=".25"/><circle cx="200" cy="120" r="36" fill="#fbf7ec" stroke="#e8dfc6" stroke-width="3"/>`,
+  phone: () => shadow(200, 70) + brick(160, 90, 2, 190, 'blk', false) + `<rect x="168" y="102" width="64" height="150" rx="4" fill="#3a4c62"/><rect x="176" y="112" width="48" height="10" fill="#f6c21b"/><circle cx="200" cy="266" r="6" fill="#555"/>`,
+  stack3: () => shadow(200, 120) + brick(120, 232, 4, 48, 'blue') + brick(140, 184, 3, 48, 'red') + brick(160, 136, 2, 48, 'yel') +
+    ['3', '2', '1'].map((t, i) => `<text x="${150 + i * 0}" y="${266 - i * 48}" font-family="Archivo" font-weight="900" font-size="26" fill="${i === 2 ? '#151514' : '#fff'}">${['contexto', 'personagem', 'detalhe'][i]}</text>`).join(''),
+  cameraBack: () => `<g transform="translate(400 0) scale(-1 1)">${OBJ.camera()}</g><path d="M90 120C40 40 340 20 330 120" fill="none" stroke="#f6c21b" stroke-width="12" stroke-linecap="round"/><path d="M312 108l20 26 16-30z" fill="#f6c21b"/>`
+};
+const objSvg = k => `<svg class="obj" viewBox="0 0 400 300">${OBJ[k]()}</svg>`;
+const HILL = `<svg class="hill" viewBox="0 0 1080 430" preserveAspectRatio="none"><defs><pattern id="st" width="38" height="22" patternUnits="userSpaceOnUse"><ellipse cx="19" cy="11" rx="10" ry="4" fill="#3da24f"/></pattern>
+  <clipPath id="dome"><path d="M-80 430Q760 -230 1160 430Z"/></clipPath></defs>
+  <path d="M-80 430Q760 -230 1160 430Z" fill="#2c8a3b"/><rect width="1080" height="430" fill="url(#st)" opacity=".55" clip-path="url(#dome)"/>
+  <path d="M-80 430Q760 -230 1160 430" fill="none" stroke="#45ad57" stroke-width="5" opacity=".7"/><rect y="330" width="1080" height="100" fill="#287e36"/><rect y="330" width="1080" height="100" fill="url(#st)" opacity=".4"/></svg>`;
+
+/* muro de blocos (vista de cima) para o fundo do CTA */
+function wall() {
+  let seed = 11; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  const cols = ['red', 'blue', 'yel', 'grn', 'wht', 'blue', 'red', 'yel', 'blk'], P = 54;
+  let s = '';
+  for (let y = 0; y < 1350; y += P * 2) {
+    let x = -Math.floor(rnd() * 3) * P;
+    while (x < 1080) {
+      const len = 2 + Math.floor(rnd() * 3), c = COL[cols[Math.floor(rnd() * cols.length)]];
+      s += `<rect x="${x}" y="${y}" width="${len * P}" height="${P * 2}" fill="${c}" stroke="rgba(0,0,0,.35)" stroke-width="3"/>`;
+      for (let i = 0; i < len; i++) for (let j = 0; j < 2; j++) {
+        const cx = x + P * i + P / 2, cy = y + P * j + P / 2;
+        s += `<circle cx="${cx + 3}" cy="${cy + 4}" r="17" fill="rgba(0,0,0,.25)"/><circle cx="${cx}" cy="${cy}" r="17" fill="${c}"/><circle cx="${cx}" cy="${cy}" r="17" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="2"/>`;
+      }
+      x += len * P;
+    }
+  }
+  return `<svg class="wall" viewBox="0 0 1080 1350">${s}</svg>`;
+}
+
+/* ---------- layouts ---------- */
+const LAY = {
+  list: s => `<div class="L">${kick(s.k)}<h2 class="h">${fmt(s.h)}</h2><div class="stack">${s.items.map(([b, p], i) =>
+      `<div class="brk c-${p ? CYC[i % 4] : 'wht'} ${p ? '' : 'ck'}"><span class="n">${p ? String(i + 1).padStart(2, '0') : ''}</span><div><b>${fmt(b)}</b>${p ? `<p>${fmt(p)}</p>` : ''}</div></div>`).join('')}</div></div>`,
+  timeline: s => `<div class="L">${kick(s.k)}<h2 class="h">${fmt(s.h)}</h2><div class="tls">${s.steps.map(([m, t, g]) => {
+      const c = g === 'stop' ? 'red' : g === 'go' ? 'grn' : g === 'O óbvio' ? 'wht' : 'yel', lbl = g === 'stop' ? 'Pare' : g === 'go' ? 'Circule' : g;
+      return `<div class="brk c-${c}"><span class="m">${m}<small>${lbl}</small></span><p>${fmt(t)}</p></div>`; }).join('')}</div></div>`,
+  table: s => `<div class="L">${kick(s.k)}<h2 class="h">${fmt(s.h)}</h2><div class="tbl">${s.cols.map((c, ci) =>
+      `<div class="col"><div class="brk c-${ci ? 'blue' : 'red'} hd2">${c.t}</div>${c.rows.map(([k, v]) => `<div class="brk c-wht r"><dt>${k}</dt><dd>${fmt(v)}</dd></div>`).join('')}</div>`).join('')}</div>
+      ${s.note ? `<p class="tnote">${fmt(s.note)}</p>` : ''}</div>`,
+  diagram: s => { const tech = TECH.has(s.d.s), t = tips(s.d);
+    return `<div class="L dg">${kick(s.k)}<h2 class="h">${fmt(s.h)}</h2>${tech ? `<div class="brk c-wht board">${fig(s.d)}</div>` : t.length ? `<p class="hn">repara em: ${t.join(' · ')}</p>` : ''}
+      <div class="nts ${tech ? '' : 'rows'}" style="grid-template-columns:repeat(${s.notes.length},1fr)">${s.notes.map(([b, p], i) => `<div class="brk c-${CYC[i % 4]}"><b>${b}</b><p>${fmt(p)}</p></div>`).join('')}</div></div>`; },
+  compare: s => `<div class="L">${kick(s.k)}<h2 class="h">${fmt(s.h)}</h2><div class="cmp">
+      <div class="brk c-red"><span class="tag">✕ Assim não</span><ul>${s.bad.notes.map(n => `<li>${fmt(n)}</li>`).join('')}</ul></div>
+      <div class="brk c-grn"><span class="tag">✓ Assim sim</span><ul>${s.good.notes.map(n => `<li>${fmt(n)}</li>`).join('')}</ul></div></div></div>`,
+  split: s => `<div class="L sp"><div class="top"><span class="num">${s.n}</span><h2 class="h">${fmt(s.h)}</h2></div>
+      <div class="mid"><div><div class="brk c-wht"><p class="bd">${fmt(s.body)}</p></div>${s.f.vf ? `<div class="brk c-blk spec"><b>Pra começar</b>${s.f.vf}</div>` : ''}${tips(s.f).length ? `<p class="hand2">${tips(s.f)[0]}</p>` : ''}</div>
+      <div class="brk c-yel hgt"><p>Altura da câmera</p>${fig({ s: 'height', o: { level: s.hgt } })}</div></div></div>`,
+  grid: s => `<div class="L">${kick(s.k)}<h2 class="h">${fmt(s.h)}</h2><div class="gr" style="grid-template-columns:repeat(${s.cols},1fr)">${s.cells.map((c, i) =>
+      `<div class="brk c-${CYC[(i + 1) % 4]}"><b>${c.n}</b><span>${fmt(c.t)}</span></div>`).join('')}</div></div>`,
+  statement: s => `<div class="L st">${kick(s.k)}<p class="q">${fmt(s.q)}</p><p class="body">${fmt(s.body)}</p>${s.note ? `<p class="note">${s.note}</p>` : ''}
+      ${s.f && TECH.has(s.f.s) ? `<div class="brk c-wht board">${fig(s.f)}</div>` : ''}</div>`,
+  cta: s => `${wall()}<div class="brk c-wht panel">${kick(s.k)}<p class="q">${fmt(s.q)}</p><p class="sub">${fmt(s.sub)}</p>
+      <div class="cbox"><i></i><span>Adicione um comentário…</span></div>
+      ${s.chips ? `<div class="chips">${s.chips.map((c, i) => `<span class="brk c-${CYC[i % 4]}">${c}</span>`).join('')}</div>` : ''}${s.note ? `<p class="note">${s.note}</p>` : ''}
+      <div class="sig"><div><b>PASCOM CRIATIVA</b><small>Fotografia • Comunicação • Evangelização</small></div><span>Salve para a próxima missa</span></div></div>`,
+  follow: (s, p) => { const nxt = POSTS[POSTS.indexOf(p) + 1];
+    return `<p class="kick-top">Curtiu? Tem mais de onde veio esse.</p>
+      <div class="title" style="bottom:380px"><span data-g="f">Me segue</span><span data-g="f">aqui</span></div>
+      <img class="ava" src="img/avatar.png" alt="">${HILL}
+      <div class="fol"><p class="at">@chagas_catolico</p><span class="brk c-yel btn">Seguir</span>
+      <p>Mais dicas de fotografia na Igreja.<br>${nxt ? `Próximo: Nº${nxt.n} · ${nxt.title}` : 'Presets que dão vida às suas fotos: @chagas_photon_'}</p></div>`; }
+};
+
+/* ---------- capas ---------- */
+const COV = {
+  '01': [['A melhor', 'foto da', 'missa'], 'é a que ninguém viu você tirar.', 'camera'],
+  '02': [['5 ângulos'], 'que transformam suas fotos (e nenhum exige câmera nova)', 'stairs'],
+  '03': [['O escuro', 'também', 'é a foto'], 'Como fotografar a Adoração ao Santíssimo', 'candle'],
+  '04': [['Pare de usar', 'o zoom', 'digital'], 'Ele só corta a foto e estica o pedaço.', 'pixels'],
+  '05': [['Quem chega', 'atrasado', 'fotografa', 'costas'], 'Como fotografar a procissão', 'procession'],
+  '06': [['3 erros'], 'que todo fotógrafo da Pascom comete (inclusive eu)', 'three'],
+  '07': [['O clique', 'mais', 'discreto'], 'Como fotografar a Santa Eucaristia', 'host'],
+  '08': [['Seu celular', 'faz mais', 'que isso'], 'As configurações que quase ninguém abre', 'phone'],
+  '09': [['Foto que', 'conta', 'história'], 'Dá pra fazer com 3 cliques. Bora?', 'stack3'],
+  '10': [['Vira a', 'câmera'], 'A missa também acontece nos bancos.', 'cameraBack']
+};
+const cover = p => { const [lines, sub, o] = COV[p.n];
+  return `<p class="kick-top">Nº${p.n} · Fotografia na Igreja</p><div class="title">${lines.map(l => `<span data-g="c">${l}</span>`).join('')}</div>
+    ${HILL}${objSvg(o)}<p class="under">${sub}<small>Arraste →</small></p>`; };
+
+/* ---------- montagem ---------- */
+const THEME = { dark: 'sky', paper: 'wht', yellow: 'yel' };
+const app = document.getElementById('app');
+const only = new URLSearchParams(location.search).get('post');
+POSTS.filter(p => !only || p.n === only).forEach(p => {
+  const slides = [...p.slides, { L: 'follow' }], N = slides.length;
+  const html = slides.map((s, i) => {
+    const th = s.L === 'cover' || s.L === 'follow' ? 'sky' : s.L === 'cta' ? 'wall' : THEME[s.th];
+    const hd = `<header class="hd"><span class="chip">PASCOM CRIATIVA</span><span class="rt" style="color:${th === 'sky' || th === 'wall' ? '#fff' : 'var(--ink)'}"><span>@chagas_catolico</span><span>${i + 1}/${N}</span></span></header>`;
+    const body = s.L === 'cover' ? cover(p) : LAY[s.L](s, p);
+    return `<div class="fr"><section class="slide t-${th}" data-post="${p.n}" data-i="${i + 1}">${hd}${body}<div class="grain"></div></section></div>`;
+  }).join('');
+  app.insertAdjacentHTML('beforeend', `<section class="post"><h3>Nº${p.n} — ${p.title}</h3><div class="row">${html}</div></section>`);
+});
+
+(async () => {
+  if (new URLSearchParams(location.search).has('render')) document.body.classList.add('render');
+  await document.fonts.ready;
+  // título da capa: todas as linhas no mesmo corpo, o da linha mais longa
+  document.querySelectorAll('.title').forEach(t => {
+    const spans = [...t.querySelectorAll('span')], W = t.offsetWidth;
+    spans.forEach(s => { s.style.display = 'inline-block'; s.style.fontSize = '100px'; });
+    let size = Math.min(...spans.map(s => 100 * W / s.offsetWidth));
+    spans.forEach(s => { s.style.display = ''; s.style.fontSize = size + 'px'; });
+    const maxh = 560;
+    if (t.offsetHeight > maxh) { size *= maxh / t.offsetHeight; spans.forEach(s => s.style.fontSize = size + 'px'); }
+  });
+  let seed = 5; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  document.querySelectorAll('.stack .brk,.tls .brk,.nts .brk,.gr .brk,.cmp .brk,.tbl .brk,.chips .brk,.sp .brk,.dg .board').forEach(b => {
+    const big = b.matches('.board,.cmp .brk,.gr .brk');
+    b.style.transform = `translate(${((rnd() - .5) * (big ? 10 : 26)).toFixed(1)}px,${((rnd() - .5) * 6).toFixed(1)}px) rotate(${((rnd() - .5) * (big ? 1.4 : 2.6)).toFixed(2)}deg)`;
+  });
+  document.querySelectorAll('.slide').forEach((sl, k) => {
+    let d = '';
+    for (let i = 0; i < 46; i++) d += `<circle cx="${(rnd() * 1080).toFixed(0)}" cy="${(rnd() * 1350).toFixed(0)}" r="${(rnd() * 1.8 + .4).toFixed(1)}"/>`;
+    for (let i = 0; i < 3; i++) { const x = rnd() * 1000, y = rnd() * 1300; d += `<path d="M${x.toFixed(0)} ${y.toFixed(0)}q${(rnd() * 30).toFixed(0)} ${(rnd() * 20 - 10).toFixed(0)} ${(20 + rnd() * 40).toFixed(0)} ${(rnd() * 30 - 15).toFixed(0)}" fill="none" stroke-width="1.2"/>`; }
+    sl.insertAdjacentHTML('beforeend', `<svg class="dust" viewBox="0 0 1080 1350"><g fill="#000" stroke="#000" opacity=".35">${d}</g></svg><div class="vig"></div>`);
+  });
+  document.body.dataset.ready = '1';
+})();
+</script>
+</body>
+</html>

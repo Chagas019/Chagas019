@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Criatividade é Missão — interativo</title>
+<style>
+@font-face{font-family:"Anton";src:url(fonts/anton.woff2) format("woff2");font-display:block}
+@font-face{font-family:"Archivo Narrow";src:url(fonts/archivo-narrow.woff2) format("woff2");font-weight:400 700;font-display:block}
+@font-face{font-family:"Instrument Serif";src:url(fonts/instrument-serif.woff2) format("woff2");font-display:block}
+@font-face{font-family:"Instrument Serif";src:url(fonts/instrument-serif-italic.woff2) format("woff2");font-style:italic;font-display:block}
+
+/* identidade @chagas_catolico: foto escura + serifada fina, pôster laranja + condensada pesada */
+:root{
+  --ink:#0b0b0a; --cream:#f3efe6; --grey:#8d8a83; --orange:#f2541b; --orange-deep:#d9430f;
+  --W:1080px; --H:1350px; --pad:72px;
+  --display:"Anton",Impact,sans-serif;
+  --narrow:"Archivo Narrow","Arial Narrow",sans-serif;
+  --serif:"Instrument Serif",Georgia,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#111;color:var(--cream)}
+body{font-family:var(--narrow);-webkit-font-smoothing:antialiased}
+
+.deck{display:flex;gap:40px;overflow-x:auto;padding:48px 16px 64px;scroll-snap-type:x mandatory}
+.frame{flex:0 0 auto;width:calc(var(--W)*var(--s));height:calc(var(--H)*var(--s));scroll-snap-align:center;--s:.42}
+.frame>.slide{transform:scale(var(--s));transform-origin:0 0}
+.intro{padding:40px 16px 0;font-family:var(--narrow);font-size:15px;color:#9a9a96;letter-spacing:.04em;max-width:1080px}
+.intro b{color:var(--cream)}
+@media (max-width:600px){.frame{--s:.31}}
+body.render{background:#000}
+body.render .intro{display:none}
+body.render .deck{display:block;padding:0;overflow:visible}
+body.render .frame{width:auto;height:auto;--s:1}
+body.render .frame>.slide{transform:none}
+body.render *,body.render *::before,body.render *::after{animation:none!important;transition:none!important}
+
+.slide{position:relative;width:var(--W);height:var(--H);overflow:hidden;isolation:isolate;user-select:none}
+.dark{background:var(--ink)}
+.orange{background:var(--orange);color:var(--ink)}
+.grain{position:absolute;inset:0;pointer-events:none;z-index:50;mix-blend-mode:overlay;opacity:.35;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.handle{font-family:var(--narrow);font-weight:600;font-size:17px;letter-spacing:.32em;text-transform:uppercase}
+.sig{font-family:var(--serif);font-size:30px;letter-spacing:-.01em}
+.fit{display:block;white-space:nowrap;font-family:var(--display);line-height:.88;text-transform:uppercase}
+.serif{font-family:var(--serif);font-weight:400;letter-spacing:-.025em;line-height:.94}
+.serif i{font-style:italic}
+.o{color:var(--orange)}
+.dots{position:absolute;left:0;right:0;bottom:40px;display:flex;justify-content:center;gap:10px;z-index:40}
+.dots i{width:9px;height:9px;border-radius:50%;background:currentColor;opacity:.3}
+.dots i.on{opacity:1}
+
+/* photo slots — fotos reais em fotos/, com tratamento quente e escuro do feed */
+.ph{position:absolute;overflow:hidden;background:#1f1d1a}
+.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:sepia(.25) saturate(.85) contrast(1.08) brightness(.78)}
+.ph .note{display:none}
+.ph.empty::before{content:"";position:absolute;inset:0;opacity:.6;mix-blend-mode:screen;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.01' numOctaves='4' seed='3'/><feColorMatrix values='.5 0 0 0 0  .42 0 0 0 0  .32 0 0 0 0  0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");background-size:cover}
+.ph.empty .note{display:block;position:absolute;left:24px;top:24px;right:24px;font-family:var(--narrow);font-size:15px;line-height:1.4;letter-spacing:.08em;text-transform:uppercase;color:#cbc4b6;z-index:2}
+.ph.empty .note b{color:var(--orange)}
+.shade{position:absolute;inset:0;background:rgba(8,8,7,.42);z-index:1}
+
+/* animações (versão digital) */
+@keyframes up{from{opacity:0;transform:translateY(26px)}}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes nudge{50%{transform:translateX(10px)}}
+@keyframes blink{50%{opacity:0}}
+.a-up{animation:up .9s cubic-bezier(.2,.7,.1,1) both}
+.d1{animation-delay:.15s}.d2{animation-delay:.3s}.d3{animation-delay:.45s}.d4{animation-delay:.6s}.d5{animation-delay:.8s}
+
+/* ===== 01 capa ===== */
+.s1 .ph{inset:0}
+.s1 .center{position:absolute;left:var(--pad);right:var(--pad);top:330px;text-align:center;z-index:5}
+.s1 .serif{font-size:150px}
+.s1 .serif s{text-decoration:none;position:relative}
+.s1 .serif s::after{content:"";position:absolute;left:-6px;right:-6px;top:54%;height:9px;background:var(--orange);transform:rotate(-3deg)}
+.s1 .handle{margin-top:46px;opacity:.85}
+.sticker{position:absolute;z-index:6;background:var(--orange);color:var(--ink);font-family:var(--display);text-transform:uppercase;line-height:1;padding:14px 22px 12px}
+.s1 .sticker{right:62px;bottom:120px;font-size:40px;transform:rotate(-4deg)}
+.s1 .sticker span{display:inline-block;animation:nudge 1.4s ease-in-out infinite}
+
+/* ===== 02 provocação (toque duas vezes) ===== */
+.s2 .wrap{position:absolute;left:var(--pad);right:var(--pad);top:150px}
+.s2 .grey{font-size:86px;color:var(--grey)}
+.s2 .main{font-size:150px;margin-top:56px}
+.s2 .tap{position:absolute;left:var(--pad);right:var(--pad);bottom:110px;display:flex;align-items:center;gap:30px;padding-top:36px;border-top:1px solid rgba(243,239,230,.25);cursor:pointer}
+.s2 .tap svg{flex:0 0 96px;height:96px}
+.s2 .tap path{fill:none;stroke:var(--cream);stroke-width:2.2;transition:fill .2s,stroke .2s}
+.s2.liked .tap path{fill:var(--orange);stroke:var(--orange)}
+.s2.liked .tap svg{animation:pop .5s ease-out}
+.s2 .tap p{font-family:var(--display);font-size:52px;line-height:1;text-transform:uppercase}
+.s2 .tap small{display:block;font-family:var(--narrow);font-size:24px;letter-spacing:.04em;text-transform:none;color:var(--grey);margin-top:10px}
+
+/* ===== 03 marque sua equipe ===== */
+.s3 .head{position:absolute;left:var(--pad);right:var(--pad);top:84px}
+.s3 .head .serif{font-size:84px}
+.s3 .grid{position:absolute;left:var(--pad);right:var(--pad);top:300px;bottom:110px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:14px}
+.s3 .tile{position:relative;overflow:hidden;cursor:pointer}
+.s3 .tile .ph{inset:0}
+.s3 .tile .cap{position:absolute;left:24px;right:24px;bottom:22px;z-index:3}
+.s3 .tile .k{font-family:var(--display);font-size:56px;line-height:.9;text-transform:uppercase}
+.s3 .tile .t{font-family:var(--serif);font-size:36px;line-height:1;margin-top:8px;letter-spacing:-.01em}
+.tag{position:absolute;left:50%;top:44%;transform:translateX(-50%);z-index:4;background:rgba(0,0,0,.82);color:#fff;font-family:var(--narrow);font-weight:600;font-size:24px;padding:10px 18px;border-radius:8px;white-space:nowrap}
+.tag::before{content:"";position:absolute;left:50%;top:-10px;margin-left:-10px;border:10px solid transparent;border-top:0;border-bottom-color:rgba(0,0,0,.82)}
+.s3 .tile.tagged .tag{background:var(--orange);color:var(--ink)}
+.s3 .tile.tagged .tag::before{border-bottom-color:var(--orange)}
+.s3 .tile.idea .ph.empty::before{opacity:.25}
+.s3 .tile .t.o{font-style:italic}
+
+/* ===== 04 enquete ===== */
+.s4 .q{position:absolute;left:var(--pad);top:100px;width:936px}
+.s4 .q .fit+.fit{margin-top:6px}
+.s4 .poll{position:absolute;left:var(--pad);right:var(--pad);top:735px;display:flex;flex-direction:column;gap:22px}
+.s4 .opt{position:relative;display:flex;align-items:center;gap:28px;height:122px;padding:0 34px;background:var(--cream);color:var(--ink);border-radius:20px;cursor:pointer;overflow:hidden;transition:transform .15s}
+.s4 .opt:active{transform:scale(.98)}
+.s4 .opt b{font-family:var(--display);font-weight:400;font-size:84px;line-height:1;width:118px}
+.s4 .opt span{font-family:var(--narrow);font-weight:700;font-size:52px;letter-spacing:-.01em}
+.s4 .opt.sel{background:var(--ink);color:var(--cream)}
+.s4 .opt.sel b{color:var(--orange)}
+.s4 .opt .ok{margin-left:auto;font-family:var(--narrow);font-size:24px;letter-spacing:.06em;text-transform:uppercase;opacity:0}
+.s4 .opt.sel .ok{opacity:1}
+.s4 .hint{position:absolute;left:var(--pad);right:var(--pad);bottom:96px;display:flex;justify-content:space-between;align-items:baseline;font-family:var(--display);font-size:46px;text-transform:uppercase}
+.s4 .hint small{font-family:var(--narrow);font-size:22px;letter-spacing:.2em;font-weight:600}
+
+/* ===== 05 missão (envie) ===== */
+.s5 .ph{inset:0}
+.s5 .share{position:absolute;left:var(--pad);top:84px;z-index:5;display:flex;align-items:center;gap:14px;background:rgba(243,239,230,.12);border:1.5px solid rgba(243,239,230,.5);border-radius:999px;padding:12px 24px 12px 18px;font-family:var(--narrow);font-weight:600;font-size:22px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.s5 .share svg{width:30px;height:30px}
+.s5 .share path{fill:none;stroke:var(--cream);stroke-width:2}
+.s5 .share.sent{background:var(--orange);border-color:var(--orange);color:var(--ink)}
+.s5 .share.sent path{stroke:var(--ink)}
+.s5 .txt{position:absolute;left:var(--pad);right:var(--pad);bottom:140px;z-index:5}
+.s5 .small{font-size:64px;color:#cfc8ba}
+.s5 .small s{text-decoration:none;opacity:.55}
+.s5 .big{font-size:132px;margin-top:40px}
+.s5 .sig{position:absolute;left:var(--pad);bottom:66px;z-index:5;opacity:.8}
+
+/* ===== 06 desafio ===== */
+.s6 .lbl{position:absolute;left:var(--pad);top:84px;font-family:var(--narrow);font-weight:600;font-size:22px;letter-spacing:.32em;text-transform:uppercase;display:flex;gap:16px;align-items:center}
+.s6 .lbl i{width:46px;height:2px;background:var(--orange)}
+.s6 .ch{position:absolute;left:var(--pad);top:150px;width:936px}
+.s6 .ch .fit+.fit{margin-top:8px}
+.s6 .cm{position:absolute;left:var(--pad);right:var(--pad);top:885px;display:flex;gap:22px;align-items:center;padding:24px 28px;background:#1c1b19;border-radius:18px}
+.s6 .cm .av{flex:0 0 62px;height:62px;border-radius:50%;background:var(--orange)}
+.s6 .cm p{font-family:var(--narrow);font-weight:500;font-size:36px;line-height:1.12}
+.s6 .cm p i{display:inline-block;width:4px;height:38px;background:var(--orange);vertical-align:-7px;margin-left:6px;animation:blink 1s steps(1) infinite}
+.s6 .chips{position:absolute;left:var(--pad);right:var(--pad);top:1062px;display:flex;flex-wrap:wrap;gap:10px}
+.s6 .chips span{font-family:var(--narrow);font-weight:600;font-size:22px;letter-spacing:.06em;border:1.5px solid #3a3835;border-radius:999px;padding:8px 18px;color:#cfc8ba;cursor:pointer}
+.s6 .chips span.on{background:var(--orange);border-color:var(--orange);color:var(--ink)}
+.s6 .save{position:absolute;left:0;right:0;bottom:0;height:78px;background:var(--orange);color:var(--ink);display:flex;align-items:center;justify-content:center;gap:16px;font-family:var(--display);font-size:30px;letter-spacing:.04em;text-transform:uppercase}
+.s6 .save svg{width:26px;height:30px}
+.s6 .save path{fill:none;stroke:var(--ink);stroke-width:2.6}
+.s6 .foot{position:absolute;left:var(--pad);right:var(--pad);bottom:104px;display:flex;justify-content:space-between;align-items:baseline}
+</style>
+</head>
+<body>
+<p class="intro"><b>@chagas_catolico — QUEM DISSE QUE CRIATIVIDADE NÃO É MISSÃO?</b> Versão interativa. Toque duas vezes no slide 2, marque os quadros do 3, vote no 4, envie no 5 e escolha um talento no 6.</p>
+<main class="deck">
+
+<!-- 01 -->
+<div class="frame"><section class="slide dark s1">
+  <div class="ph" data-src="fotos/i01-noite.jpg"><span class="note"><b>i01-noite.jpg</b> — encontro de jovens à noite, luzes amarelas, gente de costas</span></div>
+  <div class="shade"></div>
+  <div class="center">
+    <p class="serif a-up">Quem disse que <i>criatividade</i> <s>não</s> é missão?</p>
+    <p class="handle a-up d2">chagas_catolico</p>
+  </div>
+  <div class="sticker a-up d4">Arrasta e responde <span>→</span></div>
+  <div class="dots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="grain"></div>
+</section></div>
+
+<!-- 02 -->
+<div class="frame"><section class="slide dark s2">
+  <div class="wrap">
+    <p class="serif grey a-up">Você pode passar horas criando algo para ganhar atenção.</p>
+    <p class="serif main a-up d2">Mas já pensou em criar algo que leve alguém <i class="o">até Cristo?</i></p>
+  </div>
+  <div class="tap a-up d4">
+    <svg viewBox="0 0 48 48"><path d="M24 41s-15-9.2-15-20.2C9 15 13.3 11 18.2 11c2.8 0 4.7 1.4 5.8 3.2C25.1 12.4 27 11 29.8 11 34.7 11 39 15 39 20.8 39 31.8 24 41 24 41z"/></svg>
+    <p>Toque duas vezes<small>se você já pensou nisso.</small></p>
+  </div>
+  <div class="dots"><i></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+  <div class="grain"></div>
+</section></div>
+
+<!-- 03 -->
+<div class="frame"><section class="slide dark s3">
+  <div class="head a-up"><p class="serif">Marque quem é cada um <i class="o">da sua equipe.</i></p></div>
+  <div class="grid">
+    <div class="tile a-up d1"><div class="ph" data-src="fotos/i03-camera.jpg"><span class="note"><b>i03-camera.jpg</b> — fotógrafo em ação</span></div><div class="shade"></div><span class="tag">@marque aqui</span>
+      <div class="cap"><p class="k">A câmera</p><p class="t">pode registrar momentos.</p></div></div>
+    <div class="tile a-up d2"><div class="ph" data-src="fotos/i03-video.jpg"><span class="note"><b>i03-video.jpg</b> — alguém editando ou filmando</span></div><div class="shade"></div><span class="tag">@marque aqui</span>
+      <div class="cap"><p class="k">O vídeo</p><p class="t">pode tocar corações.</p></div></div>
+    <div class="tile a-up d3"><div class="ph" data-src="fotos/i03-design.jpg"><span class="note"><b>i03-design.jpg</b> — mãos no notebook ou tablet</span></div><div class="shade"></div><span class="tag">@marque aqui</span>
+      <div class="cap"><p class="k">O design</p><p class="t">pode transmitir uma mensagem.</p></div></div>
+    <div class="tile idea a-up d4" style="background:var(--orange)"><span class="tag">@marque aqui</span>
+      <div class="cap"><p class="k" style="color:var(--ink)">A ideia</p><p class="t" style="color:var(--ink)">pode alcançar alguém que você <i>nunca conheceria.</i></p></div></div>
+  </div>
+  <div class="dots"><i></i><i></i><i class="on"></i><i></i><i></i><i></i></div>
+  <div class="grain"></div>
+</section></div>
+
+<!-- 04 -->
+<div class="frame"><section class="slide orange s4">
+  <div class="q" data-maxh="590">
+    <span class="fit a-up" data-fit>Seu talento</span>
+    <span class="fit a-up d1" data-fit>está servindo</span>
+    <span class="fit a-up d2" data-fit>a quem?</span>
+  </div>
+  <div class="poll">
+    <div class="opt a-up d3"><b>01</b><span>Ao meu ego.</span><em class="ok">comente 01</em></div>
+    <div class="opt a-up d4"><b>02</b><span>À minha imagem.</span><em class="ok">comente 02</em></div>
+    <div class="opt a-up d5"><b>03</b><span>Ao Reino.</span><em class="ok">comente 03</em></div>
+  </div>
+  <div class="hint"><span>Comente o número ↓</span><small>sem filtro</small></div>
+  <div class="dots" style="color:var(--ink)"><i></i><i></i><i></i><i class="on"></i><i></i><i></i></div>
+  <div class="grain"></div>
+</section></div>
+
+<!-- 05 -->
+<div class="frame"><section class="slide dark s5">
+  <div class="ph" data-src="fotos/i05-pascom.jpg"><span class="note" style="top:160px"><b>i05-pascom.jpg</b> — equipe da Pascom trabalhando na missa ou num encontro, sem pose</span></div>
+  <div class="shade"></div>
+  <div class="share a-up"><svg viewBox="0 0 32 32"><path d="M29 3 3 14l10 4 4 10L29 3zM13 18 29 3"/></svg>Envie para sua equipe</div>
+  <div class="txt">
+    <p class="serif small a-up d1">Não precisamos de mais criadores querendo <s>aparecer.</s></p>
+    <p class="serif big a-up d3">Precisamos de criadores dispostos a fazer <i class="o">Cristo aparecer.</i></p>
+  </div>
+  <p class="sig">-chagas_catolico</p>
+  <div class="dots"><i></i><i></i><i></i><i></i><i class="on"></i><i></i></div>
+  <div class="grain"></div>
+</section></div>
+
+<!-- 06 -->
+<div class="frame"><section class="slide dark s6">
+  <div class="lbl a-up"><i></i>Desafio da semana</div>
+  <div class="ch" data-maxh="690">
+    <span class="fit a-up d1" data-fit>Crie algo</span>
+    <span class="fit a-up d2" data-fit>que leve alguém</span>
+    <span class="fit a-up d3" data-fit>mais perto</span>
+    <span class="fit a-up d3 o" data-fit>de Deus.</span>
+  </div>
+  <div class="cm a-up d4"><div class="av"></div><p>Comente qual talento você quer colocar a serviço do Reino.<i></i></p></div>
+  <div class="chips a-up d5"><span>📷 fotografia</span><span>🎬 vídeo</span><span>✏️ design</span><span>📝 escrita</span><span>🎵 música</span><span>🎙️ voz</span></div>
+  <div class="foot"><span class="handle" style="font-size:15px">Criatividade do Reino</span><span class="sig">-chagas_catolico</span></div>
+  <div class="save"><svg viewBox="0 0 26 30"><path d="M3 2h20v26l-10-7-10 7z"/></svg>Salve este post · compartilhe com sua equipe</div>
+  <div class="grain"></div>
+</section></div>
+
+</main>
+<script>
+(async () => {
+  if (new URLSearchParams(location.search).has('render')) document.body.classList.add('render');
+
+  await Promise.all([...document.querySelectorAll('.ph[data-src]')].map(el => new Promise(res => {
+    const img = new Image();
+    img.onload = () => { el.prepend(img); res(); };
+    img.onerror = () => { el.classList.add('empty'); res(); };
+    img.src = el.dataset.src;
+  })));
+
+  await document.fonts.ready;
+  document.querySelectorAll('[data-fit]').forEach(el => {
+    const w = el.parentElement.offsetWidth;
+    el.style.display = 'inline-block';
+    el.style.fontSize = '100px';
+    el.style.fontSize = 100 * w / el.offsetWidth + 'px';
+    el.style.display = '';
+  });
+  document.querySelectorAll('[data-maxh]').forEach(box => {
+    const r = +box.dataset.maxh / box.offsetHeight;
+    if (r < 1) box.querySelectorAll('[data-fit]').forEach(el => el.style.fontSize = parseFloat(el.style.fontSize) * r + 'px');
+  });
+
+  // interações da versão digital
+  const s2 = document.querySelector('.s2');
+  s2.addEventListener('dblclick', () => s2.classList.add('liked'));
+  s2.querySelector('.tap').addEventListener('click', () => s2.classList.toggle('liked'));
+  document.querySelectorAll('.s3 .tile').forEach(t => t.addEventListener('click', () => {
+    const name = t.classList.contains('tagged') ? null : prompt('Quem da sua equipe é este?', '@');
+    t.classList.toggle('tagged', !!name && name.length > 1);
+    t.querySelector('.tag').textContent = name && name.length > 1 ? name : '@marque aqui';
+  }));
+  document.querySelectorAll('.s4 .opt').forEach(o => o.addEventListener('click', () => {
+    document.querySelectorAll('.s4 .opt').forEach(x => x.classList.toggle('sel', x === o));
+  }));
+  const share = document.querySelector('.s5 .share');
+  share.addEventListener('click', async () => {
+    try { await navigator.share?.({ title: 'Criatividade é missão', url: location.href }); } catch (e) {}
+    share.classList.add('sent');
+  });
+  document.querySelectorAll('.s6 .chips span').forEach(c => c.addEventListener('click', () => c.classList.toggle('on')));
+
+  document.body.dataset.ready = '1';
+})();
+</script>
+</body>
+</html>
