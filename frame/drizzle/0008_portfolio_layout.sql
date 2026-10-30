@@ -1,0 +1,1 @@
+ALTER TABLE "profile" ADD COLUMN "portfolio_layout" text DEFAULT 'editorial' NOT NULL;
