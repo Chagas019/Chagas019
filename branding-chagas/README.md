@@ -23,3 +23,12 @@ Ela sempre atravessa a borda, porque criatividade não tem limite; quem tem limi
 - **Tipografia**: Anybody (grito, largura 50–150) · Instrument Serif (voz) · IBM Plex Mono (registro). Todas gratuitas, do Google Fonts.
 - **Elementos**: Corte · Deslocamento · Contagem (4 traços + o corte = 5) · Retícula · Marcas de gráfica · Grão · Hachura a 20° · C em 3D
 - **Regras de composição**: o título sangra a borda · o corte atravessa a margem · grade 7+5 · no máximo três camadas tipográficas · rodapé fixo
+
+---
+
+## Logotipo v2: “Cursor” (`logo-v2/`)
+Redesenho para uma empresa de tecnologia: um símbolo geométrico C/ (um C de círculos concêntricos, cortado a 20° e deslocado, com um cursor em Volt) e o nome em caixa-baixa (Sora 600, com corte de 20° na haste do h).
+- `logo-v2/index.html` e `chagas-logo-v2.pdf`: apresentação em 8 pranchas
+- `logo-v2/svg/`: símbolo, nome, assinatura horizontal e vertical, em fundo escuro, claro e Volt, mais versões transparentes
+- `logo-v2/png/`: avatares 1080×1080
+- Paleta v2: Ink `#0A0A0B` · Papel `#F4F4F1` · Volt `#D4FF2A` · Grafite `#1C1C1F`
