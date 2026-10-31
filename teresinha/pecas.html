@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>A Pequena Via — peças da coleção</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   A PEQUENA VIA — sistema visual da coleção
+   Todas as peças usam cqw (1% da largura da própria peça),
+   então o mesmo layout é renderizado em qualquer resolução.
+   ========================================================= */
+:root{
+  --vinho:#6E1F2A; --vinho-esc:#3E1218; --rosa:#C98B8B; --rosa-cl:#E7C3BC;
+  --bege:#EFE4D2; --bege-esc:#D9C7AA; --marrom:#2A1B16; --ouro:#B8935A;
+  --art:url('art/principal.jpg');
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#222;display:flex;flex-wrap:wrap;gap:40px;padding:40px;align-items:flex-start;font-family:'Jost',sans-serif}
+.peca{position:relative;overflow:hidden;container-type:inline-size;flex:none;background:var(--bege);color:var(--marrom)}
+/* papel envelhecido: grão + vinheta */
+.papel::before{content:"";position:absolute;inset:0;z-index:20;pointer-events:none;mix-blend-mode:multiply;opacity:.55;
+  background:radial-gradient(120% 90% at 50% 40%,transparent 55%,rgba(110,70,40,.28)),
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .32 0 0 0 0 .2 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.escuro{background:var(--marrom);color:var(--bege)}
+.escuro.papel::before{mix-blend-mode:screen;opacity:.18}
+.arte{position:absolute;background-image:var(--art);background-size:cover;background-position:center}
+.serif{font-family:'Cormorant Garamond',serif;font-weight:500}
+.it{font-style:italic}
+.caps{font-family:'Jost',sans-serif;font-weight:500;letter-spacing:.32em;text-transform:uppercase}
+.a{position:absolute}
+/* moldura de impressão: filete vinho deslocado */
+.filete{position:absolute;border:.25cqw solid var(--vinho)}
+/* caminho pontilhado — "a pequena via", elemento proprietário */
+.via{position:absolute;overflow:visible}
+.selo{position:absolute;border:.2cqw solid currentColor;border-radius:50%;display:grid;place-items:center;text-align:center}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <!-- raminho de rosa desenhado para a coleção (rosa + duas folhas) -->
+    <symbol id="rosa" viewBox="0 0 60 60">
+      <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M30 22c-5 0-8 3-8 7s3.5 7 8 7 8-3 8-7"/><path d="M30 22c3 0 6 2 6 5s-3 5-6 5-5-2-5-4.5 2-3.5 4-3.5"/>
+        <path d="M30 36v20"/><path d="M30 46c-6-1-10-4-11-8 4 0 9 2 11 6"/><path d="M30 50c5-1 9-4 10-8-4 0-8 2-10 6"/>
+      </g>
+    </symbol>
+    <!-- caminho pontilhado sinuoso -->
+    <symbol id="caminho" viewBox="0 0 400 120">
+      <path d="M2 100 C 80 100, 90 20, 170 30 S 270 110, 330 70 S 380 20, 398 22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="0.1 9"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ================= CARROSSEL 1 · CAPA ================= -->
+<div class="peca papel" id="carrossel-01" style="width:1080px;aspect-ratio:4/5">
+  <div class="arte" style="left:6cqw;right:6cqw;top:6cqw;height:86cqw;background-position:50% 35%"></div>
+  <div class="filete" style="left:4.4cqw;right:4.4cqw;top:4.4cqw;height:89.2cqw"></div>
+  <div class="a caps" style="left:6cqw;top:94.5cqw;font-size:1.9cqw;color:var(--vinho)">Coleção · A Pequena Via</div>
+  <div class="a caps" style="right:6cqw;top:94.5cqw;font-size:1.9cqw;color:var(--vinho)">Nº 01</div>
+  <div class="a serif" style="left:6cqw;right:6cqw;top:99cqw;font-size:10.4cqw;line-height:.86;color:var(--vinho-esc);letter-spacing:-.01em">
+    Santa <span class="it" style="color:var(--vinho)">Teresinha</span>
+  </div>
+  <div class="a caps" style="left:6.3cqw;top:111.5cqw;font-size:2.6cqw;letter-spacing:.42em;color:var(--marrom)">do Menino Jesus</div>
+  <svg class="a" style="right:5cqw;top:105cqw;width:9cqw;color:var(--vinho)"><use href="#rosa"/></svg>
+</div>
+
+<!-- ================= CARROSSEL 2 · CONCEITO ================= -->
+<div class="peca escuro papel" id="carrossel-02" style="width:1080px;aspect-ratio:4/5">
+  <div class="a caps" style="left:8cqw;top:8cqw;font-size:1.9cqw;color:var(--rosa)">A Pequena Via · conceito</div>
+  <svg class="a" style="left:8cqw;top:15cqw;width:12cqw;color:var(--rosa)"><use href="#rosa"/></svg>
+  <div class="a serif" style="left:8cqw;right:8cqw;top:31cqw;font-size:9.4cqw;line-height:1;color:var(--bege)">
+    “Pequena no caminho,<br><span class="it" style="color:var(--rosa-cl)">gigante no amor.”</span>
+  </div>
+  <svg class="a" style="left:6cqw;right:6cqw;top:60cqw;width:88cqw;color:var(--ouro)"><use href="#caminho"/></svg>
+  <p class="a serif" style="left:8cqw;right:14cqw;top:88cqw;font-size:3.4cqw;line-height:1.35;color:var(--bege);opacity:.92">
+    Santa Teresinha ensinou que a santidade cabe nas coisas pequenas: um gesto escondido, uma flor oferecida, a confiança de uma criança nos braços do Pai. Esta coleção traduz a Pequena Via em três momentos: <i>amar</i>, <i>contemplar a Cruz</i> e <i>entregar-se em oração</i>.
+  </p>
+  <div class="a caps" style="left:8cqw;bottom:6cqw;font-size:1.6cqw;color:var(--rosa);opacity:.9">Ilustração · edição limitada</div>
+</div>
+
+<!-- ================= CARROSSEL 3 · O PACK ================= -->
+<div class="peca papel" id="carrossel-03" style="width:1080px;aspect-ratio:4/5">
+  <div class="a caps" style="left:7cqw;top:7cqw;font-size:1.9cqw;color:var(--vinho)">O que vem no pack</div>
+  <div class="a serif" style="left:7cqw;top:11cqw;font-size:7cqw;line-height:.95;color:var(--vinho-esc)">Leve a Pequena Via <span class="it" style="color:var(--vinho)">para onde for.</span></div>
+  <!-- pôster na parede -->
+  <div class="a" style="left:8cqw;top:33cqw;width:38cqw;aspect-ratio:297/420;background:#f6efe3;padding:2.2cqw;box-shadow:1.6cqw 2.4cqw 3cqw rgba(60,30,20,.35),0 0 0 .2cqw rgba(60,30,20,.15)">
+    <div class="arte" style="position:relative;width:100%;height:100%;background-position:50% 40%"></div>
+  </div>
+  <!-- notebook -->
+  <div class="a" style="left:40cqw;top:58cqw;width:54cqw">
+    <div style="background:#1b1715;border-radius:1.6cqw 1.6cqw 0 0;padding:1.4cqw;aspect-ratio:16/10.4">
+      <div style="position:relative;width:100%;height:100%;background:var(--marrom);overflow:hidden">
+        <div class="arte" style="left:auto;right:4%;top:0;bottom:0;width:48%;background-position:50% 30%"></div>
+        <div class="serif" style="position:absolute;left:7%;top:30%;font-size:3.2cqw;line-height:.9;color:var(--bege)">Santa<br><i style="color:var(--rosa-cl)">Teresinha</i></div>
+      </div>
+    </div>
+    <div style="height:2.2cqw;background:linear-gradient(#cfc9c4,#8e8883);border-radius:0 0 3cqw 3cqw;margin:0 -4cqw"></div>
+  </div>
+  <!-- tablet -->
+  <div class="a" style="left:58cqw;top:28cqw;width:30cqw;aspect-ratio:3/4;background:#1b1715;border-radius:2cqw;padding:1.3cqw;box-shadow:1cqw 1.6cqw 2.4cqw rgba(60,30,20,.3);transform:rotate(4deg)">
+    <div style="position:relative;width:100%;height:100%;border-radius:.8cqw;overflow:hidden;background:var(--marrom)"><div class="arte" style="inset:0;background-position:50% 35%"></div></div>
+  </div>
+  <!-- celular -->
+  <div class="a" style="left:27cqw;top:71cqw;width:15cqw;aspect-ratio:9/19.5;background:#111;border-radius:3cqw;padding:.8cqw;box-shadow:1cqw 1.6cqw 2.4cqw rgba(60,30,20,.35);transform:rotate(-6deg)">
+    <div style="position:relative;width:100%;height:100%;border-radius:2.3cqw;overflow:hidden"><div class="arte" style="inset:0;background-position:50% 40%"></div><div style="position:absolute;left:0;right:0;top:14%;text-align:center;font:300 4cqw/1 'Jost';color:#fff">7:19</div></div>
+  </div>
+  <div class="a" style="left:7cqw;right:7cqw;bottom:6cqw;display:grid;grid-template-columns:repeat(4,1fr);gap:2cqw;font-size:1.9cqw;line-height:1.4">
+    <div><b class="caps" style="font-size:1.6cqw;color:var(--vinho)">Celular</b><br>1290 × 2796</div>
+    <div><b class="caps" style="font-size:1.6cqw;color:var(--vinho)">Computador</b><br>3840 × 2160</div>
+    <div><b class="caps" style="font-size:1.6cqw;color:var(--vinho)">Tablet</b><br>4:3 · 2732 × 2048</div>
+    <div><b class="caps" style="font-size:1.6cqw;color:var(--vinho)">Pôster</b><br>A3 · 29,7 × 42 cm</div>
+  </div>
+</div>
+
+<!-- ================= CARROSSEL 4 · DETALHES ================= -->
+<div class="peca escuro papel" id="carrossel-04" style="width:1080px;aspect-ratio:4/5">
+  <div class="a caps" style="left:7cqw;top:7cqw;font-size:1.9cqw;color:var(--rosa)">Detalhes da arte</div>
+  <div class="a serif it" style="left:7cqw;top:11cqw;font-size:6.4cqw;color:var(--bege)">Cada traço é uma pequena oferta.</div>
+  <div class="a" style="left:7cqw;right:7cqw;top:24cqw;bottom:9cqw;display:grid;grid-template-columns:1.25fr 1fr;grid-template-rows:1fr 1fr 1fr;gap:1.6cqw">
+    <div style="grid-row:1/3;position:relative;overflow:hidden;outline:.2cqw solid var(--ouro);outline-offset:-.2cqw"><div class="arte" style="inset:0;background-size:300%;background-position:50% 38%"></div><span class="caps" style="position:absolute;left:1.6cqw;bottom:1.4cqw;font-size:1.5cqw;color:var(--bege);background:var(--vinho-esc);padding:.6cqw 1cqw">01 · O olhar</span></div>
+    <div style="position:relative;overflow:hidden"><div class="arte" style="inset:0;background-size:280%;background-position:50% 75%"></div><span class="caps" style="position:absolute;left:1.4cqw;bottom:1.2cqw;font-size:1.5cqw;color:var(--bege);background:var(--vinho-esc);padding:.6cqw 1cqw">02 · As rosas</span></div>
+    <div style="position:relative;overflow:hidden"><div class="arte" style="inset:0;background-size:320%;background-position:4% 10%"></div><span class="caps" style="position:absolute;left:1.4cqw;bottom:1.2cqw;font-size:1.5cqw;color:var(--bege);background:var(--vinho-esc);padding:.6cqw 1cqw">03 · O crucifixo</span></div>
+    <div style="position:relative;overflow:hidden"><div class="arte" style="inset:0;background-size:300%;background-position:96% 42%"></div><span class="caps" style="position:absolute;left:1.4cqw;bottom:1.2cqw;font-size:1.5cqw;color:var(--bege);background:var(--vinho-esc);padding:.6cqw 1cqw">04 · A oração</span></div>
+    <div style="position:relative;overflow:hidden"><div class="arte" style="inset:0;background-size:260%;background-position:10% 95%"></div><span class="caps" style="position:absolute;left:1.4cqw;bottom:1.2cqw;font-size:1.5cqw;color:var(--bege);background:var(--vinho-esc);padding:.6cqw 1cqw">05 · O hábito</span></div>
+  </div>
+  <div class="a caps" style="left:7cqw;bottom:4.4cqw;font-size:1.5cqw;color:var(--rosa);opacity:.9">Traço · pintura digital · textura de impressão</div>
+</div>
+
+<!-- ================= CARROSSEL 5 · CHAMADA ================= -->
+<div class="peca escuro" id="carrossel-05" style="width:1080px;aspect-ratio:4/5">
+  <div class="arte" style="inset:0;background-position:50% 30%"></div>
+  <div class="a" style="inset:0;background:linear-gradient(180deg,rgba(42,27,22,0) 35%,rgba(42,27,22,.88) 68%,var(--marrom) 92%)"></div>
+  <div class="a serif" style="left:8cqw;right:8cqw;top:73cqw;font-size:7.6cqw;line-height:1;color:var(--bege);text-align:center">“Que minha vida seja <span class="it" style="color:var(--rosa-cl)">um ato de amor.”</span></div>
+  <div class="a serif it" style="left:8cqw;right:8cqw;top:93cqw;font-size:3.6cqw;color:var(--bege);text-align:center;opacity:.9">Leve essa inspiração para onde você for.</div>
+  <div class="a caps" style="left:12cqw;right:12cqw;top:104cqw;padding:2.6cqw 0;background:var(--vinho);color:var(--bege);text-align:center;font-size:2.3cqw;letter-spacing:.18em">Comente “eu quero” para receber as informações</div>
+  <div class="a caps" style="left:0;right:0;bottom:3.4cqw;text-align:center;font-size:1.5cqw;color:var(--rosa)">Coleção A Pequena Via</div>
+</div>
+
+<!-- ================= WALLPAPER CELULAR ================= -->
+<div class="peca escuro" id="wallpaper-celular" style="width:1290px;aspect-ratio:1290/2796">
+  <div class="a" style="inset:0;background:radial-gradient(90% 60% at 50% 55%,#4a2a24,var(--marrom) 70%)"></div>
+  <div class="arte" style="left:0;right:0;top:34cqw;height:134cqw;background-position:50% 40%;-webkit-mask-image:linear-gradient(transparent,#000 10%,#000 82%,transparent);mask-image:linear-gradient(transparent,#000 10%,#000 82%,transparent)"></div>
+  <div class="a serif" style="left:0;right:0;bottom:22cqw;text-align:center;font-size:10cqw;line-height:.9;color:var(--bege)">Santa <i style="color:var(--rosa-cl)">Teresinha</i></div>
+  <div class="a caps" style="left:0;right:0;bottom:15cqw;text-align:center;font-size:2.8cqw;color:var(--rosa)">do Menino Jesus</div>
+  <svg class="a" style="left:45cqw;bottom:5cqw;width:10cqw;color:var(--ouro)"><use href="#rosa"/></svg>
+</div>
+
+<!-- ================= WALLPAPER DESKTOP ================= -->
+<div class="peca escuro papel" id="wallpaper-desktop" style="width:3840px;aspect-ratio:16/9">
+  <div class="arte" style="right:6cqw;top:0;bottom:0;width:42.2cqw;background-position:50% 40%;-webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)"></div>
+  <div class="a caps" style="left:7cqw;top:12cqw;font-size:.9cqw;color:var(--rosa)">Coleção · A Pequena Via</div>
+  <div class="a serif" style="left:7cqw;top:15cqw;font-size:7cqw;line-height:.86;color:var(--bege)">Santa<br><i style="color:var(--rosa-cl)">Teresinha</i></div>
+  <div class="a caps" style="left:7.2cqw;top:31cqw;font-size:1.3cqw;letter-spacing:.42em;color:var(--bege)">do Menino Jesus</div>
+  <svg class="a" style="left:6cqw;top:37cqw;width:30cqw;color:var(--ouro)"><use href="#caminho"/></svg>
+  <div class="a serif it" style="left:7cqw;bottom:8cqw;font-size:1.6cqw;color:var(--bege);opacity:.8">“Que minha vida seja um ato de amor.”</div>
+</div>
+
+<!-- ================= WALLPAPER TABLET 4:3 ================= -->
+<div class="peca escuro papel" id="wallpaper-tablet" style="width:2732px;aspect-ratio:4/3">
+  <div class="arte" style="left:50%;transform:translateX(-50%);top:0;bottom:0;width:56.25cqw;background-position:50% 40%;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)"></div>
+  <div class="a serif" style="left:5cqw;bottom:6cqw;font-size:4.6cqw;line-height:.9;color:var(--bege)">Santa<br><i style="color:var(--rosa-cl)">Teresinha</i></div>
+  <div class="a caps" style="right:5cqw;bottom:6.4cqw;font-size:1.2cqw;color:var(--rosa);text-align:right">A Pequena Via<br>Nº 01</div>
+</div>
+
+<!-- ================= PÔSTER A3 ================= -->
+<div class="peca papel" id="poster-a3" style="width:3508px;aspect-ratio:297/420">
+  <div class="arte" style="left:7cqw;right:7cqw;top:7cqw;height:105cqw;background-position:50% 38%"></div>
+  <div class="filete" style="left:5.6cqw;right:5.6cqw;top:5.6cqw;height:107.8cqw"></div>
+  <div class="a caps" style="left:7cqw;top:117cqw;font-size:1.6cqw;color:var(--vinho)">Coleção · A Pequena Via · Nº 01</div>
+  <div class="a serif" style="left:7cqw;top:121cqw;font-size:9.6cqw;line-height:.86;color:var(--vinho-esc)">Santa <i style="color:var(--vinho)">Teresinha</i></div>
+  <div class="a caps" style="left:7.3cqw;top:131.5cqw;font-size:2.2cqw;letter-spacing:.42em">do Menino Jesus</div>
+  <svg class="a" style="right:7cqw;top:121cqw;width:8cqw;color:var(--vinho)"><use href="#rosa"/></svg>
+</div>
+
+</body>
+</html>

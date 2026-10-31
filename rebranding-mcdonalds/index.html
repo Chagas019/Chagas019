@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ENTRE. — Rebranding conceitual McDonald's · Estúdio Fresta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   ENTRE. — Sistema de identidade (conceito experimental)
+   1cqw = 1% da largura do slide (base 1920px → 19.2px)
+   ========================================================= */
+:root{
+  --brasa:#E2231A;     /* vermelho da torre sob luz direta */
+  --brasa-d:#A8140F;   /* vermelho na sombra */
+  --gema:#FFBC0D;      /* arcos acesos */
+  --gema-l:#FFD866;
+  --grelha:#1A120E;    /* preto quente, nunca #000 */
+  --pao:#F3E6D0;       /* papel / pão */
+  --kraft:#C9A27A;
+  --ceu:#9BAFD4;       /* céu da hora dourada */
+  --folha:#3F5A24;     /* folhagem em primeiro plano */
+  --display:'Archivo', 'Arial Narrow', sans-serif;
+  --serif:'Instrument Serif', Georgia, serif;
+  --mono:'JetBrains Mono', ui-monospace, monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:#0d0907}
+body{font-family:var(--display);color:var(--pao);-webkit-font-smoothing:antialiased}
+.deck{max-width:1920px;margin:0 auto}
+.slide{position:relative;width:100%;aspect-ratio:16/9;container-type:inline-size;overflow:hidden;background:var(--grelha);isolation:isolate}
+.slide + .slide{margin-top:1.2vw}
+/* grão de papel / material em todos os slides */
+.slide::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:50;opacity:.16;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+/* cabeçalho editorial recorrente */
+.chrome{position:absolute;left:3.2cqw;right:3.2cqw;top:2.2cqw;display:flex;justify-content:space-between;font:600 .68cqw/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;z-index:40;opacity:.8}
+.chrome b{color:var(--gema);font-weight:800}
+.on-light .chrome{color:var(--grelha)}
+.on-light .chrome b{color:var(--brasa)}
+.mono{font-family:var(--mono)}
+.serif{font-family:var(--serif);font-weight:400}
+.it{font-style:italic}
+.kicker{font:600 .75cqw/1.2 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--gema)}
+.on-light .kicker{color:var(--brasa)}
+.h-xl{font-weight:900;font-stretch:125%;letter-spacing:-.04em;line-height:.82}
+.h-cond{font-weight:800;font-stretch:62%;letter-spacing:-.01em;line-height:.86;text-transform:uppercase}
+.body{font:400 1.02cqw/1.5 var(--display);font-stretch:100%;opacity:.86}
+.small{font:500 .78cqw/1.45 var(--display)}
+.fresta{position:absolute;width:.22cqw;background:linear-gradient(var(--gema-l),var(--gema) 60%,transparent);box-shadow:0 0 1.2cqw .25cqw rgba(255,188,13,.55),0 0 4cqw 1cqw rgba(255,188,13,.18)}
+.glow{filter:drop-shadow(0 0 .6cqw rgba(255,200,40,.55)) drop-shadow(0 0 3cqw rgba(255,170,0,.35))}
+.portal{clip-path:url(#portalClip)}
+.num{font:800 .7cqw/1 var(--mono);color:var(--gema);letter-spacing:.1em}
+.rule{height:1px;background:currentColor;opacity:.25}
+/* padrões proprietários */
+.pat-arcos{background-color:var(--brasa);background-image:radial-gradient(circle at 50% 100%,transparent 34%,var(--gema) 35% 47%,transparent 48%);background-size:3.2cqw 1.9cqw}
+.pat-arcos-dark{background-color:var(--grelha);background-image:radial-gradient(circle at 50% 100%,transparent 34%,rgba(255,188,13,.9) 35% 40%,transparent 41%);background-size:2.4cqw 1.4cqw}
+.pat-gergelim{background-color:var(--gema);background-image:radial-gradient(ellipse 22% 38% at 50% 50%,var(--pao) 92%,transparent 100%),radial-gradient(ellipse 22% 38% at 50% 50%,var(--pao) 92%,transparent 100%);background-size:2.2cqw 2.2cqw;background-position:0 0,1.1cqw 1.1cqw}
+.pat-comanda{background-color:var(--pao);background-image:repeating-linear-gradient(0deg,transparent 0 .9cqw,rgba(26,18,14,.12) .9cqw calc(.9cqw + 1px))}
+.pat-portais{background-color:var(--grelha);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 52'%3E%3Cpath d='M8 50 V22 C8 10 14 4 20 4 C26 4 32 10 32 22 V50 Z' fill='%23E2231A'/%3E%3Crect x='19.3' y='4' width='1.4' height='46' fill='%23FFBC0D'/%3E%3C/svg%3E");background-size:2.6cqw 3.38cqw}
+@keyframes breathe{0%,100%{font-stretch:62%}50%{font-stretch:125%}}
+@keyframes pulse{0%,100%{opacity:.75}50%{opacity:1}}
+@keyframes rise{from{transform:translateY(8%);opacity:0}to{transform:none;opacity:1}}
+.breathe{animation:breathe 6s ease-in-out infinite}
+.pulse{animation:pulse 3.2s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.breathe,.pulse{animation:none}}
+@page{size:1920px 1080px;margin:0}
+@media print{html,body{background:var(--grelha)}.deck{max-width:none}.slide{width:1920px;height:1080px;break-after:page}.slide + .slide{margin-top:0}}
+</style>
+</head>
+<body>
+
+<!-- =================== BIBLIOTECA DE SÍMBOLOS =================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- O Portal: a contra-forma do arco, recorte proprietário -->
+    <clipPath id="portalClip" clipPathUnits="objectBoundingBox">
+      <path d="M0,1 L0,.42 C0,.14 .2,0 .5,0 C.8,0 1,.14 1,.42 L1,1 Z"/>
+    </clipPath>
+    <clipPath id="portalTallClip" clipPathUnits="objectBoundingBox">
+      <path d="M0,1 L0,.3 C0,.1 .2,0 .5,0 C.8,0 1,.1 1,.3 L1,1 Z"/>
+    </clipPath>
+    <linearGradient id="gGema" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFE07A"/><stop offset=".45" stop-color="#FFBC0D"/><stop offset="1" stop-color="#F29A00"/>
+    </linearGradient>
+    <linearGradient id="gBrasa" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F0362A"/><stop offset="1" stop-color="#B5160F"/>
+    </linearGradient>
+    <radialGradient id="gLuz" cx=".5" cy=".75" r=".75">
+      <stop offset="0" stop-color="#FFF1C2"/><stop offset=".35" stop-color="#FFC93A"/><stop offset="1" stop-color="#E08600"/>
+    </radialGradient>
+  </defs>
+  <!-- LOGOTIPO: dois arcos parabólicos, terminais cortados a 90°, fresta central -->
+  <symbol id="m" viewBox="0 0 240 214">
+    <path fill="none" stroke="currentColor" stroke-width="28" stroke-linecap="butt"
+      d="M30 212 V150 C30 74 46 22 67 22 C88 22 104 74 104 150 V170 M136 170 V150 C136 74 152 22 173 22 C194 22 210 74 210 150 V212"/>
+  </symbol>
+  <symbol id="m-luz" viewBox="0 0 240 214">
+    <path fill="none" stroke="currentColor" stroke-width="28" stroke-linecap="butt"
+      d="M30 212 V150 C30 74 46 22 67 22 C88 22 104 74 104 150 V170 M136 170 V150 C136 74 152 22 173 22 C194 22 210 74 210 150 V212"/>
+    <rect x="118.6" y="96" width="2.8" height="116" fill="#FFF6D6"/>
+  </symbol>
+  <!-- arco único (ícone de app / favicon) -->
+  <symbol id="arco" viewBox="0 0 120 214">
+    <path fill="none" stroke="currentColor" stroke-width="28" stroke-linecap="butt" d="M23 212 V150 C23 74 39 22 60 22 C81 22 97 74 97 150 V212"/>
+  </symbol>
+  <!-- SISTEMA DE ÍCONES: grade 48, traço 4, terminais retos, tudo nasce do arco -->
+  <symbol id="ic-burger" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="4"><path d="M7 22 C7 12 15 7 24 7 C33 7 41 12 41 22 Z"/><path d="M5 29 H43"/><path d="M8 35 H40 V41 H8 Z"/></g></symbol>
+  <symbol id="ic-fries" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="4"><path d="M16 22 V6 M24 22 V3 M32 22 V6"/><path d="M9 20 H39 L35 45 H13 Z"/></g></symbol>
+  <symbol id="ic-cup" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="4"><path d="M10 15 H38 L34 45 H14 Z"/><path d="M8 15 C8 10 14 8 24 8 C34 8 40 10 40 15"/><path d="M26 8 L31 1"/></g></symbol>
+  <symbol id="ic-coffee" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="4"><path d="M8 20 H34 V34 C34 40 29 44 21 44 C13 44 8 40 8 34 Z"/><path d="M34 24 H40 V32 H34"/><path d="M16 14 C16 9 20 9 20 4 M24 14 C24 9 28 9 28 4"/></g></symbol>
+  <symbol id="ic-bag" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="4"><path d="M7 14 H41 V45 H7 Z"/><path d="M18 26 V22 C18 18 20 16 24 16 C28 16 30 18 30 22 V26"/></g></symbol>
+  <symbol id="ic-pin" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="4"><path d="M10 44 V20 C10 10 16 4 24 4 C32 4 38 10 38 20 V44"/><path d="M24 18 V44"/></g></symbol>
+  <symbol id="ic-24h" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="4"><path d="M8 44 V22 C8 11 15 5 24 5 C33 5 40 11 40 22 V44 Z"/><path d="M24 15 V27 H31"/></g></symbol>
+  <symbol id="ic-app" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="4"><rect x="12" y="3" width="24" height="42" rx="3"/><path d="M18 30 V24 C18 20 20 18 22 18 C23.5 18 24 20 24 24 V30 M24 24 C24 20 24.5 18 26 18 C28 18 30 20 30 24 V30"/></g></symbol>
+  <symbol id="ic-ice" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="4"><path d="M12 20 C12 11 17 6 24 6 C31 6 36 11 36 20 Z"/><path d="M14 20 L24 45 L34 20"/></g></symbol>
+  <symbol id="ic-heart" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="4"><path d="M24 43 L6 22 C3 12 9 6 15 6 C20 6 23 10 24 14 C25 10 28 6 33 6 C39 6 45 12 42 22 Z"/></g></symbol>
+  <symbol id="ic-drive" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="4"><path d="M4 32 H44 V40 H4 Z"/><path d="M9 32 L13 20 H35 L39 32"/><path d="M24 4 V14"/></g></symbol>
+  <symbol id="ic-star" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="4"><path d="M24 4 C24 18 30 24 44 24 C30 24 24 30 24 44 C24 30 18 24 4 24 C18 24 24 18 24 4 Z"/></g></symbol>
+  <filter id="folBlur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="5"/></filter>
+  <symbol id="foliage" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMax slice"><rect x="-50" y="330" width="1100" height="200" fill="#16200B"/><g><path d="M310 291 Q300 191 243 125 Q304 191 323 291Z" fill="#2C3F13"/><path d="M580 496 Q575 430 539 385 Q579 430 592 496Z" fill="#24340F"/><path d="M69 365 Q58 251 0 173 Q61 251 79 365Z" fill="#1E2B0E"/><path d="M572 357 Q558 232 483 152 Q563 232 588 357Z" fill="#2C3F13"/><path d="M408 396 Q418 303 426 226 Q423 303 423 396Z" fill="#1E2B0E"/><path d="M581 423 Q586 344 591 281 Q589 344 589 423Z" fill="#1E2B0E"/><path d="M617 384 Q634 294 668 226 Q637 294 630 384Z" fill="#1A250B"/><path d="M352 317 Q363 254 387 206 Q366 254 360 317Z" fill="#2C3F13"/><path d="M517 486 Q517 381 487 298 Q523 381 535 486Z" fill="#1E2B0E"/><path d="M506 295 Q525 219 569 169 Q529 219 519 295Z" fill="#1E2B0E"/><path d="M768 405 Q767 288 737 196 Q771 288 783 405Z" fill="#1A250B"/><path d="M577 373 Q603 259 671 185 Q607 259 589 373Z" fill="#1E2B0E"/><path d="M35 439 Q62 340 127 279 Q67 340 51 439Z" fill="#2C3F13"/><path d="M720 490 Q738 413 783 364 Q742 413 731 490Z" fill="#1E2B0E"/><path d="M487 309 Q500 237 524 182 Q504 237 499 309Z" fill="#1A250B"/><path d="M56 371 Q78 279 125 216 Q82 279 72 371Z" fill="#2C3F13"/><path d="M709 516 Q710 414 693 332 Q713 414 720 516Z" fill="#1E2B0E"/><path d="M156 313 Q163 245 161 190 Q167 245 170 313Z" fill="#2C3F13"/><path d="M268 289 Q277 199 291 125 Q280 199 279 289Z" fill="#24340F"/><path d="M694 389 Q705 292 728 215 Q707 292 702 389Z" fill="#1A250B"/><path d="M389 356 Q391 270 379 200 Q394 270 399 356Z" fill="#24340F"/><path d="M431 280 Q423 184 372 119 Q428 184 445 280Z" fill="#1E2B0E"/><path d="M961 416 Q961 361 939 320 Q964 361 973 416Z" fill="#2C3F13"/><path d="M967 413 Q961 327 916 267 Q965 327 980 413Z" fill="#1A250B"/><path d="M472 334 Q486 274 506 227 Q490 274 487 334Z" fill="#1A250B"/><path d="M835 294 Q851 242 882 209 Q855 242 849 294Z" fill="#24340F"/><path d="M690 497 Q689 389 659 304 Q693 389 705 497Z" fill="#1E2B0E"/><path d="M696 321 Q694 243 659 187 Q699 243 712 321Z" fill="#2C3F13"/><path d="M637 416 Q653 305 692 222 Q656 305 647 416Z" fill="#24340F"/><path d="M825 450 Q832 383 833 328 Q835 383 837 450Z" fill="#1E2B0E"/><path d="M1002 463 Q999 377 963 314 Q1003 377 1016 463Z" fill="#2C3F13"/><path d="M439 503 Q467 377 543 297 Q471 377 451 503Z" fill="#24340F"/><path d="M77 377 Q86 301 84 240 Q91 301 95 377Z" fill="#1E2B0E"/><path d="M471 426 Q461 315 399 241 Q465 315 486 426Z" fill="#1A250B"/><path d="M786 453 Q783 366 745 303 Q788 366 802 453Z" fill="#2C3F13"/><path d="M63 505 Q69 400 63 315 Q73 400 78 505Z" fill="#1E2B0E"/><path d="M725 296 Q726 237 698 194 Q731 237 742 296Z" fill="#24340F"/><path d="M611 411 Q631 325 681 269 Q634 325 621 411Z" fill="#24340F"/><path d="M-5 466 Q-14 360 -70 288 Q-9 360 10 466Z" fill="#24340F"/><path d="M426 485 Q418 372 374 288 Q422 372 436 485Z" fill="#2C3F13"/><path d="M493 456 Q503 382 507 321 Q507 382 509 456Z" fill="#1E2B0E"/><path d="M918 346 Q929 261 939 192 Q934 261 935 346Z" fill="#1A250B"/><path d="M834 487 Q832 428 804 385 Q836 428 847 487Z" fill="#1A250B"/><path d="M783 414 Q773 305 721 227 Q775 305 792 414Z" fill="#1E2B0E"/><path d="M551 338 Q561 249 568 176 Q565 249 567 338Z" fill="#1E2B0E"/><path d="M894 265 Q887 201 848 160 Q890 201 903 265Z" fill="#1A250B"/><path d="M557 455 Q562 335 552 238 Q566 335 571 455Z" fill="#24340F"/><path d="M692 372 Q700 282 697 208 Q705 282 709 372Z" fill="#2C3F13"/><path d="M934 491 Q938 426 934 373 Q942 426 946 491Z" fill="#1A250B"/><path d="M432 270 Q429 202 390 157 Q433 202 447 270Z" fill="#1E2B0E"/><path d="M908 292 Q919 187 943 104 Q922 187 918 292Z" fill="#24340F"/><path d="M980 309 Q981 186 964 87 Q985 186 993 309Z" fill="#24340F"/><path d="M143 367 Q142 277 123 206 Q145 277 153 367Z" fill="#2C3F13"/><path d="M68 349 Q75 273 70 212 Q79 273 83 349Z" fill="#1A250B"/><path d="M316 418 Q310 330 258 271 Q315 330 334 418Z" fill="#24340F"/><path d="M983 278 Q978 208 935 164 Q983 208 998 278Z" fill="#2C3F13"/><path d="M757 471 Q774 356 802 265 Q779 356 775 471Z" fill="#1A250B"/><path d="M131 498 Q143 405 168 332 Q145 405 140 498Z" fill="#1E2B0E"/><path d="M807 300 Q801 181 763 90 Q803 181 816 300Z" fill="#1E2B0E"/><path d="M805 273 Q794 157 727 81 Q799 157 822 273Z" fill="#1A250B"/><path d="M-15 518 Q5 437 51 382 Q9 437 -1 518Z" fill="#1E2B0E"/><path d="M524 314 Q520 256 494 215 Q523 256 532 314Z" fill="#24340F"/><path d="M943 420 Q939 329 903 262 Q943 329 956 420Z" fill="#24340F"/><path d="M257 467 Q239 341 161 261 Q241 341 265 467Z" fill="#24340F"/><path d="M508 316 Q520 232 538 166 Q524 232 522 316Z" fill="#1A250B"/><path d="M543 490 Q538 366 506 268 Q541 366 553 490Z" fill="#24340F"/><path d="M330 475 Q342 371 361 287 Q346 371 342 475Z" fill="#2C3F13"/><path d="M993 476 Q1004 425 1012 385 Q1009 425 1010 476Z" fill="#1A250B"/><path d="M142 273 Q166 159 223 79 Q171 159 157 273Z" fill="#2C3F13"/><path d="M597 437 Q596 384 574 345 Q599 384 608 437Z" fill="#1E2B0E"/><path d="M249 510 Q256 385 264 284 Q259 385 259 510Z" fill="#2C3F13"/><path d="M201 299 Q194 224 152 174 Q198 224 212 299Z" fill="#24340F"/><path d="M233 460 Q245 403 269 362 Q248 403 243 460Z" fill="#1E2B0E"/><path d="M381 331 Q374 233 319 167 Q379 233 399 331Z" fill="#24340F"/><path d="M658 443 Q659 326 641 231 Q662 326 669 443Z" fill="#1A250B"/><path d="M127 446 Q118 346 58 283 Q123 346 144 446Z" fill="#1A250B"/><path d="M737 469 Q744 409 746 360 Q748 409 750 469Z" fill="#1E2B0E"/><path d="M832 408 Q848 289 878 196 Q852 289 847 408Z" fill="#24340F"/><path d="M63 261 Q86 163 146 100 Q90 163 74 261Z" fill="#1A250B"/><path d="M554 419 Q568 322 592 245 Q572 322 567 419Z" fill="#1E2B0E"/><path d="M451 269 Q474 148 539 65 Q477 148 460 269Z" fill="#1E2B0E"/><path d="M750 378 Q771 266 823 186 Q774 266 761 378Z" fill="#24340F"/><path d="M216 425 Q231 341 271 280 Q234 341 224 425Z" fill="#2C3F13"/><path d="M773 417 Q761 318 705 252 Q764 318 782 417Z" fill="#2C3F13"/><path d="M651 437 Q644 340 596 271 Q648 340 664 437Z" fill="#1A250B"/><path d="M254 431 Q267 329 291 247 Q270 329 265 431Z" fill="#2C3F13"/><path d="M458 376 Q472 317 503 277 Q475 317 468 376Z" fill="#1E2B0E"/><path d="M945 255 Q964 170 1001 108 Q970 170 963 255Z" fill="#1A250B"/><path d="M1009 354 Q1034 234 1103 155 Q1036 234 1018 354Z" fill="#1E2B0E"/><path d="M119 391 Q110 269 49 182 Q115 269 136 391Z" fill="#2C3F13"/><path d="M896 440 Q913 373 949 327 Q917 373 909 440Z" fill="#1E2B0E"/><path d="M138 506 Q142 405 128 322 Q146 405 153 506Z" fill="#1A250B"/><path d="M330 335 Q316 221 241 152 Q320 221 345 335Z" fill="#1A250B"/><path d="M99 500 Q121 396 177 325 Q124 396 110 500Z" fill="#2C3F13"/><path d="M39 355 Q28 239 -38 161 Q34 239 56 355Z" fill="#2C3F13"/><path d="M861 326 Q872 272 884 230 Q876 272 876 326Z" fill="#24340F"/><path d="M233 322 Q229 233 191 168 Q232 233 245 322Z" fill="#1A250B"/><path d="M891 469 Q915 371 970 305 Q921 371 908 469Z" fill="#24340F"/><path d="M721 263 Q726 157 719 71 Q731 157 736 263Z" fill="#2C3F13"/><path d="M479 496 Q473 404 432 338 Q477 404 491 496Z" fill="#2C3F13"/><path d="M282 450 Q278 325 237 229 Q282 325 297 450Z" fill="#2C3F13"/><path d="M478 431 Q486 372 497 325 Q488 372 487 431Z" fill="#1A250B"/><path d="M546 372 Q560 297 587 240 Q564 297 559 372Z" fill="#24340F"/><path d="M228 297 Q227 205 204 132 Q231 205 240 297Z" fill="#24340F"/><path d="M896 452 Q900 371 890 305 Q904 371 909 452Z" fill="#1A250B"/><path d="M255 453 Q264 365 273 294 Q267 365 267 453Z" fill="#24340F"/><path d="M70 492 Q81 413 97 350 Q85 413 82 492Z" fill="#2C3F13"/><path d="M855 486 Q853 435 822 402 Q858 435 870 486Z" fill="#1A250B"/><path d="M978 382 Q996 327 1028 291 Q1001 327 996 382Z" fill="#1A250B"/><path d="M985 317 Q983 259 956 218 Q987 259 998 317Z" fill="#1E2B0E"/><path d="M953 445 Q969 346 1005 270 Q973 346 965 445Z" fill="#1E2B0E"/><path d="M-26 284 Q-35 191 -93 131 Q-31 191 -11 284Z" fill="#24340F"/><path d="M627 393 Q640 309 670 246 Q643 309 636 393Z" fill="#2C3F13"/><path d="M518 407 Q517 328 487 268 Q521 328 532 407Z" fill="#1E2B0E"/><path d="M531 519 Q534 448 516 392 Q539 448 547 519Z" fill="#24340F"/><path d="M467 313 Q487 245 529 201 Q491 245 482 313Z" fill="#2C3F13"/><path d="M33 302 Q44 185 68 91 Q47 185 42 302Z" fill="#24340F"/><path d="M668 500 Q662 433 621 390 Q665 433 680 500Z" fill="#1A250B"/><path d="M349 357 Q353 307 338 268 Q358 307 365 357Z" fill="#1E2B0E"/><path d="M188 512 Q203 438 235 385 Q206 438 199 512Z" fill="#24340F"/><path d="M249 490 Q258 432 268 386 Q263 432 263 490Z" fill="#24340F"/><path d="M476 496 Q486 442 494 398 Q492 442 493 496Z" fill="#1E2B0E"/><path d="M197 513 Q191 453 155 414 Q194 453 206 513Z" fill="#1A250B"/><path d="M443 442 Q437 369 398 318 Q439 369 452 442Z" fill="#24340F"/><path d="M318 300 Q334 179 375 85 Q337 179 327 300Z" fill="#1A250B"/><path d="M848 516 Q840 432 796 375 Q843 432 857 516Z" fill="#1E2B0E"/><path d="M340 508 Q356 449 393 412 Q359 449 351 508Z" fill="#2C3F13"/><path d="M772 333 Q762 222 700 147 Q766 222 787 333Z" fill="#24340F"/><path d="M359 498 Q364 434 352 382 Q369 434 376 498Z" fill="#1E2B0E"/><path d="M631 317 Q633 219 620 140 Q637 219 643 317Z" fill="#1A250B"/><path d="M37 498 Q52 429 75 376 Q57 429 54 498Z" fill="#2C3F13"/><path d="M350 340 Q336 218 261 139 Q340 218 365 340Z" fill="#2C3F13"/><path d="M933 330 Q945 225 959 140 Q950 225 949 330Z" fill="#1E2B0E"/><path d="M-4 313 Q21 227 73 172 Q26 227 14 313Z" fill="#1A250B"/><path d="M795 497 Q785 384 730 306 Q789 384 808 497Z" fill="#1E2B0E"/><path d="M808 449 Q827 337 869 251 Q831 337 822 449Z" fill="#2C3F13"/><path d="M869 374 Q880 265 894 176 Q884 265 882 374Z" fill="#1A250B"/><path d="M756 317 Q753 262 719 228 Q757 262 770 317Z" fill="#2C3F13"/><path d="M140 365 Q138 308 105 269 Q142 308 154 365Z" fill="#24340F"/><path d="M75 385 Q78 280 70 195 Q81 280 85 385Z" fill="#1A250B"/><path d="M451 491 Q460 423 464 368 Q465 423 467 491Z" fill="#1E2B0E"/><path d="M786 329 Q784 258 762 204 Q788 258 796 329Z" fill="#2C3F13"/><path d="M179 317 Q178 248 146 200 Q183 248 196 317Z" fill="#24340F"/><path d="M314 357 Q320 231 321 128 Q323 231 325 357Z" fill="#1E2B0E"/><path d="M651 518 Q659 460 657 413 Q664 460 668 518Z" fill="#1A250B"/><path d="M926 261 Q920 189 883 139 Q923 189 936 261Z" fill="#24340F"/><path d="M942 351 Q945 234 937 140 Q948 234 953 351Z" fill="#1E2B0E"/><path d="M84 411 Q79 314 42 241 Q83 314 96 411Z" fill="#24340F"/><path d="M17 520 Q31 468 47 427 Q36 468 35 520Z" fill="#1E2B0E"/><path d="M827 360 Q835 282 848 219 Q838 282 836 360Z" fill="#1E2B0E"/><path d="M801 398 Q799 344 770 307 Q802 344 813 398Z" fill="#24340F"/><path d="M639 275 Q649 213 666 164 Q653 213 651 275Z" fill="#2C3F13"/><path d="M666 363 Q680 309 698 268 Q685 309 683 363Z" fill="#1A250B"/><path d="M408 483 Q406 357 383 256 Q409 357 418 483Z" fill="#1A250B"/><path d="M184 252 Q188 133 176 36 Q193 133 200 252Z" fill="#1A250B"/><path d="M577 348 Q565 239 511 163 Q568 239 585 348Z" fill="#24340F"/><path d="M640 496 Q649 439 659 394 Q652 439 652 496Z" fill="#24340F"/><path d="M127 326 Q147 237 198 177 Q149 237 136 326Z" fill="#1A250B"/><path d="M756 464 Q755 352 725 265 Q760 352 772 464Z" fill="#1E2B0E"/><path d="M989 380 Q1003 327 1034 291 Q1007 327 1001 380Z" fill="#24340F"/><path d="M641 481 Q650 384 666 305 Q653 384 651 481Z" fill="#1A250B"/><path d="M164 309 Q171 229 173 163 Q174 229 176 309Z" fill="#1E2B0E"/><path d="M127 512 Q122 400 75 317 Q127 400 144 512Z" fill="#1E2B0E"/><path d="M666 338 Q673 258 668 193 Q678 258 683 338Z" fill="#2C3F13"/><path d="M649 333 Q652 265 641 209 Q656 265 661 333Z" fill="#1A250B"/><path d="M160 251 Q164 126 158 23 Q168 126 172 251Z" fill="#1A250B"/><path d="M844 469 Q836 389 790 336 Q840 389 856 469Z" fill="#2C3F13"/><path d="M68 369 Q60 281 5 224 Q64 281 83 369Z" fill="#1E2B0E"/><path d="M931 335 Q922 230 863 160 Q927 230 947 335Z" fill="#1A250B"/><path d="M652 462 Q650 410 620 376 Q654 410 666 462Z" fill="#1E2B0E"/><path d="M173 515 Q197 428 250 372 Q202 428 190 515Z" fill="#24340F"/><path d="M687 445 Q702 378 732 330 Q706 378 701 445Z" fill="#2C3F13"/><path d="M140 492 Q154 421 184 370 Q157 421 150 492Z" fill="#1A250B"/><path d="M192 321 Q190 233 168 163 Q193 233 201 321Z" fill="#24340F"/><path d="M394 422 Q395 351 378 295 Q398 351 405 422Z" fill="#2C3F13"/><path d="M91 393 Q94 295 75 216 Q99 295 108 393Z" fill="#1E2B0E"/><path d="M236 395 Q253 279 290 190 Q256 279 248 395Z" fill="#1A250B"/><path d="M1004 406 Q1018 329 1046 270 Q1022 329 1016 406Z" fill="#24340F"/><path d="M614 509 Q620 436 622 377 Q624 436 626 509Z" fill="#2C3F13"/><path d="M735 452 Q737 385 718 333 Q741 385 749 452Z" fill="#1A250B"/><path d="M506 492 Q507 432 485 387 Q511 432 520 492Z" fill="#1E2B0E"/><path d="M30 403 Q37 330 40 271 Q41 330 43 403Z" fill="#1A250B"/><path d="M581 409 Q590 344 601 291 Q594 344 593 409Z" fill="#24340F"/><path d="M-10 466 Q-7 362 -14 278 Q-5 362 -1 466Z" fill="#24340F"/><path d="M882 461 Q879 381 853 319 Q881 381 890 461Z" fill="#2C3F13"/><path d="M592 406 Q599 310 602 232 Q603 310 605 406Z" fill="#24340F"/><path d="M914 262 Q916 171 905 98 Q919 171 925 262Z" fill="#1E2B0E"/><path d="M923 278 Q934 182 955 105 Q937 182 933 278Z" fill="#1A250B"/><path d="M179 414 Q192 326 210 255 Q197 326 196 414Z" fill="#24340F"/><path d="M501 267 Q528 170 591 110 Q532 170 517 267Z" fill="#1A250B"/><path d="M718 252 Q735 137 773 49 Q739 137 730 252Z" fill="#1A250B"/><path d="M158 519 Q166 449 180 394 Q169 449 167 519Z" fill="#2C3F13"/><path d="M712 322 Q718 230 710 155 Q723 230 728 322Z" fill="#2C3F13"/><path d="M281 501 Q268 382 203 303 Q272 382 294 501Z" fill="#24340F"/><path d="M243 314 Q269 207 333 138 Q274 207 259 314Z" fill="#2C3F13"/><path d="M171 355 Q175 259 159 182 Q180 259 188 355Z" fill="#1A250B"/><path d="M462 393 Q462 343 430 312 Q467 343 480 393Z" fill="#24340F"/><path d="M569 333 Q576 267 587 214 Q579 267 578 333Z" fill="#24340F"/><path d="M125 257 Q140 200 173 161 Q143 200 136 257Z" fill="#24340F"/><path d="M705 258 Q712 198 724 150 Q715 198 713 258Z" fill="#1E2B0E"/><path d="M738 268 Q741 173 723 97 Q746 173 754 268Z" fill="#1E2B0E"/><path d="M890 454 Q890 350 873 266 Q893 350 900 454Z" fill="#24340F"/><path d="M89 259 Q110 145 159 60 Q115 145 104 259Z" fill="#2C3F13"/><path d="M471 286 Q483 175 505 87 Q486 175 482 286Z" fill="#2C3F13"/><path d="M413 256 Q415 186 394 133 Q419 186 428 256Z" fill="#2C3F13"/><path d="M921 458 Q926 362 923 283 Q929 362 932 458Z" fill="#1E2B0E"/><path d="M794 258 Q787 169 738 108 Q790 169 807 258Z" fill="#1E2B0E"/><path d="M531 308 Q521 193 457 114 Q526 193 547 308Z" fill="#24340F"/><path d="M429 391 Q441 320 465 265 Q443 320 438 391Z" fill="#2C3F13"/><path d="M484 383 Q477 272 429 191 Q481 272 497 383Z" fill="#2C3F13"/><path d="M967 389 Q963 295 920 228 Q968 295 984 389Z" fill="#24340F"/><path d="M490 280 Q482 181 427 115 Q487 181 506 280Z" fill="#1E2B0E"/><path d="M625 346 Q630 266 618 201 Q635 266 642 346Z" fill="#1E2B0E"/><path d="M413 424 Q413 346 392 285 Q417 346 425 424Z" fill="#24340F"/><path d="M368 489 Q373 421 370 366 Q377 421 381 489Z" fill="#1E2B0E"/><path d="M335 338 Q351 277 379 233 Q355 277 350 338Z" fill="#2C3F13"/><path d="M152 368 Q160 259 172 171 Q162 259 161 368Z" fill="#1A250B"/><path d="M641 438 Q640 349 612 281 Q645 349 656 438Z" fill="#24340F"/><path d="M727 513 Q736 408 751 323 Q740 408 738 513Z" fill="#24340F"/><path d="M317 301 Q332 177 371 80 Q335 177 326 301Z" fill="#1E2B0E"/><path d="M178 291 Q179 230 162 182 Q182 230 189 291Z" fill="#2C3F13"/><path d="M178 422 Q177 365 154 322 Q181 365 190 422Z" fill="#1E2B0E"/><path d="M-16 481 Q-16 398 -47 335 Q-11 398 2 481Z" fill="#2C3F13"/><path d="M454 288 Q458 192 446 115 Q463 192 470 288Z" fill="#1A250B"/><path d="M702 409 Q723 309 769 238 Q727 309 717 409Z" fill="#24340F"/><path d="M680 423 Q681 339 659 272 Q685 339 694 423Z" fill="#1E2B0E"/><path d="M906 315 Q917 235 941 173 Q920 235 915 315Z" fill="#1A250B"/><path d="M475 255 Q483 140 486 45 Q487 140 489 255Z" fill="#24340F"/><path d="M902 339 Q917 288 939 252 Q922 288 919 339Z" fill="#1E2B0E"/><path d="M11 397 Q26 335 50 288 Q32 335 28 397Z" fill="#2C3F13"/><path d="M79 405 Q93 314 120 243 Q97 314 92 405Z" fill="#2C3F13"/><path d="M515 361 Q509 238 460 147 Q513 238 530 361Z" fill="#1A250B"/><path d="M507 502 Q519 396 536 311 Q523 396 522 502Z" fill="#2C3F13"/><path d="M259 358 Q264 307 258 266 Q267 307 271 358Z" fill="#2C3F13"/><path d="M575 279 Q581 207 571 148 Q586 207 592 279Z" fill="#24340F"/><path d="M1005 509 Q1003 424 964 363 Q1008 424 1023 509Z" fill="#1E2B0E"/><path d="M817 421 Q824 336 831 266 Q827 336 827 421Z" fill="#24340F"/><path d="M341 422 Q361 310 409 228 Q365 310 354 422Z" fill="#2C3F13"/><path d="M762 425 Q769 316 764 226 Q774 316 778 425Z" fill="#24340F"/><path d="M253 352 Q256 283 249 226 Q259 283 263 352Z" fill="#1E2B0E"/><path d="M812 466 Q822 389 839 327 Q826 389 823 466Z" fill="#1A250B"/><path d="M417 422 Q420 322 401 241 Q425 322 434 422Z" fill="#1A250B"/><path d="M35 474 Q53 354 99 265 Q55 354 44 474Z" fill="#2C3F13"/><path d="M631 254 Q647 204 678 171 Q652 204 646 254Z" fill="#2C3F13"/><path d="M606 406 Q598 291 549 206 Q602 291 619 406Z" fill="#24340F"/><path d="M189 359 Q201 268 214 195 Q205 268 204 359Z" fill="#1E2B0E"/><path d="M670 491 Q690 381 740 302 Q693 381 680 491Z" fill="#24340F"/><path d="M525 450 Q544 367 587 309 Q549 367 539 450Z" fill="#2C3F13"/><path d="M409 473 Q418 387 425 317 Q422 387 422 473Z" fill="#24340F"/><path d="M701 317 Q711 254 719 204 Q715 254 716 317Z" fill="#24340F"/><path d="M846 376 Q860 284 882 210 Q865 284 863 376Z" fill="#2C3F13"/><path d="M417 520 Q410 418 366 344 Q414 418 429 520Z" fill="#1E2B0E"/><path d="M-7 262 Q22 156 92 92 Q27 156 9 262Z" fill="#1E2B0E"/><path d="M503 381 Q490 262 416 187 Q494 262 519 381Z" fill="#24340F"/><path d="M326 483 Q331 405 329 341 Q335 405 339 483Z" fill="#24340F"/><path d="M270 342 Q264 273 223 229 Q267 273 281 342Z" fill="#2C3F13"/><path d="M834 359 Q833 271 805 202 Q837 271 847 359Z" fill="#24340F"/><path d="M655 464 Q655 389 637 330 Q659 389 666 464Z" fill="#1E2B0E"/><path d="M789 261 Q811 156 866 83 Q815 156 802 261Z" fill="#1E2B0E"/><path d="M388 279 Q401 226 424 188 Q405 226 401 279Z" fill="#1E2B0E"/></g><g><path d="M795 498 Q804 414 818 346 Q808 414 806 498Z" fill="#3F5A1C"/><path d="M198 440 Q209 366 235 310 Q211 366 204 440Z" fill="#4C6B22"/><path d="M881 381 Q892 331 922 297 Q894 331 887 381Z" fill="#4C6B22"/><path d="M793 415 Q793 354 777 306 Q796 354 803 415Z" fill="#56781F"/><path d="M-4 416 Q14 334 60 279 Q17 334 6 416Z" fill="#3F5A1C"/><path d="M833 466 Q843 394 863 338 Q846 394 842 466Z" fill="#3F5A1C"/><path d="M-12 373 Q9 290 57 235 Q13 290 2 373Z" fill="#3A5218"/><path d="M774 412 Q780 362 778 322 Q784 362 787 412Z" fill="#3F5A1C"/><path d="M418 282 Q441 194 497 140 Q445 194 431 282Z" fill="#4C6B22"/><path d="M880 311 Q888 266 902 231 Q891 266 888 311Z" fill="#4C6B22"/><path d="M936 368 Q947 274 972 201 Q949 274 943 368Z" fill="#3F5A1C"/><path d="M278 414 Q290 337 308 276 Q294 337 291 414Z" fill="#3F5A1C"/><path d="M720 283 Q729 238 738 202 Q732 238 732 283Z" fill="#3F5A1C"/><path d="M378 355 Q399 271 450 218 Q403 271 391 355Z" fill="#3F5A1C"/><path d="M305 508 Q308 416 304 340 Q310 416 313 508Z" fill="#3F5A1C"/><path d="M353 435 Q355 349 345 280 Q358 349 362 435Z" fill="#3A5218"/><path d="M959 468 Q956 387 933 323 Q958 387 966 468Z" fill="#56781F"/><path d="M878 454 Q878 409 857 377 Q882 409 891 454Z" fill="#3A5218"/><path d="M989 339 Q992 270 980 214 Q996 270 1002 339Z" fill="#4C6B22"/><path d="M815 348 Q816 304 801 270 Q819 304 824 348Z" fill="#3F5A1C"/><path d="M276 314 Q300 211 367 148 Q302 211 284 314Z" fill="#3A5218"/><path d="M337 300 Q350 220 383 160 Q352 220 345 300Z" fill="#4C6B22"/><path d="M295 294 Q308 224 328 169 Q312 224 309 294Z" fill="#3F5A1C"/><path d="M797 390 Q809 341 830 304 Q813 341 809 390Z" fill="#4C6B22"/><path d="M390 405 Q402 344 430 300 Q405 344 398 405Z" fill="#4C6B22"/><path d="M172 326 Q181 270 197 226 Q184 270 181 326Z" fill="#56781F"/><path d="M392 404 Q389 350 356 316 Q393 350 406 404Z" fill="#56781F"/><path d="M877 369 Q869 295 827 245 Q871 295 885 369Z" fill="#3F5A1C"/><path d="M332 405 Q330 359 302 331 Q335 359 346 405Z" fill="#3A5218"/><path d="M587 331 Q581 226 549 145 Q583 226 594 331Z" fill="#3A5218"/><path d="M775 477 Q768 369 731 287 Q769 369 781 477Z" fill="#4C6B22"/><path d="M1010 371 Q1006 325 978 296 Q1009 325 1019 371Z" fill="#3A5218"/><path d="M481 483 Q501 380 551 307 Q504 380 492 483Z" fill="#3F5A1C"/><path d="M711 302 Q708 237 684 187 Q710 237 718 302Z" fill="#3A5218"/><path d="M164 484 Q163 415 138 364 Q166 415 176 484Z" fill="#4C6B22"/><path d="M14 341 Q31 274 67 229 Q35 274 27 341Z" fill="#3F5A1C"/><path d="M243 403 Q258 310 291 240 Q261 310 253 403Z" fill="#3F5A1C"/><path d="M126 461 Q138 355 164 271 Q140 355 135 461Z" fill="#3A5218"/><path d="M765 305 Q762 240 740 190 Q764 240 772 305Z" fill="#3A5218"/><path d="M368 386 Q391 289 445 223 Q394 289 381 386Z" fill="#3A5218"/><path d="M722 327 Q734 280 760 250 Q736 280 730 327Z" fill="#56781F"/><path d="M898 314 Q893 240 853 190 Q897 240 911 314Z" fill="#3F5A1C"/><path d="M629 389 Q642 322 671 274 Q645 322 638 389Z" fill="#56781F"/><path d="M123 333 Q132 285 146 248 Q136 285 134 333Z" fill="#4C6B22"/><path d="M433 316 Q429 244 405 190 Q431 244 440 316Z" fill="#56781F"/><path d="M321 320 Q322 244 303 184 Q326 244 335 320Z" fill="#3F5A1C"/><path d="M133 403 Q149 318 183 254 Q153 318 146 403Z" fill="#3A5218"/><path d="M844 309 Q866 215 924 156 Q869 215 853 309Z" fill="#56781F"/><path d="M1011 502 Q1014 452 999 412 Q1018 452 1025 502Z" fill="#3F5A1C"/><path d="M841 515 Q849 461 859 418 Q851 461 850 515Z" fill="#56781F"/><path d="M507 386 Q528 290 585 228 Q530 290 515 386Z" fill="#56781F"/><path d="M429 499 Q434 440 440 393 Q436 440 436 499Z" fill="#4C6B22"/><path d="M516 335 Q525 280 532 235 Q528 280 529 335Z" fill="#3A5218"/><path d="M766 322 Q775 269 788 227 Q779 269 777 322Z" fill="#4C6B22"/><path d="M582 329 Q591 280 606 243 Q593 280 591 329Z" fill="#3F5A1C"/><path d="M512 363 Q523 301 535 251 Q527 301 526 363Z" fill="#3F5A1C"/><path d="M-8 498 Q7 423 45 370 Q9 423 0 498Z" fill="#4C6B22"/><path d="M560 517 Q569 470 582 434 Q572 470 571 517Z" fill="#3F5A1C"/><path d="M346 504 Q332 396 271 324 Q335 396 355 504Z" fill="#4C6B22"/><path d="M825 488 Q835 423 853 372 Q837 423 834 488Z" fill="#3F5A1C"/><path d="M280 306 Q281 214 274 138 Q283 214 286 306Z" fill="#4C6B22"/><path d="M-2 512 Q-6 453 -31 410 Q-4 453 5 512Z" fill="#56781F"/><path d="M552 509 Q565 464 591 434 Q569 464 564 509Z" fill="#56781F"/><path d="M-7 424 Q-1 342 2 275 Q3 342 4 424Z" fill="#3F5A1C"/><path d="M340 303 Q340 247 322 204 Q343 247 350 303Z" fill="#56781F"/><path d="M91 309 Q96 207 102 123 Q98 207 98 309Z" fill="#4C6B22"/><path d="M127 417 Q121 324 78 257 Q125 324 139 417Z" fill="#3A5218"/><path d="M695 423 Q687 340 635 286 Q691 340 709 423Z" fill="#3F5A1C"/><path d="M783 361 Q784 301 771 254 Q787 301 793 361Z" fill="#56781F"/><path d="M821 483 Q828 436 829 397 Q832 436 834 483Z" fill="#56781F"/><path d="M234 381 Q235 296 219 227 Q238 296 244 381Z" fill="#3F5A1C"/><path d="M313 328 Q308 240 275 174 Q311 240 322 328Z" fill="#3A5218"/><path d="M781 505 Q798 419 834 356 Q802 419 794 505Z" fill="#3F5A1C"/><path d="M12 434 Q20 372 35 324 Q22 372 20 434Z" fill="#3F5A1C"/><path d="M619 340 Q624 262 617 198 Q628 262 633 340Z" fill="#56781F"/><path d="M91 363 Q88 308 56 272 Q92 308 104 363Z" fill="#56781F"/><path d="M63 422 Q65 316 57 230 Q68 316 73 422Z" fill="#56781F"/><path d="M926 419 Q938 356 958 309 Q942 356 938 419Z" fill="#56781F"/><path d="M850 426 Q858 345 875 280 Q860 345 857 426Z" fill="#56781F"/><path d="M455 412 Q458 327 455 258 Q461 327 464 412Z" fill="#4C6B22"/><path d="M322 325 Q342 245 391 195 Q344 245 332 325Z" fill="#56781F"/><path d="M145 508 Q144 443 129 391 Q147 443 153 508Z" fill="#4C6B22"/><path d="M281 465 Q278 411 247 375 Q282 411 294 465Z" fill="#3A5218"/><path d="M658 404 Q658 305 638 226 Q662 305 670 404Z" fill="#4C6B22"/><path d="M1003 443 Q1005 337 993 251 Q1009 337 1015 443Z" fill="#4C6B22"/><path d="M677 428 Q695 328 739 255 Q698 328 687 428Z" fill="#3A5218"/><path d="M255 431 Q266 346 290 279 Q269 346 264 431Z" fill="#3F5A1C"/><path d="M-22 464 Q-16 381 -16 313 Q-11 381 -9 464Z" fill="#4C6B22"/><path d="M410 468 Q419 366 434 284 Q422 366 419 468Z" fill="#3A5218"/><path d="M695 349 Q696 282 683 228 Q700 282 705 349Z" fill="#3A5218"/><path d="M650 282 Q672 188 732 131 Q675 188 659 282Z" fill="#56781F"/><path d="M166 353 Q173 299 179 256 Q176 299 177 353Z" fill="#3F5A1C"/><path d="M831 359 Q839 251 855 164 Q841 251 838 359Z" fill="#56781F"/><path d="M189 382 Q173 278 105 214 Q175 278 196 382Z" fill="#3A5218"/><path d="M287 409 Q295 344 306 292 Q298 344 297 409Z" fill="#3A5218"/><path d="M378 366 Q380 283 363 216 Q384 283 392 366Z" fill="#3F5A1C"/><path d="M521 304 Q524 235 514 179 Q527 235 532 304Z" fill="#4C6B22"/><path d="M890 511 Q893 435 887 373 Q897 435 901 511Z" fill="#56781F"/><path d="M695 459 Q697 409 687 369 Q699 409 704 459Z" fill="#3F5A1C"/><path d="M833 403 Q847 352 874 317 Q850 352 845 403Z" fill="#3A5218"/><path d="M630 406 Q625 308 586 235 Q629 308 643 406Z" fill="#3A5218"/><path d="M163 431 Q165 347 148 280 Q169 347 177 431Z" fill="#3F5A1C"/><path d="M694 283 Q703 238 716 204 Q706 238 705 283Z" fill="#56781F"/><path d="M390 304 Q385 259 357 230 Q387 259 397 304Z" fill="#56781F"/><path d="M882 495 Q875 417 838 362 Q877 417 890 495Z" fill="#3F5A1C"/><path d="M128 404 Q117 327 68 278 Q119 327 134 404Z" fill="#3A5218"/><path d="M833 427 Q820 330 763 266 Q821 330 839 427Z" fill="#56781F"/><path d="M124 337 Q118 275 80 236 Q122 275 135 337Z" fill="#3F5A1C"/><path d="M336 388 Q331 319 290 273 Q335 319 349 388Z" fill="#3F5A1C"/><path d="M431 429 Q427 368 390 330 Q431 368 444 429Z" fill="#4C6B22"/><path d="M302 496 Q300 398 273 321 Q303 398 313 496Z" fill="#3A5218"/><path d="M993 296 Q1005 208 1026 137 Q1008 208 1004 296Z" fill="#3A5218"/><path d="M298 490 Q310 414 341 358 Q313 414 305 490Z" fill="#4C6B22"/><path d="M152 371 Q163 326 186 296 Q166 326 161 371Z" fill="#56781F"/><path d="M96 408 Q97 339 88 282 Q99 339 103 408Z" fill="#3F5A1C"/><path d="M414 499 Q416 419 403 354 Q419 419 424 499Z" fill="#56781F"/><path d="M223 288 Q221 201 202 131 Q223 201 230 288Z" fill="#4C6B22"/><path d="M72 345 Q62 246 12 176 Q65 246 81 345Z" fill="#4C6B22"/><path d="M139 365 Q141 273 126 199 Q145 273 152 365Z" fill="#4C6B22"/><path d="M283 394 Q297 337 325 296 Q301 337 295 394Z" fill="#56781F"/><path d="M595 386 Q601 276 607 187 Q604 276 604 386Z" fill="#4C6B22"/><path d="M104 460 Q96 371 48 312 Q100 371 117 460Z" fill="#3A5218"/><path d="M4 452 Q-0 399 -35 366 Q3 399 16 452Z" fill="#4C6B22"/><path d="M784 336 Q796 279 825 240 Q798 279 790 336Z" fill="#56781F"/><path d="M814 462 Q822 405 839 361 Q824 405 821 462Z" fill="#56781F"/><path d="M105 452 Q109 389 100 339 Q113 389 118 452Z" fill="#4C6B22"/><path d="M948 322 Q962 254 990 204 Q966 254 960 322Z" fill="#3A5218"/><path d="M2 449 Q21 374 70 329 Q24 374 11 449Z" fill="#3F5A1C"/><path d="M163 308 Q178 203 212 123 Q182 203 175 308Z" fill="#3F5A1C"/><path d="M397 426 Q408 354 434 298 Q410 354 404 426Z" fill="#3F5A1C"/><path d="M551 431 Q557 325 567 238 Q559 325 558 431Z" fill="#3A5218"/><path d="M721 341 Q731 268 749 211 Q733 268 730 341Z" fill="#3F5A1C"/><path d="M90 463 Q110 376 157 317 Q114 376 103 463Z" fill="#3F5A1C"/><path d="M987 443 Q990 397 978 360 Q993 397 999 443Z" fill="#56781F"/><path d="M754 301 Q756 211 743 138 Q759 211 765 301Z" fill="#4C6B22"/><path d="M266 302 Q269 195 258 109 Q273 195 279 302Z" fill="#3A5218"/><path d="M503 442 Q513 385 527 339 Q517 385 515 442Z" fill="#4C6B22"/><path d="M484 325 Q503 219 550 141 Q506 219 494 325Z" fill="#4C6B22"/><path d="M544 513 Q550 427 555 356 Q552 427 552 513Z" fill="#3F5A1C"/><path d="M151 363 Q157 313 167 273 Q160 313 158 363Z" fill="#3A5218"/><path d="M672 337 Q678 277 679 228 Q680 277 682 337Z" fill="#56781F"/><path d="M702 312 Q709 221 720 148 Q711 221 710 312Z" fill="#3F5A1C"/><path d="M545 463 Q554 407 566 364 Q557 407 556 463Z" fill="#3A5218"/><path d="M850 377 Q857 320 872 275 Q859 320 856 377Z" fill="#3A5218"/><path d="M189 294 Q187 232 162 186 Q191 232 200 294Z" fill="#3A5218"/><path d="M977 319 Q983 245 990 186 Q986 245 986 319Z" fill="#3F5A1C"/><path d="M21 392 Q27 284 25 195 Q30 284 33 392Z" fill="#56781F"/><path d="M995 415 Q999 364 998 322 Q1002 364 1004 415Z" fill="#4C6B22"/><path d="M791 357 Q784 290 747 244 Q787 290 799 357Z" fill="#56781F"/><path d="M655 299 Q642 205 583 147 Q645 205 664 299Z" fill="#4C6B22"/><path d="M281 325 Q300 238 340 177 Q304 238 295 325Z" fill="#4C6B22"/><path d="M82 453 Q89 388 100 336 Q92 388 91 453Z" fill="#56781F"/><path d="M307 368 Q309 288 294 224 Q313 288 319 368Z" fill="#4C6B22"/><path d="M33 306 Q56 209 111 144 Q60 209 47 306Z" fill="#3A5218"/><path d="M918 507 Q921 430 921 367 Q924 430 925 507Z" fill="#56781F"/><path d="M603 430 Q601 377 581 337 Q603 377 610 430Z" fill="#3A5218"/><path d="M67 290 Q64 217 34 163 Q68 217 79 290Z" fill="#3F5A1C"/><path d="M10 427 Q14 328 15 247 Q16 328 17 427Z" fill="#3F5A1C"/><path d="M663 404 Q664 332 648 275 Q666 332 673 404Z" fill="#4C6B22"/><path d="M915 319 Q919 256 914 204 Q922 256 925 319Z" fill="#56781F"/><path d="M566 393 Q571 313 573 247 Q574 313 575 393Z" fill="#4C6B22"/><path d="M990 511 Q1004 426 1040 364 Q1006 426 997 511Z" fill="#56781F"/><path d="M609 351 Q628 270 677 217 Q631 270 618 351Z" fill="#4C6B22"/><path d="M288 362 Q272 260 208 196 Q275 260 295 362Z" fill="#3A5218"/><path d="M692 315 Q701 233 707 166 Q705 233 706 315Z" fill="#56781F"/><path d="M527 416 Q521 345 484 297 Q523 345 535 416Z" fill="#4C6B22"/><path d="M547 307 Q540 206 506 129 Q542 206 553 307Z" fill="#56781F"/><path d="M712 334 Q719 260 723 200 Q722 260 723 334Z" fill="#3F5A1C"/><path d="M861 443 Q852 346 804 278 Q855 346 871 443Z" fill="#3F5A1C"/><path d="M626 510 Q630 432 626 369 Q634 432 637 510Z" fill="#4C6B22"/><path d="M982 326 Q975 251 934 200 Q977 251 991 326Z" fill="#3F5A1C"/><path d="M394 291 Q404 245 417 208 Q408 245 407 291Z" fill="#3A5218"/><path d="M286 450 Q303 378 341 328 Q306 378 297 450Z" fill="#4C6B22"/><path d="M559 500 Q552 399 507 325 Q556 399 571 500Z" fill="#56781F"/><path d="M812 457 Q812 412 797 378 Q814 412 820 457Z" fill="#56781F"/><path d="M725 290 Q718 207 673 150 Q721 207 736 290Z" fill="#3F5A1C"/><path d="M10 498 Q12 438 0 390 Q16 438 21 498Z" fill="#3F5A1C"/><path d="M848 420 Q842 368 809 336 Q844 368 855 420Z" fill="#56781F"/><path d="M168 413 Q177 350 194 300 Q180 350 177 413Z" fill="#4C6B22"/><path d="M588 340 Q603 230 642 147 Q605 230 596 340Z" fill="#3A5218"/><path d="M-12 362 Q-6 308 -5 264 Q-2 308 1 362Z" fill="#3F5A1C"/><path d="M51 429 Q61 342 73 272 Q65 342 64 429Z" fill="#4C6B22"/><path d="M696 388 Q711 329 747 291 Q714 329 706 388Z" fill="#56781F"/><path d="M319 332 Q326 229 339 145 Q328 229 326 332Z" fill="#4C6B22"/><path d="M825 455 Q831 389 828 335 Q835 389 839 455Z" fill="#56781F"/><path d="M-19 419 Q-26 353 -68 312 Q-23 353 -9 419Z" fill="#3F5A1C"/><path d="M633 454 Q634 401 625 358 Q636 401 639 454Z" fill="#56781F"/><path d="M345 418 Q339 335 299 277 Q343 335 357 418Z" fill="#3F5A1C"/><path d="M883 466 Q892 380 908 311 Q894 380 892 466Z" fill="#56781F"/><path d="M801 337 Q791 241 744 172 Q793 241 808 337Z" fill="#56781F"/><path d="M744 402 Q744 316 726 248 Q747 316 754 402Z" fill="#3A5218"/><path d="M322 449 Q341 361 387 300 Q345 361 334 449Z" fill="#56781F"/><path d="M906 474 Q895 364 843 286 Q897 364 914 474Z" fill="#3A5218"/><path d="M396 375 Q417 280 472 217 Q420 280 407 375Z" fill="#4C6B22"/><path d="M287 354 Q295 262 302 187 Q299 262 300 354Z" fill="#56781F"/><path d="M52 326 Q60 221 72 135 Q62 221 61 326Z" fill="#56781F"/><path d="M1000 366 Q1004 271 995 193 Q1008 271 1013 366Z" fill="#3F5A1C"/><path d="M847 357 Q861 301 890 263 Q864 301 857 357Z" fill="#4C6B22"/><path d="M627 337 Q624 292 596 262 Q626 292 636 337Z" fill="#56781F"/><path d="M872 436 Q884 379 902 335 Q888 379 885 436Z" fill="#3F5A1C"/><path d="M59 474 Q56 372 34 291 Q58 372 66 474Z" fill="#4C6B22"/><path d="M258 434 Q258 389 247 354 Q260 389 265 434Z" fill="#56781F"/><path d="M314 460 Q317 373 305 303 Q320 373 326 460Z" fill="#56781F"/><path d="M156 487 Q146 391 93 326 Q149 391 167 487Z" fill="#3A5218"/><path d="M1004 376 Q1023 270 1076 196 Q1025 270 1010 376Z" fill="#56781F"/><path d="M561 517 Q569 469 576 431 Q572 469 573 517Z" fill="#56781F"/><path d="M137 284 Q144 227 146 179 Q147 227 149 284Z" fill="#56781F"/><path d="M821 382 Q829 302 839 237 Q832 302 832 382Z" fill="#56781F"/><path d="M216 428 Q218 331 215 251 Q220 331 222 428Z" fill="#56781F"/><path d="M653 412 Q660 321 667 247 Q662 321 662 412Z" fill="#56781F"/><path d="M111 282 Q122 207 138 147 Q125 207 123 282Z" fill="#56781F"/><path d="M130 431 Q150 360 194 317 Q154 360 143 431Z" fill="#4C6B22"/><path d="M103 410 Q113 353 135 310 Q116 353 111 410Z" fill="#56781F"/><path d="M741 497 Q761 395 810 323 Q765 395 753 497Z" fill="#3F5A1C"/><path d="M341 450 Q355 377 391 325 Q357 377 349 450Z" fill="#56781F"/><path d="M914 373 Q924 315 947 272 Q925 315 920 373Z" fill="#3F5A1C"/><path d="M45 435 Q58 364 93 315 Q60 364 51 435Z" fill="#3A5218"/><path d="M402 501 Q412 394 430 309 Q414 394 410 501Z" fill="#56781F"/><path d="M-3 450 Q-2 390 -14 342 Q1 390 6 450Z" fill="#3A5218"/><path d="M643 352 Q636 242 594 160 Q639 242 654 352Z" fill="#4C6B22"/></g><g opacity=".95"><path d="M474 505 Q491 426 539 375 Q492 426 479 505Z" fill="#C4D45A"/><path d="M271 373 Q283 311 316 268 Q285 311 277 373Z" fill="#B9C94C"/><path d="M598 400 Q612 332 647 285 Q613 332 605 400Z" fill="#C4D45A"/><path d="M25 470 Q27 411 21 362 Q28 411 31 470Z" fill="#C4D45A"/><path d="M690 477 Q699 435 723 407 Q701 435 695 477Z" fill="#C4D45A"/><path d="M133 462 Q132 423 114 395 Q134 423 141 462Z" fill="#8DA83A"/><path d="M407 441 Q408 368 397 309 Q410 368 414 441Z" fill="#8DA83A"/><path d="M586 344 Q575 273 530 229 Q577 273 592 344Z" fill="#B9C94C"/><path d="M216 395 Q214 355 189 331 Q217 355 226 395Z" fill="#C4D45A"/><path d="M43 324 Q64 233 121 176 Q66 233 51 324Z" fill="#8DA83A"/><path d="M162 451 Q170 409 184 377 Q172 409 170 451Z" fill="#8DA83A"/><path d="M526 485 Q516 394 465 333 Q519 394 536 485Z" fill="#A6C24A"/><path d="M738 360 Q737 316 723 283 Q738 316 743 360Z" fill="#8DA83A"/><path d="M181 311 Q199 230 247 178 Q200 230 187 311Z" fill="#C4D45A"/><path d="M691 444 Q697 378 701 324 Q699 378 700 444Z" fill="#C4D45A"/><path d="M392 370 Q406 312 443 275 Q408 312 399 370Z" fill="#7E9A2E"/><path d="M894 477 Q902 389 918 319 Q903 389 900 477Z" fill="#B9C94C"/><path d="M940 356 Q940 286 928 230 Q942 286 946 356Z" fill="#A6C24A"/><path d="M666 319 Q657 249 613 204 Q660 249 674 319Z" fill="#7E9A2E"/><path d="M699 371 Q703 299 708 240 Q705 299 705 371Z" fill="#B9C94C"/><path d="M-23 464 Q-19 380 -18 310 Q-16 380 -15 464Z" fill="#7E9A2E"/><path d="M220 438 Q220 361 207 298 Q223 361 228 438Z" fill="#7E9A2E"/><path d="M992 359 Q1004 286 1037 233 Q1006 286 998 359Z" fill="#B9C94C"/><path d="M666 503 Q663 424 638 363 Q666 424 675 503Z" fill="#C4D45A"/><path d="M518 405 Q516 358 494 326 Q519 358 528 405Z" fill="#B9C94C"/><path d="M354 345 Q356 302 348 267 Q359 302 363 345Z" fill="#A6C24A"/><path d="M830 401 Q844 330 876 277 Q847 330 839 401Z" fill="#8DA83A"/><path d="M311 380 Q312 294 304 225 Q315 294 318 380Z" fill="#C4D45A"/><path d="M367 380 Q371 307 373 247 Q373 307 373 380Z" fill="#8DA83A"/><path d="M262 364 Q257 304 226 263 Q259 304 270 364Z" fill="#A6C24A"/><path d="M765 333 Q765 259 752 199 Q768 259 773 333Z" fill="#A6C24A"/><path d="M624 415 Q620 334 592 271 Q622 334 632 415Z" fill="#8DA83A"/><path d="M570 313 Q577 269 590 235 Q579 269 577 313Z" fill="#C4D45A"/><path d="M242 358 Q246 299 249 250 Q249 299 250 358Z" fill="#8DA83A"/><path d="M186 393 Q193 312 207 247 Q196 312 193 393Z" fill="#8DA83A"/><path d="M721 383 Q730 347 742 320 Q733 347 731 383Z" fill="#7E9A2E"/><path d="M650 478 Q652 424 643 380 Q654 424 658 478Z" fill="#B9C94C"/><path d="M175 514 Q175 438 162 376 Q178 438 183 514Z" fill="#C4D45A"/><path d="M871 318 Q872 258 863 209 Q874 258 878 318Z" fill="#8DA83A"/><path d="M89 424 Q99 334 124 264 Q101 334 96 424Z" fill="#7E9A2E"/><path d="M159 314 Q155 257 127 217 Q158 257 168 314Z" fill="#8DA83A"/><path d="M673 463 Q667 406 632 369 Q669 406 681 463Z" fill="#B9C94C"/><path d="M319 385 Q314 324 280 283 Q316 324 328 385Z" fill="#B9C94C"/><path d="M826 322 Q834 284 847 255 Q836 284 834 322Z" fill="#8DA83A"/><path d="M833 344 Q844 291 871 253 Q847 291 841 344Z" fill="#7E9A2E"/><path d="M853 331 Q847 273 813 236 Q850 273 861 331Z" fill="#C4D45A"/><path d="M325 414 Q334 381 356 360 Q336 381 331 414Z" fill="#C4D45A"/><path d="M67 384 Q64 311 44 254 Q66 311 74 384Z" fill="#7E9A2E"/><path d="M685 368 Q686 319 678 281 Q688 319 692 368Z" fill="#B9C94C"/><path d="M244 344 Q248 308 250 279 Q250 308 251 344Z" fill="#7E9A2E"/><path d="M659 456 Q670 415 693 387 Q672 415 666 456Z" fill="#7E9A2E"/><path d="M932 422 Q934 386 924 358 Q936 386 940 422Z" fill="#7E9A2E"/><path d="M966 481 Q966 446 952 420 Q968 446 973 481Z" fill="#A6C24A"/><path d="M714 477 Q718 408 713 352 Q721 408 724 477Z" fill="#7E9A2E"/><path d="M189 345 Q198 301 219 270 Q200 301 195 345Z" fill="#A6C24A"/><path d="M872 316 Q869 247 839 196 Q871 247 882 316Z" fill="#B9C94C"/><path d="M742 336 Q751 290 765 254 Q753 290 751 336Z" fill="#A6C24A"/><path d="M532 335 Q543 255 566 193 Q545 255 540 335Z" fill="#7E9A2E"/><path d="M75 473 Q76 382 65 309 Q79 382 83 473Z" fill="#C4D45A"/><path d="M710 397 Q723 339 752 297 Q726 339 719 397Z" fill="#A6C24A"/><path d="M19 484 Q18 433 -0 395 Q21 433 27 484Z" fill="#C4D45A"/><path d="M711 458 Q710 407 693 367 Q713 407 719 458Z" fill="#A6C24A"/><path d="M135 476 Q134 384 120 309 Q136 384 141 476Z" fill="#7E9A2E"/><path d="M139 364 Q148 291 167 234 Q150 291 145 364Z" fill="#A6C24A"/><path d="M733 395 Q726 320 688 269 Q729 320 742 395Z" fill="#8DA83A"/><path d="M661 346 Q664 274 667 214 Q666 274 666 346Z" fill="#7E9A2E"/><path d="M339 465 Q352 402 389 360 Q354 402 345 465Z" fill="#7E9A2E"/><path d="M268 367 Q278 298 302 246 Q280 298 274 367Z" fill="#7E9A2E"/><path d="M257 496 Q253 412 222 349 Q256 412 267 496Z" fill="#8DA83A"/><path d="M580 322 Q579 289 566 265 Q581 289 586 322Z" fill="#C4D45A"/><path d="M28 373 Q26 313 5 267 Q29 313 36 373Z" fill="#A6C24A"/><path d="M90 483 Q101 401 126 338 Q103 401 98 483Z" fill="#B9C94C"/><path d="M95 336 Q87 279 52 243 Q89 279 100 336Z" fill="#B9C94C"/><path d="M78 442 Q82 401 87 368 Q84 401 84 442Z" fill="#C4D45A"/><path d="M734 462 Q740 407 752 363 Q742 407 739 462Z" fill="#8DA83A"/><path d="M853 492 Q848 430 818 386 Q849 430 859 492Z" fill="#A6C24A"/><path d="M98 409 Q92 344 58 298 Q94 344 105 409Z" fill="#A6C24A"/><path d="M568 309 Q580 261 609 229 Q582 261 574 309Z" fill="#B9C94C"/><path d="M188 328 Q198 280 222 247 Q201 280 195 328Z" fill="#8DA83A"/><path d="M-8 508 Q3 445 28 398 Q5 445 -0 508Z" fill="#A6C24A"/><path d="M67 338 Q87 254 142 203 Q89 254 74 338Z" fill="#B9C94C"/><path d="M515 364 Q505 277 456 219 Q507 277 523 364Z" fill="#A6C24A"/><path d="M229 470 Q241 406 269 360 Q244 406 238 470Z" fill="#8DA83A"/><path d="M599 516 Q605 481 611 452 Q607 481 607 516Z" fill="#C4D45A"/><path d="M333 478 Q346 417 380 377 Q347 417 338 478Z" fill="#7E9A2E"/><path d="M794 307 Q787 226 749 169 Q789 226 802 307Z" fill="#A6C24A"/><path d="M134 376 Q132 334 115 304 Q134 334 140 376Z" fill="#C4D45A"/><path d="M714 315 Q722 282 739 259 Q723 282 720 315Z" fill="#B9C94C"/><path d="M787 500 Q795 421 809 358 Q796 421 793 500Z" fill="#8DA83A"/><path d="M856 473 Q863 434 874 404 Q865 434 863 473Z" fill="#A6C24A"/><path d="M812 408 Q815 329 815 263 Q817 329 819 408Z" fill="#C4D45A"/><path d="M917 464 Q931 381 965 319 Q933 381 925 464Z" fill="#7E9A2E"/><path d="M377 441 Q382 351 383 278 Q384 351 386 441Z" fill="#B9C94C"/><path d="M528 508 Q540 468 565 443 Q543 468 537 508Z" fill="#C4D45A"/><path d="M757 486 Q762 439 768 400 Q765 439 765 486Z" fill="#7E9A2E"/><path d="M574 505 Q563 418 511 362 Q565 418 582 505Z" fill="#7E9A2E"/><path d="M802 450 Q817 360 857 295 Q819 360 809 450Z" fill="#8DA83A"/><path d="M213 448 Q223 367 241 303 Q225 367 222 448Z" fill="#7E9A2E"/><path d="M802 301 Q793 238 753 200 Q795 238 807 301Z" fill="#7E9A2E"/><path d="M412 433 Q412 372 398 324 Q413 372 418 433Z" fill="#C4D45A"/><path d="M385 403 Q387 368 379 340 Q390 368 395 403Z" fill="#A6C24A"/><path d="M706 397 Q718 324 748 270 Q720 324 712 397Z" fill="#8DA83A"/><path d="M368 497 Q367 441 354 396 Q369 441 374 497Z" fill="#A6C24A"/><path d="M210 496 Q224 426 261 378 Q226 426 217 496Z" fill="#7E9A2E"/><path d="M307 493 Q315 412 327 347 Q317 412 316 493Z" fill="#A6C24A"/><path d="M383 302 Q374 217 328 160 Q375 217 390 302Z" fill="#B9C94C"/><path d="M818 355 Q813 301 784 264 Q816 301 826 355Z" fill="#B9C94C"/><path d="M669 330 Q665 251 639 191 Q667 251 676 330Z" fill="#B9C94C"/><path d="M625 398 Q624 307 607 234 Q627 307 633 398Z" fill="#7E9A2E"/><path d="M952 478 Q958 441 965 412 Q960 441 959 478Z" fill="#8DA83A"/><path d="M36 484 Q41 409 47 349 Q43 409 43 484Z" fill="#B9C94C"/><path d="M903 460 Q893 382 844 332 Q895 382 910 460Z" fill="#A6C24A"/><path d="M-17 506 Q-19 457 -40 420 Q-16 457 -8 506Z" fill="#B9C94C"/><path d="M25 386 Q33 308 48 245 Q35 308 32 386Z" fill="#A6C24A"/><path d="M279 420 Q294 361 331 325 Q296 361 287 420Z" fill="#7E9A2E"/><path d="M489 514 Q501 460 531 422 Q503 460 496 514Z" fill="#B9C94C"/><path d="M493 311 Q506 245 540 201 Q507 245 499 311Z" fill="#8DA83A"/><path d="M146 462 Q145 419 134 385 Q147 419 151 462Z" fill="#C4D45A"/><path d="M987 471 Q994 416 1009 373 Q996 416 994 471Z" fill="#7E9A2E"/><path d="M182 371 Q176 311 145 270 Q178 311 188 371Z" fill="#7E9A2E"/><path d="M308 475 Q303 413 271 370 Q306 413 317 475Z" fill="#B9C94C"/><path d="M445 484 Q456 413 483 359 Q458 413 452 484Z" fill="#A6C24A"/><path d="M267 418 Q280 345 314 293 Q282 345 274 418Z" fill="#8DA83A"/><path d="M263 380 Q267 291 271 219 Q269 291 270 380Z" fill="#8DA83A"/><path d="M246 470 Q255 434 270 408 Q257 434 254 470Z" fill="#C4D45A"/><path d="M602 379 Q620 287 668 223 Q623 287 611 379Z" fill="#8DA83A"/><path d="M761 449 Q771 391 795 349 Q773 391 767 449Z" fill="#C4D45A"/><path d="M150 339 Q160 262 185 203 Q161 262 155 339Z" fill="#7E9A2E"/><path d="M387 507 Q385 429 368 367 Q388 429 394 507Z" fill="#C4D45A"/><path d="M340 341 Q345 255 349 185 Q347 255 348 341Z" fill="#C4D45A"/><path d="M115 375 Q118 338 113 308 Q120 338 123 375Z" fill="#B9C94C"/><path d="M671 427 Q676 370 682 323 Q678 370 678 427Z" fill="#A6C24A"/><path d="M132 448 Q137 369 137 305 Q140 369 142 448Z" fill="#8DA83A"/><path d="M750 481 Q763 408 800 358 Q765 408 756 481Z" fill="#7E9A2E"/><path d="M612 361 Q618 323 624 293 Q621 323 621 361Z" fill="#C4D45A"/><path d="M608 499 Q609 447 599 406 Q612 447 616 499Z" fill="#8DA83A"/><path d="M351 454 Q359 417 376 390 Q361 417 357 454Z" fill="#8DA83A"/><path d="M451 468 Q456 408 456 359 Q459 408 461 468Z" fill="#B9C94C"/><path d="M554 478 Q562 442 577 417 Q563 442 560 478Z" fill="#A6C24A"/><path d="M283 506 Q287 415 291 340 Q289 415 289 506Z" fill="#B9C94C"/><path d="M801 346 Q815 262 850 201 Q818 262 809 346Z" fill="#8DA83A"/><path d="M208 338 Q204 256 178 193 Q207 256 215 338Z" fill="#C4D45A"/><path d="M730 429 Q734 371 735 325 Q736 371 737 429Z" fill="#A6C24A"/><path d="M670 494 Q672 458 665 428 Q674 458 677 494Z" fill="#C4D45A"/><path d="M50 405 Q53 364 51 330 Q56 364 58 405Z" fill="#B9C94C"/><path d="M450 375 Q451 331 445 295 Q453 331 456 375Z" fill="#A6C24A"/><path d="M55 497 Q63 463 76 438 Q66 463 64 497Z" fill="#A6C24A"/><path d="M781 344 Q795 266 831 209 Q797 266 787 344Z" fill="#8DA83A"/><path d="M934 459 Q924 382 879 332 Q926 382 940 459Z" fill="#8DA83A"/><path d="M845 441 Q850 363 854 299 Q852 363 853 441Z" fill="#A6C24A"/><path d="M564 369 Q560 315 531 278 Q562 315 572 369Z" fill="#C4D45A"/><path d="M415 306 Q426 230 454 173 Q428 230 421 306Z" fill="#A6C24A"/><path d="M355 495 Q348 432 313 390 Q350 432 362 495Z" fill="#C4D45A"/><path d="M471 481 Q469 440 448 412 Q471 440 479 481Z" fill="#B9C94C"/><path d="M381 378 Q397 305 439 258 Q399 305 387 378Z" fill="#C4D45A"/><path d="M960 516 Q969 456 987 410 Q971 456 967 516Z" fill="#7E9A2E"/><path d="M116 303 Q121 257 126 220 Q123 257 123 303Z" fill="#8DA83A"/><path d="M823 514 Q830 476 845 447 Q832 476 829 514Z" fill="#B9C94C"/><path d="M531 316 Q538 263 547 221 Q541 263 540 316Z" fill="#7E9A2E"/><path d="M776 499 Q776 465 762 441 Q778 465 783 499Z" fill="#8DA83A"/><path d="M78 493 Q80 403 72 329 Q82 403 86 493Z" fill="#7E9A2E"/><path d="M769 425 Q783 349 820 295 Q785 349 775 425Z" fill="#A6C24A"/><path d="M723 403 Q729 317 742 247 Q731 317 728 403Z" fill="#7E9A2E"/><path d="M600 314 Q612 266 643 237 Q614 266 606 314Z" fill="#7E9A2E"/><path d="M565 464 Q573 417 588 382 Q576 417 573 464Z" fill="#A6C24A"/><path d="M75 515 Q63 433 13 381 Q64 433 80 515Z" fill="#A6C24A"/><path d="M955 511 Q945 431 896 380 Q947 431 963 511Z" fill="#B9C94C"/><path d="M932 358 Q928 316 901 289 Q931 316 940 358Z" fill="#8DA83A"/><path d="M766 494 Q764 455 746 428 Q767 455 774 494Z" fill="#B9C94C"/><path d="M508 323 Q525 243 567 187 Q528 243 517 323Z" fill="#8DA83A"/></g><g filter="url(#folBlur)"><path d="M39 424 Q36 308 -28 230 Q46 308 71 424Z" fill="#24340F"/><path d="M697 499 Q712 386 706 293 Q722 386 731 499Z" fill="#1A250B"/><path d="M-6 520 Q3 391 -5 286 Q10 391 16 520Z" fill="#1A250B"/><path d="M663 538 Q660 425 598 349 Q669 425 694 538Z" fill="#24340F"/><path d="M60 449 Q97 315 182 232 Q103 315 82 449Z" fill="#3F5A1C"/><path d="M275 511 Q298 434 309 372 Q310 434 315 511Z" fill="#1A250B"/><path d="M-29 429 Q-7 354 13 295 Q2 354 3 429Z" fill="#56781F"/><path d="M435 469 Q460 356 484 266 Q472 356 473 469Z" fill="#24340F"/><path d="M913 520 Q907 399 832 323 Q917 399 946 520Z" fill="#56781F"/><path d="M801 427 Q804 313 772 224 Q812 313 826 427Z" fill="#2C3F13"/><path d="M232 456 Q236 363 214 290 Q243 363 254 456Z" fill="#3A5218"/><path d="M133 534 Q148 417 144 322 Q158 417 166 534Z" fill="#4C6B22"/><path d="M253 450 Q247 352 185 291 Q254 352 277 450Z" fill="#4C6B22"/><path d="M919 459 Q951 334 998 240 Q963 334 957 459Z" fill="#24340F"/><path d="M517 433 Q524 303 491 201 Q534 303 550 433Z" fill="#4C6B22"/><path d="M36 435 Q35 333 -4 258 Q42 333 57 435Z" fill="#1A250B"/><path d="M936 469 Q966 333 1001 225 Q977 333 975 469Z" fill="#24340F"/><path d="M637 446 Q672 322 737 236 Q683 322 671 446Z" fill="#56781F"/><path d="M708 539 Q723 459 716 394 Q733 459 741 539Z" fill="#3F5A1C"/><path d="M746 450 Q748 364 694 310 Q758 364 780 450Z" fill="#1A250B"/><path d="M635 494 Q658 378 696 288 Q665 378 658 494Z" fill="#24340F"/><path d="M591 503 Q587 414 535 355 Q593 414 612 503Z" fill="#1E2B0E"/><path d="M40 429 Q66 320 99 236 Q76 320 73 429Z" fill="#3F5A1C"/><path d="M924 474 Q925 339 879 235 Q933 339 951 474Z" fill="#2C3F13"/><path d="M429 507 Q455 434 497 386 Q463 434 456 507Z" fill="#1A250B"/><path d="M-6 519 Q23 436 64 377 Q34 436 30 519Z" fill="#4C6B22"/><path d="M257 421 Q281 341 325 286 Q288 341 280 421Z" fill="#3F5A1C"/><path d="M648 442 Q656 365 614 312 Q667 365 687 442Z" fill="#56781F"/><path d="M231 431 Q225 320 160 247 Q233 320 257 431Z" fill="#3F5A1C"/><path d="M849 436 Q859 295 833 183 Q870 295 884 436Z" fill="#2C3F13"/><path d="M348 508 Q352 414 309 346 Q362 414 381 508Z" fill="#1A250B"/><path d="M915 440 Q947 315 1018 233 Q953 315 936 440Z" fill="#1A250B"/><path d="M883 512 Q889 380 842 280 Q900 380 921 512Z" fill="#3F5A1C"/><path d="M872 426 Q900 309 953 225 Q907 309 897 426Z" fill="#1E2B0E"/><path d="M457 478 Q473 404 479 343 Q482 404 486 478Z" fill="#56781F"/><path d="M88 478 Q94 398 65 338 Q103 398 117 478Z" fill="#24340F"/><path d="M165 452 Q168 352 132 276 Q176 352 192 452Z" fill="#1E2B0E"/><path d="M36 447 Q57 323 68 223 Q69 323 73 447Z" fill="#56781F"/><path d="M83 533 Q84 427 46 346 Q91 427 106 533Z" fill="#4C6B22"/><path d="M186 430 Q215 344 264 286 Q224 344 215 430Z" fill="#2C3F13"/><path d="M41 474 Q47 384 11 317 Q57 384 74 474Z" fill="#4C6B22"/><path d="M36 504 Q41 402 7 323 Q50 402 66 504Z" fill="#1E2B0E"/><path d="M632 502 Q653 434 667 379 Q664 434 667 502Z" fill="#2C3F13"/><path d="M640 437 Q679 310 755 227 Q690 310 675 437Z" fill="#4C6B22"/><path d="M648 498 Q640 378 563 304 Q649 378 677 498Z" fill="#24340F"/><path d="M429 522 Q464 434 519 379 Q475 434 466 522Z" fill="#3F5A1C"/><path d="M742 490 Q754 352 735 240 Q764 352 776 490Z" fill="#1E2B0E"/><path d="M336 478 Q351 407 338 350 Q362 407 373 478Z" fill="#3A5218"/><path d="M665 445 Q663 310 606 210 Q672 310 694 445Z" fill="#3F5A1C"/><path d="M1006 475 Q1035 391 1086 338 Q1042 391 1033 475Z" fill="#56781F"/><path d="M147 470 Q168 349 179 251 Q178 349 182 470Z" fill="#1A250B"/><path d="M827 420 Q830 307 793 221 Q839 307 856 420Z" fill="#56781F"/><path d="M112 449 Q137 374 183 326 Q144 374 135 449Z" fill="#2C3F13"/><path d="M1007 436 Q1027 345 1059 276 Q1034 345 1030 436Z" fill="#56781F"/><path d="M135 490 Q151 389 138 308 Q162 389 173 490Z" fill="#1A250B"/><path d="M861 535 Q890 448 941 392 Q898 448 889 535Z" fill="#1E2B0E"/><path d="M422 518 Q455 378 531 283 Q462 378 444 518Z" fill="#2C3F13"/><path d="M867 470 Q900 364 950 287 Q911 364 903 470Z" fill="#24340F"/><path d="M430 480 Q452 373 478 289 Q460 373 458 480Z" fill="#1A250B"/><path d="M415 491 Q429 406 416 337 Q441 406 452 491Z" fill="#3F5A1C"/><path d="M631 469 Q636 330 590 223 Q647 330 667 469Z" fill="#1E2B0E"/><path d="M619 477 Q643 359 691 272 Q649 359 639 477Z" fill="#3A5218"/><path d="M319 511 Q355 372 428 276 Q364 372 348 511Z" fill="#4C6B22"/><path d="M785 448 Q815 349 875 285 Q822 349 809 448Z" fill="#56781F"/><path d="M380 436 Q391 313 369 213 Q401 313 414 436Z" fill="#56781F"/><path d="M658 512 Q662 436 633 379 Q669 436 682 512Z" fill="#3F5A1C"/><path d="M81 481 Q104 347 125 239 Q114 347 114 481Z" fill="#3A5218"/><path d="M569 533 Q579 423 557 334 Q590 423 603 533Z" fill="#56781F"/><path d="M289 517 Q315 398 344 304 Q326 398 325 517Z" fill="#56781F"/><path d="M348 535 Q381 410 438 320 Q391 410 381 535Z" fill="#1A250B"/></g></symbol>
+  <!-- Ilustração de hambúrguer construída com o arco -->
+  <symbol id="burger" viewBox="0 0 400 320">
+    <path d="M30 150 C30 60 110 18 200 18 C290 18 370 60 370 150 Z" fill="#E9A23B"/>
+    <path d="M30 150 C30 60 110 18 200 18 C290 18 370 60 370 150 Z" fill="url(#gLuz)" opacity=".35"/>
+    <g fill="#F7E7C4"><ellipse cx="140" cy="70" rx="9" ry="5" transform="rotate(-20 140 70)"/><ellipse cx="200" cy="52" rx="9" ry="5"/><ellipse cx="260" cy="72" rx="9" ry="5" transform="rotate(18 260 72)"/><ellipse cx="170" cy="104" rx="9" ry="5" transform="rotate(10 170 104)"/><ellipse cx="236" cy="108" rx="9" ry="5" transform="rotate(-12 236 108)"/><ellipse cx="110" cy="116" rx="9" ry="5" transform="rotate(-30 110 116)"/><ellipse cx="296" cy="118" rx="9" ry="5" transform="rotate(30 296 118)"/></g>
+    <path d="M18 162 Q48 146 78 162 T138 162 T198 162 T258 162 T318 162 T382 162 L382 176 H18 Z" fill="#6E9A2E"/>
+    <path d="M24 176 H376 L340 214 L300 186 L260 212 H24 Z" fill="#FFBC0D"/>
+    <rect x="22" y="186" width="356" height="52" rx="26" fill="#4A2416"/>
+    <rect x="40" y="194" width="320" height="6" rx="3" fill="#6A3820" opacity=".7"/>
+    <path d="M30 250 H370 V262 C370 290 340 304 300 304 H100 C60 304 30 290 30 262 Z" fill="#D98E2E"/>
+  </symbol>
+</defs>
+</svg>
+
+<main class="deck">
+
+<!-- ======================================================= 01 CAPA -->
+<section class="slide" id="capa" style="background:radial-gradient(120% 90% at 78% 110%,#3A1A0E 0%,var(--grelha) 55%)">
+  <div class="chrome"><span><b>Estúdio Fresta</b> · Case 047</span><span>Rebranding conceitual · 2026</span><span>01 / 17</span></div>
+
+  <div style="position:absolute;left:3.2cqw;top:7cqw;width:50cqw">
+    <div class="kicker" style="margin-bottom:2.2cqw">McDonald's — nova interpretação de marca</div>
+    <h1 class="h-xl" style="font-size:17cqw;color:var(--pao)">Entre<span style="color:var(--gema)">.</span></h1>
+    <p class="serif it" style="font-size:2.6cqw;line-height:1.05;margin-top:2.4cqw;max-width:40cqw;color:var(--pao)">O arco sempre foi uma porta.<br>A gente só deixou ela aberta.</p>
+  </div>
+
+  <div style="position:absolute;left:3.2cqw;bottom:3cqw;display:flex;gap:3.4cqw;font:500 .72cqw/1.5 var(--mono);text-transform:uppercase;letter-spacing:.06em;opacity:.75">
+    <div>Escopo<br><span style="color:var(--gema)">Estratégia · Identidade · Ambiente</span></div>
+    <div>Peças<br><span style="color:var(--gema)">17 pranchas · 10 aplicações</span></div>
+    <div>Status<br><span style="color:var(--gema)">Experimental / não oficial</span></div>
+  </div>
+
+  <!-- janela-portal com a fotografia original (sem alteração: apenas enquadrada) -->
+  <div style="position:absolute;right:6cqw;top:5.2cqw;width:27cqw;height:52.5cqw">
+    <div class="portal" style="position:absolute;inset:0;clip-path:url(#portalTallClip);background:#000">
+      <img src="assets/fachada-atual.jpg" alt="Fachada atual: torre vermelha com os arcos dourados ao pôr do sol" style="width:100%;height:100%;object-fit:cover;object-position:50% 38%">
+    </div>
+    <div style="position:absolute;inset:-1.1cqw;border:1px solid rgba(255,188,13,.45);clip-path:url(#portalTallClip);"></div>
+    <div class="mono" style="position:absolute;left:-6.5cqw;bottom:6cqw;font-size:.62cqw;letter-spacing:.1em;writing-mode:vertical-rl;transform:rotate(180deg);opacity:.6;text-transform:uppercase">Ponto de partida · fachada atual, 17h48</div>
+  </div>
+  <div class="fresta pulse" style="left:66.5cqw;top:0;height:56.25cqw;opacity:.9"></div>
+  <svg class="glow" style="position:absolute;left:50cqw;bottom:9cqw;width:6cqw;height:5.4cqw;color:var(--gema)"><use href="#m"/></svg>
+</section>
+
+<!-- ======================================================= 02 DIAGNÓSTICO -->
+<section class="slide on-light" id="diagnostico" style="background:var(--pao);color:var(--grelha)">
+  <div class="chrome"><span><b>02</b> Diagnóstico da identidade atual</span><span>O que a fachada já nos diz</span><span>02 / 17</span></div>
+
+  <div style="position:absolute;left:3.2cqw;top:6cqw;width:21cqw;height:40.8cqw;background:#000">
+    <img src="assets/fachada-atual.jpg" alt="Fotografia original enviada" style="width:100%;height:100%;object-fit:cover">
+    <!-- camada de anotação (a foto permanece intacta) -->
+    <div style="position:absolute;left:52%;top:31%;width:2cqw;height:2cqw;border-radius:50%;border:2px solid var(--pao);transform:translate(-50%,-50%);display:grid;place-items:center;font:800 .8cqw var(--mono);color:var(--pao);background:rgba(26,18,14,.55)">1</div>
+    <div style="position:absolute;left:62%;top:48%;width:2cqw;height:2cqw;border-radius:50%;border:2px solid var(--pao);transform:translate(-50%,-50%);display:grid;place-items:center;font:800 .8cqw var(--mono);color:var(--pao);background:rgba(26,18,14,.55)">2</div>
+    <div style="position:absolute;left:90%;top:47%;width:2cqw;height:2cqw;border-radius:50%;border:2px solid var(--pao);transform:translate(-50%,-50%);display:grid;place-items:center;font:800 .8cqw var(--mono);color:var(--pao);background:rgba(26,18,14,.55)">3</div>
+    <div style="position:absolute;left:30%;top:80%;width:2cqw;height:2cqw;border-radius:50%;border:2px solid var(--pao);transform:translate(-50%,-50%);display:grid;place-items:center;font:800 .8cqw var(--mono);color:var(--pao);background:rgba(26,18,14,.55)">4</div>
+    <div class="mono" style="position:absolute;left:0;bottom:-1.6cqw;font-size:.6cqw;letter-spacing:.08em;text-transform:uppercase;opacity:.6">Foto de referência · original, sem tratamento</div>
+  </div>
+
+  <div style="position:absolute;left:28cqw;top:6cqw;width:30cqw">
+    <div class="kicker">Leitura de campo</div>
+    <h2 class="h-cond" style="font-size:5cqw;margin:1cqw 0 1.4cqw">Ícone gigante.<br>Experiência<br><span style="color:var(--brasa)">pequena.</span></h2>
+    <p class="body" style="max-width:27cqw">O símbolo é um dos mais reconhecíveis do planeta — e isso virou um risco: a marca passou a depender só dele. Em volta do “M”, tudo parece placa, sinalização, eficiência. Ninguém para pra olhar.</p>
+  </div>
+
+  <div style="position:absolute;left:28cqw;top:36.5cqw;width:30cqw;display:grid;grid-template-columns:1fr 1fr;gap:1.4cqw 2cqw">
+    <div><div class="num" style="color:var(--brasa)">01 · O SÍMBOLO</div><p class="small" style="margin-top:.5cqw">Força total. Os arcos sobrevivem a qualquer escala, distância e cultura. <b>Fica.</b></p></div>
+    <div><div class="num" style="color:var(--brasa)">02 · O VERMELHO</div><p class="small" style="margin-top:.5cqw">Vermelho + amarelo virou código da categoria inteira. Hoje é <b>categoria, não assinatura.</b></p></div>
+    <div><div class="num" style="color:var(--brasa)">03 · A ARQUITETURA</div><p class="small" style="margin-top:.5cqw">Torre = outdoor. A loja “anuncia”, mas não <b>convida</b>. A entrada é anônima.</p></div>
+    <div><div class="num" style="color:var(--brasa)">04 · O CONTEXTO</div><p class="small" style="margin-top:.5cqw">A marca é vista de passagem, do carro. Linguagem pensada para <b>velocidade, não presença.</b></p></div>
+  </div>
+
+  <div style="position:absolute;right:3.2cqw;top:6cqw;width:34cqw;height:46cqw;background:var(--grelha);color:var(--pao);padding:2.4cqw">
+    <div class="kicker">O insight da foto</div>
+    <p class="serif" style="font-size:3.3cqw;line-height:1.02;margin-top:1.4cqw">“Às 17h48 a torre deixa de ser placa e vira <span class="it" style="color:var(--gema)">lugar</span>. A marca fica mais bonita quando a luz bate nela.”</p>
+    <div class="rule" style="margin:2cqw 0"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.4cqw" class="small">
+      <div><div class="num">MANTER</div><p style="margin-top:.6cqw;opacity:.85">Os dois arcos · o dourado · o vermelho como energia · a escala monumental</p></div>
+      <div><div class="num" style="color:var(--brasa)">ABANDONAR</div><p style="margin-top:.6cqw;opacity:.85">Cor chapada como placa · loja como outdoor · campanhas sem sistema · tom genérico de “promoção”</p></div>
+    </div>
+    <div class="rule" style="margin:2cqw 0"></div>
+    <p class="small" style="opacity:.75">Pergunta do projeto:<br><span class="serif it" style="font-size:1.7cqw;color:var(--gema);opacity:1">E se a marca inteira fosse feita de luz — e não de tinta?</span></p>
+  </div>
+</section>
+
+<!-- ======================================================= 03 CONCEITO -->
+<section class="slide" id="conceito" style="background:var(--brasa)">
+  <div class="chrome" style="color:var(--pao)"><span><b style="color:var(--gema)">03</b> Conceito</span><span>Uma palavra, dois sentidos</span><span>03 / 17</span></div>
+
+  <div style="position:absolute;left:3.2cqw;top:4.5cqw">
+    <h2 class="h-xl" style="font-size:19.5cqw;color:var(--pao);letter-spacing:-.06em">Entre<span style="color:var(--gema)">.</span></h2>
+  </div>
+
+  <div style="position:absolute;left:3.6cqw;top:27cqw;width:28cqw">
+    <div class="num" style="color:var(--gema)">VERBO · IMPERATIVO</div>
+    <p class="serif" style="font-size:2.7cqw;line-height:1.02;margin-top:.6cqw"><span class="it">en·tre</span> — convite. A porta mais aberta da cidade: 24h, sem dress code, sem reserva, sem idade.</p>
+  </div>
+  <div style="position:absolute;left:34cqw;top:27cqw;width:28cqw">
+    <div class="num" style="color:var(--gema)">PREPOSIÇÃO</div>
+    <p class="serif" style="font-size:2.7cqw;line-height:1.02;margin-top:.6cqw"><span class="it">en·tre</span> — o espaço no meio. Entre a aula e o trampo, entre o rolê e a casa, entre amigos.</p>
+  </div>
+
+  <div style="position:absolute;right:3.2cqw;top:24cqw;width:28cqw;height:29cqw;background:var(--grelha);padding:1.8cqw;display:flex;flex-direction:column;justify-content:space-between">
+    <div class="kicker">Como o conceito vira forma</div>
+    <svg viewBox="0 0 520 330" style="width:100%">
+      <g fill="none" stroke-width="1.2" stroke="#F3E6D0" opacity=".35"><path d="M0 300 H520"/><path d="M0 40 H520" stroke-dasharray="4 6"/></g>
+      <!-- etapa 1: o M -->
+      <use href="#m" x="10" y="70" width="140" height="125" style="color:#FFBC0D"/>
+      <text x="80" y="232" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#F3E6D0" opacity=".7">ARCOS</text>
+      <text x="168" y="140" font-family="JetBrains Mono" font-size="20" fill="#FFBC0D">→</text>
+      <!-- etapa 2: contra-forma = portal -->
+      <path d="M205 195 V120 C205 88 218 70 238 70 C258 70 271 88 271 120 V195 Z" fill="#E2231A"/>
+      <path d="M279 195 V120 C279 88 292 70 312 70 C332 70 345 88 345 120 V195 Z" fill="#E2231A"/>
+      <text x="275" y="232" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#F3E6D0" opacity=".7">PORTAIS</text>
+      <text x="364" y="140" font-family="JetBrains Mono" font-size="20" fill="#FFBC0D">→</text>
+      <!-- etapa 3: a fresta -->
+      <rect x="440" y="40" width="5" height="260" fill="#FFBC0D"/>
+      <rect x="430" y="40" width="25" height="260" fill="#FFBC0D" opacity=".18"/>
+      <text x="442" y="320" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#F3E6D0" opacity=".7">FRESTA</text>
+    </svg>
+    <p class="small" style="opacity:.85">Os arcos geram dois ativos novos: o <b style="color:var(--gema)">Portal</b> (a contra-forma de cada arco, usada como janela, recorte e arquitetura) e a <b style="color:var(--gema)">Fresta</b> (o filete de luz que escapa entre eles — a porta entreaberta).</p>
+  </div>
+
+  <div class="fresta pulse" style="left:64.6cqw;top:0;height:56.25cqw"></div>
+  <p class="mono" style="position:absolute;left:3.6cqw;bottom:2.4cqw;font-size:.7cqw;letter-spacing:.1em;text-transform:uppercase;opacity:.85">Território: hora dourada · porta entreaberta · ritual coletivo · luz como material</p>
+</section>
+
+<!-- ======================================================= 04 ESTRATÉGIA -->
+<section class="slide" id="estrategia" style="background:var(--grelha)">
+  <div class="chrome"><span><b>04</b> Estratégia da nova marca</span><span>Plataforma</span><span>04 / 17</span></div>
+
+  <div style="position:absolute;left:3.2cqw;top:6cqw;width:30cqw">
+    <div class="kicker">Posicionamento</div>
+    <p class="serif" style="font-size:3.5cqw;line-height:1;margin-top:1.2cqw">Para quem vive no <span class="it" style="color:var(--gema)">entre</span>, o McDonald's é o lugar onde todo mundo cabe — a qualquer hora, do jeito que chegar.</p>
+    <div class="rule" style="margin:2.4cqw 0 1.6cqw"></div>
+    <div class="kicker">Público-núcleo</div>
+    <p class="body" style="margin-top:.8cqw">Geração Z e jovens adultos (16–30). Não compram refeição: compram <b>ritual</b> — o pós-treino, a madrugada depois da festa, o encontro antes do cinema. Valorizam honestidade, estética e lugares que viram cenário.</p>
+  </div>
+
+  <div style="position:absolute;left:37cqw;top:6cqw;width:27cqw">
+    <div class="kicker">Personalidade — de / para</div>
+    <div style="margin-top:1.4cqw;display:grid;gap:1.25cqw">
+      <!-- sliders -->
+      <div><div style="display:flex;justify-content:space-between" class="small"><span style="opacity:.5">Promocional</span><span>Generoso</span></div><div style="position:relative;height:.25cqw;background:rgba(243,230,208,.15);margin-top:.5cqw"><div style="position:absolute;left:18%;top:-.3cqw;width:.8cqw;height:.8cqw;border-radius:50%;border:2px solid rgba(243,230,208,.4)"></div><div style="position:absolute;left:84%;top:-.4cqw;width:1cqw;height:1cqw;border-radius:50%;background:var(--gema)"></div></div></div>
+      <div><div style="display:flex;justify-content:space-between" class="small"><span style="opacity:.5">Infantil</span><span>Brincalhão adulto</span></div><div style="position:relative;height:.25cqw;background:rgba(243,230,208,.15);margin-top:.5cqw"><div style="position:absolute;left:12%;top:-.3cqw;width:.8cqw;height:.8cqw;border-radius:50%;border:2px solid rgba(243,230,208,.4)"></div><div style="position:absolute;left:70%;top:-.4cqw;width:1cqw;height:1cqw;border-radius:50%;background:var(--gema)"></div></div></div>
+      <div><div style="display:flex;justify-content:space-between" class="small"><span style="opacity:.5">Placa</span><span>Lugar</span></div><div style="position:relative;height:.25cqw;background:rgba(243,230,208,.15);margin-top:.5cqw"><div style="position:absolute;left:10%;top:-.3cqw;width:.8cqw;height:.8cqw;border-radius:50%;border:2px solid rgba(243,230,208,.4)"></div><div style="position:absolute;left:90%;top:-.4cqw;width:1cqw;height:1cqw;border-radius:50%;background:var(--gema)"></div></div></div>
+      <div><div style="display:flex;justify-content:space-between" class="small"><span style="opacity:.5">Gritado</span><span>Confiante</span></div><div style="position:relative;height:.25cqw;background:rgba(243,230,208,.15);margin-top:.5cqw"><div style="position:absolute;left:20%;top:-.3cqw;width:.8cqw;height:.8cqw;border-radius:50%;border:2px solid rgba(243,230,208,.4)"></div><div style="position:absolute;left:78%;top:-.4cqw;width:1cqw;height:1cqw;border-radius:50%;background:var(--gema)"></div></div></div>
+      <div><div style="display:flex;justify-content:space-between" class="small"><span style="opacity:.5">Rápido</span><span>Rápido <i>e</i> presente</span></div><div style="position:relative;height:.25cqw;background:rgba(243,230,208,.15);margin-top:.5cqw"><div style="position:absolute;left:30%;top:-.3cqw;width:.8cqw;height:.8cqw;border-radius:50%;border:2px solid rgba(243,230,208,.4)"></div><div style="position:absolute;left:72%;top:-.4cqw;width:1cqw;height:1cqw;border-radius:50%;background:var(--gema)"></div></div></div>
+    </div>
+    <p class="mono" style="font-size:.62cqw;opacity:.5;margin-top:1.2cqw;letter-spacing:.06em">○ HOJE &nbsp;&nbsp; ● ENTRE.</p>
+
+    <div class="kicker" style="margin-top:2.2cqw">Voz</div>
+    <div style="margin-top:.9cqw;display:grid;gap:.7cqw" class="small">
+      <div style="display:flex;gap:1cqw"><span style="opacity:.45;text-decoration:line-through;flex:1">“Aproveite já! Oferta imperdível!”</span><span style="flex:1;color:var(--gema)">“Tá com fome às 3h? A gente também tá acordado.”</span></div>
+      <div style="display:flex;gap:1cqw"><span style="opacity:.45;text-decoration:line-through;flex:1">“Novo sabor exclusivo.”</span><span style="flex:1;color:var(--gema)">“Novo. Experimenta antes de opinar.”</span></div>
+    </div>
+  </div>
+
+  <div style="position:absolute;right:3.2cqw;top:6cqw;width:27cqw;display:grid;gap:1.2cqw">
+    <div class="kicker">Pilares de experiência</div>
+    <div style="background:var(--brasa);padding:1.6cqw;display:flex;gap:1.4cqw;align-items:flex-start"><svg style="width:3cqw;height:3cqw;flex:none;color:var(--gema)"><use href="#ic-24h"/></svg><div><div class="h-cond" style="font-size:2.4cqw">Abrir</div><p class="small" style="opacity:.9;margin-top:.3cqw">Acesso radical: todo ponto de contato convida. Lojas com portais reais, app sem fricção, linguagem sem jargão.</p></div></div>
+    <div style="background:var(--gema);color:var(--grelha);padding:1.6cqw;display:flex;gap:1.4cqw;align-items:flex-start"><svg style="width:3cqw;height:3cqw;flex:none;color:var(--brasa)"><use href="#ic-star"/></svg><div><div class="h-cond" style="font-size:2.4cqw">Iluminar</div><p class="small" style="margin-top:.3cqw">O dourado é tratado como luz. Ambientes, embalagens e telas que brilham — a “hora dourada” o dia todo.</p></div></div>
+    <div style="background:var(--pao);color:var(--grelha);padding:1.6cqw;display:flex;gap:1.4cqw;align-items:flex-start"><svg style="width:3cqw;height:3cqw;flex:none;color:var(--brasa)"><use href="#ic-heart"/></svg><div><div class="h-cond" style="font-size:2.4cqw">Dividir</div><p class="small" style="margin-top:.3cqw">Peças feitas para a mesa e para o feed: embalagens que viram cenário, rituais que viram conteúdo.</p></div></div>
+  </div>
+  <div style="position:absolute;left:3.2cqw;right:3.2cqw;top:39.5cqw">
+    <div class="kicker">Um dia em portais — os rituais que a marca ocupa</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:.6cqw;margin-top:1cqw">
+      <div style="border-top:2px solid var(--ceu);padding-top:.7cqw"><div class="mono" style="font-size:1.5cqw;font-weight:800;color:var(--ceu)">07:10</div><div class="small" style="opacity:.8">Café no caminho. <i>Entre</i> o ônibus e a aula.</div></div>
+      <div style="border-top:2px solid var(--pao);padding-top:.7cqw"><div class="mono" style="font-size:1.5cqw;font-weight:800">12:30</div><div class="small" style="opacity:.8">Almoço rápido, mesa com a equipe.</div></div>
+      <div style="border-top:2px solid var(--gema);padding-top:.7cqw;box-shadow:0 -1cqw 2cqw -1cqw rgba(255,188,13,.5)"><div class="mono" style="font-size:1.5cqw;font-weight:800;color:var(--gema)">17:48</div><div class="small" style="opacity:.8">Hora dourada: a torre acende a Fresta.</div></div>
+      <div style="border-top:2px solid var(--brasa);padding-top:.7cqw"><div class="mono" style="font-size:1.5cqw;font-weight:800;color:var(--brasa)">23:00</div><div class="small" style="opacity:.8">Pré-rolê. O ponto de encontro da turma.</div></div>
+      <div style="border-top:2px solid var(--gema);padding-top:.7cqw"><div class="mono" style="font-size:1.5cqw;font-weight:800;color:var(--gema)">03:12</div><div class="small" style="opacity:.8">Madrugada. A única porta acesa da rua.</div></div>
+    </div>
+  </div>
+  <p class="mono" style="position:absolute;left:3.2cqw;bottom:2.4cqw;font-size:.7cqw;letter-spacing:.1em;text-transform:uppercase;opacity:.7">Assinatura de marca: <span style="color:var(--gema)">Entre.</span> &nbsp;·&nbsp; Propósito: fazer da cidade um lugar onde todo mundo tem para onde ir.</p>
+</section>
+
+<!-- ======================================================= 05 LOGOTIPO -->
+<section class="slide on-light" id="logotipo" style="background:var(--pao);color:var(--grelha)">
+  <div class="chrome"><span><b>05</b> Construção do logotipo</span><span>Arcos parabólicos · corte reto · fresta</span><span>05 / 17</span></div>
+
+  <div style="position:absolute;left:3.2cqw;top:5.5cqw;width:46cqw;height:46cqw;background:#fff8ec;border:1px solid rgba(26,18,14,.12)">
+    <svg viewBox="-30 -20 300 260" style="width:100%;height:100%">
+      <defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M10 0 H0 V10" fill="none" stroke="#1A120E" stroke-width=".25" opacity=".18"/></pattern></defs>
+      <rect x="-30" y="-20" width="300" height="260" fill="url(#grid)"/>
+      <use href="#m" x="0" y="0" width="240" height="214" style="color:#E2231A"/>
+      <g fill="none" stroke="#1A120E" stroke-width=".5">
+        <path d="M-30 22 H270" stroke-dasharray="2 2"/><path d="M-30 150 H270" stroke-dasharray="2 2"/><path d="M-30 170 H270" stroke-dasharray="2 2"/><path d="M-30 212 H270" stroke-dasharray="2 2"/>
+        <path d="M120 -20 V240" stroke="#FFBC0D" stroke-width="1.2"/>
+        <circle cx="67" cy="92" r="70" opacity=".5"/><circle cx="173" cy="92" r="70" opacity=".5"/>
+        <path d="M30 150 C30 74 46 22 67 22 C88 22 104 74 104 150" stroke="#fff" stroke-width=".8"/>
+        <path d="M136 150 C136 74 152 22 173 22 C194 22 210 74 210 150" stroke="#fff" stroke-width=".8"/>
+        <circle cx="67" cy="22" r="2.2" fill="#1A120E"/><circle cx="173" cy="22" r="2.2" fill="#1A120E"/>
+        <path d="M16 228 H224"/><path d="M16 224 V232 M224 224 V232"/>
+        <path d="M250 22 V212"/><path d="M246 22 H254 M246 212 H254"/>
+      </g>
+      <g font-family="JetBrains Mono" font-size="6.5" fill="#1A120E">
+        <text x="-26" y="19">ÁPICE</text><text x="-26" y="147">OMBRO</text><text x="-26" y="167">DEGRAU</text><text x="-26" y="209">BASE</text>
+        <text x="120" y="238" text-anchor="middle">8 MÓDULOS (L)</text>
+        <text x="258" y="120" transform="rotate(90 258 120)" text-anchor="middle">7 MÓDULOS (A)</text>
+        <text x="124" y="-10" fill="#B07A00">EIXO / FRESTA 1/60 L</text>
+      </g>
+    </svg>
+  </div>
+
+  <div style="position:absolute;left:52cqw;top:5.5cqw;width:20cqw">
+    <div class="kicker">Lógica de desenho</div>
+    <div style="margin-top:1.2cqw;display:grid;gap:1.15cqw">
+      <div><div class="num" style="color:var(--brasa)">01 — PARÁBOLA, NÃO SEMICÍRCULO</div><p class="small" style="margin-top:.35cqw">Os arcos ganham ombros mais altos e ápice mais tenso: lembram uma porta, não uma letra.</p></div>
+      <div><div class="num" style="color:var(--brasa)">02 — TERMINAIS A 90°</div><p class="small" style="margin-top:.35cqw">Cortes retos e secos, como uma viga de arquitetura. O mesmo corte rege ícones e tipografia.</p></div>
+      <div><div class="num" style="color:var(--brasa)">03 — A FRESTA</div><p class="small" style="margin-top:.35cqw">Os arcos não se tocam mais. O vão de 1/60 da largura é por onde a luz passa — a porta entreaberta.</p></div>
+      <div><div class="num" style="color:var(--brasa)">04 — O DEGRAU</div><p class="small" style="margin-top:.35cqw">As pernas internas param mais alto: um “degrau” que cria a soleira do Portal.</p></div>
+    </div>
+  </div>
+
+  <!-- variações -->
+  <div style="position:absolute;right:3.2cqw;top:5.5cqw;width:21cqw;display:grid;grid-template-columns:1fr 1fr;gap:.8cqw">
+    <div style="aspect-ratio:1;background:var(--brasa);display:grid;place-items:center"><svg style="width:62%;height:62%;color:var(--gema)"><use href="#m"/></svg></div>
+    <div style="aspect-ratio:1;background:var(--grelha);display:grid;place-items:center"><svg class="glow" style="width:62%;height:62%;color:var(--gema)"><use href="#m-luz"/></svg></div>
+    <div style="aspect-ratio:1;background:#fff;display:grid;place-items:center;border:1px solid rgba(26,18,14,.12)"><svg style="width:62%;height:62%;color:var(--grelha)"><use href="#m"/></svg></div>
+    <div style="aspect-ratio:1;background:var(--pao);display:grid;place-items:center;border:1px solid rgba(26,18,14,.12)"><div style="width:58%;aspect-ratio:1;border-radius:22%;background:var(--brasa);display:grid;place-items:center;box-shadow:0 .6cqw 1.2cqw rgba(168,20,15,.35)"><svg style="width:40%;height:60%;color:var(--gema)"><use href="#arco"/></svg></div></div>
+  </div>
+  <div class="mono" style="position:absolute;right:3.2cqw;top:28cqw;width:21cqw;display:grid;grid-template-columns:1fr 1fr;gap:.8cqw;font-size:.6cqw;letter-spacing:.06em;text-transform:uppercase;opacity:.7">
+    <span>Primária · Gema s/ Brasa</span><span>Luz · versão noturna / digital</span><span>Monocromática</span><span>Ícone de app · arco único</span>
+  </div>
+
+  <!-- lockups -->
+  <div style="position:absolute;left:52cqw;bottom:3cqw;right:3.2cqw;height:20cqw;display:grid;grid-template-columns:1.45fr 1fr;gap:.8cqw">
+    <div style="background:var(--grelha);color:var(--pao);display:flex;align-items:center;justify-content:center;gap:1.6cqw">
+      <svg style="width:6cqw;height:5.4cqw;color:var(--gema)"><use href="#m"/></svg>
+      <div style="width:1px;height:5cqw;background:var(--gema);box-shadow:0 0 .8cqw var(--gema)"></div>
+      <div><div style="font-weight:800;font-stretch:112%;font-size:2cqw;letter-spacing:-.02em;line-height:.9">McDonald’s</div><div class="mono" style="font-size:.66cqw;letter-spacing:.2em;color:var(--gema);margin-top:.5cqw">ENTRE. — DESDE 1955</div></div>
+    </div>
+    <div style="background:#fff;border:1px solid rgba(26,18,14,.12);padding:1.4cqw;display:flex;flex-direction:column;justify-content:space-between">
+      <div class="num" style="color:var(--brasa)">TAMANHO MÍNIMO</div>
+      <div style="display:flex;align-items:flex-end;gap:1.4cqw;color:var(--brasa)">
+        <svg style="width:4cqw;height:3.6cqw"><use href="#m"/></svg><svg style="width:2.4cqw;height:2.2cqw"><use href="#m"/></svg><svg style="width:1.2cqw;height:1.1cqw"><use href="#m"/></svg>
+      </div>
+      <p class="mono" style="font-size:.6cqw;opacity:.7">IMPRESSO 8 MM · TELA 16 PX · ABAIXO DISSO A FRESTA É SUPRIMIDA</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= 06 PALETA -->
+<section class="slide" id="paleta" style="background:var(--grelha)">
+  <div class="chrome"><span><b>06</b> Paleta de cores</span><span>Extraída da fotografia de referência</span><span>06 / 17</span></div>
+
+  <div style="position:absolute;left:3.2cqw;top:6cqw;width:25cqw">
+    <div class="kicker">Paleta “Hora Dourada”</div>
+    <h2 class="h-cond" style="font-size:4.2cqw;margin:1cqw 0 1.2cqw">Cores medidas<br>na luz, não<br>no Pantone.</h2>
+    <p class="body">Cada cor foi coletada na própria foto da fachada às 17h48: o vermelho onde o sol bate, o dourado aceso, o céu, a folhagem. A paleta não é inventada — é o momento em que a marca já está mais bonita.</p>
+    <div style="position:relative;width:8.6cqw;height:16.7cqw;margin-top:1.6cqw">
+      <img src="assets/fachada-atual.jpg" alt="Referência da paleta" style="width:100%;height:100%;object-fit:cover">
+      <span style="position:absolute;left:30%;top:6%;width:1.1cqw;height:1.1cqw;border-radius:50%;border:2px solid #fff;background:var(--ceu)"></span>
+      <span style="position:absolute;left:68%;top:22%;width:1.1cqw;height:1.1cqw;border-radius:50%;border:2px solid #fff;background:var(--brasa)"></span>
+      <span style="position:absolute;left:48%;top:34%;width:1.1cqw;height:1.1cqw;border-radius:50%;border:2px solid #fff;background:var(--gema)"></span>
+      <span style="position:absolute;left:86%;top:46%;width:1.1cqw;height:1.1cqw;border-radius:50%;border:2px solid #fff;background:#5A3E2B"></span>
+      <span style="position:absolute;left:30%;top:80%;width:1.1cqw;height:1.1cqw;border-radius:50%;border:2px solid #fff;background:var(--folha)"></span>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:31cqw;top:6cqw;right:3.2cqw;bottom:9cqw;display:grid;grid-template-columns:2.2fr 1.6fr 1fr 1fr 1fr .8fr;gap:.5cqw">
+    <div style="background:var(--brasa);padding:1.4cqw;display:flex;flex-direction:column;justify-content:space-between"><div class="h-cond" style="font-size:3.2cqw">Brasa</div><div class="mono" style="font-size:.7cqw;line-height:1.7">#E2231A<br>RGB 226 35 26<br>CMYK 0 95 100 0<br><span style="color:var(--gema)">Energia · 40%</span></div></div>
+    <div style="background:var(--gema);color:var(--grelha);padding:1.4cqw;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 0 4cqw rgba(255,188,13,.35);position:relative;z-index:2"><div class="h-cond" style="font-size:3.2cqw">Gema</div><div class="mono" style="font-size:.7cqw;line-height:1.7">#FFBC0D<br>RGB 255 188 13<br>Sempre como luz<br><b>Luz · 25%</b></div></div>
+    <div style="background:#1A120E;border:1px solid rgba(243,230,208,.2);padding:1.2cqw;display:flex;flex-direction:column;justify-content:space-between"><div class="h-cond" style="font-size:2.2cqw">Grelha</div><div class="mono" style="font-size:.62cqw;line-height:1.7">#1A120E<br>Preto quente<br><span style="color:var(--gema)">Palco · 20%</span></div></div>
+    <div style="background:var(--pao);color:var(--grelha);padding:1.2cqw;display:flex;flex-direction:column;justify-content:space-between"><div class="h-cond" style="font-size:2.2cqw">Pão</div><div class="mono" style="font-size:.62cqw;line-height:1.7">#F3E6D0<br>Papel, kraft<br><b>Respiro · 10%</b></div></div>
+    <div style="background:var(--ceu);color:var(--grelha);padding:1.2cqw;display:flex;flex-direction:column;justify-content:space-between"><div class="h-cond" style="font-size:2.2cqw">Céu</div><div class="mono" style="font-size:.62cqw;line-height:1.7">#9BAFD4<br>Contraste frio<br><b>Acento · 3%</b></div></div>
+    <div style="background:var(--folha);padding:1.2cqw;display:flex;flex-direction:column;justify-content:space-between"><div class="h-cond" style="font-size:2.2cqw">Folha</div><div class="mono" style="font-size:.62cqw;line-height:1.7">#3F5A24<br>Frescor<br><span style="color:var(--gema)">2%</span></div></div>
+  </div>
+
+  <div style="position:absolute;left:31cqw;right:3.2cqw;bottom:3cqw;display:flex;gap:2cqw;align-items:center" class="small">
+    <div style="flex:1;display:flex;height:1.2cqw"><span style="flex:40;background:var(--brasa)"></span><span style="flex:25;background:var(--gema)"></span><span style="flex:20;background:#2b1e18"></span><span style="flex:10;background:var(--pao)"></span><span style="flex:3;background:var(--ceu)"></span><span style="flex:2;background:var(--folha)"></span></div>
+    <div style="flex:1.2;opacity:.8">Regra de ouro: o <b style="color:var(--gema)">Gema nunca é fundo chapado em ambiente</b> — ele é luz (néon, retroiluminação, brilho em tela). O <b style="color:var(--ceu)">Céu</b> é o contraste inesperado: quebra o código “vermelho + amarelo” da categoria.</div>
+  </div>
+</section>
+
+<!-- ======================================================= 07 TIPOGRAFIA -->
+<section class="slide on-light" id="tipografia" style="background:var(--pao);color:var(--grelha)">
+  <div class="chrome"><span><b>07</b> Tipografia</span><span>Uma família que estica como um arco</span><span>07 / 17</span></div>
+
+  <div style="position:absolute;left:3.2cqw;top:5.5cqw;right:3.2cqw;height:23cqw;background:var(--grelha);color:var(--pao);overflow:hidden;display:flex;align-items:center;padding-left:3cqw">
+    <div class="breathe" style="font-weight:900;font-size:15cqw;letter-spacing:-.04em;line-height:.8;white-space:nowrap;color:var(--gema)">ENTRE.</div>
+    <div style="position:absolute;right:2.4cqw;top:2cqw;width:22cqw;text-align:right">
+      <div class="kicker">Arco Grotesk — display</div>
+      <p class="small" style="margin-top:.6cqw;opacity:.8">Grotesca variável com eixo de largura de 62 a 125. Ela <b>respira</b>: condensada na correria (cardápio, preço), expandida no momento de pausa (campanha, fachada). <span class="mono" style="font-size:.6cqw;opacity:.7"><br>Protótipo construído sobre Archivo Variable (OFL)</span></p>
+    </div>
+    <div class="mono" style="position:absolute;right:2.4cqw;bottom:1.6cqw;font-size:.62cqw;letter-spacing:.1em;opacity:.6">WDTH 62 ⟷ 125 · ANIMADO</div>
+  </div>
+
+  <div style="position:absolute;left:3.2cqw;top:31cqw;width:30cqw">
+    <div class="kicker">Arco Grotesk</div>
+    <div style="font-weight:800;font-stretch:62%;font-size:4.4cqw;line-height:.95;margin-top:.6cqw">Aa Bb Cc Dd Ee Ff<br><span style="font-stretch:125%;font-size:3cqw;font-weight:900">Gg Hh 0123</span></div>
+    <div class="mono" style="font-size:.62cqw;margin-top:.8cqw;opacity:.6;letter-spacing:.06em">CONDENSADA 800 — INFO / PREÇO · EXPANDIDA 900 — VOZ ALTA</div>
+  </div>
+
+  <div style="position:absolute;left:36cqw;top:31cqw;width:26cqw">
+    <div class="kicker">Voz — Instrument Serif</div>
+    <p class="serif" style="font-size:4.6cqw;line-height:.92;margin-top:.6cqw">Itálica para <span class="it" style="color:var(--brasa)">o que é sentido</span>.</p>
+    <p class="small" style="margin-top:1cqw;opacity:.8">A serifa entra como contraponto humano: frases, convites, manifesto. Nunca em preço, nunca em sinalização.</p>
+  </div>
+
+  <div style="position:absolute;right:3.2cqw;top:31cqw;width:24cqw;padding:1.6cqw;border:1px dashed rgba(26,18,14,.4);position:absolute" class="pat-comanda">
+    <div class="kicker">Comanda — JetBrains Mono</div>
+    <div class="mono" style="font-size:.9cqw;line-height:1.8;margin-top:.8cqw">
+      PEDIDO #0427 ········· 03:12<br>
+      1× QUARTERÃO ·········· 32,90<br>
+      1× FRITAS M ··········· 12,50<br>
+      1× COCA 500 ··········· 9,90<br>
+      <b>TOTAL ················ 55,30</b><br>
+      <span style="color:var(--brasa)">ENTRE. VOLTE SEMPRE.</span>
+    </div>
+    <p class="small" style="margin-top:.8cqw;opacity:.75">A voz técnica do sistema: preços, horários, números de pedido. Herda a honestidade do cupom fiscal.</p>
+  </div>
+
+  <div style="position:absolute;left:3.2cqw;right:3.2cqw;bottom:2.6cqw;display:grid;grid-template-columns:repeat(4,1fr);gap:1.4cqw;align-items:end">
+    <div><div class="mono" style="font-size:.6cqw;opacity:.55">H1 · 900 · WDTH 125</div><div style="font-weight:900;font-stretch:125%;font-size:2.6cqw;letter-spacing:-.03em;line-height:.9">Entre com fome.</div></div>
+    <div><div class="mono" style="font-size:.6cqw;opacity:.55">H2 · 800 · WDTH 62</div><div style="font-weight:800;font-stretch:62%;font-size:2.6cqw;text-transform:uppercase;line-height:.9">Aberto 24 horas</div></div>
+    <div><div class="mono" style="font-size:.6cqw;opacity:.55">VOZ · SERIF ITÁLICO</div><div class="serif it" style="font-size:2.4cqw;line-height:.9">saia com história</div></div>
+    <div><div class="mono" style="font-size:.6cqw;opacity:.55">CORPO · 400 · WDTH 100</div><div style="font-size:.95cqw;line-height:1.4">Feito na hora, com ingredientes de verdade, para quem vive no entre.</div></div>
+  </div>
+</section>
+
+<!-- ======================================================= 08 ELEMENTOS GRÁFICOS -->
+<section class="slide" id="elementos" style="background:var(--grelha)">
+  <div class="chrome"><span><b>08</b> Elementos gráficos proprietários</span><span>Padrões · texturas · recortes</span><span>08 / 17</span></div>
+
+  <div style="position:absolute;left:3.2cqw;top:5.5cqw;width:22cqw">
+    <div class="kicker">Kit de construção</div>
+    <h2 class="h-cond" style="font-size:4.4cqw;margin:1cqw 0">Tudo nasce<br>de um arco.</h2>
+    <p class="body">Nenhum ornamento é aleatório: cada padrão é o arco repetido, invertido ou comido. Isso faz qualquer peça ser reconhecível mesmo <b>sem o logo</b>.</p>
+  </div>
+
+  <div style="position:absolute;left:28cqw;top:5.5cqw;right:3.2cqw;bottom:3cqw;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:1fr 1fr;gap:.8cqw">
+    <div style="position:relative;overflow:hidden;background:var(--brasa)"><div style="position:absolute;left:16%;right:16%;top:14%;bottom:0;clip-path:url(#portalTallClip);background:radial-gradient(80% 60% at 50% 100%,#FFF1C2,var(--gema) 45%,#E08600)"></div><div class="fresta" style="left:calc(50% - .11cqw);top:0;height:14%"></div><div class="lbl" style="position:absolute;left:1cqw;bottom:1cqw"></div></div>
+    <div class="pat-arcos" style="position:relative"></div>
+    <div class="pat-gergelim" style="position:relative"></div>
+    <div class="pat-portais" style="position:relative"></div>
+    <div style="position:relative;background:var(--grelha);border:1px solid rgba(243,230,208,.15);overflow:hidden">
+      <div class="fresta pulse" style="left:20%;top:0;height:100%"></div><div class="fresta pulse" style="left:48%;top:10%;height:90%;animation-delay:.6s"></div><div class="fresta pulse" style="left:76%;top:25%;height:75%;animation-delay:1.2s"></div>
+    </div>
+    <div class="pat-comanda" style="position:relative;color:var(--grelha);padding:1.2cqw;clip-path:polygon(0 0,100% 0,100% 96%,95% 100%,90% 96%,85% 100%,80% 96%,75% 100%,70% 96%,65% 100%,60% 96%,55% 100%,50% 96%,45% 100%,40% 96%,35% 100%,30% 96%,25% 100%,20% 96%,15% 100%,10% 96%,5% 100%,0 96%)"><div class="mono" style="font-size:.7cqw;line-height:1.9">#0427 · 03:12<br>QUARTERÃO<br>FRITAS M<br>COCA 500<br>————<br>ENTRE.</div></div>
+    <div style="position:relative;background:var(--gema);overflow:hidden;display:grid;place-items:center"><div style="font-weight:900;font-stretch:125%;font-size:9cqw;color:var(--brasa);letter-spacing:-.06em;line-height:.7;transform:translateY(12%)">En<br>tre.</div></div>
+    <div style="position:relative;background:var(--ceu);overflow:hidden"><svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%"><g fill="none" stroke="#1A120E" stroke-width="7"><path d="M20 200 V120 C20 70 35 40 60 40 C85 40 100 70 100 120 V200"/><path d="M100 200 V120 C100 70 115 40 140 40 C165 40 180 70 180 120 V200"/><path d="M-20 200 V150 C-20 110 -5 90 20 90"/><path d="M180 90 C205 90 220 110 220 150 V200"/></g></svg></div>
+  </div>
+  <div class="mono" style="position:absolute;left:28cqw;right:3.2cqw;top:23.6cqw;display:grid;grid-template-columns:repeat(4,1fr);gap:.8cqw;font-size:.6cqw;letter-spacing:.06em;text-transform:uppercase;pointer-events:none">
+    <span style="padding:.4cqw .6cqw;background:var(--grelha);justify-self:start">01 Portal · janela de luz</span><span style="padding:.4cqw .6cqw;background:var(--grelha);justify-self:start">02 Fila de Arcos · arcada</span><span style="padding:.4cqw .6cqw;background:var(--grelha);justify-self:start">03 Gergelim · textura de pão</span><span style="padding:.4cqw .6cqw;background:var(--grelha);justify-self:start">04 Portais em grade · vitral</span>
+  </div>
+  <div class="mono" style="position:absolute;left:28cqw;right:3.2cqw;bottom:3.6cqw;display:grid;grid-template-columns:repeat(4,1fr);gap:.8cqw;font-size:.6cqw;letter-spacing:.06em;text-transform:uppercase;pointer-events:none">
+    <span style="padding:.4cqw .6cqw;background:var(--grelha);justify-self:start">05 Frestas · ritmo de luz</span><span style="padding:.4cqw .6cqw;background:var(--grelha);justify-self:start">06 Comanda · cupom serrilhado</span><span style="padding:.4cqw .6cqw;background:var(--grelha);justify-self:start">07 Tipo empilhado · supergráfico</span><span style="padding:.4cqw .6cqw;background:var(--grelha);justify-self:start">08 Arcada contínua · traço</span>
+  </div>
+
+  <div style="position:absolute;left:3.2cqw;bottom:3cqw;width:22cqw" class="small">
+    <div class="num" style="margin-bottom:.6cqw">REGRAS</div>
+    <p style="opacity:.8">· Máx. 2 padrões por peça<br>· Fresta sempre vertical, nunca decorativa<br>· Portal recorta imagem ou contém luz — nunca é só moldura<br>· Gergelim só em contexto de comida</p>
+  </div>
+</section>
+
+<!-- ======================================================= 09 ÍCONES + FOTOGRAFIA -->
+<section class="slide on-light" id="icones" style="background:var(--pao);color:var(--grelha)">
+  <div class="chrome"><span><b>09</b> Ícones e direção de fotografia</span><span>Linguagem visual</span><span>09 / 17</span></div>
+
+  <div style="position:absolute;left:3.2cqw;top:5.5cqw;width:38cqw">
+    <div class="kicker">Sistema de ícones</div>
+    <p class="small" style="margin:.6cqw 0 1.4cqw;max-width:32cqw">Grade de 48, traço de 4, terminais retos como no logo. Toda forma arredondada é um arco do símbolo — os ícones são “primos” do M.</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.6cqw">
+      <div style="aspect-ratio:1;background:#fff;display:grid;place-items:center;position:relative"><svg style="width:45%;height:45%;color:var(--brasa)"><use href="#ic-burger"/></svg><span class="mono" style="position:absolute;bottom:.5cqw;font-size:.52cqw;opacity:.55">LANCHE</span></div>
+      <div style="aspect-ratio:1;background:#fff;display:grid;place-items:center;position:relative"><svg style="width:45%;height:45%;color:var(--brasa)"><use href="#ic-fries"/></svg><span class="mono" style="position:absolute;bottom:.5cqw;font-size:.52cqw;opacity:.55">FRITAS</span></div>
+      <div style="aspect-ratio:1;background:#fff;display:grid;place-items:center;position:relative"><svg style="width:45%;height:45%;color:var(--brasa)"><use href="#ic-cup"/></svg><span class="mono" style="position:absolute;bottom:.5cqw;font-size:.52cqw;opacity:.55">BEBIDA</span></div>
+      <div style="aspect-ratio:1;background:#fff;display:grid;place-items:center;position:relative"><svg style="width:45%;height:45%;color:var(--brasa)"><use href="#ic-coffee"/></svg><span class="mono" style="position:absolute;bottom:.5cqw;font-size:.52cqw;opacity:.55">CAFÉ</span></div>
+      <div style="aspect-ratio:1;background:var(--grelha);display:grid;place-items:center;position:relative"><svg style="width:45%;height:45%;color:var(--gema)"><use href="#ic-bag"/></svg><span class="mono" style="position:absolute;bottom:.5cqw;font-size:.52cqw;opacity:.55;color:var(--pao)">DELIVERY</span></div>
+      <div style="aspect-ratio:1;background:var(--grelha);display:grid;place-items:center;position:relative"><svg style="width:45%;height:45%;color:var(--gema)"><use href="#ic-pin"/></svg><span class="mono" style="position:absolute;bottom:.5cqw;font-size:.52cqw;opacity:.55;color:var(--pao)">LOJA</span></div>
+      <div style="aspect-ratio:1;background:var(--grelha);display:grid;place-items:center;position:relative"><svg style="width:45%;height:45%;color:var(--gema)"><use href="#ic-24h"/></svg><span class="mono" style="position:absolute;bottom:.5cqw;font-size:.52cqw;opacity:.55;color:var(--pao)">24H</span></div>
+      <div style="aspect-ratio:1;background:var(--grelha);display:grid;place-items:center;position:relative"><svg style="width:45%;height:45%;color:var(--gema)"><use href="#ic-drive"/></svg><span class="mono" style="position:absolute;bottom:.5cqw;font-size:.52cqw;opacity:.55;color:var(--pao)">DRIVE</span></div>
+      <div style="aspect-ratio:1;background:var(--brasa);display:grid;place-items:center;position:relative"><svg style="width:45%;height:45%;color:var(--gema)"><use href="#ic-ice"/></svg><span class="mono" style="position:absolute;bottom:.5cqw;font-size:.52cqw;opacity:.7;color:var(--pao)">SOBREMESA</span></div>
+      <div style="aspect-ratio:1;background:var(--brasa);display:grid;place-items:center;position:relative"><svg style="width:45%;height:45%;color:var(--gema)"><use href="#ic-app"/></svg><span class="mono" style="position:absolute;bottom:.5cqw;font-size:.52cqw;opacity:.7;color:var(--pao)">APP</span></div>
+      <div style="aspect-ratio:1;background:var(--brasa);display:grid;place-items:center;position:relative"><svg style="width:45%;height:45%;color:var(--gema)"><use href="#ic-heart"/></svg><span class="mono" style="position:absolute;bottom:.5cqw;font-size:.52cqw;opacity:.7;color:var(--pao)">FAVORITOS</span></div>
+      <div style="aspect-ratio:1;background:var(--brasa);display:grid;place-items:center;position:relative"><svg style="width:45%;height:45%;color:var(--gema)"><use href="#ic-star"/></svg><span class="mono" style="position:absolute;bottom:.5cqw;font-size:.52cqw;opacity:.7;color:var(--pao)">NOVIDADE</span></div>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:3.2cqw;bottom:3cqw;width:38cqw;height:9cqw;background:var(--grelha);color:var(--pao);display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center">
+    <div style="display:flex;gap:1cqw;align-items:center;padding-left:1.6cqw"><svg style="width:3cqw;height:3cqw;color:var(--gema)"><use href="#ic-bag"/></svg><div><div class="h-cond" style="font-size:1.6cqw">Retirada</div><div class="mono" style="font-size:.6cqw;color:var(--gema)">PORTAL 2 →</div></div></div>
+    <div style="display:flex;gap:1cqw;align-items:center;border-left:1px solid #3a2a22;padding-left:1.6cqw"><svg style="width:3cqw;height:3cqw;color:var(--gema)"><use href="#ic-drive"/></svg><div><div class="h-cond" style="font-size:1.6cqw">Drive</div><div class="mono" style="font-size:.6cqw;color:var(--gema)">24H ↗</div></div></div>
+    <div style="display:flex;gap:1cqw;align-items:center;border-left:1px solid #3a2a22;padding-left:1.6cqw"><svg style="width:3cqw;height:3cqw;color:var(--gema)"><use href="#ic-coffee"/></svg><div><div class="h-cond" style="font-size:1.6cqw">McCafé</div><div class="mono" style="font-size:.6cqw;color:var(--gema)">PISO 1 ↑</div></div></div>
+  </div>
+  <div class="mono" style="position:absolute;left:3.2cqw;bottom:1.4cqw;font-size:.58cqw;letter-spacing:.08em;opacity:.6">ÍCONES EM USO · SINALIZAÇÃO INTERNA RETROILUMINADA</div>
+  <div style="position:absolute;left:45cqw;top:5.5cqw;right:3.2cqw">
+    <div class="kicker">Direção de fotografia — “Hora Dourada”</div>
+    <p class="small" style="margin-top:.6cqw;max-width:40cqw">Luz rasante real, ângulos baixos (como a foto de referência), primeiro plano desfocado e sempre um enquadramento em Portal. Nada de comida plástica em fundo branco: comida em cena, com gente e com hora marcada.</p>
+  </div>
+  <div style="position:absolute;left:45cqw;top:13cqw;right:3.2cqw;height:28cqw;display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:.8cqw">
+    <div style="position:relative"><div style="position:absolute;inset:0;clip-path:url(#portalTallClip)"><img src="assets/fachada-atual.jpg" alt="Enquadramento 1" style="width:100%;height:100%;object-fit:cover;object-position:50% 30%"></div></div>
+    <div style="position:relative;background:var(--grelha)"><div style="position:absolute;inset:0;clip-path:url(#portalClip)"><img src="assets/fachada-atual.jpg" alt="Enquadramento 2" style="width:100%;height:100%;object-fit:cover;object-position:52% 36%;transform:scale(2.2);transform-origin:52% 34%"></div></div>
+    <div style="position:relative;overflow:hidden"><img src="assets/fachada-atual.jpg" alt="Enquadramento 3" style="width:100%;height:100%;object-fit:cover;object-position:50% 85%"><div class="fresta" style="left:50%;top:0;height:100%"></div></div>
+  </div>
+  <div class="mono" style="position:absolute;left:45cqw;top:42cqw;right:3.2cqw;display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:.8cqw;font-size:.6cqw;letter-spacing:.06em;text-transform:uppercase;opacity:.7">
+    <span>01 · Contra-plongée, luz rasante</span><span>02 · Detalhe macro do arco aceso</span><span>03 · Primeiro plano vivo + fresta</span>
+  </div>
+  <div style="position:absolute;left:45cqw;right:3.2cqw;bottom:3cqw;display:grid;grid-template-columns:repeat(4,1fr);gap:1cqw" class="small">
+    <div><b style="color:var(--brasa)">Luz</b><br>Sol baixo ou néon. Sombra longa sempre.</div>
+    <div><b style="color:var(--brasa)">Ângulo</b><br>De baixo pra cima. A marca é monumento.</div>
+    <div><b style="color:var(--brasa)">Gente</b><br>Real, de costas, em movimento. Sem pose.</div>
+    <div><b style="color:var(--brasa)">Tempo</b><br>Toda foto carrega a hora: 17h48, 03h12.</div>
+  </div>
+</section>
+
+<!-- ======================================================= 10 EMBALAGENS -->
+<section class="slide" id="embalagens" style="background:radial-gradient(90% 80% at 50% 100%,#3a1810,var(--grelha) 70%)">
+  <div class="chrome"><span><b>10</b> Aplicações — embalagens</span><span>Caixa · sacola · copo · fritas</span><span>10 / 17</span></div>
+
+  <div style="position:absolute;left:3.2cqw;top:5.5cqw;width:24cqw">
+    <div class="kicker">Embalagem como cenário</div>
+    <h2 class="h-cond" style="font-size:4.4cqw;margin:1cqw 0">Feitas para<br>a mesa e<br>para o feed.</h2>
+    <p class="body">A alça da sacola é um Portal vazado: por ela se vê a luz do outro lado. O copo carrega a Fila de Arcos como uma arcada que gira. A caixa abre como uma porta — e por dentro, a Fresta.</p>
+  </div>
+
+  <!-- floor -->
+  <div style="position:absolute;left:0;right:0;bottom:0;height:13cqw;background:linear-gradient(#2a1510,#160d0a)"></div>
+
+  <!-- SACOLA -->
+  <svg viewBox="0 0 300 420" style="position:absolute;left:28cqw;bottom:5.5cqw;width:17cqw;filter:drop-shadow(1.2cqw 1.2cqw 1cqw rgba(0,0,0,.55))">
+    <defs><clipPath id="bagC"><path d="M20 30 H280 L290 410 H10 Z"/></clipPath></defs>
+    <path d="M20 30 H280 L290 410 H10 Z" fill="#C9A27A"/>
+    <g clip-path="url(#bagC)">
+      <rect x="0" y="0" width="300" height="420" fill="url(#gBrasa)" opacity="0"/>
+      <rect x="230" y="0" width="70" height="420" fill="#000" opacity=".12"/>
+      <use href="#m" x="40" y="250" width="220" height="196" style="color:#E2231A"/>
+      <rect x="0" y="30" width="300" height="10" fill="#000" opacity=".08"/>
+    </g>
+    <!-- alça portal vazada -->
+    <path d="M118 112 V82 C118 66 131 58 150 58 C169 58 182 66 182 82 V112 Z" fill="#160d0a"/>
+    <path d="M118 112 V82 C118 66 131 58 150 58 C169 58 182 66 182 82 V112 Z" fill="url(#gLuz)" opacity=".85"/>
+    <text x="150" y="160" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="34" font-stretch="125%" fill="#1A120E" letter-spacing="-1">Entre.</text>
+    <text x="40" y="200" font-family="JetBrains Mono" font-size="9" fill="#1A120E" opacity=".75">PEDIDO #0427 · 03:12 · FEITO NA HORA</text>
+    <text x="40" y="214" font-family="JetBrains Mono" font-size="9" fill="#1A120E" opacity=".75">PAPEL 100% RECICLADO · DOBRE E REUSE</text>
+  </svg>
+
+  <!-- CAIXA (isométrica) -->
+  <svg viewBox="0 0 320 300" style="position:absolute;left:47.5cqw;bottom:5.5cqw;width:18cqw;filter:drop-shadow(1cqw 1cqw .8cqw rgba(0,0,0,.55))">
+    <defs><pattern id="arcosBox" width="22" height="13" patternUnits="userSpaceOnUse"><path d="M3 13 V9 C3 4 6.5 2 11 2 C15.5 2 19 4 19 9 V13" fill="none" stroke="#FFBC0D" stroke-width="2.6"/></pattern></defs>
+    <!-- tampa aberta (porta) -->
+    <path d="M160 40 L290 95 L290 20 L160 -30 Z" fill="#A8140F" transform="translate(0 30)"/>
+    <path d="M222 70 L224 0" stroke="#FFE07A" stroke-width="3" transform="translate(0 40)"/>
+    <!-- interior -->
+    <path d="M30 125 L160 70 L290 125 L160 180 Z" fill="#7A0F0A"/>
+    <svg x="70" y="58" width="180" height="110" viewBox="0 0 400 320"><use href="#burger"/></svg>
+    <!-- faces -->
+    <path d="M30 125 L160 180 L160 290 L30 235 Z" fill="#E2231A"/>
+    <path d="M30 125 L160 180 L160 290 L30 235 Z" fill="url(#arcosBox)" opacity=".95"/>
+    <path d="M160 180 L290 125 L290 235 L160 290 Z" fill="#B5160F"/>
+    <path d="M225 160 L225 260" stroke="#FFE07A" stroke-width="3"/>
+    <path d="M225 160 L225 260" stroke="#FFBC0D" stroke-width="14" opacity=".25"/>
+    <g transform="matrix(1 .423 0 1 46 200)"><rect width="84" height="16" fill="#1A120E"/><text x="6" y="11.5" font-family="JetBrains Mono" font-weight="800" font-size="8.5" fill="#FFBC0D">QUARTERÃO · 03:12</text></g>
+  </svg>
+
+  <!-- COPO -->
+  <svg viewBox="0 0 220 420" style="position:absolute;left:67cqw;bottom:5.5cqw;width:11cqw;filter:drop-shadow(1cqw 1cqw .8cqw rgba(0,0,0,.55))">
+    <defs><clipPath id="cupC"><path d="M22 60 H198 L176 412 H44 Z"/></clipPath>
+      <pattern id="arcosP" width="44" height="26" patternUnits="userSpaceOnUse"><path d="M6 26 V18 C6 8 13 4 22 4 C31 4 38 8 38 18 V26" fill="none" stroke="#FFBC0D" stroke-width="5"/></pattern>
+      <linearGradient id="cupShade" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".25"/><stop offset=".35" stop-color="#fff" stop-opacity=".12"/><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient></defs>
+    <path d="M118 4 L104 60" stroke="#F3E6D0" stroke-width="9"/>
+    <path d="M22 60 H198 L176 412 H44 Z" fill="#E2231A"/>
+    <g clip-path="url(#cupC)"><rect x="0" y="230" width="220" height="190" fill="url(#arcosP)"/><rect x="0" y="216" width="220" height="10" fill="#1A120E"/><use href="#m" x="62" y="100" width="96" height="86" style="color:#FFBC0D"/><rect x="0" y="0" width="220" height="420" fill="url(#cupShade)"/></g>
+    <ellipse cx="110" cy="58" rx="94" ry="12" fill="#F3E6D0"/><rect x="14" y="48" width="192" height="12" rx="6" fill="#F3E6D0"/>
+  </svg>
+
+  <!-- FRITAS -->
+  <svg viewBox="0 0 220 300" style="position:absolute;left:80cqw;bottom:5.5cqw;width:12cqw;filter:drop-shadow(1cqw 1cqw .8cqw rgba(0,0,0,.55))">
+    <g fill="#F4C24A"><rect x="50" y="10" width="16" height="120" transform="rotate(-8 58 70)"/><rect x="72" y="0" width="16" height="130"/><rect x="94" y="6" width="16" height="124" transform="rotate(5 102 70)"/><rect x="116" y="2" width="16" height="128" transform="rotate(-3 124 70)"/><rect x="138" y="12" width="16" height="118" transform="rotate(9 146 70)"/></g>
+    <path d="M30 100 H190 L170 296 H50 Z" fill="#FFBC0D"/>
+    <path d="M30 100 H190 L186 128 C150 108 70 108 34 128 Z" fill="#E2231A"/>
+    <path d="M78 296 V230 C78 196 92 176 110 176 C128 176 142 196 142 230 V296 Z" fill="#E2231A"/>
+    <rect x="108.5" y="196" width="3" height="100" fill="#FFF1C2"/>
+    <text x="110" y="160" text-anchor="middle" font-family="JetBrains Mono" font-weight="800" font-size="11" fill="#1A120E">FRITAS · M</text>
+  </svg>
+
+  <div class="mono" style="position:absolute;left:28cqw;right:3.2cqw;bottom:2.2cqw;display:grid;grid-template-columns:20.8fr 18fr 13fr 14.6fr;font-size:.6cqw;letter-spacing:.08em;text-transform:uppercase;opacity:.65">
+    <span>Sacola kraft · alça-portal vazada</span><span>Caixa · porta que abre</span><span>Copo · arcada 360°</span><span>Fritas · portal na base</span>
+  </div>
+</section>
+
+<!-- ======================================================= 11 FACHADA -->
+<section class="slide" id="fachada" style="background:var(--grelha)">
+  <div class="chrome"><span><b>11</b> Fachada e arquitetura</span><span>Da torre-placa à torre-portal</span><span>11 / 17</span></div>
+
+  <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5C73A6"/><stop offset=".55" stop-color="#9BAFD4"/><stop offset=".85" stop-color="#E8C39A"/><stop offset="1" stop-color="#F1B072"/></linearGradient>
+      <linearGradient id="towerSide" x1="0" x2="1"><stop offset="0" stop-color="#8E120C"/><stop offset="1" stop-color="#6A0D08"/></linearGradient>
+      <linearGradient id="towerFront" x1="0" x2="1"><stop offset="0" stop-color="#F23A28"/><stop offset="1" stop-color="#D21D14"/></linearGradient>
+      <pattern id="slats" width="40" height="22" patternUnits="userSpaceOnUse"><rect width="40" height="22" fill="#5A3E2B"/><rect y="19" width="40" height="3" fill="#3B271A"/></pattern>
+      <radialGradient id="floorGlow" cx=".5" cy="0" r=".6"><stop offset="0" stop-color="#FFC93A" stop-opacity=".55"/><stop offset="1" stop-color="#FFC93A" stop-opacity="0"/></radialGradient>
+      <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3A2418"/><stop offset="1" stop-color="#E9A040"/></linearGradient>
+      <filter id="blur8"><feGaussianBlur stdDeviation="8"/></filter>
+      <filter id="blur30"><feGaussianBlur stdDeviation="30"/></filter>
+    </defs>
+    <rect width="1600" height="900" fill="url(#sky)"/>
+    <!-- chão -->
+    <rect y="760" width="1600" height="140" fill="#2A211C"/>
+    <rect y="760" width="1600" height="6" fill="#4A3A30"/>
+    <!-- volume da loja com ripado de madeira (como na foto) -->
+    <rect x="760" y="430" width="760" height="330" fill="url(#slats)"/>
+    <rect x="760" y="420" width="760" height="14" fill="#2B1D14"/>
+    <rect x="860" y="560" width="600" height="200" fill="url(#glass)"/>
+    <g stroke="#2B1D14" stroke-width="8"><path d="M1010 560 V760 M1160 560 V760 M1310 560 V760"/></g>
+    <!-- silhuetas internas -->
+    <g fill="#2B1D14" opacity=".55"><circle cx="940" cy="640" r="16"/><rect x="924" y="656" width="32" height="104" rx="14"/><circle cx="1210" cy="650" r="15"/><rect x="1195" y="665" width="30" height="95" rx="13"/><circle cx="1250" cy="655" r="13"/><rect x="1237" y="668" width="26" height="92" rx="12"/></g>
+    <text x="880" y="520" font-family="Archivo" font-weight="800" font-stretch="125%" font-size="56" fill="#FFBC0D" letter-spacing="-1" style="filter:drop-shadow(0 0 8px rgba(255,188,13,.8))">McDonald’s</text>
+    <text x="884" y="548" font-family="JetBrains Mono" font-size="18" fill="#F3E6D0" opacity=".85" letter-spacing="3">ABERTO 24H · ENTRE.</text>
+    <!-- torre portal: lateral -->
+    <path d="M760 110 L800 90 L800 760 L760 760 Z" fill="url(#towerSide)"/>
+    <!-- torre portal: frente -->
+    <rect x="460" y="110" width="300" height="650" fill="url(#towerFront)"/>
+    <path d="M800 90 L500 90 L460 110 L760 110 Z" fill="#B3170F"/>
+    <!-- portal-entrada recortado na torre -->
+    <path d="M520 760 V560 C520 470 556 420 610 420 C664 420 700 470 700 560 V760 Z" fill="#7A0F0A"/>
+    <path d="M532 760 V566 C532 482 564 436 610 436 C656 436 688 482 688 566 V760 Z" fill="url(#gLuz)"/>
+    <ellipse cx="610" cy="770" rx="240" ry="40" fill="url(#floorGlow)"/>
+    <!-- pessoa entrando -->
+    <g fill="#1A120E"><circle cx="604" cy="664" r="13"/><path d="M590 680 h28 l6 80 h-14 l-6 -50 l-6 50 h-14 z"/></g>
+    <!-- fresta vertical de luz -->
+    <rect x="606" y="150" width="8" height="250" fill="#FFE07A"/>
+    <rect x="590" y="150" width="40" height="250" fill="#FFBC0D" opacity=".35" filter="url(#blur8)"/>
+    <!-- novo M -->
+    <use href="#m" x="500" y="160" width="220" height="196" style="color:#FFBC0D;filter:drop-shadow(0 0 10px rgba(255,200,40,.7))"/>
+    <!-- totem -->
+    <rect x="200" y="200" width="70" height="560" fill="#1A120E"/>
+    <rect x="160" y="140" width="150" height="150" fill="#E2231A"/>
+    <use href="#m" x="180" y="160" width="110" height="98" style="color:#FFBC0D;filter:drop-shadow(0 0 6px rgba(255,200,40,.7))"/>
+    <rect x="160" y="300" width="150" height="54" fill="#1A120E"/>
+    <text x="235" y="334" text-anchor="middle" font-family="JetBrains Mono" font-weight="800" font-size="20" fill="#FFBC0D">24H · DRIVE</text>
+    <rect x="232" y="364" width="6" height="396" fill="#FFE07A"/>
+    <!-- folhagem em primeiro plano (citação da foto) -->
+    <use href="#foliage" x="-40" y="700" width="560" height="240"/>
+    <use href="#foliage" x="1100" y="690" width="560" height="250"/>
+  </svg>
+
+  <div style="position:absolute;right:3.2cqw;top:5.5cqw;width:34cqw;background:rgba(26,18,14,.9);padding:1.8cqw;display:grid;grid-template-columns:1fr 7.4cqw;gap:1.6cqw"><div>
+    <div class="kicker">Arquitetura · Torre-Portal</div>
+    <p class="small" style="margin-top:.7cqw;opacity:.9">A torre deixa de ser placa e vira <b style="color:var(--gema)">entrada</b>: o Portal é recortado no volume vermelho e iluminado por dentro. Acima, a Fresta — uma lâmina vertical de luz — liga a porta ao símbolo. O ripado de madeira da loja atual é mantido: calor e continuidade.</p>
+    <div class="rule" style="margin:1.2cqw 0;color:var(--pao)"></div>
+    <div class="mono" style="font-size:.6cqw;line-height:1.8;opacity:.75;letter-spacing:.04em">TORRE · ACM BRASA FOSCO<br>PORTAL · ALUMÍNIO ANODIZADO OURO + LED 2700K<br>FRESTA · PERFIL LED LINEAR 12 M<br>TOTEM · AÇO GRELHA + CAIXA BRASA</div>
+  </div>
+  <div>
+    <div style="position:relative;width:7.4cqw;height:14.4cqw;border:2px solid var(--pao)"><img src="assets/fachada-atual.jpg" alt="Fachada atual" style="width:100%;height:100%;object-fit:cover"></div>
+    <div class="mono" style="font-size:.58cqw;margin-top:.5cqw;letter-spacing:.06em;color:var(--grelha);background:var(--pao);padding:.3cqw .4cqw;display:inline-block">HOJE → AMANHÃ</div>
+  </div></div>
+</section>
+
+<!-- ======================================================= 12 UNIFORMES + TOTEM -->
+<section class="slide on-light" id="uniformes" style="background:var(--pao);color:var(--grelha)">
+  <div class="chrome"><span><b>12</b> Uniformes e sinalização</span><span>Pessoas são a marca em movimento</span><span>12 / 17</span></div>
+
+  <div style="position:absolute;left:3.2cqw;top:5.5cqw;width:22cqw">
+    <div class="kicker">Uniforme “Turno”</div>
+    <h2 class="h-cond" style="font-size:4.4cqw;margin:1cqw 0">Equipe que<br>parece anfitrião,<br>não balcão.</h2>
+    <p class="body">Base Grelha (resiste ao turno), avental Brasa com a Fresta costurada como viés dourado. O crachá é uma comanda: nome, desde quando, e o lanche favorito — conversa começa ali.</p>
+  </div>
+
+  <!-- camiseta + avental -->
+  <svg viewBox="0 0 400 460" style="position:absolute;left:27cqw;top:6cqw;width:22cqw">
+    <path d="M120 20 L160 8 C170 30 230 30 240 8 L280 20 L380 80 L345 160 L300 140 L300 450 H100 V140 L55 160 L20 80 Z" fill="#1A120E"/>
+    <path d="M160 8 C170 30 230 30 240 8" fill="none" stroke="#2c201a" stroke-width="10"/>
+    <use href="#m" x="250" y="70" width="32" height="28" style="color:#FFBC0D"/>
+    <!-- avental -->
+    <path d="M125 190 H275 L290 450 H110 Z" fill="#E2231A"/>
+    <path d="M125 190 L95 120 M275 190 L305 120" stroke="#E2231A" stroke-width="8"/>
+    <rect x="198" y="190" width="4" height="260" fill="#FFBC0D"/>
+    <rect x="140" y="300" width="120" height="70" fill="none" stroke="#A8140F" stroke-width="4"/>
+    <path d="M110 230 H40 M290 230 H360" stroke="#1A120E" stroke-width="7"/>
+    <!-- crachá comanda -->
+    <g transform="translate(82 60) rotate(-4)"><rect width="70" height="44" fill="#F3E6D0"/><text x="6" y="14" font-family="JetBrains Mono" font-size="7" font-weight="800" fill="#1A120E">BIA</text><text x="6" y="25" font-family="JetBrains Mono" font-size="5.5" fill="#1A120E">DESDE 2024</text><text x="6" y="35" font-family="JetBrains Mono" font-size="5.5" fill="#E2231A">♥ MC FRITAS</text></g>
+  </svg>
+  <!-- boné -->
+  <svg viewBox="0 0 300 180" style="position:absolute;left:50cqw;top:8cqw;width:13cqw">
+    <path d="M40 130 C40 40 100 10 150 10 C200 10 260 40 260 130 Z" fill="#1A120E"/>
+    <path d="M150 10 V130" stroke="#FFBC0D" stroke-width="4"/>
+    <path d="M30 128 H290 C290 150 250 160 160 160 C80 160 30 150 30 128 Z" fill="#E2231A"/>
+    <use href="#m" x="104" y="64" width="40" height="36" style="color:#FFBC0D"/>
+  </svg>
+  <div class="mono" style="position:absolute;left:50cqw;top:18.5cqw;font-size:.6cqw;opacity:.6;letter-spacing:.06em">BONÉ · FRESTA COMO COSTURA CENTRAL</div>
+  <div class="pat-comanda" style="position:absolute;left:51cqw;top:23cqw;width:12cqw;padding:1.2cqw;transform:rotate(-3deg);box-shadow:0 1cqw 2cqw rgba(26,18,14,.25);clip-path:polygon(0 0,100% 0,100% 94%,92% 100%,84% 94%,76% 100%,68% 94%,60% 100%,52% 94%,44% 100%,36% 94%,28% 100%,20% 94%,12% 100%,4% 94%,0 100%)">
+    <div style="display:flex;justify-content:space-between;align-items:center"><svg style="width:1.6cqw;height:1.4cqw;color:var(--brasa)"><use href="#m"/></svg><span class="mono" style="font-size:.5cqw">#EQUIPE 0112</span></div>
+    <div style="font-weight:900;font-stretch:125%;font-size:2.4cqw;letter-spacing:-.04em;margin-top:.6cqw">Bia</div>
+    <div class="mono" style="font-size:.6cqw;line-height:1.8;margin-top:.3cqw">DESDE ··· 2024<br>TURNO ··· 03H12<br><span style="color:var(--brasa)">♥ MC FRITAS + SUNDAE</span></div>
+    <div class="serif it" style="font-size:1cqw;margin-top:.5cqw">pode entrar.</div>
+  </div>
+  <div class="mono" style="position:absolute;left:51cqw;top:38cqw;font-size:.6cqw;opacity:.6;letter-spacing:.06em">CRACHÁ-COMANDA · CONVERSA COMEÇA AQUI</div>
+
+  <!-- totens -->
+  <div style="position:absolute;right:3.2cqw;top:5.5cqw;bottom:3cqw;width:30cqw;background:linear-gradient(#9BAFD4,#E8C39A);overflow:hidden">
+    <div class="kicker" style="position:absolute;left:1.6cqw;top:1.4cqw;color:var(--grelha)">Totens externos</div>
+    <svg viewBox="0 0 600 900" style="position:absolute;inset:0;width:100%;height:100%" preserveAspectRatio="xMidYMax meet">
+      <rect y="820" width="600" height="80" fill="#2A211C"/>
+      <!-- totem alto -->
+      <rect x="110" y="120" width="140" height="700" fill="#E2231A"/>
+      <path d="M250 120 L270 110 V820 H250 Z" fill="#8E120C"/>
+      <path d="M110 120 L130 110 H270 L250 120 Z" fill="#B3170F"/>
+      <use href="#m" x="128" y="150" width="104" height="93" style="color:#FFBC0D;filter:drop-shadow(0 0 6px rgba(255,200,40,.8))"/>
+      <rect x="177" y="270" width="6" height="400" fill="#FFE07A"/>
+      <rect x="168" y="270" width="24" height="400" fill="#FFBC0D" opacity=".25"/>
+      <text x="180" y="720" text-anchor="middle" font-family="JetBrains Mono" font-weight="800" font-size="20" fill="#FFBC0D">ENTRE.</text>
+      <text x="180" y="748" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#F3E6D0">24H · DRIVE</text>
+      <!-- totem drive portal -->
+      <path d="M340 820 V520 C340 450 375 410 430 410 C485 410 520 450 520 520 V820 Z" fill="#1A120E"/>
+      <path d="M360 820 V530 C360 468 390 432 430 432 C470 432 500 468 500 530 V820 Z" fill="#E2231A"/>
+      <text x="430" y="500" text-anchor="middle" font-family="Archivo" font-weight="800" font-stretch="62%" font-size="30" fill="#FFBC0D">DRIVE</text>
+      <rect x="378" y="520" width="104" height="220" fill="#1A120E"/>
+      <g font-family="JetBrains Mono" font-size="11" fill="#F3E6D0"><text x="388" y="545">QUARTERÃO</text><text x="388" y="562" fill="#FFBC0D">32,90</text><text x="388" y="592">MC FRITAS M</text><text x="388" y="609" fill="#FFBC0D">12,50</text><text x="388" y="639">CAFÉ 03H</text><text x="388" y="656" fill="#FFBC0D">6,90</text></g>
+      <use href="#ic-drive" x="410" y="680" width="40" height="40" style="color:#FFBC0D"/>
+    </svg>
+  </div>
+
+  <!-- cores do uniforme -->
+  <div style="position:absolute;left:27cqw;bottom:3cqw;width:36cqw;display:grid;grid-template-columns:repeat(3,1fr);gap:1.2cqw" class="small">
+    <div><div style="height:.6cqw;background:var(--grelha);margin-bottom:.5cqw"></div><b>Equipe</b> — Grelha + avental Brasa</div>
+    <div><div style="height:.6cqw;background:var(--brasa);margin-bottom:.5cqw"></div><b>Gerência</b> — Brasa integral, fresta ouro</div>
+    <div><div style="height:.6cqw;background:var(--ceu);margin-bottom:.5cqw"></div><b>McCafé</b> — Céu + avental Pão</div>
+  </div>
+</section>
+
+<!-- ======================================================= 13 DIGITAL: APP + MENU -->
+<section class="slide" id="digital" style="background:var(--grelha)">
+  <div class="chrome"><span><b>13</b> Cardápio digital e aplicativo</span><span>Telas que brilham como os arcos</span><span>13 / 17</span></div>
+
+  <div style="position:absolute;left:3.2cqw;top:5.5cqw;width:20cqw">
+    <div class="kicker">Produto digital</div>
+    <h2 class="h-cond" style="font-size:4.2cqw;margin:1cqw 0">A tela é<br>a nova vitrine.</h2>
+    <p class="body">No digital o Gema é luz de verdade. O app adota o modo escuro como padrão — a interface brilha como a fachada à noite. O progresso do pedido é um Portal que se acende.</p>
+  </div>
+
+  <!-- MENU BOARDS -->
+  <div style="position:absolute;left:3.2cqw;bottom:3cqw;width:42cqw;height:24cqw;background:#0b0705;padding:.8cqw;display:grid;grid-template-columns:repeat(3,1fr);gap:.6cqw;box-shadow:0 2cqw 3cqw rgba(0,0,0,.6)">
+    <div style="background:var(--brasa);position:relative;overflow:hidden;padding:1cqw">
+      <div class="mono" style="font-size:.55cqw;letter-spacing:.1em;color:var(--gema)">DESTAQUE · 17H48</div>
+      <div style="font-weight:900;font-stretch:125%;font-size:2.1cqw;line-height:.85;margin-top:.5cqw;letter-spacing:-.03em">Quar-<br>terão</div>
+      <svg viewBox="0 0 400 320" style="position:absolute;left:-10%;bottom:16%;width:120%"><use href="#burger"/></svg>
+      <div style="position:absolute;left:1cqw;bottom:1cqw;font:800 1.6cqw var(--mono);color:var(--gema)">32,90</div>
+    </div>
+    <div style="background:var(--grelha);padding:1cqw;border:1px solid #2b1e18">
+      <div class="mono" style="font-size:.55cqw;letter-spacing:.1em;color:var(--gema)">LANCHES</div>
+      <div style="margin-top:.6cqw;display:grid;gap:.55cqw;font-size:.72cqw">
+        <div style="display:flex;justify-content:space-between;border-bottom:1px solid #2b1e18;padding-bottom:.4cqw"><span style="font-weight:700;font-stretch:62%;font-size:1cqw;text-transform:uppercase">Big Mac</span><span class="mono" style="color:var(--gema)">29,90</span></div>
+        <div style="display:flex;justify-content:space-between;border-bottom:1px solid #2b1e18;padding-bottom:.4cqw"><span style="font-weight:700;font-stretch:62%;font-size:1cqw;text-transform:uppercase">Quarterão</span><span class="mono" style="color:var(--gema)">32,90</span></div>
+        <div style="display:flex;justify-content:space-between;border-bottom:1px solid #2b1e18;padding-bottom:.4cqw"><span style="font-weight:700;font-stretch:62%;font-size:1cqw;text-transform:uppercase">McChicken</span><span class="mono" style="color:var(--gema)">24,90</span></div>
+        <div style="display:flex;justify-content:space-between;border-bottom:1px solid #2b1e18;padding-bottom:.4cqw"><span style="font-weight:700;font-stretch:62%;font-size:1cqw;text-transform:uppercase">Cheddar Mc</span><span class="mono" style="color:var(--gema)">27,90</span></div>
+        <div style="display:flex;justify-content:space-between;border-bottom:1px solid #2b1e18;padding-bottom:.4cqw"><span style="font-weight:700;font-stretch:62%;font-size:1cqw;text-transform:uppercase">Mc Fritas M</span><span class="mono" style="color:var(--gema)">12,50</span></div>
+      </div>
+      <div style="display:flex;gap:.5cqw;margin-top:1cqw;color:var(--gema)"><svg style="width:1.2cqw;height:1.2cqw"><use href="#ic-burger"/></svg><svg style="width:1.2cqw;height:1.2cqw"><use href="#ic-fries"/></svg><svg style="width:1.2cqw;height:1.2cqw"><use href="#ic-cup"/></svg></div>
+    </div>
+    <div style="background:var(--grelha);position:relative;overflow:hidden;display:grid;place-items:center;border:1px solid #2b1e18">
+      <div style="position:absolute;inset:16% 18% 0;clip-path:url(#portalTallClip);background:radial-gradient(80% 60% at 50% 100%,#FFF1C2,var(--gema) 45%,#E08600)"></div>
+      <div class="breathe" style="position:relative;font-weight:900;font-size:2.6cqw;color:var(--grelha);letter-spacing:-.03em">Entre.</div>
+      <div class="mono" style="position:absolute;top:1cqw;font-size:.55cqw;letter-spacing:.1em;color:var(--gema)">LOOP · 6S</div>
+    </div>
+  </div>
+  <div class="mono" style="position:absolute;left:3.2cqw;bottom:1.4cqw;font-size:.58cqw;letter-spacing:.08em;opacity:.6">MENU BOARD · 3 TELAS 9:16 · HERÓI / LISTA / LOOP DE MARCA</div>
+
+  <!-- APP phones -->
+  <div style="position:absolute;left:49cqw;top:5cqw;right:3.2cqw;bottom:3cqw;display:flex;gap:2cqw;justify-content:center;align-items:center">
+    <!-- tela 1 home -->
+    <div style="width:14.5cqw;height:30cqw;border-radius:2.2cqw;background:#0b0705;padding:.55cqw;box-shadow:0 2cqw 3cqw rgba(0,0,0,.6),0 0 0 1px #3a2a22;transform:translateY(-1.5cqw)">
+      <div style="width:100%;height:100%;border-radius:1.7cqw;background:var(--grelha);overflow:hidden;position:relative;padding:1.4cqw 1cqw">
+        <div style="display:flex;justify-content:space-between;align-items:center"><svg style="width:1.6cqw;height:1.4cqw;color:var(--gema)"><use href="#m"/></svg><span class="mono" style="font-size:.5cqw;opacity:.6">03:12</span></div>
+        <div class="serif it" style="font-size:1.5cqw;line-height:1;margin-top:1.2cqw">Boa madrugada, Lu.</div>
+        <div style="font-weight:900;font-stretch:125%;font-size:2.4cqw;letter-spacing:-.04em;line-height:.9;color:var(--gema)">Entre.</div>
+        <div style="margin-top:1cqw;height:9cqw;background:var(--brasa);border-radius:.6cqw;position:relative;overflow:hidden">
+          <svg viewBox="0 0 400 320" style="position:absolute;right:-12%;bottom:-8%;width:80%"><use href="#burger"/></svg>
+          <div style="position:absolute;left:.7cqw;top:.7cqw"><div class="mono" style="font-size:.45cqw;color:var(--gema)">SÓ NA MADRUGADA</div><div style="font-weight:800;font-stretch:62%;font-size:1.3cqw;text-transform:uppercase;line-height:.9;margin-top:.2cqw">Combo<br>Coruja</div></div>
+          <div class="mono" style="position:absolute;left:.7cqw;bottom:.7cqw;font-size:.8cqw;font-weight:800;color:var(--gema)">24,90</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.4cqw;margin-top:.9cqw">
+          <div style="aspect-ratio:1;background:#2b1e18;border-radius:.4cqw;display:grid;place-items:center"><svg style="width:55%;height:55%;color:var(--gema)"><use href="#ic-burger"/></svg></div>
+          <div style="aspect-ratio:1;background:#2b1e18;border-radius:.4cqw;display:grid;place-items:center"><svg style="width:55%;height:55%;color:var(--gema)"><use href="#ic-fries"/></svg></div>
+          <div style="aspect-ratio:1;background:#2b1e18;border-radius:.4cqw;display:grid;place-items:center"><svg style="width:55%;height:55%;color:var(--gema)"><use href="#ic-cup"/></svg></div>
+          <div style="aspect-ratio:1;background:#2b1e18;border-radius:.4cqw;display:grid;place-items:center"><svg style="width:55%;height:55%;color:var(--gema)"><use href="#ic-ice"/></svg></div>
+        </div>
+        <div style="margin-top:.9cqw;padding:.7cqw;border:1px solid #3a2a22;border-radius:.5cqw;display:flex;gap:.6cqw;align-items:center"><svg style="width:1.2cqw;height:1.2cqw;color:var(--ceu)"><use href="#ic-pin"/></svg><div style="font-size:.55cqw;line-height:1.3">Loja Av. Paulista<br><span style="opacity:.6">aberta agora · 400 m</span></div></div>
+        <div style="position:absolute;left:1cqw;right:1cqw;bottom:1cqw;height:2.4cqw;border-radius:1.2cqw;background:#2b1e18;display:flex;justify-content:space-around;align-items:center;color:var(--pao)"><svg style="width:1cqw;height:1cqw;color:var(--gema)"><use href="#ic-24h"/></svg><svg style="width:1cqw;height:1cqw"><use href="#ic-bag"/></svg><svg style="width:1cqw;height:1cqw"><use href="#ic-heart"/></svg><svg style="width:1cqw;height:1cqw"><use href="#ic-star"/></svg></div>
+      </div>
+    </div>
+    <!-- tela 2 tracking -->
+    <div style="width:14.5cqw;height:30cqw;border-radius:2.2cqw;background:#0b0705;padding:.55cqw;box-shadow:0 2cqw 3cqw rgba(0,0,0,.6),0 0 0 1px #3a2a22;transform:translateY(1.5cqw)">
+      <div style="width:100%;height:100%;border-radius:1.7cqw;background:var(--grelha);overflow:hidden;position:relative;padding:1.4cqw 1cqw;text-align:center">
+        <div class="mono" style="font-size:.5cqw;letter-spacing:.1em;opacity:.7">PEDIDO #0427</div>
+        <div style="position:relative;width:8cqw;height:11cqw;margin:1.4cqw auto 0">
+          <div style="position:absolute;inset:0;clip-path:url(#portalTallClip);background:#2b1e18"></div>
+          <div style="position:absolute;left:0;right:0;bottom:0;height:70%;clip-path:url(#portalTallClip);background:linear-gradient(#FFE07A,var(--gema) 50%,#E08600)"></div>
+          <div class="fresta pulse" style="left:calc(50% - .11cqw);top:-1.2cqw;height:1.2cqw"></div>
+        </div>
+        <div style="font-weight:900;font-stretch:125%;font-size:1.9cqw;letter-spacing:-.03em;margin-top:1cqw;line-height:.9">Quase lá.</div>
+        <p class="serif it" style="font-size:1cqw;opacity:.8;margin-top:.3cqw">sua porta está acendendo</p>
+        <div style="display:flex;justify-content:space-between;margin-top:1.4cqw" class="mono"><span style="font-size:.48cqw;color:var(--gema)">● RECEBIDO</span><span style="font-size:.48cqw;color:var(--gema)">● NA CHAPA</span><span style="font-size:.48cqw;opacity:.5">○ SAINDO</span></div>
+        <div style="height:.25cqw;background:#2b1e18;margin-top:.5cqw"><div style="width:70%;height:100%;background:var(--gema);box-shadow:0 0 .6cqw var(--gema)"></div></div>
+        <div style="position:absolute;left:1cqw;right:1cqw;bottom:1cqw;height:2.6cqw;border-radius:1.3cqw;background:var(--gema);color:var(--grelha);display:grid;place-items:center;font:800 .7cqw var(--mono);letter-spacing:.08em">RETIRAR NO PORTAL 2</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= 14 REDES SOCIAIS -->
+<section class="slide on-light" id="social" style="background:var(--ceu);color:var(--grelha)">
+  <div class="chrome"><span><b>14</b> Redes sociais</span><span>Instagram · grade como arquitetura</span><span>14 / 17</span></div>
+
+  <div style="position:absolute;left:3.2cqw;top:5.5cqw;width:22cqw">
+    <div class="kicker">Feed com hora marcada</div>
+    <h2 class="h-cond" style="font-size:4.4cqw;margin:1cqw 0">Cada post<br>é uma janela.</h2>
+    <p class="body">O feed alterna três ritmos: <b>luz</b> (foto em Portal), <b>voz</b> (tipografia gigante) e <b>comanda</b> (horário e preço em mono). Visto de longe, a grade forma uma arcada.</p>
+    <div class="mono" style="margin-top:1.6cqw;font-size:.7cqw;line-height:1.9;letter-spacing:.04em">
+      #EntreNoMc<br>Série “03h12” — histórias da madrugada<br>Série “17h48” — a hora dourada da cidade
+    </div>
+  </div>
+
+  <!-- phone with profile -->
+  <div style="position:absolute;left:28cqw;top:4.5cqw;width:22cqw;height:47cqw;border-radius:3cqw;background:#0b0705;padding:.7cqw;box-shadow:0 2cqw 3cqw rgba(26,18,14,.35)">
+    <div style="width:100%;height:100%;border-radius:2.4cqw;background:#fff;overflow:hidden;color:var(--grelha)">
+      <div style="padding:1.6cqw 1.2cqw .8cqw;display:flex;gap:1cqw;align-items:center">
+        <div style="width:4.4cqw;height:4.4cqw;border-radius:50%;background:var(--brasa);display:grid;place-items:center;box-shadow:0 0 0 .2cqw #fff,0 0 0 .38cqw var(--gema)"><svg style="width:55%;height:55%;color:var(--gema)"><use href="#m"/></svg></div>
+        <div style="flex:1;display:flex;justify-content:space-around;text-align:center;font-size:.6cqw"><div><b style="font-size:.85cqw">1.247</b><br>posts</div><div><b style="font-size:.85cqw">4,1 mi</b><br>seguidores</div><div><b style="font-size:.85cqw">12</b><br>seguindo</div></div>
+      </div>
+      <div style="padding:0 1.2cqw;font-size:.62cqw;line-height:1.4"><b>mcdonalds.entre</b><br>A porta mais aberta da cidade. 24h.<br><span style="color:var(--brasa)">Entre. ↓ peça pelo app</span></div>
+      <div style="display:flex;gap:.6cqw;padding:.8cqw 1.2cqw">
+        <div style="text-align:center;font-size:.45cqw"><div style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:var(--grelha);border:2px solid var(--gema);display:grid;place-items:center;font:800 .5cqw var(--mono);color:var(--gema)">03h</div>madrugada</div>
+        <div style="text-align:center;font-size:.45cqw"><div style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:var(--gema);border:2px solid var(--brasa);display:grid;place-items:center;font:800 .5cqw var(--mono);color:var(--brasa)">17h</div>dourada</div>
+        <div style="text-align:center;font-size:.45cqw"><div style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:var(--brasa);border:2px solid var(--grelha);display:grid;place-items:center"><svg style="width:50%;height:50%;color:var(--gema)"><use href="#ic-star"/></svg></div>novos</div>
+        <div style="text-align:center;font-size:.45cqw"><div style="width:2.6cqw;height:2.6cqw;border-radius:50%;background:var(--ceu);border:2px solid var(--grelha);display:grid;place-items:center"><svg style="width:50%;height:50%;color:var(--grelha)"><use href="#ic-coffee"/></svg></div>mccafé</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px">
+        <div style="aspect-ratio:4/5;background:var(--brasa);display:grid;place-items:center"><span style="font-weight:900;font-stretch:125%;font-size:1.5cqw;color:var(--pao);letter-spacing:-.04em">Entre<span style="color:var(--gema)">.</span></span></div>
+        <div style="aspect-ratio:4/5;background:var(--grelha);position:relative"><div style="position:absolute;inset:10% 14% 0;clip-path:url(#portalTallClip)"><img src="assets/fachada-atual.jpg" alt="" style="width:100%;height:100%;object-fit:cover;object-position:50% 35%"></div></div>
+        <div style="aspect-ratio:4/5;background:var(--pao);display:grid;place-items:center"><svg viewBox="0 0 400 320" style="width:80%"><use href="#burger"/></svg></div>
+        <div style="aspect-ratio:4/5;background:var(--grelha);display:flex;flex-direction:column;justify-content:center;padding:.5cqw;color:var(--pao)"><span class="mono" style="font-size:1.2cqw;font-weight:800;color:var(--gema)">03:12</span><span class="serif it" style="font-size:.7cqw">ainda aberto.</span></div>
+        <div class="pat-arcos" style="aspect-ratio:4/5;background-size:1.1cqw .65cqw;display:grid;place-items:center"><div style="background:var(--brasa);padding:.4cqw"><svg style="width:2cqw;height:1.8cqw;color:var(--gema)"><use href="#m"/></svg></div></div>
+        <div style="aspect-ratio:4/5;background:var(--gema);display:grid;place-items:center;text-align:center"><span class="serif it" style="font-size:1cqw;line-height:.95;color:var(--brasa)">entre<br>amigos</span></div>
+        <div style="aspect-ratio:4/5;background:var(--ceu);display:grid;place-items:center"><svg style="width:45%;height:45%;color:var(--grelha)"><use href="#ic-fries"/></svg></div>
+        <div style="aspect-ratio:4/5;background:var(--brasa);position:relative;overflow:hidden"><div class="fresta" style="left:50%;top:0;height:100%"></div><span class="mono" style="position:absolute;left:.4cqw;bottom:.4cqw;font-size:.45cqw;color:var(--gema)">17:48</span></div>
+        <div class="pat-gergelim" style="aspect-ratio:4/5;background-size:.8cqw .8cqw;background-position:0 0,.4cqw .4cqw;display:grid;place-items:center"><span class="mono" style="font-size:.45cqw;background:var(--grelha);color:var(--gema);padding:.2cqw .3cqw">#EntreNoMc</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- posts grandes -->
+  <div style="position:absolute;left:53cqw;top:5.5cqw;width:20cqw;height:25cqw;background:var(--grelha);color:var(--pao);padding:1.4cqw;overflow:hidden;box-shadow:0 1.6cqw 2.4cqw rgba(26,18,14,.3)">
+    <div class="mono" style="font-size:.6cqw;color:var(--gema);letter-spacing:.1em">SÉRIE 03H12 · EP. 14</div>
+    <p class="serif" style="font-size:2.3cqw;line-height:1;margin-top:1cqw">“Terminei o namoro às 2h. Às 3h12 eu tava aqui, com a melhor amiga e uma fritas grande.”</p>
+    <div style="position:absolute;left:1.4cqw;bottom:1.4cqw;display:flex;align-items:center;gap:.6cqw"><svg style="width:1.6cqw;height:1.4cqw;color:var(--gema)"><use href="#m"/></svg><span class="mono" style="font-size:.55cqw;opacity:.7">— CAROL, 22 · LOJA CONSOLAÇÃO</span></div>
+  </div>
+  <div style="position:absolute;left:75cqw;top:5.5cqw;right:3.2cqw;height:25cqw;background:var(--brasa);overflow:hidden;box-shadow:0 1.6cqw 2.4cqw rgba(26,18,14,.3)">
+    <div style="position:absolute;left:14%;right:14%;top:18%;bottom:0;clip-path:url(#portalTallClip);background:radial-gradient(80% 60% at 50% 100%,#FFF1C2,var(--gema) 45%,#E08600)"></div>
+    <svg viewBox="0 0 400 320" style="position:absolute;left:8%;bottom:6%;width:84%"><use href="#burger"/></svg>
+    <div style="position:absolute;left:1.2cqw;top:1.2cqw;font-weight:900;font-stretch:125%;font-size:2cqw;letter-spacing:-.04em;line-height:.85;color:var(--pao)">Novo.<br><span class="serif it" style="font-weight:400;font-size:1.4cqw;letter-spacing:0">prova antes de opinar</span></div>
+  </div>
+  <!-- reels / stories -->
+  <div style="position:absolute;left:53cqw;top:32.5cqw;right:3.2cqw;bottom:3cqw;display:grid;grid-template-columns:repeat(3,1fr);gap:1cqw">
+    <div style="background:var(--gema);position:relative;overflow:hidden;padding:1cqw"><div class="mono" style="font-size:.55cqw;color:var(--brasa)">STORY · ENQUETE</div><div style="font-weight:900;font-stretch:62%;font-size:2cqw;text-transform:uppercase;line-height:.88;margin-top:.5cqw;color:var(--grelha)">Fritas:<br>no ketchup<br>ou no sundae?</div><div style="position:absolute;left:1cqw;right:1cqw;bottom:1cqw;display:grid;grid-template-columns:1fr 1fr;gap:.4cqw"><span style="background:#fff;padding:.4cqw;font:800 .55cqw var(--mono);text-align:center">KETCHUP 38%</span><span style="background:var(--brasa);color:#fff;padding:.4cqw;font:800 .55cqw var(--mono);text-align:center">SUNDAE 62%</span></div></div>
+    <div style="background:var(--grelha);position:relative;overflow:hidden"><img src="assets/fachada-atual.jpg" alt="" style="width:100%;height:100%;object-fit:cover;object-position:50% 40%;opacity:.95"><div style="position:absolute;left:0;right:0;bottom:0;padding:1cqw;background:linear-gradient(transparent,rgba(26,18,14,.9))"><div class="mono" style="font-size:.55cqw;color:var(--gema)">REELS · 17H48</div><div class="serif it" style="font-size:1.2cqw;color:var(--pao)">a cidade tem uma hora dourada.</div></div><div style="position:absolute;top:.8cqw;left:.8cqw;right:.8cqw;height:.2cqw;background:rgba(255,255,255,.35)"><div style="width:40%;height:100%;background:#fff"></div></div></div>
+    <div style="background:var(--brasa);position:relative;overflow:hidden;display:grid;place-items:center"><div style="text-align:center"><svg class="glow" style="width:5cqw;height:4.5cqw;color:var(--gema)"><use href="#m-luz"/></svg><div class="mono" style="font-size:.6cqw;margin-top:.8cqw;color:var(--pao)">STICKER · GIF ANIMADO</div></div></div>
+  </div>
+</section>
+
+<!-- ======================================================= 15 CAMPANHA -->
+<section class="slide" id="campanha" style="background:#120b08">
+  <div class="chrome"><span><b>15</b> Campanha publicitária</span><span>“Entre.” — lançamento</span><span>15 / 17</span></div>
+
+  <!-- billboard -->
+  <div style="position:absolute;left:3.2cqw;top:5.5cqw;width:60cqw;height:30cqw;background:var(--brasa);overflow:hidden;box-shadow:0 2cqw 4cqw rgba(0,0,0,.6)">
+    <div style="position:absolute;right:6%;top:12%;bottom:0;width:30%;clip-path:url(#portalTallClip);background:radial-gradient(80% 60% at 50% 100%,#FFF1C2,var(--gema) 45%,#E08600)"></div>
+    <svg viewBox="0 0 400 320" style="position:absolute;right:3%;bottom:8%;width:36%"><use href="#burger"/></svg>
+    <div style="position:absolute;left:4%;top:10%">
+      <div style="font-weight:900;font-stretch:125%;font-size:6.6cqw;letter-spacing:-.06em;line-height:.82;color:var(--pao)">Entre<br>com<br>fome<span style="color:var(--gema)">.</span></div>
+      <div class="serif it" style="font-size:2.6cqw;margin-top:1cqw;color:var(--gema)">Saia com história.</div>
+    </div>
+    <div style="position:absolute;left:4%;bottom:7%;display:flex;gap:1cqw;align-items:center"><svg style="width:3cqw;height:2.7cqw;color:var(--gema)"><use href="#m"/></svg><span class="mono" style="font-size:.8cqw;letter-spacing:.1em">ABERTO AGORA · A 400 M</span></div>
+    <div class="fresta" style="left:62.5%;top:0;height:12%"></div>
+  </div>
+  <div class="mono" style="position:absolute;left:3.2cqw;top:36.3cqw;font-size:.6cqw;letter-spacing:.08em;opacity:.6">OOH · OUTDOOR 9×3 M — PEÇA-MÃE</div>
+
+  <!-- posters -->
+  <div style="position:absolute;right:3.2cqw;top:5.5cqw;width:30cqw;height:30cqw;display:grid;grid-template-columns:1fr 1fr;gap:1cqw">
+    <div style="background:var(--grelha);border:1px solid #2b1e18;position:relative;overflow:hidden;padding:1.2cqw">
+      <div class="mono" style="font-size:1.8cqw;font-weight:800;color:var(--gema)">03:12</div>
+      <div style="font-weight:900;font-stretch:125%;font-size:1.85cqw;letter-spacing:-.04em;line-height:.88;margin-top:.6cqw">Entre<br>acordado.</div>
+      <div class="fresta pulse" style="left:50%;bottom:0;top:auto;height:45%;background:linear-gradient(transparent,var(--gema))"></div>
+      <svg style="position:absolute;left:1.2cqw;bottom:1.2cqw;width:2cqw;height:1.8cqw;color:var(--gema)"><use href="#m"/></svg>
+    </div>
+    <div style="background:var(--gema);color:var(--grelha);position:relative;overflow:hidden;padding:1.2cqw">
+      <div style="font-weight:900;font-stretch:125%;font-size:1.85cqw;letter-spacing:-.04em;line-height:.88">Entre<br>no meio.</div>
+      <p class="serif it" style="font-size:1cqw;margin-top:.6cqw">da aula e do trampo.</p>
+      <svg viewBox="0 0 240 214" style="position:absolute;left:22%;bottom:-14%;width:56%;color:var(--brasa)"><use href="#m"/></svg>
+    </div>
+    <div style="background:var(--ceu);color:var(--grelha);position:relative;overflow:hidden;padding:1.2cqw">
+      <div class="mono" style="font-size:1.8cqw;font-weight:800">17:48</div>
+      <div style="font-weight:900;font-stretch:125%;font-size:1.85cqw;letter-spacing:-.04em;line-height:.88;margin-top:.6cqw">Entre na<br>hora certa.</div>
+      <div style="position:absolute;left:30%;right:30%;bottom:0;height:30%;clip-path:url(#portalClip);background:var(--brasa)"></div>
+    </div>
+    <div style="background:var(--pao);color:var(--grelha);position:relative;overflow:hidden;padding:1.2cqw">
+      <div style="font-weight:900;font-stretch:125%;font-size:1.85cqw;letter-spacing:-.04em;line-height:.88">Entre<br>amigos.</div>
+      <div style="position:absolute;left:0;right:0;bottom:0;height:45%" class="pat-arcos"></div>
+    </div>
+  </div>
+
+  <!-- abrigo de ônibus + manifesto -->
+  <div style="position:absolute;left:3.2cqw;bottom:3cqw;width:30cqw;height:14cqw">
+    <div class="kicker">Manifesto · filme 30″</div>
+    <p class="serif" style="font-size:1.55cqw;line-height:1.15;margin-top:.8cqw;opacity:.92">Tem gente que chega de terno. Tem gente que chega de chinelo. Tem quem chega às 7h, quem chega às 3h. Quem chega sozinho e quem chega em doze. A porta é a mesma. <span class="it" style="color:var(--gema)">Entre.</span></p>
+  </div>
+  <div style="position:absolute;left:36cqw;bottom:3cqw;width:27cqw;height:14cqw;display:grid;grid-template-columns:repeat(4,1fr);gap:.5cqw">
+    <div style="background:linear-gradient(#2b1e18,#120b08);position:relative;overflow:hidden"><div class="mono" style="position:absolute;left:.5cqw;top:.5cqw;font-size:.5cqw;opacity:.6">00:03</div><div style="position:absolute;inset:30% 25% 0;clip-path:url(#portalTallClip);background:var(--gema);opacity:.25"></div></div>
+    <div style="background:linear-gradient(#2b1e18,#120b08);position:relative;overflow:hidden"><div class="mono" style="position:absolute;left:.5cqw;top:.5cqw;font-size:.5cqw;opacity:.6">00:08</div><div style="position:absolute;inset:30% 25% 0;clip-path:url(#portalTallClip);background:var(--gema);opacity:.55"></div></div>
+    <div style="background:linear-gradient(#2b1e18,#120b08);position:relative;overflow:hidden"><div class="mono" style="position:absolute;left:.5cqw;top:.5cqw;font-size:.5cqw;opacity:.6">00:19</div><div style="position:absolute;inset:30% 25% 0;clip-path:url(#portalTallClip);background:radial-gradient(80% 60% at 50% 100%,#FFF1C2,var(--gema))"></div></div>
+    <div style="background:var(--brasa);position:relative;overflow:hidden;display:grid;place-items:center"><div class="mono" style="position:absolute;left:.5cqw;top:.5cqw;font-size:.5cqw;opacity:.8">00:28</div><span style="font-weight:900;font-stretch:125%;font-size:1.6cqw;letter-spacing:-.04em">Entre<span style="color:var(--gema)">.</span></span></div>
+  </div>
+  <div class="mono" style="position:absolute;left:36cqw;bottom:1.4cqw;font-size:.58cqw;letter-spacing:.08em;opacity:.6">STORYBOARD · A PORTA ACENDE ATÉ VIRAR A MARCA</div>
+
+  <div style="position:absolute;right:3.2cqw;bottom:3cqw;width:30cqw;height:14cqw;display:grid;grid-template-columns:1fr 1fr;gap:1cqw" class="small">
+    <div><div class="num">ATIVAÇÃO 01</div><p style="margin-top:.4cqw;opacity:.85"><b>Portais pela cidade</b> — portas douradas instaladas em pontos de ônibus. Quem atravessa ganha um código no app.</p></div>
+    <div><div class="num">ATIVAÇÃO 02</div><p style="margin-top:.4cqw;opacity:.85"><b>Clube 03h12</b> — menu exclusivo da madrugada para quem trabalha, estuda e vive no turno da noite.</p></div>
+    <div><div class="num">ATIVAÇÃO 03</div><p style="margin-top:.4cqw;opacity:.85"><b>Hora Dourada</b> — todos os dias, no pôr do sol local, a torre acende a Fresta e o app libera um desconto.</p></div>
+    <div><div class="num">MÍDIA</div><p style="margin-top:.4cqw;opacity:.85">OOH digital · TikTok/Reels · Spotify (playlists por horário) · creators de madrugada.</p></div>
+  </div>
+</section>
+
+<!-- ======================================================= 16 ANTES E DEPOIS -->
+<section class="slide" id="antes-depois" style="background:var(--grelha)">
+  <div class="chrome"><span><b>16</b> Comparação antes e depois</span><span>Mesmo lugar, mesma luz</span><span>16 / 17</span></div>
+
+  <div style="position:absolute;left:3.2cqw;top:5.5cqw;width:24cqw">
+    <div class="kicker">Antes → Depois</div>
+    <h2 class="h-cond" style="font-size:4.6cqw;margin:1cqw 0">De placa<br>a porta.</h2>
+    <div style="display:grid;gap:1.1cqw;margin-top:1.6cqw" class="small">
+      <div style="display:grid;grid-template-columns:7cqw 1fr;gap:1cqw"><span class="num" style="opacity:.5">SÍMBOLO</span><span>Arcos unidos → arcos com <b style="color:var(--gema)">fresta</b>, parabólicos, cortados a 90°</span></div>
+      <div style="display:grid;grid-template-columns:7cqw 1fr;gap:1cqw"><span class="num" style="opacity:.5">COR</span><span>Amarelo como tinta → <b style="color:var(--gema)">Gema como luz</b>; entra o Céu e o preto Grelha</span></div>
+      <div style="display:grid;grid-template-columns:7cqw 1fr;gap:1cqw"><span class="num" style="opacity:.5">TORRE</span><span>Outdoor vertical → <b style="color:var(--gema)">entrada iluminada</b> (Portal + Fresta)</span></div>
+      <div style="display:grid;grid-template-columns:7cqw 1fr;gap:1cqw"><span class="num" style="opacity:.5">VOZ</span><span>Promoção → <b style="color:var(--gema)">convite</b>. Uma palavra: Entre.</span></div>
+      <div style="display:grid;grid-template-columns:7cqw 1fr;gap:1cqw"><span class="num" style="opacity:.5">SISTEMA</span><span>Peças isoladas → um kit em que <b style="color:var(--gema)">tudo nasce do arco</b></span></div>
+    </div>
+  </div>
+
+  <!-- ANTES: foto original intacta -->
+  <div style="position:absolute;left:31cqw;top:5.5cqw;width:24.5cqw;height:47.6cqw">
+    <img src="assets/fachada-atual.jpg" alt="Antes: fotografia original" style="width:100%;height:100%;object-fit:cover">
+    <div class="mono" style="position:absolute;left:0;top:0;background:var(--pao);color:var(--grelha);font-size:.7cqw;font-weight:800;padding:.4cqw .7cqw;letter-spacing:.1em">ANTES · FOTO ORIGINAL</div>
+  </div>
+  <!-- DEPOIS: proposta no mesmo enquadramento -->
+  <div style="position:absolute;left:57cqw;top:5.5cqw;width:24.5cqw;height:47.6cqw;overflow:hidden">
+    <svg viewBox="0 0 988 1920" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%">
+      <defs>
+        <linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5D74A8"/><stop offset=".5" stop-color="#8FA4CB"/><stop offset="1" stop-color="#C9C3CC"/></linearGradient>
+        <linearGradient id="tF" x1="0" x2="1"><stop offset="0" stop-color="#C7180F"/><stop offset=".55" stop-color="#F0362A"/><stop offset="1" stop-color="#E2231A"/></linearGradient>
+        <linearGradient id="leaf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8FA83A"/><stop offset=".4" stop-color="#4C6B22"/><stop offset="1" stop-color="#16200B"/></linearGradient>
+        <filter id="b6"><feGaussianBlur stdDeviation="6"/></filter><filter id="b20"><feGaussianBlur stdDeviation="20"/></filter>
+      </defs>
+      <rect width="988" height="1920" fill="url(#sky2)"/>
+      <!-- caixa de madeira à direita (mantida) -->
+      <path d="M785 790 L988 720 V1300 H785 Z" fill="#4A3324"/>
+      <g stroke="#2E1F15" stroke-width="5"><path d="M785 840 L988 775 M785 900 L988 835 M785 960 L988 895 M785 1020 L988 955 M785 1080 L988 1015 M785 1140 L988 1075 M785 1200 L988 1135"/></g>
+      <!-- torre -->
+      <path d="M800 300 L785 1400 H300 L320 450 Z" fill="url(#tF)"/>
+      <path d="M320 450 L800 300 L805 320 L328 470 Z" fill="#9C140D"/>
+      <!-- linha de luz no topo -->
+      <path d="M326 440 L726 272" stroke="#1A120E" stroke-width="12"/>
+      <!-- fresta -->
+      <path d="M552 760 L548 1350" stroke="#FFE07A" stroke-width="10"/>
+      <path d="M552 760 L548 1350" stroke="#FFBC0D" stroke-width="60" opacity=".35" filter="url(#b20)"/>
+      <!-- portal iluminado, parcialmente escondido pela folhagem -->
+      <path d="M440 1400 V1200 C440 1110 486 1060 548 1060 C610 1060 656 1110 656 1200 V1400 Z" fill="url(#gLuz)"/>
+      <!-- novo M -->
+      <g transform="translate(395 520) scale(1.3)"><use href="#m-luz" width="240" height="214" style="color:#FFBC0D;filter:drop-shadow(0 0 14px rgba(255,200,40,.75))"/></g>
+      <rect x="0" y="1300" width="988" height="620" fill="#1E2B0E"/>
+      <!-- folhagem frente -->
+      <use href="#foliage" x="-300" y="880" width="1600" height="1100"/>
+    </svg>
+    <div class="mono" style="position:absolute;left:0;top:0;background:var(--gema);color:var(--grelha);font-size:.7cqw;font-weight:800;padding:.4cqw .7cqw;letter-spacing:.1em">DEPOIS · PROPOSTA ENTRE.</div>
+  </div>
+
+  <div style="position:absolute;right:3.2cqw;top:5.5cqw;width:10.5cqw;display:grid;gap:.8cqw">
+    <div style="aspect-ratio:1;background:var(--brasa);display:grid;place-items:center;position:relative"><svg style="width:62%;height:62%;color:var(--gema)"><use href="#m"/></svg><span class="mono" style="position:absolute;bottom:.4cqw;font-size:.5cqw;opacity:.8">NOVO SÍMBOLO</span></div>
+    <div style="aspect-ratio:1;background:var(--grelha);border:1px solid #2b1e18;display:grid;place-items:center;position:relative"><div style="width:60%;aspect-ratio:1;border-radius:22%;background:var(--brasa);display:grid;place-items:center"><svg style="width:40%;height:60%;color:var(--gema)"><use href="#arco"/></svg></div><span class="mono" style="position:absolute;bottom:.4cqw;font-size:.5cqw;opacity:.8">ÍCONE APP</span></div>
+    <div style="aspect-ratio:1;position:relative;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr)"><span style="background:var(--brasa)"></span><span style="background:var(--gema)"></span><span style="background:var(--grelha);border:1px solid #2b1e18"></span><span style="background:var(--pao)"></span><span style="background:var(--ceu)"></span><span style="background:var(--folha)"></span></div>
+    <div style="aspect-ratio:1;background:var(--pao);color:var(--grelha);display:grid;place-items:center"><span style="font-weight:900;font-stretch:125%;font-size:2.2cqw;letter-spacing:-.05em">Entre<span style="color:var(--brasa)">.</span></span></div>
+  </div>
+</section>
+
+<!-- ======================================================= 17 UNIVERSO -->
+<section class="slide" id="universo" style="background:var(--grelha)">
+  <div class="chrome"><span><b>17</b> Universo visual</span><span>Tudo junto, uma porta só</span><span>17 / 17</span></div>
+
+  <div style="position:absolute;left:3.2cqw;top:5.5cqw;right:3.2cqw;bottom:6.5cqw;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(4,1fr);gap:.7cqw">
+    <div style="grid-column:1/4;grid-row:1/3;background:var(--brasa);position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:1.4cqw"><div style="font-weight:900;font-stretch:125%;font-size:7.4cqw;letter-spacing:-.06em;line-height:.8">Entre<span style="color:var(--gema)">.</span></div><div class="fresta pulse" style="right:3cqw;top:0;height:100%"></div></div>
+    <div style="grid-column:4/6;grid-row:1/4;position:relative;overflow:hidden;background:#000"><div style="position:absolute;inset:0;clip-path:url(#portalTallClip)"><img src="assets/fachada-atual.jpg" alt="" style="width:100%;height:100%;object-fit:cover;object-position:50% 35%"></div></div>
+    <div style="grid-column:6/7;grid-row:1/2;background:var(--gema);display:grid;place-items:center"><svg style="width:60%;height:60%;color:var(--brasa)"><use href="#m"/></svg></div>
+    <div class="pat-arcos" style="grid-column:7/9;grid-row:1/2"></div>
+    <div style="grid-column:6/9;grid-row:2/4;background:radial-gradient(90% 80% at 50% 100%,#3a1810,#0b0705);position:relative;overflow:hidden">
+      <svg viewBox="0 0 300 420" style="position:absolute;left:6%;bottom:6%;width:28%"><path d="M20 30 H280 L290 410 H10 Z" fill="#C9A27A"/><g clip-path="url(#bagC)"><use href="#m" x="40" y="250" width="220" height="196" style="color:#E2231A"/></g><path d="M118 112 V82 C118 66 131 58 150 58 C169 58 182 66 182 82 V112 Z" fill="url(#gLuz)"/><text x="150" y="170" text-anchor="middle" font-family="Archivo" font-weight="900" font-size="34" fill="#1A120E">Entre.</text></svg>
+      <svg viewBox="0 0 220 420" style="position:absolute;left:40%;bottom:6%;width:17%"><path d="M22 60 H198 L176 412 H44 Z" fill="#E2231A"/><use href="#m" x="62" y="100" width="96" height="86" style="color:#FFBC0D"/><rect x="0" y="230" width="220" height="190" fill="url(#arcosP)" clip-path="url(#cupC)"/><ellipse cx="110" cy="58" rx="94" ry="12" fill="#F3E6D0"/></svg>
+      <svg viewBox="0 0 220 300" style="position:absolute;left:62%;bottom:6%;width:22%"><g fill="#F4C24A"><rect x="72" y="0" width="16" height="130"/><rect x="94" y="6" width="16" height="124"/><rect x="116" y="2" width="16" height="128"/><rect x="50" y="10" width="16" height="120"/><rect x="138" y="12" width="16" height="118"/></g><path d="M30 100 H190 L170 296 H50 Z" fill="#FFBC0D"/><path d="M78 296 V230 C78 196 92 176 110 176 C128 176 142 196 142 230 V296 Z" fill="#E2231A"/><rect x="108.5" y="196" width="3" height="100" fill="#FFF1C2"/></svg>
+    </div>
+    <div style="grid-column:1/2;grid-row:3/5;background:var(--ceu);display:grid;place-items:center"><svg style="width:55%;height:30%;color:var(--grelha)"><use href="#ic-coffee"/></svg></div>
+    <div style="grid-column:2/4;grid-row:3/4;background:var(--pao);color:var(--grelha);padding:1cqw;display:flex;flex-direction:column;justify-content:space-between"><span class="mono" style="font-size:.6cqw;opacity:.6">ARCO GROTESK · WDTH 62–125</span><span class="breathe" style="font-weight:900;font-size:2.6cqw;letter-spacing:-.03em;line-height:.9">Aa Entre 24h</span></div>
+    <div class="pat-gergelim" style="grid-column:2/3;grid-row:4/5"></div>
+    <div style="grid-column:3/5;grid-row:4/5;background:#0b0705;display:flex;align-items:center;justify-content:space-around;color:var(--gema);padding:0 1cqw"><svg style="width:1.8cqw;height:1.8cqw"><use href="#ic-burger"/></svg><svg style="width:1.8cqw;height:1.8cqw"><use href="#ic-fries"/></svg><svg style="width:1.8cqw;height:1.8cqw"><use href="#ic-cup"/></svg><svg style="width:1.8cqw;height:1.8cqw"><use href="#ic-24h"/></svg><svg style="width:1.8cqw;height:1.8cqw"><use href="#ic-pin"/></svg><svg style="width:1.8cqw;height:1.8cqw"><use href="#ic-drive"/></svg></div>
+    <div style="grid-column:5/6;grid-row:4/5;background:var(--folha);display:flex;align-items:center;justify-content:center"><span class="serif it" style="font-size:1.5cqw">entre amigos</span></div>
+    <div class="pat-comanda" style="grid-column:6/7;grid-row:4/5;color:var(--grelha);padding:.8cqw"><div class="mono" style="font-size:.55cqw;line-height:1.7">#0427 · 03:12<br>QUARTERÃO<br><b style="color:var(--brasa)">ENTRE.</b></div></div>
+    <div style="grid-column:7/9;grid-row:4/5;background:var(--grelha);border:1px solid #2b1e18;display:flex;align-items:center;justify-content:center;gap:1.2cqw"><svg class="glow" style="width:3.2cqw;height:2.9cqw;color:var(--gema)"><use href="#m-luz"/></svg><div><div style="font-weight:800;font-stretch:112%;font-size:1.5cqw;line-height:.9">McDonald’s</div><div class="mono" style="font-size:.5cqw;letter-spacing:.2em;color:var(--gema);margin-top:.3cqw">ENTRE.</div></div></div>
+  </div>
+
+  <div style="position:absolute;left:3.2cqw;right:3.2cqw;bottom:2cqw;display:flex;justify-content:space-between;align-items:center" class="mono">
+    <span style="font-size:.62cqw;opacity:.7;letter-spacing:.06em">ESTÚDIO FRESTA · ESTRATÉGIA, IDENTIDADE E AMBIENTE · 2026</span>
+    <span style="font-size:.62cqw;opacity:.55;letter-spacing:.04em;max-width:52cqw;text-align:right">Projeto conceitual, independente e experimental. Não é uma identidade oficial e não tem vínculo com a McDonald’s Corporation. Marcas citadas pertencem aos seus titulares.</span>
+  </div>
+</section>
+
+</main>
+</body>
+</html>
