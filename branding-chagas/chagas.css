@@ -1,0 +1,42 @@
+/* =========================================================
+   CHAGAS® — sistema visual "CORTE"
+   ========================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,100..900&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500;700&display=swap');
+:root{
+  --preto:#0D0D0D; --carvao:#191919; --branco:#F2F0EB; --fogo:#FF4D1A; --grafite:#8A8780;
+  --d:'Anybody',Impact,sans-serif; --s:'Instrument Serif',Georgia,serif; --m:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#050505;color:var(--branco);font-family:var(--d);-webkit-font-smoothing:antialiased}
+svg.lg{display:block;overflow:visible}
+.fogo{color:var(--fogo)}
+.mono{font-family:var(--m);font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+.serif{font-family:var(--s);font-weight:400}
+.it{font-style:italic}
+/* corpo display */
+.dx{font-family:var(--d);font-weight:900;font-stretch:140%;letter-spacing:-.045em;line-height:.8;text-transform:uppercase}
+.dc{font-family:var(--d);font-weight:800;font-stretch:55%;letter-spacing:-.01em;line-height:.85;text-transform:uppercase}
+/* grão — textura de fotocópia */
+.grao::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:30;opacity:.22;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+/* O CORTE — faixa a 20° */
+.corte{position:absolute;background:var(--fogo);transform:skewX(-20deg);transform-origin:50% 50%}
+/* retícula */
+.reticula{background-image:radial-gradient(circle,currentColor 32%,transparent 34%);background-size:var(--rs,.9cqw) var(--rs,.9cqw)}
+/* marcas de registro */
+.reg{position:absolute;width:var(--r,2.4cqw);height:var(--r,2.4cqw)}
+.reg::before,.reg::after{content:"";position:absolute;background:currentColor}
+.reg::before{left:50%;top:0;bottom:0;width:1px}
+.reg::after{top:50%;left:0;right:0;height:1px}
+/* contagem: 4 traços + o corte = 5 */
+.tally{display:inline-flex;gap:var(--tg,.5em);position:relative;height:1em;align-items:stretch}
+.tally i{display:block;width:var(--tw,.12em);background:currentColor}
+.tally b{position:absolute;left:-15%;right:-15%;top:42%;height:var(--tw,.12em);background:var(--fogo);transform:rotate(-24deg)}
+/* artboards responsivos (tudo em cqw da própria peça) */
+.art{position:relative;overflow:hidden;container-type:inline-size;background:var(--preto);color:var(--branco)}
+.r45{aspect-ratio:4/5} .r916{aspect-ratio:9/16} .r11{aspect-ratio:1/1} .rphone{aspect-ratio:9/19.5}
+.art .pad{position:absolute;inset:6cqw}
+.tag{font:500 2.6cqw/1.2 var(--m);letter-spacing:.06em;text-transform:uppercase}
+.brk::before{content:"[ "}.brk::after{content:" ]"}
+
+.bg-fogo{background:var(--fogo)} .bg-preto{background:var(--preto)} .bg-branco{background:var(--branco);color:var(--preto)}
