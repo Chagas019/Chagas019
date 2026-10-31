@@ -32,3 +32,11 @@ Redesenho para uma empresa de tecnologia: um símbolo geométrico C/ (um C de c�
 - `logo-v2/svg/`: símbolo, nome, assinatura horizontal e vertical, em fundo escuro, claro e Volt, mais versões transparentes
 - `logo-v2/png/`: avatares 1080×1080
 - Paleta v2: Ink `#0A0A0B` · Papel `#F4F4F1` · Volt `#D4FF2A` · Grafite `#1C1C1F`
+
+---
+
+## v4: CHAGAS com mascote “Agno” (`v4/`)
+Direção inspirada na referência de streetwear com mascote: letras retrô que “quicam” (Chango, com auréola no C) e o **Agno**, um cordeiro (*Agnus Dei*) de boné, tênis, câmera e auréola.
+- `v4/index.html` e `chagas-agno-identidade.pdf`: 6 pranchas (logotipo, mascote, submarca, paleta, tipografia, mural, camiseta, boné, Instagram, post, adesivos)
+- `v4/mascote-agno.svg`, `v4/logotipo-*.svg`, `v4/agno-1080.png`
+- Paleta: Vermelho Brasa `#E2261C` · Lã `#F4ECD8` · Azul Manto `#2547A8` · Nanquim `#141414` · Auréola `#FFD24A`
