@@ -5,12 +5,10 @@
 <title>06 — Qual deles você vai testar? · Semana Criativa EP.01</title>
 <link rel="stylesheet" href="../css/system.css">
 <style>
-.s { transform-origin: 0 0; }
-  .s .num { font-size: 540px; left: -40px; top: 48px; }
-  .s .disc { left: 312px; top: 118px; }
-  .c3 { left: 250px; top: 70px;  transform: rotate(9deg) scale(.72); }
-  .c2 { left: 60px;  top: 250px; transform: rotate(-6deg) scale(.72); }
-  .c1 { left: 330px; top: 410px; transform: rotate(3deg) scale(.72); }
+.apps { position: absolute; left: var(--m); right: var(--m); top: 220px; list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .apps img { display: block; width: 280px; height: 280px; }
+  .apps .n { display: block; margin-top: 30px; font-size: 24px; color: var(--orange); font-weight: 600; }
+  .apps b { display: block; font-size: 44px; font-weight: 700; letter-spacing: -.035em; margin-top: 4px; }
   .head { position: absolute; left: 52px; top: 840px; }
   .head .mega { font-size: 176px; display: block; }
   .head .h1 { font-size: 92px; display: block; margin-top: 30px; margin-left: 6px; }
@@ -21,25 +19,14 @@
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="ast" viewBox="-50 -50 100 100"><g fill="currentColor"><rect x="-9.5" y="-48" width="19" height="96"/><rect x="-9.5" y="-48" width="19" height="96" transform="rotate(60)"/><rect x="-9.5" y="-48" width="19" height="96" transform="rotate(-60)"/></g></symbol></defs></svg>
 <div class="slide">
 <div class="top small"><span>Qual deles você vai testar?</span><span class="mute">06/07</span></div>
 
-<div class="card dark s c3">
-  <div class="num">#03</div>
-  <div class="disc"><img src="../assets/logos/luminar.png" alt="Luminar"></div>
-  <div class="foot"><span>Luminar</span><span>Edição</span></div>
-</div>
-<div class="card bone s c2">
-  <div class="num">#02</div>
-  <div class="disc"><img src="../assets/logos/evoto.png" alt="Evoto"></div>
-  <div class="foot"><span>Evoto</span><span>Retratos</span></div>
-</div>
-<div class="card orange s c1">
-  <div class="num">#01</div>
-  <div class="disc"><img src="../assets/logos/leica.png" alt="Leica LUX"></div>
-  <div class="foot"><span>Leica LUX</span><span>Foto</span></div>
-</div>
+<ul class="apps">
+  <li><img src="../assets/logos/leica.png" alt="Leica LUX"><span class="n">01</span><b>Leica LUX</b></li>
+  <li><img src="../assets/logos/evoto.png" alt="Evoto"><span class="n">02</span><b>Evoto</b></li>
+  <li><img src="../assets/logos/luminar.png" alt="Luminar"><span class="n">03</span><b>Luminar</b></li>
+</ul>
 
 <h2 class="head"><span class="mega">Três apps.</span><span class="h1 or">Novas possibilidades.</span></h2>
 

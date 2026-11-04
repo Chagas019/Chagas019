@@ -1,16 +1,14 @@
 <!-- title: 02 — Introdução -->
 <style>
   .head { position: absolute; left: var(--m); top: 132px; width: 960px; font-size: 112px; }
-  .copy { position: absolute; left: var(--m); top: 560px; width: 430px; }
+  .copy { position: absolute; left: var(--m); top: 560px; width: 760px; }
   .copy p + p { margin-top: 22px; color: var(--bone); }
   .copy .txt:first-child { color: #B9B6B0; }
-  .mini { transform-origin: 0 0; }
-  .m1 { left: 540px; top: 640px; transform: rotate(-9deg) scale(.56); }
-  .m2 { left: 470px; top: 880px; transform: rotate(5deg) scale(.56); }
-  .m3 { left: 70px; top: 930px; transform: rotate(-4deg) scale(.56); }
-  .mini .num { font-size: 540px; left: -40px; top: 48px; }
-  .mini .disc { left: 330px; top: 118px; }
-  .mini .foot, .mini .tag { font-size: 44px; }
+  .apps { position: absolute; left: var(--m); right: var(--m); top: 900px; list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .apps li { border-top: 2px solid #2A2A28; padding-top: 26px; }
+  .apps img { display: block; width: 200px; height: 200px; }
+  .apps .n { display: block; margin-top: 24px; font-size: 22px; color: var(--orange); font-weight: 600; }
+  .apps b { display: block; font-size: 38px; font-weight: 700; letter-spacing: -.035em; margin-top: 4px; }
 </style>
 <div class="top small"><span>Semana→Criativa</span><span class="mute">Ep. 01</span></div>
 
@@ -21,23 +19,10 @@
   <p class="txt">Conheça 3 aplicativos que podem elevar seu processo criativo.</p>
 </div>
 
-<div class="card dark mini m3">
-  <div class="num">#03</div>
-  <div class="disc"><img src="../assets/logos/luminar.png" alt="Luminar"></div>
-  <div class="foot"><span>Luminar</span></div>
-  <div class="tag"><svg class="ast"><use href="#ast"/></svg>Edição</div>
-</div>
-<div class="card bone mini m2">
-  <div class="num">#02</div>
-  <div class="disc"><img src="../assets/logos/evoto.png" alt="Evoto"></div>
-  <div class="foot"><span>Evoto</span></div>
-  <div class="tag"><svg class="ast"><use href="#ast"/></svg>Retrato</div>
-</div>
-<div class="card orange mini m1">
-  <div class="num">#01</div>
-  <div class="disc"><img src="../assets/logos/leica.png" alt="Leica LUX"></div>
-  <div class="foot"><span>Leica LUX</span></div>
-  <div class="tag"><svg class="ast"><use href="#ast"/></svg>Foto</div>
-</div>
+<ul class="apps">
+  <li><img src="../assets/logos/leica.png" alt="Leica LUX"><span class="n">01</span><b>Leica LUX</b></li>
+  <li><img src="../assets/logos/evoto.png" alt="Evoto"><span class="n">02</span><b>Evoto</b></li>
+  <li><img src="../assets/logos/luminar.png" alt="Luminar"><span class="n">03</span><b>Luminar</b></li>
+</ul>
 
 <div class="bottom small"><span>Chagas Criatividade</span><span class="mute">02/07</span></div>
