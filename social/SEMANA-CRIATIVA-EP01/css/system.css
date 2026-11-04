@@ -7,6 +7,9 @@
 @font-face { font-family: "Bricolage"; src: url(../assets/fonts/bricolage-grotesque-latin-500-normal.woff2) format("woff2"); font-weight: 500; }
 @font-face { font-family: "Bricolage"; src: url(../assets/fonts/bricolage-grotesque-latin-700-normal.woff2) format("woff2"); font-weight: 700; }
 @font-face { font-family: "Bricolage"; src: url(../assets/fonts/bricolage-grotesque-latin-800-normal.woff2) format("woff2"); font-weight: 800; }
+/* Caer — Hvnter (licença comercial). Coloque Caer.woff2 ou Caer.otf em assets/fonts/ */
+@font-face { font-family: "Caer"; src: url(../assets/fonts/Caer.woff2) format("woff2"), url(../assets/fonts/Caer.otf) format("opentype"); font-display: block; }
+@font-face { font-family: "CaerProvisoria"; src: url(../assets/fonts/unbounded-latin-900-normal.woff2) format("woff2"); font-weight: 800 900; }
 @font-face { font-family: "Instrument"; src: url(../assets/fonts/instrument-serif-latin-400-normal.woff2) format("woff2"); font-style: normal; }
 @font-face { font-family: "Instrument"; src: url(../assets/fonts/instrument-serif-latin-400-italic.woff2) format("woff2"); font-style: italic; }
 @font-face { font-family: "Mono"; src: url(../assets/fonts/jetbrains-mono-latin-400-normal.woff2) format("woff2"); font-weight: 400; }
@@ -76,7 +79,12 @@ html, body { width: 1080px; height: 1350px; overflow: hidden; background: var(--
 .on-dark { color: var(--cream); }
 
 /* ---------- tipografia ---------- */
-.display { font-weight: 800; letter-spacing: -.045em; line-height: .84; text-transform: uppercase; }
+.display, .caer {
+  font-family: "Caer", "CaerProvisoria", var(--sans);
+  font-weight: 900; letter-spacing: -.01em; line-height: .9; text-transform: lowercase;
+  filter: url(#liquid);
+}
+.has-caer .display, .has-caer .caer { filter: none; letter-spacing: -.02em; }
 .serif-it { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -.02em; line-height: .86; }
 .kicker { font-family: var(--mono); font-size: 18px; letter-spacing: .14em; text-transform: uppercase; }
 .body { font-size: 31px; line-height: 1.28; letter-spacing: -.012em; font-weight: 400; }

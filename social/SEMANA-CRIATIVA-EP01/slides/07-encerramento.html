@@ -6,10 +6,10 @@
 <link rel="stylesheet" href="../css/system.css">
 <style>
   .title { position: absolute; left: var(--m); top: 130px; right: var(--m); }
-  .title .display { display: block; font-size: 112px; }
+  .title .display { display: block; font-size: 82px; }
   .title .serif-it { display: block; font-size: 200px; color: var(--leica); margin-top: 4px; margin-left: -8px; }
 
-  .actions { position: absolute; left: var(--m); right: var(--m); top: 610px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; }
+  .actions { position: absolute; left: var(--m); right: var(--m); top: 548px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; }
   .actions div { border-top: 2px solid var(--ink); padding-top: 18px; }
   .actions .k { font-family: var(--mono); font-size: 16px; letter-spacing: .14em; text-transform: uppercase; display: flex; justify-content: space-between; }
   .actions p { font-size: 30px; line-height: 1.22; letter-spacing: -.015em; margin-top: 14px; }
@@ -20,8 +20,8 @@
   .sign { position: absolute; left: var(--m); right: var(--m); top: 948px; color: var(--cream); z-index: 5; }
   .sign .ep { font-family: var(--mono); font-size: 18px; letter-spacing: .16em; text-transform: uppercase; display: flex; gap: 18px; align-items: center; }
   .sign .ep::after { content: ""; flex: 1; height: 1px; background: currentColor; opacity: .6; }
-  .sign .brand { font-weight: 800; font-size: 104px; letter-spacing: -.05em; line-height: .86; text-transform: uppercase; margin-top: 22px; }
-  .sign .brand em { font-family: var(--serif); font-weight: 400; font-style: italic; text-transform: none; letter-spacing: -.02em; font-size: 116px; }
+  .sign .brand { font-size: 96px; margin-top: 26px; }
+  .sign .brand em { font-family: var(--serif); font-weight: 400; font-style: italic; text-transform: none; letter-spacing: -.02em; font-size: 120px; filter: none; display: inline-block; margin-top: 6px; }
   .sign .concept { display: flex; gap: 30px; margin-top: 26px; font-family: var(--mono); font-size: 18px; letter-spacing: .16em; text-transform: uppercase; }
   .sign .next { position: absolute; right: 0; top: 0; font-family: var(--serif); font-style: italic; font-size: 30px; }
 
@@ -54,12 +54,13 @@
   <div class="sign">
     <div class="ep">Semana Criativa — EP. 01</div>
     <span class="next">Acompanhe os próximos episódios.</span>
-    <div class="brand">Chagas<br><em>Criatividade</em></div>
+    <div class="brand caer">Chagas<br><em>Criatividade</em></div>
     <div class="concept"><span>Inspirar.</span><span>Experimentar.</span><span>Criar.</span></div>
   </div>
 
   <div class="chrome bottom on-dark"><span>Até o EP. 02</span><span>07 / 07</span></div>
   <div class="grain"></div>
 </div>
+<script src="../js/system.js"></script>
 </body>
 </html>

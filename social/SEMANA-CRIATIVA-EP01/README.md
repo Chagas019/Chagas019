@@ -25,10 +25,16 @@ node scripts/export.js             # todos os slides (ou: node scripts/export.js
 ```
 
 ## Sistema visual
-- **Tipografia:** Bricolage Grotesque 800 em caixa-alta (impacto) × Instrument Serif itálica (palavras de destaque) × JetBrains Mono (legendas editoriais).
+- **Tipografia:** **Caer** (Hvnter) em caixa-baixa nos títulos de impacto, Bricolage Grotesque nos textos × Instrument Serif itálica (palavras de destaque) × JetBrains Mono (legendas editoriais).
 - **Paleta:** céu `#5E8FCF`, grama `#2E4A23`, papel `#F3EEE3`, tinta `#161613` + cor-assinatura de cada app (Leica `#E2412A`, Evoto `#F6D660`, Luminar `#E2A33B`).
 - **Assinaturas gráficas:** numeral serifado gigante, lista com fios, “Dica prática” dentro de uma moldura de seleção tracejada, ícones como adesivos sobrepostos, grão analógico em todas as peças.
 - **Ritmo:** papel → papel → **papel / tinta / grama** (apps) → céu → papel + grama (fecha com a mesma colina da capa).
+
+## Fonte Caer
+Os títulos usam a **Caer** (Hvnter, licença comercial: shop.6tm-magazine.com). Ela não vem no projeto porque é paga.
+Depois de comprar, copie o arquivo para `assets/fonts/Caer.woff2` (ou `Caer.otf`) e rode `node scripts/export.js`.
+Ela entra sozinha e o efeito provisório é desligado.
+Sem o arquivo, os títulos usam uma versão provisória: Unbounded 900 + filtro SVG líquido (`js/system.js`).
 
 ## Observações
 - As telas dos celulares são **interfaces ilustrativas** (construídas em código), indicadas na legenda de cada slide. Para usar capturas reais, troque o conteúdo de `.screen` por uma `<img>`.
