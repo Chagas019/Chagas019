@@ -498,9 +498,23 @@ function renderTV(t) {
 }
 
 /* ---------- loop, reinício e gravação ---------- */
+/* Ritmo: mapeia o tempo real (s) para o tempo da animação.
+   As transições correm quase na velocidade normal; os momentos
+   de leitura são esticados para dar tempo de ler cada informação. */
+const PACE = [[0, 0], [1.7, 2.0], [2.6, 4.6], [3.7, 5.9], [4.7, 7.3], [5.0, 7.8], [5.45, 10.0], [6.35, 11.0],
+  [8.3, 13.2], [10.4, 16.2], [12.05, 18.0], [12.3, 20.0], [13, 20.8]];
+const REAL_DUR = PACE[PACE.length - 1][1];
+function animT(r) {
+  for (let i = 1; i < PACE.length; i++) {
+    const [a0, r0] = PACE[i - 1], [a1, r1] = PACE[i];
+    if (r <= r1) return a0 + (a1 - a0) * (r - r0) / (r1 - r0);
+  }
+  const [a, rl] = PACE[PACE.length - 1]; return a + (r - rl);
+}
+window.__animT = animT; window.__REAL_DUR = REAL_DUR;
 let t0 = performance.now();
 function frame(now) {
-  const t = (now - t0) / 1000;
+  const t = animT((now - t0) / 1000);
   if (tvMode && tv) renderTV(t); else render(ctx, W, H, t);
   requestAnimationFrame(frame);
 }
@@ -524,9 +538,9 @@ btnRec.onclick = () => {
     a.download = `gincana-novas-datas${tvMode ? '-tv' : ''}.${ext}`; a.click();
     btnRec.disabled = false; btnRec.textContent = '● Gravar vídeo'; status.textContent = `Vídeo salvo (.${ext}).`;
   };
-  btnRec.disabled = true; btnRec.textContent = '● Gravando…'; status.textContent = 'Gravando 13s — mantenha esta aba aberta e visível.';
+  btnRec.disabled = true; btnRec.textContent = '● Gravando…'; status.textContent = `Gravando ${Math.round(REAL_DUR)}s — mantenha esta aba aberta e visível.`;
   restart(); rec.start(250);
-  setTimeout(() => rec.stop(), (DUR + .4) * 1000);
+  setTimeout(() => rec.stop(), (REAL_DUR + .4) * 1000);
 };
 
 Promise.race([document.fonts.load(`900 100px Montserrat`).then(() => document.fonts.load(`800 100px Montserrat`)), new Promise(r => setTimeout(r, 2000))])
