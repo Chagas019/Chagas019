@@ -5,102 +5,37 @@
 <title>03 — Leica LUX · Semana Criativa EP.01</title>
 <link rel="stylesheet" href="../css/system.css">
 <style>
-  .slide { --accent: var(--leica); }
-  .num { position: absolute; left: 54px; top: 104px; font-size: 270px; color: var(--leica); }
-  .head { position: absolute; left: var(--m); top: 312px; width: 580px; }
-  .head .display { font-size: 104px; }
-  .head .serif-it { font-size: 50px; margin-top: 16px; line-height: .98; color: var(--ink-2); }
-
-  .features { position: absolute; left: var(--m); top: 656px; width: 548px; }
-  .features li { font-size: 26px; padding: 15px 0 16px; grid-template-columns: 52px 1fr; }
-
-  .select-box { left: var(--m); top: 984px; width: 560px; color: var(--ink); }
-
-  /* celular */
-  .phone { right: 34px; top: 236px; transform: rotate(4deg); }
-  .vf { position: absolute; inset: 0; background: url(../assets/textures/sky.jpg) 40% 30%/1080px auto; }
-  .vf::after { content: ""; position: absolute; left: -20px; right: -20px; bottom: 120px; height: 290px; background: url(../assets/textures/grass.jpg) center/cover; transform: rotate(-7deg); transform-origin: left top; }
-  .grid { position: absolute; inset: 0; z-index: 2;
-    background:
-      linear-gradient(90deg, transparent calc(33.33% - .5px), rgba(255,255,255,.45) 0 calc(33.33% + .5px), transparent 0 calc(66.66% - .5px), rgba(255,255,255,.45) 0 calc(66.66% + .5px), transparent 0),
-      linear-gradient(transparent calc(33.33% - .5px), rgba(255,255,255,.45) 0 calc(33.33% + .5px), transparent 0 calc(66.66% - .5px), rgba(255,255,255,.45) 0 calc(66.66% + .5px), transparent 0);
-  }
-  .topbar { position: absolute; top: 58px; left: 18px; right: 18px; display: flex; justify-content: space-between; z-index: 3; }
-  .pill { background: rgba(0,0,0,.55); padding: 6px 10px; border-radius: 8px; }
-  .pill.red { background: var(--leica); }
-  .focus { position: absolute; left: 170px; top: 300px; width: 92px; height: 92px; border: 2px solid #F6D660; z-index: 3; }
-  .focus::after { content: "MF"; position: absolute; top: -22px; left: -2px; font-family: var(--mono); font-size: 11px; color: #F6D660; letter-spacing: .1em; }
-  .controls { position: absolute; left: 0; right: 0; bottom: 0; height: 232px; background: #0c0c0b; z-index: 3; padding: 16px 18px 0; }
-  .dials { display: flex; justify-content: space-between; color: #bdb9ae; }
-  .dials div { text-align: center; }
-  .dials b { display: block; font-family: var(--sans); font-size: 18px; color: #f2efe6; letter-spacing: -.01em; margin-top: 4px; }
-  .dials .on b { color: #F6D660; }
-  .ruler { margin: 14px 0 0; height: 26px; background: repeating-linear-gradient(90deg, #6d6a62 0 1.5px, transparent 1.5px 12px); position: relative; opacity: .9; }
-  .ruler::after { content: ""; position: absolute; left: 50%; top: -4px; width: 2px; height: 34px; background: #F6D660; }
-  .lenses { display: flex; gap: 10px; justify-content: center; margin-top: 14px; }
-  .lenses span { font-family: var(--mono); font-size: 12px; padding: 6px 9px; border-radius: 20px; background: #1f1f1c; color: #cfcbc0; }
-  .lenses span.on { background: #f2efe6; color: #111; }
-  .shutter { position: absolute; left: 50%; bottom: 18px; width: 66px; height: 66px; margin-left: -33px; border-radius: 50%; border: 4px solid #f2efe6; }
-  .shutter::after { content: ""; position: absolute; inset: 5px; border-radius: 50%; background: #f2efe6; }
-  .look { position: absolute; left: 22px; bottom: 36px; font-family: var(--mono); font-size: 11px; color: #9a968b; letter-spacing: .08em; line-height: 1.4; }
-  .look b { color: #f2efe6; font-weight: 500; }
-
-  .sticker { position: absolute; width: 168px; right: 340px; top: 186px; transform: rotate(-8deg); z-index: 10; }
-  .caption { position: absolute; right: 64px; top: 1072px; width: 330px; text-align: right; font-family: var(--mono); font-size: 14px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); line-height: 1.5; }
+.hero { left: 92px; top: 150px; transform: rotate(-6deg); }
+  .hero .num { left: -46px; top: 48px; font-size: 540px; }
+  .hero .disc { left: 312px; top: 118px; }
+  .name { position: absolute; left: var(--m); top: 770px; font-size: 132px; }
+  .sub { position: absolute; left: var(--m); top: 900px; font-size: 42px; color: var(--grey); }
+  .feats { position: absolute; left: var(--m); right: var(--m); top: 984px; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; }
+  .feats li { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0 16px; border-top: 2px solid #2A2A28; font-size: 27px; font-weight: 500; line-height: 1.15; letter-spacing: -.02em; }
+  .feats .ast { flex: 0 0 22px; width: 22px; height: 22px; margin-top: 4px; color: var(--orange); }
+  .tip { position: absolute; left: var(--m); right: var(--m); bottom: 56px; background: var(--orange); color: var(--black); border-radius: 30px; padding: 24px 30px 26px; display: grid; grid-template-columns: 150px 1fr; gap: 18px; align-items: start; }
+  .tip b { font-size: 24px; font-weight: 700; display: flex; gap: 8px; align-items: center; letter-spacing: -.02em; line-height: 1; padding-top: 4px; }
+  .tip b .ast { width: 22px; height: 22px; }
+  .tip p { font-size: 27px; font-weight: 600; line-height: 1.18; letter-spacing: -.02em; }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="ast" viewBox="-50 -50 100 100"><g fill="currentColor"><rect x="-9.5" y="-48" width="19" height="96"/><rect x="-9.5" y="-48" width="19" height="96" transform="rotate(60)"/><rect x="-9.5" y="-48" width="19" height="96" transform="rotate(-60)"/></g></symbol></defs></svg>
 <div class="slide">
-  <div class="bg bg-paper"></div>
-  <div class="chrome top"><b>Semana Criativa</b><span class="rule"></span><span>App 01 / 03</span></div>
+<div class="top small"><span>Semana→Criativa</span><span class="mute">App 01/03 · 03/07</span></div>
 
-  <div class="num numeral">01.</div>
-  <div class="head">
-    <h2 class="display">Leica<br>LUX</h2>
-    <p class="serif-it">Fotografia com controle profissional.</p>
-  </div>
-
-  <ul class="features">
-    <li><span>A</span>Controles manuais de câmera</li>
-    <li><span>B</span>Ajustes de exposição e foco</li>
-    <li><span>C</span>Simulação de lentes e estilos fotográficos</li>
-    <li><span>D</span>Captura em RAW, quando compatível</li>
-  </ul>
-
-  <div class="phone">
-    <div class="screen">
-      <div class="island"></div>
-      <div class="status"><span>9:41</span><span>●●●</span></div>
-      <div class="vf"></div>
-      <div class="grid"></div>
-      <div class="topbar ui-mono"><span></span><span style="display:flex;gap:8px"><span class="pill">f/1.8</span><span class="pill">4:5</span><span class="pill red">RAW</span></span></div>
-      <div class="focus"></div>
-      <div class="controls">
-        <div class="dials ui-mono">
-          <div>ISO<b>100</b></div>
-          <div class="on">Obt.<b>1/250</b></div>
-          <div>EV<b>−0.3</b></div>
-          <div>Foco<b>MF</b></div>
-        </div>
-        <div class="ruler"></div>
-        <div class="lenses"><span>28</span><span class="on">35</span><span>50</span><span>75</span></div>
-        <div class="look">LOOK<br><b>Clássico</b></div>
-        <div class="shutter"></div>
-      </div>
-    </div>
-  </div>
-  <img class="app-icon sticker" src="../assets/logos/leica.png" alt="Leica LUX">
-  <p class="caption">Leica LUX — Pro Manual Camera<br>Interface ilustrativa</p>
-
-  <div class="select-box">
-    <span class="h1"></span><span class="h2"></span>
-    <div class="label"><i></i>Dica prática</div>
-    <p>Experimente fotografar em <strong>RAW</strong> e explore os controles manuais para ter mais liberdade na edição.</p>
-  </div>
-
-  <div class="chrome bottom"><span>Chagas Criatividade</span><span>03 / 07</span></div>
-  <div class="grain soft"></div>
+<div class="card orange hero">
+  <div class="num">#01</div>
+  <div class="disc"><img src="../assets/logos/leica.png" alt="Leica LUX"></div>
+  <div class="foot"><span>Leica LUX</span><span>Fotografia</span></div>
+  <div class="tag"><svg class="ast"><use href="#ast"/></svg>RAW</div>
 </div>
-<script src="../js/system.js"></script>
+
+<h2 class="name h1">Leica LUX</h2>
+<p class="sub h2">Fotografia com controle profissional.</p>
+<ul class="feats"><li><svg class="ast"><use href="#ast"/></svg><span>Controles manuais de câmera</span></li><li><svg class="ast"><use href="#ast"/></svg><span>Ajustes de exposição e foco</span></li><li><svg class="ast"><use href="#ast"/></svg><span>Simulação de lentes e estilos fotográficos</span></li><li><svg class="ast"><use href="#ast"/></svg><span>Captura em RAW, quando compatível</span></li></ul>
+<div class="tip"><b><svg class="ast"><use href="#ast"/></svg>Dica prática</b><p>Experimente fotografar em RAW e explore os controles manuais para ter mais liberdade na edição.</p></div>
+<div class="grain"></div>
+</div>
 </body>
 </html>

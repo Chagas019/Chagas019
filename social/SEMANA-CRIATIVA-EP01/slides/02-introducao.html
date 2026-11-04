@@ -5,61 +5,52 @@
 <title>02 — Introdução · Semana Criativa EP.01</title>
 <link rel="stylesheet" href="../css/system.css">
 <style>
-  .title { position: absolute; left: var(--m); top: 128px; right: var(--m); }
-  .title .display { font-size: 78px; display: block; }
-  .title .serif-it { font-size: 158px; color: var(--grass); display: block; margin-top: 22px; position: relative; z-index: 5; margin-left: -6px; }
-
-  /* janela fotográfica com o número 3 */
-  .window {
-    position: absolute; left: var(--m); top: 770px; width: 400px; height: 440px;
-    background: url(../assets/textures/sky-2.jpg) 62% 58%/1300px auto;
-    overflow: hidden;
-  }
-  .window::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 150px; background: url(../assets/textures/grass.jpg) center/cover; transform: skewY(-6deg); transform-origin: right bottom; }
-  .three {
-    position: absolute; left: 120px; top: 704px; z-index: 4;
-    font-family: var(--serif); font-style: italic; font-size: 560px; line-height: .8; color: var(--ink);
-    letter-spacing: -.04em;
-  }
-  .window-cap { position: absolute; left: var(--m); top: 1226px; font-family: var(--mono); font-size: 15px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); }
-
-  .copy { position: absolute; left: 540px; right: var(--m); top: 772px; }
-  .copy .body { margin-bottom: 20px; font-size: 28px; }
-  .copy .lead { font-weight: 700; }
-
-  .toc { position: absolute; left: 540px; right: var(--m); top: 1012px; list-style: none; }
-  .toc li { display: flex; align-items: center; gap: 18px; padding: 12px 0; border-top: 1.5px solid var(--ink); font-size: 30px; font-weight: 700; letter-spacing: -.02em; }
-  .toc li:last-child { border-bottom: 1.5px solid var(--ink); }
-  .toc img { width: 44px; height: 44px; filter: none; }
-  .toc .n { font-family: var(--mono); font-size: 15px; font-weight: 400; letter-spacing: .1em; width: 30px; }
-  .toc .t { margin-left: auto; font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 28px; color: var(--ink-2); }
+.head { position: absolute; left: var(--m); top: 132px; width: 960px; font-size: 112px; }
+  .copy { position: absolute; left: var(--m); top: 560px; width: 430px; }
+  .copy p + p { margin-top: 22px; color: var(--bone); }
+  .copy .txt:first-child { color: #B9B6B0; }
+  .mini { transform-origin: 0 0; }
+  .m1 { left: 540px; top: 640px; transform: rotate(-9deg) scale(.56); }
+  .m2 { left: 470px; top: 880px; transform: rotate(5deg) scale(.56); }
+  .m3 { left: 70px; top: 930px; transform: rotate(-4deg) scale(.56); }
+  .mini .num { font-size: 540px; left: -40px; top: 48px; }
+  .mini .disc { left: 330px; top: 118px; }
+  .mini .foot, .mini .tag { font-size: 44px; }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="ast" viewBox="-50 -50 100 100"><g fill="currentColor"><rect x="-9.5" y="-48" width="19" height="96"/><rect x="-9.5" y="-48" width="19" height="96" transform="rotate(60)"/><rect x="-9.5" y="-48" width="19" height="96" transform="rotate(-60)"/></g></symbol></defs></svg>
 <div class="slide">
-  <div class="bg bg-paper"></div>
-  <div class="chrome top"><b>Semana Criativa</b><span class="rule"></span><span>EP. 01 — Introdução</span></div>
+<div class="top small"><span>Semana→Criativa</span><span class="mute">Ep. 01</span></div>
 
-  <h2 class="title"><span class="display">Sua criatividade<br>merece</span><span class="serif-it">novas ferramentas.</span></h2>
+<h2 class="head h1">Sua criatividade merece <span class="or">novas ferramentas.</span></h2>
 
-  <div class="window"></div>
-  <div class="three">3</div>
-  <div class="window-cap">Fig. 01 — Três apps, um processo</div>
-
-  <div class="copy">
-    <p class="body">Às vezes, tudo o que você precisa é conhecer novas ferramentas para transformar suas ideias em projetos incríveis.</p>
-    <p class="body lead">Conheça 3 aplicativos que podem elevar seu processo criativo.</p>
-  </div>
-
-  <ol class="toc">
-    <li><span class="n">01</span><img class="app-icon" src="../assets/logos/leica.png" alt="">Leica LUX<span class="t">foto</span></li>
-    <li><span class="n">02</span><img class="app-icon" src="../assets/logos/evoto.png" alt="">Evoto<span class="t">retrato</span></li>
-    <li><span class="n">03</span><img class="app-icon" src="../assets/logos/luminar.png" alt="">Luminar<span class="t">edição</span></li>
-  </ol>
-
-  <div class="chrome bottom"><span>Chagas Criatividade</span><span>02 / 07</span></div>
-  <div class="grain soft"></div>
+<div class="copy">
+  <p class="txt">Às vezes, tudo o que você precisa é conhecer novas ferramentas para transformar suas ideias em projetos incríveis.</p>
+  <p class="txt">Conheça 3 aplicativos que podem elevar seu processo criativo.</p>
 </div>
-<script src="../js/system.js"></script>
+
+<div class="card dark mini m3">
+  <div class="num">#03</div>
+  <div class="disc"><img src="../assets/logos/luminar.png" alt="Luminar"></div>
+  <div class="foot"><span>Luminar</span></div>
+  <div class="tag"><svg class="ast"><use href="#ast"/></svg>Edição</div>
+</div>
+<div class="card bone mini m2">
+  <div class="num">#02</div>
+  <div class="disc"><img src="../assets/logos/evoto.png" alt="Evoto"></div>
+  <div class="foot"><span>Evoto</span></div>
+  <div class="tag"><svg class="ast"><use href="#ast"/></svg>Retrato</div>
+</div>
+<div class="card orange mini m1">
+  <div class="num">#01</div>
+  <div class="disc"><img src="../assets/logos/leica.png" alt="Leica LUX"></div>
+  <div class="foot"><span>Leica LUX</span></div>
+  <div class="tag"><svg class="ast"><use href="#ast"/></svg>Foto</div>
+</div>
+
+<div class="bottom small"><span>Chagas Criatividade</span><span class="mute">02/07</span></div>
+<div class="grain"></div>
+</div>
 </body>
 </html>

@@ -5,93 +5,37 @@
 <title>05 — Luminar · Semana Criativa EP.01</title>
 <link rel="stylesheet" href="../css/system.css">
 <style>
-  .slide { --accent: var(--luminar); color: var(--cream); }
-  .shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(14,22,10,.55), rgba(14,22,10,.25) 45%, rgba(14,22,10,.7)); }
-  .num { position: absolute; left: 54px; top: 104px; font-size: 270px; color: var(--luminar); }
-  .head { position: absolute; left: var(--m); top: 330px; width: 600px; }
-  .head .display { font-size: 100px; }
-  .head .serif-it { font-size: 50px; margin-top: 18px; line-height: .98; color: #e8e1cf; }
-
-  .features { position: absolute; left: var(--m); top: 600px; width: 540px; }
-  .features li { font-size: 26px; padding: 15px 0 16px; grid-template-columns: 52px 1fr; border-color: rgba(251,244,228,.6) !important; }
-
-  .select-box { left: var(--m); top: 948px; width: 560px; color: var(--cream); }
-  .select-box::before, .select-box::after, .select-box > .h1, .select-box > .h2 { background: var(--luminar); }
-
-  /* celular — edição de luz e atmosfera */
-  .phone { right: 34px; top: 250px; transform: rotate(4deg); box-shadow: 0 0 0 2px #2b2b27 inset, 0 40px 80px -30px rgba(0,0,0,.8); }
-  .viewer { position: absolute; left: 0; right: 0; top: 0; height: 480px; overflow: hidden; }
-  .scene { position: absolute; inset: 0; background: url(../assets/textures/sky-2.jpg) 50% 30%/1100px auto; }
-  .scene::after { content: ""; position: absolute; left: -30px; right: -30px; bottom: -40px; height: 210px; background: url(../assets/textures/grass.jpg) center/cover; transform: rotate(-6deg); transform-origin: right top; }
-  .scene.edit { clip-path: inset(0 0 0 52%); filter: saturate(1.25) contrast(1.08) sepia(.28) hue-rotate(-8deg) brightness(1.02); }
-  .glow { position: absolute; right: -60px; top: 40px; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(255,200,120,.55), transparent 65%); clip-path: inset(0 0 0 0); mix-blend-mode: screen; }
-  .split { position: absolute; left: 52%; top: 0; bottom: 0; width: 2px; background: #fff; z-index: 3; }
-  .tag { position: absolute; top: 70px; z-index: 4; background: rgba(0,0,0,.5); padding: 6px 10px; border-radius: 8px; }
-  .tag.l { left: 18px; } .tag.r { right: 18px; }
-  .panel { position: absolute; left: 0; right: 0; bottom: 0; top: 480px; background: #121411; padding: 18px 22px; }
-  .tools { display: flex; gap: 8px; margin-bottom: 16px; }
-  .tools span { padding: 6px 10px; border-radius: 20px; background: #22251f; color: #c9c4b6; }
-  .tools span.on { background: var(--luminar); color: #1a1a17; }
-  .slider { margin-bottom: 15px; }
-  .slider .row { display: flex; justify-content: space-between; font-size: 14px; color: #e6e1d4; margin-bottom: 7px; }
-  .slider .row em { font-style: normal; font-family: var(--mono); color: #9a968b; font-size: 12px; }
-  .track { height: 4px; background: #2c2e28; border-radius: 2px; position: relative; }
-  .track i { position: absolute; left: 50%; top: 0; bottom: 0; background: var(--luminar); }
-  .track b { position: absolute; top: -6px; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: #f2efe6; }
-
-  .sticker { position: absolute; width: 160px; right: 236px; top: 1000px; transform: rotate(-6deg); z-index: 10; }
-  .caption { position: absolute; right: 64px; top: 1190px; text-align: right; font-family: var(--mono); font-size: 14px; letter-spacing: .1em; text-transform: uppercase; color: #d7d1c1; line-height: 1.5; }
+.hero { left: 96px; top: 150px; transform: rotate(-4deg); }
+  .hero .num { left: -46px; top: 48px; font-size: 540px; }
+  .hero .disc { left: 312px; top: 118px; }
+  .name { position: absolute; left: var(--m); top: 770px; font-size: 132px; }
+  .sub { position: absolute; left: var(--m); top: 900px; font-size: 42px; color: var(--grey); }
+  .feats { position: absolute; left: var(--m); right: var(--m); top: 984px; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; }
+  .feats li { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0 16px; border-top: 2px solid #2A2A28; font-size: 27px; font-weight: 500; line-height: 1.15; letter-spacing: -.02em; }
+  .feats .ast { flex: 0 0 22px; width: 22px; height: 22px; margin-top: 4px; color: var(--orange); }
+  .tip { position: absolute; left: var(--m); right: var(--m); bottom: 56px; background: var(--orange); color: var(--black); border-radius: 30px; padding: 24px 30px 26px; display: grid; grid-template-columns: 150px 1fr; gap: 18px; align-items: start; }
+  .tip b { font-size: 24px; font-weight: 700; display: flex; gap: 8px; align-items: center; letter-spacing: -.02em; line-height: 1; padding-top: 4px; }
+  .tip b .ast { width: 22px; height: 22px; }
+  .tip p { font-size: 27px; font-weight: 600; line-height: 1.18; letter-spacing: -.02em; }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="ast" viewBox="-50 -50 100 100"><g fill="currentColor"><rect x="-9.5" y="-48" width="19" height="96"/><rect x="-9.5" y="-48" width="19" height="96" transform="rotate(60)"/><rect x="-9.5" y="-48" width="19" height="96" transform="rotate(-60)"/></g></symbol></defs></svg>
 <div class="slide">
-  <div class="bg bg-grass"></div>
-  <div class="shade"></div>
-  <div class="chrome top on-dark"><b>Semana Criativa</b><span class="rule"></span><span>App 03 / 03</span></div>
+<div class="top small"><span>Semana→Criativa</span><span class="mute">App 03/03 · 05/07</span></div>
 
-  <div class="num numeral">03.</div>
-  <div class="head">
-    <h2 class="display">Luminar</h2>
-    <p class="serif-it">Explore novas possibilidades na edição.</p>
-  </div>
-
-  <ul class="features">
-    <li><span>A</span>Ajustes inteligentes de imagem</li>
-    <li><span>B</span>Tratamento de luz e cores</li>
-    <li><span>C</span>Ferramentas de edição criativa</li>
-    <li><span>D</span>Recursos de inteligência artificial</li>
-  </ul>
-
-  <div class="phone">
-    <div class="screen">
-      <div class="island"></div>
-      <div class="viewer">
-        <div class="scene"></div>
-        <div class="scene edit"></div>
-        <div class="split"></div>
-        <span class="tag l ui-mono">Original</span><span class="tag r ui-mono">Editada</span>
-      </div>
-      <div class="panel">
-        <div class="tools ui-mono"><span class="on">Luz</span><span>Cor</span><span>Céu</span><span>Detalhe</span></div>
-        <div class="slider"><div class="row">Exposição<em>+0.4</em></div><div class="track"><i style="width:10%"></i><b style="left:60%"></b></div></div>
-        <div class="slider"><div class="row">Atmosfera<em>+32</em></div><div class="track"><i style="width:16%"></i><b style="left:66%"></b></div></div>
-        <div class="slider"><div class="row">Temperatura<em>+18</em></div><div class="track"><i style="width:9%"></i><b style="left:59%"></b></div></div>
-        <div class="slider"><div class="row">Realce de céu<em>+45</em></div><div class="track"><i style="width:22%"></i><b style="left:72%"></b></div></div>
-      </div>
-    </div>
-  </div>
-  <img class="app-icon sticker" src="../assets/logos/luminar.png" alt="Luminar">
-  <p class="caption">Luminar — Editor de Fotos IA<br>Interface ilustrativa</p>
-
-  <div class="select-box">
-    <span class="h1"></span><span class="h2"></span>
-    <div class="label"><i></i>Dica prática</div>
-    <p>Experimente trabalhar <strong>luz, atmosfera e cores</strong> para desenvolver uma identidade visual própria.</p>
-  </div>
-
-  <div class="chrome bottom on-dark"><span>Chagas Criatividade</span><span>05 / 07</span></div>
-  <div class="grain"></div>
+<div class="card dark hero">
+  <div class="num">#03</div>
+  <div class="disc"><img src="../assets/logos/luminar.png" alt="Luminar"></div>
+  <div class="foot"><span>Luminar</span><span>Edição</span></div>
+  <div class="tag"><svg class="ast"><use href="#ast"/></svg>IA</div>
 </div>
-<script src="../js/system.js"></script>
+
+<h2 class="name h1">Luminar</h2>
+<p class="sub h2">Explore novas possibilidades na edição.</p>
+<ul class="feats"><li><svg class="ast"><use href="#ast"/></svg><span>Ajustes inteligentes de imagem</span></li><li><svg class="ast"><use href="#ast"/></svg><span>Tratamento de luz e cores</span></li><li><svg class="ast"><use href="#ast"/></svg><span>Ferramentas de edição criativa</span></li><li><svg class="ast"><use href="#ast"/></svg><span>Recursos de inteligência artificial</span></li></ul>
+<div class="tip"><b><svg class="ast"><use href="#ast"/></svg>Dica prática</b><p>Experimente trabalhar luz, atmosfera e cores para desenvolver uma identidade visual própria.</p></div>
+<div class="grain"></div>
+</div>
 </body>
 </html>
