@@ -12,10 +12,10 @@
   header h1 em { color: #FF4D1F; text-transform: none; font-style: normal; }
   header p { font-size: 14px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
   .rail { display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 8px 16px 40px; max-width: 1200px; margin: 0 auto; }
-  .card { flex: 0 0 min(86vw, 432px); scroll-snap-align: center; }
+  .item { flex: 0 0 min(86vw, 432px); scroll-snap-align: center; }
   .frame { position: relative; width: 100%; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 4px; }
   .frame iframe { position: absolute; left: 0; top: 0; width: 1080px; height: 1350px; border: 0; transform-origin: 0 0; }
-  .card a { display: inline-block; margin-top: 10px; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: inherit; opacity: .75; }
+  .item a { display: inline-block; margin-top: 10px; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: inherit; opacity: .75; }
 </style>
 </head>
 <body>
@@ -27,7 +27,7 @@
 <script>
   const slides = ['01-capa','02-introducao','03-leica-lux','04-evoto','05-luminar','06-qual-voce-vai-testar','07-encerramento'];
   const rail = document.getElementById('rail');
-  rail.innerHTML = slides.map(s => `<div class="card"><div class="frame"><iframe src="slides/${s}.html" loading="lazy" title="${s}"></iframe></div><a href="export/png-2x/${s}.png" download>Baixar PNG ↓</a></div>`).join('');
+  rail.innerHTML = slides.map(s => `<div class="item"><div class="frame"><iframe src="slides/${s}.html" loading="lazy" title="${s}"></iframe></div><a href="export/png-2x/${s}.png" download>Baixar PNG ↓</a></div>`).join('');
   const fit = () => document.querySelectorAll('.frame').forEach(f => f.querySelector('iframe').style.transform = `scale(${f.clientWidth / 1080})`);
   addEventListener('resize', fit); fit();
 </script>
