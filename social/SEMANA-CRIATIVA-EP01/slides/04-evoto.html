@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>04 — Evoto · Semana Criativa EP.01</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .slide { --accent: var(--evoto); color: var(--cream); }
+  .num { position: absolute; right: 60px; top: 104px; font-size: 270px; color: var(--evoto); text-align: right; }
+  .head { position: absolute; right: var(--m); top: 330px; width: 560px; text-align: right; }
+  .head .display { font-size: 150px; }
+  .head .serif-it { font-size: 50px; margin-top: 18px; line-height: .98; color: #d9d3c4; }
+
+  .features { position: absolute; right: var(--m); top: 600px; width: 520px; }
+  .features li { font-size: 26px; padding: 15px 0 16px; grid-template-columns: 52px 1fr; border-color: rgba(251,244,228,.55) !important; }
+
+  .select-box { right: var(--m); top: 948px; width: 520px; color: var(--cream); }
+  .select-box::before, .select-box::after, .select-box > .h1, .select-box > .h2 { background: var(--evoto); }
+
+  /* celular — editor de retrato */
+  .phone { left: 40px; top: 250px; transform: rotate(-4deg); box-shadow: 0 0 0 2px #3a3a34 inset, 0 40px 80px -30px rgba(0,0,0,.8); }
+  .viewer { position: absolute; left: 0; right: 0; top: 0; height: 480px; overflow: hidden; }
+  /* macro de pele: antes (manchas) | depois (uniforme, com textura preservada) */
+  .skin { position: absolute; inset: 0; background:
+      radial-gradient(120% 90% at 30% 20%, #f0c4a6 0%, #dca184 45%, #b77a5f 100%); }
+  .skin.before::after { content: ""; position: absolute; inset: 0; background:
+      radial-gradient(14px 12px at 22% 34%, rgba(150,60,50,.55), transparent 70%),
+      radial-gradient(10px 10px at 38% 52%, rgba(150,60,50,.5), transparent 70%),
+      radial-gradient(18px 14px at 16% 62%, rgba(130,55,45,.45), transparent 70%),
+      radial-gradient(9px 9px at 44% 28%, rgba(150,60,50,.5), transparent 70%),
+      radial-gradient(60px 40px at 30% 78%, rgba(110,50,40,.35), transparent 70%),
+      radial-gradient(12px 10px at 8% 44%, rgba(150,60,50,.45), transparent 70%); }
+  .skin .pores { position: absolute; inset: 0; background-image: url(../assets/textures/grain.png); background-size: 300px; mix-blend-mode: soft-light; opacity: .55; }
+  .after { clip-path: inset(0 0 0 50%); }
+  .after .skin { filter: saturate(.95) brightness(1.04); }
+  .split { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: #fff; z-index: 3; }
+  .split::after { content: ""; position: absolute; left: -17px; top: 50%; width: 36px; height: 36px; margin-top: -18px; border-radius: 50%; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
+  .tag { position: absolute; top: 70px; z-index: 4; background: rgba(0,0,0,.5); padding: 6px 10px; border-radius: 8px; }
+  .tag.l { left: 18px; } .tag.r { right: 18px; }
+  .panel { position: absolute; left: 0; right: 0; bottom: 0; top: 480px; background: #0e0e0d; padding: 18px 22px; }
+  .tabs { display: flex; gap: 16px; color: #8d897e; margin-bottom: 14px; }
+  .tabs .on { color: var(--evoto); }
+  .slider { margin-bottom: 15px; }
+  .slider .row { display: flex; justify-content: space-between; font-size: 14px; color: #e6e1d4; margin-bottom: 7px; }
+  .slider .row em { font-style: normal; font-family: var(--mono); color: #9a968b; font-size: 12px; }
+  .track { height: 4px; background: #2a2a26; border-radius: 2px; position: relative; }
+  .track i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--evoto); border-radius: 2px; }
+  .track i::after { content: ""; position: absolute; right: -8px; top: -6px; width: 16px; height: 16px; border-radius: 50%; background: #f2efe6; }
+
+  .sticker { position: absolute; width: 160px; left: 296px; top: 990px; transform: rotate(7deg); z-index: 10; }
+  .caption { position: absolute; left: var(--m); top: 1158px; font-family: var(--mono); font-size: 14px; letter-spacing: .1em; text-transform: uppercase; color: #a9a497; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg bg-ink"></div>
+  <div class="chrome top on-dark"><b>Semana Criativa</b><span class="rule"></span><span>App 02 / 03</span></div>
+
+  <div class="num numeral">02.</div>
+  <div class="head">
+    <h2 class="display">Evoto</h2>
+    <p class="serif-it">Edição de retratos com inteligência artificial.</p>
+  </div>
+
+  <ul class="features">
+    <li><span>A</span>Retoque de pele</li>
+    <li><span>B</span>Ajustes de iluminação</li>
+    <li><span>C</span>Tratamento de retratos</li>
+    <li><span>D</span>Ferramentas para agilizar fluxos de edição</li>
+  </ul>
+
+  <div class="phone">
+    <div class="screen">
+      <div class="island"></div>
+      <div class="viewer">
+        <div class="skin before"><div class="pores"></div></div>
+        <div class="after" style="position:absolute;inset:0"><div class="skin"><div class="pores"></div></div></div>
+        <div class="split"></div>
+        <span class="tag l ui-mono">Antes</span><span class="tag r ui-mono">Depois</span>
+      </div>
+      <div class="panel">
+        <div class="tabs ui-mono"><span class="on">Pele</span><span>Luz</span><span>Rosto</span><span>Lote</span></div>
+        <div class="slider"><div class="row">Suavizar manchas<em>40</em></div><div class="track"><i style="width:40%"></i></div></div>
+        <div class="slider"><div class="row">Preservar textura<em>100</em></div><div class="track"><i style="width:96%"></i></div></div>
+        <div class="slider"><div class="row">Iluminação do rosto<em>25</em></div><div class="track"><i style="width:25%"></i></div></div>
+        <div class="slider"><div class="row">Aplicar em lote<em>12 fotos</em></div><div class="track"><i style="width:62%"></i></div></div>
+      </div>
+    </div>
+  </div>
+  <img class="app-icon sticker" src="../assets/logos/evoto.png" alt="Evoto">
+  <p class="caption">Evoto — Editor de Fotos IA<br>Interface ilustrativa</p>
+
+  <div class="select-box">
+    <span class="h1"></span><span class="h2"></span>
+    <div class="label"><i></i>Dica prática</div>
+    <p>Use a ferramenta para otimizar o tratamento, <strong>preservando a textura natural da pele</strong> e a identidade da pessoa.</p>
+  </div>
+
+  <div class="chrome bottom on-dark"><span>Chagas Criatividade</span><span>04 / 07</span></div>
+  <div class="grain"></div>
+</div>
+</body>
+</html>

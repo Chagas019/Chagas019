@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>07 — Encerramento · Semana Criativa EP.01</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .title { position: absolute; left: var(--m); top: 130px; right: var(--m); }
+  .title .display { display: block; font-size: 112px; }
+  .title .serif-it { display: block; font-size: 200px; color: var(--leica); margin-top: 4px; margin-left: -8px; }
+
+  .actions { position: absolute; left: var(--m); right: var(--m); top: 610px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; }
+  .actions div { border-top: 2px solid var(--ink); padding-top: 18px; }
+  .actions .k { font-family: var(--mono); font-size: 16px; letter-spacing: .14em; text-transform: uppercase; display: flex; justify-content: space-between; }
+  .actions p { font-size: 30px; line-height: 1.22; letter-spacing: -.015em; margin-top: 14px; }
+  .actions strong { font-weight: 700; }
+
+  .ground { position: absolute; left: -60px; right: -60px; bottom: -130px; height: 520px; background: url(../assets/textures/grass.jpg) center/cover; transform: rotate(-5deg); transform-origin: left top; }
+
+  .sign { position: absolute; left: var(--m); right: var(--m); top: 948px; color: var(--cream); z-index: 5; }
+  .sign .ep { font-family: var(--mono); font-size: 18px; letter-spacing: .16em; text-transform: uppercase; display: flex; gap: 18px; align-items: center; }
+  .sign .ep::after { content: ""; flex: 1; height: 1px; background: currentColor; opacity: .6; }
+  .sign .brand { font-weight: 800; font-size: 104px; letter-spacing: -.05em; line-height: .86; text-transform: uppercase; margin-top: 22px; }
+  .sign .brand em { font-family: var(--serif); font-weight: 400; font-style: italic; text-transform: none; letter-spacing: -.02em; font-size: 116px; }
+  .sign .concept { display: flex; gap: 30px; margin-top: 26px; font-family: var(--mono); font-size: 18px; letter-spacing: .16em; text-transform: uppercase; }
+  .sign .next { position: absolute; right: 0; top: 0; font-family: var(--serif); font-style: italic; font-size: 30px; }
+
+  .icons { position: absolute; right: 80px; top: 1086px; display: flex; z-index: 6; }
+  .icons img { width: 104px; margin-left: -18px; }
+  .icons img:nth-child(1) { transform: rotate(-8deg); }
+  .icons img:nth-child(2) { transform: rotate(4deg); }
+  .icons img:nth-child(3) { transform: rotate(-3deg); }
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg bg-paper"></div>
+  <div class="ground"></div>
+  <div class="chrome top"><b>Semana Criativa</b><span class="rule"></span><span>EP. 01 — Fim</span></div>
+
+  <h2 class="title"><span class="display">Criatividade<br>se desenvolve</span><span class="serif-it">na prática.</span></h2>
+
+  <div class="icons">
+    <img class="app-icon" src="../assets/logos/leica.png" alt="Leica LUX">
+    <img class="app-icon" src="../assets/logos/evoto.png" alt="Evoto">
+    <img class="app-icon" src="../assets/logos/luminar.png" alt="Luminar">
+  </div>
+
+  <div class="actions">
+    <div><span class="k"><span>Salve</span><span>↓</span></span><p><strong>Salve este post</strong> para testar os aplicativos depois.</p></div>
+    <div><span class="k"><span>Compartilhe</span><span>→</span></span><p>Compartilhe com <strong>aquele amigo</strong> que também ama criar.</p></div>
+  </div>
+
+  <div class="sign">
+    <div class="ep">Semana Criativa — EP. 01</div>
+    <span class="next">Acompanhe os próximos episódios.</span>
+    <div class="brand">Chagas<br><em>Criatividade</em></div>
+    <div class="concept"><span>Inspirar.</span><span>Experimentar.</span><span>Criar.</span></div>
+  </div>
+
+  <div class="chrome bottom on-dark"><span>Até o EP. 02</span><span>07 / 07</span></div>
+  <div class="grain"></div>
+</div>
+</body>
+</html>

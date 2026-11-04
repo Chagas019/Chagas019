@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>02 — Introdução · Semana Criativa EP.01</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .title { position: absolute; left: var(--m); top: 128px; right: var(--m); }
+  .title .display { font-size: 104px; display: block; }
+  .title .serif-it { font-size: 158px; color: var(--grass); display: block; margin-top: 6px; position: relative; z-index: 5; margin-left: -6px; }
+
+  /* janela fotográfica com o número 3 */
+  .window {
+    position: absolute; left: var(--m); top: 770px; width: 400px; height: 440px;
+    background: url(../assets/textures/sky-2.jpg) 62% 58%/1300px auto;
+    overflow: hidden;
+  }
+  .window::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 150px; background: url(../assets/textures/grass.jpg) center/cover; transform: skewY(-6deg); transform-origin: right bottom; }
+  .three {
+    position: absolute; left: 120px; top: 704px; z-index: 4;
+    font-family: var(--serif); font-style: italic; font-size: 560px; line-height: .8; color: var(--ink);
+    letter-spacing: -.04em;
+  }
+  .window-cap { position: absolute; left: var(--m); top: 1226px; font-family: var(--mono); font-size: 15px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); }
+
+  .copy { position: absolute; left: 540px; right: var(--m); top: 772px; }
+  .copy .body { margin-bottom: 20px; font-size: 28px; }
+  .copy .lead { font-weight: 700; }
+
+  .toc { position: absolute; left: 540px; right: var(--m); top: 1012px; list-style: none; }
+  .toc li { display: flex; align-items: center; gap: 18px; padding: 12px 0; border-top: 1.5px solid var(--ink); font-size: 30px; font-weight: 700; letter-spacing: -.02em; }
+  .toc li:last-child { border-bottom: 1.5px solid var(--ink); }
+  .toc img { width: 44px; height: 44px; filter: none; }
+  .toc .n { font-family: var(--mono); font-size: 15px; font-weight: 400; letter-spacing: .1em; width: 30px; }
+  .toc .t { margin-left: auto; font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 28px; color: var(--ink-2); }
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg bg-paper"></div>
+  <div class="chrome top"><b>Semana Criativa</b><span class="rule"></span><span>EP. 01 — Introdução</span></div>
+
+  <h2 class="title"><span class="display">Sua criatividade<br>merece</span><span class="serif-it">novas ferramentas.</span></h2>
+
+  <div class="window"></div>
+  <div class="three">3</div>
+  <div class="window-cap">Fig. 01 — Três apps, um processo</div>
+
+  <div class="copy">
+    <p class="body">Às vezes, tudo o que você precisa é conhecer novas ferramentas para transformar suas ideias em projetos incríveis.</p>
+    <p class="body lead">Conheça 3 aplicativos que podem elevar seu processo criativo.</p>
+  </div>
+
+  <ol class="toc">
+    <li><span class="n">01</span><img class="app-icon" src="../assets/logos/leica.png" alt="">Leica LUX<span class="t">foto</span></li>
+    <li><span class="n">02</span><img class="app-icon" src="../assets/logos/evoto.png" alt="">Evoto<span class="t">retrato</span></li>
+    <li><span class="n">03</span><img class="app-icon" src="../assets/logos/luminar.png" alt="">Luminar<span class="t">edição</span></li>
+  </ol>
+
+  <div class="chrome bottom"><span>Chagas Criatividade</span><span>02 / 07</span></div>
+  <div class="grain soft"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>01 — Capa · Semana Criativa EP.01</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .hill {
+    position: absolute; left: -60px; right: -60px; bottom: -120px; height: 560px;
+    background: url(../assets/textures/grass.jpg) center/cover;
+    transform: rotate(-5deg); transform-origin: left top;
+    box-shadow: 0 -2px 0 rgba(0,0,0,.08);
+  }
+  .semana {
+    position: absolute; left: 62px; top: 136px;
+    font-size: 236px; color: var(--cream);
+  }
+  .criativa {
+    position: absolute; left: 150px; top: 318px;
+    font-size: 300px; color: var(--ink);
+    z-index: 3;
+  }
+  .ep {
+    position: absolute; right: 64px; top: 640px; z-index: 6;
+    color: var(--cream); text-align: right;
+  }
+  .ep .lab { font-family: var(--mono); font-size: 22px; letter-spacing: .2em; display: block; margin-bottom: 4px; }
+  .ep .num { font-family: var(--sans); font-weight: 800; font-size: 360px; letter-spacing: -.07em; line-height: .78; display: block; }
+  .ep .num em { font-family: var(--serif); font-weight: 400; font-style: italic; font-size: 210px; letter-spacing: -.02em; margin-right: 6px; }
+
+  .subtitle {
+    position: absolute; left: var(--m); top: 668px; z-index: 6; width: 470px;
+  }
+  .subtitle .tape { font-size: 38px; line-height: 1; margin-bottom: 8px; }
+  .subtitle .tape.dark { background: var(--ink); color: var(--cream); }
+
+  .icons { position: absolute; z-index: 7; }
+  .i1 { width: 210px; left: 92px; top: 960px; transform: rotate(-9deg); }
+  .i2 { width: 182px; left: 352px; top: 1010px; transform: rotate(5deg); }
+  .i3 { width: 160px; left: 584px; top: 970px; transform: rotate(-3deg); }
+
+  .swipe {
+    position: absolute; right: var(--m); bottom: 110px; z-index: 8;
+    font-family: var(--mono); font-size: 18px; letter-spacing: .14em; text-transform: uppercase; color: var(--cream);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .swipe::after { content: ""; width: 74px; height: 2px; background: currentColor; box-shadow: 0 0 0 0; }
+  .swipe-arrow { position: absolute; right: 72px; bottom: 104px; z-index: 8; width: 0; height: 0; border-left: 12px solid var(--cream); border-top: 7px solid transparent; border-bottom: 7px solid transparent; }
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="bg bg-sky"></div>
+  <div class="hill"></div>
+
+  <div class="chrome top on-dark"><b>Chagas Criatividade</b><span class="rule"></span><span>Série · 2026</span></div>
+
+  <h1 class="semana display">Semana</h1>
+  <div class="criativa serif-it">Criativa</div>
+
+  <div class="ep"><span class="lab">EPISÓDIO</span><span class="num"><em>ep.</em>01</span></div>
+
+  <div class="subtitle">
+    <span class="tape">Apps para</span><br>
+    <span class="tape dark">melhorar sua</span><br>
+    <span class="tape">criatividade</span>
+  </div>
+
+  <img class="app-icon icons i1" src="../assets/logos/leica.png" alt="Leica LUX">
+  <img class="app-icon icons i2" src="../assets/logos/evoto.png" alt="Evoto">
+  <img class="app-icon icons i3" src="../assets/logos/luminar.png" alt="Luminar">
+
+  <div class="swipe">Arraste</div><div class="swipe-arrow"></div>
+
+  <div class="chrome bottom on-dark"><span>Inspirar. Experimentar. Criar.</span><span>01 / 07</span></div>
+  <div class="grain strong"></div>
+</div>
+</body>
+</html>
