@@ -1,0 +1,81 @@
+/* =========================================================
+   SEMANA→CRIATIVA · EP. 01 — sistema visual v2
+   Preto · laranja · osso · tipografia suíça · cartões inclinados
+   CHAGAS CRIATIVIDADE — Inspirar. Experimentar. Criar.
+   ========================================================= */
+
+@font-face { font-family: "Display"; src: url(../assets/fonts/InterDisplay-Medium.otf) format("opentype"); font-weight: 500; }
+@font-face { font-family: "Display"; src: url(../assets/fonts/InterDisplay-SemiBold.otf) format("opentype"); font-weight: 600; }
+@font-face { font-family: "Display"; src: url(../assets/fonts/InterDisplay-Bold.otf) format("opentype"); font-weight: 700; }
+
+:root {
+  --black: #0A0A0A;
+  --card-dark: #1B1B1A;
+  --orange: #FF4D1F;
+  --bone: #E7E5E0;
+  --grey: #8C8A85;
+  --m: 64px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1350px; overflow: hidden; background: var(--black); }
+
+.slide {
+  position: relative; width: 1080px; height: 1350px; overflow: hidden;
+  background: var(--black); color: var(--bone);
+  font-family: "Display", "Inter", system-ui, sans-serif; font-weight: 600;
+  letter-spacing: -.02em;
+  -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision;
+  font-feature-settings: "ss01" 0, "cv11" 1;
+}
+
+/* grão — última camada */
+.grain { position: absolute; inset: 0; z-index: 90; pointer-events: none;
+  background: url(../assets/textures/grain.png); mix-blend-mode: overlay; opacity: .2; }
+
+/* tipografia */
+.mega { font-weight: 700; letter-spacing: -.065em; line-height: .8; white-space: nowrap; }
+.h1 { font-weight: 700; letter-spacing: -.055em; line-height: .88; }
+.h2 { font-weight: 600; letter-spacing: -.04em; line-height: .95; }
+.txt { font-weight: 500; font-size: 32px; line-height: 1.22; letter-spacing: -.02em; }
+.small { font-weight: 600; font-size: 26px; letter-spacing: -.015em; }
+.or { color: var(--orange); }
+.mute { color: var(--grey); }
+
+/* cabeçalho e rodapé */
+.top, .bottom { position: absolute; left: var(--m); right: var(--m); display: flex; justify-content: space-between; align-items: baseline; z-index: 60; }
+.top { top: 52px; }
+.bottom { bottom: 50px; }
+
+/* asterisco */
+.ast { display: inline-block; width: 1em; height: 1em; vertical-align: -.12em; color: inherit; }
+
+/* ---------- cartão ---------- */
+.card {
+  position: absolute; width: 880px; height: 540px; border-radius: 52px; overflow: hidden;
+  background: var(--c, var(--orange)); color: var(--t, var(--black));
+  box-shadow: 0 50px 90px -20px rgba(0,0,0,.75), 0 0 0 1px rgba(255,255,255,.04) inset;
+}
+.card::before { /* brilho do plástico */
+  content: ""; position: absolute; inset: 0; z-index: 8; pointer-events: none;
+  background: linear-gradient(118deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 28%, rgba(255,255,255,0) 58%, rgba(255,255,255,.07) 70%, rgba(255,255,255,0) 84%);
+}
+.card::after { /* grão próprio do cartão */
+  content: ""; position: absolute; inset: 0; z-index: 9; pointer-events: none;
+  background: url(../assets/textures/grain.png); mix-blend-mode: overlay; opacity: .35;
+}
+.card .num { position: absolute; z-index: 1; font-weight: 700; letter-spacing: -.07em; line-height: .74; white-space: nowrap; color: var(--n, currentColor); }
+.card .disc {
+  position: absolute; z-index: 3; width: 230px; height: 230px; border-radius: 50%;
+  background: var(--d, var(--bone)); color: var(--black);
+  display: grid; place-items: center;
+}
+.card .disc .ast { width: 128px; height: 128px; }
+.card .disc img { width: 150px; height: 150px; border-radius: 34px; }
+.card .foot { position: absolute; z-index: 4; left: 50px; bottom: 42px; display: flex; gap: 34px; font-size: 32px; font-weight: 600; letter-spacing: -.025em; }
+.card .tag { position: absolute; z-index: 4; right: 50px; bottom: 42px; font-size: 32px; font-weight: 600; letter-spacing: -.025em; display: flex; align-items: center; gap: 12px; }
+.card .tag .ast { width: 30px; height: 30px; color: var(--tagc, var(--bone)); }
+
+.card.orange { --c: var(--orange); --t: var(--black); --n: #161616; --d: var(--bone); }
+.card.dark   { --c: var(--card-dark); --t: var(--bone); --n: var(--bone); --d: var(--orange); --tagc: var(--orange); }
+.card.bone   { --c: var(--bone); --t: var(--black); --n: var(--black); --d: var(--orange); --tagc: var(--orange); }
