@@ -3,7 +3,13 @@
 <head>
 <meta charset="utf-8">
 <title>PAFIES 2027 — Mascote</title>
-<style>html,body{margin:0;background:#000}canvas{display:block}</style>
+<style>html,body{margin:0;background:#000}canvas{display:block}
+@font-face{font-family:ISerif;src:url(fonts/instrument-serif-latin-400-normal.woff2)}
+@font-face{font-family:ISerif;font-style:italic;src:url(fonts/instrument-serif-latin-400-italic.woff2)}
+@font-face{font-family:Unb;font-weight:300;src:url(fonts/unbounded-latin-300-normal.woff2)}
+@font-face{font-family:Unb;font-weight:700;src:url(fonts/unbounded-latin-700-normal.woff2)}
+@font-face{font-family:Man;font-weight:300;src:url(fonts/manrope-latin-300-normal.woff2)}
+@font-face{font-family:Man;font-weight:700;src:url(fonts/manrope-latin-700-normal.woff2)}</style>
 </head>
 <body>
 <canvas id="c" width="1080" height="1920"></canvas>
@@ -22,7 +28,7 @@ const IM={}; const load=(k,s)=>new Promise(r=>{const i=new Image();i.onload=()=>
 let ENV=[];
 window.ready = Promise.all([
   load('body','body.png'), ...[0,1,2,3,4].map(k=>load('h'+k,`head${k}.png`)),
-  fetch('env.json').then(r=>r.json()).then(j=>ENV=j), document.fonts.load('900 80px "Inter Display"'), document.fonts.load('300 80px "Inter Display"')
+  fetch('env.json').then(r=>r.json()).then(j=>ENV=j), ...['400 80px ISerif','italic 400 80px ISerif','300 80px Unb','700 80px Unb','300 80px Man','700 80px Man'].map(f=>document.fonts.load(f))
 ]).then(()=>{ buildRim(); });
 
 // silhueta para rim light
@@ -40,18 +46,21 @@ function energy(t){ let a=0,n=0; for(let k=-12;k<=12;k++){ a+=envAt(t+k/FPS)*Mat
 
 // ---------- falas (início, fim) ----------
 const LINES=[[1.6,2.51],[3.2,6.58],[6.9,10.14],[10.7,15.33],[15.9,20.24],[20.7,26.06],[26.6,28.5],[28.9,32.65]];
-const BLINKS=[0.9,4.1,7.0,9.3,12.4,15.5,17.9,20.4,23.1,26.3,28.7,31.9,34.4];
+const BLINKS=[0.9,3.0,5.3,7.9,10.45,13.6,16.75,19.0,21.75,24.4,27.6,30.2,33.0,35.0];
 
 // ---------- câmera (ponto do mundo no centro da tela + zoom) ----------
 // mundo = coordenadas da imagem recortada (1179x2096); base cobre a tela inteira
 const BASE = 1920/2096;
 const KEYS=[ // t, cx, cy, z
   [0.0, 600,1060,1.50],[2.9, 600,1010,1.32],
-  [3.25,600,1150,1.30],[7.2, 600,1120,1.20],[10.4,600,1070,1.10],
-  [10.7,560,1060,1.02],[15.5,640,1040,1.05],
-  [15.8,600,1160,1.36],[20.3,600,1150,1.46],
-  [20.7,600,1000,0.98],[26.2,600,1010,1.03],
-  [26.5,600,1080,1.10],[29.0,600,1060,1.04],[36.0,600,1060,1.00]];
+  [3.0, 600,1080,1.18],[6.8, 600,1060,1.22],
+  [6.85,600,1130,1.36],[10.3,600,1175,1.50],
+  [10.45,600,1000,1.00],[13.6,600,1010,1.08],
+  [13.75,600,930,0.94],[16.7,600,950,0.98],
+  [16.85,640,960,0.98],[21.6,580,980,1.03],
+  [21.75,600,1110,1.28],[25.4,600,1120,1.34],
+  [25.55,600,1100,1.16],[28.0,600,1080,1.12],
+  [28.05,600,1000,1.00],[36.0,600,1000,1.04]];
 function cam(t){ let i=0; while(i<KEYS.length-2 && t>KEYS[i+1][0]) i++;
   const a=KEYS[i], b=KEYS[i+1]; const cut = (b[0]-a[0])<0.5; const x = cut? eIO(prog(t,a[0],b[0])) : eIO(prog(t,a[0],b[0]));
   let cx=lerp(a[1],b[1],x), cy=lerp(a[2],b[2],x), z=lerp(a[3],b[3],x);
@@ -59,7 +68,7 @@ function cam(t){ let i=0; while(i<KEYS.length-2 && t>KEYS[i+1][0]) i++;
   cx += Math.sin(t*.73)*3+Math.sin(t*1.9)*1.2; cy += Math.cos(t*.61)*2.5;
   return {cx,cy,z}; }
 // whip pans: deslocamento lateral rápido + desfoque de movimento
-const WHIPS=[3.05,10.55,15.65,20.55,26.35];
+const WHIPS=[2.95,10.4,16.8,21.7];
 function whip(t){ for(const w of WHIPS){ const d=(t-w)/0.22; if(Math.abs(d)<1){ const e=1-Math.abs(d); return {off:(d<0?-1:1)*Math.pow(e,2.2), k:e}; } } return {off:0,k:0}; }
 
 // ---------- fundo ----------
@@ -102,19 +111,26 @@ function drawFront(t,C){ const px=(C.cx-600)*C.z*.9; g.save(); g.globalComposite
 function drawChar(t,C,wh){
   const E=energy(t), m=mouthAt(t);
   // eventos de surpresa/alegria (sobrancelhas e pulo)
-  const pops=[[1.6,1],[7.3,1],[11.2,.6],[21.3,.7],[26.6,1],[29.0,1]];
-  let pop=0; for(const [pt,s] of pops){ const d=t-pt; if(d>-.15&&d<1.1) pop=Math.max(pop, s*(d<0? (d+.15)/.15 : Math.exp(-d*2.6))); }
-  const brow = clamp(.35 + E*.45 + pop*.6);
+  // acentos de atuação: antecipação (afunda) -> salto -> assentamento com overshoot
+  const pops=[[1.6,1],[4.22,.6],[8.83,.8],[12.34,.9],[14.01,1],[20.64,.7],[26.34,.8],[28.2,1],[30.56,.6]];
+  const popAt=(tt)=>{ let p=0, b=0; for(const [pt,s] of pops){ const d=tt-pt;
+      if(d>-.18&&d<0){ b+=8*s*Math.sin(Math.PI*(d+.18)/.18); }
+      if(d>=0&&d<1.3){ p=Math.max(p,s*Math.exp(-d*2.4)); b+=-22*s*Math.exp(-d*3.2)*Math.cos(d*7.5); } } return {p,b}; };
+  const P=popAt(t), Plag=popAt(t-.07);
+  const pop=P.p;
+  const ask = smooth(t,8.3,8.7)*(1-smooth(t,10.1,10.5));           // pergunta: cabeça inclinada, sobrancelhas no alto
+  const lean = smooth(t,6.9,7.4)*(1-smooth(t,8.2,8.7));           // "me conta uma coisa": se aproxima
+  const proud = smooth(t,14.0,14.3)*(1-smooth(t,16.2,16.6));     // orgulho: acenos firmes
+  const party = smooth(t,25.7,26.0)*(1-smooth(t,27.8,28.1));     // comemoração: quiques no ritmo
+  const brow = clamp(.35 + E*.4 + pop*.6 + ask*.5);
   const hk = Math.round(brow*4);
-  // corpo: respiração, balanço, quique com a fala
   const breathe = Math.sin(t*2*Math.PI/3.4);
-  const bounce = -E*10 - pop*22*Math.abs(Math.sin((t)*9))*0 - pop*16;
-  const sway = Math.sin(t*.9)*0.7 + Math.sin(t*2.3)*E*0.6;
-  // cabeça: inclinação conversando, acenos nas sílabas fortes
-  const nod = Math.sin(t*5.2)*E*1.6 + (m-.35)*2.2*E;
-  const tilt = Math.sin(t*1.25+.6)*2.4 + Math.sin(t*3.1)*E*1.2 + pop*Math.sin(t*14)*.6;
-  const headX = Math.sin(t*1.25+.6)*6;
-
+  const bounce = -E*8 + P.b - party*14*Math.abs(Math.sin((t-25.7)*Math.PI*2.1));
+  const sway = Math.sin(t*.9)*0.7 + Math.sin(t*2.3)*E*0.6 + lean*1.2;
+  const nod = Math.sin(t*5.2)*E*1.6 + (m-.35)*2.2*E + (Plag.b-P.b)*.6 + proud*5*Math.sin((t-14)*Math.PI*2*1.5) + party*4*Math.sin((t-25.7)*Math.PI*4.2);
+  const tilt = Math.sin(t*1.25+.6)*2.2*(1-ask) + Math.sin(t*3.1)*E*1.1 + ask*6.5 - lean*1.5;
+  const headX = Math.sin(t*1.25+.6)*6*(1-ask) + ask*10;
+  const headS = 1 + lean*.03;
   g.save();
   // mundo -> tela
   g.translate(540 + wh.off*420, 960); g.scale(BASE*C.z, BASE*C.z); g.translate(-C.cx, -C.cy);
@@ -124,7 +140,7 @@ function drawChar(t,C,wh){
   g.save(); g.translate(600,2096); g.rotate(sway*Math.PI/180); g.scale(1-breathe*.002, 1+breathe*.006); g.translate(-600,-2096+bounce);
   g.drawImage(IM.body,0,0);
   // cabeça (pivô no pescoço)
-  g.save(); g.translate(600+headX,1372+nod); g.rotate(tilt*Math.PI/180); g.translate(-600,-1372);
+  g.save(); g.translate(600+headX,1372+nod); g.rotate(tilt*Math.PI/180); g.scale(headS,headS); g.translate(-600,-1372);
   g.drawImage(IM['h'+hk],0,0);
   drawMouth(m, E, pop);
   drawLids(t);
@@ -170,22 +186,108 @@ function drawLids(t){
 }
 
 // ---------- tipografia ----------
-function goldGrad(y0,y1,t){ const gr=g.createLinearGradient(0,y0,0,y1); gr.addColorStop(0,'#fff6cf'); gr.addColorStop(.42,'#f2c552'); gr.addColorStop(.7,'#c98f1e'); gr.addColorStop(1,'#7a520c'); return gr; }
-function sheen(text,x,y,size,t,t0,opt={}){ // reflexo de luz que atravessa só as letras
-  const k=prog(t,t0,t0+1.1); if(k<=0||k>=1) return;
-  const sx=lerp(x-700,x+700,eIO(k)); const lg=g.createLinearGradient(sx-110,0,sx+110,0); lg.addColorStop(0,'rgba(255,255,255,0)'); lg.addColorStop(.5,'rgba(255,255,255,.8)'); lg.addColorStop(1,'rgba(255,255,255,0)');
-  g.save(); g.globalCompositeOperation='lighter'; txt(text,x,y,Object.assign({},opt,{size,fill:lg,extrude:0,glow:null,alpha:(opt.alpha??1)})); g.restore(); }
-function txt(s,x,y,{size=80,weight=900,fill='#fff',track=0,alpha=1,blur=0,align='center',glow=null,extrude=0}={}){
-  if(alpha<=0) return; g.save(); g.globalAlpha=alpha; g.font=`${weight} ${size}px "Inter Display"`; g.textAlign=align; g.textBaseline='alphabetic';
-  if('letterSpacing' in g) g.letterSpacing=track+'px';
-  if(blur>0.3) g.filter=`blur(${blur}px)`;
-  if(extrude){ for(let i=extrude;i>0;i--){ g.fillStyle=`rgba(${60+i*4},${35+i*2},0,1)`; g.fillText(s,x,y+i*1.6); } }
-  if(glow){ g.shadowColor=glow; g.shadowBlur=40; }
-  g.fillStyle=fill; g.fillText(s,x,y); g.restore(); }
-// palavra entra subindo de uma máscara, com desfoque -> nítido
-function rise(s,x,y,t,t0,opt){ const k=eExpo(prog(t,t0,t0+.55)); if(k<=0) return; const o=Object.assign({},opt);
-  g.save(); g.beginPath(); g.rect(0,y-(o.size||80)*1.05,W,(o.size||80)*1.3); g.clip();
-  o.alpha=(o.alpha??1)*clamp(k*1.4); o.blur=(1-k)*10; txt(s,x,y+(1-k)*(o.size||80)*.9,o); g.restore(); }
+// Instrument Serif (itálico, emoção) + Unbounded (rótulos) + Manrope (apoio). Dourado só como acento.
+const SERIF='"ISerif"', WIDE='"Unb"', SANS='"Man"';
+function gold(y0,y1){ const gr=g.createLinearGradient(0,y0,0,y1); gr.addColorStop(0,'#fbe7b0'); gr.addColorStop(.55,'#e8c06a'); gr.addColorStop(1,'#b88a3a'); return gr; }
+function font(fam,size,weight=400,italic=false){ return `${italic?'italic ':''}${weight} ${size}px ${fam}`; }
+// texto letra a letra: sobe, perde o desfoque, ganha opacidade. Sai subindo e desfocando.
+function letters(s,x,y,t,t0,{fam=SERIF,size=120,weight=400,italic=false,fill='#fff',track=0,align='center',stagger=.028,dur=.6,out=99,outDur=.35,alpha=1,shadow='rgba(0,8,40,.55)',glow=null}={}){
+  if(t<t0) return; const ko=smooth(t,out,out+outDur); if(ko>=1) return;
+  g.save(); g.font=font(fam,size,weight,italic); g.textBaseline='alphabetic';
+  const ch=[...s]; const ws=ch.map(c=>g.measureText(c).width+track); const tot=ws.reduce((a,b)=>a+b,0)-track;
+  let cx = align==='center'? x-tot/2 : align==='right'? x-tot : x;
+  ch.forEach((c,i)=>{ const k=eExpo(prog(t,t0+i*stagger,t0+i*stagger+dur)); if(k<=0){cx+=ws[i];return;}
+    const a=alpha*clamp(k*1.3)*(1-ko); const dy=(1-k)*size*.35 - ko*size*.25; const bl=(1-k)*10+ko*8;
+    g.save(); g.globalAlpha=a; if(bl>.4) g.filter=`blur(${bl}px)`;
+    if(shadow){ g.shadowColor=shadow; g.shadowBlur=size*.35; g.shadowOffsetY=size*.06; }
+    g.fillStyle=typeof fill==='function'? fill(y-size,y): fill; g.fillText(c,cx,y+dy);
+    if(glow){ g.shadowColor=glow; g.shadowBlur=size*.5; g.shadowOffsetY=0; g.globalAlpha=a*.6; g.fillText(c,cx,y+dy); }
+    g.restore(); cx+=ws[i]; });
+  g.restore(); }
+// filete dourado que se desenha
+function hair(x0,x1,y,t,t0,out=99){ const k=eIO(prog(t,t0,t0+.7)), ko=smooth(t,out,out+.3); if(k<=0||ko>=1) return;
+  g.save(); g.globalAlpha=1-ko; g.strokeStyle='#e8c06a'; g.lineWidth=2.5; const xm=(x0+x1)/2, hw=(x1-x0)/2*k;
+  g.beginPath(); g.moveTo(xm-hw,y); g.lineTo(xm+hw,y); g.stroke(); g.restore(); }
+// faixa escura suave para leitura (topo ou base)
+function scrim(where,a){ if(a<=0) return; const y0= where==='top'?0:H-760, y1= where==='top'?760:H;
+  const gr=g.createLinearGradient(0,y0,0,y1); if(where==='top'){ gr.addColorStop(0,`rgba(0,4,24,${.75*a})`); gr.addColorStop(1,'rgba(0,4,24,0)'); } else { gr.addColorStop(0,'rgba(0,4,24,0)'); gr.addColorStop(1,`rgba(0,4,24,${.8*a})`); }
+  g.fillStyle=gr; g.fillRect(0,y0,W,760); }
+const win=(t,a,b,f=.3)=>smooth(t,a-f,a)*(1-smooth(t,b,b+f));
+// o "10" monumental: vidro claro com contorno dourado fino e reflexo que atravessa
+function bigTen(t){ const t0=14.0, out=16.55; const k=eExpo(prog(t,t0,t0+.9)), ko=smooth(t,out,out+.3); if(k<=0||ko>=1) return;
+  g.save(); g.globalAlpha=1-ko; const s=lerp(1.25,1,k)+ (t-t0)*.012; g.translate(540,760); g.scale(s,s); g.translate(-540,-760);
+  g.font=font(SERIF,980,400,false); g.textAlign='center'; g.textBaseline='alphabetic';
+  if(k<1) g.filter=`blur(${(1-k)*14}px)`;
+  const gr=g.createLinearGradient(0,280,0,1060); gr.addColorStop(0,'rgba(255,255,255,.95)'); gr.addColorStop(.5,'rgba(170,210,255,.55)'); gr.addColorStop(1,'rgba(60,120,255,.08)');
+  g.shadowColor='rgba(120,180,255,.6)'; g.shadowBlur=60; g.fillStyle=gr; g.fillText('10',520,1000);
+  g.shadowBlur=0; g.lineWidth=3; g.strokeStyle='rgba(232,192,106,.95)'; g.strokeText('10',520,1000);
+  // reflexo
+  const ks=prog(t,t0+.6,t0+1.8); if(ks>0&&ks<1){ const sx=lerp(-200,1300,eIO(ks)); const lg=g.createLinearGradient(sx-140,0,sx+140,0);
+    lg.addColorStop(0,'rgba(255,255,255,0)'); lg.addColorStop(.5,'rgba(255,255,255,.9)'); lg.addColorStop(1,'rgba(255,255,255,0)'); g.globalCompositeOperation='lighter'; g.fillStyle=lg; g.fillText('10',520,1000); }
+  g.restore();
+  g.save(); g.globalAlpha=1-ko; letters('ª',900,430,t,t0+.35,{fam:SERIF,size:240,italic:true,fill:gold}); g.restore(); }
+// palavras atrás do personagem (antes do personagem ser desenhado)
+function typeBack(t){
+  bigTen(t);
+  // dez edições: palavras empilhadas à esquerda, foco acompanha a fala
+  const L=[['diversão,',17.79,420],['desafios,',18.54,565],['união…',19.47,710]];
+  L.forEach(([w,t0,y],i)=>{ const next=L[i+1]?L[i+1][1]:20.2; const dim=lerp(1,.38,smooth(t,next,next+.25));
+    letters(w,90,y,t,t0,{fam:SERIF,size:145,italic:true,align:'left',fill:'#ffffff',alpha:dim,out:21.55}); });
+  // final
+  letters('PAFIES',540,470,t,28.2,{fam:WIDE,size:190,weight:700,track:6,fill:'#ffffff',stagger:.05,dur:.8,glow:'rgba(120,180,255,.5)'});
+  letters('2027',540,665,t,28.65,{fam:SERIF,size:200,italic:true,fill:gold,stagger:.07,dur:.9});
+}
+// textos à frente do personagem
+function typeFront(t){
+  // CENA 1
+  scrim('top',win(t,1.5,2.75));
+  letters('Ei,',110,430,t,1.6,{fam:SERIF,size:300,italic:true,align:'left',out:2.8});
+  letters('você!',980,660,t,2.1,{fam:SERIF,size:300,italic:true,align:'right',fill:gold,out:2.8});
+  // CENA 2
+  scrim('top',win(t,3.1,6.55));
+  letters('E AÍ, GALERA DO',540,290,t,3.15,{fam:WIDE,size:38,weight:300,track:12,out:6.6,stagger:.02});
+  letters('PAFIES',540,450,t,4.2,{fam:WIDE,size:150,weight:700,track:6,out:6.6,stagger:.05});
+  hair(380,700,500,t,4.6,6.6);
+  letters('tudo bem com vocês?',540,610,t,5.56,{fam:SERIF,size:96,italic:true,fill:'#d9e8ff',out:6.6,stagger:.018});
+  // CENA 3 (close)
+  scrim('bottom',win(t,7.6,10.3));
+  letters('me conta uma coisa',540,1760,t,7.0,{fam:SANS,size:48,weight:300,track:8,out:8.15,stagger:.015});
+  letters('VOCÊS TÃO',540,1700,t,8.29,{fam:WIDE,size:40,weight:300,track:16,out:10.3,stagger:.02});
+  letters('animados?',540,1880,t,8.83,{fam:SERIF,size:200,italic:true,fill:gold,out:10.3,stagger:.04});
+  // CENA 4
+  scrim('top',win(t,10.6,13.5));
+  letters('eu tô sabendo de uma coisa…',540,300,t,10.89,{fam:SANS,size:46,weight:300,track:4,out:13.55,stagger:.012});
+  letters('tá chegando',540,520,t,12.34,{fam:SERIF,size:190,italic:true,out:13.55,stagger:.035,glow:'rgba(140,190,255,.5)'});
+  // CENA 5
+  scrim('bottom',win(t,14.4,16.5));
+  scrim('top',win(t,14.4,16.5)*.6); letters('EDIÇÃO',540,220,t,14.47,{fam:WIDE,size:44,weight:300,track:30,out:16.55});
+  letters('GINCANA SOLIDÁRIA',540,1740,t,14.93,{fam:WIDE,size:52,weight:700,track:8,out:16.55,stagger:.02});
+  letters('PAFIES',540,1830,t,15.89,{fam:WIDE,size:44,weight:300,track:26,fill:gold,out:16.55});
+  // CENA 6
+  scrim('top',win(t,16.9,21.5)*.8); scrim('bottom',win(t,20.1,21.5));
+  letters('DEZ EDIÇÕES DE',90,300,t,16.9,{fam:WIDE,size:40,weight:300,track:14,align:'left',out:21.55,stagger:.02});
+  letters('e muita',540,1660,t,20.14,{fam:SANS,size:50,weight:300,track:10,out:21.55});
+  letters('solidariedade!',540,1840,t,20.64,{fam:SERIF,size:190,italic:true,fill:gold,out:21.55,stagger:.03});
+  // CENA 7
+  scrim('top',win(t,21.9,25.3)*.85); scrim('bottom',win(t,23.8,25.3));
+  letters('CHAMA OS AMIGOS,',540,300,t,21.9,{fam:WIDE,size:56,weight:700,track:4,out:25.4,stagger:.02});
+  letters('REÚNE SUA EQUIPE',540,390,t,22.96,{fam:WIDE,size:56,weight:300,track:4,out:25.4,stagger:.02});
+  letters('e vem viver isso',540,1745,t,23.86,{fam:SERIF,size:104,italic:true,out:25.4,stagger:.02});
+  letters('com a gente.',540,1865,t,24.66,{fam:SERIF,size:104,italic:true,fill:gold,out:25.4,stagger:.02});
+  // CENA 8
+  scrim('top',win(t,25.7,27.9));
+  letters('eu quero ver',540,260,t,25.7,{fam:SANS,size:48,weight:300,track:8,out:28.0});
+  letters('todo mundo',540,450,t,26.34,{fam:SERIF,size:190,italic:true,out:28.0,stagger:.03});
+  letters('participando!',540,620,t,26.97,{fam:SERIF,size:150,italic:true,fill:gold,out:28.0,stagger:.025});
+  // CENA 9 (final)
+  scrim('top',smooth(t,28.0,28.5)*.9); scrim('bottom',smooth(t,30.3,30.9));
+  letters('10ª GINCANA SOLIDÁRIA',540,250,t,28.4,{fam:WIDE,size:36,weight:300,track:14,stagger:.015});
+  hair(330,750,300,t,28.8);
+  letters('vamos juntos fazer história',540,1820,t,30.56,{fam:SANS,size:50,weight:300,track:6,stagger:.012,out:32.1});
+  letters('Mais que uma gincana,',540,1700,t,32.3,{fam:SERIF,size:92,italic:true,stagger:.015});
+  letters('uma missão de solidariedade!',540,1810,t,32.9,{fam:SERIF,size:92,italic:true,fill:gold,stagger:.015});
+  hair(380,700,1870,t,33.6);
+}
 
 // ---------- quadro ----------
 window.renderAt = function(t){
@@ -194,39 +296,7 @@ window.renderAt = function(t){
   g.save(); g.translate(wh.off*-260,0); drawBG(t,C); drawMotes(t,C,smooth(t,.3,2)); g.restore();
 
   // ===== TIPOGRAFIA ATRÁS DO PERSONAGEM =====
-  g.save(); g.translate(wh.off*-340,0);
-  // CENA 2 — o 10 monumental
-  { const k=prog(t,7.25,8.1), out=smooth(t,10.2,10.55);
-    if(k>0 && out<1){ const s=lerp(1.5,1,eExpo(k)), a=clamp(k*2)*(1-out);
-      g.save(); g.translate(540,720); g.scale(s,s); g.translate(-540,-720);
-      // halo
-      const rg=g.createRadialGradient(540,520,0,540,520,560); rg.addColorStop(0,`rgba(255,200,90,${.35*a})`); rg.addColorStop(1,'rgba(255,200,90,0)'); g.fillStyle=rg; g.fillRect(0,0,W,1200);
-      txt('10',520,900,{size:760,weight:900,fill:goldGrad(330,900),track:-30,alpha:a,extrude:14,glow:'rgba(255,190,60,.45)'});
-      txt('ª',890,500,{size:220,weight:900,fill:goldGrad(330,520),alpha:a});
-      sheen('10',520,900,760,t,7.9,{weight:900,track:-30,alpha:a});
-      g.restore(); } }
-  // CENA 3 — palavras que acompanham a fala
-  { const out=smooth(t,15.35,15.6); const a=1-out;
-    const words=[['DIVERSÃO',11.15,330],['DESAFIOS',11.85,470],['PROVAS',12.55,610],['UNIÃO',13.2,750]];
-    words.forEach(([w,t0,y],i)=> rise(w,540,y,t,t0,{size:150,weight:900,fill: i%2? goldGrad(y-150,y,t):'rgba(255,255,255,.95)',track:-4,alpha:a*.92}));
-    }
-  // CENA 5 — datas
-  { const out=smooth(t,26.05,26.35); const a=1-out;
-    rise('JANEIRO DE 2027',540,300,t,24.5,{size:74,weight:800,fill:'#ffffff',track:10,alpha:a});
-    const ds=[['22',21.3],['23',21.9],['24',22.5],['30',23.15],['31',23.75]];
-    const xs=[215,540,865,378,702], ys=[540,540,540,770,770];
-    ds.forEach(([d,t0],i)=>{ const k=eExpo(prog(t,t0,t0+.45)); if(k<=0) return;
-      g.save(); g.translate(xs[i],ys[i]-60); const s=lerp(1.35,1,k); g.scale(s,s); g.translate(-xs[i],-(ys[i]-60));
-      txt(d,xs[i],ys[i],{size:200,weight:900,fill:goldGrad(ys[i]-230,ys[i]),track:-8,alpha:a*clamp(k*1.6),extrude:8,blur:(1-k)*8}); g.restore();
-      sheen(d,xs[i],ys[i],200,t,t0+.3,{weight:900,track:-8,alpha:a}); });
-  }
-  // CENA 6 — título atrás
-  { const k=eExpo(prog(t,29.1,30.0));
-    if(k>0){ g.save(); g.translate(0,(1-k)*60);
-      txt('PAFIES',540,560,{size:300,weight:900,fill:goldGrad(300,560),track:-10,alpha:clamp(k*1.5),extrude:14,glow:'rgba(255,190,60,.35)'});
-      g.restore(); sheen('PAFIES',540,560,300,t,30.0,{weight:900,track:-10});
-      rise('2027',540,760,t,29.6,{size:200,weight:300,fill:'#ffffff',track:40}); } }
-  g.restore();
+  g.save(); g.translate(wh.off*-340,0); typeBack(t); g.restore();
 
   // ===== PERSONAGEM =====
   if(wh.k>0.02){ // motion blur do whip: personagem num buffer, rastro atrás + cópia nítida
@@ -237,39 +307,14 @@ window.renderAt = function(t){
 
   // ===== PRIMEIRO PLANO =====
   drawFront(t,C);
-  // CENA 1 — "EI, VOCÊ!"
-  { const out=smooth(t,2.85,3.05); if(t<3.1){ g.save(); g.translate(wh.off*-500,0);
-    rise('EI,',540,360,t,1.55,{size:210,weight:900,fill:'#ffffff',track:-6,alpha:1-out,glow:'rgba(110,180,255,.8)'});
-    rise('VOCÊ!',540,580,t,1.85,{size:210,weight:900,fill:goldGrad(400,580),track:-6,alpha:1-out,glow:'rgba(255,190,60,.5)'});
-    g.restore(); } }
-  // CENA 2 — legenda do 10
-  { const a=1-smooth(t,10.2,10.5); rise('GINCANA SOLIDÁRIA',540,1760,t,8.0,{size:70,weight:800,fill:'#fff',track:12,alpha:a,glow:'rgba(0,20,80,.9)'}); }
-  // CENA 3 — "E MUITA SOLIDARIEDADE"
-  { const a=1-smooth(t,15.35,15.6); rise('E MUITA',540,1650,t,14.0,{size:70,weight:300,fill:'#fff',track:14,alpha:a,glow:'rgba(0,20,80,.9)'});
-    rise('SOLIDARIEDADE',540,1790,t,14.35,{size:118,weight:900,fill:goldGrad(1680,1790),track:-2,alpha:a,glow:'rgba(0,10,50,.9)'}); }
-  // CENA 4 — inscrições
-  { const a=1-smooth(t,20.25,20.5);
-    rise('AINDA DÁ TEMPO',540,360,t,16.0,{size:104,weight:900,fill:'#fff',track:-2,alpha:a,glow:'rgba(0,20,80,.9)'});
-    rise('DE SE INSCREVER',540,470,t,16.35,{size:64,weight:300,fill:'#cfe2ff',track:14,alpha:a});
-    rise('CHAMA OS AMIGOS',540,1730,t,18.0,{size:72,weight:800,fill:'#fff',track:6,alpha:a,glow:'rgba(0,20,80,.9)'});
-    rise('REÚNE SUA EQUIPE',540,1840,t,18.9,{size:84,weight:900,fill:goldGrad(1750,1840),track:2,alpha:a,glow:'rgba(0,10,50,.9)'}); }
-  // CENA 6 — linha da gincana e slogan
-  { rise('10ª GINCANA SOLIDÁRIA',540,240,t,29.9,{size:62,weight:800,fill:'#fff',track:12});
-    const k=eExpo(prog(t,32.6,33.4)); if(k>0){ const y=1790+(1-k)*80;
-      g.save(); g.globalAlpha=clamp(k*1.4);
-      const bw=940,bh=230,bx=70; const gr=g.createLinearGradient(bx,0,bx+bw,0); gr.addColorStop(0,'rgba(4,20,80,.0)'); gr.addColorStop(.15,'rgba(4,20,80,.72)'); gr.addColorStop(.85,'rgba(4,20,80,.72)'); gr.addColorStop(1,'rgba(4,20,80,0)');
-      g.fillStyle=gr; g.fillRect(bx,y-150,bw,bh);
-      g.fillStyle=goldGrad(0,1,t); g.fillRect(340,y-160,400,3);
-      txt('MAIS QUE UMA GINCANA,',540,y-70,{size:52,weight:300,fill:'#fff',track:8});
-      txt('UMA MISSÃO DE SOLIDARIEDADE!',540,y+10,{size:58,weight:900,fill:goldGrad(y-50,y+10),track:1});
-      g.restore(); } }
+  g.save(); g.translate(wh.off*-500,0); typeFront(t); g.restore();
 
   // ===== CONFETES (cena 6) =====
   drawConfetti(t);
 
   // ===== flashes de luz nas transições =====
   let fl=0; for(const w of WHIPS) fl=Math.max(fl, clamp(1-Math.abs(t-w)/.16)*.45);
-  fl=Math.max(fl, clamp(1-Math.abs(t-7.3)/.35)*.55, clamp(1-Math.abs(t-29.05)/.4)*.5);
+  fl=Math.max(fl, clamp(1-Math.abs(t-13.72)/.2)*.5, clamp(1-Math.abs(t-14.05)/.35)*.45, clamp(1-Math.abs(t-25.5)/.15)*.3, clamp(1-Math.abs(t-28.05)/.4)*.5);
   if(fl>0){ g.save(); g.globalCompositeOperation='screen'; const rg=g.createRadialGradient(540,700,0,540,700,1300); rg.addColorStop(0,`rgba(255,240,210,${fl})`); rg.addColorStop(1,'rgba(80,140,255,0)'); g.fillStyle=rg; g.fillRect(0,0,W,H); g.restore(); }
 
   // ===== grade final: vinheta, fade, grão =====
@@ -281,7 +326,7 @@ window.renderAt = function(t){
 
 // confetes com profundidade (os da frente desfocados)
 const CONF=Array.from({length:180},()=>({x:rnd()*1080, vy:260+rnd()*380, sw:rnd()*6.28, w:10+rnd()*16, h:5+rnd()*9, z:rnd(), d:rnd()*1.4, c:['#f5c542','#ffe08a','#c9901e','#ffffff','#3d7bff','#9cc4ff'][Math.floor(rnd()*6)]}));
-function drawConfetti(t){ const t0=28.95; if(t<t0) return;
+function drawConfetti(t){ const t0=28.15; if(t<t0) return;
   for(const p of CONF){ const k=t-t0-p.d*.4; if(k<0) continue;
     const y=-60 + p.vy*k*(0.6+p.z) - 40, x=p.x+Math.sin(k*2+p.sw)*50*(1+p.z);
     if(y>2000) continue; const s=.6+p.z*1.3;

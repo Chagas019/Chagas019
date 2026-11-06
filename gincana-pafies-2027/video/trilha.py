@@ -72,18 +72,18 @@ for b in range(nbars):
     for k in range(4):
         t0=b*BAR+k*B
         if t0>=3.25 and t0<34.0: add(drums,kick(),t0,.30)
-        if t0>=7.3 and t0<34.0 and k in(1,3): add(drums,clap(),t0,.06)
+        if t0>=3.0 and t0<34.0 and k in(1,3): add(drums,clap(),t0,.06)
         for h in range(4):
             th=t0+h*B/4
-            if th>=10.7 and th<34.0: add(drums,hat(),th,.035 if h%2 else .015)
+            if th>=10.45 and th<34.0: add(drums,hat(),th,.035 if h%2 else .015)
 # quebra antes do final (silencia bateria 28.2–29.0)
-m=np.ones(N); i0,i1=int(28.2*SR),int(29.0*SR); m[i0:i1]=0; drums*=m
+m=np.ones(N); i0,i1=int(27.3*SR),int(28.1*SR); m[i0:i1]=0; drums*=m
 music+=drums
 # acorde final sustentado
 tt=t_(6.0); x=np.zeros(len(tt))
 for mm in [50,57,62,66,69,74,78]:
     for det in (-.08,0,.08): x+=np.sin(2*np.pi*midi(mm+det)*tt)
-add(music,x*np.exp(-tt*.55)*np.minimum(1,tt/.05)*.02,30.0)
+add(music,x*np.exp(-tt*.55)*np.minimum(1,tt/.05)*.02,28.2)
 music=reverb(music,2.0,.25)
 # ---------- efeitos ----------
 fx=np.zeros(N)
@@ -103,14 +103,14 @@ def bell(f,d=1.4):
     tt=t_(d); x=np.sin(2*np.pi*f*tt)+.4*np.sin(2*np.pi*f*2.76*tt)+.2*np.sin(2*np.pi*f*5.4*tt); return x*np.exp(-tt*3.5)
 def pop():
     tt=t_(.5); return hp_fast(rng.standard_normal(len(tt)),2500)*np.exp(-tt*14)
-for w in [3.05,10.55,15.65,20.55,26.35]: add(fx,whoosh(),w-.22,.22)
-add(fx,riser(2.0),5.3,.10); add(fx,impact(),7.28,.55)
-add(fx,riser(1.6),27.4,.10); add(fx,impact(),28.98,.45)
-for i,tb in enumerate([21.3,21.9,22.5,23.15,23.75]): add(fx,bell(midi(74+[0,2,4,7,9][i])),tb,.05)
-for tb in [11.15,11.85,12.55,13.2]: add(fx,bell(midi(86),.6),tb,.025)
-for k in range(14): add(fx,pop(),28.95+rng.random()*1.2,.05*rng.random())
-add(fx,bell(midi(81),3.0),30.0,.05); add(fx,bell(midi(86),3.0),32.6,.04)
-for tb in [1.55,8.0,16.0,18.0,29.6]: add(fx,bell(midi(93),.8),tb,.015)
+for w in [2.95,10.4,16.8,21.7]: add(fx,whoosh(),w-.22,.22)
+add(fx,riser(1.6),12.3,.08); add(fx,impact(),13.98,.55)
+add(fx,riser(1.4),26.7,.10); add(fx,impact(),28.12,.45)
+for i,tb in enumerate([17.79,18.54,19.47,20.64]): add(fx,bell(midi(74+[0,2,4,9][i])),tb,.045)
+for tb in [4.22,12.34,26.34]: add(fx,bell(midi(86),.6),tb,.02)
+for k in range(14): add(fx,pop(),28.15+rng.random()*1.2,.05*rng.random())
+add(fx,bell(midi(81),3.0),28.65,.05); add(fx,bell(midi(86),3.0),32.3,.04)
+for tb in [1.6,8.83,14.47,23.86]: add(fx,bell(midi(93),.8),tb,.015)
 fx=reverb(fx,1.6,.3)
 # ---------- voz + duck ----------
 w=wave.open(sys.argv[1]); v=np.frombuffer(w.readframes(w.getnframes()),np.int16).astype(np.float64)/32768

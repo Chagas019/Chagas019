@@ -1,31 +1,19 @@
-# Roteiro — 10ª Gincana Solidária PAFIES 2027 (≈30 s)
+# Roteiro — 10ª Gincana Solidária PAFIES 2027 (36 s)
 
-Tom: apresentador de TV jovem, animado, natural, sotaque brasileiro. Olhando para a câmera.
+Sem datas. O mascote pergunta se a galera está animada e fala da 10ª edição.
 
-| Tempo | Cena | Fala | Na tela | Som |
-|---|---|---|---|---|
-| 0,0–4,0 | 1. Abertura | "Ei, você!" | Tela azul escura → partículas → mascote aparece. Texto 3D **EI, VOCÊ!** | Pad grave subindo, brilho |
-| 4,0–11,0 | 2. Apresentação | "E aí, galera do PAFIES! Tá chegando, hein?! A nossa décima Gincana Solidária PAFIES 2027!" | Whip pan. **10ª** dourado entra com impacto + **GINCANA SOLIDÁRIA** | Whoosh; impacto suave no 10 |
-| 11,0–18,0 | 3. Provas | "Vai ter diversão, desafios, provas, união e muita solidariedade!" | **DESAFIOS • PROVAS • UNIÃO**; troféu, caixa de alimentos, medalha, estrela, bola, coração, anéis entrelaçados | "Pops" a cada objeto, brilhos |
-| 18,0–24,0 | 4. Data | "Ainda dá tempo de se inscrever! Chama os amigos, reúne sua equipe! É nos dias 22, 23, 24, 30 e 31 de janeiro de 2027!" | Transição de partículas; câmera orbita; cartão **22, 23, 24, 30 E 31 DE JANEIRO DE 2027** | Whoosh; tique de destaque em cada dia |
-| 24,0–30,0 | 5. Encerramento | "Eu quero ver todo mundo participando! PAFIES 2027… vamos juntos fazer história!" | Confetes azuis e dourados; **10ª GINCANA SOLIDÁRIA PAFIES 2027**; slogan **MAIS QUE UMA GINCANA, UMA MISSÃO DE SOLIDARIEDADE!** | Estouro de confete, comemoração discreta, acorde final |
+| Início | Fala | Na tela |
+|---|---|---|
+| 1,6 s | Ei, você! | *Ei, você!* |
+| 3,1 s | E aí, galera do PAFIES! Tudo bem com vocês? | E AÍ, GALERA DO / **PAFIES** / *tudo bem com vocês?* |
+| 7,0 s | Me conta uma coisa: vocês tão animados pra nossa gincana?! | VOCÊS TÃO / *animados?* (cabeça inclinada, sobrancelhas no alto) |
+| 10,6 s | Porque eu tô sabendo de uma coisa... tá chegando, hein?! | *tá chegando* |
+| 13,8 s | É a décima edição da Gincana Solidária PAFIES! | **10ª** monumental atrás dele · EDIÇÃO · GINCANA SOLIDÁRIA PAFIES |
+| 16,9 s | Dez edições de diversão, desafios, união... e muita solidariedade! | DEZ EDIÇÕES DE / *diversão, desafios, união…* / *solidariedade!* |
+| 21,9 s | Chama os amigos, reúne sua equipe e vem viver isso com a gente! | CHAMA OS AMIGOS, REÚNE SUA EQUIPE / *e vem viver isso com a gente.* |
+| 25,7 s | Eu quero ver todo mundo participando! | *todo mundo participando!* (comemora) |
+| 28,2 s | PAFIES 2027... vamos juntos fazer história! | 10ª GINCANA SOLIDÁRIA / **PAFIES** / *2027* · confetes |
+| 32,3 s | — | *Mais que uma gincana, uma missão de solidariedade!* |
 
-## Texto corrido para gerar a voz
-
-> Ei, você!
-> E aí, galera do PAFIES! Tá chegando, hein?! A nossa décima Gincana Solidária PAFIES 2027!
-> Vai ter diversão, desafios, provas, união… e muita solidariedade!
-> Ainda dá tempo de se inscrever! Chama os amigos, reúne sua equipe!
-> É nos dias vinte e dois, vinte e três, vinte e quatro, trinta e trinta e um de janeiro de 2027!
-> Eu quero ver todo mundo participando!
-> PAFIES 2027… vamos juntos fazer história!
-
-A fala tem uns 28 s. Se a voz gerada passar de 30 s, os tempos de `animatic/index.html` são ajustados para bater com o áudio.
-
-## Gestos por cena (para os clipes de IA)
-
-1. Entra no quadro, tira as mãos dos bolsos, sorriso de surpresa, sobrancelhas sobem.
-2. Gesto de "chega mais" com uma mão, depois abre os braços na hora do "décima".
-3. Aponta para a esquerda e para a direita (onde surgem os objetos), conta nos dedos.
-4. Aponta para cima (o cartão de datas), cabeça acompanhando; sorriso confiante.
-5. Comemora (punho fechado), sorri e aponta para a câmera no "vamos juntos".
+Tipografia: Instrument Serif itálico (emoção), Unbounded (rótulos), Manrope (apoio). Dourado só em acentos.
+Voz: pt-BR-AntonioNeural (Microsoft, gratuita). Trilha e efeitos compostos em `video/trilha.py`.
