@@ -1,0 +1,113 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Magister Auxilium — Prancha</title>
+<link rel="stylesheet" href="../assets/brand.css">
+<style>
+body{width:1600px;background:var(--preto)}
+.board{width:1600px;height:2400px;display:grid;grid-template-rows:760px 560px 280px 440px 360px;gap:0}
+section{position:relative;overflow:hidden}
+.lbl{position:absolute;z-index:5;font:500 10px/1 var(--sans);letter-spacing:.4em;text-transform:uppercase}
+/* hero: ambiente escuro institucional (cena construída) */
+.hero{background:
+  radial-gradient(ellipse 520px 380px at 50% 44%,rgba(255,236,200,.16),transparent 70%),
+  radial-gradient(ellipse 900px 300px at 82% 8%,rgba(255,210,150,.12),transparent 70%),
+  linear-gradient(180deg,#1b1a18 0%,#151413 58%,#0f0e0d 58.2%,#1c1714 100%)}
+.hero .wall{position:absolute;inset:0 0 42% 0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.018) 0 2px,transparent 2px 180px)}
+.hero .shelf{position:absolute;left:90px;top:120px;width:300px;height:250px;border-bottom:3px solid #2c2622}
+.hero .shelf i{position:absolute;bottom:0;width:22px;background:linear-gradient(90deg,#2a2420,#3a302a,#221d1a);border-radius:2px 2px 0 0}
+.hero .desk{position:absolute;left:0;right:0;bottom:0;height:42%;background:linear-gradient(180deg,#2a211b,#16110e),repeating-linear-gradient(92deg,rgba(255,255,255,.02) 0 1px,transparent 1px 7px);background-blend-mode:overlay}
+.hero .lamp{position:absolute;right:210px;top:0;width:2px;height:150px;background:#3b332b}
+.hero .lamp::after{content:"";position:absolute;left:-46px;top:150px;width:94px;height:44px;border-radius:50% 50% 6px 6px/100% 100% 6px 6px;background:linear-gradient(#2b2621,#191512);box-shadow:0 30px 90px 40px rgba(255,214,160,.10)}
+.hero .veil{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 30%,rgba(0,0,0,.55) 100%)}
+.hero .center{position:absolute;inset:0;display:grid;place-items:center;z-index:3}
+.hero .frame{padding:22px;background:linear-gradient(145deg,#3a3127,#1f1a15);box-shadow:0 50px 80px -20px rgba(0,0,0,.8),0 0 0 1px rgba(201,164,93,.5)}
+.split{display:grid;grid-template-columns:1fr 1fr}
+.strip{display:grid;grid-template-columns:repeat(5,1fr)}
+.strip>div{position:relative;display:grid;place-items:center;overflow:hidden}
+</style></head><body>
+<div class="board e" data-export="01-BRANDING-BOARD/prancha-principal">
+
+<!-- BLOCO 01 HERO -->
+<section class="hero">
+  <div class="wall"></div>
+  <div class="shelf"><i style="left:10px;height:180px"></i><i style="left:36px;height:200px;width:28px"></i><i style="left:68px;height:165px"></i><i style="left:94px;height:210px;width:26px"></i><i style="left:150px;height:120px;transform:rotate(-14deg);transform-origin:bottom left"></i></div>
+  <div class="lamp"></div>
+  <div class="desk"></div>
+  <div class="veil"></div>
+  <div class="lbl ouro" style="left:64px;top:56px">Magister Auxilium — Identidade Visual</div>
+  <div class="lbl" style="right:64px;top:56px;color:rgba(248,245,239,.5)">Brand Presentation · 2026</div>
+  <div class="center"><div class="frame"><div data-logo="340" data-opts='{"pad":26}'></div></div></div>
+  <div class="lbl" style="left:64px;bottom:56px;color:rgba(248,245,239,.55)">Fé · Conhecimento · Sabedoria</div>
+  <div class="lbl ouro" style="right:64px;bottom:56px">01</div>
+</section>
+
+<!-- BLOCO 02 MOCKUPS INSTITUCIONAIS -->
+<section class="split">
+  <div class="paper" style="position:relative;background-color:#EFEAE0">
+    <!-- folha timbrada ao fundo -->
+    <div class="paper" style="position:absolute;left:70px;top:60px;width:330px;height:466px;transform:rotate(-6deg);box-shadow:0 30px 40px -20px rgba(0,0,0,.35);padding:34px">
+      <div data-logo="64" data-opts='{"plate":false,"pad":0}'></div>
+      <div style="margin-top:40px;display:grid;gap:9px"><div style="height:4px;background:#e4ddd0;width:70%"></div><div style="height:4px;background:#e4ddd0"></div><div style="height:4px;background:#e4ddd0"></div><div style="height:4px;background:#e4ddd0;width:85%"></div><div style="height:4px;background:#e4ddd0;width:60%"></div></div>
+      <div style="position:absolute;left:0;right:0;bottom:0;height:8px;background:var(--petroleo)"></div>
+    </div>
+    <div data-card="B-frente" data-scale=".78" style="position:absolute;left:330px;top:250px;transform:rotate(4deg)"></div>
+    <!-- caneta -->
+    <div style="position:absolute;left:250px;top:470px;width:420px;height:18px;border-radius:9px 3px 3px 9px;transform:rotate(-24deg);background:linear-gradient(180deg,#3a3836,#0f0e0d 60%,#2a2826);box-shadow:0 18px 16px -8px rgba(0,0,0,.4)">
+      <div style="position:absolute;left:120px;top:0;width:14px;height:18px" class="foil-bg"></div>
+      <div style="position:absolute;right:-26px;top:5px;width:30px;height:8px;border-radius:0 8px 8px 0" class="foil-bg"></div></div>
+    <div class="lbl petro" style="left:40px;top:30px">Papelaria · papel fosco 350 g</div>
+  </div>
+  <div style="position:relative;background:#1d1c1a;overflow:hidden">
+    <div style="position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(255,240,210,.10),transparent 60%)"></div>
+    <div data-card="A-frente" data-scale=".6" style="position:absolute;left:40px;top:50px;transform:rotate(-8deg)"></div>
+    <div data-card="A-verso" data-scale=".6" style="position:absolute;left:400px;top:30px;transform:rotate(6deg)"></div>
+    <div data-card="B-frente" data-scale=".6" style="position:absolute;left:90px;top:250px;transform:rotate(5deg)"></div>
+    <div data-card="B-verso" data-scale=".6" style="position:absolute;left:430px;top:230px;transform:rotate(-4deg)"></div>
+    <div data-card="A-frente" data-scale=".6" style="position:absolute;left:260px;top:390px;transform:rotate(-2deg)"></div>
+    <div class="lbl ouro" style="right:40px;bottom:30px">Vista superior</div>
+  </div>
+</section>
+
+<!-- BLOCO 03 SISTEMA GRÁFICO -->
+<section class="strip">
+  <div class="paper"><img src="../05-ELEMENTOS-GRAFICOS/estrela-8-pontas--dourado.svg" style="width:150px"></div>
+  <div class="paper preto"><img src="../05-ELEMENTOS-GRAFICOS/circulo-aureo--dourado.svg" style="width:220px"></div>
+  <div class="paper verde"><div style="position:absolute;inset:0;background:url(../05-ELEMENTOS-GRAFICOS/padrao-turquesa-sobre-verde.svg) 0 0/90px;opacity:.6"></div><img src="../05-ELEMENTOS-GRAFICOS/estrela-8-pontas--marfim.svg" style="width:70px;position:relative"></div>
+  <div class="paper"><img src="../05-ELEMENTOS-GRAFICOS/livro-aberto-linhas--verde.svg" style="width:230px"></div>
+  <div class="paper preto"><img src="../05-ELEMENTOS-GRAFICOS/curva-manto--dourado.svg" style="width:240px;margin-top:60px"></div>
+</section>
+
+<!-- BLOCO 04 APLICAÇÃO DO LOGOTIPO -->
+<section class="split" style="background:#0e0d0c">
+  <div style="position:relative;display:grid;place-items:center;background:radial-gradient(circle at 50% 50%,rgba(255,240,210,.09),transparent 55%)">
+    <div data-logo="250" data-opts='{"pad":20,"style":"box-shadow:0 40px 70px -20px rgba(0,0,0,.9)"}'></div>
+    <div class="lbl ouro" style="left:40px;top:34px">Logotipo oficial · arquivo original</div>
+  </div>
+  <div style="position:relative;display:grid;place-items:center;perspective:1400px">
+    <div style="transform:rotateX(52deg) rotateZ(-28deg);transform-style:preserve-3d">
+      <div data-stack="A-frente" data-n="14" data-scale=".72" data-opts='{"dy":2.5,"gilt":true,"edge":"#272523"}'></div>
+    </div>
+    <div class="lbl" style="right:40px;bottom:34px;color:rgba(248,245,239,.5)">Bordas douradas · hot stamping</div>
+  </div>
+</section>
+
+<!-- BLOCO 05 MOCKUP FINAL -->
+<section style="display:grid;grid-template-columns:1.1fr 1fr 1fr">
+  <div class="paper" style="position:relative;background-color:#ECE6DA;display:grid;place-items:center;perspective:1200px">
+    <div style="transform:rotateX(48deg) rotateZ(18deg)"><div data-stack="B-frente" data-n="12" data-scale=".66" data-opts='{"dy":2.5,"edge":"#e7e0d2","gilt":true}'></div></div>
+  </div>
+  <div style="position:relative;background:var(--grafite);display:grid;place-items:center;perspective:900px">
+    <!-- cartões em pé -->
+    <div style="display:flex;gap:16px;align-items:flex-end;transform:rotateY(-18deg)">
+      <div data-card="A-frente" data-scale=".42" style="transform:rotate(-2deg)"></div>
+      <div data-card="B-frente" data-scale=".42" style="transform:rotate(2deg)"></div>
+    </div>
+    <div style="position:absolute;left:0;right:0;bottom:0;height:34%;background:linear-gradient(#1a1918,#121110)"></div>
+  </div>
+  <div style="position:relative;overflow:hidden;background:var(--preto)">
+    <!-- detalhe de textura (macro) -->
+    <div style="position:absolute;left:-130px;top:-40px;transform:scale(1.25) rotate(-12deg);transform-origin:0 0"><div data-card="A-verso"></div></div>
+    <div class="lbl ouro" style="right:30px;bottom:28px">Detalhe · textura e relevo</div>
+  </div>
+</section>
+</div>
+<script src="../assets/components.js"></script>
+</body></html>

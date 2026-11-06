@@ -1,0 +1,48 @@
+/* MAGISTER AUXILIUM — tokens e componentes da identidade complementar.
+   O logotipo entra SEMPRE como <img class="logo" src="assets/logo-original.png">
+   com object-fit: contain (proporção preservada, sem filtros, sem sobreposições). */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Cinzel:wght@400;500;600&family=Montserrat:wght@300;400;500;600&display=swap');
+
+:root{
+  --petroleo:#075C5A; --turquesa:#36BDB5; --profundo:#123D3B;
+  --dourado:#B98732; --ouro:#C9A45D; --marfim:#F8F5EF; --branco:#FFFFFF;
+  --preto:#171615; --grafite:#292827;
+  --serif:'Cormorant Garamond', Georgia, serif;
+  --caps:'Cinzel', 'Cormorant Garamond', serif;
+  --sans:'Montserrat', 'Inter', system-ui, sans-serif;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --shadow-card:0 1px 1px rgba(0,0,0,.18),0 6px 10px -4px rgba(0,0,0,.25),0 26px 40px -18px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--grafite);font-family:var(--sans);color:var(--preto);-webkit-font-smoothing:antialiased}
+.e{display:block} /* bloco exportável */
+
+/* ---------- Logotipo (imutável) ---------- */
+.logo{display:block;object-fit:contain;object-position:center;image-rendering:auto;filter:none!important;mix-blend-mode:normal!important}
+.plate{background:var(--branco);display:grid;place-items:center;overflow:hidden}
+.plate.marfim{background:var(--marfim)}
+
+/* ---------- Superfícies ---------- */
+.paper{position:relative;background-color:var(--marfim)}
+.paper::after{content:"";position:absolute;inset:0;background-image:var(--grain);pointer-events:none;mix-blend-mode:multiply;opacity:.9}
+.paper.dark{background-color:var(--grafite)}
+.paper.dark::after{mix-blend-mode:screen;opacity:.35}
+.paper.preto{background-color:var(--preto)}
+.paper.preto::after{mix-blend-mode:screen;opacity:.3}
+.paper.verde{background-color:var(--petroleo)}
+.paper.verde::after{mix-blend-mode:screen;opacity:.3}
+
+/* ---------- Tipografia ---------- */
+.eyebrow{font:500 11px/1 var(--sans);letter-spacing:.42em;text-transform:uppercase}
+.display{font-family:var(--serif);font-weight:400;letter-spacing:-.01em;line-height:.95}
+.caps{font-family:var(--caps);letter-spacing:.24em;text-transform:uppercase}
+.gold{color:var(--dourado)} .ouro{color:var(--ouro)} .petro{color:var(--petroleo)} .ivory{color:var(--marfim)}
+.foil{background:linear-gradient(115deg,#8f6420 0%,#d8b46a 28%,#f3dca0 40%,#b98732 55%,#e2c27c 72%,#8f6420 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.foil-bg{background:linear-gradient(115deg,#8f6420 0%,#d8b46a 28%,#f3dca0 40%,#b98732 55%,#e2c27c 72%,#8f6420 100%)}
+.rule{height:1px;background:currentColor;opacity:.5}
+.field{font:400 italic 13px/1.4 var(--serif);opacity:.75} /* campos editáveis */
+.field::before{content:"[ "} .field::after{content:" ]"}
+
+/* ---------- Cartão de visita 90×50 mm (escala 1050×583) ---------- */
+.bc{width:525px;height:292px;position:relative;overflow:hidden;border-radius:3px}
+.bc .star{position:absolute;opacity:.9}

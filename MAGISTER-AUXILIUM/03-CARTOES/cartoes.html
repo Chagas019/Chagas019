@@ -1,0 +1,31 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Magister Auxilium — Cartões</title>
+<link rel="stylesheet" href="../assets/brand.css">
+<style>body{padding:40px;display:grid;gap:40px;justify-content:start;background:#555}
+.scene{width:1600px;height:1000px;position:relative;overflow:hidden}</style></head><body>
+<!-- Artes planas 90×50 mm (exportação 2100×1168 px) — campos entre [ ] são editáveis -->
+<div class="e" data-export="03-CARTOES/versao-A-escuro-frente" data-card="A-frente" data-scale="2"></div>
+<div class="e" data-export="03-CARTOES/versao-A-escuro-verso" data-card="A-verso" data-scale="2"></div>
+<div class="e" data-export="03-CARTOES/versao-B-claro-frente" data-card="B-frente" data-scale="2"></div>
+<div class="e" data-export="03-CARTOES/versao-B-claro-verso" data-card="B-verso" data-scale="2"></div>
+
+<!-- Mockup: versões A e B lado a lado -->
+<div class="scene e" data-export="02-MOCKUPS/cartoes-A-e-B" style="display:grid;grid-template-columns:1fr 1fr">
+  <div style="background:radial-gradient(circle at 40% 30%,#3a3836,#1a1918);display:grid;place-items:center;position:relative">
+    <div data-card="A-verso" data-scale="1.05" style="position:absolute;left:150px;top:170px;transform:rotate(-7deg)"></div>
+    <div data-card="A-frente" data-scale="1.05" style="position:absolute;left:110px;top:470px;transform:rotate(4deg)"></div>
+    <div class="eyebrow ouro" style="position:absolute;left:50px;top:50px">Versão A · fundo escuro</div>
+  </div>
+  <div class="paper" style="background-color:#EAE4D8;position:relative">
+    <div data-card="B-verso" data-scale="1.05" style="position:absolute;left:150px;top:170px;transform:rotate(6deg)"></div>
+    <div data-card="B-frente" data-scale="1.05" style="position:absolute;left:120px;top:470px;transform:rotate(-3deg)"></div>
+    <div class="eyebrow petro" style="position:absolute;left:50px;top:50px">Versão B · fundo claro</div>
+  </div>
+</div>
+<!-- Mockup: pilha 3D -->
+<div class="scene e" data-export="02-MOCKUPS/cartoes-pilha-3d" style="background:radial-gradient(ellipse at 50% 40%,#2c2a28,#0f0e0d);display:grid;place-items:center;perspective:1600px">
+  <div style="display:flex;gap:120px;transform:rotateX(50deg) rotateZ(-24deg)">
+    <div data-stack="A-frente" data-n="18" data-scale="1" data-opts='{"dy":2.4,"gilt":true}'></div>
+    <div data-stack="B-frente" data-n="18" data-scale="1" data-opts='{"dy":2.4,"gilt":true,"edge":"#e7e0d2"}'></div>
+  </div>
+</div>
+<script src="../assets/components.js"></script></body></html>
