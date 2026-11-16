@@ -3,11 +3,11 @@ import { AlertOctagon, CheckCircle2, Inbox, Lock, PlugZap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const variants = {
-  empty: { Icon: Inbox, ring: "bg-sand-100 text-sand-600" },
+  empty: { Icon: Inbox, ring: "bg-white/10 text-ink-muted" },
   error: { Icon: AlertOctagon, ring: "bg-danger-soft text-danger" },
   success: { Icon: CheckCircle2, ring: "bg-success-soft text-success" },
-  forbidden: { Icon: Lock, ring: "bg-navy-100 text-navy-800" },
-  unconfigured: { Icon: PlugZap, ring: "bg-gold-100 text-gold-800" },
+  forbidden: { Icon: Lock, ring: "bg-violet-500/20 text-violet-200" },
+  unconfigured: { Icon: PlugZap, ring: "bg-lime-400/15 text-lime-300" },
 } as const;
 
 /** Estados padronizados de página/seção: vazio, erro, sucesso, sem permissão e backend não configurado. */

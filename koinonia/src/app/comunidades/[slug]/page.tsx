@@ -41,14 +41,14 @@ export default async function CommunityPage({ params }: Params) {
 
   return (
     <>
-      <section className="bg-grain bg-navy-900 text-white">
+      <section className="bg-grain bg-night-950 text-white">
         <Container className="py-14">
           <div className="flex flex-wrap items-center gap-2">
             <Badge tone="gold">{m.enums.communityKind[community.kind]}</Badge>
             {community.status === "verified" ? <Badge tone="success"><BadgeCheck aria-hidden />{m.communities.verifiedBadge}</Badge> : <Badge tone="warning">{m.enums.communityStatus[community.status]}</Badge>}
           </div>
           <h1 className="mt-4 font-display text-4xl font-semibold sm:text-5xl">{community.name}</h1>
-          <p className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-navy-200">
+          <p className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-ink-muted">
             <span className="inline-flex items-center gap-1.5"><MapPin aria-hidden className="size-4" />{community.city}, {countryName(community.country_code, locale)}</span>
             {community.diocese ? <span>{community.diocese}</span> : null}
             <span>{members.count ?? 0} {m.communities.members.toLowerCase()}</span>
@@ -96,7 +96,7 @@ export default async function CommunityPage({ params }: Params) {
                 <ul className="space-y-3">
                   {reviewRows.map((r) => (
                     <li key={r.id} className="text-sm">
-                      <p aria-label={`${r.rating}/5`} className="text-accent-ink">{"★".repeat(r.rating)}<span className="text-sand-200">{"★".repeat(5 - r.rating)}</span></p>
+                      <p aria-label={`${r.rating}/5`} className="text-accent-ink">{"★".repeat(r.rating)}<span className="text-white/20">{"★".repeat(5 - r.rating)}</span></p>
                       {r.comment ? <p className="mt-0.5">{r.comment}</p> : null}
                     </li>
                   ))}

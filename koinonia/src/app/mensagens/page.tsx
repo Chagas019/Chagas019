@@ -31,7 +31,7 @@ export default async function MessagesPage() {
     <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface">
       {res.data.map((c) => (
         <li key={c.conversation_id}>
-          <Link href={`/mensagens/${c.conversation_id}`} className="flex items-center gap-4 p-4 transition-colors hover:bg-navy-50">
+          <Link href={`/mensagens/${c.conversation_id}`} className="flex items-center gap-4 p-4 transition-colors hover:bg-white/5">
             <Avatar name={c.other_name || "?"} src={c.other_avatar} />
             <span className="min-w-0 flex-1">
               <span className="flex items-center justify-between gap-3">

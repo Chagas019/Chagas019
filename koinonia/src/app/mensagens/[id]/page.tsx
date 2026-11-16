@@ -62,10 +62,10 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
           const mine = msg.sender_id === session.userId;
           return (
             <li key={msg.id} className={cn("flex", mine ? "justify-end" : "justify-start")}>
-              <div className={cn("max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-soft sm:max-w-[70%]", mine ? "rounded-br-sm bg-navy-900 text-white" : "rounded-bl-sm border border-border bg-surface text-ink")}>
+              <div className={cn("max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-soft sm:max-w-[70%]", mine ? "rounded-br-sm bg-violet-600 text-white" : "rounded-bl-sm border border-border bg-surface text-ink")}>
                 <p className="sr-only">{mine ? m.messages.you : conv.other_name}:</p>
                 <p className="leading-relaxed break-words whitespace-pre-line">{msg.body}</p>
-                <p className={cn("mt-1 text-[0.7rem]", mine ? "text-navy-200" : "text-ink-subtle")}><time dateTime={msg.created_at}>{time.format(new Date(msg.created_at))}</time></p>
+                <p className={cn("mt-1 text-[0.7rem]", mine ? "text-violet-200" : "text-ink-subtle")}><time dateTime={msg.created_at}>{time.format(new Date(msg.created_at))}</time></p>
               </div>
             </li>
           );

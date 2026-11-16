@@ -3,80 +3,85 @@
 /* KOINONIA Design System — tokens primitivos e semânticos.
    Documentação: src/design-system/README.md · Contrastes validados em docs/design-system.md */
 @theme {
-  /* Primitivos — azul-marinho (marca) */
-  --color-navy-950: #0a1224;
-  --color-navy-900: #101c35;
-  --color-navy-800: #1a2a4d;
-  --color-navy-700: #263a66;
-  --color-navy-600: #3a5084;
-  --color-navy-500: #5a6e9e;
-  --color-navy-300: #9aa6c4;
-  --color-navy-200: #c9d1e3;
-  --color-navy-100: #e6eaf3;
-  --color-navy-50: #f4f6fa;
+  /* Primitivos — noite (fundos escuros) */
+  --color-night-950: #08080d;
+  --color-night-900: #0e0e16;
+  --color-night-800: #14141e;
+  --color-night-700: #1b1b28;
+  --color-night-600: #262636;
+  --color-night-500: #3a3a50;
 
-  /* Primitivos — dourado (marca). gold-500 nunca como texto sobre fundo claro. */
-  --color-gold-800: #6b5020;
-  --color-gold-700: #8c6a2a;
-  --color-gold-600: #b88e3e;
-  --color-gold-500: #d6ae62;
-  --color-gold-400: #e2c385;
-  --color-gold-300: #ebd5a8;
-  --color-gold-100: #f8f0df;
-  --color-gold-50: #fcf8ef;
+  /* Primitivos — lima (ação principal) */
+  --color-lime-200: #ecffb0;
+  --color-lime-300: #dcff70;
+  --color-lime-400: #c8ff2e;
+  --color-lime-500: #b2ea12;
 
-  /* Neutros quentes */
-  --color-sand-0: #ffffff;
-  --color-sand-25: #fbfaf7;
-  --color-sand-50: #f5f3ee;
-  --color-sand-100: #ece9e2;
-  --color-sand-200: #dcd8cf;
-  --color-sand-400: #9a958b;
-  --color-sand-500: #6e6a62;
-  --color-sand-600: #57534c;
-  --color-sand-700: #3f3c37;
-  --color-sand-900: #1c1b19;
+  /* Primitivos — roxo (marca) */
+  --color-violet-200: #d9c6ff;
+  --color-violet-300: #b994ff;
+  --color-violet-400: #9d6bff;
+  --color-violet-500: #8a4bff;
+  --color-violet-600: #7b2ff7;
+  --color-violet-700: #5f1fd0;
 
-  /* Semânticos */
-  --color-canvas: var(--color-sand-25);
-  --color-surface: var(--color-sand-0);
-  --color-surface-muted: var(--color-sand-50);
-  --color-border: var(--color-sand-200);
-  --color-border-strong: var(--color-sand-400);
-  --color-ink: var(--color-navy-900);
-  --color-ink-muted: var(--color-sand-600);
-  --color-ink-subtle: var(--color-sand-500);
-  --color-brand: var(--color-navy-900);
-  --color-accent: var(--color-gold-500);
-  --color-accent-ink: var(--color-gold-700);
-  --color-focus: var(--color-gold-600);
+  /* Acentos ilustrativos */
+  --color-sky-400: #3aa0ff;
+  --color-sky-500: #1f7fff;
+  --color-flame-500: #ff5a36;
+  --color-sun-400: #ffd23f;
+  --color-mint-400: #5fe3a1;
 
-  --color-success: #1f7a4d;
-  --color-success-soft: #e7f4ec;
-  --color-danger: #b42318;
-  --color-danger-soft: #fdecea;
-  --color-warning: #b54708;
-  --color-warning-soft: #fef3e6;
-  --color-info: #2e5aac;
-  --color-info-soft: #eaf0fb;
+  /* Semânticos (tema escuro) */
+  --color-canvas: var(--color-night-900);
+  --color-surface: var(--color-night-800);
+  --color-surface-muted: var(--color-night-700);
+  --color-border: var(--color-night-600);
+  --color-border-strong: var(--color-night-500);
+  --color-ink: #f6f6f8;
+  --color-ink-muted: #b8b8c8;
+  --color-ink-subtle: #9a9aae;
+  --color-brand: var(--color-violet-600);
+  --color-accent: var(--color-lime-400);
+  --color-accent-ink: var(--color-lime-400);
+  --color-focus: var(--color-lime-400);
+
+  --color-success: #5fe3a1;
+  --color-success-soft: rgb(95 227 161 / 0.12);
+  --color-danger: #ff7a70;
+  --color-danger-soft: rgb(255 122 112 / 0.12);
+  --color-warning: #ffc44d;
+  --color-warning-soft: rgb(255 196 77 / 0.12);
+  --color-info: #7cbcff;
+  --color-info-soft: rgb(124 188 255 / 0.12);
 
   /* Tipografia */
-  --font-display: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-marker), "Comic Sans MS", cursive;
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  /* Raios e sombras discretas */
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
-  --radius-xl: 1.5rem;
-  --shadow-soft: 0 1px 2px rgb(16 28 53 / 0.04), 0 2px 8px rgb(16 28 53 / 0.05);
-  --shadow-lifted: 0 2px 4px rgb(16 28 53 / 0.05), 0 12px 32px rgb(16 28 53 / 0.09);
-  --shadow-gold: 0 8px 24px rgb(214 174 98 / 0.28);
+  --radius-xl: 1.75rem;
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.25);
+  --shadow-lifted: 0 4px 10px rgb(0 0 0 / 0.35), 0 18px 40px rgb(0 0 0 / 0.4);
+  --shadow-gold: 0 8px 28px rgb(200 255 46 / 0.35);
 
   --animate-rise: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-float: float 5s ease-in-out infinite;
+  --animate-wave: wave 2.4s ease-in-out infinite;
   @keyframes rise {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes wave {
+    0%, 60%, 100% { transform: rotate(0deg); }
+    20% { transform: rotate(14deg); }
+    40% { transform: rotate(-6deg); }
   }
 }
 
@@ -89,10 +94,12 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
-  h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.015em; text-wrap: balance; }
+  h1, h2, h3 { font-family: var(--font-display); font-weight: 400; letter-spacing: 0.01em; text-wrap: balance; }
   p { text-wrap: pretty; }
+  h1, h2, h3, .font-display { font-synthesis-weight: none; }
   :focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; border-radius: 4px; }
-  ::selection { background: var(--color-gold-300); color: var(--color-navy-900); }
+  ::selection { background: var(--color-lime-400); color: var(--color-night-950); }
+  html { color-scheme: dark; }
   [hidden] { display: none !important; }
 }
 
@@ -107,14 +114,20 @@
 
 @layer components {
   .select-chevron {
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path d='M5.5 7.5 10 12l4.5-4.5' stroke='%23101c35' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path d='M5.5 7.5 10 12l4.5-4.5' stroke='%23c8ff2e' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");
     background-size: 1.1rem;
     background-position: right 0.8rem center;
     background-repeat: no-repeat;
   }
   .bg-grain {
     background-image:
-      radial-gradient(60rem 30rem at 85% -10%, rgb(214 174 98 / 0.18), transparent 60%),
-      radial-gradient(40rem 24rem at -10% 110%, rgb(58 80 132 / 0.35), transparent 60%);
+      radial-gradient(38rem 24rem at 0% 0%, rgb(123 47 247 / 0.55), transparent 62%),
+      radial-gradient(26rem 20rem at 100% 30%, rgb(255 90 54 / 0.28), transparent 60%),
+      radial-gradient(30rem 22rem at 0% 100%, rgb(31 127 255 / 0.38), transparent 62%);
+  }
+  .panel {
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
   }
 }

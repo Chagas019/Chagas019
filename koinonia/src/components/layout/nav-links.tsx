@@ -20,12 +20,12 @@ export function NavLinks({ items, className, onNavigate }: { items: NavItem[]; c
               aria-current={active ? "page" : undefined}
               className={cn(
                 "relative inline-flex min-h-11 items-center rounded-full px-3.5 text-[0.92rem] font-medium text-ink-muted transition-colors hover:text-ink",
-                active && "text-ink after:absolute after:inset-x-3.5 after:bottom-1.5 after:h-0.5 after:rounded-full after:bg-gold-500",
+                active && "text-ink after:absolute after:inset-x-3.5 after:bottom-1 after:h-1 after:rounded-full after:bg-lime-400",
               )}
             >
               {item.label}
               {item.badge ? (
-                <span className="ml-1.5 inline-flex min-w-5 items-center justify-center rounded-full bg-gold-500 px-1.5 text-[0.7rem] font-bold text-navy-900">
+                <span className="ml-1.5 inline-flex min-w-5 items-center justify-center rounded-full bg-lime-400 px-1.5 text-[0.7rem] font-bold text-night-950">
                   {item.badge}<span className="sr-only"> {item.badgeLabel}</span>
                 </span>
               ) : null}

@@ -4,9 +4,9 @@ test.describe("qualidade visual e performance", () => {
   test("estilos do Design System carregados (fundo do canvas e fonte da marca)", async ({ page }) => {
     await page.goto("/");
     const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-    expect(bg).toBe("rgb(251, 250, 247)");
+    expect(bg).toBe("rgb(14, 14, 22)");
     const h1Font = await page.locator("h1").first().evaluate((el) => getComputedStyle(el).fontFamily);
-    expect(h1Font.toLowerCase()).toContain("fraunces");
+    expect(h1Font.toLowerCase()).toContain("marker");
   });
 
   for (const path of ["/", "/cadastro", "/oportunidades"]) {

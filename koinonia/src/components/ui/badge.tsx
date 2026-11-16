@@ -5,9 +5,9 @@ import { cn } from "@/lib/utils";
 const badgeVariants = cva("inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold [&_svg]:size-3.5", {
   variants: {
     tone: {
-      neutral: "bg-sand-100 text-sand-700",
-      brand: "bg-navy-100 text-navy-800",
-      gold: "bg-gold-100 text-gold-800",
+      neutral: "bg-white/10 text-ink-muted",
+      brand: "bg-violet-500/20 text-violet-200",
+      gold: "bg-lime-400/15 text-lime-300",
       success: "bg-success-soft text-success",
       danger: "bg-danger-soft text-danger",
       warning: "bg-warning-soft text-warning",

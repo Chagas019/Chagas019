@@ -29,10 +29,18 @@ test.describe("páginas públicas", () => {
     });
   }
 
-  test("home mostra a identidade e o estado de backend não configurado", async ({ page }) => {
+  test("home segue a identidade visual e todos os atalhos levam a páginas reais", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Talentos unidos.");
-    await expect(page.getByText("Serviço em configuração")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("KOINONIA");
+    await expect(page.getByText("Vamos servir juntos!")).toBeVisible();
+    for (const name of ["Oportunidades em destaque", "Áreas de talento", "Sobre a KOINONIA", "Missão"]) {
+      await expect(page.getByRole("heading", { name })).toBeVisible();
+    }
+    const hrefs = await page.locator("main a[href^='/']").evaluateAll((els) => [...new Set(els.map((e) => e.getAttribute("href")))]);
+    for (const href of hrefs) {
+      const res = await page.request.get(href as string, { maxRedirects: 0 });
+      expect([200, 307], `${href}`).toContain(res.status());
+    }
   });
 
   test("404 amigável", async ({ page }) => {

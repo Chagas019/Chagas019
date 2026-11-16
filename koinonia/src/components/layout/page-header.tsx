@@ -14,7 +14,7 @@ export function PageHeader({ title, subtitle, eyebrow, actions, className }: { t
   );
 }
 
-export function Container({ className, children, size = "lg" }: { className?: string; children: ReactNode; size?: "md" | "lg" | "sm" }) {
+export function Container({ className, children, size = "lg", id }: { className?: string; children: ReactNode; size?: "md" | "lg" | "sm"; id?: string }) {
   const max = { sm: "max-w-xl", md: "max-w-4xl", lg: "max-w-7xl" }[size];
-  return <div className={cn("mx-auto w-full px-4 sm:px-6 lg:px-8", max, className)}>{children}</div>;
+  return <div id={id} className={cn("mx-auto w-full px-4 sm:px-6 lg:px-8", max, className)}>{children}</div>;
 }

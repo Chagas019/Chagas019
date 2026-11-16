@@ -64,7 +64,7 @@ export default async function VolunteerPage({ params, searchParams }: Params & {
           <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink-muted">
             {profile.country_code ? <span className="inline-flex items-center gap-1.5"><MapPin aria-hidden className="size-4" />{[profile.city, countryName(profile.country_code, locale)].filter(Boolean).join(", ")}</span> : null}
             {profile.hours_per_week ? <span className="inline-flex items-center gap-1.5"><Clock aria-hidden className="size-4" />{t(m.profile.hoursPerWeek, { hours: profile.hours_per_week })}</span> : null}
-            {avg !== null ? <span className="inline-flex items-center gap-1.5"><Star aria-hidden className="size-4 fill-gold-500 text-gold-600" />{avg.toFixed(1)} ({reviewRows.length})</span> : null}
+            {avg !== null ? <span className="inline-flex items-center gap-1.5"><Star aria-hidden className="size-4 fill-lime-400 text-lime-400" />{avg.toFixed(1)} ({reviewRows.length})</span> : null}
           </p>
         </div>
       </div>
@@ -128,7 +128,7 @@ export default async function VolunteerPage({ params, searchParams }: Params & {
           <ul className="space-y-3">
             {reviewRows.map((r) => (
               <li key={r.id as string} className="rounded-lg border border-border bg-surface p-4">
-                <p className="text-sm font-semibold text-accent-ink" aria-label={`${r.rating}/5`}>{"★".repeat(r.rating as number)}<span className="text-sand-200">{"★".repeat(5 - (r.rating as number))}</span></p>
+                <p className="text-sm font-semibold text-accent-ink" aria-label={`${r.rating}/5`}>{"★".repeat(r.rating as number)}<span className="text-white/20">{"★".repeat(5 - (r.rating as number))}</span></p>
                 {r.comment ? <p className="mt-1 text-sm">{r.comment as string}</p> : null}
                 <p className="mt-1 text-xs text-ink-subtle">{formatDate(r.created_at as string, locale)}</p>
               </li>

@@ -76,7 +76,7 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
           <option value="">{m.opportunities.country}: {m.common.anyOption}</option>
           {sortedCountries(locale).map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
         </Select>
-        <button type="submit" className="h-11 rounded-full bg-navy-900 px-6 font-semibold text-white hover:bg-navy-800">{m.common.search}</button>
+        <button type="submit" className="h-11 rounded-full bg-lime-400 px-6 font-semibold text-night-950 hover:bg-lime-300">{m.common.search}</button>
       </form>
       {body}
     </Container>
