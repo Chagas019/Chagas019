@@ -8,7 +8,7 @@ export async function SiteFooter() {
   const { m, locale } = await getI18n();
   return (
     <footer className="mt-16 border-t border-border bg-night-950 text-ink-muted">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1.2fr] lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr] lg:px-8">
         <div className="space-y-4">
           <Logo />
           <p className="max-w-xs text-sm leading-relaxed">{m.footer.tagline}</p>
@@ -35,16 +35,16 @@ export async function SiteFooter() {
         </nav>
         <form action={setLocaleAction} className="space-y-3">
           <label htmlFor="footer-locale" className="block font-sans text-xs font-semibold tracking-[0.18em] text-white uppercase">{m.footer.language}</label>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <select
               id="footer-locale"
               name="locale"
               defaultValue={locale}
-              className="h-11 min-w-0 flex-1 rounded-md border border-white/20 bg-night-700 px-3 text-sm text-white"
+              className="h-11 min-w-40 flex-1 rounded-md border border-white/20 bg-night-700 px-3 text-sm text-white"
             >
               {locales.map((l) => <option key={l} value={l}>{localeNames[l]}</option>)}
             </select>
-            <button type="submit" className="h-11 rounded-full bg-neon-400 px-4 text-sm font-semibold text-night-950 hover:bg-neon-300">
+            <button type="submit" className="h-11 shrink-0 rounded-full bg-neon-400 px-4 text-sm font-semibold text-night-950 hover:bg-neon-300">
               {m.footer.changeLanguage}
             </button>
           </div>

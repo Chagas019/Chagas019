@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Spinner } from "./spinner";
 
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-md font-semibold whitespace-nowrap transition-[background-color,box-shadow,transform,color,border-color] duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] [&_svg]:transition-transform hover:[&_svg]:translate-x-0.5 disabled:pointer-events-none disabled:opacity-55 aria-disabled:pointer-events-none aria-disabled:opacity-55 [&_svg]:size-[1.1em] [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 rounded-md text-center font-semibold transition-[background-color,box-shadow,transform,color,border-color] duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] [&_svg]:transition-transform hover:[&_svg]:translate-x-0.5 disabled:pointer-events-none disabled:opacity-55 aria-disabled:pointer-events-none aria-disabled:opacity-55 [&_svg]:size-[1.1em] [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -18,9 +18,9 @@ export const buttonVariants = cva(
         onDark: "border border-neon-400/70 bg-night-950/40 text-white uppercase tracking-[0.12em] hover:bg-neon-400/10",
       },
       size: {
-        sm: "h-9 px-4 text-xs",
-        md: "h-11 px-5 text-sm",
-        lg: "h-12 px-7 text-sm",
+        sm: "min-h-9 px-4 py-1.5 text-xs",
+        md: "min-h-11 px-5 py-2 text-sm",
+        lg: "min-h-12 px-7 py-2.5 text-sm",
         icon: "size-11",
       },
     },

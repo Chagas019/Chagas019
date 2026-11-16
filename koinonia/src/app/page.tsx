@@ -77,7 +77,7 @@ export default async function HomePage() {
 
       {/* 4. COMUNIDADES VERIFICADAS + 5. MISSION MATCH */}
       <section className="py-24">
-        <Container className="grid gap-6 lg:grid-cols-2">
+        <Container className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <Reveal className="card-glow rounded-xl border border-border bg-night-800/75 backdrop-blur p-8 sm:p-10">
             <ShieldCheck aria-hidden className="size-10 text-neon-400" strokeWidth={1.4} />
             <h2 className="mt-5 font-display text-3xl font-extrabold text-white uppercase">{m.home.communitiesTitle}</h2>
@@ -109,7 +109,7 @@ export default async function HomePage() {
 
       {/* 6. COMPARTILHAMENTO DE RECURSOS */}
       <section className="border-y border-white/5 bg-night-950/40 py-24">
-        <Container className="grid items-center gap-12 lg:grid-cols-[1fr_1.2fr]">
+        <Container className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_1.2fr]">
           <Reveal>
             <Eyebrow center={false}>{m.nav.resources}</Eyebrow>
             <h2 className="mt-4 font-display text-3xl font-black text-white uppercase sm:text-5xl">{m.home.resourcesTitle}</h2>
@@ -130,7 +130,7 @@ export default async function HomePage() {
       <section className="py-24">
         <Container>
           <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
-            <h2 className="font-display text-4xl font-black text-white uppercase">{m.home.latestTitle}</h2>
+            <h2 className="min-w-0 font-display text-3xl font-black text-white uppercase sm:text-4xl">{m.home.latestTitle}</h2>
             <Link href="/oportunidades" className="group inline-flex items-center gap-2 text-sm font-semibold tracking-[0.12em] text-neon-400 uppercase hover:text-neon-300">
               {m.common.seeAll}<ArrowRight aria-hidden className="size-4 transition-transform group-hover:translate-x-1" />
             </Link>

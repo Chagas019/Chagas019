@@ -40,7 +40,7 @@ export function PosterHero({ m }: { m: Messages }) {
           <h1 style={{ ["--i" as string]: 1 }} className="font-display text-2xl font-extrabold tracking-wide text-white/80 uppercase sm:text-3xl">{m.home.heroTitle}</h1>
         </div>
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-12 lg:gap-8">
+        <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8">
           {/* coluna esquerda */}
           <div className="stagger flex flex-col gap-6 lg:col-span-4">
             <article style={{ ["--i" as string]: 2 }} className={card}>

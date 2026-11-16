@@ -9,6 +9,17 @@ test.describe("qualidade visual e performance", () => {
     expect(h1Font.toLowerCase()).toContain("montserrat");
   });
 
+  for (const width of [320, 768, 800, 1024]) {
+    test(`sem rolagem horizontal em ${width}px (inclui largura útil com barra de rolagem)`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      for (const path of ["/", "/entrar", "/oportunidades", "/termos"]) {
+        await page.goto(path);
+        const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+        expect(overflow, `${path} @ ${width}px`).toBeLessThanOrEqual(0);
+      }
+    });
+  }
+
   for (const path of ["/", "/cadastro", "/oportunidades"]) {
     test(`${path} sem deslocamento de layout (CLS < 0.1)`, async ({ page }) => {
       await page.goto(path, { waitUntil: "networkidle" });
