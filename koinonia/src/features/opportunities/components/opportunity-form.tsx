@@ -35,7 +35,7 @@ export function OpportunityForm({ m, communityId, slug, verified, countries, lan
           {opportunityModeValues.map((v) => (
             <label key={v} className="relative cursor-pointer">
               <input type="radio" name="mode" value={v} checked={mode === v} onChange={() => setMode(v)} className="peer absolute inset-0 opacity-0" />
-              <span className="inline-flex min-h-10 items-center rounded-full border border-border px-4 text-sm peer-checked:border-violet-500 peer-checked:bg-violet-600 peer-checked:text-white peer-focus-visible:outline-3 peer-focus-visible:outline-lime-400">{m.enums.opportunityMode[v]}</span>
+              <span className="inline-flex min-h-10 items-center rounded-full border border-border px-4 text-sm peer-checked:border-navy-500 peer-checked:bg-navy-600 peer-checked:text-white peer-focus-visible:outline-3 peer-focus-visible:outline-gold-400">{m.enums.opportunityMode[v]}</span>
             </label>
           ))}
         </div>

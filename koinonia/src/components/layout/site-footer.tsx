@@ -12,7 +12,7 @@ export async function SiteFooter() {
         <div className="space-y-4">
           <Logo />
           <p className="max-w-xs text-sm leading-relaxed">{m.footer.tagline}</p>
-          <p className="font-display text-lime-400">{m.brand.slogan}</p>
+          <p className="font-display text-gold-400">{m.brand.slogan}</p>
         </div>
         <nav aria-label={m.footer.product}>
           <h2 className="mb-3 font-sans text-xs font-semibold tracking-[0.18em] text-white uppercase">{m.footer.product}</h2>
@@ -41,7 +41,7 @@ export async function SiteFooter() {
             >
               {locales.map((l) => <option key={l} value={l}>{localeNames[l]}</option>)}
             </select>
-            <button type="submit" className="h-11 rounded-full bg-lime-400 px-4 text-sm font-semibold text-night-950 hover:bg-lime-300">
+            <button type="submit" className="h-11 rounded-full bg-gold-400 px-4 text-sm font-semibold text-night-950 hover:bg-gold-300">
               {m.footer.changeLanguage}
             </button>
           </div>

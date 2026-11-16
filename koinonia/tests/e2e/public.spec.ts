@@ -32,8 +32,8 @@ test.describe("páginas públicas", () => {
   test("home segue a identidade visual e todos os atalhos levam a páginas reais", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("KOINONIA");
-    await expect(page.getByText("Vamos servir juntos!")).toBeVisible();
-    for (const name of ["Oportunidades em destaque", "Áreas de talento", "Sobre a KOINONIA", "Missão"]) {
+    await expect(page.getByText("Talentos unidos. Uma só missão.").first()).toBeVisible();
+    for (const name of ["O que você encontra na KOINONIA", "Como funciona", "Oportunidades recentes", "Gratuito, para sempre"]) {
       await expect(page.getByRole("heading", { name })).toBeVisible();
     }
     const hrefs = await page.locator("main a[href^='/']").evaluateAll((els) => [...new Set(els.map((e) => e.getAttribute("href")))]);

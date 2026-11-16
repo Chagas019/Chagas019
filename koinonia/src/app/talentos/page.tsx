@@ -105,7 +105,7 @@ export default async function TalentsPage({ searchParams }: { searchParams: SP }
           <option value="">{m.profile.availability}: {m.common.anyOption}</option>
           {availabilityValues.map((a) => <option key={a} value={a}>{m.enums.availability[a]}</option>)}
         </Select>
-        <button type="submit" className="h-11 rounded-full bg-lime-400 px-6 font-semibold text-night-950 hover:bg-lime-300">{m.common.search}</button>
+        <button type="submit" className="h-11 rounded-full bg-gold-400 px-6 font-semibold text-night-950 hover:bg-gold-300">{m.common.search}</button>
       </form>
       <p className="mb-8 text-xs text-ink-muted">{m.talents.privacyNote}</p>
       {body}

@@ -3,34 +3,27 @@
 /* KOINONIA Design System — tokens primitivos e semânticos.
    Documentação: src/design-system/README.md · Contrastes validados em docs/design-system.md */
 @theme {
-  /* Primitivos — noite (fundos escuros) */
-  --color-night-950: #08080d;
-  --color-night-900: #0e0e16;
-  --color-night-800: #14141e;
-  --color-night-700: #1b1b28;
-  --color-night-600: #262636;
-  --color-night-500: #3a3a50;
+  /* Primitivos — noite azul-marinho (fundos) */
+  --color-night-950: #050a15;
+  --color-night-900: #0a1222;
+  --color-night-800: #101c35;
+  --color-night-700: #15233f;
+  --color-night-600: #22314f;
+  --color-night-500: #34466d;
 
-  /* Primitivos — lima (ação principal) */
-  --color-lime-200: #ecffb0;
-  --color-lime-300: #dcff70;
-  --color-lime-400: #c8ff2e;
-  --color-lime-500: #b2ea12;
+  /* Primitivos — dourado (ação e destaque) */
+  --color-gold-200: #f1e0bc;
+  --color-gold-300: #e4c68a;
+  --color-gold-400: #d6ae62;
+  --color-gold-500: #c29a4c;
 
-  /* Primitivos — roxo (marca) */
-  --color-violet-200: #d9c6ff;
-  --color-violet-300: #b994ff;
-  --color-violet-400: #9d6bff;
-  --color-violet-500: #8a4bff;
-  --color-violet-600: #7b2ff7;
-  --color-violet-700: #5f1fd0;
-
-  /* Acentos ilustrativos */
-  --color-sky-400: #3aa0ff;
-  --color-sky-500: #1f7fff;
-  --color-flame-500: #ff5a36;
-  --color-sun-400: #ffd23f;
-  --color-mint-400: #5fe3a1;
+  /* Primitivos — azul-marinho (marca, superfícies de ação secundária) */
+  --color-navy-200: #cfd8ee;
+  --color-navy-300: #a9b8dc;
+  --color-navy-400: #7f93c8;
+  --color-navy-500: #4f67a6;
+  --color-navy-600: #2e4580;
+  --color-navy-700: #22365f;
 
   /* Semânticos (tema escuro) */
   --color-canvas: var(--color-night-900);
@@ -38,13 +31,13 @@
   --color-surface-muted: var(--color-night-700);
   --color-border: var(--color-night-600);
   --color-border-strong: var(--color-night-500);
-  --color-ink: #f6f6f8;
-  --color-ink-muted: #b8b8c8;
-  --color-ink-subtle: #9a9aae;
-  --color-brand: var(--color-violet-600);
-  --color-accent: var(--color-lime-400);
-  --color-accent-ink: var(--color-lime-400);
-  --color-focus: var(--color-lime-400);
+  --color-ink: #f7f5f0;
+  --color-ink-muted: #c3c3cc;
+  --color-ink-subtle: #a0a3b4;
+  --color-brand: var(--color-night-800);
+  --color-accent: var(--color-gold-400);
+  --color-accent-ink: var(--color-gold-400);
+  --color-focus: var(--color-gold-400);
 
   --color-success: #5fe3a1;
   --color-success-soft: rgb(95 227 161 / 0.12);
@@ -56,16 +49,16 @@
   --color-info-soft: rgb(124 188 255 / 0.12);
 
   /* Tipografia */
-  --font-display: var(--font-marker), "Comic Sans MS", cursive;
-  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-garamond), "Iowan Old Style", Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
-  --radius-xl: 1.75rem;
+  --radius-xl: 1rem;
   --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.25);
   --shadow-lifted: 0 4px 10px rgb(0 0 0 / 0.35), 0 18px 40px rgb(0 0 0 / 0.4);
-  --shadow-gold: 0 8px 28px rgb(200 255 46 / 0.35);
+  --shadow-gold: 0 8px 28px rgb(214 174 98 / 0.3);
 
   --animate-rise: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   --animate-float: float 5s ease-in-out infinite;
@@ -94,11 +87,11 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
-  h1, h2, h3 { font-family: var(--font-display); font-weight: 400; letter-spacing: 0.01em; text-wrap: balance; }
+  h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.005em; text-wrap: balance; }
   p { text-wrap: pretty; }
   h1, h2, h3, .font-display { font-synthesis-weight: none; }
   :focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; border-radius: 4px; }
-  ::selection { background: var(--color-lime-400); color: var(--color-night-950); }
+  ::selection { background: var(--color-gold-400); color: var(--color-night-950); }
   html { color-scheme: dark; }
   [hidden] { display: none !important; }
 }
@@ -114,16 +107,15 @@
 
 @layer components {
   .select-chevron {
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path d='M5.5 7.5 10 12l4.5-4.5' stroke='%23c8ff2e' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path d='M5.5 7.5 10 12l4.5-4.5' stroke='%23d6ae62' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");
     background-size: 1.1rem;
     background-position: right 0.8rem center;
     background-repeat: no-repeat;
   }
   .bg-grain {
     background-image:
-      radial-gradient(38rem 24rem at 0% 0%, rgb(123 47 247 / 0.55), transparent 62%),
-      radial-gradient(26rem 20rem at 100% 30%, rgb(255 90 54 / 0.28), transparent 60%),
-      radial-gradient(30rem 22rem at 0% 100%, rgb(31 127 255 / 0.38), transparent 62%);
+      radial-gradient(40rem 22rem at 50% 0%, rgb(214 174 98 / 0.14), transparent 65%),
+      radial-gradient(30rem 22rem at 0% 100%, rgb(46 69 128 / 0.45), transparent 62%);
   }
   .panel {
     border-radius: var(--radius-xl);

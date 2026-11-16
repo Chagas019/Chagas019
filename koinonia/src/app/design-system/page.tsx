@@ -14,7 +14,7 @@ export default async function DesignSystemPage() {
       <PageHeader eyebrow="KOINONIA" title="Design System" subtitle="Tokens, componentes e estados usados em toda a plataforma. Todos os pares de cor de texto atendem WCAG 2.2 AA." />
       <section aria-labelledby="ds-colors" className="mb-14">
         <h2 id="ds-colors" className="mb-5 font-display text-2xl font-semibold">Cores</h2>
-        {(["night", "lime", "violet", "accents"] as const).map((group) => (
+        {(["night", "gold", "navy"] as const).map((group) => (
           <div key={group} className="mb-5">
             <h3 className="mb-2 text-sm font-semibold capitalize">{group}</h3>
             <ul className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-10">
@@ -38,8 +38,8 @@ export default async function DesignSystemPage() {
       </section>
       <section aria-labelledby="ds-type" className="mb-14">
         <h2 id="ds-type" className="mb-5 font-display text-2xl font-semibold">Tipografia</h2>
-        <p className="font-display text-5xl">Permanent Marker — Talentos unidos.</p>
-        <p className="mt-3 text-lg">Outfit — texto de interface com leitura confortável em qualquer tela.</p>
+        <p className="font-display text-5xl">EB Garamond — Talentos unidos.</p>
+        <p className="mt-3 text-lg">Inter — texto de interface com leitura confortável em qualquer tela.</p>
       </section>
       <section aria-labelledby="ds-components" className="mb-14 space-y-8">
         <h2 id="ds-components" className="font-display text-2xl font-semibold">Componentes</h2>

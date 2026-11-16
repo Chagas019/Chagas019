@@ -64,7 +64,7 @@ export default async function VolunteerPage({ params, searchParams }: Params & {
           <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink-muted">
             {profile.country_code ? <span className="inline-flex items-center gap-1.5"><MapPin aria-hidden className="size-4" />{[profile.city, countryName(profile.country_code, locale)].filter(Boolean).join(", ")}</span> : null}
             {profile.hours_per_week ? <span className="inline-flex items-center gap-1.5"><Clock aria-hidden className="size-4" />{t(m.profile.hoursPerWeek, { hours: profile.hours_per_week })}</span> : null}
-            {avg !== null ? <span className="inline-flex items-center gap-1.5"><Star aria-hidden className="size-4 fill-lime-400 text-lime-400" />{avg.toFixed(1)} ({reviewRows.length})</span> : null}
+            {avg !== null ? <span className="inline-flex items-center gap-1.5"><Star aria-hidden className="size-4 fill-gold-400 text-gold-400" />{avg.toFixed(1)} ({reviewRows.length})</span> : null}
           </p>
         </div>
       </div>

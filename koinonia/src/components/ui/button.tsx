@@ -5,22 +5,22 @@ import { cn } from "@/lib/utils";
 import { Spinner } from "./spinner";
 
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-full font-semibold whitespace-nowrap transition-[background-color,box-shadow,transform,color] duration-200 active:translate-y-px disabled:pointer-events-none disabled:opacity-55 aria-disabled:pointer-events-none aria-disabled:opacity-55 [&_svg]:size-[1.1em] [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 rounded-md font-semibold whitespace-nowrap transition-[background-color,box-shadow,transform,color] duration-200 active:translate-y-px disabled:pointer-events-none disabled:opacity-55 aria-disabled:pointer-events-none aria-disabled:opacity-55 [&_svg]:size-[1.1em] [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        primary: "bg-lime-400 text-night-950 shadow-soft hover:bg-lime-300 hover:shadow-gold",
-        gold: "bg-violet-600 text-white shadow-soft hover:bg-violet-500",
-        outline: "border-2 border-violet-500 bg-transparent text-ink hover:border-lime-400 hover:text-lime-300",
+        primary: "bg-gold-400 text-night-950 uppercase tracking-[0.12em] shadow-soft hover:bg-gold-300 hover:shadow-gold",
+        gold: "bg-navy-600 text-white uppercase tracking-[0.12em] shadow-soft hover:bg-navy-500",
+        outline: "border border-gold-400/70 bg-transparent text-ink uppercase tracking-[0.12em] hover:bg-gold-400/10 hover:border-gold-300",
         ghost: "text-ink hover:bg-white/5",
         danger: "bg-danger text-night-950 hover:brightness-110",
         link: "h-auto rounded-none p-0 text-accent-ink underline-offset-4 hover:underline",
-        onDark: "border-2 border-violet-500 bg-night-950/40 text-white hover:border-lime-400",
+        onDark: "border border-gold-400/70 bg-night-950/40 text-white uppercase tracking-[0.12em] hover:bg-gold-400/10",
       },
       size: {
-        sm: "h-9 px-4 text-sm",
-        md: "h-11 px-5 text-[0.95rem]",
-        lg: "h-13 px-7 text-base",
+        sm: "h-9 px-4 text-xs",
+        md: "h-11 px-5 text-sm",
+        lg: "h-12 px-7 text-sm",
         icon: "size-11",
       },
     },

@@ -120,7 +120,7 @@ export default async function DashboardPage() {
                   {notifRows.map((n) => {
                     const d = describeNotification(n, m);
                     return (
-                      <li key={n.id} className={`rounded-lg border p-3 text-sm ${n.read_at ? "border-border" : "border-lime-400/40 bg-lime-400/10"}`}>
+                      <li key={n.id} className={`rounded-lg border p-3 text-sm ${n.read_at ? "border-border" : "border-gold-400/40 bg-gold-400/10"}`}>
                         {d.href ? <Link href={d.href} className="underline-offset-4 hover:underline">{d.text}</Link> : d.text}
                         <p className="mt-1 text-xs text-ink-subtle">{formatDate(n.created_at, locale)}</p>
                       </li>

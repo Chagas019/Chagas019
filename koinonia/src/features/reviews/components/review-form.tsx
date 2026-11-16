@@ -37,7 +37,7 @@ export function ReviewForm({ applicationId, target, revieweeId, back, labels }: 
             {[1, 2, 3, 4, 5].map((n) => (
               <label key={n} className="relative cursor-pointer">
                 <input type="radio" name="rating" value={n} required checked={rating === n} onChange={() => setRating(n)} className="peer absolute inset-0 opacity-0" />
-                <Star aria-hidden className={cn("size-8 transition-colors peer-focus-visible:outline-3 peer-focus-visible:outline-lime-400", n <= rating ? "fill-lime-400 text-lime-400" : "text-ink-subtle")} />
+                <Star aria-hidden className={cn("size-8 transition-colors peer-focus-visible:outline-3 peer-focus-visible:outline-gold-400", n <= rating ? "fill-gold-400 text-gold-400" : "text-ink-subtle")} />
                 <span className="sr-only">{labels.stars.replace("{n}", String(n))}</span>
               </label>
             ))}

@@ -6,7 +6,7 @@ export function Card({ className, interactive, ...props }: HTMLAttributes<HTMLDi
     <div
       className={cn(
         "rounded-xl border border-border/80 bg-surface shadow-soft",
-        interactive && "transition duration-200 hover:-translate-y-0.5 hover:border-lime-400 hover:shadow-lifted focus-within:border-lime-400",
+        interactive && "transition duration-200 hover:-translate-y-0.5 hover:border-gold-400 hover:shadow-lifted focus-within:border-gold-400",
         className,
       )}
       {...props}

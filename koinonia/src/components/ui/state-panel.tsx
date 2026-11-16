@@ -6,8 +6,8 @@ const variants = {
   empty: { Icon: Inbox, ring: "bg-white/10 text-ink-muted" },
   error: { Icon: AlertOctagon, ring: "bg-danger-soft text-danger" },
   success: { Icon: CheckCircle2, ring: "bg-success-soft text-success" },
-  forbidden: { Icon: Lock, ring: "bg-violet-500/20 text-violet-200" },
-  unconfigured: { Icon: PlugZap, ring: "bg-lime-400/15 text-lime-300" },
+  forbidden: { Icon: Lock, ring: "bg-navy-500/20 text-navy-200" },
+  unconfigured: { Icon: PlugZap, ring: "bg-gold-400/15 text-gold-300" },
 } as const;
 
 /** Estados padronizados de página/seção: vazio, erro, sucesso, sem permissão e backend não configurado. */

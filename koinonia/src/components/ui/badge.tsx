@@ -6,8 +6,8 @@ const badgeVariants = cva("inline-flex items-center gap-1 rounded-full px-2.5 py
   variants: {
     tone: {
       neutral: "bg-white/10 text-ink-muted",
-      brand: "bg-violet-500/20 text-violet-200",
-      gold: "bg-lime-400/15 text-lime-300",
+      brand: "bg-navy-500/20 text-navy-200",
+      gold: "bg-gold-400/15 text-gold-300",
       success: "bg-success-soft text-success",
       danger: "bg-danger-soft text-danger",
       warning: "bg-warning-soft text-warning",
