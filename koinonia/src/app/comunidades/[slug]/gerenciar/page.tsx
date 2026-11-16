@@ -6,6 +6,8 @@ import { createClient } from "@/lib/supabase/server";
 import { requireSession } from "@/features/auth/session";
 import { getCommunityBySlug, getMyMembership } from "@/services/communities";
 import { listOpportunities } from "@/services/opportunities";
+import { listResources } from "@/services/resources";
+import { ResourceForm } from "@/features/resources/components/resource-forms";
 import { setMemberRoleAction } from "@/features/communities/actions";
 import { CommunityForm } from "@/features/communities/components/community-form";
 import { VerificationForm } from "@/features/communities/components/verification-form";
@@ -39,6 +41,7 @@ export default async function ManageCommunityPage({ params, searchParams }: Para
     supabase.from("community_members").select("user_id, role, joined_at, profile:profiles(display_name)").eq("community_id", community.id).order("joined_at"),
     listOpportunities(supabase, { communityId: community.id, includeDrafts: true }),
   ]);
+  const resources = await listResources(supabase, { communityId: community.id, includeUnavailable: true });
   const vList = (verifications.data ?? []) as CommunityVerification[];
   const hasPending = vList.some((v) => v.status === "pending");
   const members = (membersRes.data ?? []) as unknown as Array<{ user_id: string; role: MemberRole; joined_at: string; profile: { display_name: string } | null }>;
@@ -94,6 +97,24 @@ export default async function ManageCommunityPage({ params, searchParams }: Para
                 ))}
               </ul>
             )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader><CardTitle as="h2">{m.resources.manage}</CardTitle></CardHeader>
+          <CardContent className="flex flex-col gap-6">
+            {resources.items.length ? (
+              <ul className="divide-y divide-border rounded-lg border border-border">
+                {resources.items.map((r) => (
+                  <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
+                    <span className="font-semibold">{r.title} <Badge className="ml-2">{m.resources.kinds[r.kind]}</Badge></span>
+                    <Link href={`/recursos/${r.id}`} className="text-sm font-semibold text-accent-ink underline-offset-4 hover:underline">{m.resources.requests}</Link>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            <h3 className="font-display text-lg font-semibold">{m.resources.createTitle}</h3>
+            <ResourceForm m={m} communityId={community.id} back={`/comunidades/${community.slug}/gerenciar`} countries={sortedCountries(locale)} defaultCountry={community.country_code} defaultCity={community.city} />
           </CardContent>
         </Card>
 

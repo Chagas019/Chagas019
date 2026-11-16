@@ -35,7 +35,7 @@ describe("initials", () => {
 });
 
 describe("rotas protegidas", () => {
-  it.each(["/painel", "/perfil", "/onboarding", "/match", "/admin", "/comunidades/nova", "/comunidades/x/gerenciar", "/comunidades/x/gerenciar/oportunidades/nova"])("%s exige login", (p) => {
+  it.each(["/painel", "/perfil", "/onboarding", "/match", "/admin", "/comunidades/nova", "/comunidades/x/gerenciar", "/comunidades/x/gerenciar/oportunidades/nova", "/mensagens", "/mensagens/abc", "/conta", "/recursos"])("%s exige login", (p) => {
     expect(isProtectedPath(p)).toBe(true);
   });
   it.each(["/", "/oportunidades", "/comunidades", "/comunidades/x", "/talentos", "/entrar", "/painelx"])("%s é público", (p) => {

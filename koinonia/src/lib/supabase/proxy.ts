@@ -3,7 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 import { isSupabaseConfigured, publicEnv } from "@/lib/env";
 
 /** Rotas que exigem login. A autorização fina continua no banco (RLS). */
-export const PROTECTED_PREFIXES = ["/painel", "/perfil", "/onboarding", "/match", "/comunidades/nova", "/gerenciar", "/admin"];
+export const PROTECTED_PREFIXES = ["/painel", "/perfil", "/onboarding", "/match", "/comunidades/nova", "/gerenciar", "/admin", "/mensagens", "/conta", "/recursos"];
 
 export function isProtectedPath(pathname: string): boolean {
   return PROTECTED_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`)) || /^\/comunidades\/[^/]+\/gerenciar/.test(pathname);

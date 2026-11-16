@@ -34,6 +34,9 @@ export default async function CommunityPage({ params }: Params) {
     listOpportunities(supabase, { communityId: community.id }),
     supabase.from("community_members").select("user_id", { count: "exact", head: true }).eq("community_id", community.id),
   ]);
+  const { data: reviewData } = await supabase.from("reviews").select("id, rating, comment, created_at").eq("reviewee_community_id", community.id).order("created_at", { ascending: false }).limit(10);
+  const reviewRows = (reviewData ?? []) as Array<{ id: string; rating: number; comment: string; created_at: string }>;
+  const avg = reviewRows.length ? reviewRows.reduce((a, r) => a + r.rating, 0) / reviewRows.length : null;
   const isAdmin = role === "owner" || role === "admin";
 
   return (
@@ -87,6 +90,19 @@ export default async function CommunityPage({ params }: Params) {
                 <p className="text-sm">{community.languages.map((l) => languageName(l, locale)).join(" · ")}</p>
               </div>
             ) : null}
+            <div className="rounded-xl border border-border bg-surface p-5">
+              <h2 className="mb-2 font-display text-lg font-semibold">{m.profile.reviews}{avg !== null ? <span className="ml-2 text-sm font-normal text-ink-muted">★ {avg.toFixed(1)} ({reviewRows.length})</span> : null}</h2>
+              {reviewRows.length === 0 ? <p className="text-sm text-ink-muted">{m.profile.noReviews}</p> : (
+                <ul className="space-y-3">
+                  {reviewRows.map((r) => (
+                    <li key={r.id} className="text-sm">
+                      <p aria-label={`${r.rating}/5`} className="text-accent-ink">{"★".repeat(r.rating)}<span className="text-sand-200">{"★".repeat(5 - r.rating)}</span></p>
+                      {r.comment ? <p className="mt-0.5">{r.comment}</p> : null}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
             {session && !isAdmin ? <ReportButton m={m} targetType="community" targetId={community.id} label={m.report.title} /> : null}
           </aside>
         </div>

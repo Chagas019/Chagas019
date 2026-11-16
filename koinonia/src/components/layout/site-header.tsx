@@ -6,6 +6,15 @@ import { Avatar, Button, ButtonLink } from "@/components/ui";
 import { Logo } from "./logo";
 import { NavLinks, type NavItem } from "./nav-links";
 import { MobileMenu } from "./mobile-menu";
+import { createClient } from "@/lib/supabase/server";
+import { t } from "@/i18n/format";
+
+async function unreadCount(): Promise<number> {
+  const supabase = await createClient();
+  if (!supabase) return 0;
+  const { data } = await supabase.rpc("unread_message_count");
+  return typeof data === "number" ? data : 0;
+}
 
 export async function SiteHeader() {
   const [{ m }, session] = await Promise.all([getI18n(), getSession()]);
@@ -15,7 +24,13 @@ export async function SiteHeader() {
     { href: "/comunidades", label: m.nav.communities },
   ];
   if (session) {
-    items.push({ href: "/match", label: m.nav.match }, { href: "/painel", label: m.nav.dashboard });
+    const unread = await unreadCount();
+    items.push(
+      { href: "/recursos", label: m.nav.resources },
+      { href: "/match", label: m.nav.match },
+      { href: "/mensagens", label: m.nav.messages, badge: unread, badgeLabel: t(m.messages.unread, { count: unread }) },
+      { href: "/painel", label: m.nav.dashboard },
+    );
     if (session.isModerator) items.push({ href: "/admin", label: m.nav.admin });
   }
   const name = session?.profile?.display_name || session?.email || "";
@@ -26,6 +41,7 @@ export async function SiteHeader() {
         <Avatar name={name} src={session.profile?.avatar_url} size="sm" className="size-7 text-[0.65rem]" />
         {m.nav.profile}
       </ButtonLink>
+      <ButtonLink href="/conta" variant="ghost" size="sm" className="justify-start lg:justify-center">{m.nav.account}</ButtonLink>
       <form action={logoutAction}>
         <Button type="submit" variant="outline" size="sm" className="w-full lg:w-auto">{m.nav.logout}</Button>
       </form>

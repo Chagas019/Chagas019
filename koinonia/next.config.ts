@@ -22,6 +22,8 @@ const csp = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  // avatar/logotipo: até 2 MB de imagem + folga do multipart
+  experimental: { serverActions: { bodySizeLimit: "2.2mb" } },
   images: {
     remotePatterns: supabaseOrigin
       ? [{ protocol: "https", hostname: new URL(supabaseOrigin).hostname, pathname: "/storage/v1/object/public/**" }]

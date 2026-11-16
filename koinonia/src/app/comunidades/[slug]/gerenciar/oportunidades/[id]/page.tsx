@@ -9,6 +9,7 @@ import { loadManagedCommunity } from "@/services/community-admin";
 import { getOpportunity } from "@/services/opportunities";
 import { setApplicationStatusAction, setOpportunityStatusAction } from "@/features/opportunities/actions";
 import { uuidSchema } from "@/schemas/common";
+import { ReviewForm } from "@/features/reviews/components/review-form";
 import { Alert, Avatar, Badge, Button, ButtonLink, Card, CardContent, CardHeader, CardTitle, StatePanel } from "@/components/ui";
 import { Container, PageHeader } from "@/components/layout/page-header";
 import { BackendUnavailable } from "@/components/features/backend-unavailable";
@@ -43,6 +44,9 @@ export default async function ManageOpportunityPage({ params, searchParams }: Pa
     supabase.rpc("match_volunteers_for_opportunity", { p_opportunity: id, p_limit: 8 }),
   ]);
   const appRows = (apps.data ?? []) as unknown as Array<{ id: string; status: ApplicationStatus; message: string; created_at: string; applicant: { id: string; display_name: string; avatar_url: string | null } | null }>;
+  const { data: myReviews } = await supabase.from("reviews").select("application_id").eq("reviewer_id", session.userId).in("application_id", appRows.length ? appRows.map((a) => a.id) : ["00000000-0000-0000-0000-000000000000"]);
+  const reviewed = new Set((myReviews ?? []).map((r) => r.application_id as string));
+  const reviewLabels = { open: m.reviews.rateVolunteer, rating: m.reviews.rating, stars: m.reviews.stars, comment: m.reviews.comment, submit: m.reviews.submit, sending: m.common.saving };
   const matchRows = (matches.data ?? []) as Array<{ profile_id: string; score: number }>;
   const { data: matchProfiles } = matchRows.length
     ? await supabase.from("profiles").select("id, display_name, avatar_url, city").in("id", matchRows.map((r) => r.profile_id))
@@ -90,6 +94,9 @@ export default async function ManageOpportunityPage({ params, searchParams }: Pa
                         </form>
                       ))}
                     </div>
+                  ) : null}
+                  {a.status === "completed" && a.applicant && !reviewed.has(a.id) ? (
+                    <ReviewForm applicationId={a.id} target="profile" revieweeId={a.applicant.id} back={back} labels={reviewLabels} />
                   ) : null}
                 </li>
               ))}

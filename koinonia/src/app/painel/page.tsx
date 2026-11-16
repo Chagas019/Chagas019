@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { requireSession } from "@/features/auth/session";
 import { listMyCommunities } from "@/services/communities";
 import { setApplicationStatusAction } from "@/features/opportunities/actions";
+import { ReviewForm } from "@/features/reviews/components/review-form";
 import { markAllNotificationsReadAction } from "@/features/notifications/actions";
 import { describeNotification } from "@/features/notifications/format";
 import { Badge, Button, ButtonLink, Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
@@ -29,10 +30,15 @@ export default async function DashboardPage() {
 
   const [communities, apps, notifs] = await Promise.all([
     listMyCommunities(supabase, session.userId),
-    supabase.from("applications").select("id, status, created_at, opportunity:opportunities(id, title)").eq("applicant_id", session.userId).order("created_at", { ascending: false }).limit(20),
+    supabase.from("applications").select("id, status, created_at, opportunity:opportunities(id, title, community_id)").eq("applicant_id", session.userId).order("created_at", { ascending: false }).limit(20),
     supabase.from("notifications").select("*").eq("user_id", session.userId).order("created_at", { ascending: false }).limit(15),
   ]);
-  const appRows = (apps.data ?? []) as unknown as Array<{ id: string; status: ApplicationStatus; created_at: string; opportunity: { id: string; title: string } | null }>;
+  const { data: reqData } = await supabase.from("resource_requests").select("id, status, starts_on, ends_on, resource:resources(id, title)").eq("requester_id", session.userId).order("created_at", { ascending: false }).limit(20);
+  const myRequests = (reqData ?? []) as unknown as Array<{ id: string; status: keyof typeof m.resources.status; starts_on: string; ends_on: string; resource: { id: string; title: string } | null }>;
+  const appRows = (apps.data ?? []) as unknown as Array<{ id: string; status: ApplicationStatus; created_at: string; opportunity: { id: string; title: string; community_id: string } | null }>;
+  const { data: myReviews } = await supabase.from("reviews").select("application_id").eq("reviewer_id", session.userId);
+  const reviewed = new Set((myReviews ?? []).map((r) => r.application_id as string));
+  const reviewLabels = { open: m.reviews.rateCommunity, rating: m.reviews.rating, stars: m.reviews.stars, comment: m.reviews.comment, submit: m.reviews.submit, sending: m.common.saving };
   const notifRows = (notifs.data ?? []) as Notification[];
   const unread = notifRows.filter((n) => !n.read_at).length;
 
@@ -63,6 +69,25 @@ export default async function DashboardPage() {
                         </form>
                       ) : null}
                     </div>
+                    {a.status === "completed" && a.opportunity && !reviewed.has(a.id) ? (
+                      <div className="w-full"><ReviewForm applicationId={a.id} target="community" revieweeId={a.opportunity.community_id} back="/painel" labels={reviewLabels} /></div>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+          <section aria-labelledby="my-requests">
+            <h2 id="my-requests" className="mb-4 font-display text-2xl font-semibold">{m.resources.myRequests}</h2>
+            {myRequests.length === 0 ? <p className="text-sm text-ink-muted">{m.resources.noMyRequests} <Link href="/recursos" className="font-semibold text-accent-ink">{m.resources.title}</Link></p> : (
+              <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
+                {myRequests.map((q) => (
+                  <li key={q.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
+                    <div>
+                      {q.resource ? <Link href={`/recursos/${q.resource.id}`} className="font-semibold underline-offset-4 hover:underline">{q.resource.title}</Link> : "—"}
+                      <p className="text-xs text-ink-subtle">{formatDate(q.starts_on, locale)} – {formatDate(q.ends_on, locale)}</p>
+                    </div>
+                    <Badge tone={q.status === "approved" ? "success" : q.status === "declined" ? "danger" : "info"}>{m.resources.status[q.status]}</Badge>
                   </li>
                 ))}
               </ul>

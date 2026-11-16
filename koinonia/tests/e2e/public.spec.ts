@@ -100,7 +100,7 @@ test.describe("navegação", () => {
 });
 
 test.describe("rotas protegidas", () => {
-  for (const path of ["/painel", "/perfil", "/onboarding", "/match", "/admin", "/comunidades/nova", "/comunidades/qualquer/gerenciar"]) {
+  for (const path of ["/painel", "/perfil", "/onboarding", "/match", "/admin", "/mensagens", "/conta", "/recursos", "/comunidades/nova", "/comunidades/qualquer/gerenciar"]) {
     test(`${path} redireciona visitante para /entrar`, async ({ page }) => {
       await page.goto(path);
       await expect(page).toHaveURL(`/entrar?next=${encodeURIComponent(path)}`);

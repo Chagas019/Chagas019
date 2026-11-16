@@ -7,10 +7,10 @@ describe("i18n", () => {
   it("interpola variáveis", () => {
     expect(t("Olá, {name}! {missing}", { name: "Ana" })).toBe("Olá, Ana! {missing}");
   });
-  it("faz fallback para pt-BR em chaves não traduzidas", () => {
-    const en = messagesFor("en");
-    expect(en.nav.opportunities).toBe("Opportunities");
-    expect(en.profile.editTitle).toBe(messagesFor("pt-BR").profile.editTitle);
+  it("entrega os dicionários traduzidos", () => {
+    expect(messagesFor("en").nav.opportunities).toBe("Opportunities");
+    expect(messagesFor("es").nav.opportunities).toBe("Oportunidades");
+    expect(messagesFor("en").profile.editTitle).not.toBe(messagesFor("pt-BR").profile.editTitle);
   });
   it("nomes do catálogo com fallback", () => {
     expect(localizedName({ "pt-BR": "Canto", en: "Singing" }, "en")).toBe("Singing");

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-export interface NavItem { href: string; label: string }
+export interface NavItem { href: string; label: string; badge?: number; badgeLabel?: string }
 
 export function NavLinks({ items, className, onNavigate }: { items: NavItem[]; className?: string; onNavigate?: () => void }) {
   const pathname = usePathname();
@@ -24,6 +24,11 @@ export function NavLinks({ items, className, onNavigate }: { items: NavItem[]; c
               )}
             >
               {item.label}
+              {item.badge ? (
+                <span className="ml-1.5 inline-flex min-w-5 items-center justify-center rounded-full bg-gold-500 px-1.5 text-[0.7rem] font-bold text-navy-900">
+                  {item.badge}<span className="sr-only"> {item.badgeLabel}</span>
+                </span>
+              ) : null}
             </Link>
           </li>
         );
