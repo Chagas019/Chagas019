@@ -1,15 +1,44 @@
 import Link from "next/link";
-import { ArrowRight, BookOpenCheck, Church, Compass, HandHeart, Sparkles } from "lucide-react";
+import {
+  ArrowRight, BadgeCheck, BookOpen, Camera, Church, Code2, Compass, Globe2, HandHeart, Languages, Mic2, Music,
+  Palette, Search, ShieldCheck, Sparkles, Tent, UserPlus, Users, Video,
+} from "lucide-react";
 import { getI18n } from "@/i18n/server";
+import { t } from "@/i18n/format";
 import { createClient } from "@/lib/supabase/server";
 import { listOpportunities } from "@/services/opportunities";
 import { attempt } from "@/lib/attempt";
+import { COUNTRY_CODES } from "@/lib/geo";
+import { locales } from "@/i18n/config";
+import { MATCH_WEIGHTS } from "@/features/matching/score";
 import { ButtonLink, StatePanel } from "@/components/ui";
+import { Reveal } from "@/components/ui/reveal";
 import { Container } from "@/components/layout/page-header";
 import { OpportunityCard } from "@/components/features/opportunity-card";
 import { HeroMosaic } from "@/components/features/hero-mosaic";
+import { TALENT_CHIPS } from "@/features/profiles/talent-chips";
 import type { Messages } from "@/i18n/types";
 import type { Locale } from "@/types/database";
+
+const CHIP_ICONS = { photographers: Camera, videomakers: Video, designers: Palette, musicians: Music, catechists: BookOpen, communicators: Mic2, developers: Code2, translators: Languages, volunteers: Users } as const;
+
+function Eyebrow({ children, center = true }: { children: React.ReactNode; center?: boolean }) {
+  return (
+    <p className={`flex items-center gap-3 text-xs font-semibold tracking-[0.28em] text-gold-400 uppercase ${center ? "justify-center" : ""}`}>
+      <span aria-hidden className="h-px w-8 bg-gold-400/60" />{children}{center ? <span aria-hidden className="h-px w-8 bg-gold-400/60" /> : null}
+    </p>
+  );
+}
+
+function SectionTitle({ eyebrow, title, body }: { eyebrow?: string; title: string; body?: string }) {
+  return (
+    <div className="mx-auto max-w-2xl text-center">
+      {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
+      <h2 className="mt-4 font-display text-4xl text-white sm:text-5xl">{title}</h2>
+      {body ? <p className="mt-4 leading-relaxed text-ink-muted">{body}</p> : null}
+    </div>
+  );
+}
 
 async function LatestOpportunities({ m, locale }: { m: Messages; locale: Locale }) {
   const supabase = await createClient();
@@ -24,114 +53,184 @@ async function LatestOpportunities({ m, locale }: { m: Messages; locale: Locale 
   }
   return (
     <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      {items.map((o) => <li key={o.id}><OpportunityCard o={o} m={m} locale={locale} /></li>)}
+      {items.map((o, i) => <Reveal as="li" key={o.id} index={i}><OpportunityCard o={o} m={m} locale={locale} /></Reveal>)}
     </ul>
-  );
-}
-
-function Eyebrow({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="flex items-center justify-center gap-3 text-xs font-semibold tracking-[0.28em] text-gold-400 uppercase">
-      <span aria-hidden className="h-px w-8 bg-gold-400/60" />
-      {children}
-      <span aria-hidden className="h-px w-8 bg-gold-400/60" />
-    </p>
   );
 }
 
 export default async function HomePage() {
   const { m, locale } = await getI18n();
-  const features = [
-    { Icon: Sparkles, title: m.home.f1Title, body: m.home.f1Body },
-    { Icon: Church, title: m.home.f2Title, body: m.home.f2Body },
-    { Icon: Compass, title: m.home.f3Title, body: m.home.f3Body },
-    { Icon: HandHeart, title: m.home.f4Title, body: m.home.f4Body },
-  ];
   const steps = [
-    { title: m.home.how1Title, body: m.home.how1Body },
-    { title: m.home.how2Title, body: m.home.how2Body },
-    { title: m.home.how3Title, body: m.home.how3Body },
+    { Icon: UserPlus, title: m.home.how1Title, body: m.home.how1Body },
+    { Icon: Search, title: m.home.how2Title, body: m.home.how2Body },
+    { Icon: HandHeart, title: m.home.how3Title, body: m.home.how3Body },
+  ];
+  const weights = [
+    { label: m.match.partSkills, value: MATCH_WEIGHTS.skills },
+    { label: m.match.partLanguages, value: MATCH_WEIGHTS.languages },
+    { label: m.match.partLocation, value: MATCH_WEIGHTS.location },
+    { label: m.match.partAvailability, value: MATCH_WEIGHTS.availability },
+  ];
+  const resourceKinds = [
+    { Icon: Camera, label: m.resources.kinds.camera }, { Icon: Video, label: m.resources.kinds.lens },
+    { Icon: Mic2, label: m.resources.kinds.microphone }, { Icon: Tent, label: m.resources.kinds.event_structure },
+    { Icon: Church, label: m.resources.kinds.space }, { Icon: BookOpen, label: m.resources.kinds.material },
   ];
 
   return (
     <>
-      {/* HERO com mosaico vetorial no lugar das fotos */}
+      {/* 1. HERO */}
       <section className="relative isolate overflow-hidden border-b border-border">
         <HeroMosaic />
-        <Container className="relative flex min-h-[34rem] flex-col items-center justify-center py-20 text-center sm:min-h-[38rem]">
-          <div className="animate-rise">
-            <Eyebrow>{m.home.eyebrow}</Eyebrow>
-            <h1 className="mt-5 font-display text-6xl leading-none text-white sm:text-7xl lg:text-8xl">{m.home.title}</h1>
-            <p className="mt-3 font-display text-2xl text-gold-300 italic sm:text-3xl">{m.brand.slogan}</p>
-            <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">{m.home.lead}</p>
-            <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
-              <ButtonLink href="/cadastro" variant="primary" size="lg">{m.home.ctaVolunteer}</ButtonLink>
-              <ButtonLink href="/oportunidades" variant="outline" size="lg">{m.home.ctaExplore}<ArrowRight aria-hidden /></ButtonLink>
+        <div aria-hidden className="pointer-events-none absolute top-1/2 left-1/2 -z-0 size-[36rem] -translate-x-1/2 -translate-y-1/2 animate-glow rounded-full bg-[radial-gradient(circle,rgb(214_174_98/0.16),transparent_65%)]" />
+        <Container className="relative flex min-h-[36rem] flex-col items-center justify-center py-20 text-center sm:min-h-[40rem]">
+          <div className="stagger flex flex-col items-center">
+            <div style={{ ["--i" as string]: 0 }}><Eyebrow>{m.home.eyebrow}</Eyebrow></div>
+            <h1 style={{ ["--i" as string]: 1 }} className="mt-6 max-w-4xl font-display text-5xl leading-[1.02] text-white sm:text-6xl lg:text-7xl">{m.home.heroTitle}</h1>
+            <p style={{ ["--i" as string]: 2 }} className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">{m.home.heroLead}</p>
+            <div style={{ ["--i" as string]: 3 }} className="mt-9 flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row">
+              <ButtonLink href="/oportunidades" variant="primary" size="lg">{m.home.heroPrimary}<ArrowRight aria-hidden /></ButtonLink>
+              <ButtonLink href="/cadastro" variant="outline" size="lg">{m.home.heroSecondary}</ButtonLink>
             </div>
           </div>
         </Container>
       </section>
 
-      {/* O QUE VOCÊ ENCONTRA */}
-      <Container className="py-20">
-        <h2 className="text-center font-display text-4xl text-white sm:text-5xl">{m.home.expectTitle}</h2>
-        <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {features.map(({ Icon, title, body }) => (
-            <li key={title} className="flex flex-col items-center rounded-lg border border-border bg-surface px-6 py-9 text-center transition-colors hover:border-gold-400/60">
-              <span className="inline-flex size-16 items-center justify-center text-gold-400">
-                <Icon aria-hidden className="size-12" strokeWidth={1.4} />
-              </span>
-              <h3 className="mt-5 font-display text-2xl text-gold-300">{title}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-ink-muted">{body}</p>
-            </li>
-          ))}
-        </ul>
-        <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
-          <ButtonLink href="#como-funciona" variant="primary">{m.home.howCta}</ButtonLink>
-          <ButtonLink href="/comunidades/nova" variant="outline">{m.home.ctaCommunity}</ButtonLink>
-        </div>
-      </Container>
-
-      {/* COMO FUNCIONA */}
-      <section id="como-funciona" className="scroll-mt-20 border-y border-border bg-night-950/60 py-20">
+      {/* 2. COMO FUNCIONA */}
+      <section id="como-funciona" className="scroll-mt-20 py-24">
         <Container>
-          <Eyebrow>KOINONIA</Eyebrow>
-          <h2 className="mt-4 text-center font-display text-4xl text-white sm:text-5xl">{m.home.howTitle}</h2>
-          <ol className="mt-12 grid gap-8 md:grid-cols-3">
-            {steps.map((s, i) => (
-              <li key={s.title} className="text-center">
-                <span className="mx-auto inline-flex size-14 items-center justify-center rounded-full border border-gold-400/70 font-display text-2xl text-gold-300">{i + 1}</span>
-                <h3 className="mt-5 font-display text-2xl text-white">{s.title}</h3>
-                <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-ink-muted">{s.body}</p>
-              </li>
+          <SectionTitle eyebrow="KOINONIA" title={m.home.howTitle} />
+          <ol className="mt-14 grid gap-5 md:grid-cols-3">
+            {steps.map(({ Icon, title, body }, i) => (
+              <Reveal as="li" key={title} index={i} className="card-glow rounded-xl border border-border bg-surface/80 p-7 text-center">
+                <span className="card-icon mx-auto inline-flex size-14 items-center justify-center rounded-full border border-gold-400/50 text-gold-300"><Icon aria-hidden className="size-6" strokeWidth={1.5} /></span>
+                <p className="mt-4 font-display text-sm tracking-[0.2em] text-gold-400 uppercase">0{i + 1}</p>
+                <h3 className="mt-1 font-display text-2xl text-white">{title}</h3>
+                <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-ink-muted">{body}</p>
+              </Reveal>
             ))}
           </ol>
         </Container>
       </section>
 
-      {/* OPORTUNIDADES RECENTES */}
-      <Container className="py-20">
-        <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
-          <h2 className="font-display text-4xl text-white">{m.home.latestTitle}</h2>
-          <Link href="/oportunidades" className="inline-flex items-center gap-2 text-sm font-semibold tracking-[0.12em] text-gold-400 uppercase hover:text-gold-300">
-            {m.common.seeAll}<ArrowRight aria-hidden className="size-4" />
-          </Link>
-        </div>
-        <LatestOpportunities m={m} locale={locale} />
-      </Container>
+      {/* 3. TALENTOS EM MISSÃO */}
+      <section className="border-y border-border bg-night-950/60 py-24">
+        <Container>
+          <SectionTitle eyebrow={m.nav.talents} title={m.home.talentsTitle} body={m.home.talentsBody} />
+          <ul className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            {TALENT_CHIPS.map((c, i) => {
+              const Icon = CHIP_ICONS[c.key];
+              return (
+                <Reveal as="li" key={c.key} index={i % 5}>
+                  <Link href={c.slug ? `/talentos?talento=${c.slug}` : "/talentos"} className="card-glow group flex h-full items-center gap-3 rounded-lg border border-border bg-surface/80 px-4 py-4 text-sm font-medium text-ink transition-transform hover:-translate-y-0.5">
+                    <Icon aria-hidden className="card-icon size-5 shrink-0 text-gold-400" strokeWidth={1.6} />
+                    {m.talents.chips[c.key]}
+                  </Link>
+                </Reveal>
+              );
+            })}
+          </ul>
+        </Container>
+      </section>
 
-      {/* GRATUITO */}
-      <Container>
-        <div className="relative overflow-hidden rounded-lg border border-gold-400/40 bg-surface px-6 py-14 text-center">
-          <BookOpenCheck aria-hidden className="mx-auto size-10 text-gold-400" strokeWidth={1.4} />
-          <h2 className="mt-4 font-display text-4xl text-white">{m.home.freeTitle}</h2>
-          <p className="mx-auto mt-3 max-w-2xl text-ink-muted">{m.home.freeBody}</p>
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <ButtonLink href="/cadastro" variant="primary" size="lg">{m.home.ctaVolunteer}</ButtonLink>
-            <ButtonLink href="/comunidades/nova" variant="outline" size="lg">{m.home.ctaCommunity}</ButtonLink>
+      {/* 4. COMUNIDADES VERIFICADAS + 5. MISSION MATCH */}
+      <section className="py-24">
+        <Container className="grid gap-6 lg:grid-cols-2">
+          <Reveal className="card-glow rounded-xl border border-border bg-surface/80 p-8 sm:p-10">
+            <ShieldCheck aria-hidden className="size-10 text-gold-400" strokeWidth={1.4} />
+            <h2 className="mt-5 font-display text-4xl text-white">{m.home.communitiesTitle}</h2>
+            <p className="mt-3 leading-relaxed text-ink-muted">{m.home.communitiesBody}</p>
+            <ul className="mt-6 space-y-3 text-sm">
+              {[m.home.communitiesP1, m.home.communitiesP2, m.home.communitiesP3].map((p) => (
+                <li key={p} className="flex items-center gap-3"><BadgeCheck aria-hidden className="size-5 shrink-0 text-gold-400" />{p}</li>
+              ))}
+            </ul>
+            <ButtonLink href="/comunidades" variant="outline" className="mt-8">{m.nav.communities}<ArrowRight aria-hidden /></ButtonLink>
+          </Reveal>
+          <Reveal index={1} className="card-glow rounded-xl border border-border bg-surface/80 p-8 sm:p-10">
+            <Compass aria-hidden className="size-10 text-gold-400" strokeWidth={1.4} />
+            <h2 className="mt-5 font-display text-4xl text-white">{m.home.matchTitle}</h2>
+            <p className="mt-3 leading-relaxed text-ink-muted">{m.home.matchBody}</p>
+            <p className="mt-6 text-xs font-semibold tracking-[0.2em] text-gold-400 uppercase">{m.home.matchWeights}</p>
+            <ul className="mt-3 space-y-3">
+              {weights.map((w) => (
+                <li key={w.label}>
+                  <div className="flex justify-between text-sm"><span>{w.label}</span><span className="text-gold-300">{w.value}%</span></div>
+                  <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-night-600"><div className="h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-300" style={{ width: `${w.value * 2}%` }} /></div>
+                </li>
+              ))}
+            </ul>
+            <ButtonLink href="/match" variant="outline" className="mt-8">{m.nav.match}<ArrowRight aria-hidden /></ButtonLink>
+          </Reveal>
+        </Container>
+      </section>
+
+      {/* 6. COMPARTILHAMENTO DE RECURSOS */}
+      <section className="border-y border-border bg-night-950/60 py-24">
+        <Container className="grid items-center gap-12 lg:grid-cols-[1fr_1.2fr]">
+          <Reveal>
+            <Eyebrow center={false}>{m.nav.resources}</Eyebrow>
+            <h2 className="mt-4 font-display text-4xl text-white sm:text-5xl">{m.home.resourcesTitle}</h2>
+            <p className="mt-4 leading-relaxed text-ink-muted">{m.home.resourcesBody}</p>
+            <ButtonLink href="/recursos" variant="primary" className="mt-8">{m.resources.title}<ArrowRight aria-hidden /></ButtonLink>
+          </Reveal>
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {resourceKinds.map(({ Icon, label }, i) => (
+              <Reveal as="li" key={label} index={i} className="card-glow flex flex-col items-center gap-3 rounded-lg border border-border bg-surface/80 px-4 py-7 text-center text-sm">
+                <Icon aria-hidden className="card-icon size-8 text-gold-400" strokeWidth={1.4} />{label}
+              </Reveal>
+            ))}
+          </ul>
+        </Container>
+      </section>
+
+      {/* 7. OPORTUNIDADES RECENTES */}
+      <section className="py-24">
+        <Container>
+          <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+            <h2 className="font-display text-4xl text-white">{m.home.latestTitle}</h2>
+            <Link href="/oportunidades" className="group inline-flex items-center gap-2 text-sm font-semibold tracking-[0.12em] text-gold-400 uppercase hover:text-gold-300">
+              {m.common.seeAll}<ArrowRight aria-hidden className="size-4 transition-transform group-hover:translate-x-1" />
+            </Link>
           </div>
-        </div>
-      </Container>
+          <LatestOpportunities m={m} locale={locale} />
+        </Container>
+      </section>
+
+      {/* 8. COMUNIDADE GLOBAL */}
+      <section className="border-y border-border bg-night-950/60 py-24">
+        <Container>
+          <SectionTitle eyebrow={m.home.eyebrow} title={m.home.globalTitle} body={m.home.globalBody} />
+          <dl className="mt-12 grid gap-5 sm:grid-cols-3">
+            {[
+              { Icon: Languages, value: String(locales.length), label: m.home.globalLangs },
+              { Icon: Globe2, value: String(COUNTRY_CODES.length), label: m.home.globalCountries },
+              { Icon: Sparkles, value: "100%", label: m.home.globalFree },
+            ].map(({ Icon, value, label }, i) => (
+              <Reveal key={label} index={i} className="rounded-xl border border-border bg-surface/80 px-6 py-8 text-center">
+                <Icon aria-hidden className="mx-auto size-7 text-gold-400" strokeWidth={1.5} />
+                <dd className="mt-3 font-display text-5xl text-white">{value}</dd>
+                <dt className="mt-1 text-sm text-ink-muted">{label}</dt>
+              </Reveal>
+            ))}
+          </dl>
+        </Container>
+      </section>
+
+      {/* 9. CHAMADA PARA CADASTRO */}
+      <section className="py-24">
+        <Container>
+          <Reveal className="glass relative overflow-hidden rounded-xl px-6 py-16 text-center">
+            <div aria-hidden className="pointer-events-none absolute -top-24 left-1/2 size-80 -translate-x-1/2 animate-glow rounded-full bg-[radial-gradient(circle,rgb(214_174_98/0.22),transparent_65%)]" />
+            <h2 className="relative font-display text-4xl text-white sm:text-5xl">{m.home.finalTitle}</h2>
+            <p className="relative mx-auto mt-4 max-w-xl text-ink-muted">{m.home.finalBody} {t(m.home.freeBody)}</p>
+            <div className="relative mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+              <ButtonLink href="/cadastro" variant="primary" size="lg">{m.home.heroSecondary}</ButtonLink>
+              <ButtonLink href="/comunidades/nova" variant="outline" size="lg">{m.home.ctaCommunity}</ButtonLink>
+            </div>
+          </Reveal>
+        </Container>
+      </section>
     </>
   );
 }

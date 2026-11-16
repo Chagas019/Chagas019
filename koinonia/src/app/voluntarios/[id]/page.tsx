@@ -29,7 +29,7 @@ async function load(id: string) {
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { id } = await params;
   const res = await load(id);
-  return { title: res?.profile?.display_name || "Perfil", robots: { index: res?.profile?.visibility === "public" } };
+  return { title: res?.profile?.display_name || (await getI18n()).m.profile.publicTitle, robots: { index: res?.profile?.visibility === "public" } };
 }
 
 export default async function VolunteerPage({ params, searchParams }: Params & { searchParams: Promise<Record<string, string | undefined>> }) {

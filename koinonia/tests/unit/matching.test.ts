@@ -47,6 +47,12 @@ describe("Match Missionário", () => {
       { skills: [9], languages: ["pt"], mode: "onsite", country: "BR", city: "X", availability: ["weekdays"] }).score).toBe(0);
   });
 
+  it("modalidade preferida igual ao SQL (55 / 75 / 75)", () => {
+    expect(scoreMatch({ ...alice, city: "Campinas", availability: ["flexible"], modes: ["remote"] }, { ...opp, availability: [] }).score).toBe(55);
+    expect(scoreMatch({ ...alice, availability: ["flexible"], modes: [] }, { ...opp, availability: [] }).score).toBe(75);
+    expect(scoreMatch({ ...alice, country: "PT", availability: ["flexible"], modes: ["remote"] }, { ...opp, mode: "remote", country: null, availability: [] }).score).toBe(75);
+  });
+
   it("gera explicações legíveis", () => {
     const reasons = matchReasons(scoreMatch(alice, opp), messagesFor("pt-BR"));
     expect(reasons.map((r) => r.text)).toEqual(["Talentos: 1 de 2", "Idioma em comum", "Na sua cidade", "Compatível com sua disponibilidade"]);

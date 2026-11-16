@@ -49,7 +49,7 @@ export default async function ResourcesPage({ searchParams }: { searchParams: SP
   return (
     <Container className="py-12">
       <PageHeader title={m.resources.title} subtitle={m.resources.subtitle} />
-      <form role="search" aria-label={m.resources.searchLabel} className="mb-8 grid gap-3 rounded-xl border border-border bg-surface p-4 shadow-soft md:grid-cols-[1.5fr_1fr_1fr_auto]">
+      <form role="search" aria-label={m.resources.searchLabel} className="glass mb-8 grid gap-3 rounded-xl p-4 md:grid-cols-[1.5fr_1fr_1fr_auto]">
         <label className="sr-only" htmlFor="r-q">{m.resources.searchLabel}</label>
         <Input id="r-q" name="q" type="search" defaultValue={q} placeholder={m.resources.searchLabel} />
         <label className="sr-only" htmlFor="r-tipo">{m.resources.kind}</label>
@@ -62,7 +62,7 @@ export default async function ResourcesPage({ searchParams }: { searchParams: SP
           <option value="">{m.opportunities.country}: {m.common.anyOption}</option>
           {sortedCountries(locale).map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
         </Select>
-        <button type="submit" className="h-11 rounded-full bg-gold-400 px-6 font-semibold text-night-950 hover:bg-gold-300">{m.common.search}</button>
+        <button type="submit" className="h-11 rounded-md bg-gold-400 px-6 text-sm font-semibold tracking-[0.12em] text-night-950 uppercase transition hover:bg-gold-300">{m.common.search}</button>
       </form>
       {body}
     </Container>

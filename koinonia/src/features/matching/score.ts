@@ -13,6 +13,8 @@ export interface VolunteerSignals {
   country: string | null;
   city: string | null;
   availability: readonly AvailabilitySlot[];
+  /** modalidades em que o voluntário atende; vazio = qualquer */
+  modes?: readonly OpportunityMode[];
 }
 
 export interface OpportunitySignals {
@@ -24,7 +26,7 @@ export interface OpportunitySignals {
   availability: readonly AvailabilitySlot[];
 }
 
-export type LocationFit = "remote" | "same_city" | "same_country" | "hybrid_far" | "far";
+export type LocationFit = "remote" | "same_city" | "same_country" | "hybrid_far" | "far" | "mode_mismatch";
 
 export interface MatchResult {
   score: number;
@@ -48,7 +50,9 @@ export function scoreMatch(v: VolunteerSignals, o: OpportunitySignals): MatchRes
 
   let location: LocationFit;
   let locationFraction: number;
-  if (o.mode === "remote") [location, locationFraction] = ["remote", 1];
+  const modes = v.modes ?? [];
+  if (modes.length > 0 && !(modes.includes(o.mode) || o.mode === "hybrid")) [location, locationFraction] = ["mode_mismatch", 0];
+  else if (o.mode === "remote") [location, locationFraction] = ["remote", 1];
   else if (v.country && v.country === o.country && o.city && norm(v.city) === norm(o.city)) [location, locationFraction] = ["same_city", 1];
   else if (v.country && v.country === o.country) [location, locationFraction] = ["same_country", 0.5];
   else if (o.mode === "hybrid") [location, locationFraction] = ["hybrid_far", 0.25];

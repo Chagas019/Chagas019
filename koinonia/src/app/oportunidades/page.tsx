@@ -12,8 +12,8 @@ import { OpportunityCard } from "@/components/features/opportunity-card";
 import { Pagination } from "@/components/features/pagination";
 import { BackendUnavailable } from "@/components/features/backend-unavailable";
 import { isCountryCode, sortedCountries } from "@/lib/geo";
-import { opportunityModeValues } from "@/schemas/common";
-import type { OpportunityMode } from "@/types/database";
+import { availabilityValues, opportunityModeValues } from "@/schemas/common";
+import type { AvailabilitySlot, OpportunityMode } from "@/types/database";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { m } = await getI18n();
@@ -32,6 +32,8 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
   const country = isCountryCode(countryRaw) ? countryRaw : undefined;
   const categoryNum = Number(one(sp.area));
   const category = Number.isInteger(categoryNum) && categoryNum > 0 ? categoryNum : undefined;
+  const availRaw = one(sp.disponibilidade);
+  const availability = (availabilityValues as readonly string[]).includes(availRaw) ? (availRaw as AvailabilitySlot) : undefined;
   const page = parsePage(sp.pagina);
   const supabase = await createClient();
 
@@ -39,7 +41,7 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
   let categories: Array<{ id: number; name: string }> = [];
   if (!supabase) body = <BackendUnavailable m={m} />;
   else {
-    const res = await attempt(() => Promise.all([listOpportunities(supabase, { q: q || undefined, mode, country, category, page }), getCatalog(supabase)]));
+    const res = await attempt(() => Promise.all([listOpportunities(supabase, { q: q || undefined, mode, country, category, availability, page }), getCatalog(supabase)]));
     if (!res.ok) body = <StatePanel variant="error" title={m.states.errorTitle}><p>{m.states.errorBody}</p></StatePanel>;
     else {
       const [list, catalog] = res.data;
@@ -49,7 +51,7 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
         : (
           <>
             <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{list.items.map((o) => <li key={o.id}><OpportunityCard o={o} m={m} locale={locale} /></li>)}</ul>
-            <Pagination page={list.page} pages={list.pages} basePath="/oportunidades" params={{ q, modalidade: mode, pais: country, area: category?.toString() }} m={m} />
+            <Pagination page={list.page} pages={list.pages} basePath="/oportunidades" params={{ q, modalidade: mode, pais: country, area: category?.toString(), disponibilidade: availability }} m={m} />
           </>
         );
     }
@@ -58,7 +60,7 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
   return (
     <Container className="py-12">
       <PageHeader title={m.opportunities.title} subtitle={m.opportunities.subtitle} />
-      <form role="search" aria-label={m.opportunities.searchLabel} className="mb-8 grid gap-3 rounded-xl border border-border bg-surface p-4 shadow-soft md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr_auto]">
+      <form role="search" aria-label={m.opportunities.searchLabel} className="glass mb-8 grid gap-3 rounded-xl p-4 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr_auto]">
         <label className="sr-only" htmlFor="o-q">{m.opportunities.searchLabel}</label>
         <Input id="o-q" name="q" type="search" defaultValue={q} placeholder={m.opportunities.searchPlaceholder} />
         <label className="sr-only" htmlFor="o-mode">{m.opportunities.mode}</label>
@@ -76,7 +78,12 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
           <option value="">{m.opportunities.country}: {m.common.anyOption}</option>
           {sortedCountries(locale).map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
         </Select>
-        <button type="submit" className="h-11 rounded-full bg-gold-400 px-6 font-semibold text-night-950 hover:bg-gold-300">{m.common.search}</button>
+        <label className="sr-only" htmlFor="o-disp">{m.opportunities.availability}</label>
+        <Select id="o-disp" name="disponibilidade" defaultValue={availability ?? ""}>
+          <option value="">{m.opportunities.availability}: {m.common.anyOption}</option>
+          {availabilityValues.map((a) => <option key={a} value={a}>{m.enums.availability[a]}</option>)}
+        </Select>
+        <button type="submit" className="h-11 rounded-md bg-gold-400 px-6 text-sm font-semibold tracking-[0.12em] text-night-950 uppercase transition hover:bg-gold-300">{m.common.search}</button>
       </form>
       {body}
     </Container>

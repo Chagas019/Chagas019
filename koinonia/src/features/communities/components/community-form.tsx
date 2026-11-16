@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { createCommunityAction, updateCommunityAction } from "../actions";
+import { createCommunityAction, updateCommunityAction, uploadCommunityLogoAction } from "../actions";
 import { idleState } from "@/lib/action-state";
 import { ChoiceGroup, Field, Input, Select, Textarea } from "@/components/ui/field";
 import { FormMessage, prev, prevList, SubmitButton } from "@/components/ui/form";
@@ -12,7 +12,7 @@ import type { Community } from "@/types/database";
 
 interface Option { code: string; name: string }
 
-export function CommunityForm({ m, countries, languages, community }: { m: Messages; countries: Option[]; languages: Option[]; community?: Community }) {
+export function CommunityForm({ m, countries, languages, categories, community }: { m: Messages; countries: Option[]; languages: Option[]; categories: Array<{ id: number; name: string }>; community?: Community }) {
   const [state, action] = useActionState(community ? updateCommunityAction : createCommunityAction, idleState);
   const [slug, setSlug] = useState(prev(state, "slug", community?.slug ?? ""));
   const [slugTouched, setSlugTouched] = useState(Boolean(community));
@@ -59,12 +59,31 @@ export function CommunityForm({ m, countries, languages, community }: { m: Messa
       <Field label={m.communities.description} error={fe.description} optionalLabel={m.common.optional}>
         {({ id, describedBy, invalid }) => <Textarea id={id} name="description" rows={5} maxLength={3000} defaultValue={prev(state, "description", community?.description ?? "")} aria-describedby={describedBy} invalid={invalid} />}
       </Field>
+      <Field label={m.communities.needs} hint={m.communities.needsHint} error={fe.needs} optionalLabel={m.common.optional}>
+        {({ id, describedBy, invalid }) => <Textarea id={id} name="needs" rows={3} maxLength={2000} defaultValue={prev(state, "needs", community?.needs ?? "")} aria-describedby={describedBy} invalid={invalid} />}
+      </Field>
+      <ChoiceGroup legend={m.communities.focusAreas} name="focusCategories" error={fe.focusCategories}
+        options={categories.map((c) => ({ value: String(c.id), label: c.name }))} defaultValue={prevList(state, "focusCategories", (community?.focus_categories ?? []).map(String))} />
       <Field label={m.communities.website} error={fe.website} optionalLabel={m.common.optional}>
         {({ id, describedBy, invalid }) => <Input id={id} name="website" type="url" placeholder="https://" defaultValue={prev(state, "website", community?.website ?? "")} aria-describedby={describedBy} invalid={invalid} />}
       </Field>
       <ChoiceGroup legend={m.communities.languages} name="languages" error={fe.languages}
         options={languages.map((l) => ({ value: l.code, label: l.name }))} defaultValue={prevList(state, "languages", community?.languages ?? [])} />
       <SubmitButton pendingLabel={m.common.saving} size="lg" className="self-start">{community ? m.common.save : m.communities.submit}</SubmitButton>
+    </form>
+  );
+}
+
+export function CommunityLogoForm({ m, communityId }: { m: Messages; communityId: string }) {
+  const [state, action] = useActionState(uploadCommunityLogoAction, idleState);
+  return (
+    <form action={action} className="flex flex-col gap-4">
+      <FormMessage state={state} />
+      <input type="hidden" name="communityId" value={communityId} />
+      <Field label={m.communities.logo} hint={m.account.avatarHint}>
+        {({ id, describedBy }) => <Input id={id} name="logo" type="file" accept="image/png,image/jpeg,image/webp" required aria-describedby={describedBy} className="h-auto py-2" />}
+      </Field>
+      <SubmitButton pendingLabel={m.common.saving} variant="outline" size="sm" className="self-start">{m.communities.logoSubmit}</SubmitButton>
     </form>
   );
 }

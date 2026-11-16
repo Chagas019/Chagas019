@@ -29,6 +29,7 @@ export interface Profile {
   languages: string[];
   availability: AvailabilitySlot[];
   hours_per_week: number | null;
+  service_modes: OpportunityMode[];
   visibility: ProfileVisibility;
   message_permission: MessagePermission;
   preferred_locale: Locale;
@@ -63,6 +64,8 @@ export interface Community {
   website: string | null;
   logo_url: string | null;
   languages: string[];
+  focus_categories: number[];
+  needs: string;
   status: CommunityStatus;
   verified_at: string | null;
   created_by: string;
@@ -127,5 +130,6 @@ export interface VolunteerSearchRow {
   city: string | null;
   languages: string[];
   availability: AvailabilitySlot[];
+  service_modes: OpportunityMode[];
   skill_names: LocalizedNames[];
 }

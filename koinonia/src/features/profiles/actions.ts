@@ -9,7 +9,7 @@ import { formToObject, uuidSchema } from "@/schemas/common";
 import { dbError, validationError } from "@/lib/errors";
 import type { ActionState } from "@/lib/action-state";
 
-const ARRAYS = ["languages", "availability", "skills"] as const;
+const ARRAYS = ["languages", "availability", "skills", "serviceModes"] as const;
 
 function echo(raw: Record<string, unknown>): ActionState["values"] {
   const out: NonNullable<ActionState["values"]> = {};
@@ -30,7 +30,7 @@ export async function completeOnboardingAction(_prev: ActionState, form: FormDat
     .from("profiles")
     .update({
       display_name: d.displayName, bio: d.bio, country_code: d.country, city: d.city || null,
-      languages: d.languages, availability: d.availability, hours_per_week: d.hoursPerWeek,
+      languages: d.languages, availability: d.availability, service_modes: d.serviceModes, hours_per_week: d.hoursPerWeek,
       visibility: d.visibility, message_permission: d.messagePermission,
       onboarded_at: now,
     })
@@ -50,7 +50,7 @@ export async function updateProfileAction(_prev: ActionState, form: FormData): P
   const [{ error }, { error: privError }] = await Promise.all([
     supabase.from("profiles").update({
       username: d.username, display_name: d.displayName, bio: d.bio, country_code: d.country, city: d.city || null,
-      languages: d.languages, availability: d.availability, hours_per_week: d.hoursPerWeek,
+      languages: d.languages, availability: d.availability, service_modes: d.serviceModes, hours_per_week: d.hoursPerWeek,
       visibility: d.visibility, message_permission: d.messagePermission,
     }).eq("id", user.id),
     supabase.from("profile_private").update({ phone: d.phone || null, contact_email: d.contactEmail || null }).eq("user_id", user.id),

@@ -28,15 +28,14 @@ export function MobileMenu({ items, openLabel, closeLabel, footer }: { items: Na
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex size-12 items-center justify-center rounded-full bg-navy-600 text-white shadow-soft hover:bg-navy-500"
+        className="inline-flex size-11 items-center justify-center rounded-full border border-gold-400/40 text-gold-300 transition-colors hover:bg-gold-400/10"
       >
         {open ? <X aria-hidden className="size-6" /> : <Menu aria-hidden className="size-6" />}
         <span className="sr-only">{open ? closeLabel : openLabel}</span>
       </button>
       <div
         id={panelId}
-        hidden={!open}
-        className="absolute inset-x-0 top-full border-b border-border bg-surface px-4 pb-6 pt-2 shadow-lifted animate-rise"
+        className={`glass absolute inset-x-0 top-full origin-top border-x-0 px-4 pb-6 pt-2 shadow-lifted transition duration-300 ${open ? "visible translate-y-0 opacity-100" : "invisible -translate-y-2 opacity-0"}`}
       >
         <NavLinks items={items} className="flex flex-col" onNavigate={() => setOpen(false)} />
         <div className="mt-4 flex flex-col gap-2 border-t border-border pt-4" onClick={(e) => { if ((e.target as HTMLElement).closest("a")) setOpen(false); }}>{footer}</div>

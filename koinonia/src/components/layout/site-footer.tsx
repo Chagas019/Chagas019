@@ -20,6 +20,9 @@ export async function SiteFooter() {
             <li><Link className="hover:text-white" href="/oportunidades">{m.nav.opportunities}</Link></li>
             <li><Link className="hover:text-white" href="/talentos">{m.nav.talents}</Link></li>
             <li><Link className="hover:text-white" href="/comunidades">{m.nav.communities}</Link></li>
+            <li><Link className="hover:text-white" href="/recursos">{m.nav.resources}</Link></li>
+            <li><Link className="hover:text-white" href="/match">{m.nav.match}</Link></li>
+            <li><Link className="hover:text-white" href="/comunidades/nova">{m.home.ctaCommunity}</Link></li>
           </ul>
         </nav>
         <nav aria-label={m.footer.legal}>

@@ -4,7 +4,7 @@ import { getI18n } from "@/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 import { requireSession } from "@/features/auth/session";
 import { getOpportunitiesByIds } from "@/services/opportunities";
-import { scoreMatch } from "@/features/matching/score";
+import { MATCH_WEIGHTS, scoreMatch } from "@/features/matching/score";
 import { matchReasons } from "@/features/matching/reasons";
 import { Container, PageHeader } from "@/components/layout/page-header";
 import { ButtonLink, StatePanel } from "@/components/ui";
@@ -29,7 +29,7 @@ export default async function MatchPage() {
   const rows = (matches ?? []) as Array<{ opportunity_id: string; score: number }>;
   const opps = error ? [] : await getOpportunitiesByIds(supabase, rows.map((r) => r.opportunity_id));
   const p = session.profile;
-  const volunteer = { skills: (mySkills ?? []).map((s) => s.skill_id as number), languages: p.languages, country: p.country_code, city: p.city, availability: p.availability };
+  const volunteer = { skills: (mySkills ?? []).map((s) => s.skill_id as number), languages: p.languages, country: p.country_code, city: p.city, availability: p.availability, modes: p.service_modes ?? [] };
 
   return (
     <Container className="py-12">
@@ -51,6 +51,20 @@ export default async function MatchPage() {
                   <OpportunityCard o={o} m={m} locale={locale} score={Number(r.score)} />
                   <details className="rounded-lg border border-border bg-surface px-4 py-3 text-sm">
                     <summary className="cursor-pointer font-semibold">{m.match.why}</summary>
+                    <p className="mt-3 text-xs font-semibold tracking-[0.15em] text-gold-400 uppercase">{m.match.breakdown}</p>
+                    <ul className="mt-2 space-y-2">
+                      {([
+                        [m.match.partSkills, result.parts.skills, MATCH_WEIGHTS.skills],
+                        [m.match.partLanguages, result.parts.languages, MATCH_WEIGHTS.languages],
+                        [m.match.partLocation, result.parts.location, MATCH_WEIGHTS.location],
+                        [m.match.partAvailability, result.parts.availability, MATCH_WEIGHTS.availability],
+                      ] as const).map(([label, got, max]) => (
+                        <li key={label}>
+                          <div className="flex justify-between text-xs"><span>{label}</span><span className="text-gold-300">{Math.round(got)}/{max}</span></div>
+                          <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-night-600"><div className="h-full origin-left rounded-full bg-gradient-to-r from-gold-500 to-gold-300 transition-transform duration-700" style={{ width: `${(got / max) * 100}%` }} /></div>
+                        </li>
+                      ))}
+                    </ul>
                     <ul className="mt-3 space-y-1.5">
                       {matchReasons(result, m).map((reason) => (
                         <li key={reason.text} className="flex items-center gap-2">

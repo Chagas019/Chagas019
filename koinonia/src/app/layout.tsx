@@ -6,16 +6,18 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { publicEnv } from "@/lib/env";
 import "@/styles/globals.css";
 
-const garamond = EB_Garamond({ subsets: ["latin", "latin-ext"], weight: ["500", "600", "700"], variable: "--font-garamond", display: "swap" });
+const garamond = EB_Garamond({ subsets: ["latin"], weight: ["600", "700"], variable: "--font-garamond", display: "swap" });
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { m } = await getI18n();
+  const { m, locale } = await getI18n();
   return {
     metadataBase: new URL(publicEnv.siteUrl),
     title: { default: m.meta.title, template: `%s · ${m.brand.name}` },
     description: m.meta.description,
-    openGraph: { title: m.meta.title, description: m.meta.description, siteName: m.brand.name, type: "website" },
+    openGraph: { title: m.meta.title, description: m.meta.description, siteName: m.brand.name, type: "website", locale: locale.replace("-", "_") },
+    twitter: { card: "summary_large_image", title: m.meta.title, description: m.meta.description },
+    alternates: { canonical: "/" },
   };
 }
 

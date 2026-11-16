@@ -9,7 +9,9 @@ import { listOpportunities } from "@/services/opportunities";
 import { listResources } from "@/services/resources";
 import { ResourceForm } from "@/features/resources/components/resource-forms";
 import { setMemberRoleAction } from "@/features/communities/actions";
-import { CommunityForm } from "@/features/communities/components/community-form";
+import { CommunityForm, CommunityLogoForm } from "@/features/communities/components/community-form";
+import { getCatalog } from "@/services/catalog";
+import { localizedName } from "@/i18n/format";
 import { VerificationForm } from "@/features/communities/components/verification-form";
 import { Alert, Badge, Button, ButtonLink, Card, CardContent, CardDescription, CardHeader, CardTitle, StatePanel } from "@/components/ui";
 import { Container, PageHeader } from "@/components/layout/page-header";
@@ -41,6 +43,8 @@ export default async function ManageCommunityPage({ params, searchParams }: Para
     supabase.from("community_members").select("user_id, role, joined_at, profile:profiles(display_name)").eq("community_id", community.id).order("joined_at"),
     listOpportunities(supabase, { communityId: community.id, includeDrafts: true }),
   ]);
+  const catalog = await getCatalog(supabase);
+  const categories = catalog.categories.map((c) => ({ id: c.id, name: localizedName(c.names, locale) }));
   const resources = await listResources(supabase, { communityId: community.id, includeUnavailable: true });
   const vList = (verifications.data ?? []) as CommunityVerification[];
   const hasPending = vList.some((v) => v.status === "pending");
@@ -146,7 +150,8 @@ export default async function ManageCommunityPage({ params, searchParams }: Para
 
         <Card>
           <CardHeader><CardTitle as="h2">{m.common.edit}</CardTitle></CardHeader>
-          <CardContent><CommunityForm m={m} community={community} countries={sortedCountries(locale)} languages={sortedLanguages(locale)} /></CardContent>
+          <CardContent className="flex flex-col gap-8">
+            <CommunityLogoForm m={m} communityId={community.id} /><CommunityForm m={m} categories={categories} community={community} countries={sortedCountries(locale)} languages={sortedLanguages(locale)} /></CardContent>
         </Card>
       </div>
     </Container>

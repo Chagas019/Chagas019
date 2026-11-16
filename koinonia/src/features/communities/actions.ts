@@ -8,6 +8,28 @@ import { communitySchema, verificationSchema } from "@/schemas/community";
 import { formToObject, uuidSchema } from "@/schemas/common";
 import { dbError, validationError } from "@/lib/errors";
 import type { ActionState } from "@/lib/action-state";
+import { detectImageType } from "@/lib/image";
+
+export async function uploadCommunityLogoAction(_prev: ActionState, form: FormData): Promise<ActionState> {
+  const { m } = await getI18n();
+  const { supabase, user } = await getCurrentUser();
+  if (!supabase || !user) return { status: "error", message: m.states.loginRequired };
+  const id = uuidSchema.safeParse(form.get("communityId"));
+  const file = form.get("logo");
+  if (!id.success) return { status: "error", message: m.errors.notFound };
+  if (!(file instanceof Blob) || file.size === 0 || file.size > 2 * 1024 * 1024) return { status: "error", message: m.account.avatarInvalid };
+  const ext = await detectImageType(file);
+  if (!ext) return { status: "error", message: m.account.avatarInvalid };
+  // pasta do próprio usuário (política de Storage); a atualização da comunidade passa pelo RLS (só admins)
+  const path = `${user.id}/community-${id.data}-${Date.now()}.${ext}`;
+  const { error } = await supabase.storage.from("community-logos").upload(path, file, { contentType: ext === "jpg" ? "image/jpeg" : `image/${ext}`, cacheControl: "31536000" });
+  if (error) return { status: "error", message: m.errors.generic };
+  const { data } = supabase.storage.from("community-logos").getPublicUrl(path);
+  const { data: row, error: upError } = await supabase.from("communities").update({ logo_url: data.publicUrl }).eq("id", id.data).select("slug").maybeSingle();
+  if (upError || !row) return { status: "error", message: m.errors.forbidden };
+  revalidatePath(`/comunidades/${row.slug}`, "layout");
+  return { status: "success", message: m.communities.logoDone };
+}
 
 function echo(raw: Record<string, unknown>): ActionState["values"] {
   const out: NonNullable<ActionState["values"]> = {};
@@ -18,7 +40,7 @@ function echo(raw: Record<string, unknown>): ActionState["values"] {
 function toRow(d: ReturnType<typeof communitySchema.parse>) {
   return {
     name: d.name, slug: d.slug, kind: d.kind, description: d.description, country_code: d.country, city: d.city,
-    diocese: d.diocese || null, website: d.website, languages: d.languages,
+    diocese: d.diocese || null, website: d.website, languages: d.languages, needs: d.needs, focus_categories: d.focusCategories,
   };
 }
 
@@ -26,7 +48,7 @@ export async function createCommunityAction(_prev: ActionState, form: FormData):
   const { m } = await getI18n();
   const { supabase, user } = await getCurrentUser();
   if (!supabase || !user) return { status: "error", message: m.states.loginRequired };
-  const raw = formToObject(form, ["languages"]);
+  const raw = formToObject(form, ["languages", "focusCategories"]);
   const parsed = communitySchema.safeParse(raw);
   if (!parsed.success) return validationError(parsed.error, m, echo(raw));
   const { data, error } = await supabase.from("communities").insert({ ...toRow(parsed.data), created_by: user.id }).select("slug").single();
@@ -39,7 +61,7 @@ export async function updateCommunityAction(_prev: ActionState, form: FormData):
   const { supabase, user } = await getCurrentUser();
   if (!supabase || !user) return { status: "error", message: m.states.loginRequired };
   const id = uuidSchema.safeParse(form.get("id"));
-  const raw = formToObject(form, ["languages"]);
+  const raw = formToObject(form, ["languages", "focusCategories"]);
   const parsed = communitySchema.safeParse(raw);
   if (!id.success) return { status: "error", message: m.errors.notFound };
   if (!parsed.success) return validationError(parsed.error, m, echo(raw));

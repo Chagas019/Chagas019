@@ -40,6 +40,8 @@ export default async function ResourcePage({ params }: { params: Promise<{ id: s
     supabase.from("resource_requests").select("id, requester_id, message, starts_on, ends_on, status, created_at, requester:profiles(display_name)").eq("resource_id", id).order("created_at", { ascending: false }),
   ]);
   const isAdmin = role === "owner" || role === "admin";
+  const { data: busyData } = await supabase.rpc("resource_busy_ranges", { p_resource: id });
+  const busy = (busyData ?? []) as Array<{ starts_on: string; ends_on: string }>;
   const rows = (requests.data ?? []) as unknown as Array<{ id: string; requester_id: string; message: string; starts_on: string; ends_on: string; status: ResourceRequestStatus; created_at: string; requester: { display_name: string } | null }>;
   const myRequest = rows.find((x) => x.requester_id === session.userId && (x.status === "pending" || x.status === "approved"));
 
@@ -56,6 +58,15 @@ export default async function ResourcePage({ params }: { params: Promise<{ id: s
         {r.ships_remotely ? <span className="inline-flex items-center gap-1.5"><Truck aria-hidden className="size-4" />{m.resources.shipsRemotely}</span> : null}
       </p>
       {r.description ? <p className="mt-6 leading-relaxed whitespace-pre-line">{r.description}</p> : null}
+
+      <section aria-labelledby="busy" className="mt-8 rounded-xl border border-border bg-surface p-5">
+        <h2 id="busy" className="font-display text-xl">{m.resources.busy}</h2>
+        {busy.length === 0 ? <p className="mt-2 text-sm text-success">{m.resources.noBusy}</p> : (
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {busy.map((b) => <li key={b.starts_on + b.ends_on}><Badge tone="warning">{formatDate(b.starts_on, locale)} – {formatDate(b.ends_on, locale)}</Badge></li>)}
+          </ul>
+        )}
+      </section>
 
       <div className="mt-10 flex flex-col gap-6">
         {isAdmin ? (

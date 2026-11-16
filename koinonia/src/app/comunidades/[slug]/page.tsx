@@ -13,6 +13,9 @@ import { Container } from "@/components/layout/page-header";
 import { OpportunityCard } from "@/components/features/opportunity-card";
 import { BackendUnavailable } from "@/components/features/backend-unavailable";
 import { countryName, languageName } from "@/lib/geo";
+import { getCatalog } from "@/services/catalog";
+import { localizedName } from "@/i18n/format";
+import { CommunityLogo } from "@/components/features/community-card";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -20,7 +23,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   const supabase = await createClient();
   const c = supabase ? await getCommunityBySlug(supabase, slug).catch(() => null) : null;
-  return { title: c?.name ?? "Comunidade", description: c?.description?.slice(0, 160) };
+  return { title: c?.name ?? (await getI18n()).m.communities.title, description: c?.description?.slice(0, 160) };
 }
 
 export default async function CommunityPage({ params }: Params) {
@@ -38,6 +41,10 @@ export default async function CommunityPage({ params }: Params) {
   const reviewRows = (reviewData ?? []) as Array<{ id: string; rating: number; comment: string; created_at: string }>;
   const avg = reviewRows.length ? reviewRows.reduce((a, r) => a + r.rating, 0) / reviewRows.length : null;
   const isAdmin = role === "owner" || role === "admin";
+  const catalog = await getCatalog(supabase);
+  const areas = community.focus_categories.map((id) => catalog.categories.find((c) => c.id === id)).filter((c) => c !== undefined).map((c) => localizedName(c.names, locale));
+  const soughtIds = [...new Set(opps.items.filter((o) => o.status === "open").flatMap((o) => o.opportunity_skills.map((x) => x.skill_id)))];
+  const sought = soughtIds.map((id) => catalog.skills.find((x) => x.id === id)).filter((x) => x !== undefined).map((x) => localizedName(x.names, locale));
 
   return (
     <>
@@ -47,7 +54,7 @@ export default async function CommunityPage({ params }: Params) {
             <Badge tone="gold">{m.enums.communityKind[community.kind]}</Badge>
             {community.status === "verified" ? <Badge tone="success"><BadgeCheck aria-hidden />{m.communities.verifiedBadge}</Badge> : <Badge tone="warning">{m.enums.communityStatus[community.status]}</Badge>}
           </div>
-          <h1 className="mt-4 font-display text-4xl font-semibold sm:text-5xl">{community.name}</h1>
+          <div className="mt-5 flex items-center gap-5"><CommunityLogo name={community.name} src={community.logo_url} className="size-20" /><h1 className="font-display text-4xl font-semibold sm:text-5xl">{community.name}</h1></div>
           <p className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-ink-muted">
             <span className="inline-flex items-center gap-1.5"><MapPin aria-hidden className="size-4" />{community.city}, {countryName(community.country_code, locale)}</span>
             {community.diocese ? <span>{community.diocese}</span> : null}
@@ -84,6 +91,22 @@ export default async function CommunityPage({ params }: Params) {
             )}
           </div>
           <aside className="space-y-4">
+            {community.needs ? (
+              <div className="rounded-xl border border-gold-400/30 bg-surface p-5">
+                <h2 className="mb-2 font-display text-lg font-semibold text-gold-300">{m.communities.needs}</h2>
+                <p className="text-sm leading-relaxed whitespace-pre-line">{community.needs}</p>
+              </div>
+            ) : null}
+            <div className="rounded-xl border border-border bg-surface p-5">
+              <h2 className="mb-2 font-display text-lg font-semibold">{m.communities.soughtSkills}</h2>
+              {sought.length ? <ul className="flex flex-wrap gap-1.5">{sought.map((n) => <li key={n}><Badge tone="gold">{n}</Badge></li>)}</ul> : <p className="text-sm text-ink-muted">{m.communities.noSought}</p>}
+            </div>
+            {areas.length ? (
+              <div className="rounded-xl border border-border bg-surface p-5">
+                <h2 className="mb-2 font-display text-lg font-semibold">{m.communities.focusAreas}</h2>
+                <ul className="flex flex-wrap gap-1.5">{areas.map((n) => <li key={n}><Badge tone="brand">{n}</Badge></li>)}</ul>
+              </div>
+            ) : null}
             {community.languages.length ? (
               <div className="rounded-xl border border-border bg-surface p-5">
                 <h2 className="mb-2 font-display text-lg font-semibold">{m.communities.languages}</h2>

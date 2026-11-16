@@ -2,7 +2,7 @@
 
 import { ChoiceGroup, Field, Input, Select, Textarea } from "@/components/ui/field";
 import { prev, prevList } from "@/components/ui/form";
-import { availabilityValues, messagePermissionValues, visibilityValues } from "@/schemas/common";
+import { availabilityValues, messagePermissionValues, opportunityModeValues, visibilityValues } from "@/schemas/common";
 import type { ActionState } from "@/lib/action-state";
 import type { Messages } from "@/i18n/types";
 import type { Profile } from "@/types/database";
@@ -41,6 +41,9 @@ export function ProfileFields({ m, state, profile, countries, languages }: {
       <ChoiceGroup legend={m.onboarding.availability} name="availability" error={fe.availability}
         options={availabilityValues.map((v) => ({ value: v, label: m.enums.availability[v] }))}
         defaultValue={prevList(state, "availability", profile.availability)} />
+      <ChoiceGroup legend={m.onboarding.serviceModes} name="serviceModes" hint={m.onboarding.serviceModesHint} error={fe.serviceModes}
+        options={opportunityModeValues.map((v) => ({ value: v, label: m.enums.opportunityMode[v] }))}
+        defaultValue={prevList(state, "serviceModes", profile.service_modes ?? [])} />
       <Field label={m.onboarding.hoursPerWeek} error={fe.hoursPerWeek} optionalLabel={m.common.optional} className="max-w-48">
         {({ id, describedBy, invalid }) => <Input id={id} name="hoursPerWeek" type="number" min={0} max={80} inputMode="numeric" defaultValue={prev(state, "hoursPerWeek", profile.hours_per_week?.toString() ?? "")} aria-describedby={describedBy} invalid={invalid} />}
       </Field>

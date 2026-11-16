@@ -2,7 +2,7 @@ import { forwardRef, useId, type InputHTMLAttributes, type ReactNode, type Selec
 import { cn } from "@/lib/utils";
 
 const controlBase =
-  "w-full rounded-xl border bg-surface-muted px-3.5 text-[0.95rem] text-ink transition-colors placeholder:text-ink-subtle hover:border-border-strong focus-visible:border-gold-400 focus-visible:outline-3 focus-visible:outline-offset-1 focus-visible:outline-gold-400/70 disabled:cursor-not-allowed disabled:bg-surface-muted";
+  "w-full rounded-xl border bg-surface-muted px-3.5 text-[0.95rem] text-ink transition-[border-color,box-shadow,background-color] duration-200 focus-visible:bg-night-800 focus-visible:shadow-[0_0_0_4px_rgb(214_174_98/0.15)] placeholder:text-ink-subtle hover:border-border-strong focus-visible:border-gold-400 focus-visible:outline-3 focus-visible:outline-offset-1 focus-visible:outline-gold-400/70 disabled:cursor-not-allowed disabled:bg-surface-muted";
 
 export function controlClass(invalid?: boolean, extra?: string) {
   return cn(controlBase, invalid ? "border-danger" : "border-border", extra);

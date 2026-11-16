@@ -7,3 +7,4 @@ export * from "./field";
 export * from "./skeleton";
 export * from "./spinner";
 export * from "./state-panel";
+export * from "./tooltip";

@@ -27,7 +27,7 @@ describe("auth schemas", () => {
 });
 
 describe("onboarding", () => {
-  const base = { displayName: "Ana", bio: "", country: "br", city: "Campinas", languages: ["pt"], availability: ["weekends"], hoursPerWeek: "4", visibility: "members", messagePermission: "everyone" };
+  const base = { displayName: "Ana", bio: "", country: "br", city: "Campinas", languages: ["pt"], availability: ["weekends"], serviceModes: [], hoursPerWeek: "4", visibility: "members", messagePermission: "everyone" };
   it("aceita dados válidos e normaliza país", () => {
     const r = onboardingSchema.safeParse(base);
     expect(r.success && r.data.country).toBe("BR");
@@ -45,7 +45,7 @@ describe("onboarding", () => {
 });
 
 describe("comunidade", () => {
-  const base = { name: "Paróquia São José", slug: "paroquia-sao-jose", kind: "parish", description: "", country: "BR", city: "SP", diocese: "", website: "", languages: [] };
+  const base = { name: "Paróquia São José", slug: "paroquia-sao-jose", kind: "parish", description: "", country: "BR", city: "SP", diocese: "", website: "", languages: [], needs: "", focusCategories: [] };
   it("valida slug e URL https", () => {
     expect(communitySchema.safeParse(base).success).toBe(true);
     expect(communitySchema.safeParse({ ...base, slug: "Com Espaço" }).success).toBe(false);

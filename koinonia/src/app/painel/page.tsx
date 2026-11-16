@@ -15,6 +15,10 @@ import { Container, PageHeader } from "@/components/layout/page-header";
 import { BackendUnavailable } from "@/components/features/backend-unavailable";
 import { CommunityCard } from "@/components/features/community-card";
 import { formatDate } from "@/lib/geo";
+import { getOpportunitiesByIds } from "@/services/opportunities";
+import { OpportunityCard } from "@/components/features/opportunity-card";
+import { Reveal } from "@/components/ui/reveal";
+import { ClipboardList, Package, Users as UsersIcon, MessageCircle as MsgIcon } from "lucide-react";
 import type { ApplicationStatus, Notification } from "@/types/database";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -41,11 +45,64 @@ export default async function DashboardPage() {
   const reviewLabels = { open: m.reviews.rateCommunity, rating: m.reviews.rating, stars: m.reviews.stars, comment: m.reviews.comment, submit: m.reviews.submit, sending: m.common.saving };
   const notifRows = (notifs.data ?? []) as Notification[];
   const unread = notifRows.filter((n) => !n.read_at).length;
+  const [{ data: unreadMsgs }, { data: recData }, { count: skillCount }] = await Promise.all([
+    supabase.rpc("unread_message_count"),
+    supabase.rpc("match_opportunities_for_me", { p_limit: 3 }),
+    supabase.from("profile_skills").select("skill_id", { count: "exact", head: true }).eq("profile_id", session.userId),
+  ]);
+  const recRows = (recData ?? []) as Array<{ opportunity_id: string; score: number }>;
+  const recOpps = await getOpportunitiesByIds(supabase, recRows.map((r) => r.opportunity_id));
+  const p = session.profile;
+  const checks = [p?.bio, p?.country_code, p?.city, p?.languages.length, p?.availability.length, p?.avatar_url, skillCount];
+  const completion = Math.round((checks.filter(Boolean).length / checks.length) * 100);
 
   return (
     <Container className="py-12">
       <PageHeader title={t(m.dashboard.title, { name: session.profile?.display_name || "" })} subtitle={m.dashboard.subtitle}
         actions={<ButtonLink href="/match" variant="gold"><Sparkles aria-hidden />{m.dashboard.matchCta}</ButtonLink>} />
+      <section aria-label={m.dashboard.summary} className="mb-10">
+        <ul className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {[
+            { Icon: ClipboardList, label: m.dashboard.statApplications, value: appRows.length, href: "#my-apps" },
+            { Icon: UsersIcon, label: m.dashboard.statCommunities, value: communities.length, href: "#my-communities" },
+            { Icon: MsgIcon, label: m.dashboard.statUnread, value: typeof unreadMsgs === "number" ? unreadMsgs : 0, href: "/mensagens" },
+            { Icon: Package, label: m.dashboard.statRequests, value: myRequests.length, href: "#my-requests" },
+          ].map(({ Icon, label, value, href }, i) => (
+            <li key={label} className="animate-rise" style={{ animationDelay: `${i * 70}ms` }}>
+              <Link href={href} className="card-glow flex h-full flex-col gap-2 rounded-xl border border-border bg-surface/80 p-5 transition-transform hover:-translate-y-0.5">
+                <Icon aria-hidden className="card-icon size-5 text-gold-400" />
+                <span className="font-display text-4xl text-white">{value}</span>
+                <span className="text-xs text-ink-muted">{label}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-4 rounded-xl border border-border bg-surface/80 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
+            <span>{t(m.dashboard.profileCompletion, { pct: completion })}</span>
+            {completion < 100 ? <Link href="/perfil" className="font-semibold text-gold-400 hover:text-gold-300">{m.profile.editTitle}</Link> : null}
+          </div>
+          <div className="mt-3 h-2 overflow-hidden rounded-full bg-night-600" role="progressbar" aria-valuenow={completion} aria-valuemin={0} aria-valuemax={100} aria-label={t(m.dashboard.profileCompletion, { pct: completion })}>
+            <div className="h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-300 transition-[width] duration-700" style={{ width: `${completion}%` }} />
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="recommended" className="mb-10">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <h2 id="recommended" className="font-display text-2xl font-semibold">{m.dashboard.recommended}</h2>
+          <Link href="/match" className="text-sm font-semibold text-gold-400 hover:text-gold-300">{m.common.seeAll}</Link>
+        </div>
+        {recOpps.length === 0 ? <p className="text-sm text-ink-muted">{m.dashboard.noRecommended}</p> : (
+          <ul className="grid gap-4 md:grid-cols-3">
+            {recRows.map((r, i) => {
+              const o = recOpps.find((x) => x.id === r.opportunity_id);
+              return o ? <Reveal as="li" key={o.id} index={i}><OpportunityCard o={o} m={m} locale={locale} score={Number(r.score)} /></Reveal> : null;
+            })}
+          </ul>
+        )}
+      </section>
+
       <div className="grid gap-8 lg:grid-cols-[1.5fr_1fr]">
         <div className="flex flex-col gap-8">
           <section aria-labelledby="my-apps">
@@ -111,7 +168,7 @@ export default async function DashboardPage() {
         <aside>
           <Card>
             <CardHeader className="flex-row items-center justify-between">
-              <CardTitle as="h2" className="flex items-center gap-2"><Bell aria-hidden className="size-5" />{m.dashboard.notifications}{unread ? <Badge tone="gold">{unread}</Badge> : null}</CardTitle>
+              <CardTitle as="h2" className="flex items-center gap-2"><Bell aria-hidden className="size-5 text-gold-400" />{m.dashboard.activity}{unread ? <Badge tone="gold">{unread}</Badge> : null}</CardTitle>
               {unread ? <form action={markAllNotificationsReadAction}><Button type="submit" size="sm" variant="link">{m.dashboard.markAllRead}</Button></form> : null}
             </CardHeader>
             <CardContent>
@@ -120,7 +177,7 @@ export default async function DashboardPage() {
                   {notifRows.map((n) => {
                     const d = describeNotification(n, m);
                     return (
-                      <li key={n.id} className={`rounded-lg border p-3 text-sm ${n.read_at ? "border-border" : "border-gold-400/40 bg-gold-400/10"}`}>
+                      <li key={n.id} className={`animate-rise rounded-lg border p-3 text-sm ${n.read_at ? "border-border" : "border-gold-400/40 bg-gold-400/10"}`}>
                         {d.href ? <Link href={d.href} className="underline-offset-4 hover:underline">{d.text}</Link> : d.text}
                         <p className="mt-1 text-xs text-ink-subtle">{formatDate(n.created_at, locale)}</p>
                       </li>

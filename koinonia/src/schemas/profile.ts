@@ -1,6 +1,6 @@
 import { z } from "zod";
 import {
-  availabilityValues, cleanText, httpsUrlSchema, languagesSchema, messagePermissionValues, optionalCountrySchema, visibilityValues,
+  availabilityValues, opportunityModeValues, cleanText, httpsUrlSchema, languagesSchema, messagePermissionValues, optionalCountrySchema, visibilityValues,
 } from "./common";
 
 const hoursSchema = z
@@ -16,6 +16,7 @@ export const onboardingSchema = z.object({
   city: cleanText(80),
   languages: languagesSchema.min(1, "validation.languagesMin"),
   availability: z.array(z.enum(availabilityValues)).max(4),
+  serviceModes: z.array(z.enum(opportunityModeValues)).max(3),
   hoursPerWeek: hoursSchema,
   visibility: z.enum(visibilityValues),
   messagePermission: z.enum(messagePermissionValues),

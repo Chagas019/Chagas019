@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { cleanText, countrySchema } from "./common";
 
-export const resourceKindValues = ["equipment", "material", "space", "other"] as const;
+export const resourceKindValues = ["camera", "lens", "microphone", "equipment", "event_structure", "space", "material", "other"] as const;
 
 export const resourceSchema = z.object({
   title: cleanText(120, 3),
