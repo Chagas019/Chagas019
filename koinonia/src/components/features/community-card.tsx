@@ -11,7 +11,7 @@ type CardCommunity = Pick<Community, "slug" | "name" | "kind" | "city" | "countr
 
 export function CommunityLogo({ name, src, className = "size-14" }: { name: string; src?: string | null; className?: string }) {
   return (
-    <span className={`inline-flex shrink-0 items-center justify-center overflow-hidden rounded-lg border border-gold-400/30 bg-night-700 font-display text-lg text-gold-300 ${className}`}>
+    <span className={`inline-flex shrink-0 items-center justify-center overflow-hidden rounded-lg border border-neon-400/30 bg-night-700 font-display text-lg text-neon-300 ${className}`}>
       {/* eslint-disable-next-line @next/next/no-img-element -- logotipos pequenos vindos do Storage */}
       {src ? <img src={src} alt="" className="size-full object-cover" loading="lazy" decoding="async" /> : <span aria-hidden>{initials(name)}</span>}
     </span>

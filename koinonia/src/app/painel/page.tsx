@@ -70,7 +70,7 @@ export default async function DashboardPage() {
           ].map(({ Icon, label, value, href }, i) => (
             <li key={label} className="animate-rise" style={{ animationDelay: `${i * 70}ms` }}>
               <Link href={href} className="card-glow flex h-full flex-col gap-2 rounded-xl border border-border bg-surface/80 p-5 transition-transform hover:-translate-y-0.5">
-                <Icon aria-hidden className="card-icon size-5 text-gold-400" />
+                <Icon aria-hidden className="card-icon size-5 text-neon-400" />
                 <span className="font-display text-4xl text-white">{value}</span>
                 <span className="text-xs text-ink-muted">{label}</span>
               </Link>
@@ -80,10 +80,10 @@ export default async function DashboardPage() {
         <div className="mt-4 rounded-xl border border-border bg-surface/80 p-5">
           <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
             <span>{t(m.dashboard.profileCompletion, { pct: completion })}</span>
-            {completion < 100 ? <Link href="/perfil" className="font-semibold text-gold-400 hover:text-gold-300">{m.profile.editTitle}</Link> : null}
+            {completion < 100 ? <Link href="/perfil" className="font-semibold text-neon-400 hover:text-neon-300">{m.profile.editTitle}</Link> : null}
           </div>
           <div className="mt-3 h-2 overflow-hidden rounded-full bg-night-600" role="progressbar" aria-valuenow={completion} aria-valuemin={0} aria-valuemax={100} aria-label={t(m.dashboard.profileCompletion, { pct: completion })}>
-            <div className="h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-300 transition-[width] duration-700" style={{ width: `${completion}%` }} />
+            <div className="h-full rounded-full bg-gradient-to-r from-neon-500 to-neon-300 transition-[width] duration-700" style={{ width: `${completion}%` }} />
           </div>
         </div>
       </section>
@@ -91,7 +91,7 @@ export default async function DashboardPage() {
       <section aria-labelledby="recommended" className="mb-10">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <h2 id="recommended" className="font-display text-2xl font-semibold">{m.dashboard.recommended}</h2>
-          <Link href="/match" className="text-sm font-semibold text-gold-400 hover:text-gold-300">{m.common.seeAll}</Link>
+          <Link href="/match" className="text-sm font-semibold text-neon-400 hover:text-neon-300">{m.common.seeAll}</Link>
         </div>
         {recOpps.length === 0 ? <p className="text-sm text-ink-muted">{m.dashboard.noRecommended}</p> : (
           <ul className="grid gap-4 md:grid-cols-3">
@@ -168,7 +168,7 @@ export default async function DashboardPage() {
         <aside>
           <Card>
             <CardHeader className="flex-row items-center justify-between">
-              <CardTitle as="h2" className="flex items-center gap-2"><Bell aria-hidden className="size-5 text-gold-400" />{m.dashboard.activity}{unread ? <Badge tone="gold">{unread}</Badge> : null}</CardTitle>
+              <CardTitle as="h2" className="flex items-center gap-2"><Bell aria-hidden className="size-5 text-neon-400" />{m.dashboard.activity}{unread ? <Badge tone="gold">{unread}</Badge> : null}</CardTitle>
               {unread ? <form action={markAllNotificationsReadAction}><Button type="submit" size="sm" variant="link">{m.dashboard.markAllRead}</Button></form> : null}
             </CardHeader>
             <CardContent>
@@ -177,7 +177,7 @@ export default async function DashboardPage() {
                   {notifRows.map((n) => {
                     const d = describeNotification(n, m);
                     return (
-                      <li key={n.id} className={`animate-rise rounded-lg border p-3 text-sm ${n.read_at ? "border-border" : "border-gold-400/40 bg-gold-400/10"}`}>
+                      <li key={n.id} className={`animate-rise rounded-lg border p-3 text-sm ${n.read_at ? "border-border" : "border-neon-400/40 bg-neon-400/10"}`}>
                         {d.href ? <Link href={d.href} className="underline-offset-4 hover:underline">{d.text}</Link> : d.text}
                         <p className="mt-1 text-xs text-ink-subtle">{formatDate(n.created_at, locale)}</p>
                       </li>

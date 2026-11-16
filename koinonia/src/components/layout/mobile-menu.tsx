@@ -28,7 +28,7 @@ export function MobileMenu({ items, openLabel, closeLabel, footer }: { items: Na
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex size-11 items-center justify-center rounded-full border border-gold-400/40 text-gold-300 transition-colors hover:bg-gold-400/10"
+        className="inline-flex size-11 items-center justify-center rounded-full border border-neon-400/40 text-neon-300 transition-colors hover:bg-neon-400/10"
       >
         {open ? <X aria-hidden className="size-6" /> : <Menu aria-hidden className="size-6" />}
         <span className="sr-only">{open ? closeLabel : openLabel}</span>

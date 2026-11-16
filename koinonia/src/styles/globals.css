@@ -3,27 +3,27 @@
 /* KOINONIA Design System — tokens primitivos e semânticos.
    Documentação: src/design-system/README.md · Contrastes validados em docs/design-system.md */
 @theme {
-  /* Primitivos — noite azul-marinho (fundos) */
-  --color-night-950: #050a15;
-  --color-night-900: #0a1222;
-  --color-night-800: #101c35;
-  --color-night-700: #15233f;
-  --color-night-600: #22314f;
-  --color-night-500: #34466d;
+  /* Primitivos — grafite (fundos) */
+  --color-night-950: #141414;
+  --color-night-900: #2b2b2b;
+  --color-night-800: #1c1c1c;
+  --color-night-700: #242424;
+  --color-night-600: #3a3a3a;
+  --color-night-500: #555555;
 
-  /* Primitivos — dourado (ação e destaque) */
-  --color-gold-200: #f1e0bc;
-  --color-gold-300: #e4c68a;
-  --color-gold-400: #d6ae62;
-  --color-gold-500: #c29a4c;
+  /* Primitivos — verde neon (destaque e ação) */
+  --color-neon-200: #d9ffc4;
+  --color-neon-300: #b6ff8f;
+  --color-neon-400: #8cff5a;
+  --color-neon-500: #6fe23d;
 
-  /* Primitivos — azul-marinho (marca, superfícies de ação secundária) */
-  --color-navy-200: #cfd8ee;
-  --color-navy-300: #a9b8dc;
-  --color-navy-400: #7f93c8;
-  --color-navy-500: #4f67a6;
-  --color-navy-600: #2e4580;
-  --color-navy-700: #22365f;
+  /* Primitivos — cinzas de apoio */
+  --color-graphite-200: #e5e5e5;
+  --color-graphite-300: #cfcfcf;
+  --color-graphite-400: #a3a3a3;
+  --color-graphite-500: #6b6b6b;
+  --color-graphite-600: #4a4a4a;
+  --color-graphite-700: #333333;
 
   /* Semânticos (tema escuro) */
   --color-canvas: var(--color-night-900);
@@ -31,13 +31,13 @@
   --color-surface-muted: var(--color-night-700);
   --color-border: var(--color-night-600);
   --color-border-strong: var(--color-night-500);
-  --color-ink: #f7f5f0;
-  --color-ink-muted: #c3c3cc;
-  --color-ink-subtle: #a0a3b4;
+  --color-ink: #f5f5f5;
+  --color-ink-muted: #cbcbcb;
+  --color-ink-subtle: #ababab;
   --color-brand: var(--color-night-800);
-  --color-accent: var(--color-gold-400);
-  --color-accent-ink: var(--color-gold-400);
-  --color-focus: var(--color-gold-400);
+  --color-accent: var(--color-neon-400);
+  --color-accent-ink: var(--color-neon-400);
+  --color-focus: var(--color-neon-400);
 
   --color-success: #5fe3a1;
   --color-success-soft: rgb(95 227 161 / 0.12);
@@ -49,21 +49,22 @@
   --color-info-soft: rgb(124 188 255 / 0.12);
 
   /* Tipografia */
-  --font-display: var(--font-garamond), "Iowan Old Style", Georgia, serif;
+  --font-display: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
-  --radius-xl: 1rem;
+  --radius-xl: 1.1rem;
   --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.25);
   --shadow-lifted: 0 4px 10px rgb(0 0 0 / 0.35), 0 18px 40px rgb(0 0 0 / 0.4);
-  --shadow-gold: 0 8px 28px rgb(214 174 98 / 0.3);
+  --shadow-gold: 0 8px 28px rgb(140 255 90 / 0.28);
 
   --animate-rise: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   --animate-float: float 7s ease-in-out infinite;
   --animate-page: page-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   --animate-glow: glow 6s ease-in-out infinite;
+  --animate-spin-slow: spin 28s linear infinite;
   @keyframes rise {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
@@ -85,17 +86,21 @@
 @layer base {
   html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
   body {
-    background: var(--color-canvas);
+    background:
+      radial-gradient(70rem 40rem at 50% -5%, #4d4d4d 0%, transparent 60%),
+      linear-gradient(180deg, #333333 0%, #262626 45%, #1f1f1f 100%) fixed;
+    background-color: #2b2b2b;
     color: var(--color-ink);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
-  h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.005em; text-wrap: balance; }
+  h1, h2, h3 { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.015em; text-wrap: balance; }
   p { text-wrap: pretty; }
   h1, h2, h3, .font-display { font-synthesis-weight: none; }
+  h1, h2, h3 { overflow-wrap: break-word; }
   :focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; border-radius: 4px; }
-  ::selection { background: var(--color-gold-400); color: var(--color-night-950); }
+  ::selection { background: var(--color-neon-400); color: var(--color-night-950); }
   html { color-scheme: dark; }
   [hidden] { display: none !important; }
 }
@@ -103,16 +108,16 @@
 @layer components {
   /* Vidro moderado: superfícies sobre fundos com profundidade */
   .glass {
-    background: rgb(16 28 53 / 0.62);
-    backdrop-filter: blur(14px) saturate(140%);
-    -webkit-backdrop-filter: blur(14px) saturate(140%);
-    border: 1px solid rgb(214 174 98 / 0.14);
+    background: rgb(22 22 22 / 0.72);
+    backdrop-filter: blur(16px) saturate(120%);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    border: 1px solid rgb(255 255 255 / 0.09);
   }
   /* Borda dourada dinâmica no hover (só transform/opacity animam) */
   .card-glow { position: relative; isolation: isolate; }
   .card-glow::before {
     content: ""; position: absolute; inset: -1px; z-index: -1; border-radius: inherit; padding: 1px;
-    background: linear-gradient(135deg, rgb(214 174 98 / 0.9), rgb(214 174 98 / 0) 40%, rgb(214 174 98 / 0) 60%, rgb(214 174 98 / 0.7));
+    background: linear-gradient(135deg, rgb(140 255 90 / 0.9), rgb(140 255 90 / 0) 40%, rgb(140 255 90 / 0) 60%, rgb(140 255 90 / 0.6));
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor; mask-composite: exclude;
     opacity: 0; transition: opacity 0.35s ease;
@@ -139,15 +144,15 @@
 
 @layer components {
   .select-chevron {
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path d='M5.5 7.5 10 12l4.5-4.5' stroke='%23d6ae62' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path d='M5.5 7.5 10 12l4.5-4.5' stroke='%238cff5a' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");
     background-size: 1.1rem;
     background-position: right 0.8rem center;
     background-repeat: no-repeat;
   }
   .bg-grain {
     background-image:
-      radial-gradient(40rem 22rem at 50% 0%, rgb(214 174 98 / 0.14), transparent 65%),
-      radial-gradient(30rem 22rem at 0% 100%, rgb(46 69 128 / 0.45), transparent 62%);
+      radial-gradient(40rem 22rem at 50% 0%, rgb(255 255 255 / 0.10), transparent 65%),
+      radial-gradient(30rem 22rem at 0% 100%, rgb(140 255 90 / 0.08), transparent 62%);
   }
   .panel {
     border-radius: var(--radius-xl);

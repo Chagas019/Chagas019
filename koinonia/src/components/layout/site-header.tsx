@@ -46,7 +46,7 @@ export async function SiteHeader() {
   );
 
   return (
-    <header className="sticky top-0 z-40 border-b border-gold-400/10 bg-night-900/70 backdrop-blur-xl supports-[backdrop-filter]:bg-night-900/55">
+    <header className="sticky top-0 z-40 border-b border-neon-400/10 bg-night-900/70 backdrop-blur-xl supports-[backdrop-filter]:bg-night-900/55">
       <div className="relative mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link href="/" className="shrink-0 rounded-lg" aria-label={`${m.brand.name} — ${m.brand.slogan}`}>
           <Logo />
@@ -60,11 +60,11 @@ export async function SiteHeader() {
               <Link href="/mensagens" className="relative inline-flex size-10 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-white/5 hover:text-white">
                 <Bell aria-hidden className="size-5" />
                 <span className="sr-only">{m.nav.messages}{unread ? `: ${t(m.messages.unread, { count: unread })}` : ""}</span>
-                {unread ? <span aria-hidden className="absolute top-1.5 right-1.5 inline-flex min-w-4 animate-rise items-center justify-center rounded-full bg-gold-400 px-1 text-[0.65rem] font-bold text-night-950">{unread}</span> : null}
+                {unread ? <span aria-hidden className="absolute top-1.5 right-1.5 inline-flex min-w-4 animate-rise items-center justify-center rounded-full bg-neon-400 px-1 text-[0.65rem] font-bold text-night-950">{unread}</span> : null}
               </Link>
               <Dropdown label={m.common.accountMenu} buttonContent={<><Avatar name={name} src={session.profile?.avatar_url} size="sm" className="size-7 text-[0.65rem]" /><span className="max-w-32 truncate">{name}</span></>}>
                 {accountLinks.map(({ href, label, Icon }) => (
-                  <Link key={href} href={href} className={dropdownItemClass}><Icon aria-hidden className="size-4 text-gold-400" />{label}</Link>
+                  <Link key={href} href={href} className={dropdownItemClass}><Icon aria-hidden className="size-4 text-neon-400" />{label}</Link>
                 ))}
                 <div className="my-1 h-px bg-border" />
                 {logout}

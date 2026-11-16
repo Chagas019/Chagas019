@@ -15,7 +15,7 @@ export default async function DesignSystemPage() {
       <PageHeader eyebrow="KOINONIA" title={m.ds.title} subtitle={m.ds.subtitle} />
       <section aria-labelledby="ds-colors" className="mb-14">
         <h2 id="ds-colors" className="mb-5 font-display text-2xl font-semibold">{m.ds.colors}</h2>
-        {(["night", "gold", "navy"] as const).map((group) => (
+        {(["night", "neon", "graphite"] as const).map((group) => (
           <div key={group} className="mb-5">
             <h3 className="mb-2 text-sm font-semibold capitalize">{group}</h3>
             <ul className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-10">
@@ -39,7 +39,7 @@ export default async function DesignSystemPage() {
       </section>
       <section aria-labelledby="ds-type" className="mb-14">
         <h2 id="ds-type" className="mb-5 font-display text-2xl font-semibold">{m.ds.typography}</h2>
-        <p className="font-display text-5xl">EB Garamond — {m.brand.slogan}</p>
+        <p className="font-display text-5xl">Montserrat — {m.brand.slogan}</p>
         <p className="mt-3 text-lg">Inter — {m.ds.sample}</p>
       </section>
       <section aria-labelledby="ds-components" className="mb-14 space-y-8">

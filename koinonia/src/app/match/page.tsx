@@ -51,7 +51,7 @@ export default async function MatchPage() {
                   <OpportunityCard o={o} m={m} locale={locale} score={Number(r.score)} />
                   <details className="rounded-lg border border-border bg-surface px-4 py-3 text-sm">
                     <summary className="cursor-pointer font-semibold">{m.match.why}</summary>
-                    <p className="mt-3 text-xs font-semibold tracking-[0.15em] text-gold-400 uppercase">{m.match.breakdown}</p>
+                    <p className="mt-3 text-xs font-semibold tracking-[0.15em] text-neon-400 uppercase">{m.match.breakdown}</p>
                     <ul className="mt-2 space-y-2">
                       {([
                         [m.match.partSkills, result.parts.skills, MATCH_WEIGHTS.skills],
@@ -60,8 +60,8 @@ export default async function MatchPage() {
                         [m.match.partAvailability, result.parts.availability, MATCH_WEIGHTS.availability],
                       ] as const).map(([label, got, max]) => (
                         <li key={label}>
-                          <div className="flex justify-between text-xs"><span>{label}</span><span className="text-gold-300">{Math.round(got)}/{max}</span></div>
-                          <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-night-600"><div className="h-full origin-left rounded-full bg-gradient-to-r from-gold-500 to-gold-300 transition-transform duration-700" style={{ width: `${(got / max) * 100}%` }} /></div>
+                          <div className="flex justify-between text-xs"><span>{label}</span><span className="text-neon-300">{Math.round(got)}/{max}</span></div>
+                          <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-night-600"><div className="h-full origin-left rounded-full bg-gradient-to-r from-neon-500 to-neon-300 transition-transform duration-700" style={{ width: `${(got / max) * 100}%` }} /></div>
                         </li>
                       ))}
                     </ul>

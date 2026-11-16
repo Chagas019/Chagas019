@@ -1,12 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { EB_Garamond, Inter } from "next/font/google";
+import { Inter, Montserrat } from "next/font/google";
 import { getI18n } from "@/i18n/server";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { publicEnv } from "@/lib/env";
 import "@/styles/globals.css";
 
-const garamond = EB_Garamond({ subsets: ["latin"], weight: ["600", "700"], variable: "--font-garamond", display: "swap" });
+const montserrat = Montserrat({ subsets: ["latin"], weight: ["700", "800", "900"], variable: "--font-montserrat", display: "swap" });
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -21,14 +21,14 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export const viewport: Viewport = { themeColor: "#0A1222", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#2B2B2B", width: "device-width", initialScale: 1 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { m, locale } = await getI18n();
   return (
-    <html lang={locale} className={`${garamond.variable} ${inter.variable}`}>
+    <html lang={locale} className={`${montserrat.variable} ${inter.variable}`}>
       <body className="flex min-h-dvh flex-col">
-        <a href="#conteudo" className="sr-only z-50 rounded-full bg-gold-400 px-4 py-2 font-semibold text-night-950 focus:not-sr-only focus:fixed focus:top-3 focus:left-3">
+        <a href="#conteudo" className="sr-only z-50 rounded-full bg-neon-400 px-4 py-2 font-semibold text-night-950 focus:not-sr-only focus:fixed focus:top-3 focus:left-3">
           {m.common.skipToContent}
         </a>
         <SiteHeader />

@@ -196,6 +196,10 @@ export const ptBR = {
     },
   },
   home: {
+    dnaTitle: "DNA da KOINONIA",
+    journeyTitle: "Caminho",
+    findWhere: "Encontre onde servir.",
+    oneMission: "Uma só missão.",
     heroTitle: "Talentos unidos. Uma só missão.",
     heroLead: "Uma plataforma que conecta paróquias, comunidades, movimentos e voluntários para transformar talentos em serviço.",
     heroPrimary: "Encontrar oportunidades",

@@ -79,11 +79,11 @@ export default async function TalentsPage({ searchParams }: { searchParams: SP }
                   </ul>
                 ) : null}
                 <dl className="mt-auto grid gap-1.5 border-t border-border pt-4 text-xs text-ink-muted">
-                  {v.languages.length ? <div className="flex items-center gap-2"><Globe2 aria-hidden className="size-3.5 text-gold-400" /><dt className="sr-only">{m.profile.languages}</dt><dd>{v.languages.map((l) => languageName(l, locale)).join(" · ")}</dd></div> : null}
-                  {v.availability.length ? <div className="flex items-center gap-2"><Clock aria-hidden className="size-3.5 text-gold-400" /><dt className="sr-only">{m.profile.availability}</dt><dd>{v.availability.map((a) => m.enums.availability[a]).join(" · ")}</dd></div> : null}
-                  {v.service_modes.length ? <div className="flex items-center gap-2"><Monitor aria-hidden className="size-3.5 text-gold-400" /><dt className="sr-only">{m.talents.modes}</dt><dd>{v.service_modes.map((x) => m.enums.opportunityMode[x]).join(" · ")}</dd></div> : null}
+                  {v.languages.length ? <div className="flex items-center gap-2"><Globe2 aria-hidden className="size-3.5 text-neon-400" /><dt className="sr-only">{m.profile.languages}</dt><dd>{v.languages.map((l) => languageName(l, locale)).join(" · ")}</dd></div> : null}
+                  {v.availability.length ? <div className="flex items-center gap-2"><Clock aria-hidden className="size-3.5 text-neon-400" /><dt className="sr-only">{m.profile.availability}</dt><dd>{v.availability.map((a) => m.enums.availability[a]).join(" · ")}</dd></div> : null}
+                  {v.service_modes.length ? <div className="flex items-center gap-2"><Monitor aria-hidden className="size-3.5 text-neon-400" /><dt className="sr-only">{m.talents.modes}</dt><dd>{v.service_modes.map((x) => m.enums.opportunityMode[x]).join(" · ")}</dd></div> : null}
                 </dl>
-                <Link href={`/voluntarios/${v.id}`} className="group inline-flex items-center gap-2 text-sm font-semibold text-gold-400 hover:text-gold-300">
+                <Link href={`/voluntarios/${v.id}`} className="group inline-flex items-center gap-2 text-sm font-semibold text-neon-400 hover:text-neon-300">
                   {m.talents.viewProfile}<ArrowRight aria-hidden className="size-4 transition-transform group-hover:translate-x-1" />
                   <span className="sr-only">: {v.display_name}</span>
                 </Link>
@@ -106,7 +106,7 @@ export default async function TalentsPage({ searchParams }: { searchParams: SP }
             return (
               <li key={c.key}>
                 <Link href={c.slug ? `/talentos?talento=${c.slug}` : "/talentos"} aria-current={active ? "page" : undefined}
-                  className={cn("inline-flex h-10 items-center rounded-full border px-4 text-sm transition-colors", active ? "border-gold-400 bg-gold-400 text-night-950" : "border-border text-ink hover:border-gold-400/60")}>
+                  className={cn("inline-flex h-10 items-center rounded-full border px-4 text-sm transition-colors", active ? "border-neon-400 bg-neon-400 text-night-950" : "border-border text-ink hover:border-neon-400/60")}>
                   {m.talents.chips[c.key]}
                 </Link>
               </li>
@@ -143,7 +143,7 @@ export default async function TalentsPage({ searchParams }: { searchParams: SP }
           <option value="">{m.talents.modes}: {m.common.anyOption}</option>
           {opportunityModeValues.map((x) => <option key={x} value={x}>{m.enums.opportunityMode[x]}</option>)}
         </Select>
-        <button type="submit" className="h-11 rounded-md bg-gold-400 px-6 text-sm font-semibold tracking-[0.12em] text-night-950 uppercase transition hover:bg-gold-300">{m.common.search}</button>
+        <button type="submit" className="h-11 rounded-md bg-neon-400 px-6 text-sm font-semibold tracking-[0.12em] text-night-950 uppercase transition hover:bg-neon-300">{m.common.search}</button>
       </form>
       <p className="mb-8 text-xs text-ink-muted">{m.talents.privacyNote}</p>
       {body}

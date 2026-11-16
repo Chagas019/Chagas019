@@ -25,7 +25,7 @@ export function Modal({ trigger, title, children, closeLabel, triggerVariant = "
         aria-labelledby={titleId}
         onClose={() => setOpen(false)}
         onClick={(e) => { if (e.target === ref.current) setOpen(false); }}
-        className="m-auto w-[min(92vw,32rem)] rounded-xl border border-gold-400/30 bg-night-800 p-0 text-ink shadow-lifted backdrop:bg-night-950/70 backdrop:backdrop-blur-sm open:animate-rise"
+        className="m-auto w-[min(92vw,32rem)] rounded-xl border border-neon-400/30 bg-night-800 p-0 text-ink shadow-lifted backdrop:bg-night-950/70 backdrop:backdrop-blur-sm open:animate-rise"
       >
         <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-4">
           <h2 id={titleId} className="font-display text-2xl">{title}</h2>

@@ -83,7 +83,7 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
           <option value="">{m.opportunities.availability}: {m.common.anyOption}</option>
           {availabilityValues.map((a) => <option key={a} value={a}>{m.enums.availability[a]}</option>)}
         </Select>
-        <button type="submit" className="h-11 rounded-md bg-gold-400 px-6 text-sm font-semibold tracking-[0.12em] text-night-950 uppercase transition hover:bg-gold-300">{m.common.search}</button>
+        <button type="submit" className="h-11 rounded-md bg-neon-400 px-6 text-sm font-semibold tracking-[0.12em] text-night-950 uppercase transition hover:bg-neon-300">{m.common.search}</button>
       </form>
       {body}
     </Container>

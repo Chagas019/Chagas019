@@ -62,7 +62,7 @@ export default async function ResourcesPage({ searchParams }: { searchParams: SP
           <option value="">{m.opportunities.country}: {m.common.anyOption}</option>
           {sortedCountries(locale).map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
         </Select>
-        <button type="submit" className="h-11 rounded-md bg-gold-400 px-6 text-sm font-semibold tracking-[0.12em] text-night-950 uppercase transition hover:bg-gold-300">{m.common.search}</button>
+        <button type="submit" className="h-11 rounded-md bg-neon-400 px-6 text-sm font-semibold tracking-[0.12em] text-night-950 uppercase transition hover:bg-neon-300">{m.common.search}</button>
       </form>
       {body}
     </Container>

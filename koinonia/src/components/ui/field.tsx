@@ -2,7 +2,7 @@ import { forwardRef, useId, type InputHTMLAttributes, type ReactNode, type Selec
 import { cn } from "@/lib/utils";
 
 const controlBase =
-  "w-full rounded-xl border bg-surface-muted px-3.5 text-[0.95rem] text-ink transition-[border-color,box-shadow,background-color] duration-200 focus-visible:bg-night-800 focus-visible:shadow-[0_0_0_4px_rgb(214_174_98/0.15)] placeholder:text-ink-subtle hover:border-border-strong focus-visible:border-gold-400 focus-visible:outline-3 focus-visible:outline-offset-1 focus-visible:outline-gold-400/70 disabled:cursor-not-allowed disabled:bg-surface-muted";
+  "w-full rounded-xl border bg-surface-muted px-3.5 text-[0.95rem] text-ink transition-[border-color,box-shadow,background-color] duration-200 focus-visible:bg-night-800 focus-visible:shadow-[0_0_0_4px_rgb(140_255_90/0.15)] placeholder:text-ink-subtle hover:border-border-strong focus-visible:border-neon-400 focus-visible:outline-3 focus-visible:outline-offset-1 focus-visible:outline-neon-400/70 disabled:cursor-not-allowed disabled:bg-surface-muted";
 
 export function controlClass(invalid?: boolean, extra?: string) {
   return cn(controlBase, invalid ? "border-danger" : "border-border", extra);
@@ -89,7 +89,7 @@ export function ChoiceGroup({ legend, name, type = "checkbox", options, defaultV
               defaultChecked={defaultValue.includes(o.value)}
               className="peer absolute inset-0 cursor-pointer opacity-0"
             />
-            <span className="inline-flex min-h-10 items-center rounded-full border border-border bg-surface px-4 text-sm text-ink transition-colors group-hover:border-navy-400 peer-checked:border-navy-500 peer-checked:bg-navy-600 peer-checked:text-white peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-gold-400">
+            <span className="inline-flex min-h-10 items-center rounded-full border border-border bg-surface px-4 text-sm text-ink transition-colors group-hover:border-graphite-400 peer-checked:border-graphite-500 peer-checked:bg-graphite-600 peer-checked:text-white peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-neon-400">
               {o.label}
             </span>
           </label>
@@ -114,7 +114,7 @@ export function Checkbox({ name, label, defaultChecked, error, required }: { nam
           required={required}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${id}-error` : undefined}
-          className="mt-0.5 size-5 shrink-0 cursor-pointer rounded border-border accent-gold-400"
+          className="mt-0.5 size-5 shrink-0 cursor-pointer rounded border-border accent-neon-400"
         />
         <label htmlFor={id} className="text-sm leading-relaxed text-ink">{label}</label>
       </div>

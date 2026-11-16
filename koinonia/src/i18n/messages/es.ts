@@ -197,6 +197,10 @@ export const es: DeepPartialMessages = {
     },
   },
   home: {
+    dnaTitle: "ADN de KOINONIA",
+    journeyTitle: "El camino",
+    findWhere: "Encuentra dónde servir.",
+    oneMission: "Una sola misión.",
     heroTitle: "Talentos unidos. Una sola misión.",
     heroLead: "Una plataforma que conecta parroquias, comunidades, movimientos y voluntarios para transformar talentos en servicio.",
     heroPrimary: "Encontrar oportunidades",

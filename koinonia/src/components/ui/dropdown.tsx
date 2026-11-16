@@ -27,7 +27,7 @@ export function Dropdown({ label, buttonContent, children, align = "right" }: { 
         aria-controls={id}
         aria-label={label}
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex h-10 items-center gap-2 rounded-full border border-border px-2 pr-3 text-sm text-ink transition-colors hover:border-gold-400/60"
+        className="inline-flex h-10 items-center gap-2 rounded-full border border-border px-2 pr-3 text-sm text-ink transition-colors hover:border-neon-400/60"
       >
         {buttonContent}
         <ChevronDown aria-hidden className={cn("size-4 text-ink-muted transition-transform duration-200", open && "rotate-180")} />
@@ -47,4 +47,4 @@ export function Dropdown({ label, buttonContent, children, align = "right" }: { 
   );
 }
 
-export const dropdownItemClass = "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-ink hover:bg-gold-400/10 hover:text-gold-200 focus-visible:bg-gold-400/10";
+export const dropdownItemClass = "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-ink hover:bg-neon-400/10 hover:text-neon-200 focus-visible:bg-neon-400/10";

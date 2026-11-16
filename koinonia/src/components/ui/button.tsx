@@ -9,13 +9,13 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: "bg-gold-400 text-night-950 uppercase tracking-[0.12em] shadow-soft hover:bg-gold-300 hover:shadow-gold",
-        gold: "bg-navy-600 text-white uppercase tracking-[0.12em] shadow-soft hover:bg-navy-500",
-        outline: "border border-gold-400/70 bg-transparent text-ink uppercase tracking-[0.12em] hover:bg-gold-400/10 hover:border-gold-300",
+        primary: "bg-neon-400 text-night-950 uppercase tracking-[0.12em] shadow-soft hover:bg-neon-300 hover:shadow-gold",
+        gold: "bg-graphite-600 text-white uppercase tracking-[0.12em] shadow-soft hover:bg-graphite-500",
+        outline: "border border-neon-400/70 bg-transparent text-ink uppercase tracking-[0.12em] hover:bg-neon-400/10 hover:border-neon-300",
         ghost: "text-ink hover:bg-white/5",
         danger: "bg-danger text-night-950 hover:brightness-110",
         link: "h-auto rounded-none p-0 text-accent-ink underline-offset-4 hover:underline",
-        onDark: "border border-gold-400/70 bg-night-950/40 text-white uppercase tracking-[0.12em] hover:bg-gold-400/10",
+        onDark: "border border-neon-400/70 bg-night-950/40 text-white uppercase tracking-[0.12em] hover:bg-neon-400/10",
       },
       size: {
         sm: "h-9 px-4 text-xs",

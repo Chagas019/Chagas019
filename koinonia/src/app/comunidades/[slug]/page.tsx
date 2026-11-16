@@ -92,8 +92,8 @@ export default async function CommunityPage({ params }: Params) {
           </div>
           <aside className="space-y-4">
             {community.needs ? (
-              <div className="rounded-xl border border-gold-400/30 bg-surface p-5">
-                <h2 className="mb-2 font-display text-lg font-semibold text-gold-300">{m.communities.needs}</h2>
+              <div className="rounded-xl border border-neon-400/30 bg-surface p-5">
+                <h2 className="mb-2 font-display text-lg font-semibold text-neon-300">{m.communities.needs}</h2>
                 <p className="text-sm leading-relaxed whitespace-pre-line">{community.needs}</p>
               </div>
             ) : null}
