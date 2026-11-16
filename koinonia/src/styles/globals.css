@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+/* KOINONIA Design System — tokens primitivos e semânticos.
+   Documentação: src/design-system/README.md · Contrastes validados em docs/design-system.md */
+@theme {
+  /* Primitivos — azul-marinho (marca) */
+  --color-navy-950: #0a1224;
+  --color-navy-900: #101c35;
+  --color-navy-800: #1a2a4d;
+  --color-navy-700: #263a66;
+  --color-navy-600: #3a5084;
+  --color-navy-500: #5a6e9e;
+  --color-navy-300: #9aa6c4;
+  --color-navy-200: #c9d1e3;
+  --color-navy-100: #e6eaf3;
+  --color-navy-50: #f4f6fa;
+
+  /* Primitivos — dourado (marca). gold-500 nunca como texto sobre fundo claro. */
+  --color-gold-800: #6b5020;
+  --color-gold-700: #8c6a2a;
+  --color-gold-600: #b88e3e;
+  --color-gold-500: #d6ae62;
+  --color-gold-400: #e2c385;
+  --color-gold-300: #ebd5a8;
+  --color-gold-100: #f8f0df;
+  --color-gold-50: #fcf8ef;
+
+  /* Neutros quentes */
+  --color-sand-0: #ffffff;
+  --color-sand-25: #fbfaf7;
+  --color-sand-50: #f5f3ee;
+  --color-sand-100: #ece9e2;
+  --color-sand-200: #dcd8cf;
+  --color-sand-400: #9a958b;
+  --color-sand-500: #6e6a62;
+  --color-sand-600: #57534c;
+  --color-sand-700: #3f3c37;
+  --color-sand-900: #1c1b19;
+
+  /* Semânticos */
+  --color-canvas: var(--color-sand-25);
+  --color-surface: var(--color-sand-0);
+  --color-surface-muted: var(--color-sand-50);
+  --color-border: var(--color-sand-200);
+  --color-border-strong: var(--color-sand-400);
+  --color-ink: var(--color-navy-900);
+  --color-ink-muted: var(--color-sand-600);
+  --color-ink-subtle: var(--color-sand-500);
+  --color-brand: var(--color-navy-900);
+  --color-accent: var(--color-gold-500);
+  --color-accent-ink: var(--color-gold-700);
+  --color-focus: var(--color-gold-600);
+
+  --color-success: #1f7a4d;
+  --color-success-soft: #e7f4ec;
+  --color-danger: #b42318;
+  --color-danger-soft: #fdecea;
+  --color-warning: #b54708;
+  --color-warning-soft: #fef3e6;
+  --color-info: #2e5aac;
+  --color-info-soft: #eaf0fb;
+
+  /* Tipografia */
+  --font-display: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Raios e sombras discretas */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --shadow-soft: 0 1px 2px rgb(16 28 53 / 0.04), 0 2px 8px rgb(16 28 53 / 0.05);
+  --shadow-lifted: 0 2px 4px rgb(16 28 53 / 0.05), 0 12px 32px rgb(16 28 53 / 0.09);
+  --shadow-gold: 0 8px 24px rgb(214 174 98 / 0.28);
+
+  --animate-rise: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.015em; text-wrap: balance; }
+  p { text-wrap: pretty; }
+  :focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; border-radius: 4px; }
+  ::selection { background: var(--color-gold-300); color: var(--color-navy-900); }
+  [hidden] { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer components {
+  .select-chevron {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path d='M5.5 7.5 10 12l4.5-4.5' stroke='%23101c35' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");
+    background-size: 1.1rem;
+    background-position: right 0.8rem center;
+    background-repeat: no-repeat;
+  }
+  .bg-grain {
+    background-image:
+      radial-gradient(60rem 30rem at 85% -10%, rgb(214 174 98 / 0.18), transparent 60%),
+      radial-gradient(40rem 24rem at -10% 110%, rgb(58 80 132 / 0.35), transparent 60%);
+  }
+}

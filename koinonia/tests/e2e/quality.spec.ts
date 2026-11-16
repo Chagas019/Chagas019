@@ -1,0 +1,28 @@
+import { expect, test } from "@playwright/test";
+
+test.describe("qualidade visual e performance", () => {
+  test("estilos do Design System carregados (fundo do canvas e fonte da marca)", async ({ page }) => {
+    await page.goto("/");
+    const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+    expect(bg).toBe("rgb(251, 250, 247)");
+    const h1Font = await page.locator("h1").first().evaluate((el) => getComputedStyle(el).fontFamily);
+    expect(h1Font.toLowerCase()).toContain("fraunces");
+  });
+
+  for (const path of ["/", "/cadastro", "/oportunidades"]) {
+    test(`${path} sem deslocamento de layout (CLS < 0.1)`, async ({ page }) => {
+      await page.goto(path, { waitUntil: "networkidle" });
+      const cls = await page.evaluate(
+        () =>
+          new Promise<number>((resolve) => {
+            let total = 0;
+            new PerformanceObserver((list) => {
+              for (const e of list.getEntries() as Array<PerformanceEntry & { value: number; hadRecentInput: boolean }>) if (!e.hadRecentInput) total += e.value;
+            }).observe({ type: "layout-shift", buffered: true });
+            setTimeout(() => resolve(total), 500);
+          }),
+      );
+      expect(cls).toBeLessThan(0.1);
+    });
+  }
+});
