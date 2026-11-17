@@ -20,6 +20,9 @@
   <meta property="og:image:height" content="450">
   <meta name="twitter:card" content="summary_large_image">
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="assets/css/tokens.css">
   <link rel="stylesheet" href="assets/css/base.css">
   <script>document.documentElement.classList.replace('no-js','js');</script>
@@ -60,11 +63,11 @@
   <header class="site-header" data-component="header">
     <div class="site-header__inner container">
       <a class="brand" href="#inicio" aria-label="Chagas — início"><span class="brand__name" data-bind="site.name">Chagas</span></a>
-      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+      <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav">
         <span class="nav-toggle__bars" aria-hidden="true"></span>
         <span class="nav-toggle__label">Menu</span>
       </button>
-      <nav class="site-nav" id="site-nav" aria-label="Principal">
+      <nav class="site-nav" id="site-nav" data-nav-menu aria-label="Principal">
         <ul class="site-nav__list">
           <li><a class="site-nav__link" href="#trabalhos">Trabalhos</a></li>
           <li><a class="site-nav__link" href="#servicos">Serviços</a></li>
@@ -133,7 +136,7 @@
         <header class="section__head" data-reveal>
           <p class="section__num" aria-hidden="true">03</p>
           <h2 class="section__title" id="pricing-title">Investimento</h2>
-          <p class="section__lead" data-slot="pricing-disclaimer"></p>
+          <p class="pricing__disclaimer" role="note" data-slot="pricing-disclaimer"></p>
         </header>
         <div class="pricing__groups" data-slot="pricing"></div>
         <ul class="pricing__terms" data-slot="pricing-terms"></ul>

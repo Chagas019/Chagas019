@@ -4,7 +4,7 @@
 # Também escreve portfolio/media/manifest.json (src original → variantes).
 #
 # Uso (a partir de qualquer pasta):  bash portfolio/scripts/optimize-media.sh [arquivos...]
-# Sem argumentos processa: videos/ resultado/ midia/ fotos/ (jpg, jpeg, png, webp, mp4, mov, webm)
+# Sem argumentos processa: videos/ resultado/ midia/ fotos/ social/ (jpg, jpeg, png, webp, mp4, mov, webm)
 # Requer: ffmpeg + ffprobe (libwebp, libaom-av1). Não amplia imagens menores que a largura alvo.
 set -euo pipefail
 
@@ -27,7 +27,7 @@ mkdir -p "$OUT"
 cd "$ROOT"
 
 if [ "$#" -gt 0 ]; then FILES=("$@"); else
-  mapfile -t FILES < <(find videos resultado midia fotos -maxdepth 1 -type f \
+  mapfile -t FILES < <(find videos resultado midia fotos social -maxdepth 1 -type f \
     \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' -o -iname '*.mp4' -o -iname '*.mov' -o -iname '*.webm' \) 2>/dev/null | sort)
 fi
 

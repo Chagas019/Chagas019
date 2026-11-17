@@ -31,7 +31,7 @@ export function renderFeatured({ projects, categories }, filter, onOpen) {
   const still = stillOf(p.cover || p.media[0]);
   const shape = shapeOf(still?.w, still?.h);
   root.append(h('article', { class: `featured__item featured__item--${shape}`, 'data-reveal': true },
-    h('button', { class: 'featured__media', type: 'button', 'aria-label': `Abrir galeria: ${p.title}`, onclick: (e) => onOpen(p, 0, e.currentTarget) },
+    h('button', { class: 'featured__media', type: 'button', 'data-lightbox': true, 'aria-label': `Abrir galeria: ${p.title}`, onclick: (e) => onOpen(p, 0, e.currentTarget) },
       picture(still, { sizes: CONFIG.sizes.featured }),
       p.media.some((m) => m.type === 'video') ? h('span', { class: 'badge badge--video' }, 'Vídeo') : null),
     h('div', { class: 'featured__meta' },
@@ -55,8 +55,8 @@ export function renderIndex({ projects, categories }, filter, onOpen) {
   }
   list.forEach((p, i) => {
     const still = stillOf(p.cover || p.media[0]);
-    root.append(h('li', { class: 'project-index__item', dataset: { category: p.category }, 'data-reveal': true },
-      h('button', { class: 'project-index__link', type: 'button', onclick: (e) => onOpen(p, 0, e.currentTarget) },
+    root.append(h('li', { class: 'project-index__item', dataset: { category: p.category, project: p.id }, 'data-reveal': true },
+      h('button', { class: 'project-index__link', type: 'button', 'data-lightbox': true, onclick: (e) => onOpen(p, 0, e.currentTarget) },
         h('span', { class: 'project-index__num', 'aria-hidden': 'true' }, String(i + 1).padStart(2, '0')),
         h('span', { class: 'project-index__title' }, p.title),
         h('span', { class: 'project-index__cat' }, catLabel(categories, p.category)),

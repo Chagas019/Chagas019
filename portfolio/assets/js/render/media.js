@@ -22,10 +22,12 @@ export function bestSrc(src, target = 1280) {
   return pool.reduce((best, v) => (Math.abs(v.w - target) < Math.abs(best.w - target) ? v : best)).src;
 }
 
+export const isVideo = (m) => !!m && (m.type === 'video' || /\.(mp4|webm|mov|m4v)(\?|$)/i.test(m.src || ''));
+
 /** Fonte de imagem estática para um item de mídia (imagem ou poster de vídeo). */
 export function stillOf(item) {
   if (!item) return null;
-  if (item.type === 'video') {
+  if (isVideo(item)) {
     const e = manifestEntry(item.src);
     const poster = item.poster || (e && e.poster) || null;
     return { src: poster, manifestKey: item.src, alt: item.alt, w: item.w || e?.w, h: item.h || e?.h };

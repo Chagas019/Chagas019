@@ -1,5 +1,5 @@
 {
-  "_generated": "2026-11-17T01:10:43Z",
+  "_generated": "2026-11-17T01:14:45Z",
   "_note": "Gerado por scripts/optimize-media.sh. Chaves = src usado no portfolio.json (relativo a portfolio/index.html). Não edite à mão.",
   "items": {
     "../fotos/carlo-acutis.jpg": {
@@ -167,6 +167,37 @@
           "w": 1180,
           "h": 2556,
           "src": "media/resultado-moto-personagem-1180.avif"
+        }
+      ]
+    },
+    "../social/comunicafe-1200x630.jpg": {
+      "type": "image",
+      "w": 1200,
+      "h": 630,
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 336,
+          "src": "media/social-comunicafe-1200x630-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 336,
+          "src": "media/social-comunicafe-1200x630-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1200,
+          "h": 630,
+          "src": "media/social-comunicafe-1200x630-1200.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1200,
+          "h": 630,
+          "src": "media/social-comunicafe-1200x630-1200.avif"
         }
       ]
     },

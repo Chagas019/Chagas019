@@ -18,7 +18,7 @@ export function renderGallery({ projects }, filter, onOpen) {
       const shape = shapeOf(m.w || still?.w, m.h || still?.h);
       root.append(h('li', { class: `mosaic__tile mosaic__tile--${shape} mosaic__tile--${rhythm[n++ % rhythm.length]}`, 'data-reveal': true },
         h('button', {
-          class: 'mosaic__btn', type: 'button',
+          class: 'mosaic__btn', type: 'button', 'data-lightbox': true,
           'aria-label': `${m.type === 'video' ? 'Assistir vídeo' : 'Ampliar imagem'}: ${m.alt || p.title}`,
           onclick: (e) => onOpen(p, idx, e.currentTarget),
         },

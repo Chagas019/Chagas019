@@ -27,6 +27,9 @@ async function loadManifest() {
 }
 
 const arr = (v) => (Array.isArray(v) ? v : []);
+const VIDEO_RE = /\.(mp4|webm|mov|m4v)(\?|$)/i;
+/** Garante `type` em itens de mídia (capa .mp4 sem type → video). */
+const typed = (m) => (m && m.src ? { ...m, type: m.type || (VIDEO_RE.test(m.src) ? 'video' : 'image') } : m);
 
 export function normalizePortfolio(raw) {
   const p = raw || {};
@@ -36,8 +39,8 @@ export function normalizePortfolio(raw) {
     .filter((pr) => pr && pr.id && (pr.status ?? 'published') !== 'draft' && pr.status !== 'hidden')
     .map((pr) => ({
       ...pr,
-      media: arr(pr.media).filter((m) => m && m.src),
-      cover: pr.cover && pr.cover.src ? pr.cover : arr(pr.media).find((m) => m.type !== 'video') || null,
+      media: arr(pr.media).filter((m) => m && m.src).map(typed),
+      cover: typed(pr.cover && pr.cover.src ? pr.cover : arr(pr.media)[0]) || null,
     }))
     .sort((a, b) => (Number(b.featured) - Number(a.featured)) || ((b.year || 0) - (a.year || 0)));
   return { site, categories, projects, missing: arr(p.missing) };

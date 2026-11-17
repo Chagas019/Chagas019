@@ -5,7 +5,23 @@ function money(value, currency) {
   if (value == null || value === '') return 'Sob consulta';
   const n = Number(value);
   if (!Number.isFinite(n)) return String(value);
-  return new Intl.NumberFormat(CONFIG.locale, { style: 'currency', currency, maximumFractionDigits: n % 1 ? 2 : 0 }).format(n);
+  return new Intl.NumberFormat(CONFIG.locale, {
+    style: 'currency', currency, minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: n % 1 ? 2 : 0,
+  }).format(n);
+}
+
+/**
+ * Formata preço + unidade.
+ *  "% do pacote" / "% da peça" → "+30% do pacote" (price_from é percentual)
+ *  "km" / "segundo" / "hora" …  → "R$ 1,80 por km"
+ *  unidade já com "por"/"/"     → mantida
+ * Retorna { value, unit } para permitir marcação separada.
+ */
+export function formatPrice(value, unit, currency) {
+  const u = (unit || '').trim();
+  if (u.startsWith('%')) return { value: `+${new Intl.NumberFormat(CONFIG.locale).format(Number(value))}%`, unit: u.slice(1).trim(), percent: true };
+  const unitText = !u ? '' : /^(por|\/)/i.test(u) ? u : `por ${u}`;
+  return { value: money(value, currency), unit: unitText, percent: false };
 }
 
 /** Serviços: lista editorial numerada (label + summary + link p/ preços). */
@@ -20,7 +36,7 @@ export function renderServices(pricing) {
     h('a', { class: 'service-list__link', href: `#preco-${s.id}` }, 'Ver investimento'))));
 }
 
-/** Investimento: por serviço, tabela-lista de faixas (tier) + adicionais. */
+/** Investimento: por serviço, faixas (tier) + adicionais. */
 export function renderPricing(pricing) {
   const root = clear(slot('pricing'));
   const disc = slot('pricing-disclaimer');
@@ -29,20 +45,28 @@ export function renderPricing(pricing) {
   if (!root) return;
   const cur = pricing.currency;
   for (const s of pricing.services) {
-    root.append(h('section', { class: 'price-group', id: `preco-${s.id}`, 'aria-labelledby': `preco-${s.id}-t`, 'data-reveal': true },
-      h('h3', { class: 'price-group__title', id: `preco-${s.id}-t` }, s.label),
-      h('ul', { class: 'tiers' }, s.tiers.map((t) => h('li', { class: `tier${t.highlight ? ' tier--highlight' : ''}` },
-        t.highlight ? h('p', { class: 'tier__flag' }, 'Mais escolhido') : null,
-        h('h4', { class: 'tier__name' }, t.name),
-        h('p', { class: 'tier__price' }, h('span', { class: 'tier__from' }, 'a partir de '), h('strong', {}, money(t.price_from, cur)),
-          t.unit ? h('span', { class: 'tier__unit' }, ` ${t.unit}`) : null),
-        t.includes?.length ? h('ul', { class: 'tier__includes' }, t.includes.map((x) => h('li', {}, x))) : null,
-        t.delivery ? h('p', { class: 'tier__delivery' }, `Entrega: ${t.delivery}`) : null,
-        h('a', { class: 'tier__cta btn btn--ghost', href: '#contato', dataset: { service: s.id, tier: t.name } }, 'Solicitar orçamento')))),
+    root.append(h('section', { class: 'price-group', id: `preco-${s.id}`, 'aria-labelledby': `preco-${s.id}-t`, 'data-pricing-service': s.id, 'data-reveal': true },
+      h('header', { class: 'price-group__head' },
+        h('h3', { class: 'price-group__title', id: `preco-${s.id}-t` }, s.label),
+        s.summary ? h('p', { class: 'price-group__summary' }, s.summary) : null),
+      h('ul', { class: 'tiers' }, s.tiers.map((t) => {
+        const pr = formatPrice(t.price_from, t.unit, cur);
+        return h('li', { class: `tier${t.highlight ? ' tier--highlight' : ''}`, 'data-pricing-tier': t.name },
+          t.highlight ? h('p', { class: 'tier__flag' }, 'Mais escolhido') : null,
+          h('h4', { class: 'tier__name' }, t.name),
+          h('p', { class: 'tier__price' }, h('span', { class: 'tier__from' }, 'a partir de '), h('strong', { class: 'tier__value' }, pr.value),
+            pr.unit ? h('span', { class: 'tier__unit' }, ` ${pr.unit}`) : null),
+          t.includes?.length ? h('ul', { class: 'tier__includes' }, t.includes.map((x) => h('li', {}, x))) : null,
+          t.delivery ? h('p', { class: 'tier__delivery' }, `Entrega: ${t.delivery}`) : null,
+          h('a', { class: 'tier__cta btn btn--ghost', href: '#contato', dataset: { service: s.label, tier: t.name } }, 'Solicitar orçamento'));
+      })),
       s.addons.length ? h('div', { class: 'addons' },
         h('h4', { class: 'addons__title' }, 'Adicionais'),
-        h('ul', { class: 'addons__list' }, s.addons.map((a) => h('li', { class: 'addons__item' },
-          h('span', {}, a.label), h('span', { class: 'addons__price' }, `${money(a.price_from, cur)}${a.unit ? ` ${a.unit}` : ''}`))))) : null));
+        h('ul', { class: 'addons__list' }, s.addons.map((a) => {
+          const pr = formatPrice(a.price_from, a.unit, cur);
+          return h('li', { class: 'addons__item' }, h('span', { class: 'addons__label' }, a.label),
+            h('span', { class: 'addons__price' }, pr.percent ? `${pr.value} ${pr.unit}` : `${pr.value}${pr.unit ? ` ${pr.unit}` : ''}`));
+        }))) : null));
   }
   if (terms) pricing.terms.forEach((t) => terms.append(h('li', {}, t)));
 }
