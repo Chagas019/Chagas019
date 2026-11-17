@@ -99,4 +99,31 @@ reset role;
 -- ===== Integridade entre paróquias (mesmo como superusuário)
 select tests.denied($$insert into public.roster_slots (parish_id,event_id,roster_role_id) values ('10000000-0000-0000-0000-0000000000b0','40000000-0000-0000-0000-000000000001','50000000-0000-0000-0000-000000000001')$$, 'slot de B apontando para evento de A');
 
+
+-- ===== Onboarding: criar paróquia e convites
+set role authenticated;
+select set_config('request.jwt.claim.sub','',false);
+select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-000000000006","email":"fotografa@exemplo.invalid"}',false);
+select tests.eq((select count(*) from (select public.create_parish('Paróquia Nova Exemplo','nova-exemplo')) x), 1, 'voluntária cria a própria paróquia');
+select tests.eq((select count(*) from public.memberships m join public.parishes p on p.id=m.parish_id where p.slug='nova-exemplo' and m.role='parish_admin'), 1, 'quem cria vira admin');
+select tests.denied($$select public.create_parish('Exemplo X','exemplo-a1')$$ || '; select public.create_parish(''Exemplo Y'',''exemplo-a2''); select public.create_parish(''Exemplo Z'',''exemplo-a3'')', 'mais de 3 paróquias por pessoa');
+select tests.allowed($$insert into public.invitations (parish_id,email,role,invited_by) select id,'convidado@exemplo.invalid','coordinator',auth.uid() from public.parishes where slug='nova-exemplo'$$, 'admin convida');
+select tests.denied($$insert into public.invitations (parish_id,email,invited_by) values ('10000000-0000-0000-0000-000000000001','x@exemplo.invalid',auth.uid())$$, 'voluntária convida na paróquia A');
+-- convidado errado não aceita; convidado certo aceita uma vez
+select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-000000000004","email":"leitor@exemplo.invalid"}',false);
+select tests.denied($$select public.accept_invitation((select token from public.invitations limit 1))$$, 'convite usado por outro e-mail (token não visível)');
+reset role;
+create temp table tok as select token from public.invitations where email='convidado@exemplo.invalid';
+grant select on tok to authenticated;
+set role authenticated;
+select tests.denied($$select public.accept_invitation((select token from tok))$$, 'convite aceito por outro e-mail');
+reset role;
+insert into auth.users (id,email) values ('00000000-0000-0000-0000-0000000000c1','convidado@exemplo.invalid');
+set role authenticated;
+select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-0000000000c1","email":"Convidado@Exemplo.invalid"}',false);
+select tests.eq((select count(*) from (select public.accept_invitation((select token from tok))) x), 1, 'convidado aceita');
+select tests.eq((select count(*) from public.memberships where user_id=auth.uid() and role='coordinator'), 1, 'convidado entra com o papel do convite');
+select tests.denied($$select public.accept_invitation((select token from tok))$$, 'convite reutilizado');
+select tests.denied($$update public.memberships set role='parish_admin' where user_id=auth.uid()$$, 'convidado se promove');
+reset role;
 \echo 'TODOS OS TESTES PASSARAM'
