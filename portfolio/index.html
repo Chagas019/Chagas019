@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Chagas — Fotografia e Audiovisual</title>
   <meta name="description" content="Portfólio de fotografia, vídeo e pós-produção de Chagas. Trabalhos selecionados, serviços, investimento e contato.">
-  <meta name="theme-color" content="#0e0e0e">
+  <meta name="theme-color" content="#262626">
   <meta name="color-scheme" content="dark light">
   <link rel="canonical" href="https://example.com/portfolio/">
   <!-- Open Graph / Twitter (substituir URLs no deploy) -->
@@ -22,7 +22,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400..800;1,400..600&family=Pacifico&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="assets/css/tokens.css">
   <link rel="stylesheet" href="assets/css/base.css">
   <script>document.documentElement.classList.replace('no-js','js');</script>
@@ -64,36 +64,41 @@
   <header class="site-header app-toolbar" data-component="header">
     <div class="site-header__inner">
       <span class="app-toolbar__dots" aria-hidden="true"><i></i><i></i><i></i></span>
-      <a class="brand" href="#sobre" aria-label="Chagas — início"><span class="brand__name" data-bind="site.name">Chagas</span></a>
+      <a class="brand" href="#sobre"><span class="brand__name" data-bind="site.name">Chagas</span><span class="brand__file" aria-hidden="true">.portfolio</span></a>
       <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav">
         <span class="nav-toggle__bars" aria-hidden="true"></span>
-        <span class="nav-toggle__label">Menu</span>
+        <span class="nav-toggle__label">Ferramentas</span>
       </button>
       <nav class="site-nav" id="site-nav" data-nav-menu aria-label="Principal">
         <ul class="site-nav__list">
-          <li><a class="tool site-nav__link" href="#trabalhos"><svg class="tool__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 20c3 0 4-2 4-4l9-9a2 2 0 0 0-3-3l-9 9c-2 0-3 1-3 4z"/></svg><span class="tool__label">Trabalhos</span></a></li>
-          <li><a class="tool site-nav__link" href="#servicos"><svg class="tool__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2v20M2 12h20M12 2l-3 3M12 2l3 3M12 22l-3-3M12 22l3-3M2 12l3-3M2 12l3 3M22 12l-3-3M22 12l-3 3"/></svg><span class="tool__label">Serviços</span></a></li>
-          <li><a class="tool site-nav__link" href="#investimento"><svg class="tool__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 11l7-7 7 7-7 7zM19 15c0 2 1 3 1 4a1 1 0 0 1-2 0c0-1 1-2 1-4z"/></svg><span class="tool__label">Investimento</span></a></li>
-          <li><a class="tool site-nav__link" href="#sobre"><svg class="tool__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 5h14M12 5v14M9 19h6"/></svg><span class="tool__label">Sobre</span></a></li>
-          <li><a class="tool tool--swatch site-nav__link site-nav__link--cta" href="#contato"><span class="tool__swatch" aria-hidden="true"></span><span class="tool__label">Contato</span></a></li>
+          <li><a class="tool site-nav__link" href="#sobre" title="Início (Pincel)"><svg class="tool__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.5 4.5l5 5L11 18H6v-5z"/><path d="M4 21c1.5-.5 2-1.5 2-3"/></svg><span class="tool__label">Início</span><span class="tool__caret" aria-hidden="true"></span></a></li>
+          <li><a class="tool site-nav__link" href="#trabalhos" title="Trabalhos (Mão)"><svg class="tool__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11m0-6.5a1.5 1.5 0 0 1 3 0V11m0-5a1.5 1.5 0 0 1 3 0V12m0-3a1.5 1.5 0 0 1 3 0v5a7 7 0 0 1-7 7h-1a7 7 0 0 1-5.6-2.8L4 16a1.6 1.6 0 0 1 2.4-2L8 15.5"/></svg><span class="tool__label">Trabalhos</span><span class="tool__caret" aria-hidden="true"></span></a></li>
+          <li><a class="tool site-nav__link" href="#servicos" title="Serviços (Balde)"><svg class="tool__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 11l7-7 8 8-7 7z"/><path d="M4 11h15"/><path d="M20 16s1.5 2 1.5 3a1.5 1.5 0 0 1-3 0c0-1 1.5-3 1.5-3z"/></svg><span class="tool__label">Serviços</span><span class="tool__caret" aria-hidden="true"></span></a></li>
+          <li><a class="tool site-nav__link" href="#investimento" title="Planos (Mover)"><svg class="tool__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v18M3 12h18"/><path d="M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/></svg><span class="tool__label">Planos</span><span class="tool__caret" aria-hidden="true"></span></a></li>
+          <li><a class="tool site-nav__link" href="#contato" title="Contato (Texto)"><svg class="tool__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 6V4h14v2M12 4v16M9 20h6"/></svg><span class="tool__label">Contato</span><span class="tool__caret" aria-hidden="true"></span></a></li>
         </ul>
       </nav>
+      <a class="swatch-cta" href="#contato"><span class="swatch-cta__dot" aria-hidden="true"></span><span class="swatch-cta__label">Orçamento</span></a>
     </div>
   </header>
 
-  <main id="main" tabindex="-1">
+  <main id="main" class="canvas" tabindex="-1">
     <!-- SOBRE (hero) -->
-    <section class="profile" id="sobre" aria-labelledby="profile-name">
+    <section class="profile" data-theme="canvas" id="sobre" aria-labelledby="profile-name">
       <div class="profile__inner container">
         <figure class="profile__portrait" data-slot="profile-photo">
           <!-- render/profile.js: foto real ou monograma com iniciais -->
-          <div class="monogram" aria-hidden="true"><span class="monogram__letter">C</span></div>
+          <div class="monogram" aria-hidden="true"><span class="monogram__letter">CH</span></div>
         </figure>
         <div class="profile__body">
-          <p class="profile__label"><span class="selection-box">Sobre mim</span></p>
+          <div class="profile__labelrow">
+            <p class="profile__label"><span class="selection-box">Sobre mim</span></p>
+            <svg class="doodle" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path d="M50 8c22 1 40 18 40 41S72 92 49 91 9 72 10 49 27 7 50 8z"/><path d="M37 36c0 5 1 9 2 11M60 34c1 5 1 9 0 12"/><path d="M28 60c7 13 33 17 44-2"/><path d="M24 57l6 3M70 55l5 5"/></svg>
+          </div>
           <h1 class="profile__name" id="profile-name" data-bind="site.name">Chagas</h1>
           <p class="profile__role pill" data-bind="profile.role">Fotógrafo &amp; Videomaker</p>
           <p class="profile__about" data-bind="site.about"></p>
+          <span class="profile__rule" aria-hidden="true"></span>
           <p class="profile__meta"><span class="visually-hidden">Localização: </span><span data-bind="site.location"></span></p>
           <div class="profile__actions">
             <a class="btn btn--primary" href="#trabalhos">Ver trabalhos</a>
@@ -104,9 +109,10 @@
     </section>
 
     <!-- CURRÍCULO (painel) -->
-    <section class="cv-panel" id="curriculo" aria-label="Currículo">
-      <div class="cv-panel__inner container">
-        <div class="cv-panel__col cv-panel__col--main">
+    <section class="cv-panel" data-theme="blue" id="curriculo" aria-label="Currículo">
+      <div class="cv-panel__inner">
+        <div class="cv-panel__col cv-panel__col--main" data-theme="blue">
+          <span class="cv-panel__menu" aria-hidden="true"></span>
           <section class="cv-block" aria-labelledby="cv-exp">
             <h2 class="cv-block__title" id="cv-exp">Experiência</h2>
             <ol class="timeline" data-slot="experience"></ol>
@@ -116,7 +122,8 @@
             <ol class="timeline" data-slot="education"></ol>
           </section>
         </div>
-        <div class="cv-panel__col cv-panel__col--side">
+        <div class="cv-panel__col cv-panel__col--side" data-theme="navy">
+          <span class="cv-panel__scroll" aria-hidden="true"></span>
           <section class="cv-block" aria-labelledby="cv-soft">
             <h2 class="cv-block__title" id="cv-soft">Software</h2>
             <ul class="software" data-slot="software"></ul>
@@ -134,7 +141,7 @@
     </section>
 
     <!-- TRABALHOS -->
-    <section class="section work" id="trabalhos" aria-labelledby="work-title">
+    <section class="section work" data-theme="canvas" id="trabalhos" aria-labelledby="work-title">
       <div class="container">
         <header class="section__head" data-reveal>
           <p class="section__num" aria-hidden="true">01</p>
@@ -146,20 +153,20 @@
 
         <div class="featured" data-slot="featured" aria-live="polite"></div>
 
-        <h3 class="subhead">Índice de projetos</h3>
+        <h3 class="subhead">Camadas · índice de projetos</h3>
         <ol class="project-index" data-slot="project-index" aria-live="polite">
           <li class="project-index__loading">Carregando projetos…</li>
         </ol>
 
         <div class="curation" data-slot="curation"></div>
 
-        <h3 class="subhead">Galeria</h3>
+        <h3 class="subhead">Pranchetas · galeria</h3>
         <ul class="mosaic" data-slot="gallery" aria-label="Galeria de mídias"></ul>
       </div>
     </section>
 
     <!-- SERVIÇOS -->
-    <section class="section services" id="servicos" aria-labelledby="services-title">
+    <section class="section services" data-theme="blue" id="servicos" aria-labelledby="services-title">
       <div class="container">
         <header class="section__head" data-reveal>
           <p class="section__num" aria-hidden="true">02</p>
@@ -170,11 +177,11 @@
     </section>
 
     <!-- INVESTIMENTO -->
-    <section class="section pricing" id="investimento" aria-labelledby="pricing-title">
+    <section class="section pricing" data-theme="navy" id="investimento" aria-labelledby="pricing-title">
       <div class="container">
         <header class="section__head" data-reveal>
           <p class="section__num" aria-hidden="true">03</p>
-          <h2 class="section__title" id="pricing-title">Investimento</h2>
+          <h2 class="section__title" id="pricing-title">Planos</h2>
           <p class="pricing__disclaimer" role="note" data-slot="pricing-disclaimer"></p>
         </header>
         <div class="pricing__groups" data-slot="pricing"></div>
@@ -183,7 +190,7 @@
     </section>
 
     <!-- CONTATO -->
-    <section class="section contact" id="contato" aria-labelledby="contact-title">
+    <section class="section contact" data-theme="canvas" id="contato" aria-labelledby="contact-title">
       <div class="container contact__grid">
         <header class="section__head" data-reveal>
           <p class="section__num" aria-hidden="true">04</p>
@@ -193,6 +200,7 @@
         </header>
 
         <form class="form" id="contact-form" novalidate data-reveal>
+          <div class="form__panelbar" aria-hidden="true"><span>Propriedades</span><span>Pedido de orçamento</span></div>
           <div class="form__field">
             <label class="form__label" for="f-name">Nome</label>
             <input class="form__input" id="f-name" name="name" type="text" autocomplete="name" required minlength="2" aria-describedby="f-name-err">
@@ -234,7 +242,7 @@
 
   <footer class="site-footer">
     <div class="container site-footer__inner">
-      <h2 class="site-footer__title">Contato</h2>
+      <h2 class="site-footer__title">Contato:</h2>
       <p class="site-footer__copy">© <span data-slot="year">2026</span> <span data-bind="site.name">Chagas</span>. Todos os direitos reservados.</p>
       <ul class="site-footer__links" data-slot="footer-links"></ul>
       <a class="site-footer__top" href="#sobre">Voltar ao topo ↑</a>

@@ -12,7 +12,11 @@ const PH_TEXT = 'A confirmar';
 
 const LINK_LABELS = { behance: 'Behance', pinterest: 'Pinterest', drive: 'Google Drive', tiktok: 'TikTok', threads: 'Threads', instagram: 'Instagram', youtube: 'YouTube', vimeo: 'Vimeo' };
 
-export const initials = (name = '') => name.trim().split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join('') || '·';
+export const initials = (name = '') => {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  if (!words.length) return '·';
+  return (words.length === 1 ? words[0].slice(0, 2) : words[0][0] + words[1][0]).toUpperCase();
+};
 
 function phSpan(value, cls) {
   const ph = isPh(value);
@@ -30,7 +34,7 @@ function renderPhoto(site, profile) {
   } else {
     root.classList.add('is-monogram');
     root.append(h('div', { class: 'monogram', role: 'img', 'aria-label': `Monograma ${initials(site.name)} — foto a confirmar` },
-      h('span', { class: 'monogram__letter', 'aria-hidden': 'true' }, initials(site.name).slice(0, 1))));
+      h('span', { class: 'monogram__letter', 'aria-hidden': 'true' }, initials(site.name))));
   }
 }
 

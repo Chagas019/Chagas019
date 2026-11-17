@@ -23,7 +23,7 @@ function build() {
     h('div', { class: 'lightbox__frame' },
       h('header', { class: 'lightbox__bar' }, titleEl, counter, closeBtn),
       stage,
-      h('footer', { class: 'lightbox__foot' }, prevBtn, caption, nextBtn)));
+      h('footer', { class: 'lightbox__foot' }, prevBtn, caption, h('span', { class: 'lightbox__zoom', 'aria-hidden': 'true' }, '100%'), h('kbd', { class: 'lightbox__esc', 'aria-hidden': 'true' }, 'Esc'), nextBtn)));
   document.body.append(root);
 
   closeBtn.addEventListener('click', close);

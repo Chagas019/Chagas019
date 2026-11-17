@@ -98,3 +98,21 @@ export function shapeOf(w, hh) {
   if (r <= 0.8) return 'portrait';
   return 'square';
 }
+
+/** Overlay de seleção (bounding box + 4 alças + etiqueta W×H). Decorativo. */
+export function selectionOverlay(w, hh) {
+  const box = h('span', { class: 'select-box', 'aria-hidden': 'true' },
+    h('i', { class: 'select-box__h select-box__h--tl' }), h('i', { class: 'select-box__h select-box__h--tr' }),
+    h('i', { class: 'select-box__h select-box__h--bl' }), h('i', { class: 'select-box__h select-box__h--br' }));
+  if (w && hh) box.append(h('span', { class: 'select-box__dims' }, `${w} × ${hh}`));
+  return box;
+}
+
+/** Proporção legível: 16:9, 3:2, 9:16… (aproximação), ou W×H. */
+export function ratioLabel(w, hh) {
+  if (!w || !hh) return '';
+  const r = w / hh;
+  const known = [[16 / 9, '16:9'], [9 / 16, '9:16'], [3 / 2, '3:2'], [2 / 3, '2:3'], [4 / 5, '4:5'], [1, '1:1'], [21 / 9, '21:9'], [4 / 3, '4:3'], [1.91, '1.91:1']];
+  const hit = known.find(([k]) => Math.abs(k - r) / k < 0.04);
+  return hit ? hit[1] : `${r.toFixed(2)}:1`;
+}

@@ -1,5 +1,5 @@
 import { h, slot, clear } from '../dom.js';
-import { picture, stillOf, shapeOf } from './media.js';
+import { picture, stillOf, shapeOf, selectionOverlay, ratioLabel } from './media.js';
 import { CONFIG } from '../config.js';
 
 /**
@@ -16,7 +16,9 @@ export function renderGallery({ projects }, filter, onOpen) {
     p.media.forEach((m, idx) => {
       const still = stillOf(m);
       const shape = shapeOf(m.w || still?.w, m.h || still?.h);
-      root.append(h('li', { class: `mosaic__tile mosaic__tile--${shape} mosaic__tile--${rhythm[n++ % rhythm.length]}`, 'data-reveal': true },
+      const W = m.w || still?.w; const H = m.h || still?.h;
+      root.append(h('li', { class: `mosaic__tile artboard mosaic__tile--${shape} mosaic__tile--${rhythm[n++ % rhythm.length]}`, 'data-reveal': true },
+        h('span', { class: 'artboard__label', 'aria-hidden': 'true' }, `${p.title} — ${ratioLabel(W, H)}`),
         h('button', {
           class: 'mosaic__btn', type: 'button', 'data-lightbox': true,
           'aria-label': `${m.type === 'video' ? 'Assistir vídeo' : 'Ampliar imagem'}: ${m.alt || p.title}`,
@@ -24,7 +26,8 @@ export function renderGallery({ projects }, filter, onOpen) {
         },
           picture({ ...still, alt: m.alt || '' }, { sizes: CONFIG.sizes.mosaic }),
           m.type === 'video' ? h('span', { class: 'badge badge--play', 'aria-hidden': 'true' }, '▶') : null,
-          h('span', { class: 'mosaic__caption' }, p.title))));
+          h('span', { class: 'mosaic__caption' }, p.title),
+          selectionOverlay(W, H))));
     });
   }
   if (!n) root.append(h('li', { class: 'mosaic__empty' }, 'Sem mídias publicadas para este filtro.'));

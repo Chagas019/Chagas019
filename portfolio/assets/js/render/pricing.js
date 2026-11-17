@@ -52,8 +52,10 @@ export function renderPricing(pricing) {
       h('ul', { class: 'tiers' }, s.tiers.map((t) => {
         const pr = formatPrice(t.price_from, t.unit, cur);
         return h('li', { class: `tier${t.highlight ? ' tier--highlight' : ''}`, 'data-pricing-tier': t.name },
-          t.highlight ? h('p', { class: 'tier__flag' }, 'Mais escolhido') : null,
-          h('h4', { class: 'tier__name' }, t.name),
+          h('div', { class: 'tier__layer' },
+            h('span', { class: 'tier__eye', 'aria-hidden': 'true' }),
+            h('h4', { class: 'tier__name' }, t.name),
+            t.highlight ? h('p', { class: 'tier__flag' }, 'Recomendado') : null),
           h('p', { class: 'tier__price' }, h('span', { class: 'tier__from' }, 'a partir de '), h('strong', { class: 'tier__value' }, pr.value),
             pr.unit ? h('span', { class: 'tier__unit' }, ` ${pr.unit}`) : null),
           t.includes?.length ? h('ul', { class: 'tier__includes' }, t.includes.map((x) => h('li', {}, x))) : null,

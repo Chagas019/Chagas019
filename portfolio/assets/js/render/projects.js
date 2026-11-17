@@ -1,5 +1,5 @@
 import { h, slot, clear } from '../dom.js';
-import { picture, stillOf, shapeOf } from './media.js';
+import { picture, stillOf, shapeOf, selectionOverlay, ratioLabel } from './media.js';
 import { CONFIG } from '../config.js';
 
 const catLabel = (cats, id) => cats.find((c) => c.id === id)?.label || id || '';
@@ -30,10 +30,12 @@ export function renderFeatured({ projects, categories }, filter, onOpen) {
   if (!p) return;
   const still = stillOf(p.cover || p.media[0]);
   const shape = shapeOf(still?.w, still?.h);
-  root.append(h('article', { class: `featured__item featured__item--${shape}`, 'data-reveal': true },
+  root.append(h('article', { class: `featured__item artboard featured__item--${shape}`, 'data-reveal': true },
+    h('span', { class: 'artboard__label', 'aria-hidden': 'true' }, `Destaque — ${ratioLabel(still?.w, still?.h)}`),
     h('button', { class: 'featured__media', type: 'button', 'data-lightbox': true, 'aria-label': `Abrir galeria: ${p.title}`, onclick: (e) => onOpen(p, 0, e.currentTarget) },
       picture(still, { sizes: CONFIG.sizes.featured }),
-      p.media.some((m) => m.type === 'video') ? h('span', { class: 'badge badge--video' }, 'Vídeo') : null),
+      p.media.some((m) => m.type === 'video') ? h('span', { class: 'badge badge--video' }, 'Vídeo') : null,
+      selectionOverlay(still?.w, still?.h)),
     h('div', { class: 'featured__meta' },
       h('p', { class: 'eyebrow' }, [catLabel(categories, p.category), p.year].filter(Boolean).join(' · ')),
       h('h3', { class: 'featured__title' }, p.title),
