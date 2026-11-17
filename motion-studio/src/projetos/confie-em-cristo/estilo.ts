@@ -13,7 +13,7 @@ export const gradFe = {
   /** Ouro: dourado → dourado claro → âmbar (paradas vizinhas, sem banding). Texto-chave / cruz. */
   ouro: `linear-gradient(180deg, ${luzFe.douradoClaro} 0%, ${luzFe.dourado} 55%, ${luzFe.ambar} 100%)`,
   /** Amanhecer (cenas 4–6): âmbar quente no alto → marrom → preto. */
-  amanhecer: `radial-gradient(110% 70% at 50% 30%, #6B4A22 0%, #2A1A0C 50%, #0A0705 100%)`,
+  amanhecer: `radial-gradient(110% 70% at 50% 30%, #4A3318 0%, #1F150B 50%, #0A0705 100%)`,
 } as const;
 
 /** Grão e vinheta por fase do arco (interpolar entre cenas). Grão 0.04–0.08 · vinheta 0.3–0.6. */

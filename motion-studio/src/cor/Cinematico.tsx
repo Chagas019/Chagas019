@@ -146,8 +146,8 @@ export const FundoProfundo: React.FC<FundoProfundoProps> = ({luz = 0, origem = {
   const l = clamp01(luz);
   const cx = origem.x + noise2D(`${seed}-x`, t / 400, 0) * deriva;
   const cy = origem.y + noise2D(`${seed}-y`, 0, t / 400) * deriva;
-  const centro = interpolateColors(l, [0, 0.5, 1], [luzFe.azulNoite, '#2A2A35', '#6B4A22']);
-  const meio = interpolateColors(l, [0, 0.5, 1], [luzFe.azulProfundo, '#11131C', '#2A1A0C']);
+  const centro = interpolateColors(l, [0, 0.5, 1], [luzFe.azulNoite, '#24252F', '#4A3318']);
+  const meio = interpolateColors(l, [0, 0.5, 1], [luzFe.azulProfundo, '#101219', '#1F150B']);
   const borda = interpolateColors(l, [0, 1], [luzFe.preto, '#0A0705']);
   return (
     <AbsoluteFill
@@ -213,7 +213,7 @@ export const LuzVolumetrica: React.FC<LuzVolumetricaProps> = ({
         const jitter = (random(`${seed}-a-${i}`) - 0.5) * (0.6 / Math.max(1, feixes));
         return {
           rel: base + jitter - 0.5, // -0.5..0.5 dentro da abertura
-          largura: 1.2 + random(`${seed}-w-${i}`) * 3.2, // graus
+          largura: 2.2 + random(`${seed}-w-${i}`) * 4.5, // graus
           peso: 0.45 + random(`${seed}-p-${i}`) * 0.55,
         };
       }),
@@ -231,7 +231,7 @@ export const LuzVolumetrica: React.FC<LuzVolumetricaProps> = ({
   });
   raios.forEach((r, i) => {
     const centro = 10 + abertura / 2 + r.rel * abertura;
-    const a = intens[i] * 0.55 * I;
+    const a = intens[i] * 0.45 * I;
     stops.push(`transparent ${(centro - r.largura).toFixed(2)}deg`);
     stops.push(`${rgba(cor, a)} ${centro.toFixed(2)}deg`);
     stops.push(`transparent ${(centro + r.largura).toFixed(2)}deg`);
@@ -391,26 +391,27 @@ export type GradacaoCorProps = {
 };
 
 /**
- * Overlay de grading. Coloque por CIMA da cena (antes de Grão/Vinheta).
+ * Overlay de grading. Coloque por CIMA do fundo + luzes e ABAIXO da tipografia (preserva o branco quente do texto);
+ * Grão e Vinheta vão por último, acima de tudo.
  * - `lighten` com cor escura: tinge apenas as sombras (pixels mais escuros que a cor).
  * - `multiply` com cor quase branca: tinge apenas as altas.
  * - `soft-light`: temperatura geral.
  */
-export const GradacaoCor: React.FC<GradacaoCorProps> = ({mistura = 0, forca = 1, origemLuz = {x: 0.5, y: 0.3}}) => {
+export const GradacaoCor: React.FC<GradacaoCorProps> = ({mistura = 0, forca = 0.85, origemLuz = {x: 0.5, y: 0.3}}) => {
   const m = clamp01(mistura);
   const f = clamp01(forca);
   const sombra = interpolateColors(m, [0, 1], [luzFe.azulSombra, luzFe.sombraQuente]);
   const alta = interpolateColors(m, [0, 1], [luzFe.altaFria, luzFe.altaQuente]);
-  const temperatura = interpolateColors(m, [0, 0.5, 1], ['#1B3358', '#5A4A3A', '#C9862E']);
+  const temperatura = interpolateColors(m, [0, 0.5, 1], ['#1B3358', '#4A4038', '#A8763A']);
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
-      <AbsoluteFill style={{background: sombra, mixBlendMode: 'lighten', opacity: f * interpolate(m, [0, 1], [0.9, 0.6])}} />
-      <AbsoluteFill style={{background: alta, mixBlendMode: 'multiply', opacity: f}} />
-      <AbsoluteFill style={{background: temperatura, mixBlendMode: 'soft-light', opacity: f * 0.45}} />
+      <AbsoluteFill style={{background: sombra, mixBlendMode: 'lighten', opacity: f * interpolate(m, [0, 1], [0.45, 0.35])}} />
+      <AbsoluteFill style={{background: alta, mixBlendMode: 'multiply', opacity: f * 0.6}} />
+      <AbsoluteFill style={{background: temperatura, mixBlendMode: 'soft-light', opacity: f * 0.3}} />
       {m > 0 ? (
         <AbsoluteFill
           style={{
-            background: `radial-gradient(90% 60% at ${origemLuz.x * 100}% ${origemLuz.y * 100}%, ${rgba(luzFe.ambar, 0.18 * m * f)} 0%, transparent 70%)`,
+            background: `radial-gradient(90% 60% at ${origemLuz.x * 100}% ${origemLuz.y * 100}%, ${rgba(luzFe.ambar, 0.12 * m * f)} 0%, transparent 70%)`,
             mixBlendMode: 'screen',
           }}
         />
