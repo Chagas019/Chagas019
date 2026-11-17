@@ -1,7 +1,7 @@
 """SANTORAMA — pipeline de narração.
 
 Lê episodes/<ep>/script/narration.json, gera cada fala com TTS neural
-(Kokoro, local) ou usa WAVs já existentes (ex.: ElevenLabs exportado em
+(Piper ou Kokoro, local) ou usa WAVs já existentes (ex.: ElevenLabs exportado em
 episodes/<ep>/audio/lines/NN.wav), monta a faixa de narração com as pausas
 dramáticas e grava timings.json (cenas + legendas palavra a palavra) para o Remotion.
 
@@ -50,7 +50,20 @@ def main():
     cfg = json.load(open(os.path.join(ep, "script", "narration.json"), encoding="utf-8"))
     lines_dir = os.path.join(ep, "audio", "lines"); os.makedirs(lines_dir, exist_ok=True)
 
-    if not a.use_existing:
+    if not a.use_existing and cfg["voice"]["engine"] == "piper":
+        import wave
+        from piper import PiperVoice, SynthesisConfig
+        v = cfg["voice"]
+        vo = PiperVoice.load(os.path.join(a.model_dir, v["voice"] + ".onnx"))
+        sc = SynthesisConfig(length_scale=v.get("length_scale", 1.12), noise_scale=v.get("noise_scale", 0.75), noise_w_scale=v.get("noise_w", 0.9))
+        for i, ln in enumerate(cfg["lines"]):
+            tmp = os.path.join(lines_dir, f"{i:02d}_raw.wav")
+            with wave.open(tmp, "wb") as w:
+                vo.synthesize_wav(ln["say"], w, syn_config=sc)
+            x, sr = sf.read(tmp, dtype="float32"); os.remove(tmp)
+            sf.write(os.path.join(lines_dir, f"{i:02d}.wav"), resample(x, sr), SR)
+            print("tts", i, ln["say"][:50])
+    elif not a.use_existing:
         from kokoro_onnx import Kokoro
         k = Kokoro(os.path.join(a.model_dir, "kokoro-v1.0.onnx"), os.path.join(a.model_dir, "voices-v1.0.bin"))
         v = cfg["voice"]
