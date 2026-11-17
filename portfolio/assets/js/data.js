@@ -43,7 +43,15 @@ export function normalizePortfolio(raw) {
       cover: typed(pr.cover && pr.cover.src ? pr.cover : arr(pr.media)[0]) || null,
     }))
     .sort((a, b) => (Number(b.featured) - Number(a.featured)) || ((b.year || 0) - (a.year || 0)));
-  return { site, categories, projects, missing: arr(p.missing) };
+  const pf = p.profile || {};
+  const profile = {
+    role: pf.role || '', photo: pf.photo || null, photo_note: pf.photo_note || '',
+    experience: arr(pf.experience), education: arr(pf.education),
+    software: arr(pf.software), software_note: pf.software_note || '',
+    skills: arr(pf.skills), skills_note: pf.skills_note || '',
+    links: pf.links && typeof pf.links === 'object' ? pf.links : {},
+  };
+  return { site, profile, categories, projects, missing: arr(p.missing) };
 }
 
 export function normalizePricing(raw) {

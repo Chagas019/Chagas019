@@ -7,7 +7,10 @@ export const igLink = (user) => (user ? `https://instagram.com/${String(user).re
 export function bindSite(site) {
   document.querySelectorAll('[data-bind^="site."]').forEach((node) => {
     const v = site[node.dataset.bind.slice(5)];
-    if (v) node.textContent = v;
+    if (!v) return;
+    const ph = /^\s*a confirmar/i.test(v);
+    node.textContent = ph ? 'A confirmar' : v;
+    node.classList.toggle('is-placeholder', ph);
   });
   const y = slot('year'); if (y) y.textContent = String(new Date().getFullYear());
   if (site.name) document.title = `${site.name} — Fotografia e Audiovisual`;
@@ -45,7 +48,7 @@ export function updateJsonLd(site) {
     if (site.name) { person.name = site.name; service.name = `${site.name} — Fotografia e Audiovisual`; }
     if (site.email) service.email = site.email;
     if (site.whatsapp) service.telephone = `+${String(site.whatsapp).replace(/\D/g, '')}`;
-    if (site.location) service.address.addressLocality = site.location;
+    if (site.location && !/^\s*a confirmar/i.test(site.location)) service.address.addressLocality = site.location;
     if (site.instagram) person.sameAs = [igLink(site.instagram)];
     node.textContent = JSON.stringify(ld);
   } catch { /* JSON-LD inválido: ignora */ }

@@ -10,44 +10,180 @@
     "instagram": "exemplo"
   },
   "categories": [
-    { "id": "audiovisual", "label": "Audiovisual", "intro": "Vídeo, motion e finalização." },
-    { "id": "pos-producao", "label": "Pós-produção", "intro": "Tratamento, restauração e upscale." },
-    { "id": "ilustracao", "label": "Ilustração & arte", "intro": "Peças autorais e retratos ilustrados." },
-    { "id": "ensaios", "label": "Ensaios fotográficos", "intro": "Retrato, moda e editorial." }
+    {
+      "id": "audiovisual",
+      "label": "Audiovisual",
+      "intro": "Vídeo, motion e finalização."
+    },
+    {
+      "id": "pos-producao",
+      "label": "Pós-produção",
+      "intro": "Tratamento, restauração e upscale."
+    },
+    {
+      "id": "ilustracao",
+      "label": "Ilustração & arte",
+      "intro": "Peças autorais e retratos ilustrados."
+    },
+    {
+      "id": "ensaios",
+      "label": "Ensaios fotográficos",
+      "intro": "Retrato, moda e editorial."
+    }
   ],
   "projects": [
     {
-      "id": "moto-personagem", "title": "Moto / Personagem", "category": "audiovisual", "year": 2025,
-      "client": "Projeto autoral", "description": "Peça vertical em vídeo com personagem e moto, pensada para redes.",
-      "role": "Direção, edição, finalização", "featured": true, "status": "published",
-      "cover": { "src": "../resultado/abertura-computador.jpg", "alt": "Quadro de abertura em formato desktop", "w": 1646, "h": 1456 },
+      "id": "moto-personagem",
+      "title": "Moto / Personagem",
+      "category": "audiovisual",
+      "year": 2025,
+      "client": "Projeto autoral",
+      "description": "Peça vertical em vídeo com personagem e moto, pensada para redes.",
+      "role": "Direção, edição, finalização",
+      "featured": true,
+      "status": "published",
+      "cover": {
+        "src": "../resultado/abertura-computador.jpg",
+        "alt": "Quadro de abertura em formato desktop",
+        "w": 1646,
+        "h": 1456
+      },
       "media": [
-        { "type": "video", "src": "../resultado/moto-personagem.mp4", "poster": "media/resultado-moto-personagem-poster.jpg", "alt": "Vídeo vertical: personagem com moto", "w": 1180, "h": 2556 },
-        { "type": "image", "src": "../resultado/abertura-celular.jpg", "alt": "Abertura em formato celular", "w": 1678, "h": 590 },
-        { "type": "image", "src": "../resultado/abertura-computador.jpg", "alt": "Abertura em formato computador", "w": 1646, "h": 1456 }
+        {
+          "type": "video",
+          "src": "../resultado/moto-personagem.mp4",
+          "poster": "media/resultado-moto-personagem-poster.jpg",
+          "alt": "Vídeo vertical: personagem com moto",
+          "w": 1180,
+          "h": 2556
+        },
+        {
+          "type": "image",
+          "src": "../resultado/abertura-celular.jpg",
+          "alt": "Abertura em formato celular",
+          "w": 1678,
+          "h": 590
+        },
+        {
+          "type": "image",
+          "src": "../resultado/abertura-computador.jpg",
+          "alt": "Abertura em formato computador",
+          "w": 1646,
+          "h": 1456
+        }
       ]
     },
     {
-      "id": "gameplay-4k", "title": "Gameplay 4K — remaster", "category": "pos-producao", "year": 2025,
-      "client": "Projeto autoral", "description": "Upscale e realce de gameplay para 4K, com comparativo antes/depois.",
-      "role": "Pós-produção, upscale, color", "featured": true, "status": "published",
-      "cover": { "src": "../videos/comparacao_antes_depois.jpg", "alt": "Comparativo antes e depois do realce", "w": 2560, "h": 900 },
+      "id": "gameplay-4k",
+      "title": "Gameplay 4K — remaster",
+      "category": "pos-producao",
+      "year": 2025,
+      "client": "Projeto autoral",
+      "description": "Upscale e realce de gameplay para 4K, com comparativo antes/depois.",
+      "role": "Pós-produção, upscale, color",
+      "featured": true,
+      "status": "published",
+      "cover": {
+        "src": "../videos/comparacao_antes_depois.jpg",
+        "alt": "Comparativo antes e depois do realce",
+        "w": 2560,
+        "h": 900
+      },
       "media": [
-        { "type": "video", "src": "../videos/gameplay_4k_enhanced_leve.mp4", "poster": "media/videos-gameplay-4k-enhanced-leve-poster.jpg", "alt": "Trecho do gameplay remasterizado em 4K", "w": 3840, "h": 1772 },
-        { "type": "image", "src": "../videos/comparacao_antes_depois.jpg", "alt": "Antes e depois lado a lado", "w": 2560, "h": 900 }
+        {
+          "type": "video",
+          "src": "../videos/gameplay_4k_enhanced_leve.mp4",
+          "poster": "media/videos-gameplay-4k-enhanced-leve-poster.jpg",
+          "alt": "Trecho do gameplay remasterizado em 4K",
+          "w": 3840,
+          "h": 1772
+        },
+        {
+          "type": "image",
+          "src": "../videos/comparacao_antes_depois.jpg",
+          "alt": "Antes e depois lado a lado",
+          "w": 2560,
+          "h": 900
+        }
       ]
     },
     {
-      "id": "carlo-acutis", "title": "Carlo Acutis — ilustração", "category": "ilustracao", "year": 2024,
-      "client": "Comunidade", "description": "Retrato ilustrado a partir de fotografia de referência.",
-      "role": "Ilustração digital", "featured": false, "status": "published",
-      "cover": { "src": "../midia/carlo-acutis-ilustracao.webp", "alt": "Ilustração de Carlo Acutis", "w": 900, "h": 1600 },
+      "id": "carlo-acutis",
+      "title": "Carlo Acutis — ilustração",
+      "category": "ilustracao",
+      "year": 2024,
+      "client": "Comunidade",
+      "description": "Retrato ilustrado a partir de fotografia de referência.",
+      "role": "Ilustração digital",
+      "featured": false,
+      "status": "published",
+      "cover": {
+        "src": "../midia/carlo-acutis-ilustracao.webp",
+        "alt": "Ilustração de Carlo Acutis",
+        "w": 900,
+        "h": 1600
+      },
       "media": [
-        { "type": "image", "src": "../midia/carlo-acutis-ilustracao.webp", "alt": "Ilustração de Carlo Acutis", "w": 900, "h": 1600 }
+        {
+          "type": "image",
+          "src": "../midia/carlo-acutis-ilustracao.webp",
+          "alt": "Ilustração de Carlo Acutis",
+          "w": 900,
+          "h": 1600
+        }
       ]
     }
   ],
   "missing": [
-    { "category": "ensaios", "note": "Ensaios fotográficos em curadoria — novas séries entram em breve." }
-  ]
+    {
+      "category": "ensaios",
+      "note": "Ensaios fotográficos em curadoria — novas séries entram em breve."
+    }
+  ],
+  "profile": {
+    "role": "Fotógrafo & Videomaker",
+    "photo": null,
+    "photo_note": "Fixture: sem foto → monograma",
+    "experience": [
+      {
+        "period": "2024 — atual",
+        "title": "Fotógrafo freelancer (exemplo)",
+        "org": "Autônomo",
+        "status": "sample"
+      },
+      {
+        "period": "A CONFIRMAR",
+        "title": "A CONFIRMAR",
+        "org": "A CONFIRMAR",
+        "status": "placeholder"
+      }
+    ],
+    "education": [
+      {
+        "period": "A CONFIRMAR",
+        "title": "A CONFIRMAR",
+        "status": "placeholder"
+      }
+    ],
+    "software": [
+      "Lightroom",
+      "Premiere Pro",
+      "DaVinci Resolve"
+    ],
+    "software_note": "",
+    "skills": [
+      "Fotografia",
+      "Edição de vídeo",
+      "Color grading",
+      "Motion"
+    ],
+    "skills_note": "",
+    "links": {
+      "behance": "https://www.behance.net/exemplo",
+      "pinterest": "",
+      "drive": "",
+      "tiktok": "",
+      "threads": ""
+    }
+  }
 }

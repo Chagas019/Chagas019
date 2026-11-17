@@ -1,69 +1,102 @@
 /* ==========================================================================
-   CHAGAS — Design Tokens  (fonte de verdade: portfolio/docs/DESIGN_SYSTEM.md)
-   Conceito: "Sala escura" — editorial cinematográfico, preto quente,
-   papel osso e um único acento tungstênio (luz de set).
-   NÃO renomear tokens sem atualizar o DESIGN_SYSTEM.md.
+   CHAGAS — Design Tokens  v2 "Estúdio / Artboard"
+   Fonte de verdade: portfolio/docs/DESIGN_SYSTEM.md
+   Conceito: o site inteiro é a janela de um app de design (chrome grafite,
+   barra de ferramentas, canvas cinza claro, painéis azul-cobalto).
+   Nomes da v1 foram mantidos (valores mudaram); novos tokens adicionados.
 
    Google Fonts — colocar no <head> de cada HTML (NÃO usar @import):
    <link rel="preconnect" href="https://fonts.googleapis.com">
    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400..800;1,400..600&family=Pacifico&family=JetBrains+Mono:wght@400;500&display=swap">
    ========================================================================== */
 
 :root {
   color-scheme: dark;
 
-  /* ---------- Cores: base (primitivas) ---------- */
-  --c-ink:        #0C0B0A; /* fundo principal — preto quente */
-  --c-ink-2:      #151412; /* superfície elevada / cards de preço */
-  --c-ink-3:      #1E1C19; /* hover de superfície, inputs */
-  --c-line:       #2E2B27; /* filetes 1px (decorativo, não texto) */
-  --c-line-strong:#6E675D; /* bordas de input (≥3:1 em ink/ink-2, WCAG 1.4.11) */
-  --c-paper:      #EDE6DA; /* texto principal / seções claras (osso) */
-  --c-paper-dim:  #A8A095; /* texto secundário */
-  --c-paper-mute: #878075; /* metadados, legendas (AA em ink e ink-2) */
-  --c-accent:     #E8692E; /* tungstênio — acento único, uso <5% da tela */
-  --c-accent-hi:  #F07A3E; /* hover do acento */
-  --c-accent-deep:#9A3E16; /* acento sobre fundo claro (paper) */
-  --c-on-accent:  #0C0B0A; /* texto sobre botão acento */
-  --c-error:      #D9564A;
-  --c-success:    #6FA37A;
+  /* ---------- Primitivas: chrome (moldura do app) ---------- */
+  --c-chrome:   #262626; /* fundo da janela / footer */
+  --c-chrome-2: #2F2F2F; /* barra de ferramentas */
+  --c-chrome-3: #3A3A3A; /* hover de ferramenta, divisórias */
+  --c-dot-red:    #FF5F57; /* semáforo macOS (decorativo) */
+  --c-dot-yellow: #FEBC2E;
+  --c-dot-green:  #28C840;
 
-  /* ---------- Cores: semânticas ---------- */
-  --c-bg:          var(--c-ink);
-  --c-surface:     var(--c-ink-2);
-  --c-surface-2:   var(--c-ink-3);
-  --c-text:        var(--c-paper);
-  --c-text-2:      var(--c-paper-dim);
-  --c-text-3:      var(--c-paper-mute);
-  --c-border:      var(--c-line);
-  --c-focus:       var(--c-accent);
-  --c-selection:   rgba(232, 105, 46, .35);
-  --c-scrim:       rgba(12, 11, 10, .92);   /* fundo do lightbox */
-  --c-veil:        linear-gradient(180deg, rgba(12,11,10,0) 40%, rgba(12,11,10,.85) 100%); /* legibilidade sobre imagem */
-  --c-glow:        radial-gradient(60% 50% at 50% 100%, rgba(232,105,46,.18), rgba(232,105,46,0) 70%); /* "luz de set" */
-  /* Seção invertida (osso) */
-  --c-inv-bg:      var(--c-paper);
-  --c-inv-text:    var(--c-ink);
-  --c-inv-text-2:  #5A544C;
-  --c-inv-accent:  var(--c-accent-deep);
+  /* ---------- Primitivas: canvas (prancheta clara) ---------- */
+  --c-canvas:   #F2F2F2; /* seção clara principal */
+  --c-canvas-2: #E6E6E6; /* artboard vazio, placeholder, hover */
+  --c-white:    #FFFFFF;
+  --c-ink:      #1A1A1A; /* texto sobre canvas */
+  --c-ink-2:    #555555; /* texto secundário sobre canvas/branco */
+  --c-ink-3:    #6B6B6B; /* metadados sobre canvas (AA) */
+
+  /* ---------- Primitivas: azul ---------- */
+  --c-blue:       #0A4FD9; /* cobalto — cor da marca */
+  --c-blue-deep:  #083DA8; /* hover de botão azul, topo do gradiente */
+  --c-navy:       #14213D; /* base do gradiente azul→navy */
+  --c-blue-tint:  #C4D7FF; /* texto claro sobre azul (períodos, organizações) */
+  --c-blue-light: #7FA6FF; /* azul legível sobre chrome/navy (links) */
+  --c-select:     #D3E1FF; /* preenchimento de caixa de texto selecionada */
+  --c-wave:       rgba(255, 255, 255, .09); /* linhas orgânicas no fundo azul */
+  --c-cream:      #FFF6E3; /* iniciais em script atrás do retrato */
+
+  /* ---------- Texto sobre fundos escuros (nomes v1 mantidos) ---------- */
+  --c-paper:      #FFFFFF; /* texto principal sobre chrome/azul/navy */
+  --c-paper-dim:  #A3A3A3; /* secundário sobre chrome */
+  --c-paper-mute: #8F8F8F; /* metadados sobre chrome (AA só em #262626) */
+
+  /* ---------- Acento (alias v1 → azul) ---------- */
+  --c-accent:      var(--c-blue);
+  --c-accent-hi:   var(--c-blue-deep);  /* hover ESCURECE (branco 9.36:1) */
+  --c-accent-deep: var(--c-blue-deep);
+  --c-on-accent:   #FFFFFF;
+  --c-error:       #B42318; /* sobre canvas */
+  --c-error-dark:  #FF8F87; /* sobre chrome/navy */
+  --c-success:     #176F3D; /* sobre canvas */
+
+  /* Filetes */
+  --c-line:        #D9D9D9; /* filete decorativo no canvas */
+  --c-line-strong: #6B6B6B; /* borda de input no canvas (≥3:1) */
+  --c-line-dark:   #3A3A3A; /* filete no chrome */
+
+  /* ---------- Semânticas (padrão = chrome) ---------- */
+  --c-bg:        var(--c-chrome);
+  --c-surface:   var(--c-chrome-2);
+  --c-surface-2: var(--c-chrome-3);
+  --c-text:      var(--c-paper);
+  --c-text-2:    var(--c-paper-dim);
+  --c-text-3:    var(--c-paper-mute);
+  --c-border:    var(--c-line-dark);
+  --c-link:      var(--c-blue-light);
+  --c-focus:     var(--c-blue-light);
+  --c-selection: rgba(10, 79, 217, .35);
+  --c-scrim:     rgba(20, 20, 20, .92); /* lightbox */
+  --c-gradient-panel: linear-gradient(180deg, var(--c-blue) 0%, var(--c-navy) 100%);
+  --c-veil:      linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,.6) 100%);
+  /* Compat v1 */
+  --c-glow:      none;
+  --c-inv-bg:    var(--c-canvas);
+  --c-inv-text:  var(--c-ink);
+  --c-inv-text-2:var(--c-ink-2);
+  --c-inv-accent:var(--c-blue);
 
   /* ---------- Tipografia ---------- */
-  --f-display: "Archivo", "Arial Narrow", system-ui, sans-serif; /* usar com --fw-display + --fstretch-display */
-  --f-body:    "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --f-serif:   "Instrument Serif", "Times New Roman", serif;    /* acentos autorais em itálico */
-  --f-mono:    "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace; /* timecode, índices, metadados */
+  --f-display: "Inter Tight", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --f-body:    "Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-script:  "Pacifico", "Brush Script MT", cursive; /* SÓ iniciais gigantes decorativas */
+  --f-serif:   var(--f-script); /* compat v1 — não usar em texto novo */
+  --f-mono:    "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace; /* rótulos de app: W×H, %, camadas */
 
-  --fstretch-display: 72%;  /* font-stretch p/ títulos condensados */
+  --fstretch-display: 100%; /* Inter Tight não tem eixo de largura; mantido p/ compat */
   --fstretch-body:    100%;
-  --fw-light:   300;
+  --fw-light:   400;
   --fw-regular: 400;
   --fw-medium:  500;
   --fw-semi:    600;
   --fw-bold:    700;
   --fw-display: 800;
 
-  /* Escala fluida — 360px → 1600px (razão ~1.25 mobile / ~1.414 desktop) */
+  /* Escala fluida 360 → 1600px */
   --fs-mono:  clamp(0.6875rem, 0.66rem + 0.12vw, 0.75rem);  /* 11–12 */
   --fs-xs:    clamp(0.75rem,  0.72rem + 0.15vw, 0.8125rem); /* 12–13 */
   --fs-sm:    clamp(0.875rem, 0.85rem + 0.12vw, 0.9375rem); /* 14–15 */
@@ -72,19 +105,20 @@
   --fs-xl:    clamp(1.375rem, 1.2rem + 0.8vw,   2rem);      /* 22–32 */
   --fs-2xl:   clamp(1.75rem,  1.4rem + 1.6vw,   3rem);      /* 28–48 */
   --fs-3xl:   clamp(2.25rem,  1.6rem + 3vw,     4.5rem);    /* 36–72 */
-  --fs-4xl:   clamp(3rem,     1.9rem + 5vw,     7rem);      /* 48–112 */
-  --fs-hero:  clamp(3.5rem,   1.5rem + 9.5vw,   12rem);     /* 56–192 */
+  --fs-4xl:   clamp(2.75rem,  1.8rem + 4.4vw,   6rem);      /* 44–96 */
+  --fs-hero:  clamp(3rem,     1.6rem + 6.5vw,   8.5rem);    /* 48–136 nome */
+  --fs-script:clamp(10rem,    6rem + 18vw,      28rem);     /* iniciais cream */
 
-  --lh-tight:   0.88;  /* display condensado */
-  --lh-snug:    1.1;
-  --lh-normal:  1.5;
-  --lh-relaxed: 1.65;
-  --ls-display: -0.02em;
-  --ls-tight:   -0.01em;
-  --ls-normal:  0;
-  --ls-caps:    0.14em; /* rótulos uppercase / mono */
-  --measure:    62ch;   /* largura máx. de parágrafo */
-  --measure-sm: 42ch;
+  --lh-tight:   0.95;
+  --lh-snug:    1.12;
+  --lh-normal:  1.45;
+  --lh-relaxed: 1.55;
+  --ls-display: -0.035em;
+  --ls-tight:   -0.02em;
+  --ls-normal:  -0.005em;
+  --ls-caps:    0.08em;
+  --measure:    58ch;
+  --measure-sm: 40ch;
 
   /* ---------- Espaçamento (base 4px) ---------- */
   --sp-0: 0;
@@ -99,29 +133,37 @@
   --sp-9: 6rem;     /* 96 */
   --sp-10: 8rem;    /* 128 */
   --sp-11: 12rem;   /* 192 */
-  /* Fluidos de seção */
-  --sp-section:    clamp(5rem, 3rem + 8vw, 11rem);
-  --sp-section-sm: clamp(3rem, 2rem + 4vw, 6rem);
-  --sp-gutter:     clamp(1rem, 0.5rem + 2vw, 2.5rem);  /* margem lateral da página */
+  --sp-section:    clamp(4rem, 2.5rem + 6vw, 9rem);
+  --sp-section-sm: clamp(2.5rem, 1.8rem + 3vw, 5rem);
+  --sp-gutter:     clamp(1rem, 0.5rem + 2vw, 2.5rem);   /* margem interna dos painéis */
+  --sp-frame:      clamp(0.5rem, 0.2rem + 1.2vw, 1.25rem); /* moldura chrome ao redor do canvas */
 
   /* ---------- Grid ---------- */
   --grid-cols:   12;
   --grid-gap:    clamp(0.75rem, 0.4rem + 1.4vw, 1.5rem);
-  --grid-max:    1600px;
-  --grid-narrow: 960px;
-  --header-h:    clamp(3.5rem, 3rem + 1vw, 4.5rem);
-  /* breakpoints (referência p/ media queries — CSS vars não funcionam em @media):
-     --bp-sm 600px | --bp-md 900px | --bp-lg 1200px | --bp-xl 1600px */
+  --grid-max:    1440px;
+  --grid-narrow: 880px;
+  --header-h:    clamp(3.5rem, 3rem + 1.5vw, 5rem);  /* barra de ferramentas */
+  --toolbar-btn: clamp(2.5rem, 2.2rem + 1vw, 3.25rem); /* botão de ferramenta (≥44px no desktop) */
+  /* breakpoints (não funcionam como var em @media): 600 / 900 / 1200 / 1440px */
 
   /* ---------- Raios, bordas, sombras ---------- */
-  --r-0:    0;      /* padrão: cantos retos (fotografia) */
-  --r-xs:   2px;    /* inputs, tags */
-  --r-pill: 999px;  /* só botões-pílula e chips de filtro */
-  --bw-hair: 1px;
-  --bw-focus: 2px;
-  --shadow-lift: 0 30px 60px -30px rgba(0, 0, 0, .8);
+  --r-0:     0;
+  --r-xs:    6px;   /* inputs, alças */
+  --r-sm:    10px;  /* botões de ferramenta, thumbs */
+  --r-tile:  14px;  /* ícones de software (app tiles) */
+  --r-card:  clamp(16px, 1rem + 0.6vw, 24px); /* retrato, artboards */
+  --r-panel: clamp(24px, 1rem + 2vw, 40px);   /* canvas / painel azul / janela */
+  --r-pill:  999px;
+  --bw-hair:   1px;
+  --bw-select: 2px;  /* linha da bounding box */
+  --bw-focus:  2px;
+  --bw-rule:   4px;  /* régua azul abaixo do "Sobre" */
+  --handle:    8px;  /* alça quadrada/redonda da seleção */
+  --tilt-badge: -2deg; /* rotação da pílula de cargo */
+  --shadow-lift:  0 24px 48px -24px rgba(0, 0, 0, .45);
+  --shadow-panel: 0 1px 0 rgba(255,255,255,.04) inset, 0 30px 60px -30px rgba(0,0,0,.6);
 
-  /* Proporções de mídia */
   --ar-cine:   2.39 / 1;
   --ar-wide:   16 / 9;
   --ar-photo:  3 / 2;
@@ -133,47 +175,75 @@
   --z-below:    -1;
   --z-base:      0;
   --z-raised:   10;
+  --z-select:   20;  /* bounding box/alças sobre o conteúdo */
   --z-sticky:  100;
   --z-header:  200;
   --z-menu:    300;
   --z-lightbox:400;
   --z-toast:   500;
   --z-cursor:  600;
-  --z-grain:   700; /* overlay de grão (pointer-events:none) */
+  --z-grain:   700;
 
   /* ---------- Movimento ---------- */
   --dur-instant: 80ms;
-  --dur-fast:    180ms;  /* hover, cor */
-  --dur-base:    320ms;  /* UI, menus */
-  --dur-slow:    640ms;  /* reveals */
-  --dur-slower:  960ms;  /* hero, máscaras de imagem */
-  --dur-page:    720ms;  /* transição de página / lightbox */
-  --stagger:     70ms;   /* atraso entre itens em sequência */
+  --dur-fast:    160ms;  /* hover de ferramenta, cor */
+  --dur-base:    260ms;  /* menus, alças aparecendo */
+  --dur-draw:    420ms;  /* desenhar caixa de seleção / régua */
+  --dur-slow:    560ms;  /* reveals */
+  --dur-slower:  800ms;  /* retrato entrando, painéis */
+  --dur-page:    600ms;  /* página / lightbox */
+  --stagger:     60ms;
 
-  --ease-out:     cubic-bezier(0.22, 1, 0.36, 1);      /* padrão de entrada (expo-out suave) */
-  --ease-in:      cubic-bezier(0.55, 0, 0.78, 0);      /* saídas */
-  --ease-in-out:  cubic-bezier(0.76, 0, 0.24, 1);      /* cortinas, máscaras, página */
-  --ease-shutter: cubic-bezier(0.83, 0, 0.17, 1);      /* "obturador": lightbox, wipes */
-  --ease-linear:  linear;                               /* marquee / film-strip */
+  --ease-out:     cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in:      cubic-bezier(0.55, 0, 0.78, 0);
+  --ease-in-out:  cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-snap:    cubic-bezier(0.34, 1.36, 0.64, 1); /* leve overshoot: alças, badge, "encaixe" de ferramenta */
+  --ease-shutter: var(--ease-in-out); /* compat v1 */
+  --ease-linear:  linear;
 
-  --reveal-distance: 24px;
-  --hover-scale:     1.03;
-
-  /* ---------- Textura ---------- */
-  --grain-opacity: .06;
+  --reveal-distance: 20px;
+  --hover-scale:     1.02;
+  --grain-opacity:   0; /* v2 sem grão */
 }
 
-/* Seção invertida: aplicar class/atributo e as semânticas se reescrevem */
-[data-theme="paper"] {
+/* ---------- Temas de seção (reescrevem as semânticas) ---------- */
+[data-theme="canvas"],
+[data-theme="paper"] { /* "paper" = compat v1 */
   color-scheme: light;
-  --c-bg:     var(--c-inv-bg);
-  --c-surface:#E4DCCE;
-  --c-text:   var(--c-inv-text);
-  --c-text-2: var(--c-inv-text-2);
-  --c-text-3: var(--c-inv-text-2);
-  --c-border: #CFC6B7;
-  --c-focus:  var(--c-accent-deep);
-  --c-accent: var(--c-accent-deep);
+  --c-bg:        var(--c-canvas);
+  --c-surface:   var(--c-white);
+  --c-surface-2: var(--c-canvas-2);
+  --c-text:      var(--c-ink);
+  --c-text-2:    var(--c-ink-2);
+  --c-text-3:    var(--c-ink-3);
+  --c-border:    var(--c-line);
+  --c-link:      var(--c-blue);
+  --c-focus:     var(--c-blue);
+  --c-accent:    var(--c-blue);
+}
+[data-theme="blue"] {
+  --c-bg:        var(--c-blue);
+  --c-surface:   var(--c-blue-deep);
+  --c-surface-2: var(--c-blue-deep);
+  --c-text:      var(--c-white);
+  --c-text-2:    var(--c-blue-tint);
+  --c-text-3:    var(--c-blue-tint);
+  --c-border:    rgba(255, 255, 255, .25);
+  --c-link:      var(--c-white);
+  --c-focus:     var(--c-white);
+  --c-accent:    var(--c-white);
+  --c-on-accent: var(--c-blue);
+}
+[data-theme="navy"] { /* coluna com gradiente azul→navy */
+  --c-bg:        var(--c-navy);
+  --c-surface:   rgba(255, 255, 255, .06);
+  --c-surface-2: rgba(255, 255, 255, .1);
+  --c-text:      var(--c-white);
+  --c-text-2:    var(--c-blue-tint);
+  --c-text-3:    var(--c-blue-tint);
+  --c-border:    rgba(255, 255, 255, .18);
+  --c-link:      var(--c-blue-light);
+  --c-focus:     var(--c-white);
 }
 
 /* ---------- Movimento reduzido ---------- */
@@ -182,12 +252,13 @@
     --dur-instant: 0ms;
     --dur-fast:    0ms;
     --dur-base:    0ms;
+    --dur-draw:    0ms;
     --dur-slow:    0ms;
     --dur-slower:  0ms;
     --dur-page:    0ms;
     --stagger:     0ms;
     --reveal-distance: 0px;
     --hover-scale:     1;
-    --grain-opacity:   0; /* grão estático pode ficar; animado nunca */
+    --ease-snap:   var(--ease-out);
   }
 }

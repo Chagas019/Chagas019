@@ -1,9 +1,10 @@
 import { loadAll } from './data.js';
 import { setManifest } from './render/media.js';
 import { renderFilters, renderFeatured, renderIndex, renderCuration } from './render/projects.js';
-import { renderGallery, renderHero } from './render/gallery.js';
+import { renderGallery } from './render/gallery.js';
 import { renderServices, renderPricing } from './render/pricing.js';
 import { bindSite, renderContactLinks, renderServiceOptions, updateJsonLd } from './render/contact.js';
+import { renderProfile } from './render/profile.js';
 import { openLightbox } from './lightbox.js';
 import { initNav } from './nav.js';
 import { initReveal, observeReveal } from './reveal.js';
@@ -19,7 +20,7 @@ async function boot() {
   bindSite(portfolio.site);
   updateJsonLd(portfolio.site);
   renderContactLinks(portfolio.site);
-  renderHero(portfolio);
+  renderProfile(portfolio);
 
   const drawWork = (filter) => {
     renderFeatured(portfolio, filter, openLightbox);
