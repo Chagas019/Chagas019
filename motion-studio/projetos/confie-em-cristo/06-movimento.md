@@ -121,3 +121,29 @@ Riscos/pendências:
 - Os frames de batida e de transição dependem da narração estimada e precisam ser recalculados com o áudio real.
 - `filter: blur` + `brightness` no vazamento custa caro em render, mas o bloom fica ≤ 7 px e dura apenas cerca de 15 f.
 - O `PlanoDeFoco` com desfoque em tela cheia deve ficar ≤ 14 px para manter o render rápido.
+
+---
+# Rodada 2 — correções da revisão 1 (itens 2 e 4)
+
+## Item 2: T1 `vazamentoDeLuz` sem "bege chapado"
+- Removi a lavagem com `backgroundColor` (que chegava a ~72%).
+- O brilho da cena que sai caiu de +1,6 para **+0,8** (curva suave) e o bloom de 7 para 5 px.
+- A luz agora tem textura:
+  - núcleo quente pequeno na origem;
+  - streak anamórfico horizontal;
+  - 4 manchas de película (radiais âmbar/dourado/quente) com posição e raio guiados por `noise2D` (seed);
+  - um véu diagonal fraco que varre lateralmente (−35% → 0 no pico → +35%).
+- A camada de luz recebe uma máscara radial com queda, então as bordas da tela nunca estouram.
+- O cross-fade ficou mais largo (p 0,24–0,70): no pico as duas cenas aparecem sob a luz.
+- Medição em f430–470: a luminância média vai de 18 até 56 no pico (f449) e volta a 27. O desvio-padrão da luminância (contraste) **sobe** de 6 para 39 no pico, e a estrada e o horizonte continuam legíveis atrás da luz. Antes ele colapsava.
+- O pico continua em f449 (`pico` 0.46), sem impacto no cue do SOM.
+
+## Item 4: T5 `fadeNegro` com descida gradual
+- Saída:
+  - a vinheta fecha para o centro com `curvas.suave` ("a luz se recolhe");
+  - um véu uniforme **linear** acompanha a vinheta;
+  - o preto absoluto só chega em p = meio.
+- Medição em f2274–2290: luminância 57 → 54 → 50 → 47 → 43 → 39 → 34 → 28 → 20 → 14 → 10 → 6 → 5 → 4 → 3. A queda fica distribuída pelos 16 f, sem o corte de 4 f.
+- Corrigi um segundo bug na entrada: a cena que entra fica por cima, e as camadas pretas que eu tinha posto nela cobriam a descida (preto instantâneo em f2274). Agora a entrada usa só opacidade e máscara radial que abre do centro. O preto da pausa vai de f2290 a f2298 e a cena 6 emerge de f2299 a f2314.
+
+Validação: `npx tsc --noEmit` OK · `npm run qa` ✓ · `REVIEW_SUB=r2-mov npm run review -- ConfieEmCristo-Vertical 430-470,2270-2320` (92 frames consecutivos, sem salto nem frame vazio indevido).
