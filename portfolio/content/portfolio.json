@@ -28,83 +28,160 @@
       "id": "fotografia",
       "label": "Fotografia",
       "intro": "Registro de pessoas, momentos e lugares, com cuidado na luz, no enquadramento e na edição final.",
-      "items": ["Eventos", "Ensaios", "Casais", "Festas de 15 anos", "Casamentos", "Retratos", "Institucional", "Ambientes e imóveis"]
+      "items": [
+        "Eventos",
+        "Ensaios",
+        "Casais",
+        "Festas de 15 anos",
+        "Casamentos",
+        "Retratos",
+        "Institucional",
+        "Ambientes e imóveis"
+      ]
     },
     {
       "id": "audiovisual",
       "label": "Audiovisual",
       "intro": "Vídeos que contam uma história do começo ao fim: captação, edição, cor e finalização.",
-      "items": ["Vídeos cinematográficos", "Cobertura de eventos", "Aftermovies", "Reels", "Vídeos institucionais", "Vídeos promocionais", "Produção para marcas", "Storytelling visual"]
+      "items": [
+        "Vídeos cinematográficos",
+        "Cobertura de eventos",
+        "Aftermovies",
+        "Reels",
+        "Vídeos institucionais",
+        "Vídeos promocionais",
+        "Produção para marcas",
+        "Storytelling visual"
+      ]
     },
     {
       "id": "design-motion",
       "label": "Design e Motion",
       "intro": "Peças visuais e animações para redes sociais, eventos e marcas que precisam de uma cara própria.",
-      "items": ["Artes para redes sociais", "Identidade visual", "Rebranding", "Motion graphics", "Animações tipográficas", "Artes para eventos", "Apresentações", "Peças publicitárias"]
+      "items": [
+        "Artes para redes sociais",
+        "Identidade visual",
+        "Rebranding",
+        "Motion graphics",
+        "Animações tipográficas",
+        "Artes para eventos",
+        "Apresentações",
+        "Peças publicitárias"
+      ]
     },
     {
       "id": "comunicacao-digital",
       "label": "Comunicação Digital",
       "intro": "Planejamento e produção de conteúdo com estratégia, inclusive para igrejas, pastorais e comunidades.",
-      "items": ["Estratégia de conteúdo", "Planejamento para Instagram", "Roteiros", "Campanhas", "Criação de conteúdo", "Consultoria criativa", "Comunicação para igrejas e comunidades"]
+      "items": [
+        "Estratégia de conteúdo",
+        "Planejamento para Instagram",
+        "Roteiros",
+        "Campanhas",
+        "Criação de conteúdo",
+        "Consultoria criativa",
+        "Comunicação para igrejas e comunidades"
+      ]
     },
     {
       "id": "produtos-digitais",
       "label": "Produtos Digitais",
       "intro": "Recursos de edição e materiais para quem cria conteúdo e quer ganhar tempo sem perder identidade.",
-      "items": ["Presets para Lightroom", "LUTs cinematográficas", "Coleções de edição", "Materiais educativos", "Recursos para criadores"]
+      "items": [
+        "Presets para Lightroom",
+        "LUTs cinematográficas",
+        "Coleções de edição",
+        "Materiais educativos",
+        "Recursos para criadores"
+      ]
     }
   ],
   "tools": [
     {
       "name": "Adobe Lightroom",
-      "uses": ["Tratamento e cor de fotografias", "Criação de presets"],
+      "uses": [
+        "Tratamento e cor de fotografias",
+        "Criação de presets"
+      ],
       "context": "Fotografia"
     },
     {
       "name": "CapCut",
-      "uses": ["Edição de Reels e vídeos curtos", "Legendas e cortes rápidos"],
+      "uses": [
+        "Edição de Reels e vídeos curtos",
+        "Legendas e cortes rápidos"
+      ],
       "context": "Audiovisual"
     },
     {
       "name": "VN Editor",
-      "uses": ["Edição de vídeo no celular", "Montagem e ajuste de ritmo"],
+      "uses": [
+        "Edição de vídeo no celular",
+        "Montagem e ajuste de ritmo"
+      ],
       "context": "Audiovisual"
     },
     {
       "name": "Blackmagic Camera",
-      "uses": ["Captação de vídeo no celular com controles manuais", "Gravação pensada para color grading e LUTs"],
+      "uses": [
+        "Captação de vídeo no celular com controles manuais",
+        "Gravação pensada para color grading e LUTs"
+      ],
       "context": "Captação"
     },
     {
       "name": "Adobe Express",
-      "uses": ["Artes para redes sociais", "Peças para eventos e campanhas"],
+      "uses": [
+        "Artes para redes sociais",
+        "Peças para eventos e campanhas"
+      ],
       "context": "Design"
     },
     {
       "name": "Remotion",
-      "uses": ["Motion graphics e animações tipográficas feitas em código"],
+      "uses": [
+        "Motion graphics e animações tipográficas feitas em código"
+      ],
       "context": "Motion"
     },
     {
       "name": "Claude Code",
-      "uses": ["Apoio no desenvolvimento de sites e ferramentas digitais"],
+      "uses": [
+        "Apoio no desenvolvimento de sites e ferramentas digitais"
+      ],
       "context": "Web e tecnologia"
     },
     {
       "name": "Codex",
-      "uses": ["Apoio no desenvolvimento de sites e automações"],
+      "uses": [
+        "Apoio no desenvolvimento de sites e automações"
+      ],
       "context": "Web e tecnologia"
     }
   ],
   "equipment": {
     "note": "Equipamentos já utilizados ou explorados ao longo da trajetória.",
     "items": [
-      { "name": "iPhone 13 Pro Max", "kind": "Smartphone" },
-      { "name": "iPhone 16 Pro Max", "kind": "Smartphone" },
-      { "name": "Canon T3i + 18-55mm", "kind": "Câmera DSLR" },
-      { "name": "Canon RP", "kind": "Câmera mirrorless" },
-      { "name": "Canon R50", "kind": "Câmera mirrorless" }
+      {
+        "name": "iPhone 13 Pro Max",
+        "kind": "Smartphone"
+      },
+      {
+        "name": "iPhone 16 Pro Max",
+        "kind": "Smartphone"
+      },
+      {
+        "name": "Canon T3i + 18-55mm",
+        "kind": "Câmera DSLR"
+      },
+      {
+        "name": "Canon RP",
+        "kind": "Câmera mirrorless"
+      },
+      {
+        "name": "Canon R50",
+        "kind": "Câmera mirrorless"
+      }
     ],
     "knowledge": [
       "Fotografia mobile",
@@ -392,7 +469,7 @@
       "year": "2026",
       "client": null,
       "description": "Site para a Pastoral da Comunicação de uma paróquia, reunindo liturgia do dia, escala das missas, agenda e formação num só lugar. A abertura é uma sequência em rolagem com objetos 3D de comunicação sobre fundo escuro e laranja, adaptada para computador e celular.",
-      "role": "A CONFIRMAR (design e desenvolvimento)",
+      "role": "Design e desenvolvimento",
       "featured": true,
       "cover": {
         "src": "../resultado/abertura-computador.jpg",
@@ -432,7 +509,7 @@
       "year": "2026",
       "client": null,
       "description": "Tratamento de um trecho de gameplay de corrida: aumento de resolução para 4K (3840×1772) a 60 quadros por segundo, com foco em nitidez e detalhe. As imagens do jogo pertencem aos seus criadores; o trabalho apresentado é a finalização.",
-      "role": "A CONFIRMAR (tratamento e upscale de vídeo)",
+      "role": "Tratamento e upscale de vídeo",
       "featured": false,
       "cover": {
         "src": "../videos/comparacao_antes_depois.jpg",
@@ -443,7 +520,7 @@
       "media": [
         {
           "type": "video",
-          "src": "../videos/gameplay_4k_enhanced_leve.mp4",
+          "src": "media/gameplay-4k-web-1080.mp4",
           "poster": "../videos/comparacao_antes_depois.jpg",
           "alt": "Trecho de 14 segundos de gameplay de corrida tratado em 4K",
           "w": 3840,
@@ -466,11 +543,11 @@
       "year": "2026",
       "client": null,
       "description": "Vídeo vertical em que o piloto de uma moto, numa cena de rua, é substituído por um personagem. Exercício de composição e efeito pensado para redes sociais.",
-      "role": "A CONFIRMAR (efeito e composição)",
+      "role": "Efeito e composição",
       "featured": false,
       "cover": {
         "type": "video",
-        "src": "../resultado/moto-personagem.mp4",
+        "src": "media/moto-personagem-web-720.mp4",
         "alt": "Personagem de terno e chapéu pilotando uma moto numa rua",
         "w": 1180,
         "h": 2556
@@ -478,7 +555,7 @@
       "media": [
         {
           "type": "video",
-          "src": "../resultado/moto-personagem.mp4",
+          "src": "media/moto-personagem-web-720.mp4",
           "alt": "Vídeo vertical de 11 segundos: personagem de terno e chapéu no lugar do piloto de uma moto",
           "w": 1180,
           "h": 2556
@@ -488,18 +565,57 @@
     }
   ],
   "missing": [
-    { "category": "eventos", "note": "Sem fotos de eventos no repositório. Pedir 3–5 eventos (ex.: Lual Mariano, Retiro PAFIES, AVIVA 2), 12–20 fotos cada, JPEG sRGB, lado maior ≥ 2560 px, com autorização de uso." },
-    { "category": "ensaios", "note": "Sem ensaios. Pedir 3–6 ensaios (individual/casal), 8–15 fotos cada, com autorização de imagem." },
-    { "category": "casamentos-15-anos", "note": "Sem casamentos nem 15 anos. Pedir 2–4 trabalhos, 15–25 fotos cada, com autorização escrita dos retratados (menores: responsáveis)." },
-    { "category": "retratos", "note": "Sem retratos. Pedir 6–12 retratos com autorização de imagem." },
-    { "category": "institucional-imoveis", "note": "Sem fotos institucionais, de ambientes ou imóveis. Pedir 1–3 trabalhos com autorização do contratante." },
-    { "category": "audiovisual", "note": "Só há o gameplay tratado (imagens de terceiros). Pedir vídeos autorais 1920×1080 (aftermovie, institucional, cinematográfico) e, se possível, showreel de 60–90 s." },
-    { "category": "reels", "note": "Nenhum reel autoral no repositório. Pedir 3–6 vídeos verticais 1080×1920 MP4 H.264 com poster." },
-    { "category": "motion-design", "note": "Item da moto sem poster e com barra de status do celular; pedir original limpo e confirmar autoria da filmagem. Pedir também animações tipográficas (Remotion)." },
-    { "category": "design", "note": "Nenhuma arte no repositório. Pedir 6–12 artes para redes/eventos (PNG/JPG ≥ 1080 px) e, se houver, uma identidade visual." },
-    { "category": "web-design", "note": "Confirmar papel e autorização de divulgação do Comunica+Fé." },
-    { "category": "projetos-selecionados", "note": "Nenhum projeto selecionado tem capa, mídia ou link. Pedir 1 imagem de capa (16:10, ≥ 1600 px) por projeto e links públicos, se existirem. Confirmar anos." },
-    { "category": "produtos", "note": "Faltam imagens dos produtos, preços, disponibilidade e links de compra (se houver)." },
-    { "category": "perfil", "note": "Falta foto de perfil (4:5, ≥ 1600 px). Domínio do site ainda não definido. Depoimentos só se reais e autorizados." }
+    {
+      "category": "eventos",
+      "note": "Sem fotos de eventos no repositório. Pedir 3–5 eventos (ex.: Lual Mariano, Retiro PAFIES, AVIVA 2), 12–20 fotos cada, JPEG sRGB, lado maior ≥ 2560 px, com autorização de uso."
+    },
+    {
+      "category": "ensaios",
+      "note": "Sem ensaios. Pedir 3–6 ensaios (individual/casal), 8–15 fotos cada, com autorização de imagem."
+    },
+    {
+      "category": "casamentos-15-anos",
+      "note": "Sem casamentos nem 15 anos. Pedir 2–4 trabalhos, 15–25 fotos cada, com autorização escrita dos retratados (menores: responsáveis)."
+    },
+    {
+      "category": "retratos",
+      "note": "Sem retratos. Pedir 6–12 retratos com autorização de imagem."
+    },
+    {
+      "category": "institucional-imoveis",
+      "note": "Sem fotos institucionais, de ambientes ou imóveis. Pedir 1–3 trabalhos com autorização do contratante."
+    },
+    {
+      "category": "audiovisual",
+      "note": "Só há o gameplay tratado (imagens de terceiros). Pedir vídeos autorais 1920×1080 (aftermovie, institucional, cinematográfico) e, se possível, showreel de 60–90 s."
+    },
+    {
+      "category": "reels",
+      "note": "Nenhum reel autoral no repositório. Pedir 3–6 vídeos verticais 1080×1920 MP4 H.264 com poster."
+    },
+    {
+      "category": "motion-design",
+      "note": "Item da moto sem poster e com barra de status do celular; pedir original limpo e confirmar autoria da filmagem. Pedir também animações tipográficas (Remotion)."
+    },
+    {
+      "category": "design",
+      "note": "Nenhuma arte no repositório. Pedir 6–12 artes para redes/eventos (PNG/JPG ≥ 1080 px) e, se houver, uma identidade visual."
+    },
+    {
+      "category": "web-design",
+      "note": "Confirmar papel e autorização de divulgação do Comunica+Fé."
+    },
+    {
+      "category": "projetos-selecionados",
+      "note": "Nenhum projeto selecionado tem capa, mídia ou link. Pedir 1 imagem de capa (16:10, ≥ 1600 px) por projeto e links públicos, se existirem. Confirmar anos."
+    },
+    {
+      "category": "produtos",
+      "note": "Faltam imagens dos produtos, preços, disponibilidade e links de compra (se houver)."
+    },
+    {
+      "category": "perfil",
+      "note": "Falta foto de perfil (4:5, ≥ 1600 px). Domínio do site ainda não definido. Depoimentos só se reais e autorizados."
+    }
   ]
 }

@@ -39,6 +39,8 @@ Mude `price_from`. Em `products`, troque `null` por um número (`"la-creme": 49`
 - **Projeto selecionado / produto:** preencha `cover` (projetos) ou `image` (produtos) com `{"src","alt","w","h"}`; sem isso aparece o placeholder.
 - **Foto de perfil:** `about.photo` → `{"src","alt","w","h"}` (vertical, ≥ 1200 px).
 
+Vídeos: use versões leves para a web (ex.: `ffmpeg -i original.mp4 -vf "scale=1920:-2,fps=30" -c:v libx264 -crf 30 -movflags +faststart media/nome-web.mp4`). Os originais pesados ficam fora do site. Se rodar `optimize-media.sh` sem argumentos, ele recria o manifest: as entradas `media/*-web-*.mp4` (posters dos vídeos leves) precisam ser readicionadas.
+
 ### Contatos
 `site.whatsapp` só dígitos (`5519989905361`), `site.instagram` sem @, `site.email`. Botões, formulário, WhatsApp flutuante e JSON-LD usam esses valores. O link do WhatsApp flutuante também está no `index.html` (para funcionar sem JS).
 
@@ -46,7 +48,8 @@ Mude `price_from`. Em `products`, troque `null` por um número (`"la-creme": 49`
 O visitante marca serviços, descreve o projeto e informa os contatos. O envio abre o WhatsApp com a mensagem pronta (ou o e-mail, pelo segundo botão). Nada é enviado a servidor e nunca aparece sucesso falso. Opcional: `assets/js/config.js → formEndpoint` (ex.: Formspree).
 
 ## Publicar
-- **Vercel / Netlify:** importe o repositório, sem comando de build, diretório de saída = raiz. Acesse `/portfolio/` (ou configure um redirect `/` → `/portfolio/`).
+1. Gere a pasta pronta: `bash portfolio/scripts/build-dist.sh` → `portfolio/dist/` (só os arquivos usados, sem caminhos `../`, site na raiz do domínio).
+- **Vercel / Netlify:** comando de build `bash portfolio/scripts/build-dist.sh`, diretório de saída `portfolio/dist`. Ou arraste a pasta `dist/` no painel da Netlify.
 - **GitHub Pages:** o workflow `.github/workflows/publicar-site.yml` publica outro site; para o portfólio, ative Pages pela raiz da branch e acesse `/portfolio/`.
 - **Antes de publicar:** troque `TODO(domínio)` no `index.html` e `https://SEU-DOMINIO` em `robots.txt` e `sitemap.xml` pelo domínio real (ver `docs/SEO.md`).
 
