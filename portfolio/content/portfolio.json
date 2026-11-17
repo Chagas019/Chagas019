@@ -485,21 +485,24 @@
           "alt": "Gravação da rolagem do site Comunica+Fé: os objetos 3D se movem e as seções trocam em sequência",
           "w": 1280,
           "h": 720,
-          "silent": true
+          "silent": true,
+          "fit": "contain"
         },
         {
           "type": "image",
           "src": "capturas/comunicafe-desktop.png",
           "alt": "Abertura do site Comunica+Fé no computador, com o título grande e objetos 3D sobre fundo escuro e laranja",
           "w": 1440,
-          "h": 900
+          "h": 900,
+          "fit": "contain"
         },
         {
           "type": "image",
           "src": "capturas/comunicafe-mobile.png",
           "alt": "Abertura do site Comunica+Fé no celular",
           "w": 780,
-          "h": 1688
+          "h": 1688,
+          "fit": "contain"
         },
         {
           "type": "image",
@@ -548,21 +551,24 @@
           "alt": "Gravação da rolagem do site Brabo Club mostrando a animação de abertura",
           "w": 1280,
           "h": 720,
-          "silent": true
+          "silent": true,
+          "fit": "contain"
         },
         {
           "type": "image",
           "src": "capturas/brabo-desktop.png",
           "alt": "Abertura do site Brabo Club no computador",
           "w": 1440,
-          "h": 900
+          "h": 900,
+          "fit": "contain"
         },
         {
           "type": "image",
           "src": "capturas/brabo-mobile.png",
           "alt": "Abertura do site Brabo Club no celular",
           "w": 780,
-          "h": 1688
+          "h": 1688,
+          "fit": "contain"
         }
       ],
       "status": "real"

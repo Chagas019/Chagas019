@@ -193,3 +193,6 @@
   .select-box__dims { opacity: 1; transform: none; }
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* WhatsApp flutuante sai de cena perto dos botões de envio do formulário */
+html.is-form-actions-in-view [data-whatsapp-float] { opacity: 0; pointer-events: none; transform: translateY(8px); }

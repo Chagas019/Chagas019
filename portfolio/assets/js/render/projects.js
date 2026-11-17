@@ -12,7 +12,7 @@ export function renderFilters({ categories, projects }, onChange) {
   const mk = (id, label, count) => h('button', {
     class: 'filters__btn', type: 'button', 'aria-pressed': id === 'all' ? 'true' : 'false', dataset: { filter: id },
   }, label, h('span', { class: 'filters__count' }, count));
-  root.append(mk('all', 'Todos', projects.length), ...categories.map((c) => mk(c.id, c.label, counts[c.id])));
+  root.append(mk('all', 'Todos', projects.length), ...categories.filter((c) => counts[c.id] > 0).map((c) => mk(c.id, c.label, counts[c.id])));
   root.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-filter]');
     if (!btn) return;

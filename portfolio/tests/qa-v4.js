@@ -106,6 +106,24 @@ async function ctx(browser, w, opts = {}) {
       await c.close();
     }
 
+    // 4b. lightbox fits the viewport (close/next/counter reachable) on mobile/tablet
+    { const bad = [];
+      for (const w of [390, 768, 1024]) { const { c, p } = await ctx(b, w, { rm: 'reduce' });
+        for (const id of ['brabo-club', 'comunica-fe']) {
+          await p.locator(`[data-project="${id}"] [data-lightbox]`).first().click(); await sleep(500);
+          for (let i = 0; i < 2; i++) {
+            const r = await p.evaluate(() => { const d = document.querySelector('[data-lightbox-dialog]'); const vw = document.documentElement.clientWidth;
+              const off = ['[data-lightbox-close]', '[data-lightbox-next]', '.lightbox__frame', '.lightbox__media'].map((s) => [s, d.querySelector(s)]).filter(([, e]) => e && !e.hidden)
+                .filter(([, e]) => { const r = e.getBoundingClientRect(); return r.right > vw + 1 || r.left < -1; }).map(([s, e]) => `${s}→${Math.round(e.getBoundingClientRect().right)}`);
+              return off; });
+            if (r.length) bad.push(`${w} ${id}#${i}: ${r.join(',')}`);
+            await p.keyboard.press('ArrowRight'); await sleep(400);
+          }
+          await p.keyboard.press('Escape'); await sleep(200);
+        }
+        await c.close(); }
+      rec('lightbox.fits-viewport', !bad.length, bad.join('; ') || 'controls and media inside viewport at 390/768/1024'); }
+
     // 5. hover layout shift (1440)
     { const { c, p } = await ctx(b, 1440);
       const sels = ['.pricing__item', '.product-card', '.selected-card', '.featured__media', '.project-index__link', '.mosaic__btn', '.btn', '.area', '.curation__block', '.site-nav a', '.section__cta-link'];

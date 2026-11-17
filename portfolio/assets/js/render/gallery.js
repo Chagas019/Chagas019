@@ -17,7 +17,7 @@ export function renderGallery({ projects }, filter, onOpen) {
       const still = stillOf(m);
       const shape = shapeOf(m.w || still?.w, m.h || still?.h);
       const W = m.w || still?.w; const H = m.h || still?.h;
-      root.append(h('li', { class: `mosaic__tile artboard mosaic__tile--${shape} mosaic__tile--${rhythm[n++ % rhythm.length]}`, 'data-reveal': true },
+      root.append(h('li', { class: `mosaic__tile artboard mosaic__tile--${shape} mosaic__tile--${rhythm[n++ % rhythm.length]}${m.fit === 'contain' ? ' mosaic__tile--contain' : ''}`, 'data-reveal': true },
         h('span', { class: 'artboard__label', 'aria-hidden': 'true' }, `${p.title} — ${ratioLabel(W, H)}`),
         h('button', {
           class: 'mosaic__btn', type: 'button', 'data-lightbox': true,

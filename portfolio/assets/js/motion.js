@@ -77,9 +77,18 @@ function initHeroParallax() {
 }
 
 export function initMotion() {
+  floatAwayFromForm();
   if (prefersReducedMotion()) return;
   document.documentElement.classList.add('has-motion');
   initImages();
   initChips();
   initHeroParallax();
+}
+
+/** Esconde o WhatsApp flutuante enquanto os botões de envio do formulário estão na tela (eles já levam ao WhatsApp). */
+function floatAwayFromForm() {
+  const actions = document.querySelector('#quote-form [data-submit]')?.parentElement;
+  if (!actions || !('IntersectionObserver' in window)) return;
+  new IntersectionObserver(([e]) => document.documentElement.classList.toggle('is-form-actions-in-view', e.isIntersecting))
+    .observe(actions);
 }
