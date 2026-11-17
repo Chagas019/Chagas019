@@ -1,0 +1,80 @@
+{
+  "site": {
+    "name": "Chagas",
+    "tagline": "Fotografia e audiovisual, do clique ao corte final.",
+    "about": "Trabalho com fotografia e audiovisual porque gosto de transformar momento em lembrança. Meu processo é simples: entender o que você quer contar, estar presente sem atrapalhar e entregar um material bem tratado, no prazo combinado.",
+    "location": "A CONFIRMAR",
+    "email": "",
+    "whatsapp": "",
+    "instagram": ""
+  },
+  "categories": [
+    {"id": "eventos", "label": "Eventos", "intro": "Cobertura de eventos com foco no que aconteceu de verdade: as pessoas, os detalhes, o clima."},
+    {"id": "casamentos", "label": "Casamentos", "intro": "Do making of à festa, um registro que respeita o ritmo do dia."},
+    {"id": "ensaios", "label": "Ensaios", "intro": "Ensaios individuais, de casal ou de família, com direção leve e resultado natural."},
+    {"id": "audiovisual", "label": "Audiovisual", "intro": "Captação, edição e finalização de vídeo, do bruto ao arquivo pronto para publicar."},
+    {"id": "reels", "label": "Reels", "intro": "Vídeos curtos e verticais pensados para prender a atenção nos primeiros segundos."},
+    {"id": "motion-design", "label": "Motion Design", "intro": "Efeitos, animação e composição para dar movimento e personalidade ao vídeo."},
+    {"id": "web-design", "label": "Web / Design", "intro": "Projetos digitais em que imagem, texto e interação trabalham juntos."}
+  ],
+  "projects": [
+    {
+      "id": "comunica-fe",
+      "title": "Comunica+Fé",
+      "category": "web-design",
+      "year": "2026",
+      "client": null,
+      "description": "Site para a Pastoral da Comunicação de uma paróquia, reunindo liturgia do dia, escala das missas, agenda e formação num só lugar. A abertura é uma sequência em rolagem com objetos 3D de comunicação sobre fundo escuro e laranja, adaptada para computador e celular.",
+      "role": "A CONFIRMAR (design e desenvolvimento?)",
+      "featured": true,
+      "cover": {"src": "../resultado/abertura-computador.jpg", "alt": "Seis telas da abertura do site Comunica+Fé no computador, com tipografia grande branca e objetos 3D sobre fundo escuro e laranja", "w": 1646, "h": 1456},
+      "media": [
+        {"type": "image", "src": "../resultado/abertura-computador.jpg", "alt": "Sequência de telas da abertura do site Comunica+Fé na versão para computador", "w": 1646, "h": 1456},
+        {"type": "image", "src": "../resultado/abertura-celular.jpg", "alt": "Telas da abertura do site Comunica+Fé na versão para celular", "w": 1678, "h": 590},
+        {"type": "image", "src": "../social/comunicafe-1200x630.jpg", "alt": "Imagem de compartilhamento do site Comunica+Fé", "w": 1200, "h": 630}
+      ],
+      "status": "real"
+    },
+    {
+      "id": "gameplay-4k",
+      "title": "Gameplay em 4K",
+      "category": "audiovisual",
+      "year": "2026",
+      "client": null,
+      "description": "Tratamento de um trecho de gameplay de corrida: aumento de resolução para 4K (3840×1772) a 60 quadros por segundo, com foco em nitidez e detalhe. As imagens do jogo pertencem aos seus criadores; o trabalho apresentado é a finalização.",
+      "role": "A CONFIRMAR (tratamento e upscale de vídeo)",
+      "featured": false,
+      "cover": {"src": "../videos/comparacao_antes_depois.jpg", "alt": "Comparação lado a lado de um quadro do gameplay de corrida antes e depois do tratamento", "w": 2560, "h": 900},
+      "media": [
+        {"type": "video", "src": "../videos/gameplay_4k_enhanced_leve.mp4", "poster": "../videos/comparacao_antes_depois.jpg", "alt": "Trecho de 14 segundos de gameplay de corrida tratado em 4K", "w": 3840, "h": 1772},
+        {"type": "image", "src": "../videos/comparacao_antes_depois.jpg", "alt": "Comparação antes e depois do tratamento do gameplay", "w": 2560, "h": 900}
+      ],
+      "status": "real"
+    },
+    {
+      "id": "personagem-na-moto",
+      "title": "Personagem na moto",
+      "category": "motion-design",
+      "year": "2026",
+      "client": null,
+      "description": "Vídeo vertical em que o piloto de uma moto, numa cena de rua, é substituído por um personagem. Exercício de composição e efeito pensado para redes sociais.",
+      "role": "A CONFIRMAR (efeito e composição)",
+      "featured": false,
+      "cover": {"type": "video", "src": "../resultado/moto-personagem.mp4", "alt": "Personagem de terno e chapéu pilotando uma moto numa rua", "w": 1180, "h": 2556},
+      "media": [
+        {"type": "video", "src": "../resultado/moto-personagem.mp4", "alt": "Vídeo vertical de 11 segundos: personagem de terno e chapéu no lugar do piloto de uma moto", "w": 1180, "h": 2556}
+      ],
+      "status": "real"
+    }
+  ],
+  "missing": [
+    {"category": "eventos", "note": "Nenhuma foto de evento no repositório. Pedir 3–5 eventos, 12–20 fotos cada, JPEG sRGB, lado maior ≥ 2560 px, com autorização de uso."},
+    {"category": "casamentos", "note": "Nenhuma foto de casamento. Pedir 2–4 casamentos, 15–25 fotos cada, mesmas especificações, com autorização escrita dos noivos."},
+    {"category": "ensaios", "note": "Nenhum ensaio. Pedir 3–6 ensaios, 8–15 fotos cada, com autorização de imagem."},
+    {"category": "reels", "note": "Nenhum reel autoral confirmado. Pedir 3–6 vídeos verticais 1080×1920 MP4 H.264 com poster."},
+    {"category": "audiovisual", "note": "Só há o gameplay tratado (imagens de terceiros). Pedir vídeos autorais 1920×1080 e, se possível, um showreel de 60–90 s."},
+    {"category": "motion-design", "note": "Item da moto sem poster e com barra de status do celular; pedir original limpo e confirmar autoria da filmagem."},
+    {"category": "web-design", "note": "Confirmar autoria e autorização de divulgação do Comunica+Fé; brabo-club e interactive-site não têm capturas."},
+    {"category": "perfil", "note": "Faltam bio real, foto de perfil (4:5, ≥ 1600 px), cidade, e-mail, WhatsApp, Instagram e depoimentos reais autorizados."}
+  ]
+}

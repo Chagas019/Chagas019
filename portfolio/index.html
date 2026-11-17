@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="pt-BR" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Chagas — Fotografia e Audiovisual</title>
+  <meta name="description" content="Portfólio de fotografia, vídeo e pós-produção de Chagas. Trabalhos selecionados, serviços, investimento e contato.">
+  <meta name="theme-color" content="#0e0e0e">
+  <meta name="color-scheme" content="dark light">
+  <link rel="canonical" href="https://example.com/portfolio/">
+  <!-- Open Graph / Twitter (substituir URLs no deploy) -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Chagas">
+  <meta property="og:title" content="Chagas — Fotografia e Audiovisual">
+  <meta property="og:description" content="Fotografia, vídeo e pós-produção com direção, luz e intenção.">
+  <meta property="og:url" content="https://example.com/portfolio/">
+  <meta property="og:image" content="https://example.com/portfolio/media/videos-comparacao-antes-depois-1280.webp">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="450">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preload" href="content/portfolio.json" as="fetch" crossorigin>
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <script>document.documentElement.classList.replace('no-js','js');</script>
+  <script type="module" src="assets/js/main.js"></script>
+
+  <script type="application/ld+json" id="ld-json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://example.com/portfolio/#person",
+        "name": "Chagas",
+        "jobTitle": "Fotógrafo e videomaker",
+        "url": "https://example.com/portfolio/",
+        "sameAs": ["https://instagram.com/PLACEHOLDER"]
+      },
+      {
+        "@type": "ProfessionalService",
+        "@id": "https://example.com/portfolio/#service",
+        "name": "Chagas — Fotografia e Audiovisual",
+        "url": "https://example.com/portfolio/",
+        "image": "https://example.com/portfolio/media/videos-comparacao-antes-depois-1280.webp",
+        "email": "PLACEHOLDER@example.com",
+        "telephone": "+55-00-00000-0000",
+        "areaServed": "BR",
+        "address": { "@type": "PostalAddress", "addressLocality": "PLACEHOLDER", "addressCountry": "BR" },
+        "founder": { "@id": "https://example.com/portfolio/#person" },
+        "serviceType": ["Fotografia", "Produção audiovisual", "Pós-produção"]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Pular para o conteúdo</a>
+
+  <header class="site-header" data-component="header">
+    <div class="site-header__inner container">
+      <a class="brand" href="#inicio" aria-label="Chagas — início"><span class="brand__name" data-bind="site.name">Chagas</span></a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+        <span class="nav-toggle__bars" aria-hidden="true"></span>
+        <span class="nav-toggle__label">Menu</span>
+      </button>
+      <nav class="site-nav" id="site-nav" aria-label="Principal">
+        <ul class="site-nav__list">
+          <li><a class="site-nav__link" href="#trabalhos">Trabalhos</a></li>
+          <li><a class="site-nav__link" href="#servicos">Serviços</a></li>
+          <li><a class="site-nav__link" href="#investimento">Investimento</a></li>
+          <li><a class="site-nav__link" href="#sobre">Sobre</a></li>
+          <li><a class="site-nav__link site-nav__link--cta" href="#contato">Contato</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <!-- HERO -->
+    <section class="hero" id="inicio" aria-labelledby="hero-title">
+      <div class="hero__media" data-slot="hero-media" aria-hidden="true"></div>
+      <div class="hero__content container">
+        <p class="eyebrow">Fotografia · Audiovisual · Pós-produção</p>
+        <h1 class="hero__title" id="hero-title" data-bind="site.name">Chagas</h1>
+        <p class="hero__tagline" data-bind="site.tagline">Fotografia e audiovisual com direção, luz e intenção.</p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="#trabalhos">Ver trabalhos</a>
+          <a class="btn btn--ghost" href="#contato">Pedir orçamento</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRABALHOS -->
+    <section class="section work" id="trabalhos" aria-labelledby="work-title">
+      <div class="container">
+        <header class="section__head" data-reveal>
+          <p class="section__num" aria-hidden="true">01</p>
+          <h2 class="section__title" id="work-title">Trabalhos</h2>
+          <p class="section__lead">Seleção de projetos. Escolha uma categoria ou abra um projeto para ver todas as mídias.</p>
+        </header>
+
+        <div class="filters" data-slot="filters" role="group" aria-label="Filtrar por categoria"></div>
+
+        <div class="featured" data-slot="featured" aria-live="polite"></div>
+
+        <h3 class="subhead">Índice de projetos</h3>
+        <ol class="project-index" data-slot="project-index" aria-live="polite">
+          <li class="project-index__loading">Carregando projetos…</li>
+        </ol>
+
+        <div class="curation" data-slot="curation"></div>
+
+        <h3 class="subhead">Galeria</h3>
+        <ul class="mosaic" data-slot="gallery" aria-label="Galeria de mídias"></ul>
+      </div>
+    </section>
+
+    <!-- SERVIÇOS -->
+    <section class="section services" id="servicos" aria-labelledby="services-title">
+      <div class="container">
+        <header class="section__head" data-reveal>
+          <p class="section__num" aria-hidden="true">02</p>
+          <h2 class="section__title" id="services-title">Serviços</h2>
+        </header>
+        <ol class="service-list" data-slot="services"></ol>
+      </div>
+    </section>
+
+    <!-- INVESTIMENTO -->
+    <section class="section pricing" id="investimento" aria-labelledby="pricing-title">
+      <div class="container">
+        <header class="section__head" data-reveal>
+          <p class="section__num" aria-hidden="true">03</p>
+          <h2 class="section__title" id="pricing-title">Investimento</h2>
+          <p class="section__lead" data-slot="pricing-disclaimer"></p>
+        </header>
+        <div class="pricing__groups" data-slot="pricing"></div>
+        <ul class="pricing__terms" data-slot="pricing-terms"></ul>
+      </div>
+    </section>
+
+    <!-- SOBRE -->
+    <section class="section about" id="sobre" aria-labelledby="about-title">
+      <div class="container about__grid">
+        <header class="section__head" data-reveal>
+          <p class="section__num" aria-hidden="true">04</p>
+          <h2 class="section__title" id="about-title">Sobre</h2>
+        </header>
+        <div class="about__body" data-reveal>
+          <p class="about__text" data-bind="site.about"></p>
+          <p class="about__location"><span class="visually-hidden">Localização: </span><span data-bind="site.location"></span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTATO -->
+    <section class="section contact" id="contato" aria-labelledby="contact-title">
+      <div class="container contact__grid">
+        <header class="section__head" data-reveal>
+          <p class="section__num" aria-hidden="true">05</p>
+          <h2 class="section__title" id="contact-title">Contato</h2>
+          <p class="section__lead">Conte sobre o projeto. Respondo com proposta e disponibilidade.</p>
+          <ul class="contact__links" data-slot="contact-links"></ul>
+        </header>
+
+        <form class="form" id="contact-form" novalidate data-reveal>
+          <div class="form__field">
+            <label class="form__label" for="f-name">Nome</label>
+            <input class="form__input" id="f-name" name="name" type="text" autocomplete="name" required minlength="2" aria-describedby="f-name-err">
+            <p class="form__error" id="f-name-err" data-error-for="name" hidden></p>
+          </div>
+          <div class="form__field">
+            <label class="form__label" for="f-email">E-mail</label>
+            <input class="form__input" id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="f-email-err">
+            <p class="form__error" id="f-email-err" data-error-for="email" hidden></p>
+          </div>
+          <div class="form__field">
+            <label class="form__label" for="f-service">Serviço</label>
+            <select class="form__input" id="f-service" name="service" data-slot="service-options">
+              <option value="">Selecione (opcional)</option>
+            </select>
+          </div>
+          <div class="form__field">
+            <label class="form__label" for="f-date">Data prevista <span class="form__optional">(opcional)</span></label>
+            <input class="form__input" id="f-date" name="date" type="date">
+          </div>
+          <div class="form__field form__field--full">
+            <label class="form__label" for="f-message">Mensagem</label>
+            <textarea class="form__input form__textarea" id="f-message" name="message" rows="5" required minlength="10" aria-describedby="f-message-err"></textarea>
+            <p class="form__error" id="f-message-err" data-error-for="message" hidden></p>
+          </div>
+          <div class="form__hp" aria-hidden="true">
+            <label for="f-website">Não preencha</label>
+            <input id="f-website" name="_gotcha" type="text" tabindex="-1" autocomplete="off">
+          </div>
+          <div class="form__actions form__field--full">
+            <button class="btn btn--primary" type="submit">Enviar mensagem</button>
+            <p class="form__hint" data-slot="form-hint"></p>
+          </div>
+          <p class="form__status" role="status" aria-live="polite" data-slot="form-status"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <p class="site-footer__copy">© <span data-slot="year">2026</span> <span data-bind="site.name">Chagas</span>. Todos os direitos reservados.</p>
+      <ul class="site-footer__links" data-slot="footer-links"></ul>
+      <a class="site-footer__top" href="#inicio">Voltar ao topo ↑</a>
+    </div>
+  </footer>
+
+  <noscript>
+    <p class="noscript">Este portfólio usa JavaScript para carregar os trabalhos. Para contato direto, escreva para o e-mail informado no Instagram.</p>
+  </noscript>
+</body>
+</html>

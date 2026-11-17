@@ -1,0 +1,24 @@
+{
+  "_fixture": "Dados de exemplo. O site usa content/pricing.json quando existir.",
+  "disclaimer": "Valores de referência (a partir de). O orçamento final depende de escopo, deslocamento e prazos.",
+  "currency": "BRL",
+  "services": [
+    {
+      "id": "foto", "label": "Fotografia", "summary": "Ensaios, retratos e cobertura.",
+      "tiers": [
+        { "name": "Essencial", "price_from": 600, "unit": "por sessão", "highlight": false, "includes": ["1h de sessão", "20 fotos tratadas"], "delivery": "7 dias úteis" },
+        { "name": "Completo", "price_from": 1200, "unit": "por sessão", "highlight": true, "includes": ["3h de sessão", "50 fotos tratadas", "2 locações"], "delivery": "10 dias úteis" }
+      ],
+      "addons": [ { "label": "Foto extra tratada", "price_from": 30, "unit": "por foto" } ]
+    },
+    {
+      "id": "video", "label": "Audiovisual", "summary": "Captação, edição e finalização.",
+      "tiers": [
+        { "name": "Reels", "price_from": 800, "unit": "por vídeo", "highlight": false, "includes": ["Até 60s", "Edição + legendas"], "delivery": "5 dias úteis" },
+        { "name": "Institucional", "price_from": 3500, "unit": "por projeto", "highlight": true, "includes": ["Roteiro", "1 diária", "Edição, color e som"], "delivery": "15 dias úteis" }
+      ],
+      "addons": [ { "label": "Versão vertical extra", "price_from": 250, "unit": "por versão" } ]
+    }
+  ],
+  "terms": ["50% na reserva, 50% na entrega.", "Deslocamento fora da cidade cobrado à parte."]
+}

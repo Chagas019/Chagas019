@@ -1,0 +1,193 @@
+/* ==========================================================================
+   CHAGAS — Design Tokens  (fonte de verdade: portfolio/docs/DESIGN_SYSTEM.md)
+   Conceito: "Sala escura" — editorial cinematográfico, preto quente,
+   papel osso e um único acento tungstênio (luz de set).
+   NÃO renomear tokens sem atualizar o DESIGN_SYSTEM.md.
+
+   Google Fonts — colocar no <head> de cada HTML (NÃO usar @import):
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* ---------- Cores: base (primitivas) ---------- */
+  --c-ink:        #0C0B0A; /* fundo principal — preto quente */
+  --c-ink-2:      #151412; /* superfície elevada / cards de preço */
+  --c-ink-3:      #1E1C19; /* hover de superfície, inputs */
+  --c-line:       #2E2B27; /* filetes 1px (decorativo, não texto) */
+  --c-line-strong:#6E675D; /* bordas de input (≥3:1 em ink/ink-2, WCAG 1.4.11) */
+  --c-paper:      #EDE6DA; /* texto principal / seções claras (osso) */
+  --c-paper-dim:  #A8A095; /* texto secundário */
+  --c-paper-mute: #878075; /* metadados, legendas (AA em ink e ink-2) */
+  --c-accent:     #E8692E; /* tungstênio — acento único, uso <5% da tela */
+  --c-accent-hi:  #F07A3E; /* hover do acento */
+  --c-accent-deep:#9A3E16; /* acento sobre fundo claro (paper) */
+  --c-on-accent:  #0C0B0A; /* texto sobre botão acento */
+  --c-error:      #D9564A;
+  --c-success:    #6FA37A;
+
+  /* ---------- Cores: semânticas ---------- */
+  --c-bg:          var(--c-ink);
+  --c-surface:     var(--c-ink-2);
+  --c-surface-2:   var(--c-ink-3);
+  --c-text:        var(--c-paper);
+  --c-text-2:      var(--c-paper-dim);
+  --c-text-3:      var(--c-paper-mute);
+  --c-border:      var(--c-line);
+  --c-focus:       var(--c-accent);
+  --c-selection:   rgba(232, 105, 46, .35);
+  --c-scrim:       rgba(12, 11, 10, .92);   /* fundo do lightbox */
+  --c-veil:        linear-gradient(180deg, rgba(12,11,10,0) 40%, rgba(12,11,10,.85) 100%); /* legibilidade sobre imagem */
+  --c-glow:        radial-gradient(60% 50% at 50% 100%, rgba(232,105,46,.18), rgba(232,105,46,0) 70%); /* "luz de set" */
+  /* Seção invertida (osso) */
+  --c-inv-bg:      var(--c-paper);
+  --c-inv-text:    var(--c-ink);
+  --c-inv-text-2:  #5A544C;
+  --c-inv-accent:  var(--c-accent-deep);
+
+  /* ---------- Tipografia ---------- */
+  --f-display: "Archivo", "Arial Narrow", system-ui, sans-serif; /* usar com --fw-display + --fstretch-display */
+  --f-body:    "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-serif:   "Instrument Serif", "Times New Roman", serif;    /* acentos autorais em itálico */
+  --f-mono:    "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace; /* timecode, índices, metadados */
+
+  --fstretch-display: 72%;  /* font-stretch p/ títulos condensados */
+  --fstretch-body:    100%;
+  --fw-light:   300;
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-semi:    600;
+  --fw-bold:    700;
+  --fw-display: 800;
+
+  /* Escala fluida — 360px → 1600px (razão ~1.25 mobile / ~1.414 desktop) */
+  --fs-mono:  clamp(0.6875rem, 0.66rem + 0.12vw, 0.75rem);  /* 11–12 */
+  --fs-xs:    clamp(0.75rem,  0.72rem + 0.15vw, 0.8125rem); /* 12–13 */
+  --fs-sm:    clamp(0.875rem, 0.85rem + 0.12vw, 0.9375rem); /* 14–15 */
+  --fs-base:  clamp(1rem,     0.96rem + 0.2vw,  1.125rem);  /* 16–18 */
+  --fs-lg:    clamp(1.125rem, 1.05rem + 0.35vw, 1.375rem);  /* 18–22 */
+  --fs-xl:    clamp(1.375rem, 1.2rem + 0.8vw,   2rem);      /* 22–32 */
+  --fs-2xl:   clamp(1.75rem,  1.4rem + 1.6vw,   3rem);      /* 28–48 */
+  --fs-3xl:   clamp(2.25rem,  1.6rem + 3vw,     4.5rem);    /* 36–72 */
+  --fs-4xl:   clamp(3rem,     1.9rem + 5vw,     7rem);      /* 48–112 */
+  --fs-hero:  clamp(3.5rem,   1.5rem + 9.5vw,   12rem);     /* 56–192 */
+
+  --lh-tight:   0.88;  /* display condensado */
+  --lh-snug:    1.1;
+  --lh-normal:  1.5;
+  --lh-relaxed: 1.65;
+  --ls-display: -0.02em;
+  --ls-tight:   -0.01em;
+  --ls-normal:  0;
+  --ls-caps:    0.14em; /* rótulos uppercase / mono */
+  --measure:    62ch;   /* largura máx. de parágrafo */
+  --measure-sm: 42ch;
+
+  /* ---------- Espaçamento (base 4px) ---------- */
+  --sp-0: 0;
+  --sp-1: 0.25rem;  /* 4  */
+  --sp-2: 0.5rem;   /* 8  */
+  --sp-3: 0.75rem;  /* 12 */
+  --sp-4: 1rem;     /* 16 */
+  --sp-5: 1.5rem;   /* 24 */
+  --sp-6: 2rem;     /* 32 */
+  --sp-7: 3rem;     /* 48 */
+  --sp-8: 4rem;     /* 64 */
+  --sp-9: 6rem;     /* 96 */
+  --sp-10: 8rem;    /* 128 */
+  --sp-11: 12rem;   /* 192 */
+  /* Fluidos de seção */
+  --sp-section:    clamp(5rem, 3rem + 8vw, 11rem);
+  --sp-section-sm: clamp(3rem, 2rem + 4vw, 6rem);
+  --sp-gutter:     clamp(1rem, 0.5rem + 2vw, 2.5rem);  /* margem lateral da página */
+
+  /* ---------- Grid ---------- */
+  --grid-cols:   12;
+  --grid-gap:    clamp(0.75rem, 0.4rem + 1.4vw, 1.5rem);
+  --grid-max:    1600px;
+  --grid-narrow: 960px;
+  --header-h:    clamp(3.5rem, 3rem + 1vw, 4.5rem);
+  /* breakpoints (referência p/ media queries — CSS vars não funcionam em @media):
+     --bp-sm 600px | --bp-md 900px | --bp-lg 1200px | --bp-xl 1600px */
+
+  /* ---------- Raios, bordas, sombras ---------- */
+  --r-0:    0;      /* padrão: cantos retos (fotografia) */
+  --r-xs:   2px;    /* inputs, tags */
+  --r-pill: 999px;  /* só botões-pílula e chips de filtro */
+  --bw-hair: 1px;
+  --bw-focus: 2px;
+  --shadow-lift: 0 30px 60px -30px rgba(0, 0, 0, .8);
+
+  /* Proporções de mídia */
+  --ar-cine:   2.39 / 1;
+  --ar-wide:   16 / 9;
+  --ar-photo:  3 / 2;
+  --ar-port:   4 / 5;
+  --ar-reel:   9 / 16;
+  --ar-square: 1 / 1;
+
+  /* ---------- Z-index ---------- */
+  --z-below:    -1;
+  --z-base:      0;
+  --z-raised:   10;
+  --z-sticky:  100;
+  --z-header:  200;
+  --z-menu:    300;
+  --z-lightbox:400;
+  --z-toast:   500;
+  --z-cursor:  600;
+  --z-grain:   700; /* overlay de grão (pointer-events:none) */
+
+  /* ---------- Movimento ---------- */
+  --dur-instant: 80ms;
+  --dur-fast:    180ms;  /* hover, cor */
+  --dur-base:    320ms;  /* UI, menus */
+  --dur-slow:    640ms;  /* reveals */
+  --dur-slower:  960ms;  /* hero, máscaras de imagem */
+  --dur-page:    720ms;  /* transição de página / lightbox */
+  --stagger:     70ms;   /* atraso entre itens em sequência */
+
+  --ease-out:     cubic-bezier(0.22, 1, 0.36, 1);      /* padrão de entrada (expo-out suave) */
+  --ease-in:      cubic-bezier(0.55, 0, 0.78, 0);      /* saídas */
+  --ease-in-out:  cubic-bezier(0.76, 0, 0.24, 1);      /* cortinas, máscaras, página */
+  --ease-shutter: cubic-bezier(0.83, 0, 0.17, 1);      /* "obturador": lightbox, wipes */
+  --ease-linear:  linear;                               /* marquee / film-strip */
+
+  --reveal-distance: 24px;
+  --hover-scale:     1.03;
+
+  /* ---------- Textura ---------- */
+  --grain-opacity: .06;
+}
+
+/* Seção invertida: aplicar class/atributo e as semânticas se reescrevem */
+[data-theme="paper"] {
+  color-scheme: light;
+  --c-bg:     var(--c-inv-bg);
+  --c-surface:#E4DCCE;
+  --c-text:   var(--c-inv-text);
+  --c-text-2: var(--c-inv-text-2);
+  --c-text-3: var(--c-inv-text-2);
+  --c-border: #CFC6B7;
+  --c-focus:  var(--c-accent-deep);
+  --c-accent: var(--c-accent-deep);
+}
+
+/* ---------- Movimento reduzido ---------- */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-instant: 0ms;
+    --dur-fast:    0ms;
+    --dur-base:    0ms;
+    --dur-slow:    0ms;
+    --dur-slower:  0ms;
+    --dur-page:    0ms;
+    --stagger:     0ms;
+    --reveal-distance: 0px;
+    --hover-scale:     1;
+    --grain-opacity:   0; /* grão estático pode ficar; animado nunca */
+  }
+}
