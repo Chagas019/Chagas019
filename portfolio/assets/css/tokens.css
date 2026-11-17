@@ -23,24 +23,31 @@
   color-scheme: dark;
 
   /* ---------- Primitivas v3: neutros ---------- */
-  --c-black:      #0A0A0A; /* preto profundo — fundo base */
+  --c-black:      #000000; /* v5: preto puro — fundo base */
   --c-letterbox:  #000000; /* faixas de cinema do hero */
-  --c-graphite:   #1F1F1F; /* seções grafite (tema blue) */
-  --c-graphite-2: #161616; /* grafite profundo (tema navy) */
-  --c-graphite-3: #262626; /* hover/superfície sobre grafite */
+  --c-graphite:   #0B0B0B; /* v5: seções "grafite" quase pretas (tema blue) */
+  --c-graphite-2: #060606; /* v5: grafite profundo (tema navy) */
+  --c-graphite-3: #171717; /* hover/superfície sobre grafite */
   --c-gray:       #8C8C8C; /* cinza neutro (metadados no escuro) */
 
   /* ---------- Primitivas v3: acento "tally" (único) ---------- */
-  --c-signal:       #C2410C; /* preenchimento: botão, badge, caixa de seleção. Branco 5.18:1 */
-  --c-signal-hi:    #9A3412; /* hover (escurece) e TEXTO sobre papel claro 6.13:1 */
-  --c-signal-light: #FF7A45; /* texto/linha sobre preto/grafite ≥6.37:1 */
-  --c-signal-tint:  #F7DDCF; /* fundo de seleção sobre papel claro (ink 15.27:1) */
+  --c-signal:       #C8102E; /* v5 vermelho profundo: preenchimento (botão, badge). Branco 5.88:1 */
+  --c-signal-hi:    #A30D26; /* hover (escurece; branco 7.9:1) e texto sobre papel claro */
+  --c-signal-light: #FF5A68; /* texto pequeno vermelho sobre preto 6.9:1 · ≥4.6:1 em surface-3 */
+  --c-signal-tint:  #F9D6DB; /* fundo de seleção sobre papel claro (ink 15.27:1) */
   --c-rec:          var(--c-signal-light); /* ponto "REC" piscando */
+  /* v5 — família vermelha (reference: preto puro + vermelho profundo) */
+  --c-red-display:  #E0182D; /* texto GRANDE (≥24px) sobre preto 4.1:1 — números, palavra gigante */
+  --c-red-deep:     #5C0716; /* fundo de gradiente */
+  --c-red-ink:      #2A030A; /* fim de gradiente */
+  --g-red-panel:    linear-gradient(160deg, #B10E28 0%, #6E0818 48%, #2A030A 100%); /* painel citação (branco ≥5.9:1 em todo o trajeto) */
+  --g-red-glow:     radial-gradient(60% 55% at 50% 45%, rgba(200, 16, 46, .35) 0%, rgba(200, 16, 46, 0) 70%);
+  --f-hand:         "Mrs Saint Delafield", "Instrument Serif", cursive; /* script: "Olá, eu sou" e assinatura */
 
   /* ---------- Chrome (nomes v2) → pretos ---------- */
   --c-chrome:   var(--c-black); /* fundo da página / footer */
-  --c-chrome-2: #131313;        /* header, superfície */
-  --c-chrome-3: #1C1C1C;        /* hover, superfície 2 */
+  --c-chrome-2: #0B0B0B;        /* header, superfície */
+  --c-chrome-3: #161616;        /* hover, superfície 2 */
   --c-dot-red:    var(--c-rec); /* compat: vira o ponto REC */
   --c-dot-yellow: #3A3A3A;      /* compat: neutros (não usar) */
   --c-dot-green:  #3A3A3A;
@@ -95,7 +102,7 @@
   --c-link:      var(--c-paper);        /* links = texto + sublinhado; acento só no hover */
   --c-link-hover:var(--c-signal-light);
   --c-focus:     var(--c-signal-light);
-  --c-selection: rgba(194, 65, 12, .45);
+  --c-selection: rgba(200, 16, 46, .5);
   --c-scrim:     rgba(0, 0, 0, .94); /* lightbox */
   --c-gradient-panel: linear-gradient(180deg, var(--c-graphite) 0%, var(--c-graphite-2) 100%);
   --c-veil:      linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,.72) 100%);
@@ -249,7 +256,7 @@
   --card-pad-sm: var(--sp-4);
   --card-gap:    var(--sp-4);
   --card-inset:  var(--sp-2); /* mídia recuada dentro do card → raio --r-tile */
-  --nav-bg:      rgb(10 10 10 / .72);
+  --nav-bg:      rgb(0 0 0 / .78);
   --nav-blur:    16px;
   --nav-item-h:  2.75rem;
   --o-disabled:  .42;   /* opacidade de desabilitado (isento de AA, mas legível) */
@@ -298,10 +305,10 @@
 
   /* ---------- Superfícies em camadas v4 (padrão = preto) ----------
      Redefinidas por tema abaixo. 0 fundo · 1 card · 2 card elevado/hover · 3 input/chip */
-  --surface-0: #0A0A0A;
-  --surface-1: #141414;
-  --surface-2: #1C1C1C;
-  --surface-3: #242424;
+  --surface-0: #000000;
+  --surface-1: #0E0E0E;
+  --surface-2: #161616;
+  --surface-3: #1F1F1F;
   --border-hairline: rgba(255, 255, 255, .08); /* decorativo (não conta p/ 3:1) */
   --border-strong:   rgba(255, 255, 255, .16); /* hover de card, divisores fortes */
   --highlight-top:   inset 0 1px 0 rgba(255, 255, 255, .06);
@@ -379,10 +386,10 @@
   --c-accent:    var(--c-signal);
   --c-on-accent: #FFFFFF;
   --c-border-strong: var(--c-line-dark-strong);
-  --surface-0: #1F1F1F;
-  --surface-1: #272727;
-  --surface-2: #2E2E2E;
-  --surface-3: #353535;
+  --surface-0: #0B0B0B;
+  --surface-1: #121212;
+  --surface-2: #191919;
+  --surface-3: #222222;
   --border-hairline: rgba(255, 255, 255, .09);
   --border-strong:   rgba(255, 255, 255, .18);
   --highlight-top:   inset 0 1px 0 rgba(255, 255, 255, .07);
@@ -400,10 +407,10 @@
   --c-link:      var(--c-paper);
   --c-focus:     var(--c-signal-light);
   --c-border-strong: var(--c-line-dark-strong);
-  --surface-0: #161616;
-  --surface-1: #1E1E1E;
-  --surface-2: #252525;
-  --surface-3: #2C2C2C;
+  --surface-0: #060606;
+  --surface-1: #0F0F0F;
+  --surface-2: #171717;
+  --surface-3: #202020;
   --border-hairline: rgba(255, 255, 255, .08);
   --border-strong:   rgba(255, 255, 255, .16);
   --highlight-top:   inset 0 1px 0 rgba(255, 255, 255, .06);

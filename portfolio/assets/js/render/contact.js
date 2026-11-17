@@ -1,4 +1,5 @@
 import { h, slot, clear } from '../dom.js';
+import { icon } from './v5.js';
 
 export const waLink = (num, text = '') => (num ? `https://wa.me/${String(num).replace(/\D/g, '')}${text ? `?text=${encodeURIComponent(text)}` : ''}` : '');
 export const igLink = (user) => (user ? `https://www.instagram.com/${String(user).replace(/^@/, '')}/` : '');
@@ -45,7 +46,11 @@ export function renderContactLinks(site) {
         href: it.href,
         ...(it.ext ? { target: '_blank', rel: 'noopener', 'aria-label': `${it.label}: ${it.value} (abre em nova aba)` } : {}),
       },
+        h('span', { class: 'contact-link__icon' }, icon(it.id)),
         h('span', { class: 'contact-link__label' }, it.label), ' ', h('span', { class: 'contact-link__value' }, it.value)))));
+    if (name === 'contact-links' && site.location) root.append(h('li', { class: 'contact-link contact-link--location' },
+      h('span', { class: 'contact-link__row' }, h('span', { class: 'contact-link__icon' }, icon('pin')),
+        h('span', { class: 'contact-link__label' }, 'Local'), ' ', h('span', { class: 'contact-link__value' }, site.location))));
   }
 }
 

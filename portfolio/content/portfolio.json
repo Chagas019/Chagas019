@@ -12,7 +12,9 @@
     "instagram": "chagas_catolico",
     "instagramUrl": "https://www.instagram.com/chagas_catolico/",
     "url": "",
-    "tagline": "Fotografia, audiovisual, design e comunicação digital. Transformando ideias em histórias visuais desde 2019."
+    "tagline": "Fotografia, audiovisual, design e comunicação digital. Transformando ideias em histórias visuais desde 2019.",
+    "heroPhoto": null,
+    "role": "Fotógrafo, videomaker & motion designer"
   },
   "about": {
     "paragraphs": [
@@ -153,6 +155,41 @@
       ],
       "context": "Web e tecnologia"
     }
+  ],
+  "skills": [
+    "Fotografia",
+    "Edição de vídeo",
+    "Motion design",
+    "Color grading",
+    "Reels",
+    "Design para redes"
+  ],
+  "process": [
+    {
+      "title": "Briefing",
+      "text": "Entender o objetivo, o público e o que precisa ser entregue."
+    },
+    {
+      "title": "Roteiro e planejamento",
+      "text": "Definir ideia, roteiro, locais, horários e formato de cada peça."
+    },
+    {
+      "title": "Captação",
+      "text": "Fotografar e filmar com atenção à luz, ao enquadramento e aos detalhes."
+    },
+    {
+      "title": "Edição e finalização",
+      "text": "Seleção, tratamento de cor, montagem, motion e revisão."
+    },
+    {
+      "title": "Entrega",
+      "text": "Arquivos prontos para publicar, nos formatos combinados."
+    }
+  ],
+  "highlights": [
+    "festa-15-anos",
+    "pafies-2027",
+    "santa-teresa-acutis"
   ],
   "equipment": {
     "note": "Equipamentos já utilizados ou explorados ao longo da trajetória.",
@@ -740,5 +777,9 @@
       "category": "perfil",
       "note": "Falta foto de perfil (4:5, ≥ 1600 px). Domínio do site ainda não definido. Depoimentos só se reais e autorizados."
     }
-  ]
+  ],
+  "quote": {
+    "text": "Uma imagem não serve apenas para registrar momentos. Ela pode transmitir sentimentos, contar histórias e gerar conexões.",
+    "signature": "Chagas"
+  }
 }

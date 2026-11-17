@@ -8,6 +8,7 @@ import { renderAbout, renderTimeline } from './render/about.js';
 import { renderAreas, renderTools, renderEquipment, renderKnowledge } from './render/capabilities.js';
 import { renderSelectedFilters, renderSelected } from './render/selected.js';
 import { renderProducts } from './render/products.js';
+import { renderHero, renderHighlights, renderSkills, renderProcess, renderQuote } from './render/v5.js';
 import { openLightbox } from './lightbox.js';
 import { initNav } from './nav.js';
 import { initMotion } from './motion.js';
@@ -30,6 +31,8 @@ async function boot() {
   const { site } = portfolio;
 
   safe('site', () => { bindSite(site); updateJsonLd(site); renderContactLinks(site); bindWhatsappFloat(site); });
+  safe('hero', () => renderHero(portfolio));
+  safe('destaques', () => { renderHighlights(portfolio, openLightbox); renderSkills(portfolio); renderProcess(portfolio); renderQuote(portfolio); });
   safe('sobre', () => { renderAbout(portfolio); renderTimeline(portfolio); });
   safe('serviços', () => { renderAreas(portfolio); renderTools(portfolio); renderEquipment(portfolio); renderKnowledge(portfolio); renderServices(pricing); });
 

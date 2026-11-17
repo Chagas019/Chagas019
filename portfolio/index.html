@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>CHAGAS CREATIVE — Fotógrafo e Videomaker em Campinas, SP</title>
   <meta name="description" content="Fotografia, audiovisual e design em Campinas e região: ensaios fotográficos, cobertura de eventos, Reels e identidade visual. Peça seu orçamento.">
-  <meta name="theme-color" content="#0b0b0c">
+  <meta name="theme-color" content="#000000">
   <meta name="color-scheme" content="dark light">
   <meta name="author" content="Francisco das Chagas Cardoso">
   <!-- TODO(domínio): trocar URLs relativas por absolutas (https://SEU-DOMINIO/portfolio/) no deploy — canonical, og:url, og:image e JSON-LD. -->
@@ -28,10 +28,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- FONTS: Agent 1 (Creative Director) fornece a URL final do Google Fonts; o orquestrador troca a linha abaixo. -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Mrs+Saint+Delafield&display=swap">
   <link rel="stylesheet" href="assets/css/tokens.css">
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/motion.css">
+  <link rel="stylesheet" href="assets/css/v5.css">
   <script>document.documentElement.classList.replace('no-js','js');</script>
   <script type="module" src="assets/js/main.js"></script>
 
@@ -106,24 +107,88 @@
 
   <main id="main" class="canvas" tabindex="-1">
 
-    <!-- 00 HOME / HERO — texto fixo do briefing; hooks cinematográficos em .hero__frame -->
-    <section class="hero" id="home" aria-labelledby="hero-title">
-      <div class="hero__frame" data-hero-frame aria-hidden="true">
-        <span class="hero__crop hero__crop--tl"></span><span class="hero__crop hero__crop--tr"></span>
-        <span class="hero__crop hero__crop--bl"></span><span class="hero__crop hero__crop--br"></span>
-        <span class="hero__meta hero__meta--top">REC · 1920×1080 · 24fps</span>
-        <span class="hero__meta hero__meta--bottom">Campinas — SP · desde 2019</span>
+    <!-- 00 HOME / HERO v5 — palavra gigante + retrato recortado (site.heroPhoto) ou fallback honesto -->
+    <section class="hero hero--v5" id="home" aria-labelledby="hero-title">
+      <div class="hero__top container" aria-hidden="true">
+        <p class="hero__meta hero__meta--kicker">Fotografia · Audiovisual<br>Motion &amp; design</p>
+        <p class="hero__meta hero__meta--status">Disponível para projetos <svg class="spark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2c.7 5.6 2.4 7.3 8 8-5.6.7-7.3 2.4-8 8-.7-5.6-2.4-7.3-8-8 5.6-.7 7.3-2.4 8-8z"/></svg></p>
       </div>
-      <div class="hero__inner container">
-        <p class="hero__eyebrow" data-reveal><span class="selection-box">CHAGAS CREATIVE</span></p>
-        <h1 class="hero__title" id="hero-title" data-reveal>Criatividade que transforma ideias em experiências.</h1>
-        <p class="hero__subtitle" data-reveal>Fotografia, audiovisual, design e comunicação digital. Transformando ideias em histórias visuais desde 2019.</p>
-        <div class="hero__actions" data-reveal>
-          <a class="btn btn--primary" href="#portfolio">Explorar projetos</a>
-          <a class="btn btn--ghost" href="#orcamento">Solicitar orçamento</a>
+      <div class="hero__stage container">
+        <svg class="hero__word" viewBox="0 0 1000 250" preserveAspectRatio="xMidYMin meet" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="hero-word-grad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#E0182D"/><stop offset=".55" stop-color="#B50F26"/><stop offset="1" stop-color="#3A0610"/>
+            </linearGradient>
+          </defs>
+          <text x="500" y="226" text-anchor="middle" textLength="992" lengthAdjust="spacingAndGlyphs" fill="url(#hero-word-grad)">PORTFÓLIO</text>
+        </svg>
+        <figure class="hero__portrait" data-slot="hero-photo">
+          <div class="portrait-fallback" role="img" aria-label="Espaço reservado para o retrato de Chagas — foto em breve">
+            <svg class="portrait-fallback__bust" viewBox="0 0 400 520" aria-hidden="true" focusable="false">
+              <defs>
+                <linearGradient id="bust-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1A1A1A"/><stop offset="1" stop-color="#050505"/></linearGradient>
+                <linearGradient id="bust-rim" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E0182D" stop-opacity=".9"/><stop offset=".5" stop-color="#E0182D" stop-opacity="0"/><stop offset="1" stop-color="#E0182D" stop-opacity=".55"/></linearGradient>
+              </defs>
+              <path d="M200 58c-52 0-86 40-86 98 0 44 18 80 46 98v34c-70 10-128 46-140 112-4 22-6 60-6 120h372c0-60-2-98-6-120-12-66-70-102-140-112v-34c28-18 46-54 46-98 0-58-34-98-86-98z" fill="url(#bust-fill)" stroke="url(#bust-rim)" stroke-width="1.5"/>
+            </svg>
+            <span class="portrait-fallback__mono" aria-hidden="true">CC</span>
+            <span class="portrait-fallback__note" aria-hidden="true">Retrato · foto em breve</span>
+          </div>
+        </figure>
+        <div class="hero__intro">
+          <p class="hero__hello" aria-hidden="true">Olá, eu sou</p>
+          <h1 class="hero__name" id="hero-title"><span class="visually-hidden">Olá, eu sou </span><span class="hero__name-main">Chagas</span> <span class="hero__role" data-slot="hero-role">Fotógrafo, videomaker &amp; motion designer</span></h1>
+          <p class="hero__lead" data-slot="hero-intro">Sou Francisco, conhecido como Chagas. Minha trajetória na criatividade começou em 2019, através da paixão pela fotografia e pela comunicação.</p>
+          <p class="hero__avail"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21zM12 7a2.5 2.5 0 1 0 0 5a2.5 2.5 0 1 0 0-5z"/></svg>Disponível em Campinas e região — SP</p>
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="#portfolio">Explorar projetos</a>
+            <a class="btn btn--ghost" href="#orcamento">Solicitar orçamento</a>
+          </div>
+        </div>
+        <div class="hero__aside">
+          <p class="hero__claim"><span class="hero__claim-icon" aria-hidden="true"><svg class="spark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2c.7 5.6 2.4 7.3 8 8-5.6.7-7.3 2.4-8 8-.7-5.6-2.4-7.3-8-8 5.6-.7 7.3-2.4 8-8z"/></svg></span><span>Criatividade que transforma ideias em experiências.</span></p>
+          <ul class="hero__stats" aria-label="Em números">
+            <li class="stat"><span class="stat__num">2019</span><span class="stat__label">Criando<br>desde</span></li>
+            <li class="stat"><span class="stat__num" data-slot="stat-works">7</span><span class="stat__label">Trabalhos no<br>portfólio</span></li>
+            <li class="stat"><span class="stat__num">SP</span><span class="stat__label">Campinas<br>e região</span></li>
+          </ul>
         </div>
       </div>
-      <a class="hero__scroll" href="#sobre" aria-label="Rolar para Sobre"><span aria-hidden="true">Scroll ↓</span></a>
+    </section>
+
+    <!-- DESTAQUES — 3 trabalhos reais (highlights) -->
+    <section class="works-row" aria-labelledby="works-row-title">
+      <div class="container">
+        <header class="row-head">
+          <h2 class="row-head__title" id="works-row-title">Projetos selecionados</h2>
+          <span class="row-head__rule" aria-hidden="true"></span>
+          <a class="row-head__link" href="#portfolio">Ver todos <span class="visually-hidden">os trabalhos</span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12h15M14 6l6 6-6 6"/></svg></a>
+        </header>
+        <ul class="works-row__list" data-slot="highlights"></ul>
+      </div>
+    </section>
+
+    <!-- FAIXA — ferramentas & habilidades · processo · citação -->
+    <section class="band" aria-label="Ferramentas, processo e manifesto">
+      <div class="band__grid container">
+        <div class="band__col band__skills">
+          <h2 class="band__title" id="skills-title">Ferramentas &amp; habilidades</h2>
+          <h3 class="band__sub">Habilidades</h3>
+          <ul class="skill-chips" data-slot="skills" aria-label="Habilidades"></ul>
+          <h3 class="band__sub">Ferramentas</h3>
+          <ul class="skill-chips" data-slot="tool-chips" aria-label="Ferramentas"></ul>
+        </div>
+        <div class="band__col band__process">
+          <h2 class="band__title" id="process-title">Processo</h2>
+          <ol class="steps" data-slot="process" aria-labelledby="process-title"></ol>
+        </div>
+        <figure class="band__quote">
+          <span class="band__quote-mark" aria-hidden="true">“</span>
+          <blockquote><p data-slot="quote-text">Uma imagem não serve apenas para registrar momentos. Ela pode transmitir sentimentos, contar histórias e gerar conexões.</p></blockquote>
+          <figcaption class="band__sign" data-slot="quote-sign">Chagas</figcaption>
+          <a class="band__quote-cta" href="#orcamento">Vamos criar algo juntos <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12h15M14 6l6 6-6 6"/></svg></a>
+        </figure>
+      </div>
     </section>
 
     <!-- 01 SOBRE -->
@@ -205,7 +270,7 @@
       <div class="container">
         <header class="section__head" data-reveal>
           <p class="section__num" aria-hidden="true">04</p>
-          <h2 class="section__title" id="selected-title">Projetos selecionados</h2>
+          <h2 class="section__title" id="selected-title">Projetos &amp; iniciativas</h2>
           <p class="section__lead">Projetos realizados, pessoais e conceituais.</p>
         </header>
         <div class="selected__filters filters" data-slot="selected-filters" role="group" aria-label="Filtrar projetos por tipo"></div>
@@ -290,15 +355,27 @@
       </div>
     </section>
 
-    <!-- 07 CONTATO -->
+    <!-- 07 CONTATO — CTA "Vamos trabalhar juntos" + canais + mockup -->
     <section class="section section--convert contact" id="contato" aria-labelledby="contact-title">
-      <div class="container">
-        <header class="section__head" data-reveal>
+      <div class="container contact__grid">
+        <header class="contact__head" data-reveal>
           <p class="section__num" aria-hidden="true">07</p>
-          <h2 class="section__title" id="contact-title">Contato</h2>
-          <p class="section__lead">Campinas e região — SP. Respondo com disponibilidade e proposta.</p>
+          <h2 class="contact__title" id="contact-title">Vamos trabalhar juntos <svg class="spark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2c.7 5.6 2.4 7.3 8 8-5.6.7-7.3 2.4-8 8-.7-5.6-2.4-7.3-8-8 5.6-.7 7.3-2.4 8-8z"/></svg></h2>
+          <p class="section__lead">Campinas e região — SP. Conte sua ideia: respondo com disponibilidade e proposta.</p>
+          <a class="contact__cta" href="#orcamento"><span class="contact__cta-icon" aria-hidden="true"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12h15M14 6l6 6-6 6"/></svg></span>Solicitar orçamento</a>
         </header>
         <ul class="contact__links" data-slot="contact-links"></ul>
+        <figure class="laptop" data-reveal>
+          <div class="laptop__screen">
+            <picture>
+              <source type="image/avif" srcset="media/portfolio-capturas-comunicafe-desktop-640.avif 640w, media/portfolio-capturas-comunicafe-desktop-1280.avif 1280w" sizes="(min-width: 1100px) 34vw, 90vw">
+              <source type="image/webp" srcset="media/portfolio-capturas-comunicafe-desktop-640.webp 640w, media/portfolio-capturas-comunicafe-desktop-1280.webp 1280w" sizes="(min-width: 1100px) 34vw, 90vw">
+              <img src="capturas/comunicafe-desktop.png" alt="Página inicial do site Comunica+Fé, projeto web de CHAGAS CREATIVE" width="1440" height="900" loading="lazy" decoding="async">
+            </picture>
+          </div>
+          <div class="laptop__base" aria-hidden="true"></div>
+          <figcaption class="laptop__caption">Comunica+Fé · site</figcaption>
+        </figure>
       </div>
     </section>
   </main>

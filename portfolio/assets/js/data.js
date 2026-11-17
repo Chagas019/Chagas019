@@ -97,7 +97,12 @@ export function normalizePortfolio(raw) {
     skills: arr(pf.skills), skills_note: pf.skills_note || '',
     links: pf.links && typeof pf.links === 'object' ? pf.links : {},
   };
-  return { site, about, areas, tools, equipment, timeline, selected, products, profile, categories, projects, missing: arr(p.missing) };
+  // v5 — habilidades, processo, destaques (ids de projects) e citação
+  const process = arr(p.process).filter((x) => x && x.title).map((x) => ({ title: str(x.title), text: str(x.text) }));
+  const q = p.quote && typeof p.quote === 'object' ? p.quote : {};
+  const quote = str(q.text) ? { text: str(q.text), signature: str(q.signature) } : null;
+  return { site, about, areas, tools, equipment, timeline, selected, products, profile, categories, projects, missing: arr(p.missing),
+    skills: strs(p.skills), process, highlights: strs(p.highlights), quote };
 }
 
 /**

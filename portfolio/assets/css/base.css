@@ -59,7 +59,7 @@ html.is-locked, html.is-nav-open { overflow: hidden; }
 main:focus { outline: none; }
 
 /* ---------- 2. Temas por seção (sem data-theme no HTML: mapeados por classe) ---------- */
-.about, .quote-form, [data-theme="canvas"] {
+[data-theme="canvas"] {
   color-scheme: light;
   --c-bg: var(--c-canvas, #ECEBE8); --c-surface: var(--c-white, #fff); --c-surface-2: var(--c-canvas-2, #DCDBD7);
   --c-text: var(--c-ink, #0A0A0A); --c-text-2: var(--c-ink-2, #454545); --c-text-3: var(--c-ink-3, #5C5C5C);
@@ -76,18 +76,18 @@ main:focus { outline: none; }
   --chip-bg: var(--c-white, #fff);
 }
 .services, .products, [data-theme="blue"] {
-  --c-bg: var(--c-graphite, #1F1F1F); --c-surface: var(--c-graphite-3, #262626); --c-surface-2: #2E2E2E;
+  --c-bg: var(--c-graphite, #0B0B0B); --c-surface: var(--c-graphite-3, #171717); --c-surface-2: #1E1E1E;
   --c-text: var(--c-paper, #F2F1EE); --c-text-2: var(--c-blue-tint, #BDBDBD); --c-text-3: var(--c-paper-dim, #ADADAD);
   --c-border: rgba(255, 255, 255, .12);
-  --surface-0: #1F1F1F; --surface-1: #272727; --surface-2: #2E2E2E; --surface-3: #353535;
+  --surface-0: #0B0B0B; --surface-1: #121212; --surface-2: #191919; --surface-3: #222222;
   --border-hairline: rgba(255, 255, 255, .09); --border-strong: rgba(255, 255, 255, .18);
   --highlight-top: inset 0 1px 0 rgba(255, 255, 255, .07);
 }
 .selected, [data-theme="navy"] {
-  --c-bg: var(--c-graphite-2, #161616); --c-surface: rgba(255, 255, 255, .04); --c-surface-2: rgba(255, 255, 255, .08);
+  --c-bg: var(--c-graphite-2, #060606); --c-surface: rgba(255, 255, 255, .04); --c-surface-2: rgba(255, 255, 255, .08);
   --c-text: var(--c-paper, #F2F1EE); --c-text-2: var(--c-blue-tint, #BDBDBD); --c-text-3: var(--c-paper-dim, #ADADAD);
   --c-border: rgba(255, 255, 255, .1);
-  --surface-0: #161616; --surface-1: #1E1E1E; --surface-2: #252525; --surface-3: #2C2C2C;
+  --surface-0: #060606; --surface-1: #0F0F0F; --surface-2: #171717; --surface-3: #202020;
 }
 /* compostos v4 re-resolvidos no tema local (tokens.css só os declara em :root e [data-theme]) */
 .about, .quote-form, .services, .products, .selected {
@@ -98,7 +98,6 @@ main:focus { outline: none; }
   --chip-bg-hover: var(--surface-2); --chip-border: var(--c-border-strong); --chip-bg-active: var(--c-text); --chip-fg-active: var(--c-bg);
   --input-border-focus: var(--c-text); --input-bg: var(--surface-3);
 }
-.about, .quote-form { --input-bg: var(--c-white, #fff); }
 .section, [data-theme], .quote-form { background: var(--c-bg, #0A0A0A); color: var(--c-text, #F2F1EE); }
 
 /* ---------- 3. Utilitários ---------- */
