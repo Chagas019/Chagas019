@@ -1,119 +1,193 @@
 import { CONFIG } from './config.js';
-import { waLink } from './render/contact.js';
-
-const MSG = {
-  name: { valueMissing: 'Informe seu nome.', tooShort: 'Nome muito curto.' },
-  email: { valueMissing: 'Informe seu e-mail.', typeMismatch: 'E-mail inválido. Ex.: nome@dominio.com' },
-  message: { valueMissing: 'Escreva uma mensagem.', tooShort: 'Conte um pouco mais (mín. 10 caracteres).' },
-};
-
-function errorText(input) {
-  const v = input.validity; const m = MSG[input.name] || {};
-  if (v.valueMissing) return m.valueMissing || 'Campo obrigatório.';
-  if (v.typeMismatch) return m.typeMismatch || 'Formato inválido.';
-  if (v.tooShort) return m.tooShort || 'Muito curto.';
-  return input.validationMessage;
-}
-
-function showError(form, input) {
-  const err = form.querySelector(`[data-error-for="${input.name}"]`);
-  const bad = !input.checkValidity();
-  input.setAttribute('aria-invalid', String(bad));
-  if (err) { err.textContent = bad ? errorText(input) : ''; err.hidden = !bad; }
-  return !bad;
-}
-
-function compose(data) {
-  return [
-    `Olá! Meu nome é ${data.name}.`,
-    data.service && `Serviço: ${data.service}`,
-    data.date && `Data prevista: ${data.date}`,
-    '', data.message, '', `Contato: ${data.email}`,
-  ].filter((x) => x !== false && x != null).join('\n');
-}
+import { waLink, mailLink } from './render/contact.js';
 
 /**
- * Formulário: validação nativa + mensagens acessíveis (aria-invalid, aria-describedby).
- * Com CONFIG.formEndpoint → POST (Accept: application/json); só mostra sucesso com resposta ok.
- * Sem endpoint → abre WhatsApp/e-mail com a mensagem montada e diz isso claramente.
+ * Formulário de orçamento (form#quote-form).
+ * Regras: nome, ≥1 serviço (checkboxes name="services"), mensagem e pelo menos um contato
+ * (e-mail OU telefone; o e-mail, se preenchido, precisa ser válido).
+ * Erros acessíveis: aria-invalid + [data-error-for] ligado por aria-describedby + status aria-live.
+ * Envio: monta a mensagem e abre wa.me/<número>?text=… (ou mailto com o mesmo corpo).
+ * Nunca simula sucesso: o texto deixa claro que o envio só acontece no app aberto.
+ * Com CONFIG.formEndpoint → POST JSON; sucesso só com resposta ok.
  */
+const MSG = {
+  name: { valueMissing: 'Informe seu nome.', tooShort: 'Nome muito curto.' },
+  email: { typeMismatch: 'E-mail inválido. Ex.: nome@dominio.com', contact: 'Informe um e-mail ou um telefone para retorno.' },
+  phone: { invalid: 'Telefone incompleto. Inclua o DDD, ex.: (19) 90000-0000.' },
+  message: { valueMissing: 'Conte um pouco sobre o projeto.', tooShort: 'Conte um pouco mais (mín. 10 caracteres).' },
+  services: { valueMissing: 'Selecione ao menos um serviço.' },
+};
+
+const digits = (v) => String(v || '').replace(/\D/g, '');
+
+export function composeQuote(d) {
+  return [
+    `Olá, Chagas! Meu nome é ${d.name}.`,
+    'Gostaria de um orçamento para:',
+    ...d.services.map((s) => `• ${s}`),
+    '',
+    d.message,
+    '',
+    'Contato para retorno:',
+    d.email && `E-mail: ${d.email}`,
+    d.phone && `Telefone: ${d.phone}`,
+    '',
+    '(Mensagem enviada pelo formulário do site.)',
+  ].filter((x) => x != null && x !== false).join('\n');
+}
+
 export function initForm(site) {
-  const form = document.getElementById('contact-form');
+  const form = document.getElementById('quote-form') || document.getElementById('contact-form');
   if (!form) return;
-  const status = form.querySelector('[data-slot="form-status"]');
-  const hint = form.querySelector('[data-slot="form-hint"]');
-  const submit = form.querySelector('[type="submit"]');
-  const fields = [...form.querySelectorAll('input[required], textarea[required], input[type="email"]')];
+  const status = form.querySelector('[data-slot="form-status"]') || document.querySelector('[data-slot="form-status"]');
+  const hint = form.querySelector('[data-slot="form-hint"]') || document.querySelector('[data-slot="form-hint"]');
+  const el = form.elements;
+  const btnWa = form.querySelector('[data-submit="whatsapp"]');
+  const btnMail = form.querySelector('[data-submit="email"]');
+  // pelo menos um contato: e-mail deixa de ser obrigatório sozinho (validação feita aqui)
+  if (el.email) el.email.required = false;
 
-  const channel = () => {
-    const pref = CONFIG.fallbackChannel;
-    if (pref === 'whatsapp' && site.whatsapp) return 'whatsapp';
-    if (site.email) return 'email';
-    return site.whatsapp ? 'whatsapp' : null;
+  const errNode = (name) => form.querySelector(`[data-error-for="${name}"]`);
+  const ensureDescribed = (input, name) => {
+    const err = errNode(name);
+    if (!input || !err || !err.id || !input.setAttribute) return;
+    const ids = (input.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+    if (!ids.includes(err.id)) input.setAttribute('aria-describedby', [...ids, err.id].join(' '));
   };
-  if (!CONFIG.formEndpoint && hint) {
-    const c = channel();
-    hint.textContent = c === 'whatsapp' ? 'Ao enviar, o WhatsApp abre com sua mensagem pronta.'
-      : c === 'email' ? 'Ao enviar, seu app de e-mail abre com a mensagem pronta.' : '';
-  }
-  if (!CONFIG.formEndpoint && submit && channel() === 'whatsapp') submit.textContent = 'Enviar pelo WhatsApp';
+  const serviceInputs = () => [...form.querySelectorAll('input[name="services"]')];
+  ['name', 'email', 'phone', 'message'].forEach((n) => ensureDescribed(el[n], n));
 
-  // pré-seleciona serviço vindo de um CTA de preço
+  const setErr = (name, text, inputs) => {
+    const err = errNode(name);
+    const bad = !!text;
+    inputs.filter(Boolean).forEach((i) => i.setAttribute('aria-invalid', String(bad)));
+    if (err) { err.textContent = text || ''; err.hidden = !bad; }
+    return !bad;
+  };
+
+  const checks = {
+    name: () => {
+      const v = el.name; if (!v) return true;
+      v.value = v.value.replace(/\s+/g, ' ').trimStart();
+      const t = v.value.trim();
+      return setErr('name', !t ? MSG.name.valueMissing : t.length < 2 ? MSG.name.tooShort : '', [v]);
+    },
+    email: () => {
+      const e = el.email; const p = el.phone;
+      const ev = e ? e.value.trim() : ''; const pv = p ? digits(p.value) : '';
+      let msg = '';
+      if (ev && e && e.validity.typeMismatch) msg = MSG.email.typeMismatch;
+      else if (!ev && !pv) msg = MSG.email.contact;
+      return setErr('email', msg, [e]);
+    },
+    phone: () => {
+      const p = el.phone; if (!p) return true;
+      const n = digits(p.value);
+      return setErr('phone', n && (n.length < 10 || n.length > 13) ? MSG.phone.invalid : '', [p]);
+    },
+    message: () => {
+      const m = el.message; if (!m) return true;
+      const t = m.value.trim();
+      return setErr('message', !t ? MSG.message.valueMissing : t.length < 10 ? MSG.message.tooShort : '', [m]);
+    },
+    services: () => {
+      const boxes = serviceInputs(); if (!boxes.length) return true;
+      const ok = boxes.some((b) => b.checked);
+      const r = setErr('services', ok ? '' : MSG.services.valueMissing, []);
+      const fs = boxes[0].closest('fieldset.form__fieldset') || form.querySelector('[data-slot="service-options"]');
+      if (fs) fs.setAttribute('aria-invalid', String(!ok));
+      return r;
+    },
+  };
+
+  const setStatus = (text, kind) => { if (status) { status.textContent = text; status.dataset.kind = kind || ''; } };
+
+  if (hint) {
+    hint.textContent = CONFIG.formEndpoint
+      ? 'Sua mensagem é enviada pelo formulário. Se preferir, use WhatsApp ou e-mail.'
+      : 'Os botões abrem o WhatsApp ou o seu app de e-mail com a mensagem pronta — o envio só acontece quando você confirmar por lá.';
+  }
+  if (btnWa && !site.whatsapp) btnWa.hidden = true;
+  if (btnMail && !site.email) btnMail.hidden = true;
+
+  // revalida enquanto corrige
+  form.addEventListener('input', (e) => {
+    const n = e.target.name;
+    if (n === 'services') { if (errNode('services') && !errNode('services').hidden) checks.services(); return; }
+    if (n === 'phone' || n === 'email') { if (el.email?.getAttribute('aria-invalid') === 'true') checks.email(); if (n === 'phone' && el.phone.getAttribute('aria-invalid') === 'true') checks.phone(); return; }
+    if (checks[n] && e.target.getAttribute('aria-invalid') === 'true') checks[n]();
+  });
+  form.addEventListener('focusout', (e) => {
+    const n = e.target.name;
+    if (!e.target.value || n === 'services') return;
+    if (n === 'phone') { checks.phone(); if (el.email?.getAttribute('aria-invalid') === 'true') checks.email(); }
+    else if (checks[n]) checks[n]();
+  });
+
+  // CTA de preço/produto (a[data-service]) → marca o serviço correspondente
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a[data-service]');
-    const sel = form.elements.service;
-    if (!a || !sel) return;
-    if ([...sel.options].some((o) => o.value === a.dataset.service)) sel.value = a.dataset.service;
-    if (a.dataset.tier && !form.elements.message.value) form.elements.message.value = `Tenho interesse no pacote "${a.dataset.tier}". `;
+    if (!a) return;
+    const box = serviceInputs().find((b) => b.value === a.dataset.service);
+    if (box) { box.checked = true; checks.services(); }
   });
-
-  fields.forEach((f) => {
-    f.addEventListener('blur', () => { if (f.value) showError(form, f); });
-    f.addEventListener('input', () => { if (f.getAttribute('aria-invalid') === 'true') showError(form, f); });
-  });
-
-  const setStatus = (text, kind) => { status.textContent = text; status.dataset.kind = kind || ''; };
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (form.elements._gotcha?.value) return; // honeypot
-    const ok = fields.map((f) => showError(form, f)).every(Boolean);
-    if (!ok) {
-      const first = fields.find((f) => !f.checkValidity());
-      setStatus('Revise os campos destacados.', 'error');
-      first?.focus();
+    if (el._gotcha?.value) return; // honeypot
+    const channel = e.submitter?.dataset.submit || e.submitter?.value || (site.whatsapp ? 'whatsapp' : 'email');
+    const order = ['services', 'message', 'name', 'email', 'phone'];
+    const results = order.map((k) => [k, checks[k]()]);
+    const firstBad = results.find(([, ok]) => !ok);
+    if (firstBad) {
+      const n = results.filter(([, ok]) => !ok).length;
+      setStatus(`Revise ${n === 1 ? 'o campo destacado' : `os ${n} campos destacados`} antes de enviar.`, 'error');
+      const k = firstBad[0];
+      (k === 'services' ? serviceInputs()[0] : el[k])?.focus();
       return;
     }
-    const data = Object.fromEntries(new FormData(form));
-    delete data._gotcha;
+    const data = {
+      name: el.name.value.trim(),
+      email: el.email ? el.email.value.trim() : '',
+      phone: el.phone ? el.phone.value.trim() : '',
+      services: serviceInputs().filter((b) => b.checked).map((b) => b.value),
+      message: el.message.value.trim(),
+    };
+    const text = composeQuote(data);
+    const subject = `Orçamento — ${data.services.map((s) => s.split(' — ').pop()).join(', ')} (${data.name})`;
 
-    if (CONFIG.formEndpoint) {
-      submit.disabled = true; form.setAttribute('aria-busy', 'true');
-      setStatus('Enviando…', 'pending');
+    if (CONFIG.formEndpoint && channel !== 'whatsapp' && channel !== 'email') {
+      // reservado para um botão de envio direto, se existir
+    }
+    if (CONFIG.formEndpoint && channel === 'endpoint') {
+      form.setAttribute('aria-busy', 'true'); setStatus('Enviando…', 'pending');
       try {
-        const res = await fetch(CONFIG.formEndpoint, {
-          method: 'POST', headers: { Accept: 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify(data),
-        });
+        const res = await fetch(CONFIG.formEndpoint, { method: 'POST', headers: { Accept: 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
         if (!res.ok) throw new Error(String(res.status));
         form.reset();
-        setStatus('Mensagem enviada. Respondo em breve.', 'success');
+        setStatus('Mensagem recebida pelo formulário. Respondo em breve.', 'success');
       } catch (err) {
-        setStatus(`Não foi possível enviar agora (${err.message}). Tente pelo WhatsApp ou e-mail ao lado.`, 'error');
-      } finally { submit.disabled = false; form.removeAttribute('aria-busy'); }
+        setStatus(`Não foi possível enviar agora (${err.message}). Use o WhatsApp ou o e-mail.`, 'error');
+      } finally { form.removeAttribute('aria-busy'); }
       return;
     }
 
-    const text = compose(data);
-    const c = channel();
-    if (c === 'whatsapp') {
-      window.open(waLink(site.whatsapp, text), '_blank', 'noopener');
-      setStatus('Abrimos o WhatsApp com sua mensagem. Ela só é enviada quando você tocar em enviar por lá.', 'info');
-    } else if (c === 'email') {
-      const subject = `Orçamento${data.service ? ` — ${data.service}` : ''} (${data.name})`;
-      window.location.href = `mailto:${site.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
-      setStatus('Abrimos seu app de e-mail com a mensagem. Ela só é enviada quando você confirmar o envio por lá.', 'info');
-    } else {
-      setStatus('Envio indisponível no momento: nenhum canal de contato configurado.', 'error');
+    if (channel === 'email' && site.email) {
+      window.location.href = mailLink(site.email, subject, text);
+      setStatus('Abrimos seu app de e-mail com a mensagem pronta. Ela só é enviada quando você confirmar o envio por lá.', 'info');
+      return;
     }
+    if (site.whatsapp) {
+      const win = window.open(waLink(site.whatsapp, text), '_blank', 'noopener');
+      const mail = site.email ? ' Se preferir, use “Enviar por e-mail”.' : '';
+      setStatus(win === null && false ? '' : `Abrimos o WhatsApp com sua mensagem pronta em uma nova aba. Ela só é enviada quando você tocar em enviar por lá.${mail}`, 'info');
+      return;
+    }
+    if (site.email) {
+      window.location.href = mailLink(site.email, subject, text);
+      setStatus('Abrimos seu app de e-mail com a mensagem pronta. Ela só é enviada quando você confirmar o envio por lá.', 'info');
+      return;
+    }
+    setStatus('Envio indisponível no momento: nenhum canal de contato configurado.', 'error');
   });
 }

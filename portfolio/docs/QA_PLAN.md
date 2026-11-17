@@ -1,87 +1,81 @@
-# QA Plan — Chagas Portfolio
+# QA Plan — CHAGAS CREATIVE (v3)
 
-Escopo: `portfolio/index.html` (estático, HTML/CSS/JS vanilla), conteúdo em `portfolio/content/*.json`.
-Automação: `node portfolio/tests/qa.js [porta]` (Playwright/Chromium, servidor próprio, porta padrão 8091).
-Relatório: `portfolio/tests/qa-report.json` + screenshots em `portfolio/tests/screenshots/`.
+Escopo: `portfolio/index.html` (estático, HTML/CSS/ES modules), conteúdo em `portfolio/content/portfolio.json` e `portfolio/content/pricing.json`.
+Fonte da verdade: `docs/BRIEFING.md` → "CONTRATO DE DADOS" e "CONTRATO DE MARCAÇÃO".
+Automação: `node portfolio/tests/qa.js [porta]` (Playwright/Chromium, servidor próprio na raiz do repo, porta padrão 8091).
+Saída: `portfolio/tests/qa-report.json` + `portfolio/tests/screenshots/*.png`. Exit 0 = sem FAIL, 1 = algum FAIL, 2 = erro do harness.
 
-## Escala de severidade
+Contagens esperadas são lidas em tempo de execução dos JSON (nada fixo no teste): grupos/itens de `pricing.json`, `selected.length`, `products.length`, `projects.length`.
+
+## Severidade
 
 | Nível | Definição | Bloqueia release? |
 |---|---|---|
 | S1 Crítico | Página quebra, conteúdo principal ausente, form/nav inutilizável, erro JS fatal | Sim |
-| S2 Alto | Falha WCAG AA, link/asset 404, overflow horizontal, budget de performance estourado | Sim |
-| S3 Médio | Inconsistência visual, SEO incompleto, animação com jank, aviso (WARN) relevante | Não (corrigir no sprint) |
-| S4 Baixo | Polimento, copy, micro-detalhe | Não |
+| S2 Alto | Falha WCAG AA, link/asset 404, overflow horizontal, budget estourado, dado divergente do JSON | Sim |
+| S3 Médio | Inconsistência visual, SEO incompleto, aviso relevante | Não |
+| S4 Baixo | Polimento, copy | Não |
 
-Harness: FAIL = S1/S2, WARN = S3/S4. Exit code 1 se houver qualquer FAIL.
+Harness: FAIL = S1/S2, WARN = S3/S4.
 
-## 1. Responsividade — viewports 360, 390, 768, 1024, 1440, 1920
-- Sem scroll horizontal (`scrollWidth <= innerWidth`) em todas as larguras. (S2)
-- Tipografia legível: corpo >= 16px no mobile; títulos sem quebra de palavra cortada. (S3)
-- Grid de projetos: 1 col (<=390), 2 col (768), 3+ col (>=1024). (S3)
-- Tabela/cards de preço legíveis sem zoom em 360px. (S2)
-- Alvos de toque >= 44x44px em <=768px. (S2)
-- Screenshot full-page de cada viewport revisado manualmente. (S3)
+## 1. Estrutura e navegação (S1)
+- `sections.present`: `#home #sobre #servicos #portfolio #projetos #produtos #orcamento #contato`.
+- `nav.anchors`: `[data-nav-menu]` tem exatamente 8 `a[href="#…"]`, todas resolvem e cobrem as 8 seções.
+- `nav.mobile-360/390/768`: `button[data-nav-toggle]` alterna `aria-expanded`, menu visível/oculto, Esc fecha.
+- `links.internal` (S2): todo href/src/srcset interno resolve (âncora existe ou HTTP 200). `links.external-rel` (S3): `target=_blank` com `rel=noopener`.
 
-## 2. Navegação e links
-- Todo `href` interno (`#id` ou caminho relativo) resolve: âncora existe ou recurso retorna 200. (S2)
-- Todo `src` (img, script, link stylesheet, source) retorna 200; zero requests falhos. (S2)
-- Links externos com `target=_blank` têm `rel="noopener"`. (S3)
-- Menu mobile (<=768): botão `[data-nav-toggle]` alterna `aria-expanded` true/false, abre/fecha o menu, fecha com Esc e ao clicar em um link. (S1)
-- Smooth scroll respeita reduced-motion. (S3)
+## 2. Preços — `#orcamento` (S2)
+- `content.pricing`: nº de `[data-pricing-group]` == `groups.length`; nº de `[data-pricing-item]` == total de itens; cada item mostra `price_from` em BRL pt-BR (`R$ 1.234`, aceita `,00` e NBSP); `price_from: null` → "Sob consulta".
+- `content.pricing-notes`: textos `disclaimer` e `note` do JSON presentes (`[data-slot=pricing-disclaimer|pricing-note]`).
 
-## 3. Formulário de contato (`form#contact-form`)
-- Campos name, email, message com `<label>` associado. (S2)
-- Submit vazio é bloqueado; campos inválidos recebem `aria-invalid="true"`. (S1)
-- Mensagem de erro textual ligada por `aria-describedby` e anunciada (`aria-live` / `role=alert`). (S2)
-- E-mail inválido rejeitado; foco vai ao primeiro campo inválido. (S2)
-- Sucesso: feedback visível + acessível; sem recarregar página com erro. (S2)
-- `autocomplete` adequado (name, email). (S4)
+## 3. Projetos selecionados — `#projetos` (S2)
+- `content.selected`: nº de `[data-selected-project]` == `selected.length`; todo `data-type` ∈ {realizado, pessoal, conceitual}.
+- `content.selected-filters`: botões em `[data-slot=selected-filters]` mudam o conjunto visível; filtro de tipo só mostra itens daquele tipo; botões expõem `aria-pressed`/`aria-selected` (ausência = WARN).
 
-## 4. Acessibilidade — WCAG 2.1 AA
-- 1 único `<h1>`; hierarquia de headings sem saltos. (S2)
-- `<html lang>` definido; landmarks `header`, `nav`, `main`, `footer`. (S2)
-- Todo botão/link com nome acessível (texto, `aria-label` ou `aria-labelledby`). (S2)
-- Toda imagem com `alt` (decorativa: `alt=""`). (S2)
-- Contraste texto >= 4.5:1 (>= 3:1 texto grande / UI). (S2)
-- Foco visível em todos os interativos; ordem de tab lógica; skip link. (S2)
-- Lightbox: `role=dialog` + `aria-modal`, foco preso, Esc fecha, setas navegam, foco retorna ao gatilho. (S1)
-- Nada depende só de cor; zoom 200% sem perda de conteúdo. (S2)
+## 4. Produtos digitais — `#produtos` (S2)
+- `content.products`: nº de `[data-product]` == `products.length`; cada card tem preço ("R$…" ou "Sob consulta") e CTA `a[href^="https://wa.me/5519989905361"]`.
 
-## 5. Performance (budgets, Lighthouse mobile simulado)
-- LCP < 2.5s; CLS < 0.1; INP < 200ms. (S2)
-- JS total transferido < 60KB (sem compressão estimada pelo harness). (S2)
-- CSS total < 50KB; fontes <= 2 famílias, `font-display: swap`, preload da principal. (S3)
-- Imagens abaixo da dobra com `loading="lazy"`; todas com `width`/`height` (ou aspect-ratio). (S2)
-- Imagens em AVIF/WebP com `srcset`/`sizes`; hero com `fetchpriority="high"`. (S3)
-- Nenhum erro no console; zero 404. (S2)
+## 5. Formulário — `form#quote-form` (S1)
+- `form.fields`: `name`, `email`, `phone`, `message` + checkboxes `name="services"`.
+- `form.blocks-empty`: envio vazio não navega, não faz POST e não abre WhatsApp.
+- `form.aria-invalid` + `form.error-messages`: campos inválidos com `aria-invalid="true"` + `aria-describedby` apontando para texto de erro + região `aria-live`/`role=alert|status` populada em `#orcamento`.
+- `form.email-format`: e-mail inválido rejeitado.
+- `form.whatsapp`: com ≥1 serviço + dados válidos, o submit WhatsApp (`[data-submit=whatsapp]`) gera URL `https://wa.me/5519989905361?text=…` contendo os rótulos dos serviços marcados e a mensagem. `window.open` é substituído via `addInitScript` (log em `window.__opened`); navegações para wa.me são abortadas e registradas; popups capturados.
+- `form.mailto`: existe alternativa por e-mail (`[data-submit=email]` ou `a[href^=mailto:]`).
+- `form.no-fake-success` (S3): nenhuma mensagem de "enviado com sucesso" simulada.
 
-## 6. SEO
-- `<title>` 30–60 caracteres; `meta description` 70–160. (S3)
-- `link rel=canonical`; Open Graph (`og:title`, `og:description`, `og:image`, `og:url`, `og:type`); `twitter:card`. (S3)
-- JSON-LD válido (`Person` ou `ProfessionalService`) parseável. (S3)
-- `meta viewport` presente; `alt` descritivo nas imagens de projeto. (S2)
-- Conteúdo de projetos/preços visível no DOM após render (JS rendering ok). (S3)
+## 6. WhatsApp flutuante e contatos (S2)
+- `whatsapp.float`: `a[data-whatsapp-float]` existe, href começa com `https://wa.me/5519989905361`, nome acessível.
+- `whatsapp.float-mobile` (390px): visível e dentro do viewport após rolagem (deve ser `position: fixed`).
+- `whatsapp.float-vs-submit` (390px): com os botões de submit rolados ao centro (FAIL) e ao fim do viewport (WARN), o botão flutuante não se sobrepõe e `elementFromPoint` atinge o submit. Screenshot `float-vs-submit-390.png`.
+- `contact.links`: Instagram `https://www.instagram.com/chagas_catolico/`, `mailto:hh3356577@gmail.com`, link wa.me — dentro de `#contato` (fora dele = WARN).
 
-## 7. Animações
-- Reveal anima apenas `opacity`/`transform` (sem layout shift; CLS inalterado). (S2)
-- `prefers-reduced-motion: reduce`: todo conteúdo visível (opacity 1) sem depender de scroll/IntersectionObserver. (S1)
-- Sem JS: conteúdo não fica oculto (classe `.js` controla estado inicial). (S2)
-- 60fps em scroll no desktop; nada de animação infinita chamativa. (S3)
+## 7. Sem conteúdo falso (S2)
+- `content.no-fake`: sem "lorem ipsum", sem `example.com` no texto renderizado, sem tokens PLACEHOLDER/TODO visíveis, nenhum `src/srcset/poster/style/background-image` de bancos de imagem (unsplash, pexels, pixabay, shutterstock, istock, getty, freepik, Adobe Stock, picsum, placehold…), e os JSON de conteúdo também não os referenciam.
+- `seo.no-placeholder-meta` (S3): meta/canonical/JSON-LD sem `example.com`/PLACEHOLDER (WARN enquanto `site.url` for "" sem domínio de deploy).
+- Manual: nenhum cliente, métrica, resultado, data ou contrato inventado (conferir contra BRIEFING).
 
-## 8. Conteúdo dinâmico
-- `#trabalhos`: renderiza 1 `[data-project]` por item de `content/portfolio.json`; cada um abre lightbox. (S1)
-- `#investimento`: 7 `[data-pricing-service]`, cada um com 3 `[data-pricing-tier]`, valores formatados BRL. (S1)
-- Falha ao carregar JSON exibe fallback amigável, sem erro fatal. (S2)
+## 8. Acessibilidade — WCAG 2.1 AA (S2)
+- `seo.h1` (1 único h1), `a11y.heading-order` (WARN em saltos), `a11y.landmarks` (header/nav/main/footer + skip link), `a11y.names`, `a11y.form-labels`, `a11y.contrast` (heurística, WARN — confirmar com axe/Lighthouse), `a11y.touch-targets-360` (WARN < 44px).
+- Lightbox: `lightbox.open` (role=dialog + aria-modal), `focus-in`, `focus-trap`, `arrows`, `esc`, `focus-return`.
 
-## 9. UX
-- CTA principal visível acima da dobra em 360px e 1440px. (S2)
-- Estados hover/focus/active consistentes; cursor pointer em clicáveis. (S3)
-- Header fixo não cobre âncoras (`scroll-margin-top`). (S3)
-- Copy em pt-BR revisada; sem lorem ipsum. (S3)
+## 9. Responsividade (S2)
+- `responsive.no-overflow` em 360/390/768/1024/1440/1920; screenshots `full-<w>.png` revisados manualmente.
+
+## 10. Performance (S2)
+- `perf.js-budget`: JS total ≤ **80KB** (elevado de 60KB no v3: módulos novos de projetos selecionados, produtos e formulário de orçamento).
+- `perf.cls` < 0.1 e `perf.lcp` < 2.5s (lab, 390px, sem throttling — confirmar com Lighthouse mobile).
+- `img.alt-dimensions` (alt + width/height ou aspect-ratio, nenhuma quebrada), `img.lazy` (abaixo da dobra com `loading=lazy`).
+- `console.errors` = 0, `network.failed` = 0 (requisições wa.me abortadas pelo stub são ignoradas).
+
+## 11. SEO (S3)
+- `seo.meta`: title 30–60, description 70–160, viewport, lang, canonical, Open Graph completo, twitter:card, JSON-LD parseável.
+
+## 12. Movimento
+- `motion.reduced-visible` (S1): com `prefers-reduced-motion: reduce`, todo `[data-reveal]`, seções, projetos, preços, selecionados e produtos com opacidade 1 sem rolar.
+- `motion.reduced-no-infinite` (S3): nenhuma animação infinita rodando.
 
 ## Processo
-1. Dev roda `node portfolio/tests/qa.js` localmente antes de cada entrega.
-2. QA executa harness + revisão manual (screenshots, teclado, leitor de tela NVDA/VoiceOver).
-3. Lighthouse mobile para LCP/CLS reais; anexar valores ao relatório.
-4. Bugs registrados com severidade, viewport, passos e screenshot.
+1. Cada agente roda `node portfolio/tests/qa.js` antes de entregar.
+2. QA executa harness + revisão manual (screenshots, teclado, leitor de tela) e registra em `docs/QA_REPORT.md` com severidade, viewport, passos e evidência.
+3. Lighthouse mobile para LCP/CLS reais.
