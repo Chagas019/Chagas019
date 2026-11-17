@@ -4,6 +4,6 @@
 - Protótipo: "trocar paróquia" e "lembrar pendentes" só mostram aviso — dependem de auth e notificações (Fase 4).
 - Protótipo: a tela mostra a visão da coordenação; a visão do voluntário (confirmar a própria escala) será feita no app.
 - Banco: falta política de retenção/anonimização automática (LGPD) e job de backup — Fase 6.
-- Banco: ainda não aplicado no Supabase; precisa de um projeto dedicado.
+- Supabase: alerta "Signed-In Users Can Execute SECURITY DEFINER Function" em `parish_directory` é intencional — a função só devolve nomes se quem chama for membro da paróquia.
 - Protótipo: cena do hero é ilustração SVG; produto final deve permitir foto da própria igreja (Storage).
 - Protótipo mobile: Relatórios e tema ficam fora da barra inferior; irão para menu "Mais".

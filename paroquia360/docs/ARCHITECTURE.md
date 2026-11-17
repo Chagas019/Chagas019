@@ -12,6 +12,10 @@ O repositório `Chagas019` é uma coleção de sites estáticos (Comunica+Fé, b
 | Validação | Zod (front e server actions) | Um esquema só |
 | Testes | Vitest (unidade), Playwright (e2e), pgTAP/SQL (RLS) | |
 
+## Ambiente
+- Supabase: projeto `paroquia360` (ref `gyhnmnzaxrlamvptczek`, região sa-east-1, plano gratuito). URL: https://gyhnmnzaxrlamvptczek.supabase.co
+- Migrações aplicadas: `init`, `harden`. Sem dados (o `seed.sql` é só para desenvolvimento local).
+
 ## Multi-tenant
 - Banco único, coluna `parish_id` em toda tabela de domínio.
 - Tabela `memberships(user_id, parish_id, role)` é a fonte da verdade de acesso.
