@@ -103,3 +103,41 @@ Stills: `render/revisao/ConfieEmCristo-Vertical/cor-r1/` (`m2.png` = f1476 | 150
 **Pedidos**
 - CÓDIGO: nada obrigatório, porque a cena 4 já consome `luzFundoPorCena.cena4`. Opcional: passar `lente={{y: 0.42, altura: 0.34}}` explicitamente no `FundoProfundo` da Cena4 se o layout mudar (âncoras do texto em 0.33 e 0.5), mantendo a lente entre as duas.
 - CÓDIGO/REVISÃO: a cena 5 (f1840) agora fica bem mais escura que a 4. Isso é coerente com a cruz "recortada pela luz" (item 5), mas o T4 vai ter uma queda de luminância. Se a revisão achar que ela quebra o arco, a correção é passar `luzFundoPorCena.cena5` para ~1.4 (fundo luminoso atrás da cruz em silhueta). Me peçam, que eu ajusto e meço.
+
+---
+
+## Cena 5 luminosa — decisão do coordenador (o arco não recua)
+
+- `estilo.ts`: `luzFundoPorCena.cena5` foi de 0.85 para **1.4**.
+- **Problema com o perfil atual:** o texto da cena 5 fica no alto (âncoras 0.15–0.25), justamente onde o céu "amanhecer" da faixa 1..2 é mais claro. A lente padrão (y 0.42) protege a cena 4, não a 5. Medido no render atual: fundo acima do editorial `#7C5C36`, branco 5.29 / dourado 3.13; acima do JESUS `#835C2E`, dourado 3.05; acima do "NÃO TENHA MEDO" `#885D2B`, branco 4.99 / dourado 2.96. Além disso, a luz não fica atrás da cruz.
+- **Solução:** criei o `perfil: 'contraluz'` no `FundoProfundo`. O brilho creme/âmbar se concentra em `origem` (atrás da cruz) e o alto fica escuro, com uma lente em y 0.2. O `estilo.ts` exporta as props prontas:
+  - `fundoCena5 = {luz: 1.4, perfil: 'contraluz', lente: {y: 0.2, altura: 0.2}}`
+  - `fundoCena4 = {luz: 1.9, perfil: 'amanhecer', lente: {y: 0.42, altura: 0.34}}`
+
+  O padrão continua `'amanhecer'`: a cena 4 renderiza idêntica pixel a pixel (f1620, diferença 0).
+- **Validação sem editar a Cena5:** fiz uma cópia da `Cena5Cristo` no scratchpad trocando só `luz={luzFundoPorCena.cena5}` por `{...fundoCena5}` e renderizei f1860–2264.
+
+**Contraste com `contraluz`** (fundo medido em volta do texto, 9×9 px; descartei pontos que caíram sobre glifos)
+
+| Frame / texto | Fundo | Branco quente | Dourado |
+|---|---|---|---|
+| f1960 "Quando tudo parecer impossível," (borda) | `#261507` | 15.27 | 9.04 |
+| f1960 editorial, acima | `#2C1709` | 14.76 | 8.74 |
+| f1960 editorial, entre linhas | `#341D0B` | 13.73 | 8.13 |
+| f1960 editorial, lado direito | `#362212` | 13.06 | 7.73 |
+| f2030 "JESUS", lado | `#3D220D` | 12.71 | 7.53 |
+| f2030 "JESUS", acima | `#40250D` | 12.23 | 7.25 |
+| f2098 "continua ao seu lado.", lado/acima | `#4D2D0F`–`#6C431A` | 7.42–10.73 | 4.39–6.35 |
+| f2264 "NÃO TENHA MEDO / DO AMANHÃ.", lados | `#341E0B`–`#37210B` | 13.15–13.62 | 7.79–8.07 |
+| f2264 acima | `#4C2E10` | 10.68 | 6.32 |
+| f2264 abaixo (começo do brilho) | `#65441D` | 7.59 | 4.50 |
+
+Todos passam: branco ≥ 7.4, dourado ≥ 4.39 (o "AMANHÃ" dourado tem ≥ 72px, então o mínimo é 3:1). A luz do contraluz começa em y ≈ 0.27, então **nenhum texto deve descer abaixo de 0.27 na cena 5**.
+
+Stills em `render/revisao/ConfieEmCristo-Vertical/cor-r1b/`:
+- `contraluz/` mostra a cena 5 com `fundoCena5` (f1860, 1960, 2030, 2098, 2264 e `m.png`);
+- `atual/` mostra o render atual da composição, que ainda está no perfil `'amanhecer'` (f1840, 1900, 1960, 2030, 2098, 2200, 2264 e `m.png`).
+
+A cruz nos stills ainda é a madeira antiga (item 5, CÓDIGO).
+
+**Pedido ao CÓDIGO (obrigatório):** em `Cena5Cristo.tsx`, trocar `<FundoProfundo luz={luzFundoPorCena.cena5} ...>` por `<FundoProfundo {...fundoCena5} ...>`, mantendo `origem` e `seed`. Sem isso a cena 5 fica no perfil 'amanhecer': branco OK (≥ 4.99), mas dourado ~3 e luz fora do lugar. Na cruz de pedra escura, a silhueta vai ler bem contra o núcleo `#FFF4DE`/`#EBCF94`.

@@ -142,12 +142,17 @@ export type FundoProfundoProps = {
   deriva?: number;
   /** Faixa luminosa: centro vertical e altura (fração) da lente escura que protege a tipografia. */
   lente?: {y: number; altura: number};
+  /**
+   * Faixa luminosa: 'amanhecer' (padrão; céu claro no alto — cena 4) ou
+   * 'contraluz' (brilho concentrado em `origem`, atrás do objeto em silhueta; alto escuro para o texto — cena 5).
+   */
+  perfil?: 'amanhecer' | 'contraluz';
   seed?: string;
   tempo?: number;
 };
 
 /** Fundo base do projeto: gradiente radial escuro azul→preto que aquece com `luz` (0..1) e se ilumina (1..2). */
-export const FundoProfundo: React.FC<FundoProfundoProps> = ({luz = 0, origem = {x: 0.5, y: 0.38}, deriva = 0.03, lente = {y: 0.42, altura: 0.34}, seed = 'fundo', tempo}) => {
+export const FundoProfundo: React.FC<FundoProfundoProps> = ({luz = 0, origem = {x: 0.5, y: 0.38}, deriva = 0.03, lente = {y: 0.42, altura: 0.34}, perfil = 'amanhecer', seed = 'fundo', tempo}) => {
   const t = useTempo(tempo);
   const l = clamp01(luz);
   const lum = clamp01(luz - 1); // 0..1 dentro da faixa luminosa
@@ -160,7 +165,22 @@ export const FundoProfundo: React.FC<FundoProfundoProps> = ({luz = 0, origem = {
   const resp = 1 + noise2D(`${seed}-lum`, t / 300, 3) * 0.04;
   return (
     <AbsoluteFill style={{background: `radial-gradient(120% 75% at ${cx * 100}% ${cy * 100}%, ${centro} 0%, ${meio} 45%, ${borda} 100%)`}}>
-      {lum > 0 ? (
+      {lum > 0 && perfil === 'contraluz' ? (
+        <AbsoluteFill style={{opacity: lum}}>
+          {/* base escura quente: alto e base escuros, miolo levemente aceso */}
+          <AbsoluteFill style={{background: `linear-gradient(180deg, #1E1108 0%, #2A170A 22%, #4A2A10 ${(cy - 0.06) * 100}%, #3A210C ${(cy + 0.22) * 100}%, #170D06 100%)`}} />
+          {/* contraluz: brilho largo atrás do objeto (cruz) — núcleo creme, âmbar, âmbar queimado */}
+          <AbsoluteFill
+            style={{
+              background: `radial-gradient(80% 27% at ${cx * 100}% ${cy * 100}%, ${rgba(luzFe.nucleo, 0.7 * resp)} 0%, ${rgba(luzFe.douradoClaro, 0.55 * resp)} 18%, ${rgba(luzFe.ambar, 0.38)} 40%, ${rgba('#B06A2C', 0.22)} 65%, transparent 100%)`,
+            }}
+          />
+          {/* halo amplo para a luz "encher" o quadro sem atingir o alto */}
+          <AbsoluteFill style={{background: `radial-gradient(130% 40% at ${cx * 100}% ${(cy + 0.04) * 100}%, ${rgba(luzFe.ambarQuente, 0.22)} 0%, transparent 100%)`}} />
+          <AbsoluteFill style={{background: `radial-gradient(85% ${lente.altura * 100}% at 50% ${lente.y * 100}%, rgba(22,12,4,0.7) 0%, rgba(22,12,4,0.5) 50%, transparent 100%)`}} />
+        </AbsoluteFill>
+      ) : null}
+      {lum > 0 && perfil === 'amanhecer' ? (
         <AbsoluteFill style={{opacity: lum}}>
           {/* céu de amanhecer: creme → âmbar → âmbar queimado → base escura quente (saturado, sem marrom acinzentado) */}
           <AbsoluteFill

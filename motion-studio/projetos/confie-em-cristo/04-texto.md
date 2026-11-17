@@ -39,3 +39,51 @@ Contrato exportado:
 Validação feita: `npx tsc --noEmit` passou (exit 0). `npm run qa` passou ("nenhum erro", 51 arquivos). Stills vertical e horizontal renderizados e inspecionados.
 Pedidos a outros agentes: CÓDIGO deve usar `relativo()`, `maxLargura` e `unidade()`. Escala de entrada do CONFIE.: ver acima.
 Riscos/pendências: a voz ainda é estimada (sem áudio). Quando houver transcrição real, os blocos se recalculam sozinhos. Se alguma âncora mudar de grafia, o `texto.ts` falha com mensagem clara. A cena 1 mostra um texto que não é transcrição da fala ("VOCÊ NÃO PRECISA…"): as entradas são ancoradas em "entenda o que está", e depois do fim de "agora" seguem uma cadência de 6 frames.
+
+---
+
+# Correções — Revisão 1 (itens 1, 7, 10)
+
+## #1 BLOQUEANTE: saídas que atravessavam eventos (`texto.ts`)
+- O novo helper `saidaAntes(limite, duracao, nPalavras, escalonado, margem=6)` calcula `saidaEm` para que a saída TERMINE pelo menos 6 frames antes do limite. Ele considera o escalonamento de 2 frames por palavra do TextoImpacto.
+- Os limites saem de `efeitosTransicaoConfie` (cenas.ts) e da voz. Nenhum frame foi copiado à mão.
+- Todo bloco agora exporta `duracaoSaida`, com o mesmo valor que o CÓDIGO já passava (22, 24 e 30).
+
+| Bloco | Saída começa → tela limpa em | Limite |
+|---|---|---|
+| textoCena1 | f395 → f429 | T1 começa em f435 |
+| textoCena2 | f610 → f644 | T2 começa em f650 |
+| textoCena3Impacto / Editorial | f942 / f950 → f980 | "Confiar" em f986 |
+| textoCena3Apoio | f1437 → f1467 | T3 começa em f1473 |
+| textoCena4a | f1641 → f1671 | 2º "Quando" em f1677 |
+| textoCena5a | f1990 → f2020 | JESUS em f2026 |
+| textoCena5Jesus / 5b | f2148 / f2142 → f2172 | "Não tenha" em f2178 |
+
+Conferido nos stills (texto-r1b): f428 e f646 sem texto; em f2020 "Quando tudo parecer impossível," já sumiu antes do JESUS.
+
+## #7: bloco novo `textoCena3Confiar`
+- Texto: "Confiar em Cristo / não significa entender / todos os caminhos." É fiel à fala, palavra a palavra; usei "significa" no lugar do "é" sugerido para cada palavra na tela ser a palavra dita. "Cristo" fica em dourado.
+- Entra de f986 a f1134 com `duracaoEntrada: 24`. A saída começa em f1160 e dura 16 frames. A tela fica limpa em f1176, 20 frames antes de "Significa" (f1196).
+- Validado no vertical e no horizontal (preview isolado): 3 linhas centralizadas, dentro da área segura.
+
+## #10: artefatos da máscara (`TextoImpacto`, `TextoEditorial`)
+- **Acento órfão:** a máscara virou uma cortina de baixo para cima. Quando a borda passa cerca de 70% da altura das capitulares, o glifo inteiro, acento incluído, aparece no mesmo frame. Na saída por máscara, o acento só some junto com o topo das letras. Conferido em f98 (VOCÊ), f802 (NÃO), f2180 (NÃO) e f2234 (AMANHÃ).
+- **Linha âmbar:** sombra e brilho ficam zerados enquanto a máscara corre e aparecem só depois que a palavra assenta (10 frames).
+- **Gap no tracking ("VOCÊESTEJA"):** a largura de cada palavra acompanha o tracking atual, e o espaço da palavra abre 8 frames ANTES da entrada. O gap de 0.24em nunca é invadido (f506 ok).
+- **Linhas parciais descentralizadas:** a nova prop `centrarVisiveis` (padrão true) faz a linha centralizar só as palavras já reveladas, nos dois componentes. Corrige o "a" sozinho à esquerda no versículo.
+- **Corte inferior:** a máscara passou a cortar 0.3em abaixo, porque antes a cedilha de "Ç" era cortada.
+
+## ENTREGA — texto — confie-em-cristo (revisão 1)
+Status: concluído
+Arquivos alterados: src/texto/TextoImpacto.tsx, src/texto/TextoEditorial.tsx, src/projetos/confie-em-cristo/texto.ts, projetos/confie-em-cristo/04-texto.md
+Contrato exportado: `BlocoTexto` ganhou `duracaoSaida?` e `duracaoEntrada?`; bloco novo `textoCena3Confiar`; prop nova `centrarVisiveis?: boolean` (padrão true) em TextoImpacto e TextoEditorial.
+Validação feita: `npx tsc --noEmit` passou (exit 0); `npm run qa` passou (nenhum erro); `REVIEW_SUB=texto-r1b` e `texto-r1c` (f96–102, 428, 504–510, 646, 800–806, 2010, 2020, 2178–2182, 2232–2236, 2548, 2580); preview isolado de textoCena3Confiar no vertical e no horizontal.
+Pedidos a outros agentes:
+- CÓDIGO (Cena3Mensagem.tsx):
+  - importar `textoCena3Confiar` de `'../texto'`;
+  - `const confiar = relativo(textoCena3Confiar, INICIO);`
+  - dentro do mesmo `<PlanoDeFoco profundidade={1} semDesfoque>` dos outros textos, adicionar:
+    `<Ancora y={0.3}><TextoEditorial palavras={confiar.palavras} entradas={confiar.entradas} quebras={confiar.quebras} destaques={confiar.destaques} duracaoEntrada={confiar.duracaoEntrada} saidaEm={confiar.saidaEm} duracaoSaida={confiar.duracaoSaida} tamanho={escalaFe.editorialHero * u} maxLargura={maxLargura} /></Ancora>`
+  - Não há conflito com outros textos: o impacto e o "da sua história." somem em f980, e o apoio "continuar caminhando" entra em f1225.
+- CÓDIGO (todas as cenas): passar `duracaoSaida={bloco.duracaoSaida}` em vez dos números fixos. Hoje os valores coincidem, mas assim o cálculo continua valendo se algum mudar.
+Riscos/pendências: um render de revisão (texto-r1b) mostrou um gap antigo em f506 que não se reproduziu com bundle novo nem na rodada texto-r1c. Provavelmente era cache do webpack; a REVISÃO deve conferir na rodada 2. A voz ainda é estimada.

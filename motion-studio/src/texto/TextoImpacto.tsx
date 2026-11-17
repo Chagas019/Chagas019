@@ -114,7 +114,8 @@ export const TextoImpacto: React.FC<TextoImpactoProps> = ({
             const topoBruto = Math.max(topoEntrada, topoSaida);
             // Rev.1 #10: acento nunca fica órfão nem falta — quando a borda passa o topo das capitulares, o glifo inteiro
             // (com acento) aparece junto; na saída o acento só some junto com o topo das letras.
-            const topo = topoBruto <= topoCaps + 0.02 ? -0.45 : topoBruto;
+            // Limiar: a borda já revelou ~70% da altura das capitulares -> completa o glifo com o acento no mesmo frame.
+            const topo = topoBruto <= topoCaps + 0.25 ? -0.45 : topoBruto;
             // Sombra/brilho só depois que a palavra assentou (antes vazavam como linha âmbar na borda da máscara).
             const kLuz = interpolate(frame, [e + duracaoEntrada * 0.8, e + duracaoEntrada + 10], [0, 1], clamp) * (1 - s);
             const acende = interpolate(frame, [e + duracaoEntrada * 0.8, e + duracaoEntrada + 30], [1, 0], clamp);

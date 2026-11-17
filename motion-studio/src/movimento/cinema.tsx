@@ -218,8 +218,8 @@ const FadeNegro: React.FC<TransitionPresentationComponentProps<FadeNegroProps>> 
   if (presentationDirection === 'exiting') {
     // descida GRADUAL: a luz se recolhe para o centro (vinheta fechando, curva suave desde o 1º frame)
     // e um véu uniforme acompanha, chegando a preto absoluto só em p = meio. Afunda 1,5%.
-    const v = faixa(p, 0, meio, 0, 1, curvas.suave);
-    const veu = faixa(p, 0, meio, 0, 1, Easing2In);
+    const v = faixa(p, 0, meio, 0, 1, Easing2Out);
+    const veu = faixa(p, 0, meio, 0, 1, curvas.linear);
     const s = 1 - faixa(p, 0, meio, 0, 0.015);
     // IMPORTANTE: o TransitionSeries renderiza este wrapper durante TODA a cena (progresso 0 antes da transição),
     // então ele precisa ser transparente/identidade em p=0 — nada de fundo opaco (cobriria a cena anterior).
@@ -247,7 +247,6 @@ const FadeNegro: React.FC<TransitionPresentationComponentProps<FadeNegroProps>> 
   );
 };
 
-const Easing2In = (t: number) => t * t;
 const Easing2Out = (t: number) => 1 - (1 - t) * (1 - t);
 /** Vinheta que fecha para o centro: v=0 nada, v=1 só um resto de luz no miolo. */
 const vinhetaFechando = (v: number, cor: string) => {
