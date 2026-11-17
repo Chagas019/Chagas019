@@ -1,0 +1,21 @@
+{
+  "name": "santorama-studio",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render:ep001": "remotion render src/index.ts EP001-Kolbe ../episodes/001-sao-maximiliano-kolbe/renders/ep001-kolbe.mp4 --codec=h264 --crf=18 --audio-codec=aac --audio-bitrate=256k",
+    "stills": "bash ../tools/render_stills.sh"
+  },
+  "dependencies": {
+    "@fontsource/cinzel": "^5.3.0",
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@remotion/cli": "^4.0.544",
+    "@remotion/google-fonts": "^4.0.544",
+    "@types/react": "^18.3.12",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.544",
+    "typescript": "^5.6.3"
+  }
+}
