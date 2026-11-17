@@ -57,3 +57,34 @@ Contrato exportado:
 Validação feita: `npx tsc --noEmit` passou; `npm run qa` sem erros; stills em vertical e horizontal conferidos.
 Pedidos a outros agentes: TEXTO: carregar Cormorant Garamond em fontes.ts | CÓDIGO: mapear progresso da Revelacao pela voz
 Riscos/pendências: as estrelas cintilam por noise (sutil; confirmar no vídeo se não "fervem" com o grão). Os filtros de blur das nuvens têm custo de render moderado. O chão noturno é deliberadamente quase liso (escuro). `scripts/preview-pecas/` é temporário.
+
+---
+
+# Rodada 2 — correções da revisão 1 (itens 8 e 12)
+
+## Item 8 — `Revelacao` orgânica (f716–784)
+- Reescrevi o miolo de `src/pecas/cenario/Revelacao.tsx`. Os contornos traçados (vesica com bloom de 3 strokes) e o trapézio do `feixeChao` saíram.
+- A abertura agora é uma máscara CSS (`mask-image`) formada por 13 fatias elípticas radiais sobrepostas. Largura e desvio lateral de cada fatia vêm de `noise2D`, então o rasgo tem borda irregular e respira devagar.
+- O feather é ≥ 12% da largura da tela a partir do momento em que a fenda começa a abrir. O núcleo é opaco e a queda é longa.
+- A luz é uma camada em `screen`, toda feita de gradientes radiais: véu por fatia muito sobreposto e fraco, núcleo contínuo ao longo da fenda e halo amplo. Nenhuma aresta.
+- `feixeChao` virou uma poça de luz: duas elipses radiais alongadas na direção do espectador, sem borda reta. A poeira é feita de pontos radiais macios.
+- A API foi mantida: `progresso`, `forma`, `centroX/Y`, `alturaFio`, `feixeChao`, `poeira`, `corEscuridao`, `opacidadeEscuridao`, `cores`, `seed`, `largura`, `altura`, `children`. A única prop nova é `irregularidade` (0..1, padrão 0.6). Não precisa mexer em `Cena3Mensagem`.
+
+## Item 12 — faixa central sob o caminhante
+- Os tracejados da `Estrada` agora somem no primeiro plano. A opacidade é multiplicada por `1 − (1 − faixaPerto)·smooth(0.1, 0.42, t)`, com `faixaPerto` padrão 0.12. No fundo a faixa continua mostrando a direção. A opacidade geral caiu para `faixaOpacidade` = 0.6.
+- Prop opcional nova: `oclusor={{x, y, raio?}}` abre um vão na faixa em volta dos pés do caminhante.
+- A correção vale com os valores padrão, sem integração. Em f750 e f784 já não existe "bengala" sob a figura.
+- A miniatura (f0) não depende de mim: a sugestão da revisão é usar o still de capa f2740 no post.
+
+## Validação
+- `npx tsc --noEmit` passou. `npm run qa` (64 arquivos) sem erros.
+- `REVIEW_SUB=r2-pecas npm run review -- ConfieEmCristo-Vertical 700-800`, com f716, 735, 750, 765 e 784 re-renderizados depois do ajuste final, em `render/revisao/ConfieEmCristo-Vertical/r2-pecas/`.
+- f716: fio de luz macio, levemente ondulado. f750: véu contínuo sem contorno nem trapézio. f784: cenário revelado e faixa ausente sob a figura.
+
+## ENTREGA — peças — confie-em-cristo (rodada 2)
+Status: concluído
+Arquivos alterados: src/pecas/cenario/Revelacao.tsx, src/pecas/cenario/Estrada.tsx, projetos/confie-em-cristo/05-pecas.md
+Contrato exportado: `Revelacao` (mesma API + `irregularidade?=0.6`) · `Estrada` (+ `faixaPerto?=0.12`, `faixaOpacidade?=0.6`, `oclusor?: {x, y, raio?}`)
+Validação feita: tsc OK · qa OK · review r2-pecas 700–800 inspecionado (f716/750/784)
+Pedidos a outros agentes: CÓDIGO (opcional): passar `oclusor={{x: pos.x, y: pos.y}}` na Estrada das cenas 2 e 3 para um vão preciso sob os pés | nenhum obrigatório
+Riscos/pendências: os raios volumétricos (LuzVolumetrica, do COR) continuam por cima e são os únicos traços lineares da cena. A miniatura f0 fica com a capa f2740 (fora do vídeo).
