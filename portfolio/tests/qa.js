@@ -466,7 +466,8 @@ async function main() {
       const urlBefore = page.url();
       let navigated = false; const onNav = (fr) => { if (fr === page.mainFrame()) navigated = true; }; page.on('framenavigated', onNav);
       let posted = false; const onReq = (r) => { if (r.method() === 'POST') posted = true; }; page.on('request', onReq);
-      const submit = (await form.$('button[type="submit"], input[type="submit"]')) || (await form.$('button:not([type="button"])'));
+      const submit = (await form.$('[type="submit"][data-submit="whatsapp"], [type="submit"][value="whatsapp"]')) ||
+        (await form.$('button[type="submit"], input[type="submit"]')) || (await form.$('button:not([type="button"])'));
       await submit.scrollIntoViewIfNeeded(); await submit.click(); await sleep(500);
       page.off('framenavigated', onNav); page.off('request', onReq);
       const openedEmpty = await page.evaluate(() => window.__opened.length) + waHits.length;
@@ -537,7 +538,7 @@ async function main() {
       }
       const status = await page.$eval('[data-slot="form-status"]', (e) => e.innerText).catch(() => '');
       rec('form.no-fake-success', /enviad[oa] com sucesso|mensagem enviada|recebemos/i.test(status) ? 'WARN' : 'PASS', `form-status: "${status.slice(0, 100)}"`);
-      const mailto = await page.evaluate((MAIL) => [...document.querySelectorAll('#orcamento a[href^="mailto:"], #orcamento button[data-mailto], #orcamento [data-action="email"]')].map((e) => e.getAttribute('href') || e.outerHTML.slice(0, 60)), EMAIL);
+      const mailto = await page.evaluate(() => [...document.querySelectorAll('#orcamento a[href^="mailto:"], form#quote-form [type="submit"][data-submit="email"], form#quote-form [type="submit"][value="email"], #orcamento [data-mailto]')].map((e) => e.getAttribute('href') || e.outerHTML.slice(0, 90)));
       rec('form.mailto', mailto.length ? (mailto.some((h) => h.includes(EMAIL) || !h.startsWith('mailto')) ? 'PASS' : 'WARN') : 'FAIL', mailto.length ? mailto[0].slice(0, 120) : 'no mailto alternative in #orcamento');
       await gotoPage(page);
     });
@@ -639,18 +640,22 @@ async function main() {
       const vis = await fl.isVisible();
       const box = await fl.boundingBox();
       const inView = !!box && box.y >= 0 && box.y + box.height <= 800 && box.x >= 0 && box.x + box.width <= 390;
-      const sub = await p.$('form#quote-form button[type="submit"], form#quote-form input[type="submit"]');
+      const sub = await p.$('form#quote-form [type="submit"]:last-of-type') || await p.$('form#quote-form [type="submit"]');
       const res = [];
       if (sub) {
         for (const block of ['center', 'end']) {
           await sub.evaluate((e, b) => e.scrollIntoView({ block: b, behavior: 'instant' }), block); await sleep(450);
           const r = await p.evaluate(() => {
-            const s = document.querySelector('form#quote-form [type="submit"]'), f = document.querySelector('a[data-whatsapp-float]');
-            const a = s.getBoundingClientRect(), b = f.getBoundingClientRect(), fs = getComputedStyle(f);
+            const f = document.querySelector('a[data-whatsapp-float]'), b = f.getBoundingClientRect(), fs = getComputedStyle(f);
             const hiddenF = fs.display === 'none' || fs.visibility === 'hidden' || +fs.opacity < 0.1;
-            const ov = !hiddenF && !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top);
-            const top = document.elementFromPoint(a.left + a.width / 2, a.top + a.height / 2);
-            return { ov, hit: !!top && (top === s || s.contains(top)) };
+            let ov = false, hit = true;
+            document.querySelectorAll('form#quote-form [type="submit"]').forEach((s) => {
+              const a = s.getBoundingClientRect(); if (a.bottom < 0 || a.top > innerHeight) return;
+              if (!hiddenF && !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top)) ov = true;
+              for (const [x, y] of [[a.left + 4, a.top + a.height / 2], [a.left + a.width / 2, a.top + a.height / 2], [a.right - 4, a.top + a.height / 2]]) {
+                const t = document.elementFromPoint(x, y); if (!t || !(t === s || s.contains(t))) hit = false; }
+            });
+            return { ov, hit };
           });
           res.push({ block, ...r });
         }

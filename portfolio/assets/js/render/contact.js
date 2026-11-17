@@ -71,17 +71,17 @@ export function renderServiceOptions(pricing, { extra = [] } = {}) {
   const groups = [...pricing.groups];
   if (extra.length) groups.push({ id: 'outros', label: 'Outros', items: extra });
   if (!groups.length) {
-    root.append(h('label', { class: 'check' }, h('input', { type: 'checkbox', name: 'services', value: 'Outro serviço' }), h('span', {}, 'Outro serviço (descreva na mensagem)')));
+    root.append(h('label', { class: 'form__option' }, h('input', { type: 'checkbox', name: 'services', value: 'Outro serviço' }), h('span', {}, 'Outro serviço (descreva na mensagem)')));
     return;
   }
   groups.forEach((g) => {
-    root.append(h('fieldset', { class: 'service-options__group', dataset: { group: g.id } },
-      h('legend', { class: 'service-options__legend' }, g.label),
+    root.append(h('fieldset', { class: 'form__group', dataset: { group: g.id } },
+      h('legend', { class: 'form__group-legend' }, g.label),
       g.items.map((it) => {
         const id = `svc-${g.id}-${it.id}`.replace(/[^\w-]/g, '-');
-        return h('label', { class: 'check', for: id },
-          h('input', { class: 'check__input', type: 'checkbox', id, name: 'services', value: `${g.label} — ${it.label}`, dataset: { item: it.id } }),
-          h('span', { class: 'check__label' }, it.label));
+        return h('label', { class: 'form__option', for: id },
+          h('input', { class: 'form__option-input', type: 'checkbox', id, name: 'services', value: `${g.label} — ${it.label}`, dataset: { item: it.id } }),
+          h('span', { class: 'form__option-label' }, it.label));
       })));
   });
 }

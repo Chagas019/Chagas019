@@ -4,7 +4,7 @@ import { h, slot, clear, item, isList } from '../dom.js';
 export function renderAreas({ areas }) {
   const root = clear(slot('areas'));
   if (!root) return;
-  if (!areas.length) { root.append(h('p', { class: 'areas__empty' }, 'Áreas de atuação em atualização.')); return; }
+  if (!areas.length) { root.append(item(root, 'p', { class: 'areas__empty' }, 'Áreas de atuação em atualização.')); return; }
   areas.forEach((a, i) => {
     const tid = `area-${a.id}-t`;
     root.append(item(root, 'article', { class: 'area', id: `area-${a.id}`, 'aria-labelledby': tid, dataset: { area: a.id }, 'data-reveal': true },
@@ -19,20 +19,20 @@ export function renderAreas({ areas }) {
 export function renderTools({ tools }) {
   const root = clear(slot('tools'));
   if (!root) return;
-  tools.forEach((t) => root.append(item(root, 'article', { class: 'tool', 'data-reveal': true },
-    h('h3', { class: 'tool__name' }, t.name),
-    t.uses.length ? h('ul', { class: 'tool__uses', 'aria-label': `Usos de ${t.name}` }, t.uses.map((u) => h('li', { class: 'tool__use' }, u))) : null,
-    t.context ? h('p', { class: 'tool__context' }, t.context) : null)));
+  tools.forEach((t) => root.append(item(root, 'article', { class: 'tool-item', 'data-reveal': true },
+    h('h4', { class: 'tool-item__name' }, t.name),
+    t.uses.length ? h('ul', { class: 'tool-item__uses', 'aria-label': `Usos de ${t.name}` }, t.uses.map((u) => h('li', { class: 'tool-item__use' }, u))) : null,
+    t.context ? h('p', { class: 'tool-item__context' }, t.context) : null)));
 }
 
 /** Equipamentos já utilizados ou explorados (nunca "disponíveis"). */
 export function renderEquipment({ equipment }) {
   const root = clear(slot('equipment'));
   if (!root) return;
-  const items = equipment.items.map((e) => h('li', { class: 'equipment__item', dataset: e.kind ? { kind: e.kind } : {} },
-    h('span', { class: 'equipment__name' }, e.name),
-    e.kind ? h('span', { class: 'equipment__kind' }, e.kind) : null));
-  const note = h('p', { class: 'equipment__note', role: 'note', 'data-equipment-note': true }, equipment.note);
+  const items = equipment.items.map((e) => h('li', { class: 'gear__item', dataset: e.kind ? { kind: e.kind } : {} },
+    h('span', { class: 'gear__name' }, e.name),
+    e.kind ? h('span', { class: 'gear__kind' }, e.kind) : null));
+  const note = h('p', { class: 'gear__note', role: 'note', 'data-equipment-note': true }, equipment.note);
   if (isList(root)) {
     // slot já é a lista: nota vai logo antes dela (uma vez)
     const prev = root.previousElementSibling;
@@ -40,7 +40,7 @@ export function renderEquipment({ equipment }) {
     else prev.textContent = equipment.note;
     root.append(...items);
   } else {
-    root.append(note, h('ul', { class: 'equipment__list' }, items));
+    root.append(note, h('ul', { class: 'gear__items' }, items));
   }
 }
 

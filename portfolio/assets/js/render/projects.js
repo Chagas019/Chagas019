@@ -42,7 +42,7 @@ export function renderFeatured({ projects, categories }, filter, onOpen) {
       p.description ? h('p', { class: 'featured__desc' }, p.description) : null,
       h('dl', { class: 'meta-list' },
         p.client ? [h('dt', {}, 'Cliente'), h('dd', {}, p.client)] : null,
-        p.role ? [h('dt', {}, 'Função'), h('dd', {}, p.role)] : null,
+        p.role && !/^\s*a confirmar/i.test(p.role) ? [h('dt', {}, 'Função'), h('dd', {}, p.role)] : null,
         h('dt', {}, 'Mídias'), h('dd', {}, String(p.media.length))))));
 }
 

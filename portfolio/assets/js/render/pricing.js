@@ -60,22 +60,22 @@ export function renderPricing(pricing) {
   const cur = pricing.currency;
   for (const g of pricing.groups) {
     const tid = `preco-${g.id}-t`;
-    root.append(h('section', { class: 'price-group', id: `preco-${g.id}`, 'aria-labelledby': tid, 'data-pricing-group': g.id, 'data-reveal': true },
-      h('header', { class: 'price-group__head' },
-        h('h3', { class: 'price-group__title', id: tid }, g.label),
-        g.summary ? h('p', { class: 'price-group__summary' }, g.summary) : null),
-      h('ul', { class: 'price-list' }, g.items.map((it) => {
+    root.append(h('section', { class: 'pricing__group', id: `preco-${g.id}`, 'aria-labelledby': tid, 'data-pricing-group': g.id, 'data-reveal': true },
+      h('header', { class: 'pricing__group-head' },
+        h('h3', { class: 'pricing__group-title', id: tid }, g.label),
+        g.summary ? h('p', { class: 'pricing__group-summary' }, g.summary) : null),
+      h('ul', { class: 'pricing__items' }, g.items.map((it) => {
         const pr = formatPrice(it.price_from, it.unit, cur);
         const consult = it.price_from == null || it.price_from === '';
-        return h('li', { class: 'price-item', 'data-pricing-item': it.id },
-          h('div', { class: 'price-item__head' },
-            h('h4', { class: 'price-item__name' }, it.label),
-            h('p', { class: 'price-item__price' },
-              consult ? h('strong', { class: 'price-item__value' }, 'Sob consulta')
-                : [h('span', { class: 'price-item__from' }, 'a partir de '), h('strong', { class: 'price-item__value' }, pr.value),
-                  pr.unit ? h('span', { class: 'price-item__unit' }, ` ${pr.unit}`) : null])),
-          it.desc ? h('p', { class: 'price-item__desc' }, it.desc) : null,
-          h('a', { class: 'price-item__cta', href: '#orcamento', dataset: { service: `${g.label} — ${it.label}` },
+        return h('li', { class: 'pricing__item', 'data-pricing-item': it.id },
+          h('div', { class: 'pricing__item-head' },
+            h('h4', { class: 'pricing__item-name' }, it.label),
+            h('p', { class: 'pricing__item-price' },
+              consult ? h('strong', { class: 'pricing__item-value' }, 'Sob consulta')
+                : [h('span', { class: 'pricing__item-from' }, 'a partir de '), h('strong', { class: 'pricing__item-value' }, pr.value),
+                  pr.unit ? h('span', { class: 'pricing__item-unit' }, ` ${pr.unit}`) : null])),
+          it.desc ? h('p', { class: 'pricing__item-desc' }, it.desc) : null,
+          h('a', { class: 'pricing__item-cta', href: '#orcamento', dataset: { service: `${g.label} — ${it.label}` },
             'aria-label': `Solicitar orçamento: ${it.label}` }, 'Solicitar orçamento'));
       }))));
   }
