@@ -25,6 +25,12 @@ const idx = (palavra: string, ocorrencia = 1) => {
   throw new Error(`cenas.ts: palavra "${palavra}" (#${ocorrencia}) não encontrada em vozConfie`);
 };
 
+/** Primeira ocorrência de `palavra` depois do índice `depoisDe`. */
+const idxApos = (palavra: string, depoisDe: number) => {
+  for (let i = depoisDe + 1; i < P.length; i++) if (limpa(P[i].text) === limpa(palavra)) return i;
+  throw new Error(`cenas.ts: palavra "${palavra}" não encontrada após o índice ${depoisDe}`);
+};
+
 const ini = (palavra: string, oc = 1) => msParaFrame(P[idx(palavra, oc)].startMs, FPS);
 const fim = (palavra: string, oc = 1) => msParaFrame(P[idx(palavra, oc)].endMs, FPS);
 
@@ -91,7 +97,7 @@ export const gatilhosConfie = {
   confiar: ini('Confiar'),
   cristo1: ini('Cristo', 1),
   caminhos: ini('caminhos'),
-  significa2: ini('Significa'),
+  significa2: ini('Significa', 2),
   caminhando: ini('caminhando'),
   enxergar: ini('enxergar'),
   destino: ini('destino'),
@@ -107,7 +113,7 @@ export const gatilhosConfie = {
   lembreSe: ini('lembre-se'),
   jesus: ini('Jesus'),
   lado: ini('lado'),
-  naoTenha: ini('Não', 1),
+  naoTenha: msParaFrame(P[idxApos('não', idx('lado'))].startMs, FPS),
   amanha: ini('amanhã'),
   amanhaFim: fim('amanhã'),
   // Cena 6
