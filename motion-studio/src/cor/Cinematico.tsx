@@ -147,7 +147,7 @@ export type FundoProfundoProps = {
 };
 
 /** Fundo base do projeto: gradiente radial escuro azul→preto que aquece com `luz` (0..1) e se ilumina (1..2). */
-export const FundoProfundo: React.FC<FundoProfundoProps> = ({luz = 0, origem = {x: 0.5, y: 0.38}, deriva = 0.03, lente = {y: 0.42, altura: 0.3}, seed = 'fundo', tempo}) => {
+export const FundoProfundo: React.FC<FundoProfundoProps> = ({luz = 0, origem = {x: 0.5, y: 0.38}, deriva = 0.03, lente = {y: 0.42, altura: 0.34}, seed = 'fundo', tempo}) => {
   const t = useTempo(tempo);
   const l = clamp01(luz);
   const lum = clamp01(luz - 1); // 0..1 dentro da faixa luminosa
@@ -165,7 +165,7 @@ export const FundoProfundo: React.FC<FundoProfundoProps> = ({luz = 0, origem = {
           {/* céu de amanhecer: creme → âmbar → âmbar queimado → base escura quente (saturado, sem marrom acinzentado) */}
           <AbsoluteFill
             style={{
-              background: `linear-gradient(180deg, ${luzFe.altaQuente} 0%, #F0C27E 9%, #DB9A4E 20%, #B06A2C 32%, #6E3E17 46%, #3E230E 62%, #2A170A 80%, #170D06 100%)`,
+              background: `linear-gradient(180deg, ${luzFe.altaQuente} 0%, #F0C27E 7%, #DB9A4E 15%, #B06A2C 23%, #7A4419 31%, #4A2A10 42%, #38200C 60%, #2A170A 80%, #170D06 100%)`,
             }}
           />
           {/* sol difuso no alto, do lado da luz principal */}
@@ -175,7 +175,7 @@ export const FundoProfundo: React.FC<FundoProfundoProps> = ({luz = 0, origem = {
           {/* lente escura atrás da tipografia: garante contraste do branco quente sem apagar o céu */}
           <AbsoluteFill
             style={{
-              background: `radial-gradient(85% ${lente.altura * 100}% at 50% ${lente.y * 100}%, rgba(22,12,4,0.72) 0%, rgba(22,12,4,0.5) 45%, transparent 100%)`,
+              background: `radial-gradient(85% ${lente.altura * 100}% at 50% ${lente.y * 100}%, rgba(22,12,4,0.78) 0%, rgba(22,12,4,0.6) 50%, transparent 100%)`,
             }}
           />
         </AbsoluteFill>
