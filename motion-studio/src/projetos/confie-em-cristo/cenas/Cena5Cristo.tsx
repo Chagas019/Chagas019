@@ -72,9 +72,10 @@ export const Cena5Cristo: React.FC = () => {
               largura={width}
               altura={height}
               material="madeira"
-              luz={acende * (0.9 + 0.35 * revelaJesus)}
-              emissivo={0.15 * revelaJesus}
-              preenchimento={0.1 + 0.08 * revelaJesus}
+              cor="#8A6A48"
+              luz={acende * (0.55 + 0.45 * revelaJesus)}
+              emissivo={0.06 * revelaJesus}
+              preenchimento={0.02 + 0.04 * revelaJesus}
               escala={ESCALA_3D}
               oscilacao={4}
               entradaEm={0}

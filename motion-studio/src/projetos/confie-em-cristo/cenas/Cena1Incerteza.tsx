@@ -44,7 +44,7 @@ export const Cena1Incerteza: React.FC = () => {
         <PoeiraDeLuz quantidade={[26, 12, 3]} intensidade={0.32} foco={1} velocidade={0.22} seed="c1-poeira" />
       </PlanoDeFoco>
       <PlanoDeFoco profundidade={1} semDesfoque>
-        <FonteDeLuz x={LUZ_CENA1.x} y={LUZ_CENA1.y} progresso={progresso} raioInicial={14} raioFinal={200} seed="c1-luz" />
+        <FonteDeLuz x={LUZ_CENA1.x} y={LUZ_CENA1.y} progresso={progresso} raioInicial={22} raioFinal={200} seed="c1-luz" />
       </PlanoDeFoco>
       <GradacaoCor mistura={misturaPorCena.cena1} />
       <PlanoDeFoco profundidade={1} semDesfoque>
