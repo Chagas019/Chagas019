@@ -34,7 +34,7 @@ const Lado: React.FC = () => {
   return (
     <AbsoluteFill style={{background: '#16202E'}}>
       {[0, 30, 60, 90].map((v, i) => (
-        <Caminhante key={v} x={width * (0.14 + i * 0.24)} y={height * 0.6} altura={height * 0.4} vista={v} cansaco={0.6} anguloLuz={40} sombraComprimento={0.8} sombraInclinacao={-0.4} />
+        <Caminhante key={v} x={width * (0.14 + i * 0.24)} y={height * 0.6} altura={height * 0.4} vista={v} cansaco={0.6} anguloLuz={40} sombraComprimento={0.8} sombraInclinacao={-0.4} paraEm={20} duracaoParada={30} retomaEm={70} />
       ))}
     </AbsoluteFill>
   );

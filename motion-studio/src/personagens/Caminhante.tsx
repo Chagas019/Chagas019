@@ -28,6 +28,9 @@ export type CaminhanteProps = {
   /** Frame local em que começa a desacelerar até parar (opcional). */
   paraEm?: number;
   duracaoParada?: number;
+  /** Frame local em que volta a caminhar depois de `paraEm` (opcional). */
+  retomaEm?: number;
+  duracaoRetomada?: number;
   /** Guinada em graus: 0 = de costas puro; 25–35 = 3/4 de costas (positivo = vira para a direita). */
   vista?: number;
   /** Cor da silhueta (escura, não preto puro). */
@@ -57,13 +60,22 @@ export type CaminhanteProps = {
 const rad = (g: number) => (g * Math.PI) / 180;
 const TAU = Math.PI * 2;
 
-/** Fase acumulada (em ciclos) com desaceleração linear opcional até parar. */
-const faseAcumulada = (t: number, ciclo: number, paraEm?: number, dur = 45) => {
-  if (paraEm === undefined || t <= paraEm) return {fase: t / ciclo, vel: 1};
-  const dt = Math.min(t - paraEm, dur);
-  // integral de v(t)=1-(t/dur) de 0..dt
-  const extra = dt - (dt * dt) / (2 * dur);
-  return {fase: (paraEm + extra) / ciclo, vel: Math.max(0, 1 - dt / dur)};
+/** Velocidade do ciclo (0..1) no tempo local t: desacelera em `paraEm`, volta a acelerar em `retomaEm`. */
+const velocidade = (t: number, paraEm?: number, durP = 45, retomaEm?: number, durR = 40) => {
+  let v = 1;
+  if (paraEm !== undefined && t > paraEm) v = Math.max(0, 1 - (t - paraEm) / durP);
+  if (retomaEm !== undefined && t > retomaEm) v = Math.max(v, Math.min(1, (t - retomaEm) / durR));
+  return v;
+};
+
+/** Fase acumulada (em ciclos) = soma da velocidade quadro a quadro (determinística, contínua). */
+const faseAcumulada = (t: number, ciclo: number, paraEm?: number, durP = 45, retomaEm?: number, durR = 40) => {
+  if (paraEm === undefined) return {fase: t / ciclo, vel: 1};
+  let acc = 0;
+  const n = Math.floor(t);
+  for (let f = 0; f < n; f++) acc += velocidade(f + 0.5, paraEm, durP, retomaEm, durR);
+  acc += (t - n) * velocidade(n + (t - n) / 2, paraEm, durP, retomaEm, durR);
+  return {fase: acc / ciclo, vel: velocidade(t, paraEm, durP, retomaEm, durR)};
 };
 
 export const Caminhante: React.FC<CaminhanteProps> = ({
@@ -78,6 +90,8 @@ export const Caminhante: React.FC<CaminhanteProps> = ({
   cansaco = 0.5,
   paraEm,
   duracaoParada = 45,
+  retomaEm,
+  duracaoRetomada = 40,
   vista = 22,
   corCorpo = '#0A0E16',
   corLuz = '#FFB24A',
@@ -95,7 +109,14 @@ export const Caminhante: React.FC<CaminhanteProps> = ({
   const frame = useCurrentFrame();
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
   const t = Math.max(0, frame - entradaEm) + faseFrames;
-  const {fase, vel} = faseAcumulada(t, ciclo, paraEm === undefined ? undefined : paraEm - entradaEm, duracaoParada);
+  const {fase, vel} = faseAcumulada(
+    t,
+    ciclo,
+    paraEm === undefined ? undefined : paraEm - entradaEm + faseFrames,
+    duracaoParada,
+    retomaEm === undefined ? undefined : retomaEm - entradaEm + faseFrames,
+    duracaoRetomada,
+  );
   const c = Math.min(1, Math.max(0, cansaco));
   const ph = fase * TAU;
   // micro-irregularidade (cansaço não é metrônomo)

@@ -21,6 +21,8 @@ export type Cruz2DProps = {
   /** Espessura relativa das hastes (0.1 = fina/elegante). */
   espessura?: number;
   raios?: boolean;
+  /** Abertura dos raios 0..1.5 (anime para "abrir" a luz num ponto da fala). */
+  aberturaRaios?: number;
   /** Frame local de entrada (fade + leve subida) e saída opcional. */
   entradaEm?: number;
   duracaoEntrada?: number;
@@ -42,6 +44,7 @@ export const Cruz2D: React.FC<Cruz2DProps> = ({
   luz = 1,
   espessura = 0.1,
   raios = true,
+  aberturaRaios = 1,
   entradaEm = 0,
   duracaoEntrada = 75,
   saidaEm,
@@ -87,7 +90,7 @@ export const Cruz2D: React.FC<Cruz2DProps> = ({
   const nRaios = 14;
   const listaRaios = Array.from({length: nRaios}, (_, i) => {
     const ang = (i / nRaios) * 360 + random(`raio-a-${i}`) * 14 + t * 1.2;
-    const comp = 55 + random(`raio-c-${i}`) * 60;
+    const comp = (55 + random(`raio-c-${i}`) * 60) * Math.max(0, aberturaRaios);
     const larg = 0.6 + random(`raio-l-${i}`) * 2.2;
     const pulso = 0.5 + 0.5 * Math.sin(t * (0.5 + random(`raio-p-${i}`) * 0.7) + i);
     return {ang, comp, larg, alpha: (0.05 + 0.12 * pulso) * Math.min(1, L)};
