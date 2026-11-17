@@ -40,7 +40,7 @@ for f in "${FILES[@]}"; do
   dir="$(dirname "$f")"; base="$(basename "${f%.*}")"
   slug="$(echo "${dir}-${base}" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]\+/-/g; s/^-//; s/-$//')"
   ext="${f##*.}"; ext="${ext,,}"
-  src_rel="../$f"   # relativo a portfolio/index.html
+  if [[ "$f" == portfolio/* ]]; then src_rel="${f#portfolio/}"; else src_rel="../$f"; fi   # relativo a portfolio/index.html
   img_in="$f"; poster_json=""; kind="image"
 
   if [[ "$ext" =~ ^(mp4|mov|webm)$ ]]; then
@@ -93,7 +93,17 @@ done
     echo "  ${ENTRIES[$i]}$sep"
   done
   echo "}}"
-} > "$OUT/manifest.json"
+} > "$OUT/manifest.new"
 
-if command -v python3 >/dev/null; then python3 -c "import json,sys;print(json.dumps(json.load(open(sys.argv[1])),indent=2,ensure_ascii=False))" "$OUT/manifest.json" > "$OUT/manifest.tmp" && mv "$OUT/manifest.tmp" "$OUT/manifest.json"; fi
+# Mescla com o manifest existente (mantém entradas antigas; as desta execução prevalecem)
+python3 - "$OUT/manifest.json" "$OUT/manifest.new" <<'PY'
+import json, os, sys
+old_p, new_p = sys.argv[1], sys.argv[2]
+new = json.load(open(new_p))
+old = json.load(open(old_p)) if os.path.exists(old_p) else {"items": {}}
+old.setdefault("items", {}).update(new["items"])
+old["_generated"], old["_note"] = new["_generated"], new["_note"]
+json.dump(old, open(old_p, "w"), indent=2, ensure_ascii=False)
+os.remove(new_p)
+PY
 echo "ok: $(ls "$OUT" | wc -l) arquivos em $OUT"

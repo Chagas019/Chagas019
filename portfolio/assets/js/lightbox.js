@@ -1,4 +1,4 @@
-import { h } from './dom.js';
+import { h, prefersReducedMotion } from './dom.js';
 import { picture, stillOf, video } from './render/media.js';
 import { CONFIG } from './config.js';
 
@@ -32,7 +32,8 @@ function build() {
   prevBtn.addEventListener('click', () => go(-1));
   nextBtn.addEventListener('click', () => go(1));
   root.addEventListener('click', (e) => { if (e.target.closest('[data-close]')) close(); });
-  root.addEventListener('keydown', onKey);
+  // Captura no documento: o player de vídeo nativo consome Esc/setas quando focado.
+  document.addEventListener('keydown', (e) => { if (!root.hidden) onKey(e); }, true);
 
   // swipe
   let x0 = null, y0 = null;
@@ -51,9 +52,9 @@ function focusables() {
 }
 
 function onKey(e) {
-  if (e.key === 'Escape') { e.preventDefault(); close(); }
-  else if (e.key === 'ArrowRight' && e.target.tagName !== 'VIDEO') { e.preventDefault(); go(1); }
-  else if (e.key === 'ArrowLeft' && e.target.tagName !== 'VIDEO') { e.preventDefault(); go(-1); }
+  if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); }
+  else if (e.key === 'ArrowRight') { e.preventDefault(); e.stopPropagation(); go(1); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); e.stopPropagation(); go(-1); }
   else if (e.key === 'Tab') {
     const f = focusables(); if (!f.length) return;
     const first = f[0], last = f[f.length - 1];
@@ -78,8 +79,11 @@ function render() {
     return;
   }
   stage.hidden = false;
+  // Clipes sem som (gravações de motion) tocam em loop, sem controles; com
+  // redução de movimento ou áudio, ficam com controles e sem autoplay.
+  const loopClip = m.silent && !prefersReducedMotion();
   const node = m.type === 'video'
-    ? video(m, { controls: true, className: 'lightbox__media' })
+    ? video(m, { controls: !loopClip, autoplay: loopClip, className: 'lightbox__media' })
     : picture({ ...stillOf(m) }, { sizes: CONFIG.sizes.lightbox, eager: true, className: 'lightbox__media' });
   stage.replaceChildren(node);
   caption.textContent = m.alt || '';

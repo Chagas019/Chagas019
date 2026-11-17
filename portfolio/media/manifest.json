@@ -1,5 +1,5 @@
 {
-  "_generated": "2026-11-17T01:14:45Z",
+  "_generated": "2026-11-17T13:08:19Z",
   "_note": "Gerado por scripts/optimize-media.sh. Chaves = src usado no portfolio.json (relativo a portfolio/index.html). Não edite à mão.",
   "items": {
     "../fotos/carlo-acutis.jpg": {
@@ -365,6 +365,218 @@
         }
       ],
       "web_of": "../resultado/moto-personagem.mp4"
+    },
+    "capturas/brabo-desktop.png": {
+      "type": "image",
+      "w": 1440,
+      "h": 900,
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 400,
+          "src": "media/portfolio-capturas-brabo-desktop-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 400,
+          "src": "media/portfolio-capturas-brabo-desktop-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1280,
+          "h": 800,
+          "src": "media/portfolio-capturas-brabo-desktop-1280.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1280,
+          "h": 800,
+          "src": "media/portfolio-capturas-brabo-desktop-1280.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1440,
+          "h": 900,
+          "src": "media/portfolio-capturas-brabo-desktop-1440.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1440,
+          "h": 900,
+          "src": "media/portfolio-capturas-brabo-desktop-1440.avif"
+        }
+      ]
+    },
+    "capturas/brabo-mobile.png": {
+      "type": "image",
+      "w": 780,
+      "h": 1688,
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 1384,
+          "src": "media/portfolio-capturas-brabo-mobile-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 1384,
+          "src": "media/portfolio-capturas-brabo-mobile-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 780,
+          "h": 1688,
+          "src": "media/portfolio-capturas-brabo-mobile-780.webp"
+        },
+        {
+          "format": "avif",
+          "w": 780,
+          "h": 1688,
+          "src": "media/portfolio-capturas-brabo-mobile-780.avif"
+        }
+      ]
+    },
+    "capturas/comunicafe-desktop.png": {
+      "type": "image",
+      "w": 1440,
+      "h": 900,
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 400,
+          "src": "media/portfolio-capturas-comunicafe-desktop-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 400,
+          "src": "media/portfolio-capturas-comunicafe-desktop-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1280,
+          "h": 800,
+          "src": "media/portfolio-capturas-comunicafe-desktop-1280.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1280,
+          "h": 800,
+          "src": "media/portfolio-capturas-comunicafe-desktop-1280.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1440,
+          "h": 900,
+          "src": "media/portfolio-capturas-comunicafe-desktop-1440.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1440,
+          "h": 900,
+          "src": "media/portfolio-capturas-comunicafe-desktop-1440.avif"
+        }
+      ]
+    },
+    "capturas/comunicafe-mobile.png": {
+      "type": "image",
+      "w": 780,
+      "h": 1688,
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 1384,
+          "src": "media/portfolio-capturas-comunicafe-mobile-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 1384,
+          "src": "media/portfolio-capturas-comunicafe-mobile-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 780,
+          "h": 1688,
+          "src": "media/portfolio-capturas-comunicafe-mobile-780.webp"
+        },
+        {
+          "format": "avif",
+          "w": 780,
+          "h": 1688,
+          "src": "media/portfolio-capturas-comunicafe-mobile-780.avif"
+        }
+      ]
+    },
+    "media/brabo-motion-720.mp4": {
+      "type": "video",
+      "w": 1280,
+      "h": 720,
+      "poster": "media/portfolio-media-brabo-motion-720-poster.jpg",
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 360,
+          "src": "media/portfolio-media-brabo-motion-720-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 360,
+          "src": "media/portfolio-media-brabo-motion-720-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1280,
+          "h": 720,
+          "src": "media/portfolio-media-brabo-motion-720-1280.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1280,
+          "h": 720,
+          "src": "media/portfolio-media-brabo-motion-720-1280.avif"
+        }
+      ]
+    },
+    "media/comunicafe-motion-720.mp4": {
+      "type": "video",
+      "w": 1280,
+      "h": 720,
+      "poster": "media/portfolio-media-comunicafe-motion-720-poster.jpg",
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 360,
+          "src": "media/portfolio-media-comunicafe-motion-720-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 360,
+          "src": "media/portfolio-media-comunicafe-motion-720-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1280,
+          "h": 720,
+          "src": "media/portfolio-media-comunicafe-motion-720-1280.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1280,
+          "h": 720,
+          "src": "media/portfolio-media-comunicafe-motion-720-1280.avif"
+        }
+      ]
     }
   }
 }
