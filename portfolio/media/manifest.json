@@ -1,5 +1,5 @@
 {
-  "_generated": "2026-11-17T14:07:50Z",
+  "_generated": "2026-11-17T14:40:07Z",
   "_note": "Gerado por scripts/optimize-media.sh. Chaves = src usado no portfolio.json (relativo a portfolio/index.html). Não edite à mão.",
   "items": {
     "../fotos/carlo-acutis.jpg": {
@@ -507,6 +507,154 @@
           "w": 1549,
           "h": 2466,
           "src": "media/portfolio-fotos-eventos-festa-15-anos-03-1549.avif"
+        }
+      ]
+    },
+    "media/motion/pafies-2027-horizontal-720.mp4": {
+      "type": "video",
+      "w": 1280,
+      "h": 720,
+      "poster": "media/portfolio-media-motion-pafies-2027-horizontal-720-poster.jpg",
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 360,
+          "src": "media/portfolio-media-motion-pafies-2027-horizontal-720-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 360,
+          "src": "media/portfolio-media-motion-pafies-2027-horizontal-720-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1280,
+          "h": 720,
+          "src": "media/portfolio-media-motion-pafies-2027-horizontal-720-1280.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1280,
+          "h": 720,
+          "src": "media/portfolio-media-motion-pafies-2027-horizontal-720-1280.avif"
+        }
+      ]
+    },
+    "media/motion/pafies-2027-inscricoes-720.mp4": {
+      "type": "video",
+      "w": 720,
+      "h": 1280,
+      "poster": "media/portfolio-media-motion-pafies-2027-inscricoes-720-poster.jpg",
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 1136,
+          "src": "media/portfolio-media-motion-pafies-2027-inscricoes-720-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 1136,
+          "src": "media/portfolio-media-motion-pafies-2027-inscricoes-720-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 720,
+          "h": 1280,
+          "src": "media/portfolio-media-motion-pafies-2027-inscricoes-720-720.webp"
+        },
+        {
+          "format": "avif",
+          "w": 720,
+          "h": 1280,
+          "src": "media/portfolio-media-motion-pafies-2027-inscricoes-720-720.avif"
+        }
+      ]
+    },
+    "media/motion/gincana-novas-datas-720.mp4": {
+      "type": "video",
+      "w": 720,
+      "h": 1280,
+      "poster": "media/portfolio-media-motion-gincana-novas-datas-720-poster.jpg",
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 1136,
+          "src": "media/portfolio-media-motion-gincana-novas-datas-720-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 1136,
+          "src": "media/portfolio-media-motion-gincana-novas-datas-720-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 720,
+          "h": 1280,
+          "src": "media/portfolio-media-motion-gincana-novas-datas-720-720.webp"
+        },
+        {
+          "format": "avif",
+          "w": 720,
+          "h": 1280,
+          "src": "media/portfolio-media-motion-gincana-novas-datas-720-720.avif"
+        }
+      ]
+    },
+    "media/motion/santa-teresa-acutis-reels-720.mp4": {
+      "type": "video",
+      "w": 720,
+      "h": 1280,
+      "poster": "media/portfolio-media-motion-santa-teresa-acutis-reels-720-poster.jpg",
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 1136,
+          "src": "media/portfolio-media-motion-santa-teresa-acutis-reels-720-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 1136,
+          "src": "media/portfolio-media-motion-santa-teresa-acutis-reels-720-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 720,
+          "h": 1280,
+          "src": "media/portfolio-media-motion-santa-teresa-acutis-reels-720-720.webp"
+        },
+        {
+          "format": "avif",
+          "w": 720,
+          "h": 1280,
+          "src": "media/portfolio-media-motion-santa-teresa-acutis-reels-720-720.avif"
+        }
+      ]
+    },
+    "media/motion/disantos-brand-motion-540.mp4": {
+      "type": "video",
+      "w": 540,
+      "h": 960,
+      "poster": "media/portfolio-media-motion-disantos-brand-motion-540-poster.jpg",
+      "variants": [
+        {
+          "format": "webp",
+          "w": 540,
+          "h": 960,
+          "src": "media/portfolio-media-motion-disantos-brand-motion-540-540.webp"
+        },
+        {
+          "format": "avif",
+          "w": 540,
+          "h": 960,
+          "src": "media/portfolio-media-motion-disantos-brand-motion-540-540.avif"
         }
       ]
     }

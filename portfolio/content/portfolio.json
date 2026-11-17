@@ -592,6 +592,123 @@
         }
       ],
       "status": "real"
+    },
+    {
+      "id": "pafies-2027",
+      "title": "PAFIES 2027 — Gincana Solidária",
+      "category": "motion-design",
+      "year": null,
+      "client": null,
+      "description": "Vídeos de divulgação da 10ª Gincana Solidária PAFIES: uma versão horizontal com narração, legendas e os números das edições anteriores em cartões animados, e uma versão vertical para chamar as inscrições nas redes.",
+      "role": "Motion design, roteiro e edição",
+      "featured": false,
+      "cover": {
+        "type": "video",
+        "src": "media/motion/pafies-2027-horizontal-720.mp4",
+        "alt": "Cartão animado com o selo da 10ª Gincana Solidária PAFIES 2027 sobre fundo azul estrelado",
+        "w": 1280,
+        "h": 720
+      },
+      "media": [
+        {
+          "type": "video",
+          "src": "media/motion/pafies-2027-horizontal-720.mp4",
+          "alt": "Vídeo horizontal da Gincana Solidária PAFIES 2027, com narração, legendas e cartões animados",
+          "w": 1280,
+          "h": 720
+        },
+        {
+          "type": "video",
+          "src": "media/motion/pafies-2027-inscricoes-720.mp4",
+          "alt": "Vídeo vertical chamando para as inscrições da Gincana PAFIES 2027, com tipografia grande e feixes de luz azul",
+          "w": 720,
+          "h": 1280
+        }
+      ],
+      "status": "real"
+    },
+    {
+      "id": "santa-teresa-acutis",
+      "title": "Santa Teresa de Ávila × Carlo Acutis",
+      "category": "reels",
+      "year": null,
+      "client": null,
+      "description": "Reels sobre a vida de Santa Teresa de Ávila, com tipografia animada em preto e creme, ritmo de cortes para o feed vertical e assinatura Acutis × Chagas.",
+      "role": "Roteiro, motion design e edição",
+      "featured": false,
+      "cover": {
+        "type": "video",
+        "src": "media/motion/santa-teresa-acutis-reels-720.mp4",
+        "alt": "Tipografia animada: 'Teresa de Ávila — na Espanha, entrou no Carmelo'",
+        "w": 720,
+        "h": 1280
+      },
+      "media": [
+        {
+          "type": "video",
+          "src": "media/motion/santa-teresa-acutis-reels-720.mp4",
+          "alt": "Reels sobre Santa Teresa de Ávila com tipografia animada",
+          "w": 720,
+          "h": 1280
+        }
+      ],
+      "status": "real"
+    },
+    {
+      "id": "gincana-novas-datas",
+      "title": "Gincana — novas datas",
+      "category": "motion-design",
+      "year": null,
+      "client": null,
+      "description": "Animação vertical para avisar as novas datas da gincana: as informações aparecem na tela de uma TV antiga, numa sala iluminada em tons quentes.",
+      "role": "Motion design",
+      "featured": false,
+      "cover": {
+        "type": "video",
+        "src": "media/motion/gincana-novas-datas-720.mp4",
+        "alt": "TV antiga numa sala escura mostrando o aviso de novas datas da gincana",
+        "w": 720,
+        "h": 1280,
+        "silent": true
+      },
+      "media": [
+        {
+          "type": "video",
+          "src": "media/motion/gincana-novas-datas-720.mp4",
+          "alt": "Animação de uma TV antiga exibindo as novas datas da gincana",
+          "w": 720,
+          "h": 1280,
+          "silent": true
+        }
+      ],
+      "status": "real"
+    },
+    {
+      "id": "disantos",
+      "title": "DiSantos — brand motion",
+      "category": "motion-design",
+      "year": null,
+      "client": null,
+      "description": "Prévia de motion para a marca DiSantos: texto em serifa, luz suave sobre azul profundo e a frase 'Algumas histórias nunca deixam de viver'.",
+      "role": "Motion design",
+      "featured": false,
+      "cover": {
+        "type": "video",
+        "src": "media/motion/disantos-brand-motion-540.mp4",
+        "alt": "Assinatura DiSantos em serifa sobre fundo azul escuro",
+        "w": 540,
+        "h": 960
+      },
+      "media": [
+        {
+          "type": "video",
+          "src": "media/motion/disantos-brand-motion-540.mp4",
+          "alt": "Prévia de brand motion DiSantos",
+          "w": 540,
+          "h": 960
+        }
+      ],
+      "status": "real"
     }
   ],
   "missing": [
@@ -602,14 +719,6 @@
     {
       "category": "audiovisual",
       "note": "Sem vídeos autorais publicados. Pedir vídeos 1920×1080 (aftermovie, cinematográfico, institucional) com autorização."
-    },
-    {
-      "category": "reels",
-      "note": "Nenhum reel autoral no repositório. Pedir 3–6 vídeos verticais 1080×1920 MP4 H.264 com poster."
-    },
-    {
-      "category": "motion-design",
-      "note": "Item da moto sem poster e com barra de status do celular; pedir original limpo e confirmar autoria da filmagem. Pedir também animações tipográficas (Remotion)."
     },
     {
       "category": "design",

@@ -46,7 +46,7 @@ for f in "${FILES[@]}"; do
   if [[ "$ext" =~ ^(mp4|mov|webm)$ ]]; then
     kind="video"
     dur="$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$f" | cut -d. -f1)"; dur="${dur:-2}"
-    t=$(( dur > 3 ? 1 : 0 ))
+    t="${POSTER_T:-$(( dur > 3 ? 1 : 0 ))}"
     poster="$OUT/$slug-poster.jpg"
     if need "$poster" "$f"; then
       echo "poster  $f"
