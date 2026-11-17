@@ -119,7 +119,7 @@
         <h1 class="hero__title" id="hero-title" data-reveal>Criatividade que transforma ideias em experiências.</h1>
         <p class="hero__subtitle" data-reveal>Fotografia, audiovisual, design e comunicação digital. Transformando ideias em histórias visuais desde 2019.</p>
         <div class="hero__actions" data-reveal>
-          <a class="btn btn--primary" href="#projetos">Explorar projetos</a>
+          <a class="btn btn--primary" href="#portfolio">Explorar projetos</a>
           <a class="btn btn--ghost" href="#orcamento">Solicitar orçamento</a>
         </div>
       </div>
@@ -132,6 +132,7 @@
         <header class="section__head" data-reveal>
           <p class="section__num" aria-hidden="true">01</p>
           <h2 class="section__title" id="about-title">Sobre</h2>
+          <p class="section__lead">Fotógrafo, videomaker, criador de conteúdo, designer e profissional de comunicação digital.</p>
         </header>
         <figure class="about__photo" data-slot="about-photo" data-reveal>
           <!-- render: foto real (about.photo) ou monograma "CH" como placeholder honesto -->
@@ -146,12 +147,13 @@
     </section>
 
     <!-- 02 SERVIÇOS -->
-    <section class="section services" id="servicos" aria-labelledby="services-title">
+    <section class="section section--offer services" id="servicos" aria-labelledby="services-title">
       <div class="container">
         <header class="section__head" data-reveal>
           <p class="section__num" aria-hidden="true">02</p>
           <h2 class="section__title" id="services-title">Serviços</h2>
           <p class="section__lead">Áreas de atuação, do registro à estratégia.</p>
+          <p class="section__cta"><a class="section__cta-link" href="#valores">Ver valores de referência <span aria-hidden="true">→</span></a></p>
         </header>
         <ol class="areas" data-slot="areas"></ol>
 
@@ -173,7 +175,7 @@
     </section>
 
     <!-- 03 PORTFÓLIO (trabalhos reais) — markup/classes preservados -->
-    <section class="section work" id="portfolio" aria-labelledby="work-title">
+    <section class="section section--proof work" id="portfolio" aria-labelledby="work-title">
       <div class="container">
         <header class="section__head" data-reveal>
           <p class="section__num" aria-hidden="true">03</p>
@@ -185,20 +187,21 @@
 
         <div class="featured" data-slot="featured" aria-live="polite"></div>
 
-        <h3 class="subhead">Camadas · índice de projetos</h3>
-        <ol class="project-index" data-slot="project-index" aria-live="polite">
+        <h3 class="subhead" id="work-index-title">Índice · projetos</h3>
+        <ol class="project-index" data-slot="project-index" aria-live="polite" aria-labelledby="work-index-title">
           <li class="project-index__loading">Carregando projetos…</li>
         </ol>
 
-        <div class="curation" data-slot="curation"></div>
-
-        <h3 class="subhead">Pranchetas · galeria</h3>
+        <h3 class="subhead" id="work-gallery-title">Galeria · todas as mídias</h3>
         <ul class="mosaic" data-slot="gallery" aria-label="Galeria de mídias"></ul>
+
+        <!-- Categorias sem material ficam DEPOIS da prova real (galeria) -->
+        <div class="curation" data-slot="curation"></div>
       </div>
     </section>
 
     <!-- 04 PROJETOS SELECIONADOS (realizado | pessoal | conceitual) -->
-    <section class="section selected" id="projetos" aria-labelledby="selected-title">
+    <section class="section section--proof selected" id="projetos" aria-labelledby="selected-title">
       <div class="container">
         <header class="section__head" data-reveal>
           <p class="section__num" aria-hidden="true">04</p>
@@ -211,7 +214,7 @@
     </section>
 
     <!-- 05 PRODUTOS DIGITAIS -->
-    <section class="section products" id="produtos" aria-labelledby="products-title">
+    <section class="section section--offer products" id="produtos" aria-labelledby="products-title">
       <div class="container">
         <header class="section__head" data-reveal>
           <p class="section__num" aria-hidden="true">05</p>
@@ -223,15 +226,16 @@
     </section>
 
     <!-- 06 ORÇAMENTO (preços + formulário) -->
-    <section class="section quote" id="orcamento" aria-labelledby="quote-title">
+    <section class="section section--convert quote" id="orcamento" aria-labelledby="quote-title">
       <div class="container">
         <header class="section__head" data-reveal>
           <p class="section__num" aria-hidden="true">06</p>
           <h2 class="section__title" id="quote-title">Orçamento</h2>
           <p class="pricing__disclaimer" role="note" data-slot="pricing-disclaimer"></p>
+          <p class="section__cta"><a class="section__cta-link" href="#quote-form">Ir direto ao formulário <span aria-hidden="true">↓</span></a></p>
         </header>
 
-        <section class="pricing" aria-labelledby="pricing-title">
+        <section class="pricing" id="valores" aria-labelledby="pricing-title">
           <h3 class="subhead" id="pricing-title">Valores de referência</h3>
           <div class="pricing__groups" data-slot="pricing"></div>
           <p class="pricing__note" data-slot="pricing-note"></p>
@@ -287,7 +291,7 @@
     </section>
 
     <!-- 07 CONTATO -->
-    <section class="section contact" id="contato" aria-labelledby="contact-title">
+    <section class="section section--convert contact" id="contato" aria-labelledby="contact-title">
       <div class="container">
         <header class="section__head" data-reveal>
           <p class="section__num" aria-hidden="true">07</p>

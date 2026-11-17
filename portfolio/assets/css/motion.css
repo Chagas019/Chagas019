@@ -1,1 +1,181 @@
-/* motion.css — microinterações e transições (dono: Agente Motion). Carregado após base.css. */
+/* motion.css — microinterações e transições (dono: Agente Motion). Carregado após base.css.
+ * Regras: só transform/opacity (exceção: blur leve de imagem em desktop), tokens --dur-*/--ease-* com fallback,
+ * hover só em dispositivos com hover real, tudo desligado em prefers-reduced-motion (bloco no fim).
+ * Sobrescreve de base.css: transição de [data-reveal] (stagger), --hover-scale dos itens de trabalho,
+ * transition-property das alças .select-box__h (fade além de scale), origem do sublinhado do nav desktop. */
+
+:root {
+  --m-stagger: var(--stagger, 70ms);
+  --m-reveal-dur: var(--dur-slow, 800ms);
+  --m-ease: var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+  --m-ease-spring: var(--ease-spring, var(--ease-snap, cubic-bezier(0.34, 1.2, 0.64, 1)));
+  --m-fast: var(--dur-fast, 180ms);
+  --m-base: var(--dur-base, 320ms);
+}
+
+/* ---------- 1. Reveals com stagger ----------
+ * reveal.js define --reveal-i (0..5) por lote de elementos que entram juntos e zera depois. */
+.js-reveal [data-reveal] {
+  transition:
+    opacity var(--m-reveal-dur) var(--m-ease),
+    transform var(--m-reveal-dur) var(--m-ease);
+  transition-delay: calc(var(--reveal-i, 0) * var(--m-stagger));
+}
+.js-reveal [data-reveal]:not(.is-revealed) { opacity: 0; transform: translate3d(0, var(--reveal-distance, 24px), 0); }
+/* cards: sobem um pouco mais e "assentam" com escala mínima */
+.js-reveal :is(.selected-card, .product-card, .featured__item, .mosaic__tile, .curation__block, .pricing__group, .about__photo)[data-reveal]:not(.is-revealed) {
+  transform: translate3d(0, 32px, 0) scale(.985);
+}
+/* linhas de lista: deslocamento curto, ritmo mais rápido */
+.js-reveal :is(.project-index__item, .service-list__item, .timeline__item, .tool-item, .area)[data-reveal] {
+  --reveal-distance: 14px;
+  --m-reveal-dur: var(--dur-page, 700ms);
+}
+/* título do hero: mantém o clip-path de base.css (máscara de baixo para cima) */
+.js-reveal .hero__title[data-reveal] {
+  transition:
+    opacity var(--dur-slower, 1100ms) var(--m-ease),
+    transform var(--dur-slower, 1100ms) var(--m-ease),
+    clip-path var(--dur-slower, 1100ms) var(--ease-cine, cubic-bezier(0.77, 0, 0.18, 1));
+  transition-delay: calc(var(--reveal-i, 0) * var(--m-stagger));
+}
+
+/* ---------- 2. Botões ---------- */
+.btn {
+  position: relative; isolation: isolate; overflow: hidden;
+  transition:
+    background-color var(--m-fast) var(--m-ease), color var(--m-fast) var(--m-ease), border-color var(--m-fast) var(--m-ease),
+    box-shadow var(--m-base) var(--m-ease), transform var(--m-base) var(--m-ease-spring);
+}
+/* varredura de luz (accent sweep) */
+.btn::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(105deg, transparent 30%, rgb(255 255 255 / .18) 50%, transparent 70%);
+  transform: translate3d(-110%, 0, 0);
+}
+.btn--ghost::after { background: linear-gradient(105deg, transparent 30%, rgb(255 122 69 / .22) 50%, transparent 70%); }
+@media (hover: hover) {
+  .btn:hover { transform: translate3d(0, -2px, 0); box-shadow: var(--elev-2, 0 10px 24px -12px rgb(0 0 0 / .55)); }
+  .btn:hover::after { transform: translate3d(110%, 0, 0); transition: transform var(--dur-slow, 800ms) var(--m-ease); }
+}
+.btn:active { transform: scale(.98); transition-duration: var(--dur-instant, 80ms); box-shadow: none; }
+.btn[disabled] { transform: none; box-shadow: none; }
+.swatch-cta { transition: border-color var(--m-fast) var(--m-ease), color var(--m-fast), transform var(--m-base) var(--m-ease-spring); }
+.swatch-cta:active, .whatsapp-float:active { transform: scale(.97); }
+
+/* ---------- 3. Cards (projeto / produto) ---------- */
+.selected-card, .product-card {
+  transition: border-color var(--m-base) var(--m-ease), background-color var(--m-base) var(--m-ease);
+}
+.js-reveal :is(.selected-card, .product-card)[data-reveal] {
+  transition:
+    opacity var(--m-reveal-dur) var(--m-ease), transform var(--m-reveal-dur) var(--m-ease),
+    border-color var(--m-base) var(--m-ease), background-color var(--m-base) var(--m-ease);
+  transition-delay: calc(var(--reveal-i, 0) * var(--m-stagger));
+}
+/* máscara: isolation evita "vazamento" do raio no Safari com filho escalado */
+.selected-card__media, .selected-card__frame, .product-card__media, .featured__media .media, .mosaic__btn .media {
+  isolation: isolate;
+  transition: box-shadow var(--m-base) var(--m-ease), background-color var(--m-base) var(--m-ease);
+}
+.mosaic__btn, .featured__media { --hover-scale: 1.03; }
+.selected-card__frame-title { transition: color var(--m-base) var(--m-ease), transform var(--dur-slow, 800ms) var(--m-ease); }
+@media (hover: hover) {
+  .selected-card:hover, .product-card:hover { border-color: var(--border-strong, rgb(255 255 255 / .22)); background-color: var(--surface-2, transparent); }
+  :is(.selected-card, .product-card):hover .media__img { transform: scale(1.03); }
+  :is(.selected-card, .product-card):hover :is(.selected-card__media, .selected-card__frame, .product-card__media),
+  :is(.mosaic__btn, .featured__media):hover .media {
+    box-shadow: var(--elev-2, 0 18px 40px -20px rgb(0 0 0 / .7));
+  }
+  .selected-card:hover .selected-card__frame-title { transform: translate3d(0, -4px, 0); }
+}
+:is(.selected-card, .product-card):active :is(.selected-card__media, .selected-card__frame, .product-card__media) { transform: scale(.99); transition: transform var(--m-fast) var(--m-ease); }
+
+/* alças da caixa de seleção: fade + scale (atrasos por alça continuam de base.css) */
+.select-box__h { opacity: 0; transition-property: transform, opacity; }
+:is(.mosaic__btn, .featured__media):is(:hover, :focus-visible) .select-box__h { opacity: 1; }
+.select-box__dims { opacity: 0; transform: translate3d(0, -4px, 0); transition: opacity var(--m-base) var(--m-ease) 120ms, transform var(--m-base) var(--m-ease) 120ms; }
+:is(.mosaic__btn, .featured__media):is(:hover, :focus-visible) .select-box__dims { opacity: 1; transform: none; }
+
+/* linhas do índice */
+.project-index__title { transition: transform var(--m-base) var(--m-ease); }
+@media (hover: hover) { .project-index__link:hover .project-index__title { transform: translate3d(6px, 0, 0); } }
+
+/* ---------- 4. Chips / filtros ---------- */
+.filters__btn { transition: color var(--m-fast) var(--m-ease), transform var(--m-base) var(--m-ease-spring); }
+.filters__btn:active { transform: scale(.96); transition-duration: var(--dur-instant, 80ms); }
+.filters__btn.is-toggled { animation: m-chip var(--m-base) var(--m-ease-spring); }
+.filters__count { display: inline-block; transition: opacity var(--m-fast); }
+.filters__btn[aria-pressed="true"] .filters__count { opacity: 1; }
+.form__option { transition: background-color var(--m-fast) var(--m-ease), color var(--m-fast), border-color var(--m-fast), transform var(--m-base) var(--m-ease-spring); }
+.form__option:active { transform: scale(.97); transition-duration: var(--dur-instant, 80ms); }
+.form__option:has(:checked) .form__option-label::before { animation: m-check var(--m-base) var(--m-ease-spring); }
+@keyframes m-chip { 0% { transform: scale(.96); } 60% { transform: scale(1.03); } 100% { transform: none; } }
+@keyframes m-check { from { opacity: 0; transform: scale(.4) rotate(-20deg); } to { opacity: 1; transform: none; } }
+
+/* ---------- 5. Imagens: entrada suave quando o lazy load termina (motion.js) ---------- */
+.has-motion .media__img {
+  transition: opacity var(--dur-page, 700ms) var(--m-ease), transform var(--dur-slow, 800ms) var(--m-ease), filter var(--dur-page, 700ms) var(--m-ease);
+}
+.has-motion .media__img.is-loading { opacity: 0; transform: scale(1.04); }
+@media (min-width: 900px) and (pointer: fine) {
+  .has-motion .media__img.is-loading { filter: blur(14px); }
+}
+
+/* ---------- 6. Header: encolhe + desfoque mais denso ao rolar ----------
+ * Sem transform no header/inner (prenderia o menu fixo); só fundo, filete e itens se deslocam. */
+.site-header::before { transition: transform var(--m-base) var(--m-ease), background-color var(--m-base) var(--m-ease), box-shadow var(--m-base) var(--m-ease); }
+.site-header::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; pointer-events: none;
+  background: var(--border-hairline, var(--c-line-dark, #2E2E2E)); opacity: 0;
+  transition: transform var(--m-base) var(--m-ease), opacity var(--m-base) var(--m-ease);
+}
+.site-header { transition: border-color var(--m-base) var(--m-ease); }
+.site-header :is(.brand, .nav-toggle, .swatch-cta) { transition: transform var(--m-base) var(--m-ease); }
+.site-header.is-scrolled:not(.is-open) { border-bottom-color: transparent; }
+.site-header.is-scrolled:not(.is-open)::before {
+  transform: translate3d(0, -8px, 0);
+  background-color: rgb(10 10 10 / .86);
+  box-shadow: var(--elev-1, 0 8px 24px -16px rgb(0 0 0 / .8));
+}
+.site-header.is-scrolled:not(.is-open)::after { opacity: 1; transform: translate3d(0, -8px, 0); }
+.site-header.is-scrolled:not(.is-open) :is(.brand, .nav-toggle, .swatch-cta) { transform: translate3d(0, -4px, 0); }
+
+/* ---------- 7. Nav: sublinhado desliza; indicador de seção ativa (nav.js) ---------- */
+@media (min-width: 1200px) {
+  .site-nav__list { transition: transform var(--m-base) var(--m-ease); }
+  .site-header.is-scrolled:not(.is-open) .site-nav__list { transform: translate3d(0, -4px, 0); }
+  .site-nav { position: relative; }
+  .site-nav__link { transition: color var(--m-fast) var(--m-ease); }
+  .site-nav__link::after { transform-origin: right; transition: transform var(--dur-draw, 520ms) var(--m-ease); }
+  .site-nav__link:hover::after { transform-origin: left; }
+  .site-nav.has-indicator .site-nav__link[aria-current="true"]:not(:hover)::after { transform: scaleX(0); }
+  .site-nav__indicator {
+    position: absolute; left: 0; bottom: 10px; width: 1px; height: 2px; border-radius: 2px; pointer-events: none;
+    background: var(--c-signal-light, #FF7A45); transform-origin: left; opacity: 0;
+    transform: translate3d(var(--ix, 0px), var(--iy, 0px), 0) scaleX(var(--iw, 0));
+    transition: transform var(--dur-draw, 520ms) var(--m-ease), opacity var(--m-base) var(--m-ease);
+  }
+  .site-nav__indicator.is-on { opacity: 1; }
+  .site-header.is-scrolled:not(.is-open) .site-nav__indicator { --iy: -4px; }
+}
+@media (max-width: 1199.98px) { .site-nav__indicator { display: none; } }
+
+/* ---------- 8. Parallax de ponteiro no hero (só pointer fine; vars de motion.js) ---------- */
+@media (hover: hover) and (pointer: fine) {
+  .hero__crop, .hero__meta { transition: transform var(--dur-slow, 800ms) var(--m-ease); will-change: transform; }
+  .hero__crop { transform: translate3d(calc(var(--px, 0) * -10px), calc(var(--py, 0) * -8px), 0); }
+  .hero__meta { transform: translate3d(calc(var(--px, 0) * 14px), calc(var(--py, 0) * 10px), 0); }
+}
+
+/* ---------- 9. Movimento reduzido: tudo instantâneo, conteúdo visível ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal [data-reveal], .js-reveal [data-reveal]:not(.is-revealed) { opacity: 1 !important; transform: none !important; clip-path: none !important; transition: none !important; }
+  .media__img, .media__img.is-loading { opacity: 1 !important; transform: none !important; filter: none !important; }
+  .hero__crop, .hero__meta, .btn, .btn:hover, .btn:active, .filters__btn, .form__option, .site-header :is(.brand, .nav-toggle, .swatch-cta), .site-nav__list,
+  .site-header::before, .site-header::after { transform: none !important; }
+  .btn::after { display: none; }
+  .select-box__h { opacity: 1; }
+  .select-box__dims { opacity: 1; transform: none; }
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

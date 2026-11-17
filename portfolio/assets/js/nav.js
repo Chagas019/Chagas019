@@ -1,6 +1,7 @@
 /**
  * Navegação: menu responsivo (aria-expanded), estado de scroll no header
- * (.is-scrolled), seção ativa (aria-current) via IntersectionObserver.
+ * (.is-scrolled → encolhe/desfoca em motion.css), seção ativa (aria-current) via IntersectionObserver
+ * com indicador deslizante (.site-nav__indicator) no desktop.
  */
 export function initNav() {
   const header = document.querySelector('.site-header');
@@ -28,7 +29,8 @@ export function initNav() {
       else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
     }
   });
-  window.matchMedia('(min-width: 75em)').addEventListener('change', (mq) => { if (mq.matches) setOpen(false); });
+  const desktop = window.matchMedia('(min-width: 75em)');
+  desktop.addEventListener('change', (mq) => { if (mq.matches) setOpen(false); });
 
   // estado de scroll
   const sentinel = document.createElement('div');
@@ -37,16 +39,35 @@ export function initNav() {
   document.body.prepend(sentinel);
   new IntersectionObserver(([e]) => header.classList.toggle('is-scrolled', !e.isIntersecting)).observe(sentinel);
 
-  // seção ativa
+  // seção ativa + indicador deslizante (desktop): só transform, posição medida no nav
   const links = [...nav.querySelectorAll('a[href^="#"]')];
   const map = new Map(links.map((a) => [a.getAttribute('href').slice(1), a]));
   const sections = [...map.keys()].map((id) => document.getElementById(id)).filter(Boolean);
+  const indicator = document.createElement('span');
+  indicator.className = 'site-nav__indicator';
+  indicator.setAttribute('aria-hidden', 'true');
+  nav.append(indicator);
+  nav.classList.add('has-indicator');
+  let current = null;
+  const placeIndicator = () => {
+    if (!current || !desktop.matches) { indicator.classList.remove('is-on'); return; }
+    const n = nav.getBoundingClientRect();
+    const r = current.getBoundingClientRect();
+    indicator.style.setProperty('--ix', `${(r.left - n.left).toFixed(1)}px`);
+    indicator.style.setProperty('--iw', r.width.toFixed(1));
+    indicator.classList.add('is-on');
+  };
+  const setCurrent = (a) => {
+    if (a === current) return;
+    links.forEach((l) => l.removeAttribute('aria-current'));
+    current = a || null;
+    current?.setAttribute('aria-current', 'true');
+    placeIndicator();
+  };
   const io = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      if (!e.isIntersecting) continue;
-      links.forEach((a) => a.removeAttribute('aria-current'));
-      map.get(e.target.id)?.setAttribute('aria-current', 'true');
-    }
+    for (const e of entries) if (e.isIntersecting) setCurrent(map.get(e.target.id));
   }, { rootMargin: '-45% 0px -50% 0px' });
   sections.forEach((s) => io.observe(s));
+  if ('ResizeObserver' in window) new ResizeObserver(placeIndicator).observe(nav);
+  document.fonts?.ready?.then(placeIndicator);
 }
