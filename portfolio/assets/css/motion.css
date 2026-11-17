@@ -31,6 +31,19 @@
   --reveal-distance: 14px;
   --m-reveal-dur: var(--dur-page, 700ms);
 }
+/* curadoria: ritmo curto (≤40ms) */
+.js-reveal .curation__block[data-reveal] { --m-stagger: 40ms; }
+/* linhas de preço: entram em cascata curta (40ms, máx. 6) quando o grupo é revelado, uma vez */
+.js-reveal .pricing__group[data-reveal] .pricing__item { transition: opacity var(--dur-page, 700ms) var(--m-ease), transform var(--dur-page, 700ms) var(--m-ease); }
+.js-reveal .pricing__group[data-reveal]:not(.is-revealed) .pricing__item { opacity: 0; transform: translate3d(0, 12px, 0); }
+.js-reveal .pricing__group[data-reveal] .pricing__item:nth-child(2) { transition-delay: 40ms; }
+.js-reveal .pricing__group[data-reveal] .pricing__item:nth-child(3) { transition-delay: 80ms; }
+.js-reveal .pricing__group[data-reveal] .pricing__item:nth-child(4) { transition-delay: 120ms; }
+.js-reveal .pricing__group[data-reveal] .pricing__item:nth-child(5) { transition-delay: 160ms; }
+.js-reveal .pricing__group[data-reveal] .pricing__item:nth-child(n+6) { transition-delay: 200ms; }
+/* âncoras internas (#valores, #quote-form): compensa o deslocamento do reveal (alvo ainda transladado) */
+:is(#valores, #quote-form, .pricing__group) { scroll-margin-top: 24px; }
+
 /* título do hero: mantém o clip-path de base.css (máscara de baixo para cima) */
 .js-reveal .hero__title[data-reveal] {
   transition:
@@ -101,6 +114,11 @@
 .project-index__title { transition: transform var(--m-base) var(--m-ease); }
 @media (hover: hover) { .project-index__link:hover .project-index__title { transform: translate3d(6px, 0, 0); } }
 
+/* link de CTA de seção: seta desliza 3px (→ para o lado, ↓ para baixo) */
+.section__cta-link span[aria-hidden] { display: inline-block; transition: transform var(--m-base) var(--m-ease); }
+.section__cta-link:is(:hover, :focus-visible) span[aria-hidden] { transform: translate3d(3px, 0, 0); }
+.section__cta-link[href="#quote-form"]:is(:hover, :focus-visible) span[aria-hidden] { transform: translate3d(0, 3px, 0); }
+
 /* ---------- 4. Chips / filtros ---------- */
 .filters__btn { transition: color var(--m-fast) var(--m-ease), transform var(--m-base) var(--m-ease-spring); }
 .filters__btn:active { transform: scale(.96); transition-duration: var(--dur-instant, 80ms); }
@@ -170,6 +188,7 @@
 
 /* ---------- 9. Movimento reduzido: tudo instantâneo, conteúdo visível ---------- */
 @media (prefers-reduced-motion: reduce) {
+  .js-reveal .pricing__group .pricing__item { opacity: 1 !important; transform: none !important; }
   .js-reveal [data-reveal], .js-reveal [data-reveal]:not(.is-revealed) { opacity: 1 !important; transform: none !important; clip-path: none !important; transition: none !important; }
   .media__img, .media__img.is-loading { opacity: 1 !important; transform: none !important; filter: none !important; }
   .hero__crop, .hero__meta, .btn, .btn:hover, .btn:active, .filters__btn, .form__option, .site-header :is(.brand, .nav-toggle, .swatch-cta), .site-nav__list,
