@@ -23,7 +23,10 @@ export const Demo: React.FC = () => {
   const u = unidade(width, height);
   const seg = areaSegura(width, height);
   // A cena 1 já mostra a narração como título: legenda começa na cena 2.
-  const legendas = vozDemo.palavras.filter((p) => p.startMs >= 3000);
+  // Na cena 3 o título cinético carrega o texto: legenda escondida a partir de "Tudo" (revisão 1, #10).
+  const legendas = vozDemo.palavras.filter((p) => p.startMs >= 3000 && p.startMs < 6800);
+  // Vertical: +1,5% de folga acima da faixa da interface das redes.
+  const baseLegenda = seg.base + (height > width ? Math.round(height * 0.015) : 0);
   return (
     <AbsoluteFill style={{background: paletaDemo.fundo}}>
       <FundoVivo paleta={paletaDemo} />
@@ -47,7 +50,7 @@ export const Demo: React.FC = () => {
           return itens;
         })}
       </TransitionSeries>
-      <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: seg.base}}>
+      <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: baseLegenda}}>
         <LegendaSincronizada
           captions={legendas}
           tamanho={escala.legenda * u}
