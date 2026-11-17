@@ -1,22 +1,28 @@
-# Bíblia do personagem — São Maximiliano Maria Kolbe
+# Bíblia do personagem: São Maximiliano Maria Kolbe (v2, estilo chibi)
 
-**Fonte única:** `studio/src/characters/Kolbe.tsx`. Todas as cenas, a capa e a model sheet usam esse componente. Nenhuma cena redesenha o rosto, e é isso que garante a mesma aparência no episódio inteiro.
-**Model sheet:** `assets/characters/kolbe-model-sheet.png`
+**Fonte única:** `studio/src/characters/Chibi.tsx`, com os presets `KOLBE_HABITO` e `KOLBE_PRISIONEIRO`. Todas as cenas, a capa e a model sheet usam esses presets. Nenhuma cena redesenha o personagem, e é isso que garante a mesma aparência no episódio inteiro.
+**Model sheet:** `assets/characters/kolbe-model-sheet.png`.
+O desenho semirrealista da v1 continua em `studio/src/characters/Kolbe.tsx` (arquivo histórico).
 
-## Traços fixos (baseados nas fotografias históricas, ver `episodes/001.../research/pesquisa.md`)
-- Rosto oval e alongado, testa alta, queixo estreito. Corpo franzino (tuberculose crônica).
-- Cabelo castanho-escuro, curto, penteado para trás, com entradas.
-- **Óculos redondos de aro metálico fino** dourado-envelhecido (#C2A673).
-- Olhos castanho-escuros, olhar sereno. Sobrancelhas retas e escuras.
-- **Sem barba** nas variantes atuais. Para cenas de 1930–1939 (Japão/Niepokalanów), criar a variante `barba` (barba cheia escura e pontuda).
-- Pele: base #D8A47E · sombra #9C6546 · luz #F2CDA6.
+## Linguagem (alinhada ao vídeo de referência)
+- Flat 2D com **contorno grosso #2B1B14**, cores chapadas e uma única sombra.
+- Cabeça grande (cerca de 40% da altura), olhos de ponto com brilho, bochechas rosadas.
+- Corpo pequeno e braços em "tubo" com mãos redondas. Respiração e piscadas automáticas.
 
-## Variantes
-| Variante | Uso | Detalhes |
-|---|---|---|
-| `habito` | 1910–1941 | hábito conventual preto, capuz dobrado, mozeta e cordão branco com 3 nós (pobreza, castidade, obediência) |
-| `prisioneiro` | Auschwitz 1941 | uniforme listrado azul-acinzentado e cinza, cabeça raspada, triângulo vermelho com "P", nº **16670** |
+## Traços fixos do Kolbe
+- **Óculos redondos** sempre presentes. É a marca de reconhecimento do personagem.
+- Cabelo castanho-escuro penteado para trás (hábito) ou **cabeça raspada** (Auschwitz).
+- **Sem barba** em 1939–1941. Para cenas de 1930–1939 (Japão), criar a variante `barba`.
+- Hábito conventual **preto** com mozeta e cordão branco de **3 nós**.
+- Prisioneiro: uniforme listrado azul-acinzentado e bege, triângulo vermelho e nº **16670**.
 
-## Controles de atuação (props)
-`expression`: sereno · gentil · determinado · dor — `gaze` [x,y] — `tilt` — `eyesClosed` (oração) — `light`: quente · frio · ouro — `rim` — `breathe`.
-Piscadas automáticas e naturais (a cada 2,5–5 s), respiração e micro-movimentos de cabeça sempre ativos, para o personagem nunca ficar "congelado".
+## Controles de atuação
+`expression`: sereno · gentil · determinado · triste · choro · sério.
+`arms`: down · pray · face · open · point.
+Outros: `walk` (ciclo de caminhada), `eyesClosed`, `gaze`, `halo`, `shake`.
+
+## Elenco de apoio
+O mesmo boneco com outros parâmetros:
+- **Prisioneiros:** gorro listrado.
+- **Pai de família (Franciszek Gajowniczek):** `expression="choro"`, `arms="face"`.
+- **Guardas:** capacete, uniforme cinza-oliva, **sem insígnias**.

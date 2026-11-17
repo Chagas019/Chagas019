@@ -1,21 +1,30 @@
 import React from 'react';
 import {AbsoluteFill} from 'remotion';
-import {Kolbe} from './Kolbe';
+import {Chibi, KOLBE_HABITO, KOLBE_PRISIONEIRO, Sparkle} from './Chibi';
 import {C, F} from '../brand/tokens';
-import {FilmFinish} from '../core/cinema';
+import {Paper} from '../core/flat';
 
 export const CharacterSheet: React.FC = () => (
-  <AbsoluteFill style={{background: `radial-gradient(circle at 50% 30%, ${C.sepia}, ${C.carvao} 70%)`, fontFamily: F.titulo, color: C.pergaminho}}>
-    <div style={{position: 'absolute', top: 60, width: '100%', textAlign: 'center', fontSize: 44, letterSpacing: 8, color: C.ouro}}>SANTORAMA · MODEL SHEET</div>
-    <div style={{position: 'absolute', top: 120, width: '100%', textAlign: 'center', fontSize: 64}}>São Maximiliano Kolbe</div>
-    <div style={{position: 'absolute', top: 260, left: 0, width: 540, display: 'flex', justifyContent: 'center'}}><Kolbe width={520} light="quente" /></div>
-    <div style={{position: 'absolute', top: 260, left: 540, width: 540, display: 'flex', justifyContent: 'center'}}><Kolbe width={520} variant="prisioneiro" light="frio" expression="determinado" blinkSeed="b" /></div>
-    <div style={{position: 'absolute', top: 1080, left: 0, width: 540, textAlign: 'center', fontFamily: F.serifa, fontSize: 34}}>Hábito franciscano conventual<br/>1918–1941</div>
-    <div style={{position: 'absolute', top: 1080, left: 540, width: 540, textAlign: 'center', fontFamily: F.serifa, fontSize: 34}}>Auschwitz, 1941<br/>prisioneiro nº 16670</div>
-    <div style={{position: 'absolute', top: 1230, left: 0, width: 360, display: 'flex', justifyContent: 'center'}}><Kolbe width={340} expression="gentil" gaze={[0.6, -0.4]} tilt={-4} blinkSeed="c" /></div>
-    <div style={{position: 'absolute', top: 1230, left: 360, width: 360, display: 'flex', justifyContent: 'center'}}><Kolbe width={340} variant="prisioneiro" expression="sereno" eyesClosed={1} tilt={5} light="ouro" blinkSeed="d" /></div>
-    <div style={{position: 'absolute', top: 1230, left: 720, width: 360, display: 'flex', justifyContent: 'center'}}><Kolbe width={340} variant="prisioneiro" expression="dor" gaze={[-0.7, 0.3]} tilt={-3} light="frio" blinkSeed="e" /></div>
-    <div style={{position: 'absolute', bottom: 60, width: '100%', textAlign: 'center', fontFamily: F.serifa, fontSize: 30, color: C.ouroClaro}}>expressões: gentil · oração · dor   —   óculos redondos, sem barba (1939–41), rosto oval e alongado</div>
-    <FilmFinish vignette={0.5} />
+  <AbsoluteFill style={{background: '#E9DCC3', fontFamily: F.titulo, color: C.carvao}}>
+    <Paper />
+    <div style={{position: 'absolute', top: 70, width: '100%', textAlign: 'center', fontSize: 40, letterSpacing: 8, color: C.terra}}>SANTORAMA · MODEL SHEET</div>
+    <div style={{position: 'absolute', top: 130, width: '100%', textAlign: 'center', fontSize: 64, fontWeight: 700}}>São Maximiliano Kolbe</div>
+    <svg width={1080} height={1920} style={{position: 'absolute'}}>
+      <Chibi {...KOLBE_HABITO} x={290} y={880} h={600} expression="gentil" />
+      <Chibi {...KOLBE_PRISIONEIRO} x={790} y={880} h={600} expression="sereno" seed="k2" />
+      <Chibi {...KOLBE_HABITO} x={150} y={1560} h={380} arms="open" expression="gentil" halo={1} seed="k3" />
+      <Chibi {...KOLBE_PRISIONEIRO} x={410} y={1560} h={380} arms="pray" eyesClosed seed="k4" />
+      <Chibi {...KOLBE_PRISIONEIRO} x={670} y={1560} h={380} expression="determinado" walk={1.2} seed="k5" />
+      <Chibi outfit="listrado" hair="curto" cap="listrado" x={930} y={1560} h={380} arms="face" expression="choro" seed="pai" />
+      <Sparkle x={100} y={1170} r={30} />
+    </svg>
+    <div style={{position: 'absolute', top: 900, left: 0, width: 540, textAlign: 'center', fontFamily: F.serifa, fontSize: 34, fontWeight: 700}}>Hábito conventual · 1918–1941</div>
+    <div style={{position: 'absolute', top: 900, left: 540, width: 540, textAlign: 'center', fontFamily: F.serifa, fontSize: 34, fontWeight: 700}}>Auschwitz 1941 · nº 16670</div>
+    <div style={{position: 'absolute', top: 1610, width: '100%', display: 'flex', justifyContent: 'space-around', fontFamily: F.serifa, fontSize: 28, fontWeight: 700}}>
+      <span>glória</span><span>oração</span><span>o passo</span><span>o pai (Gajowniczek)</span>
+    </div>
+    <div style={{position: 'absolute', bottom: 90, width: '100%', textAlign: 'center', fontFamily: F.serifa, fontSize: 30, color: C.terra}}>
+      contorno #2B1B14 · óculos redondos sempre · sem barba (1939–41) · olhos de ponto · cabeça = 40% da altura
+    </div>
   </AbsoluteFill>
 );

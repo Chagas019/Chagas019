@@ -28,12 +28,12 @@ Arquivos: `brand/santorama-logo.png`, `brand/santorama-perfil-1080.png` (foto de
 
 Todas têm licença SIL OFL e são livres para uso comercial.
 
-## Linguagem visual
-Ilustração 2D com textura de pintura digital, luz dramática (chiaroscuro) e granulação de película. Parallax em 4 a 7 camadas, com partículas (poeira, cinzas, brasas) e raios volumétricos. O arco ogival aparece como moldura recorrente.
+## Linguagem visual (v2, alinhada à referência)
+Ilustração **flat 2D com contorno grosso #2B1B14**, personagens **chibi** e textura de papel suave. A câmera passeia e dá zoom por um mundo ilustrado, com parallax em camadas. Recursos recorrentes: **etiqueta de local e data** no canto superior direito ("AUSCHWITZ · 1941"), **brilhos de 4 pontas** no que é sagrado, fundo **sunburst** nos momentos de glória e faixas vermelhas com contorno para nomes e títulos.
 **Regras:** nada de violência gráfica, nada de símbolos de ódio e nada de visual genérico de IA. Personagem sempre via componente oficial.
 
 ## Legendas
-Até 24 caracteres por bloco, palavra a palavra, sincronizadas com a voz. Entrada com leve subida e desfoque. Palavras-chave em ouro claro com brilho. Posição em y=1360 px, acima da interface do Instagram (ver `templates/reels-zonas-seguras.png`).
+Karaokê no alto da tela (y=330 px, abaixo da interface do Instagram). Até 26 caracteres por bloco, sobre uma pílula escura translúcida. As palavras já ditas ficam em bege-claro, a palavra atual em branco bold, e as palavras-chave ganham uma **caixa de seleção dourada com alças**.
 
 ## Templates
 `templates/reels-zonas-seguras.png` · `templates/story-template.png` · capa do episódio (`Cover` em `studio/src/brand/Stills.tsx`, aceita `ep`, `title` e `saint`).

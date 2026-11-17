@@ -3,9 +3,11 @@
 Formato 9:16 · 1080×1920 · 30 fps · **89,5 s** · 10 cenas.
 Tempos tirados da narração real (`audio/timings.json`). Os eventos visuais (carimbo do número, passo à frente, porta) usam os mesmos tempos do som (`audio/events.json`).
 
-**Personagem:** sempre o componente `Kolbe` (`studio/src/characters/Kolbe.tsx`). Ele não é gerado de novo em cada cena, por isso o rosto é o mesmo em todas.
+> **v2: linguagem alinhada ao vídeo de referência.** Ilustração flat com contorno grosso e personagens chibi. A câmera passeia e dá zoom num mundo ilustrado contínuo. A etiqueta de local e data fica no canto superior direito. A legenda é karaokê no alto da tela, com a palavra-chave em caixa de seleção dourada, e há brilhos de 4 pontas nos elementos sagrados. Enquadramentos, tempos e narração abaixo continuam valendo. Só muda o tratamento visual: os cenários viram flat e os personagens viram chibi.
+
+**Personagem:** sempre os presets `KOLBE_HABITO` / `KOLBE_PRISIONEIRO` de `studio/src/characters/Chibi.tsx`.
 **Estilo fixo dos prompts** (para ilustradores ou geradores de imagem, se a série migrar para arte rasterizada):
-`2D cinematic animated film still, hand-painted digital illustration, visible brush texture, dramatic chiaroscuro lighting, earthy palette of charcoal black, sepia brown, burnt umber and liturgical gold, film grain, 9:16 vertical composition, consistent character design, no text, no photorealism, no generic AI look`
+`flat 2D vector illustration, thick dark-brown outlines (#2B1B14), cute chibi characters with big round heads and dot eyes, simple shapes, flat colors with a single shadow tone, subtle paper texture, palette of brick red, beige, brown, navy night and gold, educational explainer animation style, 9:16 vertical, consistent character design, no text, no gradients-heavy realism, no generic AI look`
 
 ---
 

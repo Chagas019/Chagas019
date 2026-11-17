@@ -4,7 +4,8 @@ import {AbsoluteFill} from 'remotion';
 import {C, F, SLOGAN} from './tokens';
 import {Emblem, Wordmark} from './Logo';
 import {FilmFinish, LightRays, Particles} from '../core/cinema';
-import {Kolbe} from '../characters/Kolbe';
+import {Chibi, KOLBE_PRISIONEIRO, OUT, Sparkle} from '../characters/Chibi';
+import {Sunburst} from '../scenes/ep001/Props';
 
 const BG: React.FC<{glow?: number}> = ({glow = 0.3}) => (
   <AbsoluteFill style={{background: `radial-gradient(circle at 50% 38%, rgba(212,162,76,${glow}), ${C.carvao} 62%)`, backgroundColor: C.carvao}} />
@@ -69,16 +70,12 @@ export const BrandBoard: React.FC = () => (
 /** Capa do episódio (Reels 9:16, área segura central 1080x1350 para o grid). */
 export const Cover: React.FC<{ep?: string; title?: string; saint?: string}> = ({ep = 'EPISÓDIO 001', title = 'O HOMEM QUE ESCOLHEU MORRER POR AMOR', saint = 'São Maximiliano Maria Kolbe'}) => (
   <AbsoluteFill style={{background: C.carvao}}>
-    <AbsoluteFill style={{background: `radial-gradient(circle at 50% 36%, #FFDB94 0%, ${C.ouro} 16%, ${C.terra} 42%, ${C.carvao} 78%)`}} />
-    <LightRays x={540} y={-100} angle={0} spread={36} count={8} opacity={0.3} />
     <svg width={1080} height={1920} style={{position: 'absolute'}}>
-      <path d="M150,1500 L150,760 Q150,330 540,250 Q930,330 930,760 L930,1500" fill="none" stroke={C.ouroClaro} strokeWidth={5} opacity={0.75} />
-      <circle cx={540} cy={640} r={250} fill="none" stroke="#FFF3D0" strokeWidth={6} opacity={0.7} />
+      <Sunburst cx={540} cy={700} a="#E9B44C" b="#F2C766" n={22} speed={0} />
+      <Chibi {...KOLBE_PRISIONEIRO} x={540} y={1500} h={1150} arms="pray" eyesClosed halo={1} seed="cover" />
+      <Sparkle x={220} y={520} r={44} phase={1.2} /><Sparkle x={870} y={430} r={36} phase={1.4} />
     </svg>
-    <AbsoluteFill style={{alignItems: 'center', top: 300}}>
-      <Kolbe width={900} variant="prisioneiro" expression="sereno" gaze={[0, 0]} light="ouro" rim={1} />
-    </AbsoluteFill>
-    <AbsoluteFill style={{background: 'linear-gradient(180deg, rgba(14,11,8,0.0) 45%, rgba(14,11,8,0.92) 72%, #0E0B08 100%)'}} />
+    <AbsoluteFill style={{background: 'linear-gradient(180deg, rgba(14,11,8,0.0) 55%, rgba(14,11,8,0.9) 70%, #0E0B08 100%)'}} />
     <AbsoluteFill style={{alignItems: 'center', top: 170}}>
       <div style={{fontFamily: F.titulo, fontWeight: 600, fontSize: 30, letterSpacing: 12, color: C.carvao, background: C.ouro, padding: '8px 22px'}}>SANTORAMA · {ep}</div>
     </AbsoluteFill>

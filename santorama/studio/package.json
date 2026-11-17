@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "studio": "remotion studio src/index.ts",
-    "render:ep001": "remotion render src/index.ts EP001-Kolbe ../episodes/001-sao-maximiliano-kolbe/renders/ep001-kolbe.mp4 --codec=h264 --crf=18 --audio-codec=aac --audio-bitrate=256k",
+    "render:ep001": "remotion render src/index.ts EP001-Kolbe ../episodes/001-sao-maximiliano-kolbe/renders/ep001-kolbe-v2.mp4 --codec=h264 --crf=18 --audio-codec=aac --audio-bitrate=256k",
     "stills": "bash ../tools/render_stills.sh"
   },
   "dependencies": {
