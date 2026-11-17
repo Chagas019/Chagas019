@@ -124,9 +124,9 @@ html.is-locked, html.is-nav-open { overflow: hidden; }
 .cv-block__title { font-size: var(--fs-3xl, clamp(2rem, 6vw, 3rem)); }
 .timeline { display: grid; gap: var(--sp-5, 1.5rem); }
 .timeline__item { display: grid; gap: var(--sp-1, .25rem); }
-.timeline__period { font-size: var(--fs-sm, .875rem); font-style: italic; opacity: .8; }
+.timeline__period { font-size: var(--fs-sm, .875rem); font-style: italic; }
 .timeline__title { font-weight: var(--fw-semi, 600); }
-.timeline__org { opacity: .8; }
+.timeline__org { font-size: var(--fs-sm, .875rem); }
 .software { display: flex; flex-wrap: wrap; gap: var(--sp-3, .75rem); }
 .software__item { display: grid; justify-items: center; gap: var(--sp-1, .25rem); font-size: var(--fs-xs, .75rem); }
 .software__icon { display: grid; place-items: center; width: 3.5rem; height: 3.5rem; border-radius: var(--r-xs, .75rem); background: var(--c-ink, #0b1020); color: var(--c-paper, #fff); font-weight: var(--fw-bold, 700); font-size: var(--fs-lg, 1.25rem); }
@@ -137,7 +137,7 @@ html.is-locked, html.is-nav-open { overflow: hidden; }
 @media (min-width: 56.25em) { .cv-panel__inner { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); } }
 
 /* ---------- Placeholder honesto ("A confirmar") ---------- */
-.is-placeholder { font-style: italic; opacity: .75; }
+.is-placeholder { font-style: italic; }
 span.is-placeholder, li.is-placeholder, p.is-placeholder { text-decoration: underline dashed; text-underline-offset: .25em; }
 .timeline__item.is-placeholder { padding-left: var(--sp-3, .75rem); border-left: var(--bw-hair, 1px) dashed currentColor; }
 .timeline__item.is-placeholder > span { text-decoration: none; }

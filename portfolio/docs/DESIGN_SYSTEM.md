@@ -1,226 +1,210 @@
-# Chagas — Design System
+# Chagas — Design System v2 "Estúdio / Artboard"
 
-> Fonte de verdade visual. Tokens implementados em `portfolio/assets/css/tokens.css`.
-> Nomes de tokens são **contrato estável** com o dev: não renomear sem atualizar os dois arquivos.
+> Fonte de verdade visual. Tokens em `portfolio/assets/css/tokens.css`.
+> Nomes de tokens são **contrato estável**: os da v1 continuam existindo (valores mudaram); v2 só adiciona.
+> A referência enviada (CV de terceiros) inspira **apenas o estilo**: nunca usar nome, texto, dados ou foto dela.
 
-## 1. Conceito — "Sala escura"
+## 1. Conceito
 
-O site é uma **sala de projeção**: escuro, silencioso, com uma única fonte de luz quente (tungstênio)
-que aponta para o trabalho. A interface recua; a imagem lidera. Linguagem de **revista editorial impressa
-+ claquete de cinema**: tipografia condensada enorme, índices numerados, timecodes, filetes finos, legendas
-técnicas em mono, um toque de serifa itálica autoral.
+O site inteiro é a **janela de um app de design aberto no trabalho do Chagas**. Moldura grafite com os três
+pontos do macOS e uma barra de ferramentas; dentro, um **canvas cinza claro** com cantos grandes, onde o
+conteúdo aparece como objetos editáveis (caixa de texto selecionada, alças, artboards); e **painéis
+azul-cobalto** com linhas orgânicas suaves, que fazem o papel de "painel de propriedades".
 
-Três pilares:
-1. **Imagem primeiro** — nada compete com a foto/vídeo. Sem cards com sombra, sem gradientes decorativos.
-2. **Ritmo editorial** — assimetria intencional, respiro generoso, escala tipográfica extrema (12rem vs 0.75rem).
-3. **Detalhe de película** — grão sutil, perfurações de filme, contagem `01 / 06`, timecode `00:00:12:04`.
+Pilares:
+1. **Ferramenta como linguagem** — seleção, alças, camadas, régua, conta-gotas: a interface fala de *fazer*.
+2. **Contraste de planos** — canvas claro (respiro) × bloco azul saturado (energia) × chrome escuro (moldura).
+3. **Retrato com personalidade** — recorte P&B transbordando a caixa azul, iniciais gigantes em script creme atrás.
+4. **Toque humano** — um rabisco desenhado à mão (smiley/seta/círculo) por seção, no máximo.
 
-Coerência com o trabalho existente (aberturas "Comunica+Fé"): preto quente, laranja de luz, display condensado
-em caixa-alta. O portfólio refina isso: menos objetos 3D, mais tipografia e fotografia.
-
-### Referências de estilo (descritas, não copiadas)
-- Revistas de moda/cinema independentes: grandes títulos condensados sangrando a margem, legendas mínimas.
-- Sites de produtoras e diretores de fotografia: índice de projetos em **lista**, preview de imagem no hover.
-- Fichas técnicas de festival: metadados em mono (câmera, lente, ano, cliente).
-- Folhas de contato e tiras de negativo: grids de miniaturas com perfuração e numeração.
-
-**Evitar:** glassmorphism, neon, gradientes roxos, grids de cards iguais, ícones genéricos, parallax exagerado,
-cursores "bolha" elásticos, textos que digitam sozinhos, emojis.
+Evitar: glassmorphism, sombras pesadas, gradientes multicoloridos, grids de cards iguais, ícones de banco
+genéricos, logos de software de terceiros sem licença (usar tiles com sigla própria), emojis.
 
 ## 2. Paleta
 
 | Token | Hex | Uso |
 |---|---|---|
-| `--c-ink` | `#0C0B0A` | Fundo principal |
-| `--c-ink-2` | `#151412` | Superfície (preços, form) |
-| `--c-ink-3` | `#1E1C19` | Hover de superfície, inputs |
-| `--c-line` | `#2E2B27` | Filetes 1px decorativos |
-| `--c-line-strong` | `#6E675D` | Borda de input (componente de UI) |
-| `--c-paper` | `#EDE6DA` | Texto principal; fundo de seção invertida |
-| `--c-paper-dim` | `#A8A095` | Texto secundário |
-| `--c-paper-mute` | `#878075` | Metadados, legendas |
-| `--c-accent` | `#E8692E` | Tungstênio — acento único |
-| `--c-accent-hi` | `#F07A3E` | Hover do acento |
-| `--c-accent-deep` | `#9A3E16` | Acento sobre fundo claro |
-| `--c-error` / `--c-success` | `#D9564A` / `#6FA37A` | Validação de formulário |
+| `--c-chrome` / `-2` / `-3` | `#262626` / `#2F2F2F` / `#3A3A3A` | Moldura, toolbar, hover de ferramenta |
+| `--c-dot-red/yellow/green` | `#FF5F57` `#FEBC2E` `#28C840` | Semáforo (decorativo, `aria-hidden`) |
+| `--c-canvas` / `-2` | `#F2F2F2` / `#E6E6E6` | Seção clara / artboard vazio |
+| `--c-white` | `#FFFFFF` | Cartões no canvas, texto sobre azul |
+| `--c-ink` / `-2` / `-3` | `#1A1A1A` / `#555555` / `#6B6B6B` | Texto sobre canvas |
+| `--c-blue` | `#0A4FD9` | Cobalto — cor da marca |
+| `--c-blue-deep` | `#083DA8` | Hover de botão azul; topo de gradiente |
+| `--c-navy` | `#14213D` | Base do gradiente azul→navy |
+| `--c-blue-tint` | `#C4D7FF` | Texto claro sobre azul (períodos, organizações) |
+| `--c-blue-light` | `#7FA6FF` | Links/destaques sobre chrome e navy |
+| `--c-select` | `#D3E1FF` | Preenchimento de caixa de texto selecionada |
+| `--c-wave` | `rgba(255,255,255,.09)` | Linhas orgânicas no fundo azul |
+| `--c-cream` | `#FFF6E3` | Iniciais em script |
+| `--c-paper` / `-dim` / `-mute` | `#FFFFFF` / `#A3A3A3` / `#8F8F8F` | Texto sobre chrome (nomes v1) |
+| `--c-error` / `--c-error-dark` / `--c-success` | `#B42318` / `#FF8F87` / `#176F3D` | Validação |
 
-### Contraste (WCAG 2.1, calculado pela fórmula de luminância relativa)
+`--c-accent*` agora apontam para o azul. **Hover de botão azul escurece** (`--c-blue-deep`), não clareia.
 
-| Texto / elemento | Fundo | Razão | Resultado |
+### Contraste verificado (WCAG 2.1, luminância relativa)
+
+| Texto | Fundo | Razão | Resultado |
 |---|---|---|---|
-| paper `#EDE6DA` | ink | **15.86:1** | AAA |
-| paper | ink-3 | 13.71:1 | AAA |
-| paper-dim `#A8A095` | ink | 7.61:1 | AAA |
-| paper-dim | ink-3 | 6.58:1 | AA |
-| paper-mute `#878075` | ink | 5.03:1 | AA |
-| paper-mute | ink-2 | 4.71:1 | AA |
-| paper-mute | ink-3 | 4.35:1 | **só texto ≥ 24px / 19px bold** |
-| accent `#E8692E` | ink | 6.08:1 | AA |
-| accent | ink-3 | 5.25:1 | AA |
-| ink sobre accent (botão) | accent | 6.08:1 | AA |
-| ink sobre accent-hi (hover) | accent-hi | 7.08:1 | AAA |
-| paper sobre accent | accent | 2.61:1 | **PROIBIDO** |
-| ink | paper | 15.86:1 | AAA |
-| `#5A544C` (inv-text-2) | paper | 6.03:1 | AA |
-| accent-deep `#9A3E16` | paper | 5.51:1 | AA |
-| accent (`#E8692E`) | paper | 2.61:1 | **PROIBIDO como texto** |
-| line-strong (borda input) | ink / ink-2 | 3.52 / 3.30:1 | AA não-texto (1.4.11) |
-| error `#D9564A` / success `#6FA37A` | ink | 5.04 / 6.74:1 | AA |
-
-Regras: o acento ocupa **< 5% da tela** (um ponto, um sublinhado, um botão, o `+`). Nunca dois acentos.
-Erro nunca só por cor: sempre com texto. Seções claras usam `data-theme="paper"` (tokens semânticos se reescrevem).
+| branco | blue `#0A4FD9` | **6.70:1** | AA (AAA ≥ 24px) |
+| branco | blue-deep | 9.36:1 | AAA |
+| branco | navy | 15.97:1 | AAA |
+| blue-tint `#C4D7FF` | blue | **4.63:1** | AA (texto normal) |
+| blue-tint | blue-deep / navy | 6.47 / 11.04:1 | AA / AAA |
+| `#A9C4FF` (mais claro que o ref.) | blue | 3.84:1 | **reprovado → por isso blue-tint** |
+| cream | blue | 6.24:1 | AA (decorativo) |
+| ink `#1A1A1A` | canvas | 15.55:1 | AAA |
+| ink-2 `#555555` | canvas | 6.66:1 | AA |
+| ink-3 `#6B6B6B` | canvas | 4.76:1 | AA (em canvas-2: só texto grande) |
+| blue | canvas / white / canvas-2 | 5.99 / 6.70 / 5.37:1 | AA |
+| ink | select `#D3E1FF` | 13.25:1 | AAA |
+| blue | select | 5.10:1 | AA |
+| branco | chrome | 15.13:1 | AAA |
+| paper-dim `#A3A3A3` | chrome / chrome-2 | 6.00 / 5.31:1 | AA |
+| paper-mute `#8F8F8F` | chrome | 4.68:1 | AA (em chrome-2: 4.14 → só grande) |
+| blue-light `#7FA6FF` | chrome / navy | 6.34 / 6.69:1 | AA |
+| **blue `#0A4FD9`** | **chrome** | **2.26:1** | **PROIBIDO como texto** (use blue-light) |
+| error / success | canvas | 5.87 / 5.55:1 | AA |
+| error-dark | chrome / navy | 6.87 / 7.25:1 | AA |
+| borda input `#6B6B6B` | canvas | 4.76:1 | AA não-texto (≥3:1) |
 
 ## 3. Tipografia
 
-Google Fonts (no `<head>`, não usar `@import`):
 ```html
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400..800;1,400..600&family=Pacifico&family=JetBrains+Mono:wght@400;500&display=swap">
 ```
 
 | Papel | Família | Config |
 |---|---|---|
-| Display | **Archivo** (variável) | `font-stretch: var(--fstretch-display)` (72%), peso 800, UPPERCASE, `--lh-tight`, `--ls-display` |
-| Corpo / UI | **Archivo** | stretch 100%, 400/500, `--lh-relaxed`, máx. `--measure` |
-| Acento autoral | **Instrument Serif** *itálico* | 1–3 palavras dentro de títulos ("histórias *que ficam*"); nunca parágrafos |
-| Técnico | **JetBrains Mono** 400/500 | `--fs-mono`, UPPERCASE, `--ls-caps`: índices, timecode, metadados, rótulos |
+| Display (títulos, nome) | **Inter Tight** 800 | `--ls-display` (−0.035em), `--lh-tight` (.95), caixa normal (não uppercase) |
+| Subtítulos de seção | Inter Tight 700 | `--fs-3xl`, `--ls-tight` |
+| Corpo | Inter Tight 500 | `--fs-lg` no "Sobre", `--fs-base` geral, `--lh-relaxed`, máx. `--measure` |
+| Períodos / datas | Inter Tight 500 *itálico* | cor `--c-text-2` (blue-tint no azul) |
+| Script decorativo | **Pacifico** | **só** iniciais gigantes "CH" `--fs-script` em `--c-cream`, `aria-hidden` |
+| Rótulos de app | JetBrains Mono 400/500 | `--fs-mono`: "1920 × 1080", "100%", nomes de camada |
 
-Escala fluida (360 → 1600px): `--fs-mono` 11–12 · `--fs-xs` 12–13 · `--fs-sm` 14–15 · `--fs-base` 16–18 ·
-`--fs-lg` 18–22 · `--fs-xl` 22–32 · `--fs-2xl` 28–48 · `--fs-3xl` 36–72 · `--fs-4xl` 48–112 · `--fs-hero` 56–192.
-Hierarquia: H1 hero `--fs-hero`; H2 seção `--fs-4xl`; H3 projeto `--fs-2xl`; lead `--fs-lg`; corpo `--fs-base`.
-Use `text-wrap: balance` em títulos e `font-variant-numeric: tabular-nums` em números/preços.
+Escala: `--fs-mono` 11–12 · `xs` 12–13 · `sm` 14–15 · `base` 16–18 · `lg` 18–22 · `xl` 22–32 · `2xl` 28–48 ·
+`3xl` 36–72 · `4xl` 44–96 · `hero` 48–136 · `script` 160–448. `text-wrap: balance` em títulos; `tabular-nums` em preços.
 
-## 4. Espaçamento e grid
+## 4. Espaço, grid, forma
 
-Base 4px: `--sp-1` 4 · `--sp-2` 8 · `--sp-3` 12 · `--sp-4` 16 · `--sp-5` 24 · `--sp-6` 32 · `--sp-7` 48 ·
-`--sp-8` 64 · `--sp-9` 96 · `--sp-10` 128 · `--sp-11` 192. Fluidos: `--sp-section` (80–176px entre seções),
-`--sp-section-sm`, `--sp-gutter` (margem lateral 16–40px).
+Espaço base 4px: `--sp-1…--sp-11` (4 → 192px); fluidos `--sp-section`, `--sp-section-sm`, `--sp-gutter`,
+`--sp-frame` (moldura chrome ao redor do canvas, 8–20px).
+Grid 12 col, `--grid-gap`, `--grid-max` 1440px, `--grid-narrow` 880px. Breakpoints 600 / 900 / 1200 / 1440.
 
-Grid: 12 colunas, `--grid-gap`, largura máx. `--grid-max` (1600px), texto em `--grid-narrow` (960px).
-Breakpoints: 600 / 900 / 1200 / 1600px (mobile-first). Mobile: 4 colunas efetivas (spans viram 1/1).
+Layouts-mestre:
+- **Janela**: `body` chrome → toolbar (`--header-h`) → canvas com `--r-panel` nos cantos superiores.
+- **Sobre (hero)**: retrato `1 / 6`, texto `7 / 13`. Mobile: retrato em cima, texto abaixo.
+- **Painel azul**: bloco `1 / -1` com `border-top-left-radius: var(--r-panel)`; dentro, coluna azul `1 / 6`
+  + coluna navy `6 / 13` com `--c-gradient-panel`.
+Raios: `--r-xs` 6 · `--r-sm` 10 · `--r-tile` 14 · `--r-card` 16–24 · `--r-panel` 24–40 · `--r-pill`.
+Seleção: `--bw-select` 2px, `--handle` 8px, `--bw-rule` 4px, `--tilt-badge` −2deg.
 
-Padrões assimétricos (desktop):
-- **Offset editorial**: título `1 / 8`, texto `8 / 12` deslocado para baixo `--sp-9`.
-- **Sangria**: imagem `1 / -1` full-bleed seguida de legenda mono em `9 / 13`.
-- **Escada**: imagens alternando `2 / 7` e `7 / 12` com `margin-top` desiguais (`--sp-8`, `--sp-10`).
-- **Coluna de nota**: rótulo mono em `1 / 3`, conteúdo `4 / 12` (seções de serviço/preço).
-Regra: nunca duas seções seguidas com o mesmo padrão.
+Temas de seção via atributo: `data-theme="canvas"` (alias v1 `paper`), `"blue"`, `"navy"`; padrão = chrome.
 
 ## 5. Componentes
 
-**Header / nav** — fixo, altura `--header-h`, fundo transparente → `--c-ink` com filete `--c-line` após 80px de scroll.
-Esquerda: logotipo "CHAGAS" display condensado. Direita: links mono UPPERCASE (Trabalhos, Serviços, Sobre, Contato)
-com índice `01–04`. Ativo: ponto acento à esquerda. Mobile: botão "MENU" (texto, não hambúrguer) abre overlay
-tela cheia `--z-menu` com links em `--fs-3xl`, entrada em cortina `--ease-in-out`. Esconde ao rolar para baixo,
-reaparece ao rolar para cima.
+**Janela / header (toolbar)** — sticky, fundo `--c-chrome-2`, cantos superiores `--r-panel`. Esquerda: 3 pontos
+(12px, decorativos). Centro: **ferramentas = navegação**, cada uma com ícone SVG próprio + `aria-label`/tooltip:
+Pincel→Início, Mão→Trabalhos, Balde→Serviços, Caneta→Motion/Vídeo, Mover→Planos, Elipse→Sobre, T→Contato.
+Ativa: quadrado `--c-blue` `--r-sm` com ícone branco e triângulo de submenu no canto. Hover: `--c-chrome-3`.
+Direita: círculo azul (amostra de cor) = botão "Orçamento". Mobile: semáforo + ferramenta ativa + botão "Ferramentas"
+que abre uma paleta flutuante (grid 4×2). Botões ≥ 44×44px.
 
-**Hero** — 100svh. Vídeo/reel em loop mudo (poster obrigatório) com `--c-veil` embaixo e `--c-glow` sutil.
-Título `--fs-hero` sangrando em 2 linhas com uma palavra em serifa itálica. Rodapé do hero: linha mono com
-`FOTOGRAFIA · AUDIOVISUAL · MOTION`, local e `↓ ROLE`. Sem botões grandes no hero; um link textual "Ver trabalhos".
+**Hero "Sobre"** (canvas) — caixa `--c-blue` `--r-card` com "CH" em Pacifico creme sangrando; retrato P&B
+recortado (PNG/WebP com alpha) transbordando o topo da caixa. À direita: rótulo de seção dentro de **caixa de
+texto selecionada** (fundo `--c-select`, linha vertical azul de 2px com alças redondas nas pontas); rabisco
+SVG desenhado à mão; nome em `--fs-hero` 800; **pílula de cargo** `--c-blue` texto branco, `rotate(var(--tilt-badge))`
+("Fotógrafo & Videomaker"); parágrafo `--fs-lg` 500; régua azul `--bw-rule` com `--r-pill`.
 
-**Índice de projetos (lista)** — substitui grid de cards. Cada linha: `nº` mono · título `--fs-2xl` display ·
-categoria · ano, separadas por `--c-line`. Hover (pointer fine): título desloca 12px, número vira acento, e um
-preview flutuante (4:5, 320px) segue o cursor com atraso (`--dur-base`). Toque: preview inline abaixo da linha.
-Filtros como chips mono pílula (`--r-pill`), ativo com fundo paper / texto ink.
+**Painel azul (serviços/trajetória)** — fundo `--c-blue` + SVG de ondas `--c-wave` (stroke 40–60px, não animado).
+Coluna esquerda: **Serviços** e **Trajetória** em timeline: período itálico blue-tint, título 700 branco, detalhe
+blue-tint. Ícone "≡" (menu de camadas) no topo. Coluna direita (navy gradiente): **Ferramentas** (tiles 56px
+`--r-tile` com sigla própria, ex. "Pr", "Ae", "Lr" desenhados em CSS — não logos oficiais), **Especialidades**
+(lista de 2 colunas com bullets) e **Redes** (ícones de link). Barra de scroll fake à direita é decorativa.
 
-**Galerias** (cantos retos `--r-0`, sempre com `aspect-ratio` dos tokens `--ar-*`):
-- *Mosaico*: grid 12 col com spans 7+5, 4+8, 12 (cine); ritmo irregular, nunca linhas iguais.
-- *Destaque (featured)*: uma imagem `--ar-cine` sangrando + 2 menores em escada + texto em coluna de nota.
-- *Film-strip*: faixa horizontal com scroll-snap, perfurações (pseudo-elementos) em cima/baixo, contador
-  `03 / 12` e timecode mono; navegável por teclado (setas) e arrastar; Reels em `--ar-reel`.
-- *Antes/depois* (4K): slider com handle 2px paper + rótulos "ANTES"/"DEPOIS" mono; `input[type=range]` acessível.
+**Trabalhos = artboards** (canvas) — cada projeto é um **artboard**: rótulo mono acima ("Casamento — 3:2"),
+superfície branca `--r-card`, mídia dentro. Layout de prancheta: grid 12 col com spans variados (7+5, 4+4+4, 12)
+e alinhamentos desencontrados, como pranchetas espalhadas. Filtros = **abas de página** no topo (pílulas).
+*Hover/foco*: aparece **bounding box** azul 2px com 4 alças quadradas brancas de borda azul (`--handle`) nos cantos,
+e etiqueta mono azul "1920 × 1080" abaixo — desenhada em `--dur-draw`. *Film-strip* (Reels): faixa horizontal com
+scroll-snap, artboards 9:16. *Antes/depois 4K*: slider estilo "divisor de camada" com alça azul.
 
-**Detalhe de projeto** — capa full-bleed; ficha técnica em lista de definição mono (Cliente, Ano, Função, Equipamento,
-Entrega); texto curto (≤ 120 palavras); galeria; navegação "Próximo projeto →" com título gigante no rodapé.
+**Detalhe / lightbox** — fundo `--c-scrim`, mídia centralizada num artboard; barra inferior estilo app: nome da
+camada, zoom "100%", `←  →`, `Esc`. Abre escalando de 0.96 → 1 + fade, `--ease-out` `--dur-page`. Foco preso,
+retorno ao gatilho, `aria-modal`, swipe no mobile, vídeo nunca com som automático.
 
-**Lightbox** — `--z-lightbox`, fundo `--c-scrim`. Abre com máscara "obturador" (clip-path inset de 50% → 0) em
-`--dur-page` `--ease-shutter`. Controles mono: `FECHAR (ESC)`, `← →`, contador. Foco preso no modal, retorno do
-foco ao gatilho, `aria-modal="true"`, swipe no mobile. Vídeos nunca autoplay com som.
+**Planos (pricing) = painel de camadas** — container navy/gradiente `--r-panel`; cada plano é uma **linha de camada**:
+ícone de olho, miniatura, nome 700, "a partir de R$" tabular, chevron para expandir os itens. Plano recomendado =
+camada **selecionada** (fundo `--c-blue`, texto branco, etiqueta "Recomendado"). Desktop alternativo: 3 painéis
+lado a lado, o do meio azul sólido e os laterais navy. Contrato mensal como "grupo de camadas" com sub-itens.
 
-**Planos / preços** — 3 colunas assimétricas (não cards idênticos): coluna de nota à esquerda com nome do plano em
-display; preço `--fs-3xl` tabular; lista de itens com filete. Plano recomendado: marcador mono "RECOMENDADO"
-em acento + borda superior 2px acento (não badge colorido). Contratos mensais em linha própria com toggle mensal/projeto.
+**Formulário de contato** (canvas) — painel branco `--r-card` estilo "inspector": label 600 acima, input com
+borda 1px `--c-line-strong`, `--r-xs`; foco: borda azul 2px + alças nos cantos (seleção). Tipos de serviço =
+chips-ferramenta. Erro em `--c-error` + texto + `aria-describedby`. Botão primário azul.
 
-**Formulário de contato** — campos com só borda inferior `--c-line-strong` (≥3:1), label mono acima (sempre visível,
-nunca só placeholder), foco: borda vira `--c-accent` + outline. Tipos de serviço como chips selecionáveis.
-Erro: texto `--c-error` + ícone + `aria-describedby`. Envio: botão primário; sucesso com mensagem textual.
+**Footer** (chrome) — "Contato:" 700 `--fs-2xl`; links com ícone (WhatsApp, e-mail, Instagram etc.) sublinhados em
+`--c-blue-light`. © e "voltar ao topo" em `--c-paper-mute`.
 
-**Footer** — e-mail/WhatsApp em `--fs-4xl` como CTA final ("Vamos filmar?"), linha mono com redes, cidade,
-© ano e "voltar ao topo". Grão + glow quente sutil na base.
+**Botões** — *Primário*: `--c-blue`, texto branco, `--r-pill`, 600, hover `--c-blue-deep`. *Secundário*: borda 2px
+`--c-blue` no canvas / branco no azul. *Ferramenta*: quadrado `--toolbar-btn` `--r-sm`. *Link*: sublinhado
+`text-underline-offset: .18em`. Foco universal: `outline: var(--bw-focus) solid var(--c-focus); outline-offset: 3px`.
 
-**Botões** — *Primário*: fundo `--c-accent`, texto `--c-on-accent`, pílula, padding `--sp-3 --sp-5`, mono UPPERCASE;
-hover `--c-accent-hi`. *Secundário*: borda 1px paper, transparente; hover inverte (paper/ink). *Texto*: link mono
-com seta `→` que avança 4px no hover. Alvo mínimo 44×44px. Foco: `outline: var(--bw-focus) solid var(--c-focus);
-outline-offset: 3px` em tudo que é focável (nunca remover).
-
-**Links no texto** — paper com sublinhado 1px `--c-paper-mute` (`text-underline-offset: .2em`); hover: sublinhado acento.
-
-## 6. Movimento
-
-Princípio: **movimento de câmera, não de aplicativo** — entradas lentas e decididas, sem quique, sem elástico.
+## 6. Movimento — micro-interações de ferramenta, contidas
 
 | Token | Valor | Uso |
 |---|---|---|
-| `--dur-fast` | 180ms | cor, opacidade de hover |
-| `--dur-base` | 320ms | menus, preview do índice |
-| `--dur-slow` | 640ms | reveal de texto/imagem |
-| `--dur-slower` | 960ms | hero, máscaras grandes |
-| `--dur-page` | 720ms | página / lightbox |
-| `--stagger` | 70ms | sequência entre itens |
-| `--ease-out` | `cubic-bezier(.22,1,.36,1)` | padrão de entrada |
-| `--ease-in` | `cubic-bezier(.55,0,.78,0)` | saídas |
-| `--ease-in-out` | `cubic-bezier(.76,0,.24,1)` | cortinas, menu |
-| `--ease-shutter` | `cubic-bezier(.83,0,.17,1)` | lightbox, wipes |
+| `--dur-fast` | 160ms | hover de ferramenta, cor |
+| `--dur-base` | 260ms | alças aparecendo, menus |
+| `--dur-draw` | 420ms | desenhar bounding box / régua |
+| `--dur-slow` / `--dur-slower` | 560 / 800ms | reveals, retrato |
+| `--dur-page` | 600ms | página / lightbox |
+| `--ease-out` | `cubic-bezier(.22,1,.36,1)` | padrão |
+| `--ease-in-out` | `cubic-bezier(.65,0,.35,1)` | painéis |
+| `--ease-snap` | `cubic-bezier(.34,1.36,.64,1)` | encaixe de alças, pílula, ferramenta ativa |
 
 Padrões:
-- **Reveal de título**: linhas sobem `100%` dentro de máscara (`overflow:hidden`), `--dur-slow`, stagger por linha.
-- **Reveal de imagem**: `clip-path: inset(100% 0 0 0)` → `inset(0)` + escala 1.08 → 1, `--dur-slower`.
-- **Texto corrido**: só fade + `--reveal-distance` (24px). Disparo via IntersectionObserver (threshold .15), uma vez.
-- **Hover de imagem**: escala `--hover-scale` (1.03) em `--dur-slow`; nunca rotação/tilt 3D.
-- **Página**: cortina ink cobre e revela (`--ease-in-out`, `--dur-page`); opcional View Transitions API com fallback.
-- **Film-strip / marquee**: linear, pausa no hover e com `:focus-within`.
-- Animar apenas `transform`, `opacity`, `clip-path`. Nada de animar `width/top/left`.
+- **Seleção**: bounding box cresce de `scale(.98)`+opacity 0 → 1 em `--dur-draw`; alças entram com `--ease-snap`, stagger 40ms.
+- **Caixa "Sobre"**: fundo `--c-select` "pinta" da esquerda (`clip-path: inset(0 100% 0 0)` → `inset(0)`), depois a linha/alças.
+- **Régua azul**: `transform: scaleX(0→1)`, origem à esquerda, `--dur-draw`.
+- **Pílula de cargo**: entra de `rotate(0)` para `--tilt-badge` com `--ease-snap`.
+- **Ferramenta ativa**: quadrado azul desliza entre ferramentas (um único elemento indicador animado em `transform`).
+- **Retrato**: sobe `--reveal-distance` + fade; iniciais creme fazem fade 200ms depois.
+- **Cursor**: opcional, só desktop `pointer: fine` — sobre artboards o cursor vira seta de seleção; sobre mídia, mão.
+  Usar `cursor:` CSS com SVG, nunca cursor seguidor em JS.
+- Animar só `transform`, `opacity`, `clip-path`. Reveals via IntersectionObserver (threshold .15), uma vez.
 
-**prefers-reduced-motion: reduce** — tokens de duração vão a 0, `--reveal-distance` 0, `--hover-scale` 1 (já em
-`tokens.css`). Além disso o dev deve: pausar vídeos de fundo (mostrar poster + botão play), parar marquees,
-desligar cursor/preview que segue o mouse, trocar transição de página por corte seco. Conteúdo nunca depende de
-animação para aparecer (estado inicial visível sem JS).
+**prefers-reduced-motion**: tokens de duração → 0, `--ease-snap` → `--ease-out`, sem rotação de entrada (pílula já
+aparece girada), seleção aparece sem desenho, vídeos de fundo pausados com poster, film-strip sem autoplay.
+Conteúdo visível sem JS.
 
-## 7. Imagem e vídeo
+## 7. Imagem
 
-- Tratamento: preto profundo, realces quentes, pele natural; nada de filtros saturados ou HDR exagerado.
-- Grão global: SVG noise em overlay `--z-grain`, opacidade `--grain-opacity` (.06), `pointer-events:none`, estático.
-- Formatos: AVIF/WebP com fallback JPG; `srcset` + `sizes`; `loading="lazy"` exceto hero; `width/height` sempre.
-- Vídeo: `muted playsinline loop`, `preload="metadata"`, poster; versão leve (≤ 6 MB) para hero; legendas quando houver fala.
-- `alt` descritivo e factual ("Noivos sob chuva de arroz na saída da igreja"), nunca "imagem1".
-- Proporções permitidas: `--ar-cine`, `--ar-wide`, `--ar-photo`, `--ar-port`, `--ar-reel`, `--ar-square`.
-- **Não usar fotos de banco como se fossem do Chagas.** Projetos sem mídia real ficam como placeholder neutro
-  (fundo `--c-ink-2`, rótulo mono "EM BREVE") até haver material próprio.
-- Trabalhos reais disponíveis: realce 4K (gameplay + comparativo antes/depois), motion "moto-personagem",
-  aberturas Comunica+Fé (desktop/mobile), ilustração Carlo Acutis.
+- Retrato do Chagas: P&B, recorte com alpha, alto contraste. Trabalhos: cor natural, sem filtro.
+- AVIF/WebP + JPG, `srcset/sizes`, `loading="lazy"` (exceto hero), `width/height` sempre; vídeo `muted playsinline`,
+  poster, ≤ 6 MB no topo.
+- `alt` descritivo e factual. Iniciais, rabiscos, ondas, semáforo e tiles: `aria-hidden="true"`.
+- Sem fotos de banco como se fossem do Chagas: artboard vazio `--c-canvas-2` com rótulo mono "Em breve".
+- Trabalhos reais: realce 4K (gameplay + antes/depois), motion "moto-personagem", aberturas Comunica+Fé, ilustração Carlo Acutis.
 
-## 8. Voz e tom (copy)
+## 8. Voz e tom
 
-- **Quem fala**: um autor, primeira pessoa do singular, pt-BR. Confiante, preciso, caloroso — nunca vendedor.
-- Frases curtas. Verbos concretos (filmar, enquadrar, montar, entregar). Um adjetivo por frase, no máximo.
-- Títulos: 2–5 palavras, com uma palavra em serifa itálica para a emoção ("Momentos *que não se repetem*").
-- Evitar: "soluções", "qualidade incomparável", "profissionais altamente qualificados", superlativos vazios,
-  CAIXA ALTA em frases longas, exclamações.
-- Metadados sempre técnicos e honestos: ano, cliente, função, equipamento. Não inventar clientes ou prêmios.
-- CTAs específicos: "Reservar data", "Pedir orçamento de casamento", "Falar no WhatsApp" — nunca "Clique aqui".
-- Preço: transparente quando possível ("a partir de"), sem asteriscos escondidos.
+- Primeira pessoa, pt-BR, próximo e direto ("Eu fotografo, filmo e animo."). Frases curtas, verbos concretos.
+- Rótulos de seção curtos como nomes de painel: "Sobre mim", "Trabalhos", "Serviços", "Planos", "Contato:".
+- Brincadeira de ferramenta só em microcopy ("Selecione um trabalho", "Camada recomendada") — sem exagero.
+- Nada de "soluções", superlativos vazios, exclamações; não inventar clientes/prêmios. CTAs específicos
+  ("Pedir orçamento", "Falar no WhatsApp"). Preço transparente ("a partir de").
 
-## 9. Índice de tokens (resumo)
+## 9. Índice de tokens
 
-- Cores: `--c-ink, -2, -3`, `--c-line(-strong)`, `--c-paper(-dim, -mute)`, `--c-accent(-hi, -deep)`, `--c-on-accent`,
-  `--c-error`, `--c-success`; semânticas `--c-bg, --c-surface(-2), --c-text(-2, -3), --c-border, --c-focus,
-  --c-selection, --c-scrim, --c-veil, --c-glow, --c-inv-*`. Tema claro: `[data-theme="paper"]`.
-- Fontes: `--f-display, --f-body, --f-serif, --f-mono`, `--fstretch-display/-body`, `--fw-light…--fw-display`.
-- Tipo: `--fs-mono, -xs, -sm, -base, -lg, -xl, -2xl, -3xl, -4xl, -hero`; `--lh-*`; `--ls-*`; `--measure(-sm)`.
-- Espaço: `--sp-0…--sp-11`, `--sp-section(-sm)`, `--sp-gutter`.
-- Grid: `--grid-cols, --grid-gap, --grid-max, --grid-narrow, --header-h`.
-- Forma: `--r-0, --r-xs, --r-pill`, `--bw-hair, --bw-focus`, `--shadow-lift`, `--ar-*`.
-- Camadas: `--z-below…--z-grain`.
-- Movimento: `--dur-instant…--dur-page`, `--stagger`, `--ease-out, -in, -in-out, -shutter, -linear`,
-  `--reveal-distance`, `--hover-scale`, `--grain-opacity`.
+- **Novos v2**: `--c-chrome(-2,-3)`, `--c-dot-*`, `--c-canvas(-2)`, `--c-white`, `--c-blue`, `--c-blue-deep`, `--c-navy`,
+  `--c-blue-tint`, `--c-blue-light`, `--c-select`, `--c-wave`, `--c-cream`, `--c-error-dark`, `--c-line-dark`, `--c-link`,
+  `--c-gradient-panel`, `--f-script`, `--fs-script`, `--sp-frame`, `--toolbar-btn`, `--r-sm`, `--r-tile`, `--r-card`,
+  `--r-panel`, `--bw-select`, `--bw-rule`, `--handle`, `--tilt-badge`, `--shadow-panel`, `--z-select`, `--dur-draw`, `--ease-snap`.
+- **Mantidos (valor novo)**: `--c-ink(-2,-3)`, `--c-paper(-dim,-mute)`, `--c-accent(-hi,-deep)`, `--c-on-accent`, `--c-line(-strong)`,
+  semânticas `--c-bg/surface/text/border/focus/selection/scrim/veil`, `--c-inv-*`, `--f-*`, `--fw-*`, `--fs-*`, `--lh-*`, `--ls-*`,
+  `--sp-*`, `--grid-*`, `--header-h`, `--r-0/xs/pill`, `--ar-*`, `--z-*`, `--dur-*`, `--ease-*`, `--stagger`, `--reveal-distance`, `--hover-scale`.
+- **Compat (evitar em código novo)**: `--f-serif` (→ script), `--fstretch-*` (100%), `--c-glow` (none), `--grain-opacity` (0),
+  `--ease-shutter` (→ in-out), `data-theme="paper"` (→ canvas).
