@@ -103,9 +103,7 @@ export function initForm(site) {
   const setStatus = (text, kind) => { if (status) { status.textContent = text; status.dataset.kind = kind || ''; } };
 
   if (hint) {
-    hint.textContent = CONFIG.formEndpoint
-      ? 'Sua mensagem é enviada pelo formulário. Se preferir, use WhatsApp ou e-mail.'
-      : 'Os botões abrem o WhatsApp ou o seu app de e-mail com a mensagem pronta — o envio só acontece quando você confirmar por lá.';
+    hint.textContent = 'Os botões abrem o WhatsApp ou o seu app de e-mail com a mensagem pronta — o envio só acontece quando você confirmar por lá.';
   }
   if (btnWa && !site.whatsapp) btnWa.hidden = true;
   if (btnMail && !site.email) btnMail.hidden = true;
@@ -156,9 +154,7 @@ export function initForm(site) {
     const text = composeQuote(data);
     const subject = `Orçamento — ${data.services.map((s) => s.split(' — ').pop()).join(', ')} (${data.name})`;
 
-    if (CONFIG.formEndpoint && channel !== 'whatsapp' && channel !== 'email') {
-      // reservado para um botão de envio direto, se existir
-    }
+    // envio direto (botão data-submit="endpoint"), só quando CONFIG.formEndpoint existir
     if (CONFIG.formEndpoint && channel === 'endpoint') {
       form.setAttribute('aria-busy', 'true'); setStatus('Enviando…', 'pending');
       try {
@@ -178,9 +174,9 @@ export function initForm(site) {
       return;
     }
     if (site.whatsapp) {
-      const win = window.open(waLink(site.whatsapp, text), '_blank', 'noopener');
+      window.open(waLink(site.whatsapp, text), '_blank', 'noopener');
       const mail = site.email ? ' Se preferir, use “Enviar por e-mail”.' : '';
-      setStatus(win === null && false ? '' : `Abrimos o WhatsApp com sua mensagem pronta em uma nova aba. Ela só é enviada quando você tocar em enviar por lá.${mail}`, 'info');
+      setStatus(`Abrimos o WhatsApp com sua mensagem pronta em uma nova aba. Ela só é enviada quando você tocar em enviar por lá.${mail}`, 'info');
       return;
     }
     if (site.email) {

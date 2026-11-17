@@ -4,8 +4,8 @@
  */
 export function initNav() {
   const header = document.querySelector('.site-header');
-  const toggle = document.querySelector('.nav-toggle');
-  const nav = document.getElementById('site-nav');
+  const toggle = document.querySelector('[data-nav-toggle]') || document.querySelector('.nav-toggle');
+  const nav = document.querySelector('[data-nav-menu]') || document.getElementById('site-nav');
   if (!header || !toggle || !nav) return;
 
   const setOpen = (open) => {
