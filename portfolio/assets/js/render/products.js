@@ -23,11 +23,10 @@ export function renderProducts({ products, site }, pricing) {
     const price = priceText(prices[p.id], cur);
     const href = site.whatsapp ? waLink(site.whatsapp, productMessage(p)) : (site.email ? `mailto:${site.email}?subject=${encodeURIComponent(`Interesse: ${p.name}`)}` : '#orcamento');
     root.append(item(root, 'article', { class: 'product-card', 'data-product': p.id, 'aria-labelledby': tid, 'data-reveal': true },
-      h('div', { class: 'product-card__media' },
+      h('div', { class: `product-card__media${img && img.src ? '' : ' is-empty'}` },
         img && img.src
           ? picture({ ...img, alt: img.alt || `Prévia: ${p.name}` }, { sizes: CONFIG.sizes.index })
           : h('div', { class: 'product-card__placeholder', role: 'img', 'aria-label': `${p.name}: imagem de prévia em produção` },
-            h('span', { class: 'product-card__ph-name', 'aria-hidden': 'true' }, p.name),
             h('span', { class: 'product-card__ph-note', 'aria-hidden': 'true' }, 'Prévia em produção'))),
       h('div', { class: 'product-card__body' },
         p.kind ? h('p', { class: 'product-card__kind' }, p.kind) : null,
@@ -38,7 +37,7 @@ export function renderProducts({ products, site }, pricing) {
           h('dt', {}, 'Valor'), h('dd', { class: 'product-card__price' }, price),
           h('dt', {}, 'Disponibilidade'), h('dd', { class: 'product-card__availability' }, p.availability)),
         h('a', {
-          class: 'product-card__cta btn btn--ghost', href,
+          class: 'product-card__cta btn btn--ghost btn--sm', href,
           ...(/^https:/.test(href) ? { target: '_blank', rel: 'noopener', 'aria-label': `Tenho interesse em ${p.name} (abre o WhatsApp em nova aba)` } : {}),
         }, 'Tenho interesse'))));
   });

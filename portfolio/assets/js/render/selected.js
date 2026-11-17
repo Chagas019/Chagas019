@@ -59,9 +59,9 @@ export function renderSelected({ selected }, filter, onOpen) {
     },
       cover
         ? h('div', { class: 'selected-card__media' }, picture({ ...stillOf(cover), alt: '' }, { sizes: CONFIG.sizes.index }))
-        : h('div', { class: 'selected-card__frame', 'aria-hidden': 'true' },
-          h('span', { class: 'selected-card__frame-title' }, p.title),
-          h('span', { class: 'selected-card__frame-meta' }, `${String(i + 1).padStart(2, '0')} / ${String(list.length).padStart(2, '0')}`)),
+        : h('div', { class: 'selected-card__frame', 'aria-hidden': 'true' }, // faixa baixa: sem capa, sem repetir o título
+          h('span', { class: 'selected-card__frame-meta' }, `${String(i + 1).padStart(2, '0')} / ${String(list.length).padStart(2, '0')}`),
+          h('span', { class: 'selected-card__frame-note' }, 'Imagens em seleção')),
       h('p', { class: 'selected-card__meta' },
         h('span', { class: 'selected-card__num', 'aria-hidden': 'true' }, String(i + 1).padStart(2, '0')),
         badge(p.type), statusTag(p.status)),

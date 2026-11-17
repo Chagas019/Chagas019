@@ -1,4 +1,8 @@
 import { h, slot, clear, item, isList } from '../dom.js';
+import { disclosure, MQ_MOBILE } from './disclosure.js';
+
+/** < 600px: extras (ferramentas, equipamentos, conhecimentos) recolhidos sob o título. */
+const fold = (titleId, region, n) => disclosure(document.getElementById(titleId), region, { mq: MQ_MOBILE, meta: n ? String(n) : '' });
 
 /** Áreas de atuação: 5 blocos numerados com lista de serviços. */
 export function renderAreas({ areas }) {
@@ -23,6 +27,7 @@ export function renderTools({ tools }) {
     h('h4', { class: 'tool-item__name' }, t.name),
     t.uses.length ? h('ul', { class: 'tool-item__uses', 'aria-label': `Usos de ${t.name}` }, t.uses.map((u) => h('li', { class: 'tool-item__use' }, u))) : null,
     t.context ? h('p', { class: 'tool-item__context' }, t.context) : null)));
+  if (tools.length) fold('tools-title', root, tools.length);
 }
 
 /** Equipamentos já utilizados ou explorados (nunca "disponíveis"). */
@@ -42,6 +47,7 @@ export function renderEquipment({ equipment }) {
   } else {
     root.append(note, h('ul', { class: 'gear__items' }, items));
   }
+  if (items.length) fold('gear-title', root, items.length);
 }
 
 /** Conhecimentos (lista simples de tags). */
@@ -49,4 +55,5 @@ export function renderKnowledge({ equipment }) {
   const root = clear(slot('knowledge'));
   if (!root) return;
   equipment.knowledge.forEach((k) => root.append(item(root, 'span', { class: 'knowledge__item' }, k)));
+  if (equipment.knowledge.length) fold('knowledge-title', root, equipment.knowledge.length);
 }

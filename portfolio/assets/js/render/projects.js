@@ -67,17 +67,20 @@ export function renderIndex({ projects, categories }, filter, onOpen) {
   });
 }
 
-/** Categorias sem projeto publicado → bloco honesto "Em curadoria". */
+/** Categorias sem projeto publicado → painel único e compacto "Em curadoria" (linhas + 1 CTA). */
 export function renderCuration({ projects, categories }, filter) {
   const root = clear(slot('curation'));
   if (!root) return;
   const empty = categories.filter((c) => !projects.some((p) => p.category === c.id));
   const shown = empty.filter((c) => filter === 'all' || c.id === filter);
-  for (const c of shown) {
-    root.append(h('aside', { class: 'curation__block', 'aria-label': `${c.label}: em curadoria`, 'data-reveal': true },
+  if (!shown.length) return;
+  root.append(h('section', { class: 'curation__panel', 'aria-labelledby': 'curation-title', 'data-reveal': true },
+    h('header', { class: 'curation__head' },
       h('p', { class: 'curation__tag' }, 'Em curadoria'),
-      h('h4', { class: 'curation__title' }, c.label),
-      h('p', { class: 'curation__text' }, c.intro || 'Material desta categoria está sendo selecionado e será publicado em breve.'),
-      h('a', { class: 'curation__cta', href: '#contato' }, 'Quer ver material desta área? Fale comigo')));
-  }
+      h('h4', { class: 'curation__heading', id: 'curation-title' }, shown.length === 1 ? shown[0].label : `${shown.length} categorias em seleção`),
+      h('p', { class: 'curation__text' }, 'Material destas categorias está sendo selecionado e será publicado em breve.')),
+    shown.length > 1 || shown[0].intro ? h('ul', { class: 'curation__list' }, shown.map((c) => h('li', { class: 'curation__block', 'aria-label': `${c.label}: em curadoria` },
+      h('span', { class: 'curation__title' }, c.label),
+      c.intro ? h('span', { class: 'curation__intro' }, c.intro) : null))) : null,
+    h('a', { class: 'curation__cta', href: '#contato' }, 'Quer ver material destas áreas? Fale comigo', h('span', { 'aria-hidden': 'true' }, ' →'))));
 }
