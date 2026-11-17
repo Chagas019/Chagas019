@@ -137,3 +137,50 @@ Riscos/pendências: a voz ainda é roteiro cronometrado, então os acordes da tr
 | 2324 | impacto_suave | 0,28 | "CONFIE" final (discreto) |
 | 2359 | brilho | 0,20 | brilho dourado / halo do clímax |
 | 2370 | impacto_suave | 0,55 | CLÍMAX "EM CRISTO." |
+
+---
+
+# Rodada 2 — item 11 da revisão 1 (POLIMENTO, áudio)
+
+## Problema confirmado
+Medi a trilha com o ganho exato da camada (mesma função, aplicada frame a frame) e a loudness momentânea (ebur128 M) dentro dos blocos de fala:
+com ganho único 0,6 → 0,19, a trilha ficava a **−40,5 LUFS sob a fala no trecho escuro** (24,5 dB abaixo da voz a −16), −35,6 em B, −33,2 em C e −32,2 em D.
+O motivo é que a própria trilha tem ~10 LU de dinâmica (escuro ≈ −26 LUFS, clímax ≈ −15), e um ganho único não compensa isso.
+Sem narração, a trilha ainda caía 10 dB em 14 blocos "fantasmas" (bombeamento no preview).
+
+## Correção
+1. **Níveis por seção** (`NivelSecao`). `trilhaConfie` agora é um descritor `{arquivo, niveis}` (`TrilhaComNiveis`). A `CamadaSomCinema` aceita string ou descritor, então a chamada atual em `ConfieEmCristo.tsx` (`trilha={trilhaConfie}`) continua igual e o CÓDIGO não precisa editar nada.
+   As fronteiras são derivadas de `efeitosTransicaoConfie` (início de T2, T3 e T5, todas em silêncio da voz), com crossfade em curva S de 45 f (`MIX_CINEMA.transicaoSecaoFrames`).
+
+| Seção | A partir de | Livre | Sob a voz | Queda |
+|---|---|---|---|---|
+| A — escuro | f0 | 0,85 | 0,50 | −4,6 dB |
+| B — a luz abre | t2.inicio (f650) | 0,70 | 0,29 | −7,7 dB |
+| C — crescendo | t3.inicio (f1473) | 0,62 | 0,22 | −9,0 dB |
+| D — resolução | t5.inicio (f2274) | 0,55 | 0,19 | −9,2 dB |
+
+   A revisão sugeria 0,28 no trecho escuro. Pela medição, 0,28 ainda deixaria a trilha a −35,5 LUFS (19,5 dB abaixo da voz), por isso usei 0,50.
+2. **Sem voz, sem ducking.** Novo prop `duckingSemVoz` (padrão `false`). Com `narracao` nula, a trilha toca no nível livre da seção, estável e sem bombear. Quando `vozConfie.arquivo` existir, o ducking liga sozinho, e `duckingSemVoz` força o ducking para testes.
+3. A lógica foi para **`src/som/ducking.ts`**, que é puro (sem React) e dá para medir em Node: `blocosDeFala`, `profundidadeDucking`, `niveisNoFrame`, `ganhoTrilha`. A `CamadaSomCinema` reexporta essas funções. As rampas (250 ms em S, pré 80 ms, pós 180 ms, junção 450 ms) não mudaram.
+
+## Medição depois da correção (trilha com o ganho real da camada, M de 400 ms)
+| Seção | Antes: sob fala | **Depois: sob fala (com voz)** | Abaixo da voz −16 | Sem voz (preview, nível estável) |
+|---|---|---|---|---|
+| A — escuro | −40,5 | **−32,1** | 16,1 dB | −29,5 / −27,5 |
+| B — abre | −35,6 | **−31,9** | 15,9 dB | −25,9 / −24,3 |
+| C — crescendo | −33,2 | **−32,0** | 16,0 dB | −22,9 |
+| D — resolução | −32,2 | **−32,2** | 16,2 dB | −22,4 |
+
+Meta "trilha 14–18 dB abaixo da voz em todo o vídeo" atendida (15,9–16,2 dB). O arco de dinâmica continua nos respiros: gaps a −32 → −30 → −27 → −24 LUFS.
+
+Pré-mixagens completas (trilha com ganho real + 14 cues), em `render/revisao/som/`:
+- `premix-r2-com-ducking.wav/.png`: −27,7 LUFS, −8,5 dBTP, 0 clip, 0 cliques, DC ~0.
+- `premix-r2-sem-voz.wav/.png` (o que o preview toca hoje): −23,6 LUFS, −7,4 dBTP, 0 clip, 0 cliques. Envelope contínuo, sem bombeamento.
+
+## ENTREGA — som — confie-em-cristo (rodada 2)
+Status: concluído
+Arquivos alterados: src/som/ducking.ts (novo), src/som/CamadaSomCinema.tsx, src/som/sfxCinema.ts (`transicaoSecaoFrames`), src/projetos/confie-em-cristo/som.ts (`trilhaConfie` → `TrilhaComNiveis`), render/revisao/som/premix-r2-*.{wav,png}, projetos/confie-em-cristo/08-som.md
+Contrato exportado: `TrilhaComNiveis`, `NivelSecao`, `ganhoTrilha`, `niveisNoFrame`, `blocosDeFala`, `profundidadeDucking` (ducking.ts) · `CamadaSomCinema` com `trilha: string | TrilhaComNiveis` e `duckingSemVoz?` · `trilhaConfie: TrilhaComNiveis`
+Validação feita: `npx tsc --noEmit` ok · `npm run qa` ✓ nenhum erro (64 arquivos) · medição ebur128 por seção (acima) · `analisar-audio.mjs` OK nas duas pré-mixagens
+Pedidos a outros agentes: nenhum (a chamada em ConfieEmCristo.tsx continua compatível) · REVISÃO: refazer o balanço com a voz real quando ela existir
+Riscos/pendências: com a voz real, os blocos de fala mudam e a medição precisa ser refeita (os níveis por seção devem continuar valendo, já que dependem da trilha, não da voz)

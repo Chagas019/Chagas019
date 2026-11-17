@@ -28,6 +28,18 @@ export type EstradaProps = {
   nevoa?: number;
   /** Mostrar marcos laterais (postes baixos com refletor). Padrão true. */
   marcos?: boolean;
+  /**
+   * Opacidade residual da faixa central no primeiro plano (0..1, padrão 0.12). A faixa some perto da câmera
+   * para não virar uma "bengala" luminosa sob o caminhante; no fundo continua indicando a direção.
+   */
+  faixaPerto?: number;
+  /** Opacidade geral da faixa central (padrão 0.6). */
+  faixaOpacidade?: number;
+  /**
+   * Abre um "vão" na faixa central em torno de um ponto (ex.: pés do caminhante): {x, y} em px, raio em px
+   * (padrão 0.09 × largura). Opcional: complementa o `faixaPerto`.
+   */
+  oclusor?: {x: number; y: number; raio?: number};
   cores?: Partial<CoresCenario>;
   /** Seed do relevo (troque para outra paisagem). */
   seed?: string;
@@ -53,6 +65,9 @@ export const Estrada: React.FC<EstradaProps> = ({
   deriva = 0,
   nevoa = 1,
   marcos = true,
+  faixaPerto = 0.12,
+  faixaOpacidade = 0.6,
+  oclusor,
   cores: coresIn,
   seed = 'estrada',
   largura,
@@ -135,7 +150,18 @@ export const Estrada: React.FC<EstradaProps> = ({
     const t1 = 1 / z1;
     const lw = meiaBase * 0.016;
     const d = `M${f(cx(t0) - lw * t0)},${f(yt(t0))} L${f(cx(t0) + lw * t0)},${f(yt(t0))} L${f(cx(t1) + lw * t1)},${f(yt(t1))} L${f(cx(t1) - lw * t1)},${f(yt(t1))} Z`;
-    tracos.push({d, a: Math.exp(-z0 / (45 / Math.max(0.4, nevoa)))});
+    const tm = (t0 + t1) / 2;
+    const ym = yt(tm);
+    // some no primeiro plano (t alto), mantém o fundo
+    const perto = 1 - (1 - clamp01(faixaPerto)) * smooth(0.1, 0.42, tm);
+    let vao = 1;
+    if (oclusor) {
+      const r = oclusor.raio ?? W * 0.09;
+      const dx = cx(tm) - oclusor.x;
+      const dy = (ym - oclusor.y) * 0.6;
+      vao = smooth(r * 0.55, r * 1.4, Math.sqrt(dx * dx + dy * dy));
+    }
+    tracos.push({d, a: Math.exp(-z0 / (45 / Math.max(0.4, nevoa))) * perto * vao * clamp01(faixaOpacidade)});
   }
 
   // Pedras / tufos no acostamento (mundo fixo, deslizam com o avanço).
@@ -256,7 +282,7 @@ export const Estrada: React.FC<EstradaProps> = ({
         <path d={faixaQuad(-1, 0.955, 0.975)} fill={`url(#${id}borda)`} />
         <path d={faixaQuad(1, 0.955, 0.975)} fill={`url(#${id}borda)`} />
         {tracos.map((tr, k) => (
-          <path key={k} d={tr.d} fill={faixaCor} opacity={tr.a * 0.85} />
+          <path key={k} d={tr.d} fill={faixaCor} opacity={tr.a} />
         ))}
 
         {/* Marcos laterais */}

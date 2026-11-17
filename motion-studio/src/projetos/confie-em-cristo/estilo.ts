@@ -25,9 +25,9 @@ export const graoFe = 0.06;
 export const vinhetaFe = 0.5;
 
 /** `mistura` sugerida do GradacaoCor por cena (0 frio → 1 quente). */
-export const misturaPorCena = {cena1: 0, cena2: 0.1, cena3: [0.15, 0.6], cena4: 0.8, cena5: 0.95, cena6: 0.9} as const;
-/** `luz` sugerida do FundoProfundo por cena. */
-export const luzFundoPorCena = {cena1: 0, cena2: 0.05, cena3: [0.1, 0.5], cena4: 0.7, cena5: 0.85, cena6: 0.6} as const;
+export const misturaPorCena = {cena1: 0, cena2: 0.1, cena3: [0.15, 0.6], cena4: 0.85, cena5: 0.95, cena6: 0.9} as const;
+/** `luz` sugerida do FundoProfundo por cena. 1..2 = faixa luminosa (cena 4: amanhecer creme/âmbar, lente escura atrás do texto). */
+export const luzFundoPorCena = {cena1: 0, cena2: 0.05, cena3: [0.1, 0.5], cena4: 1.9, cena5: 0.85, cena6: 0.6} as const;
 
 /** Luz principal coerente: SEMPRE do alto, levemente à direita (x≈0.62, y<0). Sombras caem para baixo-esquerda. */
 export const luzPrincipal = {origem: {x: 0.62, y: -0.06}, angulo: 192} as const;

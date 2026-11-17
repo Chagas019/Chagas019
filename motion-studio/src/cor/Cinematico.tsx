@@ -130,31 +130,57 @@ export const CeuNoturno: React.FC<CeuNoturnoProps> = ({
 };
 
 export type FundoProfundoProps = {
-  /** 0..1 — 0 = escuridão fria (azul→preto); 1 = luminoso quente (âmbar/dourado). Anime ao longo do arco. */
+  /**
+   * 0..1 — 0 = escuridão fria (azul→preto); 1 = escuro quente.
+   * 1..2 — faixa LUMINOSA (amanhecer): céu creme/âmbar na metade superior, falloff escuro só na "lente" atrás do texto.
+   * Anime ao longo do arco.
+   */
   luz?: number;
   /** Centro do "respiro" de luz no fundo (fração da tela). */
   origem?: {x: number; y: number};
   /** Deriva lenta do centro (0 desliga). */
   deriva?: number;
+  /** Faixa luminosa: centro vertical e altura (fração) da lente escura que protege a tipografia. */
+  lente?: {y: number; altura: number};
   seed?: string;
   tempo?: number;
 };
 
-/** Fundo base do projeto: gradiente radial escuro azul→preto que aquece com `luz`. */
-export const FundoProfundo: React.FC<FundoProfundoProps> = ({luz = 0, origem = {x: 0.5, y: 0.38}, deriva = 0.03, seed = 'fundo', tempo}) => {
+/** Fundo base do projeto: gradiente radial escuro azul→preto que aquece com `luz` (0..1) e se ilumina (1..2). */
+export const FundoProfundo: React.FC<FundoProfundoProps> = ({luz = 0, origem = {x: 0.5, y: 0.38}, deriva = 0.03, lente = {y: 0.42, altura: 0.3}, seed = 'fundo', tempo}) => {
   const t = useTempo(tempo);
   const l = clamp01(luz);
+  const lum = clamp01(luz - 1); // 0..1 dentro da faixa luminosa
   const cx = origem.x + noise2D(`${seed}-x`, t / 400, 0) * deriva;
   const cy = origem.y + noise2D(`${seed}-y`, 0, t / 400) * deriva;
   const centro = interpolateColors(l, [0, 0.5, 1], [luzFe.azulNoite, '#24252F', '#4A3318']);
   const meio = interpolateColors(l, [0, 0.5, 1], [luzFe.azulProfundo, '#101219', '#1F150B']);
   const borda = interpolateColors(l, [0, 1], [luzFe.preto, '#0A0705']);
+  // respiro lento do céu luminoso (±4%)
+  const resp = 1 + noise2D(`${seed}-lum`, t / 300, 3) * 0.04;
   return (
-    <AbsoluteFill
-      style={{
-        background: `radial-gradient(120% 75% at ${cx * 100}% ${cy * 100}%, ${centro} 0%, ${meio} 45%, ${borda} 100%)`,
-      }}
-    />
+    <AbsoluteFill style={{background: `radial-gradient(120% 75% at ${cx * 100}% ${cy * 100}%, ${centro} 0%, ${meio} 45%, ${borda} 100%)`}}>
+      {lum > 0 ? (
+        <AbsoluteFill style={{opacity: lum}}>
+          {/* céu de amanhecer: creme → âmbar → âmbar queimado → base escura quente (saturado, sem marrom acinzentado) */}
+          <AbsoluteFill
+            style={{
+              background: `linear-gradient(180deg, ${luzFe.altaQuente} 0%, #F0C27E 9%, #DB9A4E 20%, #B06A2C 32%, #6E3E17 46%, #3E230E 62%, #2A170A 80%, #170D06 100%)`,
+            }}
+          />
+          {/* sol difuso no alto, do lado da luz principal */}
+          <AbsoluteFill style={{background: `radial-gradient(70% 30% at ${(cx + 0.08) * 100}% 4%, ${rgba(luzFe.nucleo, 0.55 * resp)} 0%, ${rgba(luzFe.ambar, 0.25 * resp)} 45%, transparent 100%)`}} />
+          {/* retorno quente embaixo (continuidade com a estrada dourada da cena 3) */}
+          <AbsoluteFill style={{background: `radial-gradient(90% 22% at 50% 100%, ${rgba(luzFe.ambarQuente, 0.28)} 0%, transparent 100%)`}} />
+          {/* lente escura atrás da tipografia: garante contraste do branco quente sem apagar o céu */}
+          <AbsoluteFill
+            style={{
+              background: `radial-gradient(85% ${lente.altura * 100}% at 50% ${lente.y * 100}%, rgba(22,12,4,0.72) 0%, rgba(22,12,4,0.5) 45%, transparent 100%)`,
+            }}
+          />
+        </AbsoluteFill>
+      ) : null}
+    </AbsoluteFill>
   );
 };
 
@@ -402,7 +428,7 @@ export const GradacaoCor: React.FC<GradacaoCorProps> = ({mistura = 0, forca = 0.
   const f = clamp01(forca);
   const sombra = interpolateColors(m, [0, 1], [luzFe.azulSombra, luzFe.sombraQuente]);
   const alta = interpolateColors(m, [0, 1], [luzFe.altaFria, luzFe.altaQuente]);
-  const temperatura = interpolateColors(m, [0, 0.5, 1], ['#1B3358', '#4A4038', '#A8763A']);
+  const temperatura = interpolateColors(m, [0, 0.5, 1], ['#1B3358', '#7E7870', '#B8823F']);
   return (
     <AbsoluteFill style={{pointerEvents: 'none'}}>
       <AbsoluteFill style={{background: sombra, mixBlendMode: 'lighten', opacity: f * interpolate(m, [0, 1], [0.45, 0.35])}} />

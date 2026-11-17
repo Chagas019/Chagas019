@@ -38,6 +38,8 @@ export type TextoImpactoProps = {
   /** Reduz `tamanho` se alguma palavra não couber sozinha em `maxLargura` (padrão: true). */
   autoAjuste?: boolean;
   entrelinha?: number;
+  /** Centraliza a linha só com as palavras já reveladas (a linha "abre" conforme as palavras entram). Padrão: true. */
+  centrarVisiveis?: boolean;
 };
 
 export const TextoImpacto: React.FC<TextoImpactoProps> = ({
@@ -60,6 +62,7 @@ export const TextoImpacto: React.FC<TextoImpactoProps> = ({
   tipoSaida = 'mascara',
   autoAjuste = true,
   entrelinha = 1.02,
+  centrarVisiveis = true,
 }) => {
   const frame = useCurrentFrame();
   const fonte = peso === 700 ? 'impacto700' : 'impacto600';
@@ -71,7 +74,7 @@ export const TextoImpacto: React.FC<TextoImpactoProps> = ({
   // Quebra manual pode gerar linha larga demais: reduz até caber (medido com o tracking mais aberto).
   const tamanho = autoAjuste ? tamanhoQueCabeLinhas(caixa, linhas, fonte, t1, maxLargura, {gapEm: 0.24, trackingEm: trackMax}) : t1;
   const gap = tamanho * 0.24;
-  const sombra = sombraProfundidade(tamanho, profundidade);
+  const H = entrelinha;
 
   return (
     <div
@@ -88,21 +91,33 @@ export const TextoImpacto: React.FC<TextoImpactoProps> = ({
       }}
     >
       {linhas.map((linha, li) => (
-        <div key={li} style={{display: 'flex', columnGap: gap, justifyContent: alinhamento === 'center' ? 'center' : 'flex-start'}}>
-          {linha.map((i) => {
+        <div key={li} style={{display: 'flex', justifyContent: alinhamento === 'center' ? 'center' : 'flex-start'}}>
+          {linha.map((i, k) => {
             const e = entradas[i] ?? 0;
-            const p = interpolate(frame, [e, e + duracaoEntrada], [0, 1], {easing: curvas.entrada, extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
-            const track = interpolate(frame, [e, e + duracaoTracking], [trackingInicial, trackingFinal], {easing: curvas.entrada, extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
-            // Saída escalonada (2 frames por palavra, na ordem de leitura).
+            const clamp = {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'} as const;
+            const p = interpolate(frame, [e, e + duracaoEntrada], [0, 1], {easing: curvas.entrada, ...clamp});
+            const track = interpolate(frame, [e, e + duracaoTracking], [trackingInicial, trackingFinal], {easing: curvas.entrada, ...clamp});
+            // Saída escalonada (2 frames por palavra, na ordem de leitura). Termina em saidaEm + 2*(n-1) + duracaoSaida.
             const s0 = saidaEm === undefined ? undefined : saidaEm + i * 2;
-            const s = s0 === undefined ? 0 : interpolate(frame, [s0, s0 + duracaoSaida], [0, 1], {easing: curvas.saida, extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
-            const y = (1 - p) * 108 + (tipoSaida === 'mascara' ? s * -108 : 0);
+            const s = s0 === undefined ? 0 : interpolate(frame, [s0, s0 + duracaoSaida], [0, 1], {easing: curvas.saida, ...clamp});
             const blurSaida = tipoSaida === 'desfoque' ? s * tamanho * 0.08 : 0;
             const opSaida = tipoSaida === 'desfoque' ? 1 - s : 1;
-            // Pequeno "acender" ao assentar: a palavra chega um pouco mais clara e esquenta.
-            const acende = interpolate(frame, [e + duracaoEntrada * 0.4, e + duracaoEntrada + 24], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+            // Máscara (wipe de baixo p/ cima): a borda sobe pelo glifo, então o acento é revelado POR ÚLTIMO
+            // (sem acento órfão). Na saída 'mascara' a borda desce de cima: o acento some primeiro.
+            const topoEntrada = H + 0.12 - (H + 0.57) * p; // H+0.12em (vazio) -> -0.45em (inteiro, com acento)
+            const topoSaida = tipoSaida === 'mascara' ? -0.45 + (H + 0.57) * s : -0.45;
+            const topo = Math.max(topoEntrada, topoSaida);
+            const y = (1 - p) * 40 + (tipoSaida === 'mascara' ? s * -30 : 0);
+            // Sombra/brilho só depois que a palavra assentou (antes vazavam como linha âmbar na borda da máscara).
+            const kLuz = interpolate(frame, [e + duracaoEntrada * 0.8, e + duracaoEntrada + 10], [0, 1], clamp) * (1 - s);
+            const acende = interpolate(frame, [e + duracaoEntrada * 0.8, e + duracaoEntrada + 30], [1, 0], clamp);
             const destaque = destaques.includes(i);
-            const larguraSlot = larguraPx(caixa[i], fonte, tamanho, trackingFinal);
+            const sombra = sombraProfundidade(tamanho, profundidade * kLuz);
+            const glow = brilhoAmbar(tamanho, kLuz * (destaque ? 0.7 + acende * 0.3 : acende * 0.35));
+            // Largura do slot = largura real no tracking ATUAL (gap de 0.24em nunca é invadido).
+            // centrarVisiveis: palavras ainda não ditas têm largura 0 -> a linha centraliza só o que já apareceu.
+            const fVis = centrarVisiveis ? interpolate(frame, [e, e + duracaoEntrada * 0.5], [0, 1], {easing: curvas.entrada, ...clamp}) : 1;
+            const larguraSlot = (larguraPx(caixa[i], fonte, tamanho, track) - track * tamanho) * fVis;
             const camada: React.CSSProperties = {
               position: 'absolute',
               left: '50%',
@@ -119,9 +134,10 @@ export const TextoImpacto: React.FC<TextoImpactoProps> = ({
                   position: 'relative',
                   display: 'inline-block',
                   width: larguraSlot,
-                  height: `${entrelinha}em`,
-                  // Máscara: corta só embaixo (acentos e tracking podem passar dos lados/topo).
-                  clipPath: 'inset(-0.45em -1em -0.12em -1em)',
+                  marginLeft: k > 0 ? gap * fVis : 0,
+                  height: `${H}em`,
+                  clipPath: `inset(${topo.toFixed(4)}em -1em -0.12em -1em)`,
+                  visibility: frame < e || topo >= H + 0.11 ? 'hidden' : 'visible',
                 }}
               >
                 <span
@@ -129,8 +145,7 @@ export const TextoImpacto: React.FC<TextoImpactoProps> = ({
                     position: 'absolute',
                     inset: 0,
                     transform: `translateY(${y}%)`,
-                    // Antes da entrada nada é desenhado (o blur da sombra/brilho vazaria pela máscara).
-                    opacity: frame < e ? 0 : opSaida,
+                    opacity: opSaida,
                     filter: blurSaida > 0.05 ? `blur(${blurSaida}px)` : undefined,
                   }}
                 >
@@ -138,8 +153,8 @@ export const TextoImpacto: React.FC<TextoImpactoProps> = ({
                     style={{
                       ...camada,
                       color: destaque ? luzFe.dourado : cor,
-                      textShadow: [sombra === 'none' ? '' : sombra, brilhoAmbar(tamanho, destaque ? 0.7 + acende * 0.3 : acende * 0.35)].filter(Boolean).join(', ') || undefined,
-                      filter: acende > 0.01 ? `brightness(${1 + acende * 0.35})` : undefined,
+                      textShadow: [sombra === 'none' ? '' : sombra, glow].filter(Boolean).join(', ') || undefined,
+                      filter: kLuz > 0 && acende > 0.01 ? `brightness(${1 + acende * 0.35 * kLuz})` : undefined,
                     }}
                   >
                     {caixa[i]}

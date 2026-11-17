@@ -3,14 +3,28 @@
 // ponto de pico de cada arquivo (`picoS` em SFX_CINEMA). Nenhum frame copiado: se a voz real mudar os tempos,
 // os cues se recalculam. Uso: <CamadaSomCinema cues={cuesConfie} trilha={trilhaConfie} palavras={vozConfie.palavras} />
 import {SFX_CINEMA, type CueCinema, type NomeSfxCinema} from '../../som/sfxCinema';
+import type {TrilhaComNiveis} from '../../som/ducking';
 import {efeitosTransicaoConfie, gatilhosConfie as g} from './cenas';
 
 const FPS = 60;
 
-/** Trilha original (scripts/compor-trilha.mjs), 52,5 s, -20 LUFS, arco alinhado a voz.ts. */
-export const trilhaConfie = 'audio/trilha/confie-em-cristo.wav';
-
 const [t1, t2, t3, t4, t5] = efeitosTransicaoConfie;
+
+/**
+ * Trilha original (scripts/compor-trilha.mjs), 52,5 s, -20 LUFS, arco alinhado a voz.ts, com níveis POR SEÇÃO.
+ * A trilha tem ~10 LU de dinâmica (escuro ≈ -26 LUFS, clímax ≈ -15). Um ganho único deixava o escuro enterrado
+ * sob a fala. Aqui o ganho compensa a seção para a trilha ficar 14–18 dB abaixo da voz (-16 LUFS) o vídeo todo.
+ * As fronteiras ficam nos silêncios da voz (início das transições T2, T3 e T5), com crossfade de 45 f.
+ */
+export const trilhaConfie: TrilhaComNiveis = {
+  arquivo: 'audio/trilha/confie-em-cristo.wav',
+  niveis: [
+    {aPartirDoFrame: 0, trilha: 0.85, trilhaSobVoz: 0.5}, // A — escuro/esparso (trilha ≈ -26 LUFS: ducking leve, -4,6 dB)
+    {aPartirDoFrame: t2.inicio, trilha: 0.7, trilhaSobVoz: 0.29}, // B — a luz abre (-7,7 dB)
+    {aPartirDoFrame: t3.inicio, trilha: 0.62, trilhaSobVoz: 0.22}, // C — crescendo, confie/Jesus (-9 dB)
+    {aPartirDoFrame: t5.inicio, trilha: 0.55, trilhaSobVoz: 0.19}, // D — resolução/clímax (-9,2 dB)
+  ],
+};
 const fr = (s: number) => Math.round(s * FPS);
 /** Frames entre o início do arquivo e o seu pico. */
 const pico = (som: NomeSfxCinema) => fr(SFX_CINEMA[som].picoS);

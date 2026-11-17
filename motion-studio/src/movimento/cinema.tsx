@@ -46,45 +46,57 @@ const Vazamento: React.FC<TransitionPresentationComponentProps<VazamentoProps>> 
   const {cor = 'ambar', intensidade = 1, origem = {x: 72, y: 28}, pico = 0.46, seed = 'vazamento'} = passedProps;
   const tremor = noise2D(seed, p * 4, 0.5) * 0.06; // cintilação orgânica do vazamento
   const flash = Math.min(1, sino(p, pico) * (1 + tremor));
+  const k = Math.min(1, intensidade);
 
   if (presentationDirection === 'exiting') {
-    // a cena atual "queima": brilho + bloom leve + micro dolly-in
-    const brilho = 1 + faixa(p, 0, pico, 0, 1.6 * intensidade, curvas.saida);
-    const bloom = faixa(p, 0.15, pico, 0, 7);
-    const escala = 1 + faixa(p, 0, pico, 0, 0.025);
+    // a cena atual "aquece": brilho moderado (+0,8 no pico) + bloom leve + micro dolly-in. Nunca estoura em chapado.
+    const brilho = 1 + faixa(p, 0, pico, 0, 0.8 * intensidade);
+    const bloom = faixa(p, 0.15, pico, 0, 5);
+    const escala = 1 + faixa(p, 0, pico, 0, 0.02);
     return (
-      <AbsoluteFill style={{transform: `scale(${escala})`, filter: filtro([`brightness(${brilho.toFixed(3)})`, `saturate(${(1 - flash * 0.25).toFixed(3)})`, px(bloom)])}}>
+      <AbsoluteFill style={{transform: `scale(${escala})`, filter: filtro([`brightness(${brilho.toFixed(3)})`, `saturate(${(1 - flash * 0.15).toFixed(3)})`, px(bloom)])}}>
         {children}
       </AbsoluteFill>
     );
   }
-  // entrando: a próxima cena emerge da luz (fica por cima no TransitionSeries)
-  const opac = faixa(p, pico - 0.12, pico + 0.3, 0, 1);
-  const brilho = 1 + faixa(p, pico - 0.12, 1, 1.4 * intensidade, 0, curvas.entrada);
-  const bloom = faixa(p, pico - 0.12, 0.95, 7, 0, curvas.entrada);
-  const escala = 1 + faixa(p, pico - 0.12, 1, 0.03, 0, curvas.entrada);
+  // entrando (fica por cima): cross-fade largo em torno do pico — no ápice as DUAS cenas aparecem sob a luz.
+  const opac = faixa(p, pico - 0.22, pico + 0.24, 0, 1);
+  const brilho = 1 + faixa(p, pico - 0.22, 1, 0.7 * intensidade, 0, curvas.entrada);
+  const bloom = faixa(p, pico - 0.22, 0.95, 5, 0, curvas.entrada);
+  const escala = 1 + faixa(p, pico - 0.22, 1, 0.025, 0, curvas.entrada);
   const c = CORES_LUZ[cor];
+  const d = CORES_LUZ.dourado;
   const n = CORES_LUZ.quente;
-  // o leak varre levemente na diagonal enquanto acontece
-  const deriva = interpolate(p, [0, 1], [-8, 8]);
+  // varredura lateral do leak (da esquerda para a direita, passando pela origem no pico)
+  const varre = interpolate(p, [0, pico, 1], [-35, 0, 35], clamp);
+  const ox = origem.x;
+  const oy = origem.y;
+  // manchas de película: posições/raios guiados por noise com seed (textura, não cor chapada)
+  const manchas = [0, 1, 2, 3].map((i) => {
+    const mx = ox + varre * (0.6 + i * 0.25) + noise2D(`${seed}-mx${i}`, p * 1.3, i) * 22;
+    const my = oy + (i - 1.5) * 9 + noise2D(`${seed}-my${i}`, p * 1.1, i + 4) * 10;
+    const r = 16 + i * 7 + noise2D(`${seed}-mr${i}`, p * 2, i + 9) * 5;
+    const tom = [n, c, d, c][i];
+    const a = 0.55 - i * 0.08;
+    return `radial-gradient(ellipse ${r}% ${r * 0.62}% at ${mx.toFixed(2)}% ${my.toFixed(2)}%, rgba(${tom},${a}) 0%, rgba(${tom},${(a * 0.35).toFixed(3)}) 45%, rgba(${tom},0) 100%)`;
+  });
+  const camadas = [
+    // núcleo quente pequeno na origem (a fonte de luz)
+    `radial-gradient(ellipse 26% 16% at ${ox}% ${oy}%, rgba(${n},0.85) 0%, rgba(${n},0.35) 40%, rgba(${c},0) 100%)`,
+    // streak anamórfico horizontal que atravessa a fonte
+    `radial-gradient(ellipse 85% 3.5% at ${(ox + varre * 0.4).toFixed(2)}% ${oy}%, rgba(${n},0.6) 0%, rgba(${c},0.18) 50%, rgba(${c},0) 100%)`,
+    ...manchas,
+    // véu diagonal suave (vazamento lateral), opacidade baixa
+    `linear-gradient(${(105 + varre * 0.3).toFixed(2)}deg, rgba(${c},0) 25%, rgba(${c},0.28) ${(50 + varre * 0.5).toFixed(2)}%, rgba(${c},0) 78%)`,
+  ];
+  // queda nas bordas: a luz nunca chega chapada aos cantos da tela
+  const queda = `radial-gradient(ellipse 85% 70% at ${ox}% ${oy}%, #000 35%, rgba(0,0,0,0.35) 75%, transparent 100%)`;
   return (
     <AbsoluteFill>
       <AbsoluteFill style={{opacity: opac, transform: `scale(${escala})`, filter: filtro([`brightness(${brilho.toFixed(3)})`, px(bloom)])}}>{children}</AbsoluteFill>
-      {/* camada de luz: halo âmbar amplo + núcleo branco quente + faixa anamórfica */}
-      <AbsoluteFill
-        style={{
-          pointerEvents: 'none',
-          mixBlendMode: 'screen',
-          opacity: flash * Math.min(1, intensidade),
-          background: [
-            `radial-gradient(ellipse 60% 45% at ${origem.x + deriva}% ${origem.y}%, rgba(${n},1) 0%, rgba(${n},0.85) 22%, rgba(${c},0) 70%)`,
-            `radial-gradient(ellipse 120% 90% at ${origem.x + deriva * 0.5}% ${origem.y}%, rgba(${c},0.95) 0%, rgba(${c},0.55) 45%, rgba(${c},0) 100%)`,
-            `linear-gradient(${115 + deriva}deg, rgba(${c},0) 20%, rgba(${n},0.7) 48%, rgba(${c},0) 76%)`,
-          ].join(','),
-        }}
-      />
-      {/* lavagem de brilho total só no ápice: garante que nunca há frame "vazio" entre as cenas */}
-      <AbsoluteFill style={{pointerEvents: 'none', backgroundColor: `rgb(${n})`, opacity: Math.max(0, flash - 0.55) * 1.6 * Math.min(1, intensidade)}} />
+      {flash > 0.001 ? (
+        <AbsoluteFill style={{pointerEvents: 'none', mixBlendMode: 'screen', opacity: flash * k, background: camadas.join(','), WebkitMaskImage: queda, maskImage: queda}} />
+      ) : null}
     </AbsoluteFill>
   );
 };
@@ -204,22 +216,41 @@ const FadeNegro: React.FC<TransitionPresentationComponentProps<FadeNegroProps>> 
   const {respiro = 0.25, cor = '#030304'} = passedProps;
   const meio = (1 - respiro) / 2;
   if (presentationDirection === 'exiting') {
-    // mergulho: escurece com ease-in (cai no fim) e afunda 1,5%
-    const o = faixa(p, 0, meio, 1, 0, curvas.saida);
+    // descida GRADUAL: a luz se recolhe para o centro (vinheta fechando, curva suave desde o 1º frame)
+    // e um véu uniforme acompanha, chegando a preto absoluto só em p = meio. Afunda 1,5%.
+    const v = faixa(p, 0, meio, 0, 1, curvas.suave);
+    const veu = faixa(p, 0, meio, 0, 1, Easing2In);
     const s = 1 - faixa(p, 0, meio, 0, 0.015);
     // IMPORTANTE: o TransitionSeries renderiza este wrapper durante TODA a cena (progresso 0 antes da transição),
     // então ele precisa ser transparente/identidade em p=0 — nada de fundo opaco (cobriria a cena anterior).
     return (
       <AbsoluteFill>
         <AbsoluteFill style={{transform: `scale(${s})`}}>{children}</AbsoluteFill>
-        {o < 1 ? <AbsoluteFill style={{backgroundColor: cor, opacity: 1 - o}} /> : null}
+        {v > 0 ? <AbsoluteFill style={{background: vinhetaFechando(v, cor), opacity: Math.min(1, v * 2)}} /> : null}
+        {veu > 0 ? <AbsoluteFill style={{backgroundColor: cor, opacity: veu}} /> : null}
       </AbsoluteFill>
     );
   }
-  // emerge do preto com ease-out (respiração longa)
-  const o = faixa(p, 1 - meio, 1, 0, 1, curvas.entrada);
+  // emerge do preto pelo centro (vinheta abrindo) com ease-out
+  const v = faixa(p, 1 - meio, 1, 1, 0, curvas.entrada);
+  const veu = faixa(p, 1 - meio, 1, 1, 0, Easing2Out);
   const s = 1 + faixa(p, 1 - meio, 1, 0.015, 0, curvas.entrada);
-  return <AbsoluteFill style={{opacity: o, transform: `scale(${s})`}}>{children}</AbsoluteFill>;
+  return (
+    <AbsoluteFill>
+      <AbsoluteFill style={{transform: `scale(${s})`}}>{children}</AbsoluteFill>
+      {v > 0 ? <AbsoluteFill style={{background: vinhetaFechando(v, cor), opacity: Math.min(1, v * 2)}} /> : null}
+      {veu > 0 ? <AbsoluteFill style={{backgroundColor: cor, opacity: veu}} /> : null}
+    </AbsoluteFill>
+  );
+};
+
+const Easing2In = (t: number) => t * t;
+const Easing2Out = (t: number) => 1 - (1 - t) * (1 - t);
+/** Vinheta que fecha para o centro: v=0 nada, v=1 só um resto de luz no miolo. */
+const vinhetaFechando = (v: number, cor: string) => {
+  const interno = 70 * (1 - v); // raio limpo
+  const externo = interno + 55 - 25 * v;
+  return `radial-gradient(ellipse 75% 60% at 50% 46%, rgba(0,0,0,0) ${interno.toFixed(2)}%, ${cor} ${externo.toFixed(2)}%)`;
 };
 
 export const fadeNegro = (props: FadeNegroProps = {}): TransitionPresentation<FadeNegroProps> => ({component: FadeNegro, props});

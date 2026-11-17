@@ -35,7 +35,9 @@ export type CueCinema = {
 
 /**
  * Mix "cinema" — calibrado para a trilha masterizada a -20 LUFS (public/audio/trilha/confie-em-cristo.wav):
- * nos respiros da voz a trilha fica ~-24 LUFS; sob a voz cai ~10 dB (≈-34 LUFS, ~18 dB abaixo da narração a -16).
+ * valores PADRÃO (usados quando a trilha não traz mapa de níveis por seção). Projetos com trilha de dinâmica larga
+ * devem passar `TrilhaComNiveis` (ex.: trilhaConfie em src/projetos/confie-em-cristo/som.ts) para manter a trilha
+ * 14–18 dB abaixo da voz (-16 LUFS) em TODO o vídeo, inclusive nos trechos esparsos.
  */
 export const MIX_CINEMA = {
   narracao: 1,
@@ -50,6 +52,8 @@ export const MIX_CINEMA = {
   posMs: 180,
   /** palavras separadas por menos que isto contam como fala contínua (não "bombeia") */
   juntarMs: 450,
+  /** crossfade entre os níveis de seções vizinhas (ver NivelSecao em ducking.ts) */
+  transicaoSecaoFrames: 45,
   /** fade de entrada/saída da trilha na composição */
   fadeInFrames: 30,
   fadeOutFrames: 45,

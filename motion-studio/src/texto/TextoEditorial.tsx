@@ -5,7 +5,7 @@ import React from 'react';
 import {interpolate, useCurrentFrame} from 'remotion';
 import {luzFe} from '../cor/tema';
 import {curvas} from '../movimento/curvas';
-import {fontesFe, quebrarLinhas, tamanhoQueCabe, tamanhoQueCabeLinhas} from './fontesEditoriais';
+import {fontesFe, larguraPx, quebrarLinhas, tamanhoQueCabe, tamanhoQueCabeLinhas} from './fontesEditoriais';
 
 export type TextoEditorialProps = {
   palavras: string[];
@@ -32,6 +32,8 @@ export type TextoEditorialProps = {
   saidaEm?: number;
   duracaoSaida?: number;
   autoAjuste?: boolean;
+  /** Centraliza a linha só com as palavras já reveladas (sem "a" sozinho à esquerda enquanto a frase entra). Padrão: true. */
+  centrarVisiveis?: boolean;
 };
 
 export const TextoEditorial: React.FC<TextoEditorialProps> = ({
@@ -52,6 +54,7 @@ export const TextoEditorial: React.FC<TextoEditorialProps> = ({
   saidaEm,
   duracaoSaida = 30,
   autoAjuste = true,
+  centrarVisiveis = true,
 }) => {
   const frame = useCurrentFrame();
   const ref = variante === 'referencia';
@@ -88,24 +91,33 @@ export const TextoEditorial: React.FC<TextoEditorialProps> = ({
       }}
     >
       {linhas.map((linha, li) => (
-        <div key={li} style={{display: 'flex', columnGap: tamanho * gapEm, justifyContent: alinhamento === 'center' ? 'center' : 'flex-start'}}>
-          {linha.map((i) => {
+        <div key={li} style={{display: 'flex', justifyContent: alinhamento === 'center' ? 'center' : 'flex-start'}}>
+          {linha.map((i, k) => {
             const e = entradas[i] ?? 0;
             const p = interpolate(frame, [e, e + duracaoEntrada], [0, 1], {easing: curvas.entrada, extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
             const blur = (1 - p) * desfoqueInicial * tamanho;
             const track = trackInicial + (trackFinal - trackInicial) * p;
             const destaque = destaques.includes(i);
+            // Largura animada (0 -> largura medida) para a linha centralizar só as palavras já visíveis.
+            const fVis = centrarVisiveis
+              ? interpolate(frame, [e, e + duracaoEntrada * 0.5], [0, 1], {easing: curvas.entrada, extrapolateLeft: 'clamp', extrapolateRight: 'clamp'})
+              : 1;
+            const largura = (larguraPx(textos[i], fonte, tamanho, ref ? track : 0) - (ref ? track * tamanho : 0)) * fVis;
             return (
               <span
                 key={i}
                 style={{
-                  display: 'inline-block',
+                  display: 'inline-flex',
+                  justifyContent: 'center',
+                  width: centrarVisiveis ? largura : undefined,
+                  marginLeft: k > 0 ? tamanho * gapEm * fVis : 0,
+                  visibility: frame < e ? 'hidden' : 'visible',
                   whiteSpace: 'nowrap',
                   opacity: interpolate(p, [0, 0.6], [0, 1], {extrapolateRight: 'clamp'}),
                   filter: blur > 0.05 ? `blur(${blur}px)` : undefined,
                   transform: `translateY(${(1 - p) * subida}em)`,
                   letterSpacing: ref ? `${track}em` : undefined,
-                  marginRight: ref ? `${-track}em` : undefined, // tracking não empurra o centro
+                  marginRight: ref && !centrarVisiveis ? `${-track}em` : undefined, // tracking não empurra o centro
                   color: destaque ? corDestaque : undefined,
                   textShadow: destaque
                     ? `0 0 ${tamanho * 0.3}px rgba(255,178,74,0.35), 0 ${tamanho * 0.04}px ${tamanho * 0.18}px rgba(0,0,0,0.5)`
