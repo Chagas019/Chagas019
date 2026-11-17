@@ -1,125 +1,57 @@
 {
-  "disclaimer": "Valores de referência (sugestão, a partir de) para capital ou cidade média brasileira, sujeitos a ajuste regional e de escopo. O orçamento final é enviado por proposta. Revisão: nov/2026.",
+  "version": 3,
   "currency": "BRL",
-  "services": [
+  "reference": true,
+  "disclaimer": "Valores de referência iniciais, não são propostas comerciais definitivas.",
+  "note": "Os valores podem variar de acordo com a complexidade, duração, deslocamento e entregáveis de cada projeto. Solicite um orçamento personalizado.",
+  "groups": [
     {
-      "id": "eventos",
-      "label": "Eventos",
-      "summary": "Cobertura fotográfica de eventos corporativos e sociais, com galeria online e prévias rápidas para as redes.",
-      "tiers": [
-        {"name": "Essencial", "price_from": 1100, "unit": "evento", "highlight": false, "includes": ["2h de cobertura", "Cerca de 120 fotos tratadas", "Galeria online por 12 meses"], "delivery": "7 dias úteis"},
-        {"name": "Assinatura", "price_from": 1900, "unit": "evento", "highlight": true, "includes": ["4h de cobertura", "Cerca de 250 fotos tratadas", "15 prévias em 24h", "Galeria online por 12 meses"], "delivery": "7 dias úteis"},
-        {"name": "Autoral", "price_from": 3900, "unit": "evento", "highlight": false, "includes": ["6h de cobertura de foto + vídeo", "Cerca de 350 fotos tratadas", "Vídeo resumo de 60–90s (16:9 e 9:16)", "Prévias em 24h"], "delivery": "10 dias úteis"}
-      ],
-      "addons": [
-        {"label": "Hora extra", "price_from": 300, "unit": "hora"},
-        {"label": "Segundo fotógrafo", "price_from": 800, "unit": "evento"},
-        {"label": "Drone", "price_from": 600, "unit": "evento"},
-        {"label": "Entrega expressa (48–72h)", "price_from": 30, "unit": "% do pacote"}
-      ]
-    },
-    {
-      "id": "casamentos",
-      "label": "Casamentos",
-      "summary": "Fotografia e filme de casamento com narrativa autoral, do making of à festa.",
-      "tiers": [
-        {"name": "Essencial", "price_from": 3900, "unit": "evento", "highlight": false, "includes": ["Fotografia: 6h (cerimônia + festa)", "Cerca de 400 fotos tratadas", "Galeria online"], "delivery": "Fotos em 30 dias"},
-        {"name": "Assinatura", "price_from": 8400, "unit": "evento", "highlight": true, "includes": ["Foto + vídeo: 8h com assistente", "Cerca de 500 fotos tratadas", "Filme de 5–8 min", "Teaser de 1 min", "Reunião de roteiro"], "delivery": "Fotos em 30 dias, filme em 60 dias"},
-        {"name": "Autoral", "price_from": 13900, "unit": "evento", "highlight": false, "includes": ["Foto + vídeo: 12h com making of", "Equipe de 3 pessoas e drone", "Ensaio pré-wedding", "Reel no mesmo dia", "Filme de 10–15 min"], "delivery": "Fotos em 30 dias, filme em 75 dias"}
-      ],
-      "addons": [
-        {"label": "Hora extra (foto + vídeo)", "price_from": 550, "unit": "hora"},
-        {"label": "Álbum 30×30, 20 lâminas", "price_from": 1900, "unit": "peça"},
-        {"label": "Drone", "price_from": 600, "unit": "evento"},
-        {"label": "Segunda câmera", "price_from": 800, "unit": "evento"}
-      ]
-    },
-    {
-      "id": "ensaios",
-      "label": "Ensaios",
-      "summary": "Ensaios individuais, de casal, gestante e corporativos (branding pessoal).",
-      "tiers": [
-        {"name": "Essencial", "price_from": 690, "unit": "evento", "highlight": false, "includes": ["Ensaio individual de 1h", "1 look", "15 fotos tratadas"], "delivery": "7 dias úteis"},
-        {"name": "Assinatura", "price_from": 1290, "unit": "evento", "highlight": true, "includes": ["Casal ou gestante, 2h", "2 looks", "Briefing de estilo", "35 fotos tratadas"], "delivery": "10 dias úteis"},
-        {"name": "Autoral", "price_from": 2490, "unit": "evento", "highlight": false, "includes": ["Corporativo/branding, meia diária (4h)", "60 fotos para site e LinkedIn", "1 reel de bastidores"], "delivery": "10 dias úteis"}
-      ],
-      "addons": [
-        {"label": "Foto tratada adicional", "price_from": 35, "unit": "peça"},
-        {"label": "Entrega expressa (48–72h)", "price_from": 30, "unit": "% do pacote"},
-        {"label": "Deslocamento fora do raio de 30 km", "price_from": 1.8, "unit": "km"}
+      "id": "fotografia",
+      "label": "Fotografia",
+      "items": [
+        { "id": "ensaio", "label": "Ensaio", "price_from": 250, "unit": null, "desc": "Referência: geralmente inclui sessão fotográfica com direção e fotos editadas." },
+        { "id": "cobertura-de-evento", "label": "Cobertura de evento", "price_from": 450, "unit": null, "desc": "Referência: geralmente inclui registro fotográfico do evento e fotos editadas." },
+        { "id": "15-anos", "label": "15 anos", "price_from": 600, "unit": null, "desc": "Referência: geralmente inclui cobertura da festa e fotos editadas." },
+        { "id": "casamento", "label": "Casamento", "price_from": 900, "unit": null, "desc": "Referência: geralmente inclui cobertura da cerimônia e/ou festa e fotos editadas." }
       ]
     },
     {
       "id": "audiovisual",
-      "label": "Audiovisual institucional",
-      "summary": "Vídeos institucionais e de marca, do roteiro à finalização, com cortes para as redes.",
-      "tiers": [
-        {"name": "Essencial", "price_from": 3200, "unit": "peça", "highlight": false, "includes": ["Meia diária de captação (4h)", "1 vídeo de 60–90s", "Trilha licenciada", "2 revisões"], "delivery": "10 dias úteis"},
-        {"name": "Assinatura", "price_from": 7900, "unit": "peça", "highlight": true, "includes": ["1 diária com assistente", "Roteiro e entrevistas com áudio dedicado", "Vídeo de 2–3 min", "3 cortes verticais"], "delivery": "15 dias úteis"},
-        {"name": "Autoral", "price_from": 15900, "unit": "peça", "highlight": false, "includes": ["2 diárias", "Roteiro e storyboard", "Drone e motion de abertura e encerramento", "Vídeo de 3–5 min", "6 cortes para redes"], "delivery": "25 dias úteis"}
-      ],
-      "addons": [
-        {"label": "Legendas", "price_from": 60, "unit": "peça"},
-        {"label": "Versão extra de formato (9:16, 1:1, 16:9)", "price_from": 150, "unit": "peça"},
-        {"label": "Drone", "price_from": 600, "unit": "evento"},
-        {"label": "Revisão extra", "price_from": 180, "unit": "hora"}
+      "label": "Audiovisual",
+      "items": [
+        { "id": "edicao-de-reels", "label": "Edição de Reels", "price_from": 120, "unit": null, "desc": "Referência: geralmente inclui edição de vídeo vertical a partir do material enviado." },
+        { "id": "video-cinematografico", "label": "Vídeo cinematográfico", "price_from": 350, "unit": null, "desc": "Referência: geralmente inclui captação, edição e tratamento de cor." },
+        { "id": "aftermovie", "label": "Aftermovie", "price_from": 500, "unit": null, "desc": "Referência: geralmente inclui captação no evento e um vídeo-resumo editado." }
       ]
     },
     {
-      "id": "reels",
-      "label": "Reels e vídeos curtos",
-      "summary": "Vídeos verticais para Instagram, TikTok e Shorts, avulsos ou em pacote.",
-      "tiers": [
-        {"name": "Essencial", "price_from": 850, "unit": "peça", "highlight": false, "includes": ["1 reel de até 60s", "Captação de 1h", "Legenda", "1 revisão"], "delivery": "5 dias úteis"},
-        {"name": "Assinatura", "price_from": 590, "unit": "peça", "highlight": true, "includes": ["Pacote de 4 reels (R$ 2.360)", "1 captação de 3h", "Roteiro curto", "Legendas e capas"], "delivery": "7 dias úteis"},
-        {"name": "Autoral", "price_from": 950, "unit": "peça", "highlight": false, "includes": ["Pacote de 4 reels premium (R$ 3.800)", "2 captações", "Roteiro com gancho", "Motion, lettering e sound design", "2 revisões"], "delivery": "10 dias úteis"}
-      ],
-      "addons": [
-        {"label": "Versão extra de formato", "price_from": 150, "unit": "peça"},
-        {"label": "Uso em anúncios (mídia paga)", "price_from": 30, "unit": "% da peça"},
-        {"label": "Entrega expressa (48–72h)", "price_from": 30, "unit": "% do pacote"}
+      "id": "design",
+      "label": "Design",
+      "items": [
+        { "id": "arte-para-redes", "label": "Arte para redes", "price_from": 80, "unit": null, "desc": "Referência: geralmente inclui uma arte no formato da rede escolhida." },
+        { "id": "motion-design", "label": "Motion Design", "price_from": 250, "unit": null, "desc": "Referência: geralmente inclui uma peça animada curta, como vinheta ou animação tipográfica." },
+        { "id": "identidade-visual", "label": "Identidade visual", "price_from": 600, "unit": null, "desc": "Referência: geralmente inclui logotipo, cores e tipografia da marca." },
+        { "id": "pacote-5-artes", "label": "Pacote 5 artes", "price_from": 300, "unit": null, "desc": "Referência: cinco artes para redes sociais com a mesma linha visual." }
       ]
     },
     {
-      "id": "motion",
-      "label": "Motion design",
-      "summary": "Logos animados, vinhetas e vídeos explicativos em motion 2D.",
-      "tiers": [
-        {"name": "Essencial", "price_from": 950, "unit": "peça", "highlight": false, "includes": ["Logo animado ou vinheta de até 10s", "Feito a partir dos vetores do cliente", "1 revisão"], "delivery": "5 dias úteis"},
-        {"name": "Assinatura", "price_from": 2700, "unit": "peça", "highlight": true, "includes": ["Motion 2D de até 30s", "Styleframes", "Trilha", "2 revisões"], "delivery": "10 dias úteis"},
-        {"name": "Autoral", "price_from": 6900, "unit": "peça", "highlight": false, "includes": ["Até 60s", "Roteiro e storyboard", "Ilustração própria", "Sound design"], "delivery": "20 dias úteis"}
-      ],
-      "addons": [
-        {"label": "Segundo adicional", "price_from": 80, "unit": "segundo"},
-        {"label": "Versão extra de formato", "price_from": 150, "unit": "peça"},
-        {"label": "Legendas", "price_from": 60, "unit": "peça"}
-      ]
-    },
-    {
-      "id": "mensal",
-      "label": "Contrato mensal",
-      "summary": "Produção audiovisual recorrente para redes sociais: captação, reels e fotos todo mês.",
-      "tiers": [
-        {"name": "Essencial", "price_from": 2200, "unit": "mês", "highlight": false, "includes": ["1 captação (3h)", "4 reels", "10 fotos", "Planejamento simples"], "delivery": "Entregas semanais"},
-        {"name": "Assinatura", "price_from": 4200, "unit": "mês", "highlight": true, "includes": ["2 captações", "8 reels", "20 fotos", "4 stories", "Calendário editorial"], "delivery": "Entregas semanais"},
-        {"name": "Autoral", "price_from": 7200, "unit": "mês", "highlight": false, "includes": ["4 captações (semanais)", "12 reels", "30 fotos", "1 motion de até 10s", "Roteiros e relatório mensal"], "delivery": "Entregas semanais"}
-      ],
-      "addons": [
-        {"label": "Reel adicional", "price_from": 450, "unit": "peça"},
-        {"label": "Captação adicional (até 3h)", "price_from": 600, "unit": "evento"},
-        {"label": "Uso em anúncios (mídia paga)", "price_from": 30, "unit": "% da peça"}
+      "id": "consultoria",
+      "label": "Consultoria",
+      "items": [
+        { "id": "consultoria-criativa", "label": "Consultoria criativa", "price_from": 150, "unit": null, "desc": "Referência: geralmente inclui conversa de diagnóstico e orientações para conteúdo e comunicação." }
       ]
     }
   ],
+  "products": {
+    "emaus-collection": null,
+    "la-creme": null,
+    "spider-presets": null,
+    "combos-presets": null,
+    "luts-blackmagic": null
+  },
   "terms": [
-    "Sinal para reservar a data: 30% em eventos e ensaios, 40% em casamentos e 50% em audiovisual e motion.",
-    "Saldo até o dia da captação (eventos e ensaios), parcelado até 15 dias antes (casamentos) ou na entrega final (audiovisual e motion).",
-    "Contrato mensal: pagamento antecipado até o dia 5, mínimo de 3 meses e aviso prévio de 30 dias.",
-    "Pix ou transferência. Cartão parcelado com repasse da taxa.",
-    "2 rodadas de revisão inclusas. As seguintes custam R$ 180/h.",
-    "Reajuste anual pelo IPCA. Casamentos já contratados ficam com o preço travado.",
-    "Deslocamento fora do raio de 30 km, hospedagem e alimentação em viagens são cobrados à parte.",
-    "Direitos autorais do autor e licença de uso definida em contrato. Uso em mídia paga é adicional.",
-    "Proposta válida por 15 dias."
+    "Condições a combinar: a reserva de data pode exigir sinal, definido no orçamento.",
+    "Condições a combinar: deslocamento fora de Campinas e região é calculado sob orçamento.",
+    "Condições a combinar: prazos, formatos de entrega e número de revisões são definidos para cada projeto."
   ]
 }

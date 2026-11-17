@@ -3,55 +3,72 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Chagas — Fotografia e Audiovisual</title>
-  <meta name="description" content="Portfólio de fotografia, vídeo e pós-produção de Chagas. Trabalhos selecionados, serviços, investimento e contato.">
-  <meta name="theme-color" content="#262626">
+  <title>CHAGAS CREATIVE — Fotógrafo e Videomaker em Campinas, SP</title>
+  <meta name="description" content="Fotografia, audiovisual, design e comunicação digital em Campinas e região. Ensaios, eventos, casamentos, Reels e identidade visual. Peça seu orçamento.">
+  <meta name="theme-color" content="#0b0b0c">
   <meta name="color-scheme" content="dark light">
-  <link rel="canonical" href="https://example.com/portfolio/">
-  <!-- Open Graph / Twitter (substituir URLs no deploy) -->
+  <meta name="author" content="Francisco das Chagas Cardoso">
+  <!-- TODO(domínio): trocar URLs relativas por absolutas (https://SEU-DOMINIO/portfolio/) no deploy — canonical, og:url, og:image e JSON-LD. -->
+  <link rel="canonical" href="./">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pt_BR">
-  <meta property="og:site_name" content="Chagas">
-  <meta property="og:title" content="Chagas — Fotografia e Audiovisual">
-  <meta property="og:description" content="Fotografia, vídeo e pós-produção com direção, luz e intenção.">
-  <meta property="og:url" content="https://example.com/portfolio/">
-  <meta property="og:image" content="https://example.com/portfolio/media/videos-comparacao-antes-depois-1280.webp">
-  <meta property="og:image:width" content="1280">
-  <meta property="og:image:height" content="450">
+  <meta property="og:site_name" content="CHAGAS CREATIVE">
+  <meta property="og:title" content="CHAGAS CREATIVE — Fotografia, audiovisual e design em Campinas">
+  <meta property="og:description" content="Criatividade que transforma ideias em experiências. Fotografia, audiovisual, design e comunicação digital desde 2019.">
+  <meta property="og:url" content="./">
+  <meta property="og:image" content="media/social-comunicafe-1200x630-1200.webp">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Peça de comunicação digital criada por CHAGAS CREATIVE">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="CHAGAS CREATIVE — Fotógrafo e Videomaker em Campinas">
+  <meta name="twitter:description" content="Fotografia, audiovisual, design e comunicação digital desde 2019.">
+  <meta name="twitter:image" content="media/social-comunicafe-1200x630-1200.webp">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- FONTS: Agent 1 (Creative Director) fornece a URL final do Google Fonts; o orquestrador troca a linha abaixo. -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400..800;1,400..600&family=Pacifico&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="assets/css/tokens.css">
   <link rel="stylesheet" href="assets/css/base.css">
   <script>document.documentElement.classList.replace('no-js','js');</script>
   <script type="module" src="assets/js/main.js"></script>
 
+  <!-- TODO(domínio): "url"/"@id"/"image" relativos até existir domínio definitivo. -->
   <script type="application/ld+json" id="ld-json">
   {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "Person",
-        "@id": "https://example.com/portfolio/#person",
-        "name": "Chagas",
-        "jobTitle": "Fotógrafo e videomaker",
-        "url": "https://example.com/portfolio/",
-        "sameAs": ["https://instagram.com/PLACEHOLDER"]
+        "@id": "./#person",
+        "name": "Francisco das Chagas Cardoso",
+        "alternateName": "Chagas",
+        "jobTitle": "Fotógrafo, videomaker e designer",
+        "url": "./",
+        "email": "mailto:hh3356577@gmail.com",
+        "telephone": "+55-19-98990-5361",
+        "sameAs": ["https://www.instagram.com/chagas_catolico/"]
       },
       {
         "@type": "ProfessionalService",
-        "@id": "https://example.com/portfolio/#service",
-        "name": "Chagas — Fotografia e Audiovisual",
-        "url": "https://example.com/portfolio/",
-        "image": "https://example.com/portfolio/media/videos-comparacao-antes-depois-1280.webp",
-        "email": "PLACEHOLDER@example.com",
-        "telephone": "+55-00-00000-0000",
-        "areaServed": "BR",
-        "address": { "@type": "PostalAddress", "addressLocality": "PLACEHOLDER", "addressCountry": "BR" },
-        "founder": { "@id": "https://example.com/portfolio/#person" },
-        "serviceType": ["Fotografia", "Produção audiovisual", "Pós-produção"]
+        "@id": "./#business",
+        "name": "CHAGAS CREATIVE",
+        "description": "Fotografia, audiovisual, design e comunicação digital desde 2019.",
+        "url": "./",
+        "image": "media/social-comunicafe-1200x630-1200.webp",
+        "email": "hh3356577@gmail.com",
+        "telephone": "+55-19-98990-5361",
+        "foundingDate": "2019",
+        "founder": { "@id": "./#person" },
+        "address": { "@type": "PostalAddress", "addressLocality": "Campinas", "addressRegion": "SP", "addressCountry": "BR" },
+        "areaServed": [
+          { "@type": "City", "name": "Campinas" },
+          { "@type": "AdministrativeArea", "name": "Região Metropolitana de Campinas, SP" }
+        ],
+        "sameAs": ["https://www.instagram.com/chagas_catolico/", "https://wa.me/5519989905361"],
+        "knowsAbout": ["Fotografia", "Audiovisual", "Design", "Motion design", "Comunicação digital"],
+        "serviceType": ["Fotografia de eventos", "Ensaios fotográficos", "Fotografia de casamento", "Vídeo cinematográfico", "Edição de Reels", "Aftermovie", "Identidade visual", "Motion design", "Consultoria criativa"]
       }
     ]
   }
@@ -60,93 +77,107 @@
 <body>
   <a class="skip-link" href="#main">Pular para o conteúdo</a>
 
-  <div class="app-window">
+  <!-- HEADER / TOOLBAR — hooks do nav.js: .site-header, .nav-toggle[data-nav-toggle], #site-nav[data-nav-menu] -->
   <header class="site-header app-toolbar" data-component="header">
     <div class="site-header__inner">
-      <span class="app-toolbar__dots" aria-hidden="true"><i></i><i></i><i></i></span>
-      <a class="brand" href="#sobre"><span class="brand__name" data-bind="site.name">Chagas</span><span class="brand__file" aria-hidden="true">.portfolio</span></a>
+      <a class="brand" href="#home" aria-label="CHAGAS CREATIVE — início">
+        <span class="brand__name">CHAGAS</span><span class="brand__suffix">CREATIVE</span>
+      </a>
       <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="site-nav">
         <span class="nav-toggle__bars" aria-hidden="true"></span>
-        <span class="nav-toggle__label">Ferramentas</span>
+        <span class="nav-toggle__label">Menu</span>
       </button>
       <nav class="site-nav" id="site-nav" data-nav-menu aria-label="Principal">
-        <ul class="site-nav__list">
-          <li><a class="tool site-nav__link" href="#sobre" title="Início (Pincel)"><svg class="tool__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.5 4.5l5 5L11 18H6v-5z"/><path d="M4 21c1.5-.5 2-1.5 2-3"/></svg><span class="tool__label">Início</span><span class="tool__caret" aria-hidden="true"></span></a></li>
-          <li><a class="tool site-nav__link" href="#trabalhos" title="Trabalhos (Mão)"><svg class="tool__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11m0-6.5a1.5 1.5 0 0 1 3 0V11m0-5a1.5 1.5 0 0 1 3 0V12m0-3a1.5 1.5 0 0 1 3 0v5a7 7 0 0 1-7 7h-1a7 7 0 0 1-5.6-2.8L4 16a1.6 1.6 0 0 1 2.4-2L8 15.5"/></svg><span class="tool__label">Trabalhos</span><span class="tool__caret" aria-hidden="true"></span></a></li>
-          <li><a class="tool site-nav__link" href="#servicos" title="Serviços (Balde)"><svg class="tool__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 11l7-7 8 8-7 7z"/><path d="M4 11h15"/><path d="M20 16s1.5 2 1.5 3a1.5 1.5 0 0 1-3 0c0-1 1.5-3 1.5-3z"/></svg><span class="tool__label">Serviços</span><span class="tool__caret" aria-hidden="true"></span></a></li>
-          <li><a class="tool site-nav__link" href="#investimento" title="Planos (Mover)"><svg class="tool__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v18M3 12h18"/><path d="M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/></svg><span class="tool__label">Planos</span><span class="tool__caret" aria-hidden="true"></span></a></li>
-          <li><a class="tool site-nav__link" href="#contato" title="Contato (Texto)"><svg class="tool__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 6V4h14v2M12 4v16M9 20h6"/></svg><span class="tool__label">Contato</span><span class="tool__caret" aria-hidden="true"></span></a></li>
-        </ul>
+        <ol class="site-nav__list">
+          <li><a class="tool site-nav__link" href="#home"><span class="tool__index" aria-hidden="true">00</span><span class="tool__label">Início</span></a></li>
+          <li><a class="tool site-nav__link" href="#sobre"><span class="tool__index" aria-hidden="true">01</span><span class="tool__label">Sobre</span></a></li>
+          <li><a class="tool site-nav__link" href="#servicos"><span class="tool__index" aria-hidden="true">02</span><span class="tool__label">Serviços</span></a></li>
+          <li><a class="tool site-nav__link" href="#portfolio"><span class="tool__index" aria-hidden="true">03</span><span class="tool__label">Portfólio</span></a></li>
+          <li><a class="tool site-nav__link" href="#projetos"><span class="tool__index" aria-hidden="true">04</span><span class="tool__label">Projetos</span></a></li>
+          <li><a class="tool site-nav__link" href="#produtos"><span class="tool__index" aria-hidden="true">05</span><span class="tool__label">Produtos</span></a></li>
+          <li><a class="tool site-nav__link" href="#orcamento"><span class="tool__index" aria-hidden="true">06</span><span class="tool__label">Orçamento</span></a></li>
+          <li><a class="tool site-nav__link" href="#contato"><span class="tool__index" aria-hidden="true">07</span><span class="tool__label">Contato</span></a></li>
+        </ol>
       </nav>
-      <a class="swatch-cta" href="#contato"><span class="swatch-cta__dot" aria-hidden="true"></span><span class="swatch-cta__label">Orçamento</span></a>
+      <a class="swatch-cta" href="#orcamento"><span class="swatch-cta__dot" aria-hidden="true"></span><span class="swatch-cta__label">Solicitar orçamento</span></a>
     </div>
   </header>
 
   <main id="main" class="canvas" tabindex="-1">
-    <!-- SOBRE (hero) -->
-    <section class="profile" data-theme="canvas" id="sobre" aria-labelledby="profile-name">
-      <div class="profile__inner container">
-        <figure class="profile__portrait" data-slot="profile-photo" data-reveal>
-          <!-- render/profile.js: foto real ou monograma com iniciais -->
-          <div class="monogram" aria-hidden="true"><span class="monogram__letter">CH</span></div>
-        </figure>
-        <div class="profile__body" data-reveal>
-          <div class="profile__labelrow">
-            <p class="profile__label"><span class="selection-box">Sobre mim</span></p>
-            <svg class="doodle" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path d="M50 8c22 1 40 18 40 41S72 92 49 91 9 72 10 49 27 7 50 8z"/><path d="M37 36c0 5 1 9 2 11M60 34c1 5 1 9 0 12"/><path d="M28 60c7 13 33 17 44-2"/><path d="M24 57l6 3M70 55l5 5"/></svg>
-          </div>
-          <h1 class="profile__name" id="profile-name" data-bind="site.name">Chagas</h1>
-          <p class="profile__role pill" data-bind="profile.role">Fotógrafo &amp; Videomaker</p>
-          <p class="profile__about" data-bind="site.about"></p>
-          <span class="profile__rule" aria-hidden="true"></span>
-          <p class="profile__meta"><span class="visually-hidden">Localização: </span><span data-bind="site.location"></span></p>
-          <div class="profile__actions">
-            <a class="btn btn--primary" href="#trabalhos">Ver trabalhos</a>
-            <a class="btn btn--ghost" href="#contato">Pedir orçamento</a>
-          </div>
+
+    <!-- 00 HOME / HERO — texto fixo do briefing; hooks cinematográficos em .hero__frame -->
+    <section class="hero" id="home" aria-labelledby="hero-title">
+      <div class="hero__frame" data-hero-frame aria-hidden="true">
+        <span class="hero__crop hero__crop--tl"></span><span class="hero__crop hero__crop--tr"></span>
+        <span class="hero__crop hero__crop--bl"></span><span class="hero__crop hero__crop--br"></span>
+        <span class="hero__meta hero__meta--top">REC · 1920×1080 · 24fps</span>
+        <span class="hero__meta hero__meta--bottom">Campinas — SP · desde 2019</span>
+      </div>
+      <div class="hero__inner container">
+        <p class="hero__eyebrow" data-reveal><span class="selection-box">CHAGAS CREATIVE</span></p>
+        <h1 class="hero__title" id="hero-title" data-reveal>Criatividade que transforma ideias em experiências.</h1>
+        <p class="hero__subtitle" data-reveal>Fotografia, audiovisual, design e comunicação digital. Transformando ideias em histórias visuais desde 2019.</p>
+        <div class="hero__actions" data-reveal>
+          <a class="btn btn--primary" href="#projetos">Explorar projetos</a>
+          <a class="btn btn--ghost" href="#orcamento">Solicitar orçamento</a>
         </div>
       </div>
+      <a class="hero__scroll" href="#sobre" aria-label="Rolar para Sobre"><span aria-hidden="true">Scroll ↓</span></a>
     </section>
 
-    <!-- CURRÍCULO (painel) -->
-    <section class="cv-panel" data-theme="blue" id="curriculo" aria-label="Currículo">
-      <div class="cv-panel__inner">
-        <div class="cv-panel__col cv-panel__col--main" data-theme="blue">
-          <span class="cv-panel__menu" aria-hidden="true"></span>
-          <section class="cv-block" aria-labelledby="cv-exp">
-            <h2 class="cv-block__title" id="cv-exp">Experiência</h2>
-            <ol class="timeline" data-slot="experience"></ol>
-          </section>
-          <section class="cv-block" aria-labelledby="cv-edu">
-            <h2 class="cv-block__title" id="cv-edu">Formação</h2>
-            <ol class="timeline" data-slot="education"></ol>
-          </section>
-        </div>
-        <div class="cv-panel__col cv-panel__col--side" data-theme="navy">
-          <span class="cv-panel__scroll" aria-hidden="true"></span>
-          <section class="cv-block" aria-labelledby="cv-soft">
-            <h2 class="cv-block__title" id="cv-soft">Software</h2>
-            <ul class="software" data-slot="software"></ul>
-          </section>
-          <section class="cv-block" aria-labelledby="cv-skills">
-            <h2 class="cv-block__title" id="cv-skills">Habilidades</h2>
-            <ul class="skills" data-slot="skills"></ul>
-          </section>
-          <section class="cv-block" aria-labelledby="cv-links">
-            <h2 class="cv-block__title" id="cv-links">Portfólio</h2>
-            <ul class="profile-links" data-slot="profile-links"></ul>
-          </section>
-        </div>
-      </div>
-    </section>
-
-    <!-- TRABALHOS -->
-    <section class="section work" data-theme="canvas" id="trabalhos" aria-labelledby="work-title">
-      <div class="container">
+    <!-- 01 SOBRE -->
+    <section class="section about" id="sobre" aria-labelledby="about-title">
+      <div class="container about__grid">
         <header class="section__head" data-reveal>
           <p class="section__num" aria-hidden="true">01</p>
-          <h2 class="section__title" id="work-title">Trabalhos</h2>
-          <p class="section__lead">Seleção de projetos. Escolha uma categoria ou abra um projeto para ver todas as mídias.</p>
+          <h2 class="section__title" id="about-title">Sobre</h2>
+        </header>
+        <figure class="about__photo" data-slot="about-photo" data-reveal>
+          <!-- render: foto real (about.photo) ou monograma "CH" como placeholder honesto -->
+          <div class="monogram" aria-hidden="true"><span class="monogram__letter">CH</span></div>
+        </figure>
+        <div class="about__text" data-slot="about" data-reveal></div>
+        <section class="about__timeline" aria-labelledby="timeline-title">
+          <h3 class="subhead" id="timeline-title">Trajetória</h3>
+          <ol class="timeline" data-slot="timeline"></ol>
+        </section>
+      </div>
+    </section>
+
+    <!-- 02 SERVIÇOS -->
+    <section class="section services" id="servicos" aria-labelledby="services-title">
+      <div class="container">
+        <header class="section__head" data-reveal>
+          <p class="section__num" aria-hidden="true">02</p>
+          <h2 class="section__title" id="services-title">Serviços</h2>
+          <p class="section__lead">Áreas de atuação, do registro à estratégia.</p>
+        </header>
+        <ol class="areas" data-slot="areas"></ol>
+
+        <div class="services__extras">
+          <section class="toolkit" aria-labelledby="tools-title">
+            <h3 class="subhead" id="tools-title">Ferramentas</h3>
+            <ul class="tools" data-slot="tools"></ul>
+          </section>
+          <section class="gear" aria-labelledby="gear-title">
+            <h3 class="subhead" id="gear-title">Equipamentos já utilizados</h3>
+            <div class="gear__list" data-slot="equipment"></div>
+          </section>
+          <section class="knowledge" aria-labelledby="knowledge-title">
+            <h3 class="subhead" id="knowledge-title">Conhecimentos</h3>
+            <ul class="knowledge__list" data-slot="knowledge"></ul>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 PORTFÓLIO (trabalhos reais) — markup/classes preservados -->
+    <section class="section work" id="portfolio" aria-labelledby="work-title">
+      <div class="container">
+        <header class="section__head" data-reveal>
+          <p class="section__num" aria-hidden="true">03</p>
+          <h2 class="section__title" id="work-title">Portfólio</h2>
+          <p class="section__lead">Trabalhos realizados. Escolha uma categoria ou abra um projeto para ver todas as mídias.</p>
         </header>
 
         <div class="filters" data-slot="filters" role="group" aria-label="Filtrar por categoria"></div>
@@ -165,42 +196,64 @@
       </div>
     </section>
 
-    <!-- SERVIÇOS -->
-    <section class="section services" data-theme="blue" id="servicos" aria-labelledby="services-title">
+    <!-- 04 PROJETOS SELECIONADOS (realizado | pessoal | conceitual) -->
+    <section class="section selected" id="projetos" aria-labelledby="selected-title">
       <div class="container">
-        <header class="section__head" data-reveal>
-          <p class="section__num" aria-hidden="true">02</p>
-          <h2 class="section__title" id="services-title">Serviços</h2>
-        </header>
-        <ol class="service-list" data-slot="services"></ol>
-      </div>
-    </section>
-
-    <!-- INVESTIMENTO -->
-    <section class="section pricing" data-theme="navy" id="investimento" aria-labelledby="pricing-title">
-      <div class="container">
-        <header class="section__head" data-reveal>
-          <p class="section__num" aria-hidden="true">03</p>
-          <h2 class="section__title" id="pricing-title">Planos</h2>
-          <p class="pricing__disclaimer" role="note" data-slot="pricing-disclaimer"></p>
-        </header>
-        <div class="pricing__groups" data-slot="pricing"></div>
-        <ul class="pricing__terms" data-slot="pricing-terms"></ul>
-      </div>
-    </section>
-
-    <!-- CONTATO -->
-    <section class="section contact" data-theme="canvas" id="contato" aria-labelledby="contact-title">
-      <div class="container contact__grid">
         <header class="section__head" data-reveal>
           <p class="section__num" aria-hidden="true">04</p>
-          <h2 class="section__title" id="contact-title">Contato</h2>
-          <p class="section__lead">Conte sobre o projeto. Respondo com proposta e disponibilidade.</p>
-          <ul class="contact__links" data-slot="contact-links"></ul>
+          <h2 class="section__title" id="selected-title">Projetos selecionados</h2>
+          <p class="section__lead">Projetos realizados, pessoais e conceituais.</p>
+        </header>
+        <div class="selected__filters filters" data-slot="selected-filters" role="group" aria-label="Filtrar projetos por tipo"></div>
+        <ul class="selected__grid" data-slot="selected-projects" aria-live="polite"></ul>
+      </div>
+    </section>
+
+    <!-- 05 PRODUTOS DIGITAIS -->
+    <section class="section products" id="produtos" aria-labelledby="products-title">
+      <div class="container">
+        <header class="section__head" data-reveal>
+          <p class="section__num" aria-hidden="true">05</p>
+          <h2 class="section__title" id="products-title">Produtos digitais</h2>
+          <p class="section__lead">Presets, LUTs e recursos para criadores. Disponibilidade a confirmar.</p>
+        </header>
+        <ul class="products__grid" data-slot="products"></ul>
+      </div>
+    </section>
+
+    <!-- 06 ORÇAMENTO (preços + formulário) -->
+    <section class="section quote" id="orcamento" aria-labelledby="quote-title">
+      <div class="container">
+        <header class="section__head" data-reveal>
+          <p class="section__num" aria-hidden="true">06</p>
+          <h2 class="section__title" id="quote-title">Orçamento</h2>
+          <p class="pricing__disclaimer" role="note" data-slot="pricing-disclaimer"></p>
         </header>
 
-        <form class="form" id="contact-form" novalidate data-reveal>
-          <div class="form__panelbar" aria-hidden="true"><span>Propriedades</span><span>Pedido de orçamento</span></div>
+        <section class="pricing" aria-labelledby="pricing-title">
+          <h3 class="subhead" id="pricing-title">Valores de referência</h3>
+          <div class="pricing__groups" data-slot="pricing"></div>
+          <p class="pricing__note" data-slot="pricing-note"></p>
+          <ul class="pricing__terms" data-slot="pricing-terms"></ul>
+        </section>
+
+        <form class="form quote-form" id="quote-form" novalidate aria-labelledby="form-title" data-reveal>
+          <h3 class="form__title" id="form-title">Solicitar orçamento</h3>
+          <p class="form__intro">Selecione os serviços, conte sobre o projeto e envie pelo WhatsApp ou e-mail.</p>
+
+          <fieldset class="form__fieldset form__field--full" aria-describedby="f-services-err">
+            <legend class="form__label">Serviços de interesse</legend>
+            <div class="form__options" data-slot="service-options"></div>
+            <p class="form__error" id="f-services-err" data-error-for="services" hidden></p>
+          </fieldset>
+
+          <div class="form__field form__field--full">
+            <label class="form__label" for="f-message">Sobre o projeto</label>
+            <textarea class="form__input form__textarea" id="f-message" name="message" rows="5" required minlength="10" aria-describedby="f-message-help f-message-err" placeholder="Data, local, duração, entregáveis…"></textarea>
+            <p class="form__help" id="f-message-help">Data prevista, local e o que você precisa receber.</p>
+            <p class="form__error" id="f-message-err" data-error-for="message" hidden></p>
+          </div>
+
           <div class="form__field">
             <label class="form__label" for="f-name">Nome</label>
             <input class="form__input" id="f-name" name="name" type="text" autocomplete="name" required minlength="2" aria-describedby="f-name-err">
@@ -212,46 +265,58 @@
             <p class="form__error" id="f-email-err" data-error-for="email" hidden></p>
           </div>
           <div class="form__field">
-            <label class="form__label" for="f-service">Serviço</label>
-            <select class="form__input" id="f-service" name="service" data-slot="service-options">
-              <option value="">Selecione (opcional)</option>
-            </select>
+            <label class="form__label" for="f-phone">WhatsApp / telefone <span class="form__optional">(opcional)</span></label>
+            <input class="form__input" id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="(19) 90000-0000" aria-describedby="f-phone-err">
+            <p class="form__error" id="f-phone-err" data-error-for="phone" hidden></p>
           </div>
-          <div class="form__field">
-            <label class="form__label" for="f-date">Data prevista <span class="form__optional">(opcional)</span></label>
-            <input class="form__input" id="f-date" name="date" type="date">
-          </div>
-          <div class="form__field form__field--full">
-            <label class="form__label" for="f-message">Mensagem</label>
-            <textarea class="form__input form__textarea" id="f-message" name="message" rows="5" required minlength="10" aria-describedby="f-message-err"></textarea>
-            <p class="form__error" id="f-message-err" data-error-for="message" hidden></p>
-          </div>
+
           <div class="form__hp" aria-hidden="true">
             <label for="f-website">Não preencha</label>
             <input id="f-website" name="_gotcha" type="text" tabindex="-1" autocomplete="off">
           </div>
+
           <div class="form__actions form__field--full">
-            <button class="btn btn--primary" type="submit">Enviar mensagem</button>
+            <button class="btn btn--primary" type="submit" name="channel" value="whatsapp" data-submit="whatsapp">Enviar pelo WhatsApp</button>
+            <button class="btn btn--ghost" type="submit" name="channel" value="email" data-submit="email">Enviar por e-mail</button>
             <p class="form__hint" data-slot="form-hint"></p>
           </div>
-          <p class="form__status" role="status" aria-live="polite" data-slot="form-status"></p>
+          <p class="form__status form__field--full" role="status" aria-live="polite" data-slot="form-status"></p>
         </form>
+      </div>
+    </section>
+
+    <!-- 07 CONTATO -->
+    <section class="section contact" id="contato" aria-labelledby="contact-title">
+      <div class="container">
+        <header class="section__head" data-reveal>
+          <p class="section__num" aria-hidden="true">07</p>
+          <h2 class="section__title" id="contact-title">Contato</h2>
+          <p class="section__lead">Campinas e região — SP. Respondo com disponibilidade e proposta.</p>
+        </header>
+        <ul class="contact__links" data-slot="contact-links"></ul>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
     <div class="container site-footer__inner">
-      <h2 class="site-footer__title">Contato:</h2>
-      <p class="site-footer__copy">© <span data-slot="year">2026</span> <span data-bind="site.name">Chagas</span>. Todos os direitos reservados.</p>
+      <h2 class="site-footer__title">CHAGAS CREATIVE</h2>
       <ul class="site-footer__links" data-slot="footer-links"></ul>
-      <a class="site-footer__top" href="#sobre">Voltar ao topo ↑</a>
+      <p class="site-footer__copy">© <span data-slot="year">2026</span> CHAGAS CREATIVE · Francisco das Chagas Cardoso. Todos os direitos reservados.</p>
+      <a class="site-footer__top" href="#home">Voltar ao topo ↑</a>
     </div>
   </footer>
-  </div><!-- /.app-window -->
+
+  <!-- WhatsApp flutuante (href real; JS pode acrescentar ?text=) -->
+  <a class="whatsapp-float" data-whatsapp-float href="https://wa.me/5519989905361" target="_blank" rel="noopener" aria-label="Conversar no WhatsApp (abre em nova aba)">
+    <svg class="whatsapp-float__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.5-2-1-1 .8a5 5 0 0 1-2.3-2.3l.8-1-1-2z"/></svg>
+    <span class="whatsapp-float__label">WhatsApp</span>
+  </a>
+
+  <!-- Lightbox: o dialog [data-lightbox-dialog] é criado por assets/js/lightbox.js (sem markup estático, evita duplicar). -->
 
   <noscript>
-    <p class="noscript">Este portfólio usa JavaScript para carregar os trabalhos. Para contato direto, escreva para o e-mail informado no Instagram.</p>
+    <p class="noscript">Este site carrega o portfólio com JavaScript. Contato direto: WhatsApp <a href="https://wa.me/5519989905361">+55 19 98990-5361</a> · <a href="mailto:hh3356577@gmail.com">hh3356577@gmail.com</a> · Instagram <a href="https://www.instagram.com/chagas_catolico/">@chagas_catolico</a>.</p>
   </noscript>
 </body>
 </html>

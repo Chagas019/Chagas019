@@ -24,3 +24,6 @@ export const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 export const slot = (name) => document.querySelector(`[data-slot="${name}"]`);
 export function clear(node) { if (node) node.replaceChildren(); return node; }
 export const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+export const isList = (n) => !!n && /^(UL|OL)$/.test(n.tagName);
+/** Cria filho adequado ao slot: <li> se o slot for lista, senão `tag`. */
+export const item = (root, tag, attrs, ...children) => h(isList(root) ? 'li' : tag, attrs, ...children);
