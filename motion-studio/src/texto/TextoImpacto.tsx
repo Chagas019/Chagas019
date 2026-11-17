@@ -94,8 +94,8 @@ export const TextoImpacto: React.FC<TextoImpactoProps> = ({
             const p = interpolate(frame, [e, e + duracaoEntrada], [0, 1], {easing: curvas.entrada, extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
             const track = interpolate(frame, [e, e + duracaoTracking], [trackingInicial, trackingFinal], {easing: curvas.entrada, extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
             // Saída escalonada (2 frames por palavra, na ordem de leitura).
-            const s0 = saidaEm === undefined ? Infinity : saidaEm + i * 2;
-            const s = interpolate(frame, [s0, s0 + duracaoSaida], [0, 1], {easing: curvas.saida, extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+            const s0 = saidaEm === undefined ? undefined : saidaEm + i * 2;
+            const s = s0 === undefined ? 0 : interpolate(frame, [s0, s0 + duracaoSaida], [0, 1], {easing: curvas.saida, extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
             const y = (1 - p) * 108 + (tipoSaida === 'mascara' ? s * -108 : 0);
             const blurSaida = tipoSaida === 'desfoque' ? s * tamanho * 0.08 : 0;
             const opSaida = tipoSaida === 'desfoque' ? 1 - s : 1;
@@ -129,7 +129,8 @@ export const TextoImpacto: React.FC<TextoImpactoProps> = ({
                     position: 'absolute',
                     inset: 0,
                     transform: `translateY(${y}%)`,
-                    opacity: opSaida,
+                    // Antes da entrada nada é desenhado (o blur da sombra/brilho vazaria pela máscara).
+                    opacity: frame < e ? 0 : opSaida,
                     filter: blurSaida > 0.05 ? `blur(${blurSaida}px)` : undefined,
                   }}
                 >

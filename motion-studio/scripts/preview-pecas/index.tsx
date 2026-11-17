@@ -36,6 +36,7 @@ const Orn: React.FC = () => (
       <div style={{color: p.texto, fontFamily: 'Oswald, sans-serif', fontSize: 90, letterSpacing: '0.04em'}}>CONFIE.</div>
     </Colchetes>
     <Divisor largura={600} cor={p.primaria} entradaEm={0} />
+
     <div style={{display: 'flex', gap: 60}}>
       <Marcador tamanho={30} cor={p.primaria} entradaEm={0} />
       <Marcador tamanho={30} cor={p.primaria} entradaEm={0} tipo="ponto" brilho={0.6} />

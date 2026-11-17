@@ -24,7 +24,7 @@ export const escalaFe = {
   editorialHero: 88,
   editorial: 64,
   editorialMenor: 48, // mínimo legível no celular
-  referencia: 34, // "JOÃO 14,6" em versalete com tracking aberto
+  referencia: 38, // "JOÃO 14,6" em versalete com tracking aberto
 } as const;
 
 /** Largura (em `em`) de um texto, com tracking em em por caractere. Determinístico (tabela medida). */

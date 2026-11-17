@@ -20,7 +20,7 @@ export type EstradaProps = {
   fugaX?: number;
   /** Curvatura da estrada perto do horizonte (-1 esquerda · 0 reta · 1 direita). */
   curva?: number;
-  /** Meia-largura da estrada na base, fração da largura (padrão 0.5). */
+  /** Meia-largura da estrada na base, fração da largura (padrão 0.44). */
   larguraBase?: number;
   /** Deslocamento lateral de câmera em px (base 1080): colinas fazem parallax por profundidade. */
   deriva?: number;
@@ -49,7 +49,7 @@ export const Estrada: React.FC<EstradaProps> = ({
   horizonte = 0.6,
   fugaX = 0.5,
   curva = 0,
-  larguraBase = 0.5,
+  larguraBase = 0.44,
   deriva = 0,
   nevoa = 1,
   marcos = true,
@@ -139,14 +139,14 @@ export const Estrada: React.FC<EstradaProps> = ({
   }
 
   // Pedras / tufos no acostamento (mundo fixo, deslizam com o avanço).
-  const ZP = 120;
-  const pedras = Array.from({length: 160}, (_, k) => {
+  const ZP = 32;
+  const pedras = Array.from({length: 120}, (_, k) => {
     const lado = random(`${seed}-p-lado-${k}`) < 0.5 ? -1 : 1;
-    const xw = lado * (1.08 + random(`${seed}-p-x-${k}`) * 2.6);
+    const xw = lado * (1.06 + random(`${seed}-p-x-${k}`) * 1.5);
     const z = 0.7 + modp(random(`${seed}-p-z-${k}`) * ZP - avanco, ZP);
     const t = 1 / z;
     const r = (0.6 + random(`${seed}-p-r-${k}`) * 1.6) * 9 * u * t;
-    return {x: cx(t) + xw * meiaBase * t, y: yt(t), r, a: Math.exp(-z / 50) * (0.45 + random(`${seed}-p-a-${k}`) * 0.5)};
+    return {x: cx(t) + xw * meiaBase * t, y: yt(t), r, a: Math.exp(-z / 22) * (0.55 + random(`${seed}-p-a-${k}`) * 0.5)};
   });
 
   // Marcos laterais (a cada 14 unidades, alternados).
@@ -277,7 +277,7 @@ export const Estrada: React.FC<EstradaProps> = ({
 };
 
 /** Pontos úteis para posicionar o personagem sobre a estrada. */
-export const geometriaEstrada = (W: number, H: number, horizonte = 0.6, fugaX = 0.5, larguraBase = 0.5) => {
+export const geometriaEstrada = (W: number, H: number, horizonte = 0.6, fugaX = 0.5, larguraBase = 0.44) => {
   const hy = H * horizonte;
   const yBase = H * 1.04;
   return {

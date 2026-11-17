@@ -26,6 +26,8 @@ export const CORES_LUZ = {
 type CorLuz = keyof typeof CORES_LUZ;
 
 // ═════════════════════════ 1. TRANSIÇÕES ═════════════════════════
+// Contrato de todas as apresentações: identidade em p=0 (exiting) e p=1 (entering), pois o TransitionSeries
+// mantém os wrappers montados durante a cena inteira com o progresso travado.
 
 // ── vazamentoDeLuz ──────────────────────────────────────────────
 export type VazamentoProps = {
@@ -138,7 +140,7 @@ const Revelacao: React.FC<TransitionPresentationComponentProps<RevelacaoProps>> 
   const brilhoCena = 1 + faixa(p, 0, 0.9, 0.5, 0, curvas.entrada);
   return (
     <AbsoluteFill>
-      <AbsoluteFill style={{WebkitMaskImage: mascara, maskImage: mascara, transform: `scale(${escala})`, filter: `brightness(${brilhoCena.toFixed(3)})`}}>
+      <AbsoluteFill style={{WebkitMaskImage: p >= 1 ? undefined : mascara, maskImage: p >= 1 ? undefined : mascara, transform: `scale(${escala})`, filter: `brightness(${brilhoCena.toFixed(3)})`}}>
         {children}
       </AbsoluteFill>
       {/* o feixe de luz que "rasga" a cena acompanhando a borda da máscara */}
@@ -205,9 +207,12 @@ const FadeNegro: React.FC<TransitionPresentationComponentProps<FadeNegroProps>> 
     // mergulho: escurece com ease-in (cai no fim) e afunda 1,5%
     const o = faixa(p, 0, meio, 1, 0, curvas.saida);
     const s = 1 - faixa(p, 0, meio, 0, 0.015);
+    // IMPORTANTE: o TransitionSeries renderiza este wrapper durante TODA a cena (progresso 0 antes da transição),
+    // então ele precisa ser transparente/identidade em p=0 — nada de fundo opaco (cobriria a cena anterior).
     return (
-      <AbsoluteFill style={{backgroundColor: cor}}>
-        <AbsoluteFill style={{opacity: o, transform: `scale(${s})`}}>{children}</AbsoluteFill>
+      <AbsoluteFill>
+        <AbsoluteFill style={{transform: `scale(${s})`}}>{children}</AbsoluteFill>
+        {o < 1 ? <AbsoluteFill style={{backgroundColor: cor, opacity: 1 - o}} /> : null}
       </AbsoluteFill>
     );
   }
@@ -230,8 +235,9 @@ export const SaidaParaNegro: React.FC<{inicio: number; duracao?: number; cor?: s
   const o = interpolate(frame, [inicio, inicio + duracao], [1, 0], {...clamp, easing: curvas.suave});
   const s = 1 - interpolate(frame, [inicio, inicio + duracao], [0, 0.015], {...clamp, easing: curvas.suave});
   return (
-    <AbsoluteFill style={{backgroundColor: cor}}>
-      <AbsoluteFill style={{opacity: o, transform: `scale(${s})`}}>{children}</AbsoluteFill>
+    <AbsoluteFill>
+      <AbsoluteFill style={{transform: `scale(${s})`}}>{children}</AbsoluteFill>
+      {o < 1 ? <AbsoluteFill style={{backgroundColor: cor, opacity: 1 - o}} /> : null}
     </AbsoluteFill>
   );
 };

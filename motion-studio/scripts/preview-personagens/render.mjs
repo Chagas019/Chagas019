@@ -16,6 +16,6 @@ const dir = path.join(raiz, 'render/revisao', id);
 fs.mkdirSync(dir, {recursive: true});
 for (const frame of lista.split(',').map(Number)) {
   const output = path.join(dir, `frame-${String(frame).padStart(4, '0')}-${gl}.png`);
-  await renderStill({serveUrl, composition: comp, frame, output, browserExecutable, chromiumOptions, scale: 0.5});
+  await renderStill({serveUrl, composition: comp, frame, output, browserExecutable, chromiumOptions, scale: Number(process.env.ESCALA ?? 0.5)});
   console.log('ok', path.relative(raiz, output));
 }

@@ -175,7 +175,8 @@ for (let k = 0; k < ACORDES.length - 1; k++) {
   const tProx = ACORDES[k + 1][0];
   const ac = PC[nome];
   const ultimo = k === ACORDES.length - 2;
-  const tPedal = ultimo ? DUR : tProx + (sec === 'A' ? 0.5 : 0.12); // pedal troca logo após o próximo acorde
+  const antesDoRespiro = ACORDES[k + 1][2] === 'R';
+  const tPedal = ultimo ? DUR : tProx + (antesDoRespiro ? 0.08 : sec === 'A' ? 0.5 : 0.12); // pedal troca logo após o próximo acorde
   const e = energia(t + 0.05);
 
   if (sec === 'R') {
@@ -223,9 +224,9 @@ const pads = estereo(N);
 const serraPad = tabelaSerra(14);
 const serraCorda = tabelaSerra(20);
 
-const nivelPad = curva([[0, 0.05], [10.6, 0.09], [11.2, 0.04], [11.8, 0.1], [26.6, 0.13], [CLIMAX, 0.17], [FIM_VOZ, 0.13], [DUR, 0.06]]);
+const nivelPad = curva([[0, 0.05], [10.6, 0.09], [11.2, 0.025], [11.8, 0.1], [26.6, 0.13], [CLIMAX, 0.17], [FIM_VOZ, 0.13], [DUR, 0.06]]);
 const nivelCorda = curva([[0, 0], [11.8, 0], [14.5, 0.04], [26.6, 0.06], [33.8, 0.09], [38.0, 0.07], [CLIMAX, 0.12], [FIM_VOZ, 0.08], [DUR, 0]]);
-const nivelDrone = curva([[0, 0], [2.5, 0.07], [10.6, 0.08], [11.2, 0.04], [13, 0.06], [CLIMAX, 0.08], [DUR - 2, 0.04], [DUR, 0]]);
+const nivelDrone = curva([[0, 0], [2.5, 0.07], [10.6, 0.08], [11.2, 0.025], [13, 0.06], [CLIMAX, 0.08], [DUR - 2, 0.04], [DUR, 0]]);
 
 function voz(buf, t0, t1, f, nivel, tabela, {ataque, soltura, detunes, vibrato = 0, fasesSeed}) {
   const rnd = prng(fasesSeed);

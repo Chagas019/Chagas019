@@ -116,8 +116,8 @@ export const Caminhante: React.FC<CaminhanteProps> = ({
   const L_CANELA = 24.5;
   const L_BRACO = 17;
   const L_ANTEBRACO = 16;
-  const QUADRIL_W = 4.2;
-  const OMBRO_W = 9.6;
+  const QUADRIL_W = 5;
+  const OMBRO_W = 10.2;
 
   type Perna = {quadril: V3; joelho: V3; tornozelo: V3; ponta: V3};
   const perna = (lado: 1 | -1, p: number, hipY: number, hipZ: number): Perna => {
@@ -162,7 +162,9 @@ export const Caminhante: React.FC<CaminhanteProps> = ({
     z: peito.z - lado * OMBRO_W * Math.sin(torc),
   });
   const braco = (lado: 1 | -1, pFase: number) => {
-    const sh = ombro(lado);
+    const o = ombro(lado);
+    // articulação do braço: abaixo e para dentro da linha do ombro (a manga nasce do deltoide)
+    const sh = {x: o.x - lado * 1.9, y: o.y - 2.6, z: o.z};
     const a = rad(-bracoAmp * Math.sin(pFase) + 2);
     // follow-through: antebraço atrasa a fase
     const cot = rad(14 + 10 * c + 14 * Math.max(0, Math.sin(pFase - 0.5)) * vel);
@@ -203,22 +205,29 @@ export const Caminhante: React.FC<CaminhanteProps> = ({
   const ombD = pr(ombro(1));
   const qE = pr({...pernaE.quadril, x: pernaE.quadril.x - 2.6, y: hipY - 2});
   const qD = pr({...pernaD.quadril, x: pernaD.quadril.x + 2.6, y: hipY - 2});
-  const cinturaE = pr({x: peito.x - 7.6, y: hipY + 11, z: peito.z * 0.4});
-  const cinturaD = pr({x: peito.x + 7.6, y: hipY + 11, z: peito.z * 0.4});
+  const cinturaE = pr({x: peito.x - 8.4, y: hipY + 11, z: peito.z * 0.4});
+  const cinturaD = pr({x: peito.x + 8.4, y: hipY + 11, z: peito.z * 0.4});
   const nuca = pr({x: pescoco.x, y: pescoco.y + 1.2, z: pescoco.z});
-  const capuzE = pr({x: pescoco.x - 4.6, y: pescoco.y - 0.5, z: pescoco.z - 0.6});
-  const capuzD = pr({x: pescoco.x + 4.6, y: pescoco.y - 0.5, z: pescoco.z - 0.6});
+  const capuzE = pr({x: pescoco.x - 3.4, y: pescoco.y - 0.2, z: pescoco.z - 0.6});
+  const capuzD = pr({x: pescoco.x + 3.4, y: pescoco.y - 0.2, z: pescoco.z - 0.6});
+  const capuz = pr({x: pescoco.x, y: pescoco.y - 2.2, z: pescoco.z - 2.4});
   const f = (p: P2) => `${p.x.toFixed(2)} ${p.y.toFixed(2)}`;
+  // contorno: base do pescoço → trapézio → ombro → deltoide → axila → lateral → cintura → barra (quadril)
+  const pp = (p: P2, dx: number, dy: number) => ({x: p.x + dx, y: p.y + dy, d: 0});
+  const axE = pr({x: peito.x - (OMBRO_W - 1.2), y: peito.y - 8, z: peito.z * 0.8});
+  const axD = pr({x: peito.x + (OMBRO_W - 1.2), y: peito.y - 8, z: peito.z * 0.8});
   const troncoPath = [
     `M${f(capuzE)}`,
-    `Q${f({x: ombE.x + 1.5, y: ombE.y - 2.2, d: 0})} ${f({x: ombE.x - 1.2, y: ombE.y + 2.6, d: 0})}`,
-    `Q${f({x: cinturaE.x - 1.2, y: (ombE.y + cinturaE.y) / 2, d: 0})} ${f(cinturaE)}`,
+    `C${f(pp(capuzE, -2.5, 0.6))} ${f(pp(ombE, 2.2, -1.4))} ${f(pp(ombE, 0, -0.6))}`,
+    `C${f(pp(ombE, -1.8, 0.2))} ${f(pp(ombE, -2.2, 3.2))} ${f(axE)}`,
+    `C${f(pp(axE, -0.2, 5))} ${f(pp(cinturaE, 0.4, -4))} ${f(cinturaE)}`,
     `L${f(qE)}`,
-    `Q${f({x: (qE.x + qD.x) / 2, y: qE.y + 1.6, d: 0})} ${f(qD)}`,
+    `Q${f({x: (qE.x + qD.x) / 2, y: qE.y + 1.4, d: 0})} ${f(qD)}`,
     `L${f(cinturaD)}`,
-    `Q${f({x: cinturaD.x + 1.2, y: (ombD.y + cinturaD.y) / 2, d: 0})} ${f({x: ombD.x + 1.2, y: ombD.y + 2.6, d: 0})}`,
-    `Q${f({x: ombD.x - 1.5, y: ombD.y - 2.2, d: 0})} ${f(capuzD)}`,
-    `Q${f({x: nuca.x, y: nuca.y - 1.4, d: 0})} ${f(capuzE)}`,
+    `C${f(pp(cinturaD, -0.4, -4))} ${f(pp(axD, 0.2, 5))} ${f(axD)}`,
+    `C${f(pp(ombD, 2.2, 3.2))} ${f(pp(ombD, 1.8, 0.2))} ${f(pp(ombD, 0, -0.6))}`,
+    `C${f(pp(ombD, -2.2, -1.4))} ${f(pp(capuzD, 2.5, 0.6))} ${f(capuzD)}`,
+    `Q${f({x: nuca.x, y: nuca.y - 1.2, d: 0})} ${f(capuzE)}`,
     'Z',
   ].join(' ');
   const cabecaP = pr(cabeca);
@@ -228,10 +237,10 @@ export const Caminhante: React.FC<CaminhanteProps> = ({
     d: (pr(pp.joelho).d + pr(pp.tornozelo).d) / 2,
     el: (cor) => (
       <g key={k}>
-        <path d={seg(pp.quadril, pp.joelho)} stroke={cor} strokeWidth={7.6} strokeLinecap="round" fill="none" />
-        <path d={seg(pp.joelho, pp.tornozelo)} stroke={cor} strokeWidth={5.6} strokeLinecap="round" fill="none" />
-        <path d={cadeia({...pp.tornozelo, y: pp.tornozelo.y - 0.4}, pp.ponta)} stroke={cor} strokeWidth={3.4} strokeLinecap="round" fill="none" />
-        <path d={cadeia(pp.tornozelo, {...pp.tornozelo, z: pp.tornozelo.z - 1.6, y: pp.tornozelo.y - 0.6})} stroke={cor} strokeWidth={3.6} strokeLinecap="round" fill="none" />
+        <path d={seg(pp.quadril, pp.joelho)} stroke={cor} strokeWidth={9} strokeLinecap="round" fill="none" />
+        <path d={seg(pp.joelho, pp.tornozelo)} stroke={cor} strokeWidth={7.6} strokeLinecap="round" fill="none" />
+        <path d={cadeia({...pp.tornozelo, y: pp.tornozelo.y - 0.4}, pp.ponta)} stroke={cor} strokeWidth={4.6} strokeLinecap="round" fill="none" />
+        <path d={cadeia(pp.tornozelo, {...pp.tornozelo, z: pp.tornozelo.z - 1.6, y: pp.tornozelo.y - 0.6})} stroke={cor} strokeWidth={5} strokeLinecap="round" fill="none" />
       </g>
     ),
   });
@@ -239,9 +248,8 @@ export const Caminhante: React.FC<CaminhanteProps> = ({
     d: (pr(b.el).d + pr(b.mao).d) / 2,
     el: (cor) => (
       <g key={k}>
-        <path d={seg(b.sh, b.el)} stroke={cor} strokeWidth={5.4} strokeLinecap="round" fill="none" />
-        <path d={seg(b.el, b.mao)} stroke={cor} strokeWidth={4.4} strokeLinecap="round" fill="none" />
-        <circle cx={pr(b.mao).x} cy={pr(b.mao).y} r={2.1} fill={cor} />
+        <path d={seg(b.sh, b.el)} stroke={cor} strokeWidth={7} strokeLinecap="round" fill="none" />
+        <path d={seg(b.el, b.mao)} stroke={cor} strokeWidth={6.2} strokeLinecap="round" fill="none" />
       </g>
     ),
   });
@@ -255,7 +263,9 @@ export const Caminhante: React.FC<CaminhanteProps> = ({
       el: (cor: string) => (
         <g key="t">
           <path d={troncoPath} fill={cor} stroke={cor} strokeWidth={1.2} strokeLinejoin="round" />
-          <path d={seg({...pescoco, y: pescoco.y - 2}, cabeca)} stroke={cor} strokeWidth={4.2} strokeLinecap="round" />
+          {/* capuz do moletom caído nas costas */}
+          <ellipse cx={capuz.x} cy={capuz.y} rx={5.4} ry={3.2} fill={cor} />
+          <path d={seg({...pescoco, y: pescoco.y - 2}, cabeca)} stroke={cor} strokeWidth={5.4} strokeLinecap="round" />
         </g>
       ),
     },
@@ -278,8 +288,8 @@ export const Caminhante: React.FC<CaminhanteProps> = ({
   const L = Math.max(0, Math.min(1.5, luz));
   const lx = Math.sin(rad(anguloLuz));
   const ly = -Math.cos(rad(anguloLuz));
-  const rimLarg = 1.25; // largura da borda direcional
-  const rimEnvolve = 0.35; // borda que envolve todo o contorno (contraluz)
+  const rimLarg = 0.95; // largura da borda direcional
+  const rimEnvolve = 0.1; // borda que envolve todo o contorno (contraluz)
 
   // ---- visibilidade ----
   const entrada = interpolate(frame, [entradaEm, entradaEm + duracaoEntrada], [0, 1], {
@@ -353,7 +363,7 @@ export const Caminhante: React.FC<CaminhanteProps> = ({
       <ellipse cx={sway * 0.8} cy={0.6} rx={9} ry={1.6} fill="#000" opacity={0.55 * sombraOpacidade + 0.15} filter={`url(#s${uid})`} />
 
       {/* halo de contraluz (bloom) vazando pelas bordas do lado da luz */}
-      <g opacity={0.32 * Math.min(1, L)} filter={`url(#b${uid})`} transform={`translate(${(lx * 0.8).toFixed(2)} ${(ly * 0.8).toFixed(2)})`}>
+      <g opacity={0.16 * Math.min(1, L)} filter={`url(#b${uid})`} transform={`translate(${(lx * 0.8).toFixed(2)} ${(ly * 0.8).toFixed(2)})`}>
         {corpo(corLuz)}
       </g>
 

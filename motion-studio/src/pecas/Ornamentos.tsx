@@ -49,6 +49,7 @@ export const Fio: React.FC<FioProps> = ({comprimento, cor, entradaEm, duracao = 
         background: fundo,
         transform: h ? `scaleX(${s})` : `scaleY(${s})`,
         transformOrigin: origemCss,
+        flexShrink: 0,
         opacity: fade(frame, saidaEm),
         ...style,
       }}
@@ -251,15 +252,17 @@ export const AssinaturaVersiculo: React.FC<AssinaturaVersiculoProps> = ({
   const fRef = 40 * u;
   const tLetra = prog(frame, entradaEm + 8, 60);
   const tCit = prog(frame, entradaEm + 34, 50);
-  const espac = interpolate(tLetra, [0, 1], [0.62, 0.38]);
-  const ladoFio = 170 * u;
+  const espac = interpolate(tLetra, [0, 1], [0.5, 0.3]);
+  const ladoFio = 200 * u;
   const op = fade(frame, saidaEm, 40);
   return (
     <div style={{width: largura, display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: op, ...style}}>
       {/* fio superior curto, nasce do centro */}
-      <Fio comprimento={64 * u} cor={corFio} entradaEm={entradaEm} duracao={40} espessura={Math.max(1, 1.2 * u)} style={{marginBottom: 22 * u, opacity: 0.7}} />
+      <Fio comprimento={96 * u} cor={corFio} entradaEm={entradaEm} duracao={40} espessura={Math.max(1, 1.4 * u)} style={{marginBottom: 24 * u}} />
       <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: largura, gap: 18 * u}}>
-        <Fio comprimento={ladoFio} cor={corFio} entradaEm={entradaEm + 4} duracao={56} origem="fim" espessura={Math.max(1, 1.4 * u)} />
+        <div style={{flex: 1, minWidth: 0, display: 'flex', justifyContent: 'flex-end', overflow: 'hidden'}}>
+          <Fio comprimento={ladoFio} cor={corFio} entradaEm={entradaEm + 4} duracao={56} origem="fim" espessura={Math.max(1, 1.4 * u)} />
+        </div>
         <Marcador tamanho={11 * u} cor={corFio} entradaEm={entradaEm + 14} brilho={0.5} />
         <div
           style={{
@@ -275,7 +278,8 @@ export const AssinaturaVersiculo: React.FC<AssinaturaVersiculoProps> = ({
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            maxWidth: largura - ladoFio * 2 - 80 * u,
+            maxWidth: largura * 0.66,
+            flexShrink: 0,
             opacity: tLetra,
             filter: `blur(${(1 - tLetra) * 6 * u}px)`,
             textShadow: `0 0 ${18 * u}px color-mix(in srgb, ${corFio} 20%, transparent)`,
@@ -284,7 +288,9 @@ export const AssinaturaVersiculo: React.FC<AssinaturaVersiculoProps> = ({
           {referencia}
         </div>
         <Marcador tamanho={11 * u} cor={corFio} entradaEm={entradaEm + 14} brilho={0.5} />
-        <Fio comprimento={ladoFio} cor={corFio} entradaEm={entradaEm + 4} duracao={56} origem="inicio" espessura={Math.max(1, 1.4 * u)} />
+        <div style={{flex: 1, minWidth: 0, display: 'flex', justifyContent: 'flex-start', overflow: 'hidden'}}>
+          <Fio comprimento={ladoFio} cor={corFio} entradaEm={entradaEm + 4} duracao={56} origem="inicio" espessura={Math.max(1, 1.4 * u)} />
+        </div>
       </div>
       {citacao ? (
         <div
