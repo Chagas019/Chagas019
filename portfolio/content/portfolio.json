@@ -27,16 +27,10 @@
     {
       "id": "fotografia",
       "label": "Fotografia",
-      "intro": "Registro de pessoas, momentos e lugares, com cuidado na luz, no enquadramento e na edição final.",
+      "intro": "Cobertura de eventos e ensaios fotográficos, com cuidado na luz, no enquadramento e na edição final.",
       "items": [
         "Eventos",
-        "Ensaios",
-        "Casais",
-        "Festas de 15 anos",
-        "Casamentos",
-        "Retratos",
-        "Institucional",
-        "Ambientes e imóveis"
+        "Ensaios"
       ]
     },
     {
@@ -418,22 +412,7 @@
     {
       "id": "ensaios",
       "label": "Ensaios",
-      "intro": "Ensaios individuais e de casal, com direção leve e resultado natural."
-    },
-    {
-      "id": "casamentos-15-anos",
-      "label": "Casamentos e 15 anos",
-      "intro": "Do preparo à festa, um registro que acompanha o ritmo de um dia que não se repete."
-    },
-    {
-      "id": "retratos",
-      "label": "Retratos",
-      "intro": "Retratos com atenção à luz, à expressão e à personalidade de quem está diante da câmera."
-    },
-    {
-      "id": "institucional-imoveis",
-      "label": "Institucional e imóveis",
-      "intro": "Fotos de equipes, espaços, ambientes e imóveis para apresentar bem quem você é e onde está."
+      "intro": "Ensaios fotográficos individuais e de casal, com direção leve e resultado natural."
     },
     {
       "id": "audiovisual",
@@ -643,18 +622,6 @@
     {
       "category": "ensaios",
       "note": "Sem ensaios. Pedir 3–6 ensaios (individual/casal), 8–15 fotos cada, com autorização de imagem."
-    },
-    {
-      "category": "casamentos-15-anos",
-      "note": "Sem casamentos nem 15 anos. Pedir 2–4 trabalhos, 15–25 fotos cada, com autorização escrita dos retratados (menores: responsáveis)."
-    },
-    {
-      "category": "retratos",
-      "note": "Sem retratos. Pedir 6–12 retratos com autorização de imagem."
-    },
-    {
-      "category": "institucional-imoveis",
-      "note": "Sem fotos institucionais, de ambientes ou imóveis. Pedir 1–3 trabalhos com autorização do contratante."
     },
     {
       "category": "audiovisual",

@@ -70,7 +70,7 @@ async function ctx(browser, w, opts = {}) {
       // whole row as target?
       const rowClick = await p.evaluate(() => { const li = document.querySelector('[data-pricing-item]'); const a = li.querySelector('a[data-service]'); const lr = li.getBoundingClientRect(), ar = a.getBoundingClientRect();
         return { li: Math.round(lr.width * lr.height), a: Math.round(ar.width * ar.height), aH: Math.round(ar.height) }; });
-      rec('pricing.row-preselect', n === 12 && !fails.length, `${n} CTAs; ${fails.join('; ') || 'first/last scroll to form & checked'}; row area ${rowClick.li} vs link ${rowClick.a} (h ${rowClick.aH})`);
+      rec('pricing.row-preselect', n === require('../content/pricing.json').groups.reduce((t, g) => t + g.items.length, 0) && !fails.length, `${n} CTAs; ${fails.join('; ') || 'first/last scroll to form & checked'}; row area ${rowClick.li} vs link ${rowClick.a} (h ${rowClick.aH})`);
       rec('pricing.cta-target', rowClick.aH >= 44 ? true : 'WARN', `CTA height ${rowClick.aH}px`);
       // all data-service values map to a checkbox
       const unmapped = await p.evaluate(() => { const vals = new Set([...document.querySelectorAll('#quote-form input[name=services]')].map((x) => x.value));
