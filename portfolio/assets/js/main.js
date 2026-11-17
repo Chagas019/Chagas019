@@ -10,6 +10,7 @@ import { renderSelectedFilters, renderSelected } from './render/selected.js';
 import { renderProducts } from './render/products.js';
 import { openLightbox } from './lightbox.js';
 import { initNav } from './nav.js';
+import { initMotion } from './motion.js';
 import { initReveal, observeReveal } from './reveal.js';
 import { initForm } from './form.js';
 
@@ -56,6 +57,7 @@ async function boot() {
   safe('produtos', () => renderProducts(portfolio, pricing));
   safe('orçamento', () => { renderPricing(pricing); renderServiceOptions(pricing); initForm(site); });
   observeReveal();
+  try { initMotion(); } catch (err) { console.error('[main] motion', err); }
   document.documentElement.classList.add('is-ready');
 }
 
