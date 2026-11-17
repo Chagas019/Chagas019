@@ -1,6 +1,6 @@
 # Controle de qualidade — EP001
 
-Versão atual: **v3**, em `episodes/001-sao-maximiliano-kolbe/renders/ep001-kolbe-v3.mp4` (83,4 s). É a v2 com a voz trocada pela **Piper Faber** (pt-BR, ritmo de narrador), que você escolheu no comparativo de vozes. Versões anteriores: A v2 refaz o visual na linguagem do vídeo de referência: flat com contorno grosso, personagens chibi e legenda karaokê no alto. Áudio, roteiro e tempos são os mesmos da v1.
+Versão atual: **v4**, em `episodes/001-sao-maximiliano-kolbe/renders/ep001-kolbe-v4.mp4` (90 s). É a v2 com a voz 6 do comparativo: Kokoro `pm_alex` com o tom abaixado em cerca de 2 semitons, para soar como narrador mais grave. A v3, com a voz Piper Faber, foi descartada. Versões anteriores: A v2 refaz o visual na linguagem do vídeo de referência: flat com contorno grosso, personagens chibi e legenda karaokê no alto. Áudio, roteiro e tempos são os mesmos da v1.
 A v1, em estilo pintado semirrealista, está em `ep001-kolbe-v1.mp4`.
 
 | Verificação | Resultado |
@@ -9,7 +9,7 @@ A v1, em estilo pintado semirrealista, está em `ep001-kolbe-v1.mp4`.
 | Datas coerentes com as fontes | ✅ Museu de Auschwitz, IPN, Vatican News, Britannica. |
 | Personagem com a mesma aparência | ✅ um único boneco (`Chibi.tsx`, presets `KOLBE_*`) usado em todas as cenas e na capa. Óculos, rosto e proporções são idênticos. |
 | Animação real (não slideshow) | ✅ câmera virtual com parallax de 4 a 7 camadas por cena, piscar, respiração, olhar e inclinação de cabeça, ciclo de caminhada, máquina girando, porta, rota no mapa, partículas, raios e neblina. |
-| Narração presente | ✅ voz masculina neural pt-BR (Piper `pt_BR-faber-medium`, `length_scale` 1.2), 21 falas com pausas dramáticas, masterizada (EQ, compressão, ambiência, −16 LUFS). |
+| Narração presente | ✅ voz masculina neural pt-BR (Kokoro `pm_alex`, tom 0,89 e andamento 1,15), 21 falas com pausas dramáticas, masterizada (EQ, compressão, ambiência, −16 LUFS). |
 | Voz sincronizada | ✅ cortes de cena e eventos visuais calculados a partir dos tempos reais da voz. |
 | Legendas corretas | ✅ texto idêntico ao roteiro, palavra a palavra, destaques em ouro. SRT em `subtitles/`. ⚠️ O tempo por palavra é estimado por sílabas dentro de cada fala (o início e o fim de cada fala são exatos). |
 | Música equilibrada | ✅ trilha original com ducking sob a voz. Arco suspense → tensão → silêncio → esperança (ré maior). |

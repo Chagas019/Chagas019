@@ -1,7 +1,7 @@
 {
   "episode": "001-sao-maximiliano-kolbe",
   "title": "O HOMEM QUE ESCOLHEU MORRER POR AMOR",
-  "voice": { "engine": "piper", "voice": "pt_BR-faber-medium", "length_scale": 1.2, "noise_scale": 0.75, "noise_w": 0.9, "elevenlabs_voice_id": "4XmhZ74tBbUVCXIYNMMo" },
+  "voice": { "engine": "kokoro", "voice": "pm_alex", "speed": 0.92, "pitch": 0.89, "tempo": 1.15, "elevenlabs_voice_id": "4XmhZ74tBbUVCXIYNMMo" },
   "leadIn": 1.6,
   "tail": 2.8,
   "lines": [

@@ -1,6 +1,6 @@
 # Publicação Instagram — EP001
 
-**Formato:** Reels 9:16 (`renders/ep001-kolbe-v3.mp4`).
+**Formato:** Reels 9:16 (`renders/ep001-kolbe-v4.mp4`).
 **Capa:** `thumbnail/capa-reels-ep001.png`. O título fica na área central 1080×1350, por isso também funciona no recorte do grid.
 **Post de feed (4:5), opcional:** `thumbnail/post-feed-ep001.png`.
 **Legendas fechadas (SRT):** `subtitles/legendas.srt`. Suba como legenda automática corrigida, se quiser.

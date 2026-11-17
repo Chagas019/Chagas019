@@ -69,7 +69,14 @@ def main():
         v = cfg["voice"]
         for i, ln in enumerate(cfg["lines"]):
             s, sr = k.create(ln["say"], voice=v["voice"], speed=v["speed"], lang="pt-br")
-            sf.write(os.path.join(lines_dir, f"{i:02d}.wav"), resample(s, sr), SR)
+            out = os.path.join(lines_dir, f"{i:02d}.wav")
+            if v.get("pitch"):  # voz mais grave: abaixa o tom e recompõe o andamento
+                tmp = out + ".tmp.wav"; sf.write(tmp, s, sr)
+                subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", tmp, "-af",
+                                f"asetrate={sr}*{v['pitch']},aresample={sr},atempo={v.get('tempo', 1.0)}", "-ar", str(SR), "-ac", "1", out], check=True)
+                os.remove(tmp)
+            else:
+                sf.write(out, resample(s, sr), SR)
             print("tts", i, ln["say"][:50])
 
     t = cfg["leadIn"]
