@@ -1,5 +1,4 @@
 {
-  "_fixture": "Fixture v3 (espelho do conteúdo real). O site usa content/*.json quando existir; esta cópia só entra se o arquivo real falhar.",
   "version": 3,
   "currency": "BRL",
   "reference": true,
@@ -23,20 +22,6 @@
           "price_from": 450,
           "unit": null,
           "desc": "Referência: geralmente inclui registro fotográfico do evento e fotos editadas."
-        },
-        {
-          "id": "15-anos",
-          "label": "15 anos",
-          "price_from": 600,
-          "unit": null,
-          "desc": "Referência: geralmente inclui cobertura da festa e fotos editadas."
-        },
-        {
-          "id": "casamento",
-          "label": "Casamento",
-          "price_from": 900,
-          "unit": null,
-          "desc": "Referência: geralmente inclui cobertura da cerimônia e/ou festa e fotos editadas."
         }
       ]
     },

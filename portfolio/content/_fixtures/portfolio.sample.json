@@ -1,5 +1,4 @@
 {
-  "_fixture": "Fixture v3 (espelho do conteúdo real). O site usa content/*.json quando existir; esta cópia só entra se o arquivo real falhar.",
   "version": 3,
   "site": {
     "brand": "CHAGAS CREATIVE",
@@ -28,16 +27,11 @@
     {
       "id": "fotografia",
       "label": "Fotografia",
-      "intro": "Registro de pessoas, momentos e lugares, com cuidado na luz, no enquadramento e na edição final.",
+      "intro": "Cobertura de eventos e ensaios fotográficos, com cuidado na luz, no enquadramento e na edição final.",
       "items": [
         "Eventos",
-        "Ensaios",
-        "Casais",
-        "Festas de 15 anos",
-        "Casamentos",
-        "Retratos",
-        "Institucional",
-        "Ambientes e imóveis"
+        "Aniversários e festas de 15 anos",
+        "Ensaios"
       ]
     },
     {
@@ -419,22 +413,7 @@
     {
       "id": "ensaios",
       "label": "Ensaios",
-      "intro": "Ensaios individuais e de casal, com direção leve e resultado natural."
-    },
-    {
-      "id": "casamentos-15-anos",
-      "label": "Casamentos e 15 anos",
-      "intro": "Do preparo à festa, um registro que acompanha o ritmo de um dia que não se repete."
-    },
-    {
-      "id": "retratos",
-      "label": "Retratos",
-      "intro": "Retratos com atenção à luz, à expressão e à personalidade de quem está diante da câmera."
-    },
-    {
-      "id": "institucional-imoveis",
-      "label": "Institucional e imóveis",
-      "intro": "Fotos de equipes, espaços, ambientes e imóveis para apresentar bem quem você é e onde está."
+      "intro": "Ensaios fotográficos individuais e de casal, com direção leve e resultado natural."
     },
     {
       "id": "audiovisual",
@@ -464,14 +443,54 @@
   ],
   "projects": [
     {
+      "id": "festa-15-anos",
+      "title": "Festa de 15 anos",
+      "category": "eventos",
+      "year": null,
+      "client": null,
+      "description": "Cobertura fotográfica de uma festa de 15 anos: a decoração em verde e dourado, os detalhes das lembrancinhas e os convidados diante do painel com o número em neon.",
+      "role": "Fotografia e edição",
+      "featured": true,
+      "cover": {
+        "src": "fotos/eventos/festa-15-anos-01.jpg",
+        "alt": "Decoração da festa: painel dourado com o número 15 em neon, arco de balões verdes e mesa de lembrancinhas",
+        "w": 1717,
+        "h": 2576
+      },
+      "media": [
+        {
+          "type": "image",
+          "src": "fotos/eventos/festa-15-anos-01.jpg",
+          "alt": "Painel dourado com o número 15 em neon, arco de balões verdes e estante de lembrancinhas em primeiro plano desfocado",
+          "w": 1717,
+          "h": 2576
+        },
+        {
+          "type": "image",
+          "src": "fotos/eventos/festa-15-anos-03.jpg",
+          "alt": "Dois convidados sorrindo diante do painel dourado com o número 15 em neon",
+          "w": 1549,
+          "h": 2466
+        },
+        {
+          "type": "image",
+          "src": "fotos/eventos/festa-15-anos-02.jpg",
+          "alt": "Lembrancinhas personalizadas embaladas com fitas verde e amarela, sobre uma estante de madeira",
+          "w": 1717,
+          "h": 2576
+        }
+      ],
+      "status": "real"
+    },
+    {
       "id": "comunica-fe",
       "title": "Comunica+Fé",
       "category": "web-design",
       "year": "2026",
       "client": null,
       "description": "Site para a Pastoral da Comunicação de uma paróquia, reunindo liturgia do dia, escala das missas, agenda e formação num só lugar. A abertura é uma sequência em rolagem com objetos 3D de comunicação sobre fundo escuro e laranja, adaptada para computador e celular.",
-      "role": "A CONFIRMAR (design e desenvolvimento)",
-      "featured": true,
+      "role": "Design e desenvolvimento",
+      "featured": false,
       "cover": {
         "src": "../resultado/abertura-computador.jpg",
         "alt": "Seis telas da abertura do site Comunica+Fé no computador, com tipografia grande branca e objetos 3D sobre fundo escuro e laranja",
@@ -479,6 +498,32 @@
         "h": 1456
       },
       "media": [
+        {
+          "type": "video",
+          "src": "media/comunicafe-motion-720.mp4",
+          "poster": "media/portfolio-media-comunicafe-motion-720-poster.jpg",
+          "alt": "Gravação da rolagem do site Comunica+Fé: os objetos 3D se movem e as seções trocam em sequência",
+          "w": 1280,
+          "h": 720,
+          "silent": true,
+          "fit": "contain"
+        },
+        {
+          "type": "image",
+          "src": "capturas/comunicafe-desktop.png",
+          "alt": "Abertura do site Comunica+Fé no computador, com o título grande e objetos 3D sobre fundo escuro e laranja",
+          "w": 1440,
+          "h": 900,
+          "fit": "contain"
+        },
+        {
+          "type": "image",
+          "src": "capturas/comunicafe-mobile.png",
+          "alt": "Abertura do site Comunica+Fé no celular",
+          "w": 780,
+          "h": 1688,
+          "fit": "contain"
+        },
         {
           "type": "image",
           "src": "../resultado/abertura-computador.jpg",
@@ -504,62 +549,46 @@
       "status": "real"
     },
     {
-      "id": "gameplay-4k",
-      "title": "Gameplay em 4K",
-      "category": "audiovisual",
+      "id": "brabo-club",
+      "title": "Brabo Club",
+      "category": "web-design",
       "year": "2026",
       "client": null,
-      "description": "Tratamento de um trecho de gameplay de corrida: aumento de resolução para 4K (3840×1772) a 60 quadros por segundo, com foco em nitidez e detalhe. As imagens do jogo pertencem aos seus criadores; o trabalho apresentado é a finalização.",
-      "role": "A CONFIRMAR (tratamento e upscale de vídeo)",
+      "description": "Site para uma barbearia em Campinas, com agendamento online, montagem do corte, apresentação dos barbeiros, tabela de preços e uma área para o dono acompanhar as reservas. A abertura é uma cena em rolagem com objetos de barbearia animados.",
+      "role": "Design e desenvolvimento",
       "featured": false,
       "cover": {
-        "src": "../videos/comparacao_antes_depois.jpg",
-        "alt": "Comparação lado a lado de um quadro do gameplay de corrida antes e depois do tratamento",
-        "w": 2560,
+        "src": "capturas/brabo-desktop.png",
+        "alt": "Abertura do site Brabo Club: título em serifa 'Corte de respeito. Estilo de brabo.' sobre fundo preto com poste de barbearia e ferramentas",
+        "w": 1440,
         "h": 900
       },
       "media": [
         {
           "type": "video",
-          "src": "../videos/gameplay_4k_enhanced_leve.mp4",
-          "poster": "../videos/comparacao_antes_depois.jpg",
-          "alt": "Trecho de 14 segundos de gameplay de corrida tratado em 4K",
-          "w": 3840,
-          "h": 1772
+          "src": "media/brabo-motion-720.mp4",
+          "poster": "media/portfolio-media-brabo-motion-720-poster.jpg",
+          "alt": "Gravação da rolagem do site Brabo Club mostrando a animação de abertura",
+          "w": 1280,
+          "h": 720,
+          "silent": true,
+          "fit": "contain"
         },
         {
           "type": "image",
-          "src": "../videos/comparacao_antes_depois.jpg",
-          "alt": "Comparação antes e depois do tratamento do gameplay",
-          "w": 2560,
-          "h": 900
-        }
-      ],
-      "status": "real"
-    },
-    {
-      "id": "personagem-na-moto",
-      "title": "Personagem na moto",
-      "category": "motion-design",
-      "year": "2026",
-      "client": null,
-      "description": "Vídeo vertical em que o piloto de uma moto, numa cena de rua, é substituído por um personagem. Exercício de composição e efeito pensado para redes sociais.",
-      "role": "A CONFIRMAR (efeito e composição)",
-      "featured": false,
-      "cover": {
-        "type": "video",
-        "src": "../resultado/moto-personagem.mp4",
-        "alt": "Personagem de terno e chapéu pilotando uma moto numa rua",
-        "w": 1180,
-        "h": 2556
-      },
-      "media": [
+          "src": "capturas/brabo-desktop.png",
+          "alt": "Abertura do site Brabo Club no computador",
+          "w": 1440,
+          "h": 900,
+          "fit": "contain"
+        },
         {
-          "type": "video",
-          "src": "../resultado/moto-personagem.mp4",
-          "alt": "Vídeo vertical de 11 segundos: personagem de terno e chapéu no lugar do piloto de uma moto",
-          "w": 1180,
-          "h": 2556
+          "type": "image",
+          "src": "capturas/brabo-mobile.png",
+          "alt": "Abertura do site Brabo Club no celular",
+          "w": 780,
+          "h": 1688,
+          "fit": "contain"
         }
       ],
       "status": "real"
@@ -567,28 +596,12 @@
   ],
   "missing": [
     {
-      "category": "eventos",
-      "note": "Sem fotos de eventos no repositório. Pedir 3–5 eventos (ex.: Lual Mariano, Retiro PAFIES, AVIVA 2), 12–20 fotos cada, JPEG sRGB, lado maior ≥ 2560 px, com autorização de uso."
-    },
-    {
       "category": "ensaios",
       "note": "Sem ensaios. Pedir 3–6 ensaios (individual/casal), 8–15 fotos cada, com autorização de imagem."
     },
     {
-      "category": "casamentos-15-anos",
-      "note": "Sem casamentos nem 15 anos. Pedir 2–4 trabalhos, 15–25 fotos cada, com autorização escrita dos retratados (menores: responsáveis)."
-    },
-    {
-      "category": "retratos",
-      "note": "Sem retratos. Pedir 6–12 retratos com autorização de imagem."
-    },
-    {
-      "category": "institucional-imoveis",
-      "note": "Sem fotos institucionais, de ambientes ou imóveis. Pedir 1–3 trabalhos com autorização do contratante."
-    },
-    {
       "category": "audiovisual",
-      "note": "Só há o gameplay tratado (imagens de terceiros). Pedir vídeos autorais 1920×1080 (aftermovie, institucional, cinematográfico) e, se possível, showreel de 60–90 s."
+      "note": "Sem vídeos autorais publicados. Pedir vídeos 1920×1080 (aftermovie, cinematográfico, institucional) com autorização."
     },
     {
       "category": "reels",

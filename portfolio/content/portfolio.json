@@ -592,67 +592,6 @@
         }
       ],
       "status": "real"
-    },
-    {
-      "id": "gameplay-4k",
-      "title": "Gameplay em 4K",
-      "category": "audiovisual",
-      "year": "2026",
-      "client": null,
-      "description": "Tratamento de um trecho de gameplay de corrida: aumento de resolução para 4K (3840×1772) a 60 quadros por segundo, com foco em nitidez e detalhe. As imagens do jogo pertencem aos seus criadores; o trabalho apresentado é a finalização.",
-      "role": "Tratamento e upscale de vídeo",
-      "featured": false,
-      "cover": {
-        "src": "../videos/comparacao_antes_depois.jpg",
-        "alt": "Comparação lado a lado de um quadro do gameplay de corrida antes e depois do tratamento",
-        "w": 2560,
-        "h": 900
-      },
-      "media": [
-        {
-          "type": "video",
-          "src": "media/gameplay-4k-web-1080.mp4",
-          "poster": "../videos/comparacao_antes_depois.jpg",
-          "alt": "Trecho de 14 segundos de gameplay de corrida tratado em 4K",
-          "w": 3840,
-          "h": 1772
-        },
-        {
-          "type": "image",
-          "src": "../videos/comparacao_antes_depois.jpg",
-          "alt": "Comparação antes e depois do tratamento do gameplay",
-          "w": 2560,
-          "h": 900
-        }
-      ],
-      "status": "real"
-    },
-    {
-      "id": "personagem-na-moto",
-      "title": "Personagem na moto",
-      "category": "motion-design",
-      "year": "2026",
-      "client": null,
-      "description": "Vídeo vertical em que o piloto de uma moto, numa cena de rua, é substituído por um personagem. Exercício de composição e efeito pensado para redes sociais.",
-      "role": "Efeito e composição",
-      "featured": false,
-      "cover": {
-        "type": "video",
-        "src": "media/moto-personagem-web-720.mp4",
-        "alt": "Personagem de terno e chapéu pilotando uma moto numa rua",
-        "w": 1180,
-        "h": 2556
-      },
-      "media": [
-        {
-          "type": "video",
-          "src": "media/moto-personagem-web-720.mp4",
-          "alt": "Vídeo vertical de 11 segundos: personagem de terno e chapéu no lugar do piloto de uma moto",
-          "w": 1180,
-          "h": 2556
-        }
-      ],
-      "status": "real"
     }
   ],
   "missing": [
@@ -662,7 +601,7 @@
     },
     {
       "category": "audiovisual",
-      "note": "Só há o gameplay tratado (imagens de terceiros). Pedir vídeos autorais 1920×1080 (aftermovie, institucional, cinematográfico) e, se possível, showreel de 60–90 s."
+      "note": "Sem vídeos autorais publicados. Pedir vídeos 1920×1080 (aftermovie, cinematográfico, institucional) com autorização."
     },
     {
       "category": "reels",
