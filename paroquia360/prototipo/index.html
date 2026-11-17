@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Paróquia360 — Painel</title>
+<meta name="description" content="Protótipo navegável do painel do Paróquia360. Dados de exemplo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy-950:#0a1230; --navy-900:#111b45; --navy-800:#1b2760; --navy-600:#33427f;
+  --gold-500:#c9a45c; --gold-300:#e6cf9b; --sky-300:#a9c3ea; --sky-100:#e6eefb;
+  --bg:#efeef0; --surface:#fbfbfd; --surface-2:#f2f3f8; --glass:rgba(244,246,252,.62);
+  --text:#0f1636; --muted:#5d6584; --line:rgba(17,27,69,.08);
+  --shadow:0 20px 60px -24px rgba(17,27,69,.35); --shadow-sm:0 6px 20px -10px rgba(17,27,69,.25);
+  --r-xl:44px; --r-lg:30px; --r-md:20px; --r-pill:999px;
+  --ok:#2f8f6a; --warn:#b7802a; --bad:#b4475a;
+}
+:root[data-theme="dark"]{
+  --bg:#060a1c; --surface:#0f1736; --surface-2:#16204a; --glass:rgba(16,24,58,.62);
+  --text:#eef1fb; --muted:#9aa3c7; --line:rgba(255,255,255,.08);
+  --shadow:0 20px 60px -24px rgba(0,0,0,.7); --shadow-sm:0 6px 20px -10px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box;margin:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:Outfit,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
+  background-image:radial-gradient(1200px 600px at 10% -10%,rgba(169,195,234,.35),transparent 60%),radial-gradient(900px 500px at 110% 10%,rgba(201,164,92,.12),transparent 60%);
+  transition:background-color .3s,color .3s}
+button,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--gold-500);outline-offset:3px;border-radius:12px}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+.page{max-width:1280px;margin:0 auto;padding:28px 24px 64px}
+.brandbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;letter-spacing:.04em;font-size:15px;color:var(--muted)}
+.brandbar b{color:var(--text);font-weight:500}
+.chip-demo{font-size:12px;padding:6px 12px;border-radius:var(--r-pill);border:1px solid var(--line);background:var(--surface);color:var(--muted)}
+
+/* ===== Shell ===== */
+.shell{position:relative;border-radius:var(--r-xl);padding:10px;background:var(--surface);box-shadow:var(--shadow);border:1px solid var(--line)}
+.hero{position:relative;border-radius:calc(var(--r-xl) - 8px);overflow:hidden;min-height:720px;isolation:isolate}
+.scene{position:absolute;inset:0;z-index:-1;width:100%;height:100%}
+
+/* Top bar with notch */
+.top{position:absolute;inset:0 0 auto 0;display:flex;justify-content:space-between;align-items:flex-start;padding:16px 18px;pointer-events:none}
+.top>*{pointer-events:auto}
+.pill{display:inline-flex;align-items:center;gap:12px;height:52px;padding:0 22px;border-radius:var(--r-pill);background:var(--surface);box-shadow:var(--shadow-sm);font-size:15px;font-weight:500;min-width:170px;justify-content:space-between;transition:transform .2s}
+.pill:hover{transform:translateY(-1px)}
+.pill .arrow{color:var(--gold-500)}
+.notch{position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;gap:6px;padding:12px 34px 14px;background:var(--surface);border-radius:0 0 34px 34px}
+.notch::before,.notch::after{content:"";position:absolute;top:0;width:34px;height:34px}
+.notch::before{left:-34px;background:radial-gradient(circle at 0 100%,transparent 33.5px,var(--surface) 34px)}
+.notch::after{right:-34px;background:radial-gradient(circle at 100% 100%,transparent 33.5px,var(--surface) 34px)}
+.filter{display:flex;flex-direction:column;padding:2px 18px;min-width:150px}
+.filter label{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+.filter label svg{width:13px;height:13px}
+.filter select{appearance:none;border:0;background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%235d6584' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") right center no-repeat;padding:2px 26px 2px 0;font-size:15px;font-weight:600;cursor:pointer}
+.filter select option{color:#0f1636}
+
+/* Rail */
+.rail{position:absolute;left:18px;top:128px;display:flex;flex-direction:column;gap:14px;z-index:3}
+.rail-group{display:flex;flex-direction:column;gap:8px;padding:8px;border-radius:32px;background:var(--glass);backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);border:1px solid rgba(255,255,255,.35)}
+.rbtn{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:var(--muted);background:rgba(255,255,255,.18);transition:background .2s,color .2s,transform .2s;position:relative}
+.rbtn:hover{color:var(--text);transform:scale(1.05)}
+.rbtn.on{background:var(--surface);color:var(--navy-900);box-shadow:var(--shadow-sm)}
+:root[data-theme="dark"] .rbtn.on{color:var(--gold-300)}
+.rbtn .dot{position:absolute;top:10px;right:11px;width:8px;height:8px;border-radius:50%;background:var(--gold-500);border:2px solid var(--surface)}
+.avatar{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--navy-800),var(--navy-600));color:#fff;font-weight:600;font-size:15px}
+.rbtn[data-tip]:hover::after{content:attr(data-tip);position:absolute;left:58px;white-space:nowrap;background:var(--navy-950);color:#fff;font-size:12px;padding:6px 10px;border-radius:10px}
+
+/* Headline */
+.headline{position:absolute;top:118px;left:0;right:0;text-align:center;font-weight:600;font-size:clamp(44px,7.2vw,96px);line-height:.95;letter-spacing:-.02em;color:rgba(255,255,255,.88);text-shadow:0 2px 30px rgba(10,18,48,.15)}
+.lede{position:absolute;left:112px;top:340px;max-width:320px;color:rgba(255,255,255,.85);font-weight:300;font-size:16px;line-height:1.45}
+
+/* Cards over hero */
+.card-white{position:absolute;left:96px;bottom:0;width:min(420px,40%);background:var(--surface);border-radius:var(--r-lg) var(--r-lg) 0 0;padding:30px 30px 26px;z-index:2}
+.card-white::before{content:"";position:absolute;left:-30px;bottom:0;width:30px;height:30px;background:radial-gradient(circle at 0 0,transparent 29px,var(--surface) 30px)}
+.card-white::after{content:"";position:absolute;right:-30px;bottom:0;width:30px;height:30px;background:radial-gradient(circle at 100% 0,transparent 29px,var(--surface) 30px)}
+.card-white h2{font-size:22px;font-weight:600;margin-bottom:8px}
+.card-white p{font-size:14px;color:var(--muted);line-height:1.5}
+.big{display:flex;align-items:flex-end;gap:16px;margin-top:22px}
+.big strong{font-size:56px;font-weight:600;line-height:.9;letter-spacing:-.03em}
+.big small{display:block;font-size:13px;color:var(--muted);margin-top:6px}
+.faces{display:flex;margin-left:auto;align-items:center}
+.faces span{width:44px;height:44px;border-radius:50%;border:3px solid var(--surface);margin-left:-12px;display:grid;place-items:center;font-size:13px;font-weight:600;color:#fff}
+.faces span:nth-child(1){background:#33427f}.faces span:nth-child(2){background:#7c6a46}.faces span:nth-child(3){background:#5a7fb8}
+.circle-btn{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);margin-left:-8px;transition:transform .2s,background .2s}
+.circle-btn:hover{transform:rotate(45deg);background:var(--sky-100)}
+:root[data-theme="dark"] .circle-btn:hover{background:var(--navy-600)}
+
+.glass{position:absolute;right:18px;bottom:18px;width:min(380px,36%);padding:26px;border-radius:var(--r-lg);background:var(--glass);backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);border:1px solid rgba(255,255,255,.45);z-index:2;color:var(--text)}
+.glass h3{font-size:20px;font-weight:600}
+.meta{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);margin-top:6px}
+.meta svg{width:15px;height:15px}
+.glass .go{position:absolute;right:22px;top:22px;width:54px;height:54px;border-radius:50%;background:var(--surface);display:grid;place-items:center;box-shadow:var(--shadow-sm);transition:transform .2s}
+.glass .go:hover{transform:rotate(45deg)}
+.roles{margin:18px 0 16px;display:grid;gap:10px}
+.role{display:flex;align-items:center;gap:10px;font-size:14px}
+.role .bar{flex:1;height:6px;border-radius:6px;background:rgba(17,27,69,.1);overflow:hidden}
+:root[data-theme="dark"] .role .bar{background:rgba(255,255,255,.1)}
+.role .bar i{display:block;height:100%;border-radius:6px;background:var(--navy-800);transition:width .5s}
+:root[data-theme="dark"] .role .bar i{background:var(--gold-300)}
+.role b{font-weight:500;min-width:42px;text-align:right;font-variant-numeric:tabular-nums}
+.actions{display:flex;gap:10px;justify-content:flex-end}
+.act{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;color:var(--muted)}
+.act button{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.55);transition:background .2s,color .2s}
+:root[data-theme="dark"] .act button{background:rgba(255,255,255,.08)}
+.act button[aria-pressed="true"]{background:var(--navy-900);color:#fff}
+:root[data-theme="dark"] .act button[aria-pressed="true"]{background:var(--gold-500);color:var(--navy-950)}
+
+.seal{position:absolute;right:calc(min(380px,36%) - 6px);bottom:40px;width:104px;height:104px;border-radius:50%;background:var(--navy-950);display:grid;place-items:center;z-index:3;border:6px solid var(--surface);box-shadow:var(--shadow-sm)}
+.seal svg{width:54px;height:54px}
+
+/* ===== Dashboard grid ===== */
+.section-head{display:flex;justify-content:space-between;align-items:end;margin:44px 6px 16px}
+.section-head h2{font-size:28px;font-weight:600;letter-spacing:-.01em}
+.section-head p{color:var(--muted);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:24px;box-shadow:var(--shadow-sm);transition:transform .25s,box-shadow .25s}
+.tile:hover{transform:translateY(-2px)}
+.tile h3{font-size:16px;font-weight:600;display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.tile h3 .ic{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);color:var(--navy-800)}
+:root[data-theme="dark"] .tile h3 .ic{color:var(--gold-300)}
+.c3{grid-column:span 3}.c4{grid-column:span 4}.c5{grid-column:span 5}.c7{grid-column:span 7}.c8{grid-column:span 8}
+.kpi strong{font-size:40px;font-weight:600;letter-spacing:-.03em;display:block;line-height:1}
+.kpi small{color:var(--muted);font-size:13px}
+.kpi .trend{display:inline-block;margin-top:12px;font-size:12px;padding:4px 10px;border-radius:var(--r-pill);background:var(--surface-2);color:var(--muted)}
+.list{display:grid;gap:4px;list-style:none;padding:0}
+.list li{display:flex;align-items:center;gap:14px;padding:12px;border-radius:16px;transition:background .2s}
+.list li:hover{background:var(--surface-2)}
+.date{width:50px;height:54px;border-radius:14px;background:var(--surface-2);display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none}
+.date b{font-size:19px;line-height:1}.date small{font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em}
+.list .t{flex:1;min-width:0}.list .t b{display:block;font-weight:500;font-size:15px}.list .t small{color:var(--muted);font-size:13px}
+.tag{font-size:11px;padding:4px 10px;border-radius:var(--r-pill);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.tag.ok{color:var(--ok);border-color:currentColor}.tag.warn{color:var(--warn);border-color:currentColor}.tag.bad{color:var(--bad);border-color:currentColor}
+.help{background:var(--navy-900);color:#fff;border:0;position:relative;overflow:hidden}
+.help::after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;border:1px solid rgba(230,207,155,.25)}
+.help h3 .ic{background:rgba(255,255,255,.08);color:var(--gold-300)}
+.help p{color:rgba(255,255,255,.7);font-size:14px;line-height:1.5}
+.need{margin-top:16px;padding:14px;border-radius:18px;background:rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.need b{font-weight:500}.need small{display:block;color:rgba(255,255,255,.6);font-size:12px}
+.btn-gold{height:40px;padding:0 16px;border-radius:var(--r-pill);background:var(--gold-500);color:var(--navy-950);font-weight:600;font-size:13px;white-space:nowrap;transition:filter .2s}
+.btn-gold:hover{filter:brightness(1.08)}
+.btn-gold[aria-pressed="true"]{background:transparent;color:var(--gold-300);border:1px solid var(--gold-300)}
+.bars{display:flex;align-items:flex-end;gap:10px;height:120px;margin-top:6px}
+.bars div{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.bars i{width:100%;border-radius:10px 10px 4px 4px;background:var(--sky-300)}
+.bars div:last-child i{background:var(--navy-800)}
+:root[data-theme="dark"] .bars div:last-child i{background:var(--gold-500)}
+.bars small{font-size:11px;color:var(--muted)}
+.empty{color:var(--muted);font-size:14px;padding:12px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,120px);background:var(--navy-950);color:#fff;padding:12px 20px;border-radius:var(--r-pill);font-size:14px;transition:transform .35s cubic-bezier(.2,.9,.3,1.2);z-index:50}
+.toast.show{transform:translate(-50%,0)}
+
+/* ===== Responsive ===== */
+@media (max-width:1020px){
+  .notch .filter:nth-child(3){display:none}
+  .lede{display:none}
+  .c3{grid-column:span 6}.c4,.c5,.c7,.c8{grid-column:span 12}
+}
+@media (max-width:760px){
+  .page{padding:16px 16px 110px}
+  .brandbar .chip-demo{display:none}
+  .shell{padding:6px;border-radius:32px}
+  .hero{min-height:auto;border-radius:28px;padding:96px 14px 14px;display:flex;flex-direction:column;gap:12px}
+  .top{padding:12px}
+  .pill{height:44px;min-width:0;padding:0 16px;font-size:14px}
+  .pill.rent{display:none}
+  .notch{display:none}
+  .headline{position:static;font-size:44px;text-align:left;padding:30px 4px 120px}
+  .rail{position:fixed;left:12px;right:12px;bottom:12px;top:auto;flex-direction:row;justify-content:center}
+  .rail-group{flex-direction:row;background:var(--glass)}
+  .rail-group.extra,.rail-group:last-child{display:none}
+  .rail-group{width:100%;justify-content:space-around}
+  .rbtn[data-tip]:hover::after{display:none}
+  .card-white,.glass{position:static;width:auto;border-radius:24px}
+  .card-white::before,.card-white::after{display:none}
+  .seal{display:none}
+  .c3{grid-column:span 6}
+  .section-head{flex-direction:column;align-items:flex-start;gap:4px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="cal" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></symbol>
+  <symbol id="swap" viewBox="0 0 24 24"><path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/></symbol>
+  <symbol id="users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.5 3.3-5.5 6.5-5.5s5.9 2 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18.5 14.8c1.7.7 2.8 2.4 3 5.2"/></symbol>
+  <symbol id="hand" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.2-9.3C1.6 8.3 3.6 5 7 5c2 0 3.3 1.1 5 3 1.7-1.9 3-3 5-3 3.4 0 5.4 3.3 4.2 6.7C19.5 16.4 12 21 12 21z"/></symbol>
+  <symbol id="msg" viewBox="0 0 24 24"><path d="M4 5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-5 4V6a1 1 0 0 1 1-1z"/><path d="M8 10h8M8 13h5"/></symbol>
+  <symbol id="chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+  <symbol id="bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15zM10 21h4"/></symbol>
+  <symbol id="gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-2.7-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3.6 15H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.1-2.7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 9.7 4.3V4a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></symbol>
+  <symbol id="moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></symbol>
+  <symbol id="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="arrow" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></symbol>
+  <symbol id="arrowl" viewBox="0 0 24 24"><path d="M17 17 7 7M7 16V7h9"/></symbol>
+  <symbol id="pin" viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></symbol>
+  <symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="share" viewBox="0 0 24 24"><path d="M14 5 21 12l-7 7v-4c-6 0-9 1.5-11 5 .5-6 3.5-10 11-11z"/></symbol>
+  <symbol id="layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5zM3 13l9 5 9-5"/></symbol>
+  <symbol id="alert" viewBox="0 0 24 24"><path d="M12 3 2 20h20zM12 10v4M12 17v.5"/></symbol>
+</svg>
+
+<div class="page">
+  <header class="brandbar">
+    <span><b>PARÓQUIA360</b> &nbsp;·&nbsp; Toda a vida paroquial em um só lugar</span>
+    <span class="chip-demo">Protótipo · dados de exemplo</span>
+  </header>
+
+  <main class="shell">
+    <section class="hero" aria-label="Visão geral">
+      <svg class="scene" viewBox="0 0 1260 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#7d9ad1"/><stop offset=".45" stop-color="#a9bfe6"/><stop offset=".72" stop-color="#e4c9c4"/><stop offset="1" stop-color="#c7cbe0"/>
+          </linearGradient>
+          <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfd6ea"/><stop offset="1" stop-color="#9eabd2"/></linearGradient>
+          <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f6fc"/><stop offset="1" stop-color="#b9c4e3"/></linearGradient>
+          <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd9a0"/><stop offset="1" stop-color="#e08a52"/></linearGradient>
+          <radialGradient id="halo" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffe2b0" stop-opacity=".55"/><stop offset="1" stop-color="#ffe2b0" stop-opacity="0"/></radialGradient>
+          <filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
+        </defs>
+        <rect width="1260" height="720" fill="url(#sky)"/>
+        <g filter="url(#soft)" opacity=".55">
+          <ellipse cx="300" cy="200" rx="260" ry="34" fill="#fff"/><ellipse cx="900" cy="150" rx="320" ry="40" fill="#5f79b6"/><ellipse cx="1050" cy="260" rx="200" ry="26" fill="#f3d7d2"/><ellipse cx="180" cy="330" rx="200" ry="22" fill="#f1cfd6"/>
+        </g>
+        <path d="M0 520 C200 490 340 505 520 498 S900 480 1260 505 V720 H0z" fill="#aab6d8" opacity=".7"/>
+        <ellipse cx="820" cy="470" rx="360" ry="170" fill="url(#halo)"/>
+        <!-- Igreja moderna -->
+        <g transform="translate(70 120) scale(.9)">
+          <path d="M520 470 V330 C520 280 600 250 700 250 H930 C1010 250 1060 290 1060 340 V470z" fill="url(#wall)"/>
+          <path d="M520 330 C520 280 600 250 700 250 H930 C1010 250 1060 290 1060 340" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+          <path d="M560 470 V350 C560 312 620 292 700 292 H920 C985 292 1020 318 1020 352 V470z" fill="url(#glow)" opacity=".92"/>
+          <g stroke="#7b5a54" stroke-opacity=".35" stroke-width="3">
+            <path d="M640 296 V470M720 292 V470M800 292 V470M880 292 V470M950 298 V470"/>
+          </g>
+          <path d="M760 470 V360 a40 40 0 0 1 80 0 V470z" fill="#fff3dc" opacity=".9"/>
+          <rect x="1090" y="170" width="54" height="300" rx="27" fill="url(#wall)"/>
+          <rect x="1103" y="210" width="28" height="70" rx="14" fill="url(#glow)"/>
+          <path d="M1117 112 V160 M1101 128 H1133" stroke="#f6e6c3" stroke-width="6" stroke-linecap="round"/>
+          <path d="M480 470 H1180" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
+        </g>
+        <path d="M0 540 C260 528 520 548 760 536 S1100 528 1260 548 V720 H0z" fill="url(#ground)"/>
+        <g fill="#8090bf" opacity=".55"><ellipse cx="610" cy="580" rx="60" ry="10"/><ellipse cx="1000" cy="600" rx="80" ry="12"/></g>
+      </svg>
+
+      <div class="top">
+        <button class="pill" id="parish" aria-label="Trocar de paróquia"><svg class="i arrow"><use href="#arrowl"/></svg><span>Paróquia São José</span></button>
+        <form class="notch" aria-label="Filtros do painel" onsubmit="return false">
+          <div class="filter">
+            <label for="f-past"><svg class="i"><use href="#layers"/></svg>Pastoral</label>
+            <select id="f-past"><option value="all">Todas</option><option>Liturgia</option><option>PASCOM</option><option>Música</option><option>Catequese</option></select>
+          </div>
+          <div class="filter">
+            <label for="f-tipo"><svg class="i"><use href="#cal"/></svg>Tipo</label>
+            <select id="f-tipo"><option value="all">Tudo</option><option>Missa</option><option>Reunião</option><option>Formação</option><option>Festa</option></select>
+          </div>
+          <div class="filter">
+            <label for="f-per"><svg class="i"><use href="#clock"/></svg>Período</label>
+            <select id="f-per"><option value="7">Esta semana</option><option value="30">Este mês</option></select>
+          </div>
+        </form>
+        <button class="pill rent" id="newScale">Nova escala <svg class="i arrow"><use href="#arrow"/></svg></button>
+      </div>
+
+      <nav class="rail" aria-label="Navegação principal">
+        <div class="rail-group">
+          <button class="rbtn on" data-go="top" data-tip="Painel" aria-label="Painel"><svg class="i"><use href="#home"/></svg></button>
+          <button class="rbtn" data-go="agenda" data-tip="Agenda" aria-label="Agenda"><svg class="i"><use href="#cal"/></svg></button>
+          <button class="rbtn" data-go="escalas" data-tip="Escalas" aria-label="Escalas"><svg class="i"><use href="#swap"/></svg></button>
+          <button class="rbtn" data-go="ajuda" data-tip="Voluntários" aria-label="Voluntários"><svg class="i"><use href="#users"/></svg></button>
+          <button class="rbtn" data-go="comunicados" data-tip="Comunicação" aria-label="Comunicação"><svg class="i"><use href="#msg"/></svg></button>
+        </div>
+        <div class="rail-group extra">
+          <div class="avatar" title="Você (exemplo)">AP</div>
+          <button class="rbtn" id="bell" data-tip="Notificações" aria-label="Notificações"><svg class="i"><use href="#bell"/></svg><span class="dot"></span></button>
+        </div>
+        <div class="rail-group">
+          <button class="rbtn" data-go="relatorios" data-tip="Relatórios" aria-label="Relatórios"><svg class="i"><use href="#chart"/></svg></button>
+          <button class="rbtn" id="dark" data-tip="Modo escuro" aria-label="Modo escuro"><svg class="i"><use href="#moon"/></svg></button>
+          <button class="rbtn on" id="light" data-tip="Modo claro" aria-label="Modo claro"><svg class="i"><use href="#sun"/></svg></button>
+        </div>
+      </nav>
+
+      <h1 class="headline">Toda a vida<br>paroquial</h1>
+      <p class="lede">Escalas, pastorais, agenda e voluntários organizados em um só lugar — para que a equipe gaste tempo servindo, não procurando planilha.</p>
+
+      <article class="card-white">
+        <h2>Voluntários ativos</h2>
+        <p>Pessoas servindo nas pastorais neste mês. Toque para ver quem está disponível no próximo fim de semana.</p>
+        <div class="big">
+          <div><strong id="volCount">48</strong><small>em 9 pastorais</small></div>
+          <div class="faces" aria-hidden="true"><span>MA</span><span>JP</span><span>LC</span></div>
+          <button class="circle-btn" data-go="ajuda" aria-label="Ver voluntários"><svg class="i"><use href="#arrow"/></svg></button>
+        </div>
+      </article>
+
+      <div class="seal" aria-hidden="true">
+        <svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="30" r="21" stroke="#c9a45c" stroke-width="3" stroke-dasharray="104 30" stroke-linecap="round" transform="rotate(-60 30 30)"/><path d="M30 17v26M21 26h18" stroke="#fff" stroke-width="4.5" stroke-linecap="round"/></svg>
+      </div>
+
+      <article class="glass" aria-labelledby="nextMass">
+        <h3 id="nextMass">Missa Dominical</h3>
+        <div class="meta"><svg class="i"><use href="#clock"/></svg>Domingo, 10h00</div>
+        <div class="meta"><svg class="i"><use href="#pin"/></svg>Matriz São José</div>
+        <button class="go" data-go="escalas" aria-label="Abrir escala da missa"><svg class="i"><use href="#arrow"/></svg></button>
+        <div class="roles" id="roles"></div>
+        <div class="actions">
+          <div class="act"><button id="confirm" aria-pressed="false" aria-label="Confirmar minha presença"><svg class="i"><use href="#check"/></svg></button><span>Confirmar</span></div>
+          <div class="act"><button id="swapBtn" aria-pressed="false" aria-label="Pedir substituição"><svg class="i"><use href="#swap"/></svg></button><span>Substituir</span></div>
+          <div class="act"><button id="shareBtn" aria-label="Compartilhar escala"><svg class="i"><use href="#share"/></svg></button><span>Enviar</span></div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <div class="section-head" id="escalas">
+    <div><h2>Esta semana</h2><p>Resumo do que precisa da sua atenção.</p></div>
+  </div>
+  <section class="grid">
+    <div class="tile c3 kpi"><h3><span class="ic"><svg class="i"><use href="#cal"/></svg></span>Missas</h3><strong>6</strong><small>celebrações agendadas</small><span class="trend">2 com escala incompleta</span></div>
+    <div class="tile c3 kpi"><h3><span class="ic"><svg class="i"><use href="#swap"/></svg></span>Escalas</h3><strong id="kpiConf">83%</strong><small>presenças confirmadas</small><span class="trend">meta: 100% até sexta</span></div>
+    <div class="tile c3 kpi"><h3><span class="ic"><svg class="i"><use href="#layers"/></svg></span>Pastorais</h3><strong>9</strong><small>com atividade no mês</small><span class="trend">1 sem coordenador</span></div>
+    <div class="tile c3 kpi"><h3><span class="ic"><svg class="i"><use href="#alert"/></svg></span>Pendências</h3><strong>4</strong><small>itens administrativos</small><span class="trend">vencem em 7 dias</span></div>
+
+    <div class="tile c7" id="agenda">
+      <h3><span class="ic"><svg class="i"><use href="#cal"/></svg></span>Próximos compromissos</h3>
+      <ul class="list" id="events"></ul>
+    </div>
+
+    <div class="tile c5 help" id="ajuda">
+      <h3><span class="ic"><svg class="i"><use href="#hand"/></svg></span>Preciso de ajuda</h3>
+      <p>Pastorais publicam uma necessidade e voluntários com o talento e a disponibilidade certos recebem o convite.</p>
+      <div id="needs"></div>
+    </div>
+
+    <div class="tile c5" id="comunicados">
+      <h3><span class="ic"><svg class="i"><use href="#msg"/></svg></span>Comunicados recentes</h3>
+      <ul class="list">
+        <li><div class="t"><b>Reunião geral de coordenadores</b><small>Para: coordenadores · há 2 dias</small></div><span class="tag">Interno</span></li>
+        <li><div class="t"><b>Inscrições abertas — Retiro de Advento</b><small>Para: todos · há 4 dias</small></div><span class="tag ok">Público</span></li>
+        <li><div class="t"><b>Novo horário da secretaria</b><small>Para: todos · há 1 semana</small></div><span class="tag ok">Público</span></li>
+      </ul>
+    </div>
+
+    <div class="tile c7" id="relatorios">
+      <h3><span class="ic"><svg class="i"><use href="#chart"/></svg></span>Participação nas escalas · últimas 6 semanas</h3>
+      <div class="bars" role="img" aria-label="Presenças por semana: 71, 78, 74, 82, 80, 88 por cento">
+        <div><i style="height:71%"></i><small>S1</small></div><div><i style="height:78%"></i><small>S2</small></div><div><i style="height:74%"></i><small>S3</small></div><div><i style="height:82%"></i><small>S4</small></div><div><i style="height:80%"></i><small>S5</small></div><div><i style="height:88%"></i><small>S6</small></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const toast = msg => { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2400); };
+
+// Dados de exemplo (protótipo) — não são dados reais
+const events = [
+  {d:'22',m:'nov',t:'Missa Dominical',s:'Matriz · 10h · Liturgia',tipo:'Missa',past:'Liturgia',dias:5,tag:['warn','Escala 9/12']},
+  {d:'19',m:'nov',t:'Reunião da PASCOM',s:'Salão paroquial · 20h',tipo:'Reunião',past:'PASCOM',dias:2,tag:['ok','Confirmada']},
+  {d:'21',m:'nov',t:'Ensaio do coral',s:'Igreja matriz · 19h30',tipo:'Reunião',past:'Música',dias:4,tag:['ok','Confirmada']},
+  {d:'29',m:'nov',t:'Formação de catequistas',s:'Centro pastoral · 8h',tipo:'Formação',past:'Catequese',dias:12,tag:['','12 inscritos']},
+  {d:'08',m:'dez',t:'Festa da Imaculada',s:'Matriz · procissão às 18h',tipo:'Festa',past:'Liturgia',dias:21,tag:['bad','Faltam voluntários']},
+];
+function renderEvents(){
+  const p = $('#f-past').value, ty = $('#f-tipo').value, per = +$('#f-per').value;
+  const rows = events.filter(e => (p==='all'||e.past===p) && (ty==='all'||e.tipo===ty) && e.dias<=per);
+  $('#events').innerHTML = rows.length ? rows.map(e => `<li><div class="date"><b>${e.d}</b><small>${e.m}</small></div><div class="t"><b>${e.t}</b><small>${e.s}</small></div><span class="tag ${e.tag[0]}">${e.tag[1]}</span></li>`).join('')
+    : '<li class="empty">Nada encontrado com esses filtros.</li>';
+}
+['#f-past','#f-tipo','#f-per'].forEach(s => $(s).addEventListener('change', renderEvents));
+renderEvents();
+
+const roles = [['Leitores',3,3],['Ministros',4,5],['Músicos',2,4],['Coroinhas',4,4]];
+function renderRoles(){ $('#roles').innerHTML = roles.map(([n,a,t]) => `<div class="role"><span style="min-width:78px">${n}</span><span class="bar"><i style="width:${a/t*100}%"></i></span><b>${a}/${t}</b></div>`).join(''); }
+renderRoles();
+
+const needs = [
+  {t:'Fotógrafo', s:'PASCOM · Festa da Imaculada · 08/dez'},
+  {t:'2 ministros', s:'Liturgia · Missa das 7h · 22/nov'},
+];
+$('#needs').innerHTML = needs.map((n,i) => `<div class="need"><div><b>${n.t}</b><small>${n.s}</small></div><button class="btn-gold" data-need="${i}" aria-pressed="false">Posso ajudar</button></div>`).join('');
+$('#needs').addEventListener('click', e => {
+  const b = e.target.closest('[data-need]'); if(!b) return;
+  const on = b.getAttribute('aria-pressed') !== 'true';
+  b.setAttribute('aria-pressed', on); b.textContent = on ? 'Você se ofereceu ✓' : 'Posso ajudar';
+  toast(on ? 'Coordenador avisado da sua disponibilidade' : 'Oferta retirada');
+});
+
+$('#confirm').addEventListener('click', e => {
+  const b = e.currentTarget, on = b.getAttribute('aria-pressed') !== 'true';
+  b.setAttribute('aria-pressed', on); roles[1][1] += on ? 1 : -1; renderRoles();
+  $('#kpiConf').textContent = on ? '86%' : '83%';
+  toast(on ? 'Presença confirmada na Missa Dominical' : 'Confirmação desfeita');
+});
+$('#swapBtn').addEventListener('click', e => {
+  const b = e.currentTarget, on = b.getAttribute('aria-pressed') !== 'true';
+  b.setAttribute('aria-pressed', on); toast(on ? 'Pedido de substituição enviado à coordenação' : 'Pedido cancelado');
+});
+$('#shareBtn').addEventListener('click', async () => {
+  const text = 'Escala — Missa Dominical, domingo 10h: ' + roles.map(r => `${r[0]} ${r[1]}/${r[2]}`).join(', ');
+  try { if (navigator.share) await navigator.share({title:'Escala', text}); else { await navigator.clipboard.writeText(text); toast('Resumo da escala copiado'); } } catch { toast('Compartilhamento cancelado'); }
+});
+$('#bell').addEventListener('click', e => { e.currentTarget.querySelector('.dot')?.remove(); toast('2 avisos: escala de domingo e reunião da PASCOM'); });
+$('#parish').addEventListener('click', () => toast('Você tem acesso a 1 paróquia neste exemplo'));
+$('#newScale').addEventListener('click', () => toast('Assistente de nova escala — previsto no MVP (Fase 4)'));
+
+document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => {
+  const id = b.dataset.go;
+  if (b.classList.contains('rbtn')) { document.querySelectorAll('.rail .rbtn[data-go]').forEach(x => x.classList.remove('on')); b.classList.add('on'); }
+  (id === 'top' ? document.body : document.getElementById(id)).scrollIntoView({behavior:'smooth', block: id==='top'?'start':'center'});
+}));
+
+function setTheme(t){
+  document.documentElement.dataset.theme = t;
+  $('#dark').classList.toggle('on', t==='dark'); $('#light').classList.toggle('on', t==='light');
+  try { localStorage.setItem('p360-theme', t); } catch {}
+}
+$('#dark').addEventListener('click', () => setTheme('dark'));
+$('#light').addEventListener('click', () => setTheme('light'));
+try { const s = localStorage.getItem('p360-theme'); if (s) setTheme(s); } catch {}
+</script>
+</body>
+</html>

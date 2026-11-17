@@ -1,0 +1,20 @@
+# Tarefas por agente
+
+Regra de custo: um agente só é acionado quando a tarefa precisa da especialidade dele; paralelo só entre tarefas independentes que não tocam os mesmos arquivos. O Orchestrator executa direto tudo que é pequeno.
+
+| # | Agente | Tarefa | Depende de | Paralelo com | Status |
+|---|---|---|---|---|---|
+| 1 | Orchestrator + PM | Diagnóstico, MVP, docs | — | — | ✅ |
+| 2 | UI/UX | Protótipo do painel no estilo de referência | 1 | — | ✅ |
+| 3 | UI/UX | Telas Escalas (montar/confirmar/trocar) e Agenda mensal | 2 | 4 | ⏳ |
+| 4 | Backend | Migrations: schema + RLS + seed de exemplo (fictício) | 1 | 3 | ⏳ |
+| 5 | Security | Revisar RLS e política de menores | 4 | 6 | — |
+| 6 | Frontend | Scaffold Next.js + componentes do design system | 3 | 5 | — |
+| 7 | Frontend | Telas do MVP ligadas ao Supabase | 4,5,6 | — | — |
+| 8 | QA | e2e dos fluxos do MVP (Playwright), mobile e desktop | 7 | — | — |
+
+## Formato de entrega
+Objetivo · Arquivos modificados · O que foi feito · Problemas · Próximos passos (máx. 10 linhas).
+
+## Log
+- **#1/#2** — `paroquia360/README.md`, `docs/*`, `prototipo/index.html`. Painel com filtros funcionais, confirmar/substituir/compartilhar escala, Preciso de Ajuda, tema claro/escuro, layout mobile. Dados de exemplo rotulados. Próximo: #3 e #4 em paralelo.
