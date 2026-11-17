@@ -1,6 +1,7 @@
 // Revisão por frames (NÃO renderiza vídeo). Dono: agente REVISÃO.
 // Uso: npm run review -- <ComposicaoId> [frame1,frame2,...]
 // Sem lista de frames: amostra automática (início/meio/fim de cada trecho + picos de transição).
+// Opcional: REVIEW_SUB=<subpasta> (não apaga outras rodadas) · REVIEW_SCALE=0.5 (padrão) · intervalos a-b no formato 440-450.
 import {bundle} from '@remotion/bundler';
 import {renderStill, selectComposition} from '@remotion/renderer';
 import {execFileSync} from 'node:child_process';
@@ -16,15 +17,21 @@ const serveUrl = await bundle({entryPoint: path.join(raiz, 'src/index.ts'), publ
 const comp = await selectComposition({serveUrl, id, browserExecutable, chromiumOptions: {gl: 'swangle'}});
 const n = comp.durationInFrames;
 const frames = lista
-  ? lista.split(',').map(Number)
+  ? lista.split(',').flatMap((t) => {
+      const [a, b] = t.split('-').map(Number);
+      return b === undefined ? [a] : Array.from({length: b - a + 1}, (_, i) => a + i);
+    })
   : [...new Set(Array.from({length: 12}, (_, i) => Math.min(n - 1, Math.round((i / 11) * (n - 1)))))];
 
-const dir = path.join(raiz, 'render/revisao', id);
-fs.rmSync(dir, {recursive: true, force: true});
+const sub = process.env.REVIEW_SUB;
+const escala = Number(process.env.REVIEW_SCALE ?? 0.5);
+const dir = sub ? path.join(raiz, 'render/revisao', id, sub) : path.join(raiz, 'render/revisao', id);
+// Limpa só os PNGs desta pasta (subpastas de outras rodadas ficam).
+if (fs.existsSync(dir)) for (const f of fs.readdirSync(dir)) if (f.endsWith('.png')) fs.rmSync(path.join(dir, f));
 fs.mkdirSync(dir, {recursive: true});
 for (const frame of frames) {
   const output = path.join(dir, `frame-${String(frame).padStart(4, '0')}.png`);
-  await renderStill({serveUrl, composition: comp, frame, output, browserExecutable, chromiumOptions: {gl: 'swangle'}, scale: 0.5});
+  await renderStill({serveUrl, composition: comp, frame, output, browserExecutable, chromiumOptions: {gl: 'swangle'}, scale: escala});
   console.log('✓', path.relative(raiz, output));
 }
 // Folha de contato (grade) para revisão rápida
