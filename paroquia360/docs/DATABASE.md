@@ -1,4 +1,4 @@
-# Banco de dados (proposta — Fase 3)
+# Banco de dados (Fase 3 — implementado em `supabase/migrations/`)
 
 Todas as tabelas de domínio têm `id uuid`, `parish_id uuid not null`, `created_at`, `updated_at` e RLS ativa.
 
@@ -20,5 +20,7 @@ Todas as tabelas de domínio têm `id uuid`, `parish_id uuid not null`, `created
 | help_offers | help_request_id, user_id, status |
 | announcements | title, body, audience (`all`,`pastoral`,`coordinators`), pastoral_id null, published_at |
 | audit_log | actor_id, action, entity, entity_id, diff jsonb, at |
+
+Funções de acesso ficam no schema `private` (fora da API): `is_member`, `has_role`, `is_staff`, `coordinates`, `can_manage_pastoral`, `can_view_profile`. O diretório de nomes da paróquia é a RPC `parish_directory(parish_id)`, que mostra menores só pelo primeiro nome.
 
 Regras: menores (`is_minor`) só visíveis a coordenadores da própria pastoral e admins; `audit_log` só insere por trigger e só é lido por `parish_admin`/`priest`.

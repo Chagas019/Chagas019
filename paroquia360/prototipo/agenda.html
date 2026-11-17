@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Paróquia360 — Agenda</title>
+<meta name="description" content="Protótipo da agenda paroquial do Paróquia360. Dados de exemplo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="p360.css">
+</head>
+<body>
+<div class="page">
+  <header class="brandbar">
+    <span><b>PARÓQUIA360</b> &nbsp;·&nbsp; Agenda</span>
+    <button class="chip-demo" id="resetDemo" title="Volta os dados de exemplo ao estado inicial">Protótipo · dados de exemplo · reiniciar</button>
+  </header>
+
+  <div class="app">
+    <nav class="rail side" data-active="agenda" aria-label="Navegação principal"></nav>
+    <main class="shell">
+      <section class="band" aria-labelledby="pageTitle">
+        <div class="top">
+          <a class="pill" href="index.html"><svg class="i arrow"><use href="#arrowl"/></svg><span>Painel</span></a>
+          <form class="notch" aria-label="Filtros da agenda" onsubmit="return false">
+            <div class="filter">
+              <label for="f-tipo"><svg class="i"><use href="#cal"/></svg>Tipo</label>
+              <select id="f-tipo"><option value="all">Tudo</option></select>
+            </div>
+            <div class="filter">
+              <label for="f-past"><svg class="i"><use href="#layers"/></svg>Pastoral</label>
+              <select id="f-past"><option value="all">Todas</option></select>
+            </div>
+          </form>
+          <button class="pill rent" id="newEv">Novo evento <svg class="i arrow"><use href="#plus"/></svg></button>
+        </div>
+        <h1 class="band-title" id="pageTitle">Agenda</h1>
+        <p class="band-sub">Missas, reuniões, formações e festas da paróquia em um só calendário.</p>
+      </section>
+
+      <div class="workspace">
+        <div class="cal-wrap">
+          <section>
+            <div class="cal-head">
+              <h2 id="monthLabel"></h2>
+              <button class="btn sm" id="todayBtn">Hoje</button>
+              <button class="icon-btn" id="prev" aria-label="Mês anterior"><svg class="i"><use href="#chevl"/></svg></button>
+              <button class="icon-btn" id="next" aria-label="Próximo mês"><svg class="i"><use href="#chevr"/></svg></button>
+            </div>
+            <div class="cal" id="calGrid" role="grid" aria-labelledby="monthLabel"></div>
+            <div class="legend" id="legend"></div>
+          </section>
+          <aside class="tile day-panel" id="dayPanel" aria-live="polite"></aside>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<dialog class="sheet" id="evForm" aria-labelledby="efTitle">
+  <form class="sheet-in" method="dialog" id="efForm" novalidate>
+    <div class="sheet-head">
+      <div><h2 id="efTitle">Novo evento</h2><p>Fica salvo só neste navegador (protótipo).</p></div>
+      <button type="button" class="icon-btn" data-close aria-label="Fechar"><svg class="i"><use href="#x"/></svg></button>
+    </div>
+    <div class="sheet-body" style="padding:8px 24px 24px">
+      <label class="field">Título<input name="title" required maxlength="120" autocomplete="off"></label>
+      <div class="field-row">
+        <label class="field">Tipo<select name="type" id="efType"></select></label>
+        <label class="field">Pastoral<select name="pastoral" id="efPast"><option value="">Paróquia toda</option></select></label>
+      </div>
+      <div class="field-row">
+        <label class="field">Data<input type="date" name="date" required min="2026-11-01" max="2026-12-31"></label>
+        <label class="field">Horário<input type="time" name="time" required></label>
+      </div>
+      <label class="field">Local<input name="place" required maxlength="80"></label>
+      <label class="field" id="efSlotsWrap"><span><input type="checkbox" name="slots" checked> Criar escala padrão (leitores, ministros, músicos, coroinhas)</span></label>
+      <p class="form-err" id="efErr" role="alert"></p>
+      <button class="btn primary" type="submit" style="width:100%;justify-content:center">Salvar evento</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="p360.js"></script>
+<script src="agenda.js"></script>
+</body>
+</html>

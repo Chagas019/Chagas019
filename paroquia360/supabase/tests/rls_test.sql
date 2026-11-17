@@ -1,0 +1,102 @@
+-- Testes de isolamento e permissões (rodar com tests/run.sh). Cada falha aborta com mensagem.
+\set ON_ERROR_STOP 1
+create schema tests;
+grant usage on schema tests to authenticated, anon;
+-- Executa SQL e exige que dê erro OU afete 0 linhas.
+create function tests.denied(q text, msg text) returns void language plpgsql as $$
+declare n int;
+begin
+  begin execute q; get diagnostics n = row_count;
+  exception when others then return; end;
+  if n > 0 then raise exception 'FALHOU (deveria negar): %', msg; end if;
+end $$;
+create function tests.allowed(q text, msg text) returns void language plpgsql as $$
+declare n int;
+begin
+  begin execute q; get diagnostics n = row_count;
+  exception when others then raise exception 'FALHOU (deveria permitir): % — %', msg, sqlerrm; end;
+  if n = 0 then raise exception 'FALHOU (0 linhas): %', msg; end if;
+end $$;
+create function tests.eq(got bigint, want bigint, msg text) returns void language plpgsql as $$
+begin if got is distinct from want then raise exception 'FALHOU: % (esperado %, veio %)', msg, want, got; end if; end $$;
+grant execute on all functions in schema tests to authenticated, anon;
+
+-- Segunda paróquia, para testar isolamento
+insert into auth.users (id, email, raw_user_meta_data) values
+ ('00000000-0000-0000-0000-0000000000b1','admin.b@exemplo.invalid','{"full_name":"Bia Outra"}'),
+ ('00000000-0000-0000-0000-0000000000b2','menor.semconsent@exemplo.invalid','{"full_name":"Gui Menor Sem Consentimento"}');
+insert into public.parishes (id, name, slug) values ('10000000-0000-0000-0000-0000000000b0','Paróquia Exemplo B','exemplo-b');
+insert into public.memberships (parish_id, user_id, role) values
+ ('10000000-0000-0000-0000-0000000000b0','00000000-0000-0000-0000-0000000000b1','parish_admin'),
+ ('10000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-0000000000b2','volunteer');
+update public.profiles set birth_date = current_date - interval '12 years' where user_id = '00000000-0000-0000-0000-0000000000b2';
+insert into public.events (parish_id, type, title, starts_at) values ('10000000-0000-0000-0000-0000000000b0','mass','Missa B', now());
+
+-- ===== anon não vê nada
+set role anon;
+select tests.denied('select * from public.events', 'anon lê events');
+reset role;
+
+-- ===== Admin da paróquia B: isolamento
+set role authenticated;
+select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-0000000000b1',false);
+select tests.eq((select count(*) from public.events), 1, 'B vê só o próprio evento');
+select tests.eq((select count(*) from public.pastorals), 0, 'B não vê pastorais de A');
+select tests.eq((select count(*) from public.memberships where parish_id='10000000-0000-0000-0000-000000000001'), 0, 'B não vê membros de A');
+select tests.eq((select count(*) from public.profiles where user_id='00000000-0000-0000-0000-000000000004'), 0, 'B não vê perfis de A');
+select tests.eq((select count(*) from public.parish_directory('10000000-0000-0000-0000-000000000001')), 0, 'B não lê diretório de A');
+select tests.denied($$insert into public.events (parish_id,type,title,starts_at,created_by) values ('10000000-0000-0000-0000-000000000001','mass','Invasão',now(),auth.uid())$$, 'B cria evento em A');
+select tests.denied($$insert into public.memberships (parish_id,user_id,role) values ('10000000-0000-0000-0000-000000000001',auth.uid(),'parish_admin')$$, 'B se coloca como admin de A');
+select tests.denied($$update public.events set title='x' where parish_id='10000000-0000-0000-0000-000000000001'$$, 'B altera evento de A');
+select tests.eq((select count(*) from public.audit_log where parish_id='10000000-0000-0000-0000-000000000001'), 0, 'B não lê auditoria de A');
+
+-- ===== Voluntário (Davi, leitor)
+select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000004',false);
+select tests.eq((select count(*) from public.events), 2, 'voluntário vê eventos da própria paróquia');
+select tests.eq((select count(*) from public.announcements), 1, 'voluntário vê só comunicado para todos');
+select tests.eq((select count(*) from public.audit_log), 0, 'voluntário não lê auditoria');
+select tests.eq((select count(*) from public.profiles where user_id='00000000-0000-0000-0000-000000000005'), 0, 'voluntário não vê perfil de menor');
+select tests.eq((select count(*) from public.parish_directory('10000000-0000-0000-0000-000000000001') where display_name='Enzo'), 1, 'menor aparece só com primeiro nome');
+select tests.eq((select count(*) from public.availability), 1, 'voluntário vê só a própria disponibilidade');
+select tests.denied($$insert into public.events (parish_id,type,title,starts_at,created_by) values ('10000000-0000-0000-0000-000000000001','mass','X',now(),auth.uid())$$, 'voluntário cria evento');
+select tests.denied($$update public.memberships set role='parish_admin' where user_id=auth.uid()$$, 'voluntário se promove');
+select tests.allowed($$update public.roster_assignments set status='confirmed' where user_id=auth.uid()$$, 'voluntário confirma presença');
+select tests.denied($$update public.roster_assignments set status='confirmed' where user_id='00000000-0000-0000-0000-000000000005'$$, 'voluntário confirma por outro');
+select tests.denied($$update public.roster_assignments set user_id='00000000-0000-0000-0000-000000000006' where user_id=auth.uid()$$, 'voluntário repassa escala sozinho');
+select tests.allowed($$update public.roster_assignments set status='swap_requested', swap_note='viagem' where user_id=auth.uid()$$, 'voluntário pede substituição');
+select tests.denied($$insert into public.audit_log (action,entity) values ('x','y')$$, 'voluntário escreve na auditoria');
+select tests.denied($$insert into public.help_offers (parish_id,help_request_id,user_id) select parish_id,id,'00000000-0000-0000-0000-000000000006' from public.help_requests$$, 'oferecer ajuda em nome de outro');
+
+-- ===== Voluntária PASCOM (Fernanda)
+select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000006',false);
+select tests.eq((select count(*) from public.profiles where user_id='00000000-0000-0000-0000-000000000004'), 0, 'voluntária não vê perfil de outro voluntário');
+select tests.allowed($$insert into public.help_offers (parish_id,help_request_id,user_id) select parish_id,id,auth.uid() from public.help_requests$$, 'voluntária se oferece para ajudar');
+select tests.allowed($$update public.help_offers set status='withdrawn' where user_id=auth.uid()$$, 'voluntária retira oferta');
+select tests.denied($$update public.help_offers set status='accepted' where user_id=auth.uid()$$, 'voluntária se aceita sozinha');
+
+-- ===== Coordenadora da Liturgia (Carla)
+select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000003',false);
+select tests.eq((select count(*) from public.announcements), 2, 'coordenadora vê comunicado de coordenadores');
+select tests.eq((select count(*) from public.profiles where user_id='00000000-0000-0000-0000-000000000005'), 1, 'coordenadora vê perfil do coroinha da pastoral');
+select tests.eq((select count(*) from public.profiles where user_id='00000000-0000-0000-0000-0000000000b2'), 0, 'coordenadora não vê menor de fora da pastoral');
+select tests.allowed($$insert into public.roster_assignments (parish_id,slot_id,user_id,assigned_by) values ('10000000-0000-0000-0000-000000000001','60000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000006',auth.uid())$$, 'coordenadora escala voluntário');
+select tests.allowed($$update public.roster_assignments set status='pending' where user_id='00000000-0000-0000-0000-000000000004'$$, 'coordenadora reabre resposta');
+select tests.denied($$insert into public.roster_assignments (parish_id,slot_id,user_id) values ('10000000-0000-0000-0000-000000000001','60000000-0000-0000-0000-000000000002','00000000-0000-0000-0000-0000000000b2')$$, 'menor sem consentimento em escala');
+select tests.allowed($$insert into public.events (parish_id,pastoral_id,type,title,starts_at,created_by) values ('10000000-0000-0000-0000-000000000001','20000000-0000-0000-0000-000000000001','meeting','Reunião Liturgia',now(),auth.uid())$$, 'coordenadora cria evento da própria pastoral');
+select tests.denied($$insert into public.events (parish_id,pastoral_id,type,title,starts_at,created_by) values ('10000000-0000-0000-0000-000000000001','20000000-0000-0000-0000-000000000002','meeting','X',now(),auth.uid())$$, 'coordenadora cria evento de outra pastoral');
+select tests.denied($$insert into public.events (parish_id,type,title,starts_at,created_by) values ('10000000-0000-0000-0000-000000000001','mass','Sem pastoral',now(),auth.uid())$$, 'coordenadora cria evento geral');
+select tests.denied($$insert into public.memberships (parish_id,user_id,role) values ('10000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-0000000000b1','volunteer')$$, 'coordenadora adiciona membro');
+
+-- ===== Admin da paróquia A (Ana)
+select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000001',false);
+select tests.allowed($$update public.memberships set role='coordinator' where user_id='00000000-0000-0000-0000-000000000006'$$, 'admin muda papel de membro');
+select tests.denied($$update public.memberships set role='volunteer' where user_id=auth.uid()$$, 'admin muda o próprio papel');
+select tests.denied($$insert into public.roster_slots (parish_id,event_id,roster_role_id) values ('10000000-0000-0000-0000-000000000001','40000000-0000-0000-0000-000000000001','50000000-0000-0000-0000-000000000001')$$, 'função duplicada no mesmo evento');
+select tests.eq((select count(*) from public.events), 3, 'admin vê eventos da paróquia');
+select tests.eq((select (count(*) > 0)::int from public.audit_log where entity='roster_assignments' and actor_id is not null), 1, 'auditoria registrou ações');
+reset role;
+
+-- ===== Integridade entre paróquias (mesmo como superusuário)
+select tests.denied($$insert into public.roster_slots (parish_id,event_id,roster_role_id) values ('10000000-0000-0000-0000-0000000000b0','40000000-0000-0000-0000-000000000001','50000000-0000-0000-0000-000000000001')$$, 'slot de B apontando para evento de A');
+
+\echo 'TODOS OS TESTES PASSARAM'

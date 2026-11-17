@@ -6,8 +6,8 @@ Regra de custo: um agente só é acionado quando a tarefa precisa da especialida
 |---|---|---|---|---|---|
 | 1 | Orchestrator + PM | Diagnóstico, MVP, docs | — | — | ✅ |
 | 2 | UI/UX | Protótipo do painel no estilo de referência | 1 | — | ✅ |
-| 3 | UI/UX | Telas Escalas (montar/confirmar/trocar) e Agenda mensal | 2 | 4 | ⏳ |
-| 4 | Backend | Migrations: schema + RLS + seed de exemplo (fictício) | 1 | 3 | ⏳ |
+| 3 | UI/UX | Telas Escalas (montar/confirmar/trocar) e Agenda mensal | 2 | 4 | ✅ |
+| 4 | Backend | Migrations: schema + RLS + seed de exemplo (fictício) | 1 | 3 | ✅ |
 | 5 | Security | Revisar RLS e política de menores | 4 | 6 | — |
 | 6 | Frontend | Scaffold Next.js + componentes do design system | 3 | 5 | — |
 | 7 | Frontend | Telas do MVP ligadas ao Supabase | 4,5,6 | — | — |
@@ -18,3 +18,5 @@ Objetivo · Arquivos modificados · O que foi feito · Problemas · Próximos pa
 
 ## Log
 - **#1/#2** — `paroquia360/README.md`, `docs/*`, `prototipo/index.html`. Painel com filtros funcionais, confirmar/substituir/compartilhar escala, Preciso de Ajuda, tema claro/escuro, layout mobile. Dados de exemplo rotulados. Próximo: #3 e #4 em paralelo.
+- **#3** — `prototipo/escalas.html`, `agenda.html`, `p360.css`, `p360.js`, `painel.js`. Escalas: lista por celebração com % confirmado, escalar/substituir com seletor que respeita função, disponibilidade, conflito e consentimento de menores; registrar confirmação, tirar, lembrar, enviar. Agenda: mês com eventos por tipo, painel do dia, criar evento (cria escala padrão para missa). Painel passou a ler os mesmos dados. Testado em 1360px e 390px, sem erros de console nem rolagem lateral.
+- **#4** — `supabase/migrations/20261117000001_init.sql`, `seed.sql`, `tests/`. 17 tabelas, RLS em todas, FKs compostas impedem referência entre paróquias, gatilhos: perfil automático, anti-autopromoção, voluntário só altera a própria resposta, menor só com consentimento, auditoria. 44 checagens em `tests/rls_test.sql` passando num Postgres 16 local. Ainda não aplicado em nenhum projeto Supabase.
