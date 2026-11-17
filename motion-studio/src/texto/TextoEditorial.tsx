@@ -100,7 +100,7 @@ export const TextoEditorial: React.FC<TextoEditorialProps> = ({
             const destaque = destaques.includes(i);
             // Largura animada (0 -> largura medida) para a linha centralizar só as palavras já visíveis.
             const fVis = centrarVisiveis
-              ? interpolate(frame, [e, e + duracaoEntrada * 0.5], [0, 1], {easing: curvas.entrada, extrapolateLeft: 'clamp', extrapolateRight: 'clamp'})
+              ? interpolate(frame, [e - 8, e], [0, 1], {easing: curvas.suave, extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}) // espaço abre 8 f antes
               : 1;
             const largura = (larguraPx(textos[i], fonte, tamanho, ref ? track : 0) - (ref ? track * tamanho : 0)) * fVis;
             return (

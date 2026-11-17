@@ -104,10 +104,17 @@ export const TextoImpacto: React.FC<TextoImpactoProps> = ({
             const opSaida = tipoSaida === 'desfoque' ? 1 - s : 1;
             // Máscara (wipe de baixo p/ cima): a borda sobe pelo glifo, então o acento é revelado POR ÚLTIMO
             // (sem acento órfão). Na saída 'mascara' a borda desce de cima: o acento some primeiro.
-            const topoEntrada = H + 0.12 - (H + 0.57) * p; // H+0.12em (vazio) -> -0.45em (inteiro, com acento)
-            const topoSaida = tipoSaida === 'mascara' ? -0.45 + (H + 0.57) * s : -0.45;
-            const topo = Math.max(topoEntrada, topoSaida);
+            // Métricas Oswald (medidas): baseline em H/2 + 0.45em; topo das capitulares 0.81em acima; acentos até 1.08em;
+            // cedilha/vírgula descem até 0.28em. Corte inferior em H+0.3em (antes 0.12 cortava a cedilha de "Ç").
+            const base = H + 0.3;
             const y = (1 - p) * 40 + (tipoSaida === 'mascara' ? s * -30 : 0);
+            const topoCaps = H / 2 + 0.45 - 0.81 + (y / 100) * H; // topo das capitulares, já com o deslocamento atual
+            const topoEntrada = base - (base + 0.45) * p; // base (vazio) -> -0.45em (inteiro, com acento)
+            const topoSaida = tipoSaida === 'mascara' ? -0.45 + (base + 0.45) * s : -0.45;
+            const topoBruto = Math.max(topoEntrada, topoSaida);
+            // Rev.1 #10: acento nunca fica órfão nem falta — quando a borda passa o topo das capitulares, o glifo inteiro
+            // (com acento) aparece junto; na saída o acento só some junto com o topo das letras.
+            const topo = topoBruto <= topoCaps + 0.02 ? -0.45 : topoBruto;
             // Sombra/brilho só depois que a palavra assentou (antes vazavam como linha âmbar na borda da máscara).
             const kLuz = interpolate(frame, [e + duracaoEntrada * 0.8, e + duracaoEntrada + 10], [0, 1], clamp) * (1 - s);
             const acende = interpolate(frame, [e + duracaoEntrada * 0.8, e + duracaoEntrada + 30], [1, 0], clamp);
@@ -116,7 +123,8 @@ export const TextoImpacto: React.FC<TextoImpactoProps> = ({
             const glow = brilhoAmbar(tamanho, kLuz * (destaque ? 0.7 + acende * 0.3 : acende * 0.35));
             // Largura do slot = largura real no tracking ATUAL (gap de 0.24em nunca é invadido).
             // centrarVisiveis: palavras ainda não ditas têm largura 0 -> a linha centraliza só o que já apareceu.
-            const fVis = centrarVisiveis ? interpolate(frame, [e, e + duracaoEntrada * 0.5], [0, 1], {easing: curvas.entrada, ...clamp}) : 1;
+            // O espaço abre ANTES da palavra (8 f de antecipação) -> a palavra nunca invade a vizinha ao aparecer.
+            const fVis = centrarVisiveis ? interpolate(frame, [e - 8, e], [0, 1], {easing: curvas.suave, ...clamp}) : 1;
             const larguraSlot = (larguraPx(caixa[i], fonte, tamanho, track) - track * tamanho) * fVis;
             const camada: React.CSSProperties = {
               position: 'absolute',
@@ -136,8 +144,8 @@ export const TextoImpacto: React.FC<TextoImpactoProps> = ({
                   width: larguraSlot,
                   marginLeft: k > 0 ? gap * fVis : 0,
                   height: `${H}em`,
-                  clipPath: `inset(${topo.toFixed(4)}em -1em -0.12em -1em)`,
-                  visibility: frame < e || topo >= H + 0.11 ? 'hidden' : 'visible',
+                  clipPath: `inset(${topo.toFixed(4)}em -1em ${(H - base).toFixed(4)}em -1em)`,
+                  visibility: frame < e || topo >= base - 0.01 ? 'hidden' : 'visible',
                 }}
               >
                 <span

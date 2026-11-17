@@ -65,3 +65,41 @@ Luz principal coerente: SEMPRE do alto, levemente à direita (`luzPrincipal = {o
 - PEÇAS (cruz, estrada): cruz em `primaria`/`douradoClaro` com borda iluminada pelo lado da `luzPrincipal`; estrada e silhueta em `secundaria`/`fundo`.
 - CENAS: confirmar se a luz da cena 1 nasce no centro (x 0.5, y ~0.42); a direção da luz principal vale a partir da cena 3.
 - REVISÃO: checar visualmente o banding no amanhecer (o grão 0.05 deve cobrir).
+
+---
+
+## Correção — revisão 1, item 6 (cena 4 luminosa)
+
+**Causas encontradas**
+1. `FundoProfundo` chegava no máximo a `#4A3318` (marrom escuro), e a cena 4 usava `luz` 0.7.
+2. `GradacaoCor`: o ponto médio da temperatura (`#4A4038`) era cinza escuro. Em `soft-light`, qualquer cor abaixo de 50% escurece, e por isso a mistura 0.5–0.8 deixava a imagem lamacenta.
+
+**Mudanças**
+- `FundoProfundo` ganhou a **faixa luminosa `luz` 1..2**. As cenas que usam 0..1 (5 e 6) ficam idênticas. A camada luminosa (opacidade = `luz − 1`) tem:
+  - céu de amanhecer creme → âmbar nos 25% superiores (`altaQuente → #F0C27E → #DB9A4E → #B06A2C`), descendo para âmbar queimado e base escura quente;
+  - sol difuso no alto, do lado da luz principal;
+  - retorno âmbar embaixo, em continuidade com a estrada dourada da cena 3;
+  - **lente escura** radial atrás da tipografia (prop nova `lente = {y: 0.42, altura: 0.34}`).
+- `GradacaoCor`: o ponto médio da temperatura passou a ser neutro (`#7E7870`) e o quente virou `#B8823F`. Isso tira a lama de qualquer `mistura` intermediária. A cena 3 foi conferida em f800/1100/1300 e esquenta de forma progressiva, sem regressão.
+- `estilo.ts`: `luzFundoPorCena.cena4` foi de 0.7 para **1.9** e `misturaPorCena.cena4` de 0.8 para **0.85**. O `atmosferaFe` ficou como estava: grão 0.05 e vinheta 0.35 já eram os valores "luminosos".
+
+**Contraste medido nos pixels renderizados** (média 9×9 px do fundo ao lado e acima/abaixo do texto)
+
+| Ponto | Fundo | Branco quente | Dourado `#D9B56E` |
+|---|---|---|---|
+| f1620 editorial ("Quando faltar força,"), lado | `#4B290E` | 11.22 | 6.65 |
+| f1620 editorial, acima | `#5A3612` | 9.24 | 5.47 |
+| f1620 editorial, abaixo | `#563413` | 9.60 | 5.69 |
+| f1620 "CONFIE.", lado | `#3E220B` | 12.66 | 7.50 |
+| f1780 editorial ("direção,"), acima | `#5F3814` | 8.83 | 5.23 |
+| f1780 editorial, abaixo | `#5D3A15` | 8.75 | 5.18 |
+| f1780 "CONFIE." dourado, lado | `#41250C` | 12.18 | 7.22 |
+| topo (céu, sem texto) | `#DAB273` | 1.72 | 1.02 |
+
+Todos os textos ficam ≥ 5.18:1. Antes desta segunda calibragem, o dourado na linha editorial dava 3.7–4.3. O topo claro (céu) não leva texto e **não pode receber tipografia**.
+
+Stills: `render/revisao/ConfieEmCristo-Vertical/cor-r1/` (`m2.png` = f1476 | 1500 | 1620 | 1780 | 1840; `m3.png` = cena 3 em f800/1100/1300).
+
+**Pedidos**
+- CÓDIGO: nada obrigatório, porque a cena 4 já consome `luzFundoPorCena.cena4`. Opcional: passar `lente={{y: 0.42, altura: 0.34}}` explicitamente no `FundoProfundo` da Cena4 se o layout mudar (âncoras do texto em 0.33 e 0.5), mantendo a lente entre as duas.
+- CÓDIGO/REVISÃO: a cena 5 (f1840) agora fica bem mais escura que a 4. Isso é coerente com a cruz "recortada pela luz" (item 5), mas o T4 vai ter uma queda de luminância. Se a revisão achar que ela quebra o arco, a correção é passar `luzFundoPorCena.cena5` para ~1.4 (fundo luminoso atrás da cruz em silhueta). Me peçam, que eu ajusto e meço.
