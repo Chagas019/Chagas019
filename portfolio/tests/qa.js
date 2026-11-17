@@ -5,6 +5,7 @@
  * Usage:  node portfolio/tests/qa.js [port]        (default port 8091)
  * Env:    QA_PATH=/portfolio/  (page path)   QA_HEADED=1 not supported (launch() w/o options)
  * Output: console summary + portfolio/tests/qa-report.json + screenshots/*.png
+ * v4:     + tests/qa-v4.js (accordion, price-row preselect, motion clips, hover, WA vs submits, media, deep overflow)
  * Exit:   0 = no FAIL, 1 = at least one FAIL, 2 = harness crash
  *
  * ---------------------------------------------------------------------------
@@ -703,6 +704,9 @@ async function main() {
       rec('perf.lcp', lcp < 2500 ? 'PASS' : 'FAIL', `LCP ${Math.round(lcp)}ms (localhost, unthrottled — confirm with Lighthouse)`);
       await c.close();
     });
+
+    // ===== v4 extras (tests/qa-v4.js) =====
+    await check('v4.extras', () => require('./qa-v4.js')(browser, URL_, rec));
   } finally {
     await browser.close();
     server.close();
