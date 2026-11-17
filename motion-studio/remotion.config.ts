@@ -8,8 +8,8 @@ Config.setPixelFormat('yuv420p');
 Config.setCrf(18);
 Config.setOverwriteOutput(true);
 Config.setConcurrency(null);
-// WebGL (cenas 3D) em modo headless.
-Config.setChromiumOpenGlRenderer('angle');
+// WebGL (cenas 3D) em modo headless. 'angle' não cria contexto WebGL neste container; 'swangle' (software) funciona.
+Config.setChromiumOpenGlRenderer('swangle');
 
 // Usa o Chromium headless pré-instalado quando existir (container); localmente o Remotion baixa o seu.
 const headless =

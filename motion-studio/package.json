@@ -11,7 +11,9 @@
     "review": "node scripts/review-frames.mjs",
     "render": "node scripts/render-guard.mjs",
     "qa": "node scripts/qa-check.mjs",
-    "sfx": "bash scripts/gerar-sfx.sh"
+    "sfx": "bash scripts/gerar-sfx.sh",
+    "trilha": "node scripts/compor-trilha.mjs",
+    "sfx:cinema": "bash scripts/gerar-sfx-cinema.sh"
   },
   "dependencies": {
     "@react-three/fiber": "^9.8.2",

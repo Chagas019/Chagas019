@@ -13,7 +13,7 @@ const headless = '/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-
 const browserExecutable = fs.existsSync(headless) ? headless : null;
 
 const serveUrl = await bundle({entryPoint: path.join(raiz, 'src/index.ts'), publicDir: path.join(raiz, 'public')});
-const comp = await selectComposition({serveUrl, id, browserExecutable, chromiumOptions: {gl: 'angle'}});
+const comp = await selectComposition({serveUrl, id, browserExecutable, chromiumOptions: {gl: 'swangle'}});
 const n = comp.durationInFrames;
 const frames = lista
   ? lista.split(',').map(Number)
@@ -24,7 +24,7 @@ fs.rmSync(dir, {recursive: true, force: true});
 fs.mkdirSync(dir, {recursive: true});
 for (const frame of frames) {
   const output = path.join(dir, `frame-${String(frame).padStart(4, '0')}.png`);
-  await renderStill({serveUrl, composition: comp, frame, output, browserExecutable, chromiumOptions: {gl: 'angle'}, scale: 0.5});
+  await renderStill({serveUrl, composition: comp, frame, output, browserExecutable, chromiumOptions: {gl: 'swangle'}, scale: 0.5});
   console.log('✓', path.relative(raiz, output));
 }
 // Folha de contato (grade) para revisão rápida
