@@ -92,7 +92,7 @@ export const Revelacao: React.FC<RevelacaoProps> = ({
     const nW = noise2D(`${seed}-w`, i * 0.55, t);
     const nX = noise2D(`${seed}-x`, i * 0.4, t * 0.8);
     const wi = Math.max(1.5 * u, w * perfil * (1 + 0.45 * irr * nW));
-    const xi = cx + nX * irr * (w * 0.18 + 10 * u * (1 - smooth(0.3, 0.6, p)));
+    const xi = cx + nX * irr * (w * 0.18 + 4 * u * (1 - smooth(0.3, 0.6, p)));
     const yi = cy - h / 2 + h * s;
     const hi = (h / N) * 2.6 + 6 * u;
     return {xi, yi, wi, hi};
@@ -108,10 +108,15 @@ export const Revelacao: React.FC<RevelacaoProps> = ({
 
   // Luz (screen): núcleo quente estreito por fatia + halo largo. Some quando o cenário assume.
   const luzNucleo = fatias.map(({xi, yi, wi, hi}) => {
+    // fatias muito sobrepostas e fracas: somadas formam um véu contínuo (sem "contas" brilhantes)
     const rx = wi / 2 + 14 * u + feather * 0.25;
-    const ry = hi / 2 + 10 * u;
-    return `radial-gradient(${rx.toFixed(1)}px ${ry.toFixed(1)}px at ${xi.toFixed(1)}px ${yi.toFixed(1)}px, ${alfa(c.nucleo, 0.55 * intensidade)} 0%, ${alfa(c.ambar, 0.28 * intensidade)} 45%, transparent 100%)`;
+    const ry = hi * 1.1 + feather * 0.3;
+    return `radial-gradient(${rx.toFixed(1)}px ${ry.toFixed(1)}px at ${xi.toFixed(1)}px ${yi.toFixed(1)}px, ${alfa(c.nucleo, 0.16 * intensidade)} 0%, ${alfa(c.ambar, 0.08 * intensidade)} 50%, transparent 100%)`;
   });
+  // núcleo contínuo ao longo de toda a fenda
+  luzNucleo.push(
+    `radial-gradient(${(w / 2 + 10 * u + feather * 0.35).toFixed(1)}px ${(h / 2 + 20 * u).toFixed(1)}px at ${cx.toFixed(1)}px ${cy.toFixed(1)}px, ${alfa(c.nucleo, 0.4 * intensidade)} 0%, ${alfa(c.ambar, 0.18 * intensidade)} 55%, transparent 100%)`,
+  );
   const raioHalo = Math.max(W * 0.45, (w + h) * 0.75);
   const halo = `radial-gradient(${(raioHalo * 0.7).toFixed(0)}px ${raioHalo.toFixed(0)}px at ${cx.toFixed(1)}px ${cy.toFixed(1)}px, ${alfa(c.ambar, 0.42 * intensidade)} 0%, ${alfa(mix(c.ambar, c.sombraQuente, 0.4), 0.16 * intensidade)} 40%, transparent 100%)`;
 

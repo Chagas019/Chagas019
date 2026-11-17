@@ -231,15 +231,18 @@ const FadeNegro: React.FC<TransitionPresentationComponentProps<FadeNegroProps>> 
       </AbsoluteFill>
     );
   }
-  // emerge do preto pelo centro (vinheta abrindo) com ease-out
+  // emerge do preto pelo centro (máscara abrindo) com ease-out.
+  // A cena que entra fica POR CIMA: nada de camada opaca aqui (cobriria a descida da cena anterior);
+  // usa-se só opacidade + máscara (transparência), então por baixo continua valendo o escurecimento do exiting.
   const v = faixa(p, 1 - meio, 1, 1, 0, curvas.entrada);
-  const veu = faixa(p, 1 - meio, 1, 1, 0, Easing2Out);
+  const o = faixa(p, 1 - meio, 1, 0, 1, Easing2Out);
   const s = 1 + faixa(p, 1 - meio, 1, 0.015, 0, curvas.entrada);
+  const interno = 70 * (1 - v);
+  const externo = interno + 55 - 25 * v;
+  const mascara = `radial-gradient(ellipse 75% 60% at 50% 46%, #000 ${interno.toFixed(2)}%, rgba(0,0,0,${(1 - v).toFixed(3)}) ${externo.toFixed(2)}%)`;
   return (
-    <AbsoluteFill>
-      <AbsoluteFill style={{transform: `scale(${s})`}}>{children}</AbsoluteFill>
-      {v > 0 ? <AbsoluteFill style={{background: vinhetaFechando(v, cor), opacity: Math.min(1, v * 2)}} /> : null}
-      {veu > 0 ? <AbsoluteFill style={{backgroundColor: cor, opacity: veu}} /> : null}
+    <AbsoluteFill style={{opacity: o, transform: `scale(${s})`, WebkitMaskImage: v > 0 ? mascara : undefined, maskImage: v > 0 ? mascara : undefined}}>
+      {children}
     </AbsoluteFill>
   );
 };
