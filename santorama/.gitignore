@@ -1,0 +1,9 @@
+studio/node_modules/
+studio/out/
+*.onnx
+voices-*.bin
+episodes/*/audio/narration_raw.wav
+# regeneráveis com tools/build_score.py
+episodes/*/audio/music.wav
+episodes/*/audio/sfx.wav
+episodes/*/audio/mix.wav

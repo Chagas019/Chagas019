@@ -1,0 +1,1380 @@
+{
+ "fps": 30,
+ "duration": 89.5,
+ "scenes": [
+  {
+   "id": "s1-gancho",
+   "voiceStart": 1.6,
+   "voiceEnd": 6.614,
+   "start": 0.0,
+   "end": 7.164
+  },
+  {
+   "id": "s2-quem",
+   "voiceStart": 7.714,
+   "voiceEnd": 14.444,
+   "start": 7.164,
+   "end": 14.844
+  },
+  {
+   "id": "s3-missao",
+   "voiceStart": 15.244,
+   "voiceEnd": 22.729,
+   "start": 14.844,
+   "end": 23.229
+  },
+  {
+   "id": "s4-guerra",
+   "voiceStart": 23.729,
+   "voiceEnd": 36.106,
+   "start": 23.229,
+   "end": 36.606
+  },
+  {
+   "id": "s5-escolha",
+   "voiceStart": 37.106,
+   "voiceEnd": 47.743,
+   "start": 36.606,
+   "end": 48.343
+  },
+  {
+   "id": "s6-sacrificio",
+   "voiceStart": 48.943,
+   "voiceEnd": 55.193,
+   "start": 48.343,
+   "end": 55.793
+  },
+  {
+   "id": "s7-ultima-prova",
+   "voiceStart": 56.393,
+   "voiceEnd": 67.816,
+   "start": 55.793,
+   "end": 68.466
+  },
+  {
+   "id": "s8-mensagem",
+   "voiceStart": 69.116,
+   "voiceEnd": 75.856,
+   "start": 68.466,
+   "end": 76.456
+  },
+  {
+   "id": "s9-versiculo",
+   "voiceStart": 77.056,
+   "voiceEnd": 81.2,
+   "start": 76.456,
+   "end": 81.85
+  },
+  {
+   "id": "s10-final",
+   "voiceStart": 82.5,
+   "voiceEnd": 86.7,
+   "start": 81.85,
+   "end": 89.5
+  }
+ ],
+ "cues": [
+  {
+   "i": 0,
+   "scene": "s1-gancho",
+   "text": "Imagine estar condenado à morte…",
+   "start": 1.6,
+   "end": 3.694,
+   "words": [
+    {
+     "w": "Imagine",
+     "start": 1.6,
+     "end": 2.218,
+     "hl": false
+    },
+    {
+     "w": "estar",
+     "start": 2.218,
+     "end": 2.551,
+     "hl": false
+    },
+    {
+     "w": "condenado",
+     "start": 2.551,
+     "end": 3.169,
+     "hl": true
+    },
+    {
+     "w": "à",
+     "start": 3.169,
+     "end": 3.361,
+     "hl": false
+    },
+    {
+     "w": "morte…",
+     "start": 3.361,
+     "end": 3.694,
+     "hl": true
+    }
+   ],
+   "subtitle": true
+  },
+  {
+   "i": 1,
+   "scene": "s1-gancho",
+   "text": "e alguém decidir morrer no seu lugar.",
+   "start": 4.244,
+   "end": 6.614,
+   "words": [
+    {
+     "w": "e",
+     "start": 4.244,
+     "end": 4.466,
+     "hl": false
+    },
+    {
+     "w": "alguém",
+     "start": 4.466,
+     "end": 4.851,
+     "hl": false
+    },
+    {
+     "w": "decidir",
+     "start": 4.851,
+     "end": 5.401,
+     "hl": false
+    },
+    {
+     "w": "morrer",
+     "start": 5.401,
+     "end": 5.786,
+     "hl": true
+    },
+    {
+     "w": "no",
+     "start": 5.786,
+     "end": 6.007,
+     "hl": false
+    },
+    {
+     "w": "seu",
+     "start": 6.007,
+     "end": 6.229,
+     "hl": false
+    },
+    {
+     "w": "lugar.",
+     "start": 6.229,
+     "end": 6.614,
+     "hl": true
+    }
+   ],
+   "subtitle": true
+  },
+  {
+   "i": 2,
+   "scene": "s2-quem",
+   "text": "Esse era Maximiliano Kolbe,",
+   "start": 7.714,
+   "end": 9.595,
+   "words": [
+    {
+     "w": "Esse",
+     "start": 7.714,
+     "end": 8.07,
+     "hl": false
+    },
+    {
+     "w": "era",
+     "start": 8.07,
+     "end": 8.427,
+     "hl": false
+    },
+    {
+     "w": "Maximiliano",
+     "start": 8.427,
+     "end": 9.238,
+     "hl": true
+    },
+    {
+     "w": "Kolbe,",
+     "start": 9.238,
+     "end": 9.595,
+     "hl": true
+    }
+   ],
+   "subtitle": true
+  },
+  {
+   "i": 3,
+   "scene": "s2-quem",
+   "text": "um sacerdote franciscano que dedicou sua vida a anunciar o amor de Cristo.",
+   "start": 9.895,
+   "end": 14.444,
+   "words": [
+    {
+     "w": "um",
+     "start": 9.895,
+     "end": 10.096,
+     "hl": false
+    },
+    {
+     "w": "sacerdote",
+     "start": 10.096,
+     "end": 10.743,
+     "hl": false
+    },
+    {
+     "w": "franciscano",
+     "start": 10.743,
+     "end": 11.391,
+     "hl": true
+    },
+    {
+     "w": "que",
+     "start": 11.391,
+     "end": 11.592,
+     "hl": false
+    },
+    {
+     "w": "dedicou",
+     "start": 11.592,
+     "end": 12.091,
+     "hl": false
+    },
+    {
+     "w": "sua",
+     "start": 12.091,
+     "end": 12.292,
+     "hl": false
+    },
+    {
+     "w": "vida",
+     "start": 12.292,
+     "end": 12.642,
+     "hl": false
+    },
+    {
+     "w": "a",
+     "start": 12.642,
+     "end": 12.843,
+     "hl": false
+    },
+    {
+     "w": "anunciar",
+     "start": 12.843,
+     "end": 13.342,
+     "hl": false
+    },
+    {
+     "w": "o",
+     "start": 13.342,
+     "end": 13.543,
+     "hl": false
+    },
+    {
+     "w": "amor",
+     "start": 13.543,
+     "end": 13.893,
+     "hl": false
+    },
+    {
+     "w": "de",
+     "start": 13.893,
+     "end": 14.094,
+     "hl": false
+    },
+    {
+     "w": "Cristo.",
+     "start": 14.094,
+     "end": 14.444,
+     "hl": true
+    }
+   ],
+   "subtitle": true
+  },
+  {
+   "i": 4,
+   "scene": "s3-missao",
+   "text": "Ele acreditava tanto na evangelização",
+   "start": 15.244,
+   "end": 17.754,
+   "words": [
+    {
+     "w": "Ele",
+     "start": 15.244,
+     "end": 15.577,
+     "hl": false
+    },
+    {
+     "w": "acreditava",
+     "start": 15.577,
+     "end": 16.333,
+     "hl": false
+    },
+    {
+     "w": "tanto",
+     "start": 16.333,
+     "end": 16.665,
+     "hl": false
+    },
+    {
+     "w": "na",
+     "start": 16.665,
+     "end": 16.856,
+     "hl": false
+    },
+    {
+     "w": "evangelização",
+     "start": 16.856,
+     "end": 17.754,
+     "hl": true
+    }
+   ],
+   "subtitle": true
+  },
+  {
+   "i": 5,
+   "scene": "s3-missao",
+   "text": "que utilizou jornais, revistas e missões para levar a mensagem de Deus ao mundo.",
+   "start": 17.954,
+   "end": 22.729,
+   "words": [
+    {
+     "w": "que",
+     "start": 17.954,
+     "end": 18.163,
+     "hl": false
+    },
+    {
+     "w": "utilizou",
+     "start": 18.163,
+     "end": 18.835,
+     "hl": false
+    },
+    {
+     "w": "jornais,",
+     "start": 18.835,
+     "end": 19.198,
+     "hl": true
+    },
+    {
+     "w": "revistas",
+     "start": 19.198,
+     "end": 19.716,
+     "hl": true
+    },
+    {
+     "w": "e",
+     "start": 19.716,
+     "end": 19.924,
+     "hl": false
+    },
+    {
+     "w": "missões",
+     "start": 19.924,
+     "end": 20.287,
+     "hl": true
+    },
+    {
+     "w": "para",
+     "start": 20.287,
+     "end": 20.65,
+     "hl": false
+    },
+    {
+     "w": "levar",
+     "start": 20.65,
+     "end": 21.013,
+     "hl": false
+    },
+    {
+     "w": "a",
+     "start": 21.013,
+     "end": 21.222,
+     "hl": false
+    },
+    {
+     "w": "mensagem",
+     "start": 21.222,
+     "end": 21.74,
+     "hl": false
+    },
+    {
+     "w": "de",
+     "start": 21.74,
+     "end": 21.948,
+     "hl": false
+    },
+    {
+     "w": "Deus",
+     "start": 21.948,
+     "end": 22.157,
+     "hl": false
+    },
+    {
+     "w": "ao",
+     "start": 22.157,
+     "end": 22.365,
+     "hl": false
+    },
+    {
+     "w": "mundo.",
+     "start": 22.365,
+     "end": 22.729,
+     "hl": true
+    }
+   ],
+   "subtitle": true
+  },
+  {
+   "i": 6,
+   "scene": "s4-guerra",
+   "text": "Mas em 1941, durante a Segunda Guerra Mundial,",
+   "start": 23.729,
+   "end": 27.899,
+   "words": [
+    {
+     "w": "Mas",
+     "start": 23.729,
+     "end": 23.956,
+     "hl": false
+    },
+    {
+     "w": "em",
+     "start": 23.956,
+     "end": 24.183,
+     "hl": false
+    },
+    {
+     "w": "1941,",
+     "start": 24.183,
+     "end": 25.755,
+     "hl": true
+    },
+    {
+     "w": "durante",
+     "start": 25.755,
+     "end": 26.318,
+     "hl": false
+    },
+    {
+     "w": "a",
+     "start": 26.318,
+     "end": 26.545,
+     "hl": false
+    },
+    {
+     "w": "Segunda",
+     "start": 26.545,
+     "end": 27.109,
+     "hl": false
+    },
+    {
+     "w": "Guerra",
+     "start": 27.109,
+     "end": 27.504,
+     "hl": true
+    },
+    {
+     "w": "Mundial,",
+     "start": 27.504,
+     "end": 27.899,
+     "hl": false
+    }
+   ],
+   "subtitle": true
+  },
+  {
+   "i": 7,
+   "scene": "s4-guerra",
+   "text": "sua vida tomou um rumo terrível.",
+   "start": 28.149,
+   "end": 30.174,
+   "words": [
+    {
+     "w": "sua",
+     "start": 28.149,
+     "end": 28.358,
+     "hl": false
+    },
+    {
+     "w": "vida",
+     "start": 28.358,
+     "end": 28.721,
+     "hl": false
+    },
+    {
+     "w": "tomou",
+     "start": 28.721,
+     "end": 29.084,
+     "hl": false
+    },
+    {
+     "w": "um",
+     "start": 29.084,
+     "end": 29.293,
+     "hl": false
+    },
+    {
+     "w": "rumo",
+     "start": 29.293,
+     "end": 29.656,
+     "hl": false
+    },
+    {
+     "w": "terrível.",
+     "start": 29.656,
+     "end": 30.174,
+     "hl": true
+    }
+   ],
+   "subtitle": true
+  },
+  {
+   "i": 8,
+   "scene": "s4-guerra",
+   "text": "Ele foi levado para Auschwitz, onde recebeu o número 16670.",
+   "start": 30.774,
+   "end": 36.106,
+   "words": [
+    {
+     "w": "Ele",
+     "start": 30.774,
+     "end": 31.159,
+     "hl": false
+    },
+    {
+     "w": "foi",
+     "start": 31.159,
+     "end": 31.381,
+     "hl": false
+    },
+    {
+     "w": "levado",
+     "start": 31.381,
+     "end": 31.93,
+     "hl": false
+    },
+    {
+     "w": "para",
+     "start": 31.93,
+     "end": 32.316,
+     "hl": false
+    },
+    {
+     "w": "Auschwitz,",
+     "start": 32.316,
+     "end": 32.701,
+     "hl": true
+    },
+    {
+     "w": "onde",
+     "start": 32.701,
+     "end": 33.087,
+     "hl": false
+    },
+    {
+     "w": "recebeu",
+     "start": 33.087,
+     "end": 33.637,
+     "hl": false
+    },
+    {
+     "w": "o",
+     "start": 33.637,
+     "end": 33.858,
+     "hl": false
+    },
+    {
+     "w": "número",
+     "start": 33.858,
+     "end": 34.408,
+     "hl": false
+    },
+    {
+     "w": "16670.",
+     "start": 34.408,
+     "end": 36.106,
+     "hl": true
+    }
+   ],
+   "subtitle": true
+  },
+  {
+   "i": 9,
+   "scene": "s5-escolha",
+   "text": "Após a fuga de um prisioneiro, dez homens foram condenados à morte.",
+   "start": 37.106,
+   "end": 41.352,
+   "words": [
+    {
+     "w": "Após",
+     "start": 37.106,
+     "end": 37.473,
+     "hl": false
+    },
+    {
+     "w": "a",
+     "start": 37.473,
+     "end": 37.683,
+     "hl": false
+    },
+    {
+     "w": "fuga",
+     "start": 37.683,
+     "end": 38.05,
+     "hl": false
+    },
+    {
+     "w": "de",
+     "start": 38.05,
+     "end": 38.261,
+     "hl": false
+    },
+    {
+     "w": "um",
+     "start": 38.261,
+     "end": 38.472,
+     "hl": false
+    },
+    {
+     "w": "prisioneiro,",
+     "start": 38.472,
+     "end": 39.151,
+     "hl": false
+    },
+    {
+     "w": "dez",
+     "start": 39.151,
+     "end": 39.361,
+     "hl": true
+    },
+    {
+     "w": "homens",
+     "start": 39.361,
+     "end": 39.728,
+     "hl": true
+    },
+    {
+     "w": "foram",
+     "start": 39.728,
+     "end": 40.095,
+     "hl": false
+    },
+    {
+     "w": "condenados",
+     "start": 40.095,
+     "end": 40.774,
+     "hl": false
+    },
+    {
+     "w": "à",
+     "start": 40.774,
+     "end": 40.985,
+     "hl": false
+    },
+    {
+     "w": "morte.",
+     "start": 40.985,
+     "end": 41.352,
+     "hl": false
+    }
+   ],
+   "subtitle": true
+  },
+  {
+   "i": 10,
+   "scene": "s5-escolha",
+   "text": "Entre eles estava um pai de família",
+   "start": 41.852,
+   "end": 44.157,
+   "words": [
+    {
+     "w": "Entre",
+     "start": 41.852,
+     "end": 42.202,
+     "hl": false
+    },
+    {
+     "w": "eles",
+     "start": 42.202,
+     "end": 42.553,
+     "hl": false
+    },
+    {
+     "w": "estava",
+     "start": 42.553,
+     "end": 43.053,
+     "hl": false
+    },
+    {
+     "w": "um",
+     "start": 43.053,
+     "end": 43.254,
+     "hl": false
+    },
+    {
+     "w": "pai",
+     "start": 43.254,
+     "end": 43.456,
+     "hl": true
+    },
+    {
+     "w": "de",
+     "start": 43.456,
+     "end": 43.657,
+     "hl": false
+    },
+    {
+     "w": "família",
+     "start": 43.657,
+     "end": 44.157,
+     "hl": false
+    }
+   ],
+   "subtitle": true
+  },
+  {
+   "i": 11,
+   "scene": "s5-escolha",
+   "text": "que chorava desesperado ao pensar na esposa e nos filhos.",
+   "start": 44.307,
+   "end": 47.743,
+   "words": [
+    {
+     "w": "que",
+     "start": 44.307,
+     "end": 44.505,
+     "hl": false
+    },
+    {
+     "w": "chorava",
+     "start": 44.505,
+     "end": 44.994,
+     "hl": false
+    },
+    {
+     "w": "desesperado",
+     "start": 44.994,
+     "end": 45.776,
+     "hl": false
+    },
+    {
+     "w": "ao",
+     "start": 45.776,
+     "end": 45.974,
+     "hl": false
+    },
+    {
+     "w": "pensar",
+     "start": 45.974,
+     "end": 46.317,
+     "hl": false
+    },
+    {
+     "w": "na",
+     "start": 46.317,
+     "end": 46.515,
+     "hl": false
+    },
+    {
+     "w": "esposa",
+     "start": 46.515,
+     "end": 47.004,
+     "hl": true
+    },
+    {
+     "w": "e",
+     "start": 47.004,
+     "end": 47.202,
+     "hl": false
+    },
+    {
+     "w": "nos",
+     "start": 47.202,
+     "end": 47.399,
+     "hl": false
+    },
+    {
+     "w": "filhos.",
+     "start": 47.399,
+     "end": 47.743,
+     "hl": true
+    }
+   ],
+   "subtitle": true
+  },
+  {
+   "i": 12,
+   "scene": "s6-sacrificio",
+   "text": "Então… Maximiliano deu um passo à frente.",
+   "start": 48.943,
+   "end": 51.458,
+   "words": [
+    {
+     "w": "Então…",
+     "start": 48.943,
+     "end": 49.302,
+     "hl": false
+    },
+    {
+     "w": "Maximiliano",
+     "start": 49.302,
+     "end": 50.12,
+     "hl": false
+    },
+    {
+     "w": "deu",
+     "start": 50.12,
+     "end": 50.326,
+     "hl": false
+    },
+    {
+     "w": "um",
+     "start": 50.326,
+     "end": 50.533,
+     "hl": false
+    },
+    {
+     "w": "passo",
+     "start": 50.533,
+     "end": 50.892,
+     "hl": true
+    },
+    {
+     "w": "à",
+     "start": 50.892,
+     "end": 51.099,
+     "hl": false
+    },
+    {
+     "w": "frente.",
+     "start": 51.099,
+     "end": 51.458,
+     "hl": false
+    }
+   ],
+   "subtitle": true
+  },
+  {
+   "i": 13,
+   "scene": "s6-sacrificio",
+   "text": "Ele se ofereceu para morrer no lugar daquele homem.",
+   "start": 52.158,
+   "end": 55.193,
+   "words": [
+    {
+     "w": "Ele",
+     "start": 52.158,
+     "end": 52.48,
+     "hl": false
+    },
+    {
+     "w": "se",
+     "start": 52.48,
+     "end": 52.665,
+     "hl": false
+    },
+    {
+     "w": "ofereceu",
+     "start": 52.665,
+     "end": 53.261,
+     "hl": true
+    },
+    {
+     "w": "para",
+     "start": 53.261,
+     "end": 53.583,
+     "hl": false
+    },
+    {
+     "w": "morrer",
+     "start": 53.583,
+     "end": 53.905,
+     "hl": true
+    },
+    {
+     "w": "no",
+     "start": 53.905,
+     "end": 54.09,
+     "hl": false
+    },
+    {
+     "w": "lugar",
+     "start": 54.09,
+     "end": 54.412,
+     "hl": false
+    },
+    {
+     "w": "daquele",
+     "start": 54.412,
+     "end": 54.871,
+     "hl": false
+    },
+    {
+     "w": "homem.",
+     "start": 54.871,
+     "end": 55.193,
+     "hl": false
+    }
+   ],
+   "subtitle": true
+  },
+  {
+   "i": 14,
+   "scene": "s7-ultima-prova",
+   "text": "Durante dias, mesmo diante da morte,",
+   "start": 56.393,
+   "end": 58.943,
+   "words": [
+    {
+     "w": "Durante",
+     "start": 56.393,
+     "end": 57.045,
+     "hl": false
+    },
+    {
+     "w": "dias,",
+     "start": 57.045,
+     "end": 57.308,
+     "hl": true
+    },
+    {
+     "w": "mesmo",
+     "start": 57.308,
+     "end": 57.765,
+     "hl": false
+    },
+    {
+     "w": "diante",
+     "start": 57.765,
+     "end": 58.223,
+     "hl": false
+    },
+    {
+     "w": "da",
+     "start": 58.223,
+     "end": 58.486,
+     "hl": false
+    },
+    {
+     "w": "morte,",
+     "start": 58.486,
+     "end": 58.943,
+     "hl": false
+    }
+   ],
+   "subtitle": true
+  },
+  {
+   "i": 15,
+   "scene": "s7-ultima-prova",
+   "text": "continuou rezando e encorajando os outros prisioneiros.",
+   "start": 59.143,
+   "end": 62.523,
+   "words": [
+    {
+     "w": "continuou",
+     "start": 59.143,
+     "end": 59.671,
+     "hl": false
+    },
+    {
+     "w": "rezando",
+     "start": 59.671,
+     "end": 60.199,
+     "hl": true
+    },
+    {
+     "w": "e",
+     "start": 60.199,
+     "end": 60.411,
+     "hl": false
+    },
+    {
+     "w": "encorajando",
+     "start": 60.411,
+     "end": 61.254,
+     "hl": true
+    },
+    {
+     "w": "os",
+     "start": 61.254,
+     "end": 61.467,
+     "hl": false
+    },
+    {
+     "w": "outros",
+     "start": 61.467,
+     "end": 61.837,
+     "hl": false
+    },
+    {
+     "w": "prisioneiros.",
+     "start": 61.837,
+     "end": 62.523,
+     "hl": false
+    }
+   ],
+   "subtitle": true
+  },
+  {
+   "i": 16,
+   "scene": "s7-ultima-prova",
+   "text": "Em 14 de agosto de 1941… sua vida chegou ao fim.",
+   "start": 63.223,
+   "end": 67.816,
+   "words": [
+    {
+     "w": "Em",
+     "start": 63.223,
+     "end": 63.418,
+     "hl": false
+    },
+    {
+     "w": "14",
+     "start": 63.418,
+     "end": 64.333,
+     "hl": true
+    },
+    {
+     "w": "de",
+     "start": 64.333,
+     "end": 64.528,
+     "hl": false
+    },
+    {
+     "w": "agosto",
+     "start": 64.528,
+     "end": 65.011,
+     "hl": true
+    },
+    {
+     "w": "de",
+     "start": 65.011,
+     "end": 65.206,
+     "hl": false
+    },
+    {
+     "w": "1941…",
+     "start": 65.206,
+     "end": 66.554,
+     "hl": false
+    },
+    {
+     "w": "sua",
+     "start": 66.554,
+     "end": 66.749,
+     "hl": false
+    },
+    {
+     "w": "vida",
+     "start": 66.749,
+     "end": 67.088,
+     "hl": false
+    },
+    {
+     "w": "chegou",
+     "start": 67.088,
+     "end": 67.426,
+     "hl": false
+    },
+    {
+     "w": "ao",
+     "start": 67.426,
+     "end": 67.621,
+     "hl": false
+    },
+    {
+     "w": "fim.",
+     "start": 67.621,
+     "end": 67.816,
+     "hl": false
+    }
+   ],
+   "subtitle": true
+  },
+  {
+   "i": 17,
+   "scene": "s8-mensagem",
+   "text": "São Maximiliano Kolbe nos deixou uma das maiores lições de amor:",
+   "start": 69.116,
+   "end": 73.087,
+   "words": [
+    {
+     "w": "São",
+     "start": 69.116,
+     "end": 69.332,
+     "hl": false
+    },
+    {
+     "w": "Maximiliano",
+     "start": 69.332,
+     "end": 70.186,
+     "hl": false
+    },
+    {
+     "w": "Kolbe",
+     "start": 70.186,
+     "end": 70.562,
+     "hl": false
+    },
+    {
+     "w": "nos",
+     "start": 70.562,
+     "end": 70.778,
+     "hl": false
+    },
+    {
+     "w": "deixou",
+     "start": 70.778,
+     "end": 71.153,
+     "hl": false
+    },
+    {
+     "w": "uma",
+     "start": 71.153,
+     "end": 71.529,
+     "hl": false
+    },
+    {
+     "w": "das",
+     "start": 71.529,
+     "end": 71.744,
+     "hl": false
+    },
+    {
+     "w": "maiores",
+     "start": 71.744,
+     "end": 72.12,
+     "hl": false
+    },
+    {
+     "w": "lições",
+     "start": 72.12,
+     "end": 72.496,
+     "hl": false
+    },
+    {
+     "w": "de",
+     "start": 72.496,
+     "end": 72.711,
+     "hl": false
+    },
+    {
+     "w": "amor:",
+     "start": 72.711,
+     "end": 73.087,
+     "hl": true
+    }
+   ],
+   "subtitle": true
+  },
+  {
+   "i": 18,
+   "scene": "s8-mensagem",
+   "text": "entregar a própria vida pelo próximo.",
+   "start": 73.537,
+   "end": 75.856,
+   "words": [
+    {
+     "w": "entregar",
+     "start": 73.537,
+     "end": 74.051,
+     "hl": false
+    },
+    {
+     "w": "a",
+     "start": 74.051,
+     "end": 74.259,
+     "hl": false
+    },
+    {
+     "w": "própria",
+     "start": 74.259,
+     "end": 74.62,
+     "hl": false
+    },
+    {
+     "w": "vida",
+     "start": 74.62,
+     "end": 74.981,
+     "hl": true
+    },
+    {
+     "w": "pelo",
+     "start": 74.981,
+     "end": 75.342,
+     "hl": false
+    },
+    {
+     "w": "próximo.",
+     "start": 75.342,
+     "end": 75.856,
+     "hl": true
+    }
+   ],
+   "subtitle": true
+  },
+  {
+   "i": 19,
+   "scene": "s9-versiculo",
+   "text": "“Ninguém tem amor maior do que aquele que dá a vida por seus amigos.”",
+   "start": 77.056,
+   "end": 81.2,
+   "words": [
+    {
+     "w": "“Ninguém",
+     "start": 77.056,
+     "end": 77.432,
+     "hl": false
+    },
+    {
+     "w": "tem",
+     "start": 77.432,
+     "end": 77.648,
+     "hl": false
+    },
+    {
+     "w": "amor",
+     "start": 77.648,
+     "end": 78.024,
+     "hl": true
+    },
+    {
+     "w": "maior",
+     "start": 78.024,
+     "end": 78.24,
+     "hl": true
+    },
+    {
+     "w": "do",
+     "start": 78.24,
+     "end": 78.456,
+     "hl": false
+    },
+    {
+     "w": "que",
+     "start": 78.456,
+     "end": 78.672,
+     "hl": false
+    },
+    {
+     "w": "aquele",
+     "start": 78.672,
+     "end": 79.208,
+     "hl": false
+    },
+    {
+     "w": "que",
+     "start": 79.208,
+     "end": 79.424,
+     "hl": false
+    },
+    {
+     "w": "dá",
+     "start": 79.424,
+     "end": 79.64,
+     "hl": false
+    },
+    {
+     "w": "a",
+     "start": 79.64,
+     "end": 79.856,
+     "hl": false
+    },
+    {
+     "w": "vida",
+     "start": 79.856,
+     "end": 80.232,
+     "hl": false
+    },
+    {
+     "w": "por",
+     "start": 80.232,
+     "end": 80.448,
+     "hl": false
+    },
+    {
+     "w": "seus",
+     "start": 80.448,
+     "end": 80.664,
+     "hl": false
+    },
+    {
+     "w": "amigos.”",
+     "start": 80.664,
+     "end": 81.2,
+     "hl": true
+    }
+   ],
+   "subtitle": false
+  },
+  {
+   "i": 20,
+   "scene": "s10-final",
+   "text": "Compartilhe essa história com alguém que precisa conhecer esse testemunho.",
+   "start": 82.5,
+   "end": 86.7,
+   "words": [
+    {
+     "w": "Compartilhe",
+     "start": 82.5,
+     "end": 83.141,
+     "hl": true
+    },
+    {
+     "w": "essa",
+     "start": 83.141,
+     "end": 83.487,
+     "hl": false
+    },
+    {
+     "w": "história",
+     "start": 83.487,
+     "end": 83.981,
+     "hl": false
+    },
+    {
+     "w": "com",
+     "start": 83.981,
+     "end": 84.18,
+     "hl": false
+    },
+    {
+     "w": "alguém",
+     "start": 84.18,
+     "end": 84.526,
+     "hl": false
+    },
+    {
+     "w": "que",
+     "start": 84.526,
+     "end": 84.725,
+     "hl": false
+    },
+    {
+     "w": "precisa",
+     "start": 84.725,
+     "end": 85.219,
+     "hl": false
+    },
+    {
+     "w": "conhecer",
+     "start": 85.219,
+     "end": 85.712,
+     "hl": false
+    },
+    {
+     "w": "esse",
+     "start": 85.712,
+     "end": 86.059,
+     "hl": false
+    },
+    {
+     "w": "testemunho.",
+     "start": 86.059,
+     "end": 86.7,
+     "hl": true
+    }
+   ],
+   "subtitle": false
+  }
+ ]
+}

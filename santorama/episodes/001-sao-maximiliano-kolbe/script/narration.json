@@ -1,0 +1,39 @@
+{
+  "episode": "001-sao-maximiliano-kolbe",
+  "title": "O HOMEM QUE ESCOLHEU MORRER POR AMOR",
+  "voice": { "engine": "kokoro", "voice": "pm_alex", "speed": 0.96, "elevenlabs_voice_id": "4XmhZ74tBbUVCXIYNMMo" },
+  "leadIn": 1.6,
+  "tail": 2.8,
+  "lines": [
+    { "scene": "s1-gancho", "text": "Imagine estar condenado à morte…", "say": "Imagine estar condenado à morte...", "hl": ["condenado", "morte"], "pause": 0.55 },
+    { "scene": "s1-gancho", "text": "e alguém decidir morrer no seu lugar.", "say": "e alguém decidir morrer no seu lugar.", "hl": ["morrer", "lugar"], "pause": 1.1 },
+
+    { "scene": "s2-quem", "text": "Esse era Maximiliano Kolbe,", "say": "Esse era Maximiliano Kôlbe,", "hl": ["Maximiliano", "Kolbe"], "pause": 0.3 },
+    { "scene": "s2-quem", "text": "um sacerdote franciscano que dedicou sua vida a anunciar o amor de Cristo.", "say": "um sacerdote franciscano que dedicou sua vida a anunciar o amor de Cristo.", "hl": ["franciscano", "Cristo"], "pause": 0.8 },
+
+    { "scene": "s3-missao", "text": "Ele acreditava tanto na evangelização", "say": "Ele acreditava tanto na evangelização,", "hl": ["evangelização"], "pause": 0.2 },
+    { "scene": "s3-missao", "text": "que utilizou jornais, revistas e missões para levar a mensagem de Deus ao mundo.", "say": "que utilizou jornais, revistas e missões para levar a mensagem de Deus ao mundo.", "hl": ["jornais", "revistas", "missões", "mundo"], "pause": 1.0 },
+
+    { "scene": "s4-guerra", "text": "Mas em 1941, durante a Segunda Guerra Mundial,", "say": "Mas em mil novecentos e quarenta e um, durante a Segunda Guerra Mundial,", "hl": ["1941", "Guerra"], "pause": 0.25 },
+    { "scene": "s4-guerra", "text": "sua vida tomou um rumo terrível.", "say": "sua vida tomou um rumo terrível.", "hl": ["terrível"], "pause": 0.6 },
+    { "scene": "s4-guerra", "text": "Ele foi levado para Auschwitz, onde recebeu o número 16670.", "say": "Ele foi levado para Áuschvits, onde recebeu o número... dezesseis mil, seiscentos e setenta.", "hl": ["Auschwitz", "16670"], "pause": 1.0 },
+
+    { "scene": "s5-escolha", "text": "Após a fuga de um prisioneiro, dez homens foram condenados à morte.", "say": "Após a fuga de um prisioneiro, dez homens foram condenados à morte.", "hl": ["dez", "homens"], "pause": 0.5 },
+    { "scene": "s5-escolha", "text": "Entre eles estava um pai de família", "say": "Entre eles, estava um pai de família,", "hl": ["pai"], "pause": 0.15 },
+    { "scene": "s5-escolha", "text": "que chorava desesperado ao pensar na esposa e nos filhos.", "say": "que chorava desesperado ao pensar na esposa e nos filhos.", "hl": ["esposa", "filhos"], "pause": 1.2 },
+
+    { "scene": "s6-sacrificio", "text": "Então… Maximiliano deu um passo à frente.", "say": "Então... Maximiliano deu um passo à frente.", "hl": ["passo"], "pause": 0.7 },
+    { "scene": "s6-sacrificio", "text": "Ele se ofereceu para morrer no lugar daquele homem.", "say": "Ele se ofereceu para morrer no lugar daquele homem.", "hl": ["ofereceu", "morrer"], "pause": 1.2 },
+
+    { "scene": "s7-ultima-prova", "text": "Durante dias, mesmo diante da morte,", "say": "Durante dias, mesmo diante da morte,", "hl": ["dias"], "pause": 0.2 },
+    { "scene": "s7-ultima-prova", "text": "continuou rezando e encorajando os outros prisioneiros.", "say": "continuou rezando, e encorajando os outros prisioneiros.", "hl": ["rezando", "encorajando"], "pause": 0.7 },
+    { "scene": "s7-ultima-prova", "text": "Em 14 de agosto de 1941… sua vida chegou ao fim.", "say": "Em catorze de agosto de mil novecentos e quarenta e um... sua vida chegou ao fim.", "hl": ["14", "agosto"], "pause": 1.3 },
+
+    { "scene": "s8-mensagem", "text": "São Maximiliano Kolbe nos deixou uma das maiores lições de amor:", "say": "São Maximiliano Kôlbe nos deixou uma das maiores lições de amor:", "hl": ["amor"], "pause": 0.45 },
+    { "scene": "s8-mensagem", "text": "entregar a própria vida pelo próximo.", "say": "entregar a própria vida pelo próximo.", "hl": ["vida", "próximo"], "pause": 1.2 },
+
+    { "scene": "s9-versiculo", "text": "“Ninguém tem amor maior do que aquele que dá a vida por seus amigos.”", "say": "Ninguém tem amor maior... do que aquele que dá a vida por seus amigos.", "hl": ["amor", "maior", "amigos"], "pause": 1.3, "subtitle": false },
+
+    { "scene": "s10-final", "text": "Compartilhe essa história com alguém que precisa conhecer esse testemunho.", "say": "Compartilhe essa história com alguém que precisa conhecer esse testemunho.", "hl": ["Compartilhe", "testemunho"], "pause": 0.0, "subtitle": false }
+  ]
+}
