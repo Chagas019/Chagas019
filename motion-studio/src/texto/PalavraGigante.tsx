@@ -20,8 +20,14 @@ export type PalavraGiganteProps = {
   tamanhoMax?: number;
   peso?: 600 | 700;
   cor?: string;
-  /** true = preenchimento dourado em vez de branco quente. */
+  /** true = preenchimento dourado desde a entrada. */
   dourada?: boolean;
+  /** Índice da batida a partir da qual a palavra aquece para dourado (ex.: 1 = 2º "confie"). */
+  douradoNaBatida?: number;
+  /** Escala de base após cada batida (ex.: [1, 1.08] = 2º "confie" maior). O tamanho é calculado para o MAIOR valor caber. */
+  escalasBatidas?: number[];
+  /** Escala inicial do pouso (slam) na 1ª batida. Breve (16 f) e desfocada; mantenha <= 1.15. */
+  escalaEntrada?: number;
   /** Intensidade do "soco" de escala por batida (0.06 = +6%). */
   forcaBatida?: number;
   /** Varredura de luz em cada batida (frames). 0 desliga. */
@@ -48,6 +54,9 @@ export const PalavraGigante: React.FC<PalavraGiganteProps> = ({
   peso = 700,
   cor = luzFe.brancoQuente,
   dourada = false,
+  douradoNaBatida,
+  escalasBatidas = [],
+  escalaEntrada = 1.1,
   forcaBatida = 0.06,
   duracaoVarredura = 42,
   tremor = 0,
@@ -60,18 +69,26 @@ export const PalavraGigante: React.FC<PalavraGiganteProps> = ({
   const frame = useCurrentFrame();
   const caixa = texto.toLocaleUpperCase('pt-BR');
   const fonte = peso === 700 ? 'impacto700' : 'impacto600';
-  const porLargura = (maxLargura * preenchimento) / larguraEm(caixa, fonte, trackingEm);
+  // Dimensiona pela MAIOR escala de repouso + pico do soco -> nunca sai da largura útil depois do pouso.
+  const escalaMaxRepouso = Math.max(1, ...escalasBatidas);
+  const porLargura = (maxLargura * preenchimento) / (larguraEm(caixa, fonte, trackingEm) * escalaMaxRepouso * (1 + forcaBatida));
   const tamanho = tamanhoMax ? Math.min(tamanhoMax, porLargura) : porLargura;
 
   const entrada = batidas[0] ?? 0;
-  // Pouso da 1ª batida: chega de 118% desfocada e assenta (o "soco" vem do contraste com as demais).
+  // Pouso da 1ª batida: chega de 110% desfocada e assenta (o "soco" vem do contraste com as demais).
   const pouso = interpolate(frame, [entrada, entrada + 16], [0, 1], {easing: curvas.entrada, extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
   const anteriores = batidas.filter((b) => b <= frame);
   const ultima = anteriores.length ? anteriores[anteriores.length - 1] : -Infinity;
   const pulso = batidas.slice(1).reduce((acc, b) => acc + envelope(frame - b), 0);
-  // Escala: margem de segurança — pico total (1 + forcaBatida) ainda dentro de maxLargura/preenchimento.
-  const escalaPico = Math.min(forcaBatida, 1 / preenchimento - 1);
-  const escala = (1.18 - 0.18 * pouso) * (1 + escalaPico * Math.min(1, pulso));
+  // Base que cresce de batida em batida (transição de 12 f), soco de escala somado por cima.
+  const escalaBase = batidas.reduce((acc, b, k) => {
+    const alvo = escalasBatidas[k] ?? (k ? escalasBatidas[k - 1] ?? 1 : 1);
+    const ant = k ? escalasBatidas[k - 1] ?? 1 : 1;
+    return acc + (alvo - ant) * interpolate(frame, [b, b + 12], [0, 1], {easing: curvas.entrada, extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  }, 1);
+  const escala = (escalaEntrada - (escalaEntrada - 1) * pouso) * escalaBase * (1 + forcaBatida * Math.min(1, pulso));
+  const bOuro = douradoNaBatida === undefined ? undefined : batidas[douradoNaBatida];
+  const ouro = dourada ? 1 : bOuro === undefined ? 0 : interpolate(frame, [bOuro, bOuro + 14], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
   const blurEntrada = (1 - pouso) * tamanho * 0.06;
   const opEntrada = interpolate(frame, [entrada, entrada + 6], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
 
@@ -126,14 +143,14 @@ export const PalavraGigante: React.FC<PalavraGiganteProps> = ({
             whiteSpace: 'nowrap',
             letterSpacing: `${trackingEm}em`,
             marginRight: `${-trackingEm}em`,
-            color: dourada ? luzFe.dourado : cor,
+            color: ouro > 0.5 ? luzFe.dourado : cor,
             textShadow: [sombraProfundidade(tamanho, profundidade), brilhoAmbar(tamanho, 0.35 + 0.65 * brilho)].filter(Boolean).join(', '),
           }}
         >
           {caixa}
         </span>
-        {dourada ? (
-          <span style={{...base, backgroundImage: gradienteDourado, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent'}}>{caixa}</span>
+        {ouro > 0 ? (
+          <span style={{...base, opacity: ouro, backgroundImage: gradienteDourado, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent'}}>{caixa}</span>
         ) : null}
         {/* Máscara de luz: só a banda aparece, recortada pelas letras */}
         {varrendo ? (

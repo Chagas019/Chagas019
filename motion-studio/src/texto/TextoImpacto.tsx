@@ -4,7 +4,7 @@ import React from 'react';
 import {interpolate, useCurrentFrame} from 'remotion';
 import {luzFe} from '../cor/tema';
 import {curvas} from '../movimento/curvas';
-import {fontesFe, larguraPx, quebrarLinhas, tamanhoQueCabe} from './fontesEditoriais';
+import {fontesFe, larguraPx, quebrarLinhas, tamanhoQueCabe, tamanhoQueCabeLinhas} from './fontesEditoriais';
 import {brilhoAmbar, gradienteDourado, sombraProfundidade} from './profundidade';
 
 export type TextoImpactoProps = {
@@ -66,9 +66,11 @@ export const TextoImpacto: React.FC<TextoImpactoProps> = ({
   const caixa = palavras.map((p) => p.toLocaleUpperCase('pt-BR'));
   const trackMax = Math.max(trackingInicial, trackingFinal);
   // Cabe com o tracking mais aberto -> nunca estoura durante a animação.
-  const tamanho = autoAjuste ? tamanhoQueCabe(caixa, fonte, tamanhoPedido, maxLargura, trackMax) : tamanhoPedido;
+  const t1 = autoAjuste ? tamanhoQueCabe(caixa, fonte, tamanhoPedido, maxLargura, trackMax) : tamanhoPedido;
+  const linhas = quebrarLinhas(caixa, fonte, t1, maxLargura, {quebras, gapEm: 0.24, trackingEm: trackMax});
+  // Quebra manual pode gerar linha larga demais: reduz até caber (medido com o tracking mais aberto).
+  const tamanho = autoAjuste ? tamanhoQueCabeLinhas(caixa, linhas, fonte, t1, maxLargura, {gapEm: 0.24, trackingEm: trackMax}) : t1;
   const gap = tamanho * 0.24;
-  const linhas = quebrarLinhas(caixa, fonte, tamanho, maxLargura, {quebras, gapEm: 0.24, trackingEm: trackingFinal});
   const sombra = sombraProfundidade(tamanho, profundidade);
 
   return (

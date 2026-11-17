@@ -127,7 +127,7 @@ export const Horizonte: React.FC<HorizonteProps> = ({
           </clipPath>
           {[0, 1, 2].map((cam) => (
             <filter key={cam} id={`${id}blur${cam}`} x="-30%" y="-300%" width="160%" height="700%">
-              <feGaussianBlur stdDeviation={`${(14 + cam * 8) * u} ${(5 + cam * 3) * u}`} />
+              <feGaussianBlur stdDeviation={`${(26 + cam * 12) * u} ${(4 + cam * 2.5) * u}`} />
             </filter>
           ))}
         </defs>
@@ -164,10 +164,19 @@ export const Horizonte: React.FC<HorizonteProps> = ({
                 const x = modp(n.x * span + desloc, span) - W * 0.4;
                 // proximidade da luz: nuvens perto do sol recebem mais luz
                 const perto = Math.exp(-Math.pow((x - sx) / (W * 0.45), 2));
+                // cada nuvem = feixe de 3 estrias desalinhadas (estratos), não uma elipse única
+                const est = [0, 1, 2].map((j) => ({
+                  dx: (random(`${seed}-n${cam}-dx-${k}-${j}`) - 0.5) * n.w * 0.5,
+                  dy: (j - 1) * n.h * 1.3 + (random(`${seed}-n${cam}-dy-${k}-${j}`) - 0.5) * n.h,
+                  s: 0.45 + random(`${seed}-n${cam}-s-${k}-${j}`) * 0.55,
+                }));
+                const luzN = (0.15 + 0.6 * L) * (0.4 + 0.6 * perto) * (0.4 + 0.6 * N);
                 return (
                   <g key={k} opacity={n.a}>
-                    <ellipse cx={x} cy={n.y} rx={n.w / 2} ry={n.h} fill={corBase} />
-                    <ellipse cx={x} cy={n.y + n.h * 0.55} rx={n.w * 0.38} ry={n.h * 0.45} fill={corLuz} opacity={(0.15 + 0.6 * L) * (0.4 + 0.6 * perto) * (0.4 + 0.6 * N)} />
+                    {est.map((e, j) => (
+                      <ellipse key={j} cx={x + e.dx} cy={n.y + e.dy} rx={(n.w / 2) * e.s} ry={n.h * (0.5 + 0.3 * e.s)} fill={corBase} />
+                    ))}
+                    <ellipse cx={x + est[2].dx * 0.5} cy={n.y + n.h * 1.4} rx={n.w * 0.3} ry={n.h * 0.35} fill={corLuz} opacity={luzN} />
                   </g>
                 );
               })}

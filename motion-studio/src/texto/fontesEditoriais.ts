@@ -88,3 +88,19 @@ export const quebrarLinhas = (
   if (atual.length) linhas.push(atual);
   return linhas;
 };
+
+/** Reduz `tamanho` até que todas as `linhas` (já quebradas) caibam em `maxLargura` (com folga). */
+export const tamanhoQueCabeLinhas = (
+  textos: string[],
+  linhas: number[][],
+  fonte: FonteMedida,
+  tamanho: number,
+  maxLargura: number,
+  {gapEm = 0.25, trackingEm = 0, folga = 0.03}: {gapEm?: number; trackingEm?: number; folga?: number} = {},
+) => {
+  const maiorEm = Math.max(
+    0.01,
+    ...linhas.map((l) => l.reduce((acc, i, k) => acc + larguraEm(textos[i], fonte, trackingEm) + (k ? gapEm : 0), 0)),
+  );
+  return Math.min(tamanho, (maxLargura * (1 - folga)) / maiorEm);
+};

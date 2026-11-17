@@ -8,7 +8,7 @@ import {clamp01, coresCenarioPadrao, f, mix, modp, smooth, type CoresCenario} fr
 
 export type EstradaProps = {
   /**
-   * Distância percorrida (unidades de mundo; 1 faixa = 6 unidades). Dirija pelo frame:
+   * Distância percorrida (unidades de mundo; 1 ciclo de faixa = 2.4 unidades). Dirija pelo frame:
    * ex. `avanco={frame * 0.05}` = caminhada lenta. Valores contínuos, sem limite.
    */
   avanco?: number;
@@ -120,12 +120,12 @@ export const Estrada: React.FC<EstradaProps> = ({
     `M${borda(lado, a).join(' L')} L${borda(lado, b).reverse().join(' L')} Z`;
   const pista = `M${borda(-1, 1).join(' L')} L${borda(1, 1).reverse().join(' L')} Z`;
 
-  // Faixas centrais tracejadas fluindo (período 6, traço 2.6).
-  const P = 6;
-  const T = 2.6;
+  // Faixas centrais tracejadas fluindo (período 2.4, traço 1).
+  const P = 2.4;
+  const T = 1;
   const off = modp(avanco, P);
   const tracos: {d: string; a: number}[] = [];
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 90; i++) {
     let z0 = 1 + i * P - off;
     let z1 = z0 + T;
     if (z1 < 0.6) continue;
@@ -135,18 +135,18 @@ export const Estrada: React.FC<EstradaProps> = ({
     const t1 = 1 / z1;
     const lw = meiaBase * 0.016;
     const d = `M${f(cx(t0) - lw * t0)},${f(yt(t0))} L${f(cx(t0) + lw * t0)},${f(yt(t0))} L${f(cx(t1) + lw * t1)},${f(yt(t1))} L${f(cx(t1) - lw * t1)},${f(yt(t1))} Z`;
-    tracos.push({d, a: Math.exp(-z0 / (55 / Math.max(0.4, nevoa)))});
+    tracos.push({d, a: Math.exp(-z0 / (45 / Math.max(0.4, nevoa)))});
   }
 
   // Pedras / tufos no acostamento (mundo fixo, deslizam com o avanço).
   const ZP = 120;
-  const pedras = Array.from({length: 90}, (_, k) => {
+  const pedras = Array.from({length: 160}, (_, k) => {
     const lado = random(`${seed}-p-lado-${k}`) < 0.5 ? -1 : 1;
     const xw = lado * (1.08 + random(`${seed}-p-x-${k}`) * 2.6);
     const z = 0.7 + modp(random(`${seed}-p-z-${k}`) * ZP - avanco, ZP);
     const t = 1 / z;
-    const r = (0.6 + random(`${seed}-p-r-${k}`) * 1.6) * 7 * u * t;
-    return {x: cx(t) + xw * meiaBase * t, y: yt(t), r, a: Math.exp(-z / 40) * (0.35 + random(`${seed}-p-a-${k}`) * 0.5)};
+    const r = (0.6 + random(`${seed}-p-r-${k}`) * 1.6) * 9 * u * t;
+    return {x: cx(t) + xw * meiaBase * t, y: yt(t), r, a: Math.exp(-z / 50) * (0.45 + random(`${seed}-p-a-${k}`) * 0.5)};
   });
 
   // Marcos laterais (a cada 14 unidades, alternados).
@@ -197,15 +197,16 @@ export const Estrada: React.FC<EstradaProps> = ({
             <stop offset="1" stopColor={c.ambar} stopOpacity={0} />
           </radialGradient>
           {colinas.map((_, i) => (
-            <linearGradient key={i} id={`${id}nv${i}`} x1="0" y1={hy - H * 0.13} x2="0" y2={hy + H * 0.02} gradientUnits="userSpaceOnUse">
+            <linearGradient key={i} id={`${id}nv${i}`} x1="0" y1={hy - H * 0.13} x2="0" y2={hy} gradientUnits="userSpaceOnUse">
               <stop offset="0" stopColor={nevoaClara} stopOpacity={0} />
               <stop offset="0.75" stopColor={nevoaClara} stopOpacity={(0.1 + 0.08 * (3 - i)) * nv} />
               <stop offset="1" stopColor={nevoaClara} stopOpacity={(0.2 + 0.1 * (3 - i)) * nv} />
             </linearGradient>
           ))}
-          <linearGradient id={`${id}nevoaChao`} x1="0" y1={hy - H * 0.02} x2="0" y2={hy + H * 0.16} gradientUnits="userSpaceOnUse">
-            <stop offset="0" stopColor={nevoaClara} stopOpacity={0.55 * nv} />
-            <stop offset="0.35" stopColor={nevoaCor} stopOpacity={0.3 * nv} />
+          <linearGradient id={`${id}nevoaChao`} x1="0" y1={hy - H * 0.03} x2="0" y2={hy + H * 0.14} gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor={nevoaClara} stopOpacity={0} />
+            <stop offset="0.18" stopColor={nevoaClara} stopOpacity={0.42 * nv} />
+            <stop offset="0.4" stopColor={nevoaCor} stopOpacity={0.22 * nv} />
             <stop offset="1" stopColor={nevoaCor} stopOpacity={0} />
           </linearGradient>
           <linearGradient id={`${id}sombraBase`} x1="0" y1={H * 0.78} x2="0" y2={H} gradientUnits="userSpaceOnUse">
@@ -235,7 +236,7 @@ export const Estrada: React.FC<EstradaProps> = ({
                 strokeWidth={1.6 * u}
                 filter={`url(#${id}suave)`}
               />
-              <rect x={0} y={hy - H * 0.13} width={W} height={H * 0.15} fill={`url(#${id}nv${i})`} />
+              <rect x={0} y={hy - H * 0.13} width={W} height={H * 0.13} fill={`url(#${id}nv${i})`} />
             </g>
           );
         })}
@@ -244,7 +245,7 @@ export const Estrada: React.FC<EstradaProps> = ({
         <rect x={0} y={hy} width={W} height={H - hy} fill={`url(#${id}chao)`} />
         <rect x={0} y={hy} width={W} height={H - hy} fill={`url(#${id}brilhoChao)`} />
         {pedras.map((p, k) => (
-          <ellipse key={k} cx={p.x} cy={p.y} rx={p.r} ry={p.r * 0.42} fill={k % 3 === 0 ? mix(nevoaClara, pertoCor, 0.5) : c.preto} opacity={p.a} />
+          <ellipse key={k} cx={p.x} cy={p.y} rx={p.r} ry={p.r * 0.42} fill={k % 3 === 0 ? mix(nevoaClara, pertoCor, 0.55 - 0.2 * L) : mix(c.preto, pertoCor, 0.3)} opacity={p.a} />
         ))}
 
         {/* Pista */}
@@ -268,7 +269,7 @@ export const Estrada: React.FC<EstradaProps> = ({
         ))}
 
         {/* Névoa rente ao chão no horizonte e peso no primeiro plano */}
-        <rect x={0} y={hy - H * 0.02} width={W} height={H * 0.18} fill={`url(#${id}nevoaChao)`} />
+        <rect x={0} y={hy - H * 0.03} width={W} height={H * 0.17} fill={`url(#${id}nevoaChao)`} />
         <rect x={0} y={H * 0.78} width={W} height={H * 0.22} fill={`url(#${id}sombraBase)`} />
       </svg>
     </AbsoluteFill>

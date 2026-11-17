@@ -88,8 +88,8 @@ const Vazamento: React.FC<TransitionPresentationComponentProps<VazamentoProps>> 
 };
 
 export const vazamentoDeLuz = (props: VazamentoProps = {}): TransitionPresentation<VazamentoProps> => ({component: Vazamento, props});
-/** Recomendado 36–48 frames (0,6–0,8 s). Impacto: 30. */
-export const tempoVazamento = (frames = 42): TransitionTiming => linearTiming({durationInFrames: frames, easing: curvas.suave});
+/** Recomendado 30–48 frames (0,5–0,8 s). Projeto: 30 f. */
+export const tempoVazamento = (frames = 30): TransitionTiming => linearTiming({durationInFrames: frames, easing: curvas.suave});
 
 // ── revelacaoDeLuz ──────────────────────────────────────────────
 export type RevelacaoProps = {
@@ -150,39 +150,46 @@ const Revelacao: React.FC<TransitionPresentationComponentProps<RevelacaoProps>> 
 const Easing3 = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 export const revelacaoDeLuz = (props: RevelacaoProps = {}): TransitionPresentation<RevelacaoProps> => ({component: Revelacao, props});
-/** Recomendado 54–72 frames (0,9–1,2 s). */
-export const tempoRevelacao = (frames = 60): TransitionTiming => linearTiming({durationInFrames: frames, easing: curvas.linear});
+/** Recomendado 40–72 frames (0,7–1,2 s). Projeto: 40 f. */
+export const tempoRevelacao = (frames = 40): TransitionTiming => linearTiming({durationInFrames: frames, easing: curvas.linear});
 
 // ── dissolveFoco ────────────────────────────────────────────────
 export type DissolveFocoProps = {
-  /** desfoque máximo em px (base 1080). Mantido ≤ 20 por performance. */
+  /** desfoque máximo em px (base 1080). Teto 20 por performance. */
   desfoque?: number;
   /** variação de escala total (ex. 0.04 = 4%) */
   escala?: number;
+  /** deslocamento vertical total em px (base 1080): >0 = as cenas sobem (a nova vem de baixo). */
+  subida?: number;
+  /** 'cruzado' = as duas cenas se fundem; 'rack' = o foco sai da atual e só depois "puxa" a próxima (rack focus). */
+  modo?: 'cruzado' | 'rack';
 };
 
 const DissolveFoco: React.FC<TransitionPresentationComponentProps<DissolveFocoProps>> = ({children, presentationDirection, presentationProgress: p, passedProps}) => {
   const {width, height} = useVideoConfig();
   const u = unidade(width, height);
-  const {desfoque = 16, escala = 0.04} = passedProps;
+  const {desfoque = 16, escala = 0.04, subida = 0, modo = 'cruzado'} = passedProps;
   const max = Math.min(desfoque, 20) * u;
+  const rack = modo === 'rack';
   if (presentationDirection === 'exiting') {
     // a cena perde o foco e "avança" levemente (rack focus para fora)
-    const b = faixa(p, 0, 0.7, 0, max, curvas.saida);
+    const b = rack ? faixa(p, 0, 0.5, 0, max, curvas.saida) : faixa(p, 0, 0.7, 0, max, curvas.saida);
     const s = 1 + faixa(p, 0, 1, 0, escala * 0.5);
-    const o = faixa(p, 0.35, 1, 1, 0);
-    return <AbsoluteFill style={{opacity: o, transform: `scale(${s})`, filter: filtro([px(b)])}}>{children}</AbsoluteFill>;
+    const o = rack ? faixa(p, 0.42, 0.72, 1, 0) : faixa(p, 0.35, 1, 1, 0);
+    const y = -faixa(p, 0, 1, 0, subida * 0.5, curvas.saida) * u;
+    return <AbsoluteFill style={{opacity: o, transform: `translateY(${y.toFixed(2)}px) scale(${s})`, filter: filtro([px(b)])}}>{children}</AbsoluteFill>;
   }
   // a próxima chega fora de foco e "assenta" (foco puxado para ela)
-  const b = faixa(p, 0.3, 1, max, 0, curvas.entrada);
+  const b = rack ? faixa(p, 0.45, 1, max, 0, curvas.entrada) : faixa(p, 0.3, 1, max, 0, curvas.entrada);
   const s = 1 + faixa(p, 0, 1, escala * 0.5, 0, curvas.entrada);
-  const o = faixa(p, 0, 0.65, 0, 1);
-  return <AbsoluteFill style={{opacity: o, transform: `scale(${s})`, filter: filtro([px(b)])}}>{children}</AbsoluteFill>;
+  const o = rack ? faixa(p, 0.3, 0.6, 0, 1) : faixa(p, 0, 0.65, 0, 1);
+  const y = faixa(p, 0, 1, subida * 0.5, 0, curvas.entrada) * u;
+  return <AbsoluteFill style={{opacity: o, transform: `translateY(${y.toFixed(2)}px) scale(${s})`, filter: filtro([px(b)])}}>{children}</AbsoluteFill>;
 };
 
 export const dissolveFoco = (props: DissolveFocoProps = {}): TransitionPresentation<DissolveFocoProps> => ({component: DissolveFoco, props});
-/** Recomendado 40–60 frames (0,7–1 s). */
-export const tempoDissolveFoco = (frames = 48): TransitionTiming => linearTiming({durationInFrames: frames, easing: curvas.linear});
+/** Recomendado 30–60 frames (0,5–1 s). Projeto: 30 f. */
+export const tempoDissolveFoco = (frames = 30): TransitionTiming => linearTiming({durationInFrames: frames, easing: curvas.linear});
 
 // ── fadeNegro ───────────────────────────────────────────────────
 export type FadeNegroProps = {
@@ -211,8 +218,8 @@ const FadeNegro: React.FC<TransitionPresentationComponentProps<FadeNegroProps>> 
 };
 
 export const fadeNegro = (props: FadeNegroProps = {}): TransitionPresentation<FadeNegroProps> => ({component: FadeNegro, props});
-/** Recomendado 60–90 frames (1–1,5 s). */
-export const tempoFadeNegro = (frames = 72): TransitionTiming => linearTiming({durationInFrames: frames, easing: curvas.linear});
+/** Recomendado 40–90 frames. Projeto: 40 f (use respiro 0.2 → ~8 f de preto). */
+export const tempoFadeNegro = (frames = 40): TransitionTiming => linearTiming({durationInFrames: frames, easing: curvas.linear});
 
 /**
  * Saída final para o preto (sem cena seguinte — use no fim da composição, fora do TransitionSeries).

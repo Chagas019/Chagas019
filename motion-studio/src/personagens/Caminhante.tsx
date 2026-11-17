@@ -252,7 +252,7 @@ export const Caminhante: React.FC<CaminhanteProps> = ({
     membroBraco(bracoD, 'bd'),
     {
       d: 0,
-      el: (cor) => (
+      el: (cor: string) => (
         <g key="t">
           <path d={troncoPath} fill={cor} stroke={cor} strokeWidth={1.2} strokeLinejoin="round" />
           <path d={seg({...pescoco, y: pescoco.y - 2}, cabeca)} stroke={cor} strokeWidth={4.2} strokeLinecap="round" />

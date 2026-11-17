@@ -5,7 +5,7 @@ import React from 'react';
 import {interpolate, useCurrentFrame} from 'remotion';
 import {luzFe} from '../cor/tema';
 import {curvas} from '../movimento/curvas';
-import {fontesFe, quebrarLinhas, tamanhoQueCabe} from './fontesEditoriais';
+import {fontesFe, quebrarLinhas, tamanhoQueCabe, tamanhoQueCabeLinhas} from './fontesEditoriais';
 
 export type TextoEditorialProps = {
   palavras: string[];
@@ -60,9 +60,11 @@ export const TextoEditorial: React.FC<TextoEditorialProps> = ({
   const trackFinal = ref ? 0.32 : 0;
   const trackInicial = ref ? 0.2 : 0;
   const corBase = cor ?? (ref ? luzFe.dourado : luzFe.brancoQuente);
-  const tamanho = autoAjuste ? tamanhoQueCabe(textos, fonte, tamanhoPedido, maxLargura * (ref && fios ? 0.7 : 1), trackFinal) : tamanhoPedido;
+  const larguraTexto = maxLargura * (ref && fios ? 0.62 : 1);
   const gapEm = ref ? 0.5 : 0.26;
-  const linhas = quebrarLinhas(textos, fonte, tamanho, maxLargura * (ref && fios ? 0.7 : 1), {quebras, gapEm, trackingEm: trackFinal});
+  const t1 = autoAjuste ? tamanhoQueCabe(textos, fonte, tamanhoPedido, larguraTexto, trackFinal) : tamanhoPedido;
+  const linhas = quebrarLinhas(textos, fonte, t1, larguraTexto, {quebras, gapEm, trackingEm: trackFinal});
+  const tamanho = autoAjuste ? tamanhoQueCabeLinhas(textos, linhas, fonte, t1, larguraTexto, {gapEm, trackingEm: trackFinal}) : t1;
   const saida = saidaEm === undefined ? 0 : interpolate(frame, [saidaEm, saidaEm + duracaoSaida], [0, 1], {easing: curvas.suave, extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
   const primeira = entradas[0] ?? 0;
   const fio = interpolate(frame, [primeira, primeira + 50], [0, 1], {easing: curvas.entrada, extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
