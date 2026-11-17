@@ -32,13 +32,3 @@ export function renderGallery({ projects }, filter, onOpen) {
   }
   if (!n) root.append(h('li', { class: 'mosaic__empty' }, 'Sem mídias publicadas para este filtro.'));
 }
-
-/** Mídia de fundo do hero: capa do projeto em destaque (imagem, eager). */
-export function renderHero({ projects }) {
-  const root = clear(slot('hero-media'));
-  if (!root) return;
-  const p = projects.find((x) => x.featured) || projects[0];
-  if (!p) return;
-  const still = stillOf(p.cover || p.media[0]);
-  root.append(picture({ ...still, alt: '' }, { sizes: CONFIG.sizes.hero, eager: true, className: 'hero__img' }));
-}

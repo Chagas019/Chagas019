@@ -44,7 +44,13 @@ function renderTimeline(name, items, withOrg) {
   const list = items.length ? items : [{ status: 'placeholder' }];
   for (const it of list) {
     const ph = it.status === 'placeholder';
-    root.append(h('li', { class: `timeline__item${ph ? ' is-placeholder' : ''}`, 'data-reveal': true },
+    if (ph) {
+      root.append(h('li', { class: 'timeline__item is-placeholder', 'data-reveal': true },
+        h('span', { class: 'timeline__title' }, PH_TEXT),
+        h('span', { class: 'timeline__org' }, 'Informação ainda não enviada')));
+      continue;
+    }
+    root.append(h('li', { class: 'timeline__item', 'data-reveal': true },
       phSpan(ph ? '' : it.period, 'timeline__period'),
       phSpan(ph ? '' : it.title, 'timeline__title'),
       withOrg ? phSpan(ph ? '' : it.org, 'timeline__org') : null,

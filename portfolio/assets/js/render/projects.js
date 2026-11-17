@@ -68,17 +68,16 @@ export function renderIndex({ projects, categories }, filter, onOpen) {
 }
 
 /** Categorias sem projeto publicado → bloco honesto "Em curadoria". */
-export function renderCuration({ projects, categories, missing }, filter) {
+export function renderCuration({ projects, categories }, filter) {
   const root = clear(slot('curation'));
   if (!root) return;
   const empty = categories.filter((c) => !projects.some((p) => p.category === c.id));
   const shown = empty.filter((c) => filter === 'all' || c.id === filter);
   for (const c of shown) {
-    const note = missing.find((m) => m.category === c.id)?.note;
     root.append(h('aside', { class: 'curation__block', 'aria-label': `${c.label}: em curadoria`, 'data-reveal': true },
       h('p', { class: 'curation__tag' }, 'Em curadoria'),
       h('h4', { class: 'curation__title' }, c.label),
-      h('p', { class: 'curation__text' }, note || c.intro || 'Material desta categoria está sendo selecionado e será publicado em breve.'),
+      h('p', { class: 'curation__text' }, c.intro || 'Material desta categoria está sendo selecionado e será publicado em breve.'),
       h('a', { class: 'curation__cta', href: '#contato' }, 'Quer ver material desta área? Fale comigo')));
   }
 }

@@ -25,6 +25,10 @@ export function renderContactLinks(site) {
   for (const name of ['contact-links', 'footer-links']) {
     const root = clear(slot(name));
     if (!root) continue;
+    if (!items.length && name === 'footer-links') {
+      root.append(h('li', { class: 'contact-link contact-link--pending' }, h('a', { href: '#contato' }, 'Canais diretos a confirmar — use o formulário de orçamento')));
+      continue;
+    }
     items.forEach((it) => root.append(h('li', { class: 'contact-link' },
       h('a', { href: it.href, ...(it.ext ? { target: '_blank', rel: 'noopener' } : {}) },
         h('span', { class: 'contact-link__label' }, it.label), ' ', h('span', { class: 'contact-link__value' }, it.value)))));
