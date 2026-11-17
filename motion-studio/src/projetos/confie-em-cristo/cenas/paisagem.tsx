@@ -11,6 +11,23 @@ import {CAMINHADA, caminhada, useLayout} from './comum';
 export const HORIZONTE = 0.6;
 export const FUGA_X = 0.5;
 
+/** Trajetória do caminhante (pés, altura, desfoque, névoa) no frame absoluto. */
+const trajetoria = (abs: number, width: number, height: number) =>
+  naEstrada({
+    progresso: caminhada(abs).progresso,
+    pertoX: width * 0.53,
+    pertoY: height * 0.84,
+    alturaPerto: height * 0.2,
+    fugaX: width * FUGA_X,
+    fugaY: height * HORIZONTE,
+  });
+
+/** Pés do caminhante (px): a Estrada abre a faixa central sob ele (`oclusor`). */
+export const pesCaminhante = (abs: number, width: number, height: number) => {
+  const p = trajetoria(abs, width, height);
+  return {x: p.x, y: p.y};
+};
+
 export const CaminhanteNaEstrada: React.FC<{
   /** início absoluto da cena que contém o caminhante */
   inicioCena: number;
@@ -23,15 +40,7 @@ export const CaminhanteNaEstrada: React.FC<{
 }> = ({inicioCena, cansaco, luz, comParada = false, jaVisivel = false}) => {
   const frame = useCurrentFrame();
   const {width, height} = useLayout();
-  const {progresso} = caminhada(inicioCena + frame);
-  const pos = naEstrada({
-    progresso,
-    pertoX: width * 0.53,
-    pertoY: height * 0.84,
-    alturaPerto: height * 0.2,
-    fugaX: width * FUGA_X,
-    fugaY: height * HORIZONTE,
-  });
+  const pos = trajetoria(inicioCena + frame, width, height);
   return (
     <Caminhante
       {...pos}

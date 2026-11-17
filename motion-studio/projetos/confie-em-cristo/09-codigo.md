@@ -61,3 +61,24 @@ Contrato exportado: composição `ConfieEmCristo-Vertical` · `ConfieEmCristo` �
 Validação feita: tsc OK · qa OK · compositions OK · review com 19 frames dirigidos, inspecionados visualmente · stills de 9–10 s em escala cheia
 Pedidos a outros agentes: MOVIMENTO/REVISÃO (tom da T2 em f670) · VOZ (arquivo real) · REVISÃO (revisão em movimento)
 Riscos/pendências: os tempos são do roteiro cronometrado (sem narração real). A Cruz3D em swangle é renderização por software e deixa o render final mais lento nos ~500 f da cena 5. Não há horizontal. O render final não foi feito (exige `aprovacoes/ConfieEmCristo-Vertical.aprovado`).
+
+---
+
+# Correções — Revisão 1 (itens 3, 5, 9 + bloco do TEXTO + adendo do COR)
+
+- **#3 T2**: a `revelacaoDeLuz` virou `fade()` (`@remotion/transitions/fade`) com `linearTiming(40 f, curvas.suave)`. Como a cena 3 começa na mesma estrada noturna e a caminhada é contínua, a T2 virou um dissolve quase invisível, e a virada de luz fica só para a `Revelacao` dentro da cena 3 ("Mas" → "escute" → "Deus"). `efeitosTransicaoConfie` **não** foi alterado: a duração (40 f) continua igual e o check de consistência passa. Só o rótulo "revelação de luz" ficou desatualizado (arquivo do CENAS).
+- **#5 cruz (A/B)**: `VARIANTE_CRUZ: 'pedra3d' | 'silhueta2d'` em `Cena5Cristo.tsx`, renderizado em f1880/2060/2264 (`render/revisao/ConfieEmCristo-Vertical/r2-codigo-ab-pedra3d/` e `…-silhueta2d/`). **Escolhida: `pedra3d`** (pedra `#4A443D`, luz 0,3 → 0,45 em "Jesus", emissivo 0, preenchimento 0). A cruz lê em silhueta contra o núcleo do contraluz, com volume e perspectiva reais e a aresta texturizada pegando a luz. A Cruz2D em silhueta ganha um contorno de bloom que lê como neon/clip-art. A borda dupla foi removida: agora há **uma única cruz** por variante, e o halo vem de `Halacao` + `LuzVolumetrica` atrás dela.
+- **Adendo do COR**: `<FundoProfundo {...fundoCena5} origem={{x: 0.5, y: Y_CRUZ − 0.12}} seed="c5-fundo" />`. A cena 4 usa `{...fundoCena4}`. Nenhum texto da cena 5 passa de y 0,27.
+- **#9**: o JESUS foi para a âncora 0,17 (topo ≈ 0,125). "continua ao seu lado." ficou em 0,243 em vez dos 0,265 sugeridos, porque com 0,265 a base passaria do limite de 0,27 do COR.
+- **TEXTO**: `textoCena3Confiar` foi plugado na `Cena3Mensagem` (`<Ancora y={0.3}>`, `TextoEditorial` com `duracaoEntrada`/`saidaEm`/`duracaoSaida` do bloco). Todos os `duracaoSaida` fixos agora vêm de `bloco.duracaoSaida` (cenas 1, 2, 3, 4 e 5).
+- **Oclusor**: `pesCaminhante(frameAbs, W, H)` em `paisagem.tsx` (mesma trajetória do Caminhante) é passado como `oclusor` à Estrada nas cenas 2 e 3. A faixa central não passa mais sob os pés.
+
+Validação: tsc OK · qa OK · compositions OK (2799 f) · `REVIEW_SUB=r2-codigo`: 52 stills (640–700 de 5 em 5; 980–1200 e 1840–2280 de 20 em 20; 2026, 2098, 2740), inspecionados. A T2 dissolve sem feixe, "Confiar em Cristo…" ocupa f986–1176 sem colidir, e a cena 5 não tem texto sobre texto.
+
+## ENTREGA — codigo — confie-em-cristo (revisão 1)
+Status: concluído
+Arquivos alterados: src/projetos/confie-em-cristo/ConfieEmCristo.tsx, cenas/{Cena1Incerteza, Cena2MomentosDificeis, Cena3Mensagem, Cena4Confianca, Cena5Cristo}.tsx, cenas/paisagem.tsx, projetos/confie-em-cristo/09-codigo.md (cenas.ts e cinema.tsx NÃO foram tocados)
+Contrato exportado: `VARIANTE_CRUZ`/`VarianteCruz` (substitui `CRUZ_3D`) · `pesCaminhante()`
+Validação feita: tsc OK · qa OK · compositions OK · stills r2-codigo e A/B r2-codigo-ab-* inspecionados
+Pedidos a outros agentes: CENAS: atualizar o rótulo da T2 em `efeitosTransicaoConfie` para "dissolve" (só documentação; a duração não muda) · SOM: os cues da T2 (riser terminando em f660 + brilho "feixe") miravam o feixe da transição, que não existe mais; reancorar na Revelacao interna ("escute", f716)
+Riscos/pendências: a Cruz3D (swangle) deixa o render final mais lento na cena 5 · voz ainda estimada

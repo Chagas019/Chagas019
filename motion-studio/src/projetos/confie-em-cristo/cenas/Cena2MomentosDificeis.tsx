@@ -10,7 +10,7 @@ import {escalaFe} from '../../../texto/fontesEditoriais';
 import {misturaPorCena} from '../estilo';
 import {relativo, textoCena2} from '../texto';
 import {Ancora, Sangria, caminhada, janelaCena, useLayout} from './comum';
-import {CaminhanteNaEstrada, HORIZONTE, FUGA_X} from './paisagem';
+import {CaminhanteNaEstrada, HORIZONTE, FUGA_X, pesCaminhante} from './paisagem';
 
 const {inicio: INICIO, frames: DURACAO} = janelaCena('momentos-dificeis');
 /** Câmera ao fim da cena 2 (a cena 3 parte daqui para a T2 ficar contínua). */
@@ -18,7 +18,7 @@ export const CAMERA_FIM_CENA2 = {zoom: 1.07, x: 40} as const;
 
 export const Cena2MomentosDificeis: React.FC = () => {
   const frame = useCurrentFrame();
-  const {u, maxLargura} = useLayout();
+  const {u, maxLargura, width, height} = useLayout();
   const texto = relativo(textoCena2, INICIO);
   const {avanco} = caminhada(INICIO + frame);
   const luz = 0.05;
@@ -39,7 +39,7 @@ export const Cena2MomentosDificeis: React.FC = () => {
       </PlanoDeFoco>
       <PlanoDeFoco profundidade={1}>
         <Sangria>
-          <Estrada luz={luz} avanco={avanco} horizonte={HORIZONTE} fugaX={FUGA_X} seed="c2-estrada" />
+          <Estrada luz={luz} avanco={avanco} horizonte={HORIZONTE} fugaX={FUGA_X} oclusor={pesCaminhante(INICIO + frame, width, height)} seed="c2-estrada" />
           <CaminhanteNaEstrada inicioCena={INICIO} cansaco={0.75} luz={0.5} />
         </Sangria>
       </PlanoDeFoco>
@@ -58,7 +58,7 @@ export const Cena2MomentosDificeis: React.FC = () => {
             maxLargura={maxLargura}
             saidaEm={texto.saidaEm}
             tipoSaida="desfoque"
-            duracaoSaida={24}
+            duracaoSaida={texto.duracaoSaida}
           />
         </Ancora>
       </PlanoDeFoco>

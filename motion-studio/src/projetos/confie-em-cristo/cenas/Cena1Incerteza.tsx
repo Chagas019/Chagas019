@@ -32,7 +32,7 @@ export const Cena1Incerteza: React.FC = () => {
     tamanho: escalaFe.impacto * u,
     maxLargura,
     saidaEm: texto.saidaEm,
-    duracaoSaida: 22,
+    duracaoSaida: texto.duracaoSaida,
     profundidade: rampa(frame, local(g.talvez2, INICIO), local(g.talvez2, INICIO) + 40, 0.4, 0.9),
   };
   return (

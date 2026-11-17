@@ -3,20 +3,20 @@
 // → Grão → Vinheta → saída para o preto → áudio. Sem legenda separada: a tipografia de cada cena já é a narração.
 import React from 'react';
 import {AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig} from 'remotion';
-import {TransitionSeries} from '@remotion/transitions';
+import {TransitionSeries, linearTiming} from '@remotion/transitions';
+import {fade} from '@remotion/transitions/fade';
 import {FundoProfundo} from '../../cor/Cinematico';
 import {Grao, Vinheta} from '../../cor/Atmosfera';
 import {
   SaidaParaNegro,
   dissolveFoco,
   fadeNegro,
-  revelacaoDeLuz,
   tempoDissolveFoco,
   tempoFadeNegro,
-  tempoRevelacao,
   tempoVazamento,
   vazamentoDeLuz,
 } from '../../movimento/cinema';
+import {curvas} from '../../movimento/curvas';
 import {CamadaSomCinema} from '../../som/CamadaSomCinema';
 import {efeitosTransicaoConfie, planoConfie} from './cenas';
 import {atmosferaFe, paletaFe} from './estilo';
@@ -54,8 +54,8 @@ const transicao = (i: number, frames: number, key: string) => {
   switch (i) {
     case 0: // T1 vazamento de luz, a partir do ponto âmbar da cena 1
       return <TransitionSeries.Transition key={key} presentation={vazamentoDeLuz({cor: 'ambar', origem: {x: LUZ_CENA1.x * 100, y: LUZ_CENA1.y * 100}, seed: 'confie-t1'})} timing={tempoVazamento(frames)} />;
-    case 1: // T2 revelação de luz em fenda (a virada)
-      return <TransitionSeries.Transition key={key} presentation={revelacaoDeLuz({forma: 'fenda', angulo: 90, cor: 'dourado', brilhoBorda: 0.7})} timing={tempoRevelacao(frames)} />;
+    case 1: // T2 dissolve simples: a cena 3 começa na mesma estrada noturna; a virada de luz é a Revelacao DENTRO da cena 3 (revisão 1, item 3)
+      return <TransitionSeries.Transition key={key} presentation={fade()} timing={linearTiming({durationInFrames: frames, easing: curvas.suave})} />;
     case 2: // T3 dissolve com foco, subindo
       return <TransitionSeries.Transition key={key} presentation={dissolveFoco({subida: 40, desfoque: 14})} timing={tempoDissolveFoco(frames)} />;
     case 3: // T4 rack focus: CONFIE. desfoca, a cruz aparece nítida

@@ -13,10 +13,10 @@ import {TextoImpacto} from '../../../texto/TextoImpacto';
 import {escalaFe} from '../../../texto/fontesEditoriais';
 import {gatilhosConfie as g} from '../cenas';
 import {luzPrincipal, misturaPorCena} from '../estilo';
-import {relativo, textoCena3Apoio, textoCena3Editorial, textoCena3Impacto} from '../texto';
+import {relativo, textoCena3Apoio, textoCena3Confiar, textoCena3Editorial, textoCena3Impacto} from '../texto';
 import {Ancora, Sangria, caminhada, janelaCena, local, rampa, useLayout} from './comum';
 import {CAMERA_FIM_CENA2} from './Cena2MomentosDificeis';
-import {CaminhanteNaEstrada, FUGA_X, HORIZONTE} from './paisagem';
+import {CaminhanteNaEstrada, FUGA_X, HORIZONTE, pesCaminhante} from './paisagem';
 
 const {inicio: INICIO, frames: DURACAO} = janelaCena('mensagem');
 const L = (abs: number) => local(abs, INICIO);
@@ -25,16 +25,17 @@ const L = (abs: number) => local(abs, INICIO);
 const progressoRevelacao = (frame: number) =>
   frame < L(g.escute) ? rampa(frame, 0, L(g.mas), 0, 0.3, curvas.suave) : rampa(frame, L(g.escute), L(g.deus), 0.3, 1, curvas.suave);
 
-const Paisagem: React.FC<{luz: number; nascer: number; avanco: number; nevoa: number}> = ({luz, nascer, avanco, nevoa}) => (
+const Paisagem: React.FC<{luz: number; nascer: number; avanco: number; nevoa: number; oclusor: {x: number; y: number}}> = ({luz, nascer, avanco, nevoa, oclusor}) => (
   <>
     <Horizonte luz={luz} nascer={nascer} horizonte={HORIZONTE} solX={FUGA_X} estrelas={90} seed="c2-ceu" />
-    <Estrada luz={luz} avanco={avanco} horizonte={HORIZONTE} fugaX={FUGA_X} nevoa={nevoa} seed="c2-estrada" />
+    <Estrada luz={luz} avanco={avanco} horizonte={HORIZONTE} fugaX={FUGA_X} nevoa={nevoa} oclusor={oclusor} seed="c2-estrada" />
   </>
 );
 
 export const Cena3Mensagem: React.FC = () => {
   const frame = useCurrentFrame();
-  const {u, maxLargura} = useLayout();
+  const {u, maxLargura, width, height} = useLayout();
+  const pes = pesCaminhante(INICIO + frame, width, height);
   const {avanco} = caminhada(INICIO + frame);
   const p = progressoRevelacao(frame);
   // Amanhecer revelado: continua clareando pela cena toda.
@@ -48,6 +49,7 @@ export const Cena3Mensagem: React.FC = () => {
   const impacto = relativo(textoCena3Impacto, INICIO);
   const editorial = relativo(textoCena3Editorial, INICIO);
   const apoio = relativo(textoCena3Apoio, INICIO);
+  const confiar = relativo(textoCena3Confiar, INICIO);
   return (
     <CameraCinema
       chaves={[
@@ -61,9 +63,9 @@ export const Cena3Mensagem: React.FC = () => {
       <PlanoDeFoco profundidade={1}>
         <Sangria>
           {/* estrada noturna da cena 2 por trás da escuridão parcial da Revelacao (continuidade na T2) */}
-          {p < 1 ? <Paisagem luz={0.05} nascer={0} avanco={avanco} nevoa={1} /> : null}
+          {p < 1 ? <Paisagem luz={0.05} nascer={0} avanco={avanco} nevoa={1} oclusor={pes} /> : null}
           <Revelacao progresso={p} centroX={FUGA_X} centroY={0.5} opacidadeEscuridao={0.72} poeira={36} seed="c3-revelacao">
-            <Paisagem luz={luzDia} nascer={nascer} avanco={avanco} nevoa={nevoa} />
+            <Paisagem luz={luzDia} nascer={nascer} avanco={avanco} nevoa={nevoa} oclusor={pes} />
           </Revelacao>
           <CaminhanteNaEstrada inicioCena={INICIO} cansaco={rampa(frame, L(g.caminhando), L(g.caminhando) + 60, 0.75, 0.3)} luz={rampa(frame, L(g.escute), L(g.deus), 0.5, 1.2)} comParada jaVisivel />
         </Sangria>
@@ -85,11 +87,24 @@ export const Cena3Mensagem: React.FC = () => {
             maxLargura={maxLargura}
             saidaEm={impacto.saidaEm}
             tipoSaida="desfoque"
-            duracaoSaida={30}
+            duracaoSaida={impacto.duracaoSaida}
           />
         </Ancora>
         <Ancora y={0.43}>
-          <TextoEditorial palavras={editorial.palavras} entradas={editorial.entradas} tamanho={escalaFe.editorialHero * u} maxLargura={maxLargura} saidaEm={editorial.saidaEm} />
+          <TextoEditorial palavras={editorial.palavras} entradas={editorial.entradas} tamanho={escalaFe.editorialHero * u} maxLargura={maxLargura} saidaEm={editorial.saidaEm} duracaoSaida={editorial.duracaoSaida} />
+        </Ancora>
+        <Ancora y={0.3}>
+          <TextoEditorial
+            palavras={confiar.palavras}
+            entradas={confiar.entradas}
+            quebras={confiar.quebras}
+            destaques={confiar.destaques}
+            duracaoEntrada={confiar.duracaoEntrada}
+            saidaEm={confiar.saidaEm}
+            duracaoSaida={confiar.duracaoSaida}
+            tamanho={escalaFe.editorialHero * u}
+            maxLargura={maxLargura}
+          />
         </Ancora>
         <Ancora y={0.3}>
           <TextoEditorial
@@ -99,6 +114,7 @@ export const Cena3Mensagem: React.FC = () => {
             tamanho={escalaFe.editorialHero * u}
             maxLargura={maxLargura}
             saidaEm={apoio.saidaEm}
+            duracaoSaida={apoio.duracaoSaida}
           />
         </Ancora>
       </PlanoDeFoco>

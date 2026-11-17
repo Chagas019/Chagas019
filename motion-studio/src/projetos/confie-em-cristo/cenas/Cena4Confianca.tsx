@@ -7,7 +7,7 @@ import {Fio} from '../../../pecas/Ornamentos';
 import {PalavraGigante} from '../../../texto/PalavraGigante';
 import {TextoEditorial} from '../../../texto/TextoEditorial';
 import {escalaFe} from '../../../texto/fontesEditoriais';
-import {luzFundoPorCena, luzPrincipal, misturaPorCena, paletaFe} from '../estilo';
+import {fundoCena4, luzPrincipal, misturaPorCena, paletaFe} from '../estilo';
 import {confieCena4, relativo, textoCena4a, textoCena4b} from '../texto';
 import {Ancora, flash, janelaCena, rampa, useLayout} from './comum';
 
@@ -29,7 +29,7 @@ export const Cena4Confianca: React.FC = () => {
     <CameraCinema chaves={dolly(0, DURACAO, 1, 1.04)} mao={{amplitude: 1.5}}>
       <div style={{position: 'absolute', inset: 0, transform: `translate(${(tremor.x * u).toFixed(2)}px, ${(tremor.y * u).toFixed(2)}px) rotate(${tremor.rot.toFixed(3)}deg)`}}>
         <PlanoDeFoco profundidade={0}>
-          <FundoProfundo luz={luzFundoPorCena.cena4} origem={{x: 0.5, y: Y_CONFIE - 0.04}} seed="c4-fundo" />
+          <FundoProfundo {...fundoCena4} origem={{x: 0.5, y: Y_CONFIE - 0.04}} seed="c4-fundo" />
         </PlanoDeFoco>
         <LuzVolumetrica origem={luzPrincipal.origem} angulo={luzPrincipal.angulo} abertura={54} feixes={6} intensidade={0.35 + 0.25 * f} alcance={1.2} poeira={0} seed="c4-raios" />
         <PlanoDeFoco profundidade={1.4} semDesfoque>
@@ -39,7 +39,7 @@ export const Cena4Confianca: React.FC = () => {
         <GradacaoCor mistura={misturaPorCena.cena4} origemLuz={{x: 0.5, y: Y_CONFIE}} />
         <PlanoDeFoco profundidade={1} semDesfoque>
           <Ancora y={0.33}>
-            <TextoEditorial palavras={a.palavras} entradas={a.entradas} destaques={a.destaques} tamanho={escalaFe.editorialHero * u} maxLargura={maxLargura} saidaEm={a.saidaEm} />
+            <TextoEditorial palavras={a.palavras} entradas={a.entradas} destaques={a.destaques} tamanho={escalaFe.editorialHero * u} maxLargura={maxLargura} saidaEm={a.saidaEm} duracaoSaida={a.duracaoSaida} />
           </Ancora>
           <Ancora y={0.33}>
             <TextoEditorial palavras={b.palavras} entradas={b.entradas} destaques={b.destaques} tamanho={escalaFe.editorialHero * u} maxLargura={maxLargura} />
