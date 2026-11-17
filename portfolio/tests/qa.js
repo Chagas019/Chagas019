@@ -173,14 +173,7 @@ async function main() {
       rec('links.external-rel', bad.length ? 'WARN' : 'PASS', bad.length ? 'missing rel=noopener: ' + bad.join(', ') : 'ok');
     });
 
-    // --- sections ---
-    await check('sections.present', async () => {
-      const ids = ['trabalhos', 'servicos', 'investimento', 'sobre', 'contato'];
-      const missing = [];
-      for (const id of ids) if (!(await page.$('#' + id))) missing.push('#' + id);
-      rec('sections.present', missing.length ? 'FAIL' : 'PASS', missing.length ? 'missing ' + missing.join(', ') : ids.length + ' sections');
-    });
-
+__SECTIONS__
     // --- headings / SEO ---
     await check('seo.h1', async () => {
       const n = await page.$$eval('h1', (h) => h.filter((e) => e.offsetParent !== null || getComputedStyle(e).position === 'fixed').length);
@@ -288,71 +281,7 @@ async function main() {
       rec('a11y.contrast', bad.length ? 'WARN' : 'PASS', bad.length ? `${bad.length} low-contrast (heuristic): ` + bad.slice(0, 5).join(' | ') : 'ok (solid backgrounds only)');
     });
 
-    // --- content: projects & pricing ---
-    await check('content.projects', async () => {
-      let expected = null;
-      try { const j = JSON.parse(fs.readFileSync(path.join(ROOT, 'portfolio/content/portfolio.json'), 'utf8')); const arr = Array.isArray(j) ? j : (j.projects || j.items || []); expected = arr.length; } catch (_) {}
-      let n = await page.$$eval('[data-project]', (e) => e.length);
-      if (!n) n = await page.$$eval('#trabalhos article, #trabalhos li, #trabalhos figure', (e) => e.length).catch(() => 0);
-      const st = !n ? 'FAIL' : expected != null && n !== expected ? 'WARN' : 'PASS';
-      rec('content.projects', st, `${n} projects rendered${expected != null ? `, ${expected} in portfolio.json` : ', portfolio.json unreadable'}`);
-    });
-    await check('content.pricing', async () => {
-      const svc = await page.$$('[data-pricing-service]');
-      if (!svc.length) {
-        const txt = await page.$eval('#investimento', (e) => e.innerText).catch(() => '');
-        return rec('content.pricing', 'FAIL', `0 [data-pricing-service] (section text ${txt.length} chars)`);
-      }
-      const tiers = await Promise.all(svc.map((s) => s.$$eval('[data-pricing-tier]', (t) => t.length)));
-      const badT = tiers.filter((t) => t !== EXPECTED_TIERS).length;
-      const hasPrice = await page.$eval('#investimento', (e) => /R\$\s?\d/.test(e.innerText)).catch(() => false);
-      rec('content.pricing', svc.length === EXPECTED_SERVICES && !badT ? (hasPrice ? 'PASS' : 'WARN') : 'FAIL',
-        `${svc.length}/${EXPECTED_SERVICES} services, tiers per service [${tiers.join(',')}]${hasPrice ? '' : ', no "R$" price text'}`);
-    });
-
-    // --- form validation ---
-    await check('form.validation', async () => {
-      const form = (await page.$('form#contact-form')) || (await page.$('#contato form'));
-      if (!form) return rec('form.validation', 'FAIL', 'form#contact-form not found');
-      for (const n of ['name', 'email', 'message']) if (!(await form.$(`[name="${n}"]`))) rec('form.fields', 'FAIL', `missing [name=${n}]`);
-      const urlBefore = page.url();
-      let navigated = false; const onNav = () => { navigated = true; }; page.on('framenavigated', onNav);
-      let posted = false; const onReq = (r) => { if (r.method() === 'POST') posted = true; }; page.on('request', onReq);
-      const submit = (await form.$('button[type="submit"], input[type="submit"]')) || (await form.$('button:not([type="button"])'));
-      if (submit) await submit.click(); else await form.evaluate((f) => f.requestSubmit());
-      await sleep(500);
-      page.off('framenavigated', onNav); page.off('request', onReq);
-      if (navigated || posted || page.url() !== urlBefore) {
-        rec('form.blocks-empty', 'FAIL', `empty submit navigated/POSTed (url now ${page.url()})`);
-        rec('form.aria-invalid', 'FAIL', 'not evaluated: page navigated on empty submit');
-        await gotoPage(page); return;
-      }
-      const st = await form.evaluate((f) => {
-        const els = [...f.querySelectorAll('input:not([type=hidden]):not([type=submit]), textarea')];
-        return {
-          invalidAria: els.filter((e) => e.getAttribute('aria-invalid') === 'true').map((e) => e.name),
-          described: els.filter((e) => e.getAttribute('aria-invalid') === 'true' && e.getAttribute('aria-describedby') &&
-            e.getAttribute('aria-describedby').split(/\s+/).some((id) => (document.getElementById(id) || {}).textContent)).map((e) => e.name),
-          nativeInvalid: els.filter((e) => !e.checkValidity()).map((e) => e.name),
-          live: !!f.querySelector('[aria-live], [role="alert"]') || !!document.querySelector('#contato [aria-live], #contato [role="alert"]'),
-          focused: document.activeElement && document.activeElement.name,
-        };
-      });
-      rec('form.blocks-empty', 'PASS', 'empty submit blocked');
-      rec('form.aria-invalid', st.invalidAria.length ? 'PASS' : 'FAIL', `aria-invalid on [${st.invalidAria.join(',')}] (native invalid [${st.nativeInvalid.join(',')}])`);
-      rec('form.error-messages', st.described.length && st.live ? 'PASS' : st.described.length || st.live ? 'WARN' : 'FAIL',
-        `aria-describedby w/ text: [${st.described.join(',')}], live region: ${st.live}, focus on: ${st.focused || '-'}`);
-      // invalid email
-      const email = await form.$('[name="email"]');
-      if (email) {
-        await email.fill('not-an-email'); await (await form.$('[name="name"]'))?.fill('QA Bot'); await (await form.$('[name="message"]'))?.fill('Mensagem de teste QA com conteúdo suficiente.');
-        const u0 = page.url(); if (submit) await submit.click(); await sleep(300);
-        if (page.url() !== u0) { rec('form.email-format', 'FAIL', 'invalid email submitted (navigated)'); await gotoPage(page); return; }
-        const inv = await email.evaluate((e) => e.getAttribute('aria-invalid') === 'true' || !e.checkValidity());
-        rec('form.email-format', inv ? 'PASS' : 'FAIL', inv ? 'invalid email rejected' : 'invalid email accepted');
-      }
-    });
-
+__CONTENT__
     // --- lightbox ---
     await check('lightbox', async () => {
       await gotoPage(page); await sleep(300);
