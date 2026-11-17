@@ -30,6 +30,7 @@
       "intro": "Cobertura de eventos e ensaios fotográficos, com cuidado na luz, no enquadramento e na edição final.",
       "items": [
         "Eventos",
+        "Aniversários e festas de 15 anos",
         "Ensaios"
       ]
     },
@@ -442,6 +443,46 @@
   ],
   "projects": [
     {
+      "id": "festa-15-anos",
+      "title": "Festa de 15 anos",
+      "category": "eventos",
+      "year": null,
+      "client": null,
+      "description": "Cobertura fotográfica de uma festa de 15 anos: a decoração em verde e dourado, os detalhes das lembrancinhas e os convidados diante do painel com o número em neon.",
+      "role": "Fotografia e edição",
+      "featured": true,
+      "cover": {
+        "src": "fotos/eventos/festa-15-anos-01.jpg",
+        "alt": "Decoração da festa: painel dourado com o número 15 em neon, arco de balões verdes e mesa de lembrancinhas",
+        "w": 1717,
+        "h": 2576
+      },
+      "media": [
+        {
+          "type": "image",
+          "src": "fotos/eventos/festa-15-anos-01.jpg",
+          "alt": "Painel dourado com o número 15 em neon, arco de balões verdes e estante de lembrancinhas em primeiro plano desfocado",
+          "w": 1717,
+          "h": 2576
+        },
+        {
+          "type": "image",
+          "src": "fotos/eventos/festa-15-anos-03.jpg",
+          "alt": "Dois convidados sorrindo diante do painel dourado com o número 15 em neon",
+          "w": 1549,
+          "h": 2466
+        },
+        {
+          "type": "image",
+          "src": "fotos/eventos/festa-15-anos-02.jpg",
+          "alt": "Lembrancinhas personalizadas embaladas com fitas verde e amarela, sobre uma estante de madeira",
+          "w": 1717,
+          "h": 2576
+        }
+      ],
+      "status": "real"
+    },
+    {
       "id": "comunica-fe",
       "title": "Comunica+Fé",
       "category": "web-design",
@@ -449,7 +490,7 @@
       "client": null,
       "description": "Site para a Pastoral da Comunicação de uma paróquia, reunindo liturgia do dia, escala das missas, agenda e formação num só lugar. A abertura é uma sequência em rolagem com objetos 3D de comunicação sobre fundo escuro e laranja, adaptada para computador e celular.",
       "role": "Design e desenvolvimento",
-      "featured": true,
+      "featured": false,
       "cover": {
         "src": "../resultado/abertura-computador.jpg",
         "alt": "Seis telas da abertura do site Comunica+Fé no computador, com tipografia grande branca e objetos 3D sobre fundo escuro e laranja",
@@ -615,10 +656,6 @@
     }
   ],
   "missing": [
-    {
-      "category": "eventos",
-      "note": "Sem fotos de eventos no repositório. Pedir 3–5 eventos (ex.: Lual Mariano, Retiro PAFIES, AVIVA 2), 12–20 fotos cada, JPEG sRGB, lado maior ≥ 2560 px, com autorização de uso."
-    },
     {
       "category": "ensaios",
       "note": "Sem ensaios. Pedir 3–6 ensaios (individual/casal), 8–15 fotos cada, com autorização de imagem."

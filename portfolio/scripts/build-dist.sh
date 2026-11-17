@@ -8,7 +8,7 @@ OUT=dist
 rm -rf "$OUT" && mkdir -p "$OUT"
 
 cp index.html robots.txt sitemap.xml "$OUT"/
-cp -r assets content media capturas "$OUT"/
+cp -r assets content media capturas fotos "$OUT"/
 rm -rf "$OUT/content/_fixtures"
 # mídias de terceiros / sem uso no site não vão para a publicação
 rm -f "$OUT"/media/fotos-carlo-acutis-* "$OUT"/media/midia-carlo-acutis-*

@@ -1,5 +1,5 @@
 {
-  "_generated": "2026-11-17T13:08:19Z",
+  "_generated": "2026-11-17T14:07:50Z",
   "_note": "Gerado por scripts/optimize-media.sh. Chaves = src usado no portfolio.json (relativo a portfolio/index.html). Não edite à mão.",
   "items": {
     "../fotos/carlo-acutis.jpg": {
@@ -575,6 +575,135 @@
           "w": 1280,
           "h": 720,
           "src": "media/portfolio-media-comunicafe-motion-720-1280.avif"
+        }
+      ]
+    },
+    "fotos/eventos/festa-15-anos-01.jpg": {
+      "type": "image",
+      "w": 1717,
+      "h": 2576,
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 960,
+          "src": "media/portfolio-fotos-eventos-festa-15-anos-01-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 960,
+          "src": "media/portfolio-fotos-eventos-festa-15-anos-01-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1280,
+          "h": 1920,
+          "src": "media/portfolio-fotos-eventos-festa-15-anos-01-1280.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1280,
+          "h": 1920,
+          "src": "media/portfolio-fotos-eventos-festa-15-anos-01-1280.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1717,
+          "h": 2576,
+          "src": "media/portfolio-fotos-eventos-festa-15-anos-01-1717.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1717,
+          "h": 2576,
+          "src": "media/portfolio-fotos-eventos-festa-15-anos-01-1717.avif"
+        }
+      ]
+    },
+    "fotos/eventos/festa-15-anos-02.jpg": {
+      "type": "image",
+      "w": 1717,
+      "h": 2576,
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 960,
+          "src": "media/portfolio-fotos-eventos-festa-15-anos-02-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 960,
+          "src": "media/portfolio-fotos-eventos-festa-15-anos-02-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1280,
+          "h": 1920,
+          "src": "media/portfolio-fotos-eventos-festa-15-anos-02-1280.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1280,
+          "h": 1920,
+          "src": "media/portfolio-fotos-eventos-festa-15-anos-02-1280.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1717,
+          "h": 2576,
+          "src": "media/portfolio-fotos-eventos-festa-15-anos-02-1717.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1717,
+          "h": 2576,
+          "src": "media/portfolio-fotos-eventos-festa-15-anos-02-1717.avif"
+        }
+      ]
+    },
+    "fotos/eventos/festa-15-anos-03.jpg": {
+      "type": "image",
+      "w": 1549,
+      "h": 2466,
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 1018,
+          "src": "media/portfolio-fotos-eventos-festa-15-anos-03-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 1018,
+          "src": "media/portfolio-fotos-eventos-festa-15-anos-03-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1280,
+          "h": 2036,
+          "src": "media/portfolio-fotos-eventos-festa-15-anos-03-1280.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1280,
+          "h": 2036,
+          "src": "media/portfolio-fotos-eventos-festa-15-anos-03-1280.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1549,
+          "h": 2466,
+          "src": "media/portfolio-fotos-eventos-festa-15-anos-03-1549.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1549,
+          "h": 2466,
+          "src": "media/portfolio-fotos-eventos-festa-15-anos-03-1549.avif"
         }
       ]
     }
