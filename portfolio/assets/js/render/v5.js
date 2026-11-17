@@ -1,7 +1,7 @@
+/* v5: hero, destaques, habilidades, processo, citação. */
 import { h, slot, clear } from '../dom.js';
 import { picture, stillOf } from './media.js';
 
-/** v5 — ícones de traço (24px, currentColor). Um único path por ícone. */
 const ICONS = {
   search: 'M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14zM20 20l-4-4',
   pen: 'M4 20l4-1L19 8l-3-3L5 16l-1 4zM14 7l3 3',
@@ -24,7 +24,6 @@ export function icon(name) {
 }
 const pad = (n) => String(n).padStart(2, '0');
 
-/** Hero: parágrafo (sobre[0]), nº de trabalhos e retrato recortado (site.heroPhoto ?? about.photo). Sem foto → fallback estático do HTML. */
 export function renderHero({ site, about, projects }) {
   const intro = slot('hero-intro');
   if (intro && about.paragraphs[0]) intro.textContent = about.paragraphs[0];
@@ -34,13 +33,20 @@ export function renderHero({ site, about, projects }) {
   if (role && site.role) role.textContent = site.role;
   const photo = site.heroPhoto || about.photo;
   const ph = slot('hero-photo');
-  if (!ph || !photo || !(typeof photo === 'string' || photo.src)) return;
+  if (!ph) return;
   const img = typeof photo === 'string' ? { src: photo } : photo;
-  clear(ph).classList.add('has-photo');
-  ph.append(picture({ ...img, alt: img.alt || `Retrato de ${site.fullName || site.name}` }, { sizes: '(min-width: 900px) 40vw, 80vw', eager: true, className: 'hero__photo' }));
+  if (!img || !img.src) {
+    const tpl = document.querySelector('template[data-hero-fallback]');
+    ph.classList.remove('has-photo');
+    clear(ph).append(tpl ? tpl.content.cloneNode(true) : '');
+    return;
+  }
+  const el = ph.querySelector('img'), src = img.fallback || img.src; // HTML já traz a foto atual (LCP)
+  if (!el || el.getAttribute('src') === src) return;
+  ph.querySelectorAll('source').forEach((x) => x.setAttribute('srcset', [img.srcMobile && `${img.srcMobile} 640w`, `${img.src} ${img.w || 1150}w`].filter(Boolean).join(', ')));
+  Object.entries({ src, alt: img.alt || site.fullName, width: img.w, height: img.h }).forEach(([k, v]) => v && el.setAttribute(k, v));
 }
 
-/** Linha "Projetos selecionados": 3 cards (ids em `highlights`, senão os 3 primeiros). Seta → lightbox. */
 export function renderHighlights({ projects, categories, highlights }, onOpen) {
   const root = clear(slot('highlights'));
   if (!root) return;
@@ -65,7 +71,6 @@ export function renderHighlights({ projects, categories, highlights }, onOpen) {
   });
 }
 
-/** Ferramentas & habilidades: chips contornados (sem nível de domínio). */
 export function renderSkills({ skills, tools }) {
   const chips = (name, list) => {
     const root = clear(slot(name));
@@ -76,7 +81,6 @@ export function renderSkills({ skills, tools }) {
 }
 
 const STEP_ICONS = ['search', 'pen', 'camera', 'sliders', 'send'];
-/** Processo: passos numerados com ícone circular ligados por linha vertical. */
 export function renderProcess({ process }) {
   const root = clear(slot('process'));
   if (!root) return;
@@ -86,7 +90,6 @@ export function renderProcess({ process }) {
     h('div', { class: 'step__text' }, h('h3', { class: 'step__title' }, s.title), s.text ? h('p', { class: 'step__desc' }, s.text) : null))));
 }
 
-/** Citação do painel vermelho (texto do conteúdo; HTML já traz o mesmo texto como fallback). */
 export function renderQuote({ quote }) {
   if (!quote) return;
   const t = slot('quote-text'); if (t) t.textContent = quote.text;

@@ -122,7 +122,15 @@
           </defs>
           <text x="500" y="226" text-anchor="middle" textLength="992" lengthAdjust="spacingAndGlyphs" fill="url(#hero-word-grad)">PORTFÓLIO</text>
         </svg>
-        <figure class="hero__portrait" data-slot="hero-photo">
+        <!-- retrato: site.heroPhoto (render/v5.js). Sem foto → conteúdo de <template data-hero-fallback> -->
+        <figure class="hero__portrait has-photo" data-slot="hero-photo">
+          <picture class="hero__photo">
+            <source type="image/webp" media="(max-width: 699.98px)" srcset="fotos/perfil/chagas-retrato-640.webp 640w, fotos/perfil/chagas-retrato-1150.webp 1150w" sizes="80vw">
+            <source type="image/webp" srcset="fotos/perfil/chagas-retrato-640.webp 640w, fotos/perfil/chagas-retrato-1150.webp 1150w" sizes="(min-width: 1000px) 40vw, 80vw">
+            <img class="media__img" src="fotos/perfil/chagas-retrato.png" alt="Chagas segurando a aba de um boné azul bordado com a palavra Chagas" width="1150" height="1367" loading="eager" fetchpriority="high" decoding="async">
+          </picture>
+        </figure>
+        <template data-hero-fallback>
           <div class="portrait-fallback" role="img" aria-label="Espaço reservado para o retrato de Chagas — foto em breve">
             <svg class="portrait-fallback__bust" viewBox="0 0 400 520" aria-hidden="true" focusable="false">
               <defs>
@@ -134,7 +142,7 @@
             <span class="portrait-fallback__mono" aria-hidden="true">CC</span>
             <span class="portrait-fallback__note" aria-hidden="true">Retrato · foto em breve</span>
           </div>
-        </figure>
+        </template>
         <div class="hero__intro">
           <p class="hero__hello" aria-hidden="true">Olá, eu sou</p>
           <h1 class="hero__name" id="hero-title"><span class="visually-hidden">Olá, eu sou </span><span class="hero__name-main">Chagas</span> <span class="hero__role" data-slot="hero-role">Fotógrafo, videomaker &amp; motion designer</span></h1>
@@ -360,7 +368,7 @@
       <div class="container contact__grid">
         <header class="contact__head" data-reveal>
           <p class="section__num" aria-hidden="true">07</p>
-          <h2 class="contact__title" id="contact-title">Vamos trabalhar juntos <svg class="spark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2c.7 5.6 2.4 7.3 8 8-5.6.7-7.3 2.4-8 8-.7-5.6-2.4-7.3-8-8 5.6-.7 7.3-2.4 8-8z"/></svg></h2>
+          <h2 class="contact__title" id="contact-title">Vamos trabalhar <span class="nowrap">juntos <svg class="spark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2c.7 5.6 2.4 7.3 8 8-5.6.7-7.3 2.4-8 8-.7-5.6-2.4-7.3-8-8 5.6-.7 7.3-2.4 8-8z"/></svg></span></h2>
           <p class="section__lead">Campinas e região — SP. Conte sua ideia: respondo com disponibilidade e proposta.</p>
           <a class="contact__cta" href="#orcamento"><span class="contact__cta-icon" aria-hidden="true"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12h15M14 6l6 6-6 6"/></svg></span>Solicitar orçamento</a>
         </header>

@@ -13,7 +13,14 @@
     "instagramUrl": "https://www.instagram.com/chagas_catolico/",
     "url": "",
     "tagline": "Fotografia, audiovisual, design e comunicação digital. Transformando ideias em histórias visuais desde 2019.",
-    "heroPhoto": null,
+    "heroPhoto": {
+      "src": "fotos/perfil/chagas-retrato-1150.webp",
+      "srcMobile": "fotos/perfil/chagas-retrato-640.webp",
+      "fallback": "fotos/perfil/chagas-retrato.png",
+      "alt": "Chagas segurando a aba de um boné azul bordado com a palavra Chagas",
+      "w": 1150,
+      "h": 1367
+    },
     "role": "Fotógrafo, videomaker & motion designer"
   },
   "about": {
@@ -23,7 +30,12 @@
       "Hoje, trabalho conectando criatividade, tecnologia e comunicação para transformar ideias em experiências visuais.",
       "Acredito que uma imagem não serve apenas para registrar momentos. Ela pode transmitir sentimentos, contar histórias e gerar conexões. Minha proposta é desenvolver trabalhos com identidade, propósito e atenção aos detalhes."
     ],
-    "photo": null
+    "photo": {
+      "src": "fotos/perfil/chagas-retrato-1150.webp",
+      "alt": "Chagas segurando a aba de um boné azul bordado com a palavra Chagas",
+      "w": 1150,
+      "h": 1367
+    }
   },
   "areas": [
     {
