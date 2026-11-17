@@ -37,3 +37,9 @@ test.describe("qualidade visual e performance", () => {
     });
   }
 });
+
+test("bloqueia a tradução automática do navegador", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("html")).toHaveAttribute("translate", "no");
+  await expect(page.locator('meta[name="google"]')).toHaveAttribute("content", "notranslate");
+});

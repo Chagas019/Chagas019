@@ -18,6 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: { title: m.meta.title, description: m.meta.description, siteName: m.brand.name, type: "website", locale: locale.replace("-", "_") },
     twitter: { card: "summary_large_image", title: m.meta.title, description: m.meta.description },
     alternates: { canonical: "/" },
+    other: { google: "notranslate" },
   };
 }
 
@@ -25,8 +26,9 @@ export const viewport: Viewport = { themeColor: "#2B2B2B", width: "device-width"
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { m, locale } = await getI18n();
+  // O site já é traduzido (pt-BR/en/es). A tradução automática do navegador altera o DOM e quebra o React.
   return (
-    <html lang={locale} className={`${montserrat.variable} ${inter.variable}`}>
+    <html lang={locale} translate="no" className={`${montserrat.variable} ${inter.variable}`}>
       <body className="flex min-h-dvh flex-col">
         <a href="#conteudo" className="sr-only z-50 rounded-full bg-neon-400 px-4 py-2 font-semibold text-night-950 focus:not-sr-only focus:fixed focus:top-3 focus:left-3">
           {m.common.skipToContent}
