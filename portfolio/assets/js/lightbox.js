@@ -5,10 +5,10 @@ import { CONFIG } from './config.js';
 /**
  * Lightbox acessível: role=dialog + aria-modal, foco preso, Esc fecha,
  * ←/→ navegam, swipe horizontal (pointer events), vídeo com controles.
- * API: openLightbox(project, startIndex, triggerEl)
+ * API: openLightbox(project, startIndex, triggerEl, { detail })
  */
-let root, stage, caption, counter, titleEl, prevBtn, nextBtn, closeBtn;
-let items = [], index = 0, trigger = null, project = null;
+let root, stage, caption, counter, titleEl, prevBtn, nextBtn, closeBtn, detailEl;
+let items = [], index = 0, trigger = null, project = null, detailFn = null;
 
 function build() {
   closeBtn = h('button', { class: 'lightbox__close', type: 'button', 'aria-label': 'Fechar', 'data-lightbox-close': true }, '×');
@@ -17,12 +17,14 @@ function build() {
   stage = h('div', { class: 'lightbox__stage' });
   titleEl = h('h2', { class: 'lightbox__title', id: 'lightbox-title' });
   caption = h('p', { class: 'lightbox__caption' });
+  detailEl = h('div', { class: 'lightbox__detail', hidden: true });
   counter = h('p', { class: 'lightbox__counter', 'aria-live': 'polite' });
   root = h('div', { class: 'lightbox', role: 'dialog', 'aria-modal': 'true', 'data-lightbox-dialog': true, 'aria-labelledby': 'lightbox-title', hidden: true },
     h('div', { class: 'lightbox__backdrop', 'data-close': true }),
     h('div', { class: 'lightbox__frame' },
       h('header', { class: 'lightbox__bar' }, titleEl, counter, closeBtn),
       stage,
+      detailEl,
       h('footer', { class: 'lightbox__foot' }, prevBtn, caption, h('span', { class: 'lightbox__zoom', 'aria-hidden': 'true' }, '100%'), h('kbd', { class: 'lightbox__esc', 'aria-hidden': 'true' }, 'Esc'), nextBtn)));
   document.body.append(root);
 
@@ -62,12 +64,24 @@ function onKey(e) {
 
 function render() {
   stage.querySelectorAll('video').forEach((v) => v.pause());
+  titleEl.textContent = project.title;
+  // ficha textual (projetos selecionados): opcional, independe da mídia
+  const detail = detailFn ? detailFn(project) : null;
+  detailEl.replaceChildren(...(detail ? [detail] : []));
+  detailEl.hidden = !detail;
+  root.classList.toggle('lightbox--text', !items.length);
   const m = items[index];
+  if (!m) {
+    stage.replaceChildren(); stage.hidden = true;
+    caption.textContent = ''; counter.textContent = '';
+    prevBtn.hidden = nextBtn.hidden = true;
+    return;
+  }
+  stage.hidden = false;
   const node = m.type === 'video'
     ? video(m, { controls: true, className: 'lightbox__media' })
     : picture({ ...stillOf(m) }, { sizes: CONFIG.sizes.lightbox, eager: true, className: 'lightbox__media' });
   stage.replaceChildren(node);
-  titleEl.textContent = project.title;
   caption.textContent = m.alt || '';
   counter.textContent = `${index + 1} / ${items.length}`;
   const multi = items.length > 1;
@@ -90,10 +104,19 @@ function setInert(on) {
   }
 }
 
-export function openLightbox(p, start = 0, triggerEl = null) {
-  if (!p || !p.media?.length) return;
+/**
+ * @param p        projeto ({title, media[]})
+ * @param start    índice inicial
+ * @param triggerEl elemento que recebe o foco ao fechar
+ * @param opts.detail (p) => Node — ficha textual opcional; com ela, projetos sem mídia também abrem
+ */
+export function openLightbox(p, start = 0, triggerEl = null, opts = {}) {
+  if (!p) return;
+  const media = Array.isArray(p.media) ? p.media : [];
+  if (!media.length && !opts.detail) return;
   if (!root) build();
-  project = p; items = p.media; index = Math.min(start, items.length - 1);
+  project = p; items = media; index = Math.max(0, Math.min(start, items.length - 1));
+  detailFn = opts.detail || null;
   trigger = triggerEl || document.activeElement;
   render();
   root.hidden = false;
@@ -109,6 +132,7 @@ export function close() {
   root.classList.remove('is-open');
   root.hidden = true;
   stage.replaceChildren();
+  detailEl.replaceChildren();
   setInert(false);
   document.documentElement.classList.remove('is-locked');
   if (trigger && document.contains(trigger)) trigger.focus();

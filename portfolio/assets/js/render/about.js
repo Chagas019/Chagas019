@@ -1,4 +1,4 @@
-import { h, slot, clear } from '../dom.js';
+import { h, slot, clear, item } from '../dom.js';
 import { picture } from './media.js';
 
 /** Iniciais para o monograma (CHAGAS CREATIVE → "CC"). */
@@ -39,7 +39,7 @@ export function renderTimeline({ timeline }) {
   const root = clear(slot('timeline'));
   if (!root) return;
   root.hidden = !timeline.length;
-  timeline.forEach((t) => root.append(h('li', { class: 'timeline__item', 'data-reveal': true },
+  timeline.forEach((t) => root.append(item(root, 'div', { class: 'timeline__item', 'data-reveal': true },
     t.period ? h('span', { class: 'timeline__period' }, t.period) : null,
     t.title ? h('h3', { class: 'timeline__title' }, t.title) : null,
     t.text ? h('p', { class: 'timeline__text' }, t.text) : null)));

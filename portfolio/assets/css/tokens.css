@@ -1,65 +1,87 @@
 /* ==========================================================================
-   CHAGAS — Design Tokens  v2 "Estúdio / Artboard"
+   CHAGAS CREATIVE — Design Tokens  v3 "Sala escura / Editorial"
    Fonte de verdade: portfolio/docs/DESIGN_SYSTEM.md
-   Conceito: o site inteiro é a janela de um app de design (chrome grafite,
-   barra de ferramentas, canvas cinza claro, painéis azul-cobalto).
-   Nomes da v1 foram mantidos (valores mudaram); novos tokens adicionados.
+   Conceito: estúdio criativo internacional. Preto profundo, grafite, branco,
+   cinza neutro + UM acento: "tally" — o laranja-avermelhado da luz REC de
+   câmera. Tipografia editorial, enquadramento de cinema (letterbox, timecode).
+   COMPAT: todos os nomes v1/v2 foram mantidos (valores mudaram). --c-blue* e
+   --c-navy NÃO são mais azuis: --c-blue* = acento tally, --c-navy = grafite.
 
    Google Fonts — colocar no <head> de cada HTML (NÃO usar @import):
    <link rel="preconnect" href="https://fonts.googleapis.com">
    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400..800;1,400..600&family=Pacifico&family=JetBrains+Mono:wght@400;500&display=swap">
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
+
+   Breakpoints (não funcionam como var em @media):
+   600px (phablet) · 900px (tablet/2 col) · 1200px (desktop/12 col) · 1440px (largo)
+   Contrastes WCAG calculados: ver DESIGN_SYSTEM.md §2.
    ========================================================================== */
 
 :root {
   color-scheme: dark;
 
-  /* ---------- Primitivas: chrome (moldura do app) ---------- */
-  --c-chrome:   #262626; /* fundo da janela / footer */
-  --c-chrome-2: #2F2F2F; /* barra de ferramentas */
-  --c-chrome-3: #3A3A3A; /* hover de ferramenta, divisórias */
-  --c-dot-red:    #FF5F57; /* semáforo macOS (decorativo) */
-  --c-dot-yellow: #FEBC2E;
-  --c-dot-green:  #28C840;
+  /* ---------- Primitivas v3: neutros ---------- */
+  --c-black:      #0A0A0A; /* preto profundo — fundo base */
+  --c-letterbox:  #000000; /* faixas de cinema do hero */
+  --c-graphite:   #1F1F1F; /* seções grafite (tema blue) */
+  --c-graphite-2: #161616; /* grafite profundo (tema navy) */
+  --c-graphite-3: #262626; /* hover/superfície sobre grafite */
+  --c-gray:       #8C8C8C; /* cinza neutro (metadados no escuro) */
 
-  /* ---------- Primitivas: canvas (prancheta clara) ---------- */
-  --c-canvas:   #F2F2F2; /* seção clara principal */
-  --c-canvas-2: #E6E6E6; /* artboard vazio, placeholder, hover */
+  /* ---------- Primitivas v3: acento "tally" (único) ---------- */
+  --c-signal:       #C2410C; /* preenchimento: botão, badge, caixa de seleção. Branco 5.18:1 */
+  --c-signal-hi:    #9A3412; /* hover (escurece) e TEXTO sobre papel claro 6.13:1 */
+  --c-signal-light: #FF7A45; /* texto/linha sobre preto/grafite ≥6.37:1 */
+  --c-signal-tint:  #F7DDCF; /* fundo de seleção sobre papel claro (ink 15.27:1) */
+  --c-rec:          var(--c-signal-light); /* ponto "REC" piscando */
+
+  /* ---------- Chrome (nomes v2) → pretos ---------- */
+  --c-chrome:   var(--c-black); /* fundo da página / footer */
+  --c-chrome-2: #131313;        /* header, superfície */
+  --c-chrome-3: #1C1C1C;        /* hover, superfície 2 */
+  --c-dot-red:    var(--c-rec); /* compat: vira o ponto REC */
+  --c-dot-yellow: #3A3A3A;      /* compat: neutros (não usar) */
+  --c-dot-green:  #3A3A3A;
+
+  /* ---------- Canvas (nomes v2) → papel claro neutro ---------- */
+  --c-canvas:   #ECEBE8; /* seção clara (tema canvas) */
+  --c-canvas-2: #DCDBD7; /* placeholder de imagem, hover claro */
   --c-white:    #FFFFFF;
-  --c-ink:      #1A1A1A; /* texto sobre canvas */
-  --c-ink-2:    #555555; /* texto secundário sobre canvas/branco */
-  --c-ink-3:    #6B6B6B; /* metadados sobre canvas (AA) */
+  --c-ink:      #0A0A0A; /* texto sobre papel 16.61:1 */
+  --c-ink-2:    #454545; /* secundário 8.04:1 (6.92 em canvas-2) */
+  --c-ink-3:    #5C5C5C; /* metadados 5.61:1 (4.83 em canvas-2) */
 
-  /* ---------- Primitivas: azul ---------- */
-  --c-blue:       #0A4FD9; /* cobalto — cor da marca */
-  --c-blue-deep:  #083DA8; /* hover de botão azul, topo do gradiente */
-  --c-navy:       #14213D; /* base do gradiente azul→navy */
-  --c-blue-tint:  #C4D7FF; /* texto claro sobre azul (períodos, organizações) */
-  --c-blue-light: #7FA6FF; /* azul legível sobre chrome/navy (links) */
-  --c-select:     #D3E1FF; /* preenchimento de caixa de texto selecionada */
-  --c-wave:       rgba(255, 255, 255, .09); /* linhas orgânicas no fundo azul */
-  --c-cream:      #FFF6E3; /* iniciais em script atrás do retrato */
+  /* ---------- "Azul" (nomes v2) → acento tally + grafite ---------- */
+  --c-blue:       var(--c-signal);       /* acento de preenchimento */
+  --c-blue-deep:  var(--c-signal-hi);    /* hover / texto-acento no claro */
+  --c-navy:       var(--c-graphite-2);   /* grafite profundo */
+  --c-blue-tint:  #BDBDBD;               /* texto secundário sobre grafite 8.77:1 */
+  --c-blue-light: var(--c-signal-light); /* acento legível no escuro */
+  --c-select:     var(--c-signal-tint);  /* preenchimento de seleção no claro */
+  --c-wave:       rgba(255, 255, 255, .04); /* filetes de fundo muito sutis */
+  --c-cream:      rgba(242, 241, 238, .06); /* iniciais gigantes: marca-d'água */
 
-  /* ---------- Texto sobre fundos escuros (nomes v1 mantidos) ---------- */
-  --c-paper:      #FFFFFF; /* texto principal sobre chrome/azul/navy */
-  --c-paper-dim:  #A3A3A3; /* secundário sobre chrome */
-  --c-paper-mute: #8F8F8F; /* metadados sobre chrome (AA só em #262626) */
+  /* ---------- Texto sobre escuro (nomes v1) ---------- */
+  --c-paper:      #F2F1EE; /* principal 17.53:1 no preto, 14.59 no grafite */
+  --c-paper-dim:  #ADADAD; /* secundário ≥7.34:1 */
+  --c-paper-mute: #8C8C8C; /* metadados ≥4.90:1 (preto, chrome-2/3, grafite) */
 
-  /* ---------- Acento (alias v1 → azul) ---------- */
-  --c-accent:      var(--c-blue);
-  --c-accent-hi:   var(--c-blue-deep);  /* hover ESCURECE (branco 9.36:1) */
-  --c-accent-deep: var(--c-blue-deep);
+  /* ---------- Acento (alias v1) ---------- */
+  --c-accent:      var(--c-signal);
+  --c-accent-hi:   var(--c-signal-hi);
+  --c-accent-deep: var(--c-signal-hi);
   --c-on-accent:   #FFFFFF;
-  --c-error:       #B42318; /* sobre canvas */
-  --c-error-dark:  #FF8F87; /* sobre chrome/navy */
-  --c-success:     #176F3D; /* sobre canvas */
+  --c-error:       #B42318; /* sobre papel 5.51:1 — sempre com texto "Erro:" (não confundir c/ acento) */
+  --c-error-dark:  #FF8F87; /* sobre preto/grafite ≥7.48:1 */
+  --c-success:     #176F3D; /* sobre papel 5.22:1 */
 
   /* Filetes */
-  --c-line:        #D9D9D9; /* filete decorativo no canvas */
-  --c-line-strong: #6B6B6B; /* borda de input no canvas (≥3:1) */
-  --c-line-dark:   #3A3A3A; /* filete no chrome */
+  --c-line:        #D2D1CD; /* decorativo no papel */
+  --c-line-strong: #7A7A7A; /* borda de input no papel 3.60:1 (≥3:1) */
+  --c-line-dark:   #2E2E2E; /* decorativo no escuro */
+  --c-line-dark-strong: #6E6E6E; /* borda de input no escuro ≥3:1 */
 
-  /* ---------- Semânticas (padrão = chrome) ---------- */
+  /* ---------- Semânticas (padrão = preto) ---------- */
   --c-bg:        var(--c-chrome);
   --c-surface:   var(--c-chrome-2);
   --c-surface-2: var(--c-chrome-3);
@@ -67,29 +89,32 @@
   --c-text-2:    var(--c-paper-dim);
   --c-text-3:    var(--c-paper-mute);
   --c-border:    var(--c-line-dark);
-  --c-link:      var(--c-blue-light);
-  --c-focus:     var(--c-blue-light);
-  --c-selection: rgba(10, 79, 217, .35);
-  --c-scrim:     rgba(20, 20, 20, .92); /* lightbox */
-  --c-gradient-panel: linear-gradient(180deg, var(--c-blue) 0%, var(--c-navy) 100%);
-  --c-veil:      linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,.6) 100%);
+  --c-link:      var(--c-paper);        /* links = texto + sublinhado; acento só no hover */
+  --c-link-hover:var(--c-signal-light);
+  --c-focus:     var(--c-signal-light);
+  --c-selection: rgba(194, 65, 12, .45);
+  --c-scrim:     rgba(0, 0, 0, .94); /* lightbox */
+  --c-gradient-panel: linear-gradient(180deg, var(--c-graphite) 0%, var(--c-graphite-2) 100%);
+  --c-veil:      linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,.72) 100%);
+  --c-veil-hero: linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 60%, rgba(0,0,0,.8) 100%);
   /* Compat v1 */
   --c-glow:      none;
   --c-inv-bg:    var(--c-canvas);
   --c-inv-text:  var(--c-ink);
   --c-inv-text-2:var(--c-ink-2);
-  --c-inv-accent:var(--c-blue);
+  --c-inv-accent:var(--c-signal-hi);
 
   /* ---------- Tipografia ---------- */
-  --f-display: "Inter Tight", "Helvetica Neue", Arial, system-ui, sans-serif;
-  --f-body:    "Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --f-script:  "Pacifico", "Brush Script MT", cursive; /* SÓ iniciais gigantes decorativas */
-  --f-serif:   var(--f-script); /* compat v1 — não usar em texto novo */
-  --f-mono:    "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace; /* rótulos de app: W×H, %, camadas */
+  --f-display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif; /* com font-stretch */
+  --f-body:    "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-serif:   "Instrument Serif", "Times New Roman", Georgia, serif; /* acentos editoriais (itálico) */
+  --f-script:  var(--f-serif); /* compat v2 — iniciais gigantes agora em serifa itálica */
+  --f-mono:    "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace; /* timecode, W×H, rótulos */
 
-  --fstretch-display: 100%; /* Inter Tight não tem eixo de largura; mantido p/ compat */
+  --fstretch-display: 72%;  /* Archivo condensado — títulos */
+  --fstretch-wide:    125%; /* Archivo expandido — kicker/marca, numerais */
   --fstretch-body:    100%;
-  --fw-light:   400;
+  --fw-light:   300;
   --fw-regular: 400;
   --fw-medium:  500;
   --fw-semi:    600;
@@ -104,21 +129,22 @@
   --fs-lg:    clamp(1.125rem, 1.05rem + 0.35vw, 1.375rem);  /* 18–22 */
   --fs-xl:    clamp(1.375rem, 1.2rem + 0.8vw,   2rem);      /* 22–32 */
   --fs-2xl:   clamp(1.75rem,  1.4rem + 1.6vw,   3rem);      /* 28–48 */
-  --fs-3xl:   clamp(2.25rem,  1.6rem + 3vw,     4.5rem);    /* 36–72 */
-  --fs-4xl:   clamp(2.75rem,  1.8rem + 4.4vw,   6rem);      /* 44–96 */
-  --fs-hero:  clamp(3rem,     1.6rem + 6.5vw,   8.5rem);    /* 48–136 nome */
-  --fs-script:clamp(10rem,    6rem + 18vw,      28rem);     /* iniciais cream */
+  --fs-3xl:   clamp(2.5rem,   1.6rem + 4vw,     5.5rem);    /* 40–88  títulos de seção */
+  --fs-4xl:   clamp(3rem,     1.6rem + 6vw,     7.5rem);    /* 48–120 */
+  --fs-hero:  clamp(3.25rem,  1rem + 9.5vw,     11rem);     /* 52–176 título do hero (condensado) */
+  --fs-script:clamp(10rem,    6rem + 18vw,      28rem);     /* iniciais marca-d'água */
+  --fs-quote: clamp(1.5rem,   1.1rem + 1.8vw,   2.75rem);   /* frase em serifa itálica */
 
-  --lh-tight:   0.95;
-  --lh-snug:    1.12;
+  --lh-tight:   0.88;
+  --lh-snug:    1.1;
   --lh-normal:  1.45;
-  --lh-relaxed: 1.55;
-  --ls-display: -0.035em;
+  --lh-relaxed: 1.6;
+  --ls-display: -0.01em;  /* condensado não precisa de tracking negativo forte */
   --ls-tight:   -0.02em;
-  --ls-normal:  -0.005em;
-  --ls-caps:    0.08em;
-  --measure:    58ch;
-  --measure-sm: 40ch;
+  --ls-normal:  0;
+  --ls-caps:    0.12em;   /* mono/kicker em caixa-alta */
+  --measure:    60ch;
+  --measure-sm: 42ch;
 
   /* ---------- Espaçamento (base 4px) ---------- */
   --sp-0: 0;
@@ -133,36 +159,38 @@
   --sp-9: 6rem;     /* 96 */
   --sp-10: 8rem;    /* 128 */
   --sp-11: 12rem;   /* 192 */
-  --sp-section:    clamp(4rem, 2.5rem + 6vw, 9rem);
-  --sp-section-sm: clamp(2.5rem, 1.8rem + 3vw, 5rem);
-  --sp-gutter:     clamp(1rem, 0.5rem + 2vw, 2.5rem);   /* margem interna dos painéis */
-  --sp-frame:      clamp(0.5rem, 0.2rem + 1.2vw, 1.25rem); /* moldura chrome ao redor do canvas */
+  --sp-section:    clamp(5rem, 3rem + 8vw, 11rem);
+  --sp-section-sm: clamp(3rem, 2rem + 4vw, 6rem);
+  --sp-gutter:     clamp(1rem, 0.4rem + 2.6vw, 3rem);    /* margem lateral (16px no mobile) */
+  --sp-frame:      clamp(0.75rem, 0.4rem + 1.2vw, 1.5rem); /* respiro da moldura/timecode */
 
   /* ---------- Grid ---------- */
   --grid-cols:   12;
-  --grid-gap:    clamp(0.75rem, 0.4rem + 1.4vw, 1.5rem);
+  --grid-gap:    clamp(1rem, 0.5rem + 1.6vw, 2rem);
   --grid-max:    1440px;
   --grid-narrow: 880px;
-  --header-h:    clamp(3.5rem, 3rem + 1.5vw, 5rem);  /* barra de ferramentas */
-  --toolbar-btn: clamp(2.5rem, 2.2rem + 1vw, 3.25rem); /* botão de ferramenta (≥44px no desktop) */
-  /* breakpoints (não funcionam como var em @media): 600 / 900 / 1200 / 1440px */
+  --header-h:    clamp(3.5rem, 3.1rem + 1.2vw, 4.5rem);
+  --toolbar-btn: 2.75rem; /* 44px — alvo mínimo de toque */
+  --letterbox-h: clamp(1rem, 0.4rem + 3vh, 3.5rem); /* faixas pretas do hero */
+  --hero-min-h:  100svh;
+  --wa-size:     3.5rem;  /* botão flutuante WhatsApp (56px) */
 
-  /* ---------- Raios, bordas, sombras ---------- */
+  /* ---------- Raios, bordas, sombras (minimalismo: quase reto) ---------- */
   --r-0:     0;
-  --r-xs:    6px;   /* inputs, alças */
-  --r-sm:    10px;  /* botões de ferramenta, thumbs */
-  --r-tile:  14px;  /* ícones de software (app tiles) */
-  --r-card:  clamp(16px, 1rem + 0.6vw, 24px); /* retrato, artboards */
-  --r-panel: clamp(24px, 1rem + 2vw, 40px);   /* canvas / painel azul / janela */
-  --r-pill:  999px;
+  --r-xs:    2px;   /* inputs, rótulos, alças */
+  --r-sm:    2px;   /* botões */
+  --r-tile:  4px;
+  --r-card:  0;     /* cards e imagens retas — cinema */
+  --r-panel: 0;
+  --r-pill:  999px; /* só badges de tipo e botão WhatsApp */
   --bw-hair:   1px;
-  --bw-select: 2px;  /* linha da bounding box */
+  --bw-select: 1px;  /* linha da bounding box (fina, refinada) */
   --bw-focus:  2px;
-  --bw-rule:   4px;  /* régua azul abaixo do "Sobre" */
-  --handle:    8px;  /* alça quadrada/redonda da seleção */
-  --tilt-badge: -2deg; /* rotação da pílula de cargo */
-  --shadow-lift:  0 24px 48px -24px rgba(0, 0, 0, .45);
-  --shadow-panel: 0 1px 0 rgba(255,255,255,.04) inset, 0 30px 60px -30px rgba(0,0,0,.6);
+  --bw-rule:   1px;  /* filete editorial */
+  --handle:    7px;  /* alça quadrada da seleção */
+  --tilt-badge: 0deg; /* v3 sem inclinação */
+  --shadow-lift:  0 30px 60px -30px rgba(0, 0, 0, .7);
+  --shadow-panel: none;
 
   --ar-cine:   2.39 / 1;
   --ar-wide:   16 / 9;
@@ -175,40 +203,44 @@
   --z-below:    -1;
   --z-base:      0;
   --z-raised:   10;
-  --z-select:   20;  /* bounding box/alças sobre o conteúdo */
+  --z-select:   20;
   --z-sticky:  100;
   --z-header:  200;
+  --z-float:   250; /* WhatsApp flutuante (abaixo do menu aberto) */
   --z-menu:    300;
   --z-lightbox:400;
   --z-toast:   500;
   --z-cursor:  600;
-  --z-grain:   700;
+  --z-grain:   700; /* grão: pointer-events:none */
 
-  /* ---------- Movimento ---------- */
+  /* ---------- Movimento (cinematográfico) ---------- */
   --dur-instant: 80ms;
-  --dur-fast:    160ms;  /* hover de ferramenta, cor */
-  --dur-base:    260ms;  /* menus, alças aparecendo */
-  --dur-draw:    420ms;  /* desenhar caixa de seleção / régua */
-  --dur-slow:    560ms;  /* reveals */
-  --dur-slower:  800ms;  /* retrato entrando, painéis */
-  --dur-page:    600ms;  /* página / lightbox */
-  --stagger:     60ms;
+  --dur-fast:    180ms;  /* cor, sublinhado */
+  --dur-base:    320ms;  /* menus, alças */
+  --dur-draw:    520ms;  /* desenhar caixa de seleção / filete */
+  --dur-slow:    800ms;  /* reveals */
+  --dur-slower:  1100ms; /* entrada do hero, letterbox */
+  --dur-page:    700ms;  /* lightbox / menu mobile */
+  --dur-blink:   1600ms; /* ciclo do ponto REC */
+  --stagger:     80ms;
 
-  --ease-out:     cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in:      cubic-bezier(0.55, 0, 0.78, 0);
+  --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);    /* expo-out: padrão */
+  --ease-in:      cubic-bezier(0.7, 0, 0.84, 0);
   --ease-in-out:  cubic-bezier(0.65, 0, 0.35, 1);
-  --ease-snap:    cubic-bezier(0.34, 1.36, 0.64, 1); /* leve overshoot: alças, badge, "encaixe" de ferramenta */
-  --ease-shutter: var(--ease-in-out); /* compat v1 */
+  --ease-cine:    cubic-bezier(0.77, 0, 0.18, 1);   /* letterbox, máscaras de texto */
+  --ease-snap:    cubic-bezier(0.34, 1.2, 0.64, 1); /* overshoot leve nas alças */
+  --ease-shutter: var(--ease-cine);                 /* compat v1 */
   --ease-linear:  linear;
 
-  --reveal-distance: 20px;
-  --hover-scale:     1.02;
-  --grain-opacity:   0; /* v2 sem grão */
+  --reveal-distance: 32px;
+  --hover-scale:     1.015;
+  --grain-opacity:   .07;
+  --grain-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 /* ---------- Temas de seção (reescrevem as semânticas) ---------- */
 [data-theme="canvas"],
-[data-theme="paper"] { /* "paper" = compat v1 */
+[data-theme="paper"] { /* papel claro neutro */
   color-scheme: light;
   --c-bg:        var(--c-canvas);
   --c-surface:   var(--c-white);
@@ -217,33 +249,35 @@
   --c-text-2:    var(--c-ink-2);
   --c-text-3:    var(--c-ink-3);
   --c-border:    var(--c-line);
-  --c-link:      var(--c-blue);
-  --c-focus:     var(--c-blue);
-  --c-accent:    var(--c-blue);
+  --c-link:      var(--c-ink);
+  --c-link-hover:var(--c-signal-hi);
+  --c-focus:     var(--c-signal-hi);
+  --c-accent:    var(--c-signal);  /* só preenchimento c/ texto branco; texto-acento = --c-signal-hi */
+  --c-selection: var(--c-signal-tint);
 }
-[data-theme="blue"] {
-  --c-bg:        var(--c-blue);
-  --c-surface:   var(--c-blue-deep);
-  --c-surface-2: var(--c-blue-deep);
-  --c-text:      var(--c-white);
+[data-theme="blue"] { /* grafite */
+  --c-bg:        var(--c-graphite);
+  --c-surface:   var(--c-graphite-3);
+  --c-surface-2: #2E2E2E;
+  --c-text:      var(--c-paper);
   --c-text-2:    var(--c-blue-tint);
-  --c-text-3:    var(--c-blue-tint);
-  --c-border:    rgba(255, 255, 255, .25);
-  --c-link:      var(--c-white);
-  --c-focus:     var(--c-white);
-  --c-accent:    var(--c-white);
-  --c-on-accent: var(--c-blue);
+  --c-text-3:    var(--c-paper-dim);
+  --c-border:    rgba(255, 255, 255, .12);
+  --c-link:      var(--c-paper);
+  --c-focus:     var(--c-signal-light);
+  --c-accent:    var(--c-signal);
+  --c-on-accent: #FFFFFF;
 }
-[data-theme="navy"] { /* coluna com gradiente azul→navy */
-  --c-bg:        var(--c-navy);
-  --c-surface:   rgba(255, 255, 255, .06);
-  --c-surface-2: rgba(255, 255, 255, .1);
-  --c-text:      var(--c-white);
+[data-theme="navy"] { /* grafite profundo */
+  --c-bg:        var(--c-graphite-2);
+  --c-surface:   rgba(255, 255, 255, .04);
+  --c-surface-2: rgba(255, 255, 255, .08);
+  --c-text:      var(--c-paper);
   --c-text-2:    var(--c-blue-tint);
-  --c-text-3:    var(--c-blue-tint);
-  --c-border:    rgba(255, 255, 255, .18);
-  --c-link:      var(--c-blue-light);
-  --c-focus:     var(--c-white);
+  --c-text-3:    var(--c-paper-dim);
+  --c-border:    rgba(255, 255, 255, .1);
+  --c-link:      var(--c-paper);
+  --c-focus:     var(--c-signal-light);
 }
 
 /* ---------- Movimento reduzido ---------- */
@@ -256,9 +290,11 @@
     --dur-slow:    0ms;
     --dur-slower:  0ms;
     --dur-page:    0ms;
+    --dur-blink:   0ms;
     --stagger:     0ms;
     --reveal-distance: 0px;
     --hover-scale:     1;
     --ease-snap:   var(--ease-out);
+    --grain-opacity: .04; /* grão estático permanece, sem animar */
   }
 }

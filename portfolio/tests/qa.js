@@ -8,25 +8,22 @@
  * Exit:   0 = no FAIL, 1 = at least one FAIL, 2 = harness crash
  *
  * ---------------------------------------------------------------------------
- * DATA-ATTRIBUTE / MARKUP CONTRACT (developers: please match these)
- * Selectors fall back to role/text heuristics, but these are the reliable hooks.
- *
- *   Sections         section#trabalhos, #servicos, #investimento, #sobre, #contato
- *   Nav toggle       button[data-nav-toggle][aria-controls="<menu id>"][aria-expanded]
- *   Nav menu         [data-nav-menu] (element referenced by aria-controls)
- *   Project item     [data-project]  (one per item in content/portfolio.json)
- *   Lightbox trigger [data-lightbox] (button/link inside or equal to [data-project])
- *   Lightbox dialog  [data-lightbox-dialog] role="dialog" aria-modal="true"
- *                    (or native <dialog>); Esc closes; ArrowLeft/Right navigate;
- *                    focus moves inside and returns to trigger on close.
- *   Lightbox ctrls   [data-lightbox-close], [data-lightbox-prev], [data-lightbox-next]
- *   Pricing service  [data-pricing-service]  (7, from content/pricing.json)
- *   Pricing tier     [data-pricing-tier]     (3 per service)
- *   Contact form     form#contact-form  with inputs name="name", name="email",
- *                    textarea name="message"; each has <label for>; invalid
- *                    fields get aria-invalid="true" + aria-describedby -> error text.
- *                    Form must NOT submit when empty (use novalidate + JS, or native).
- *   Reveal anim      [data-reveal]  (must end opacity:1 under prefers-reduced-motion)
+ * MARKUP CONTRACT v3 — source of truth: portfolio/docs/BRIEFING.md ("CONTRATO DE MARCAÇÃO")
+ *   Sections     #home #sobre #servicos #portfolio #projetos #produtos #orcamento #contato
+ *   Nav          button[data-nav-toggle][aria-controls][aria-expanded] + [data-nav-menu] with 8 a[href="#<section>"]; Esc closes
+ *   Works        [data-project] (1 per portfolio.json projects[]) with [data-lightbox] trigger
+ *   Lightbox     [data-lightbox-dialog] role=dialog aria-modal + [data-lightbox-close|prev|next]
+ *   Selected     [data-selected-project][data-type=realizado|pessoal|conceitual] (== portfolio.json selected.length)
+ *                filters: buttons inside [data-slot="selected-filters"] (data-filter=<type>|all, aria-pressed)
+ *   Products     [data-product] (== portfolio.json products.length), price "R$…"|"Sob consulta", a[href^="https://wa.me/5519989905361"]
+ *   Pricing      [data-pricing-group] (== pricing.json groups) > [data-pricing-item] (== items) with "R$ 1.234" pt-BR;
+ *                [data-slot=pricing-disclaimer|pricing-note] carry pricing.json disclaimer/note
+ *   Quote form   form#quote-form: name,email,phone,message + checkbox name="services"; aria-invalid + aria-describedby + aria-live;
+ *                valid submit -> window.open / navigation to wa.me/5519989905361?text=<services+message>; mailto alternative in #orcamento
+ *   WA float     a[data-whatsapp-float] (accessible name, wa.me href, must not cover the form submit at 390px)
+ *   Contact      Instagram https://www.instagram.com/chagas_catolico/ · mailto:hh3356577@gmail.com · wa.me link
+ *   Reveal       [data-reveal] must end opacity:1 under prefers-reduced-motion
+ *   Test stub    window.open is replaced (addInitScript) and logs to window.__opened; wa.me requests are aborted and logged.
  * ---------------------------------------------------------------------------
  */
 'use strict';
@@ -43,9 +40,21 @@ const URL_ = BASE + PAGE_PATH;
 const SHOTS = path.join(__dirname, 'screenshots');
 const REPORT = path.join(__dirname, 'qa-report.json');
 const VIEWPORTS = [360, 390, 768, 1024, 1440, 1920];
-const JS_BUDGET = 60 * 1024;
-const EXPECTED_SERVICES = 7;
-const EXPECTED_TIERS = 3;
+const JS_BUDGET = 80 * 1024; // v3: raised from 60KB (more render modules: selected, products, quote form)
+const SECTIONS = ['home', 'sobre', 'servicos', 'portfolio', 'projetos', 'produtos', 'orcamento', 'contato'];
+const SELECTED_TYPES = ['realizado', 'pessoal', 'conceitual'];
+const WA_PREFIX = 'https://wa.me/5519989905361';
+const IG_URL = 'https://www.instagram.com/chagas_catolico/';
+const EMAIL = 'hh3356577@gmail.com';
+const STOCK_HOSTS = ['unsplash.com', 'pexels.com', 'pixabay.com', 'shutterstock.com', 'istockphoto.com', 'gettyimages', 'freepik.com',
+  'stock.adobe.com', 'picsum.photos', 'placehold', 'placeimg', 'loremflickr', 'dummyimage.com', 'via.placeholder.com', 'randomuser.me'];
+const readJSON = (f) => { try { return JSON.parse(fs.readFileSync(path.join(ROOT, 'portfolio/content', f), 'utf8')); } catch (_) { return null; } };
+const DATA = { portfolio: readJSON('portfolio.json'), pricing: readJSON('pricing.json') };
+const brlFmt = (n) => 'R$ ' + Math.trunc(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + (n % 1 ? ',' + Math.round((n % 1) * 100).toString().padStart(2, '0') : '');
+// accepts "R$ 1.234", "R$1.234", "R$\u00a01.234,00"
+const brlRegex = (n) => { const int = Math.trunc(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.').replace(/\./g, '\\.');
+  const dec = n % 1 ? ',' + Math.round((n % 1) * 100).toString().padStart(2, '0') : '(,00)?'; return new RegExp('R\\$[\\s\\u00a0]?' + int + dec + '(?![\\d.,]*\\d)'); };
+const waHits = [];
 
 const results = [];
 function rec(id, status, detail) {
@@ -101,11 +110,16 @@ async function main() {
   try {
     // ===== Desktop pass: console, network, DOM-level checks =====
     const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 });
+    await ctx.addInitScript(() => {
+      window.__opened = [];
+      window.open = function (u) { window.__opened.push(String(u)); return { closed: false, focus() {}, close() {}, location: { href: String(u) }, document: { write() {} } }; };
+    });
+    await ctx.route(/wa\.me|api\.whatsapp\.com/, (r) => { if (r.request().isNavigationRequest()) waHits.push(r.request().url()); r.abort(); });
     const page = await ctx.newPage();
     const consoleErrors = [], failed = [], jsBytes = { total: 0, files: [] };
     page.on('console', (m) => { if (m.type() === 'error') consoleErrors.push(m.text()); });
     page.on('pageerror', (e) => consoleErrors.push('pageerror: ' + e.message));
-    page.on('requestfailed', (r) => failed.push(`${r.failure() && r.failure().errorText} ${r.url()}`));
+    page.on('requestfailed', (r) => /wa\.me|whatsapp/.test(r.url()) || failed.push(`${r.failure() && r.failure().errorText} ${r.url()}`));
     page.on('response', async (r) => {
       if (r.status() >= 400) failed.push(`${r.status()} ${r.url()}`);
       if (r.status() < 400 && r.request().resourceType() === 'script' && r.url().startsWith(BASE)) {
@@ -133,7 +147,7 @@ async function main() {
       rec('network.failed', uniq.length ? 'FAIL' : 'PASS', uniq.length ? uniq.slice(0, 10).join(' | ') : '0 failed requests');
     });
     await check('perf.js-budget', async () => {
-      rec('perf.js-budget', jsBytes.total <= JS_BUDGET ? 'PASS' : 'FAIL', `${(jsBytes.total / 1024).toFixed(1)}KB / 60KB (${jsBytes.files.join(', ') || 'no scripts'})`);
+      rec('perf.js-budget', jsBytes.total <= JS_BUDGET ? 'PASS' : 'FAIL', `${(jsBytes.total / 1024).toFixed(1)}KB / 80KB (${jsBytes.files.join(', ') || 'no scripts'})`);
     });
 
     // --- internal links & sources ---
@@ -614,6 +628,41 @@ async function main() {
     rec('responsive.no-overflow', overflow.length ? 'FAIL' : 'PASS', overflow.length ? overflow.join(' | ') : VIEWPORTS.join('/') + ' ok');
     navRes.forEach((n) => rec(`nav.mobile-${n.w}`, n.s, n.d));
 
+    // ===== WhatsApp float vs form submit @390 =====
+    await check('whatsapp.float-mobile', async () => {
+      const c = await browser.newContext({ viewport: { width: 390, height: 800 }, deviceScaleFactor: 1, hasTouch: true, isMobile: true });
+      const p = await c.newPage();
+      await gotoPage(p); await sleep(400);
+      const fl = await p.$('a[data-whatsapp-float]');
+      if (!fl) { rec('whatsapp.float-mobile', 'FAIL', 'a[data-whatsapp-float] not found'); return c.close(); }
+      await p.evaluate(() => window.scrollTo(0, 600)); await sleep(500);
+      const vis = await fl.isVisible();
+      const box = await fl.boundingBox();
+      const inView = !!box && box.y >= 0 && box.y + box.height <= 800 && box.x >= 0 && box.x + box.width <= 390;
+      const sub = await p.$('form#quote-form button[type="submit"], form#quote-form input[type="submit"]');
+      const res = [];
+      if (sub) {
+        for (const block of ['center', 'end']) {
+          await sub.evaluate((e, b) => e.scrollIntoView({ block: b, behavior: 'instant' }), block); await sleep(450);
+          const r = await p.evaluate(() => {
+            const s = document.querySelector('form#quote-form [type="submit"]'), f = document.querySelector('a[data-whatsapp-float]');
+            const a = s.getBoundingClientRect(), b = f.getBoundingClientRect(), fs = getComputedStyle(f);
+            const hiddenF = fs.display === 'none' || fs.visibility === 'hidden' || +fs.opacity < 0.1;
+            const ov = !hiddenF && !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top);
+            const top = document.elementFromPoint(a.left + a.width / 2, a.top + a.height / 2);
+            return { ov, hit: !!top && (top === s || s.contains(top)) };
+          });
+          res.push({ block, ...r });
+        }
+        await p.screenshot({ path: path.join(SHOTS, 'float-vs-submit-390.png') });
+      }
+      const center = res.find((r) => r.block === 'center'), end = res.find((r) => r.block === 'end');
+      rec('whatsapp.float-mobile', vis && inView ? 'PASS' : 'FAIL', `visible:${vis} inViewport:${inView} box:${box ? [box.x, box.y, box.width, box.height].map(Math.round).join(',') : '-'}`);
+      rec('whatsapp.float-vs-submit', !sub ? 'FAIL' : center.ov || !center.hit ? 'FAIL' : end.ov || !end.hit ? 'WARN' : 'PASS',
+        !sub ? 'form#quote-form submit not found' : res.map((r) => `${r.block}: overlap=${r.ov} submitClickable=${r.hit}`).join('; '));
+      await c.close();
+    });
+
     // ===== Reduced motion =====
     await check('motion.reduced', async () => {
       const c = await browser.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1, reducedMotion: 'reduce' });
@@ -621,7 +670,7 @@ async function main() {
       await gotoPage(p); await sleep(600);
       // no scrolling: content must be visible without IntersectionObserver triggering
       const hidden = await p.evaluate(() => {
-        const els = [...document.querySelectorAll('[data-reveal], .reveal, section h2, section p, [data-project], [data-pricing-service]')];
+        const els = [...document.querySelectorAll('[data-reveal], .reveal, section h2, section p, [data-project], [data-pricing-group], [data-selected-project], [data-product]')];
         return els.filter((e) => { let o = 1; for (let x = e; x && x !== document.body; x = x.parentElement) { const s = getComputedStyle(x); o *= +s.opacity; if (s.visibility === 'hidden') o = 0; } return o < 0.95; })
           .slice(0, 6).map((e) => e.tagName.toLowerCase() + (e.className && typeof e.className === 'string' ? '.' + e.className.split(' ').join('.') : ''));
       });
