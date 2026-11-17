@@ -1,0 +1,505 @@
+{
+  "version": 3,
+  "site": {
+    "brand": "CHAGAS CREATIVE",
+    "name": "Chagas",
+    "fullName": "Francisco das Chagas Cardoso",
+    "since": 2019,
+    "location": "Campinas e região — SP",
+    "email": "hh3356577@gmail.com",
+    "whatsapp": "5519989905361",
+    "whatsappDisplay": "+55 19 98990-5361",
+    "instagram": "chagas_catolico",
+    "instagramUrl": "https://www.instagram.com/chagas_catolico/",
+    "url": "",
+    "tagline": "Fotografia, audiovisual, design e comunicação digital. Transformando ideias em histórias visuais desde 2019."
+  },
+  "about": {
+    "paragraphs": [
+      "Sou Francisco, conhecido como Chagas. Minha trajetória na criatividade começou em 2019, através da paixão pela fotografia e pela comunicação.",
+      "Comecei usando o celular como ferramenta de criação e fui desenvolvendo minhas habilidades em fotografia, edição, audiovisual, design e produção de conteúdo. Com o tempo, essa paixão se transformou em projetos, experiências e oportunidades profissionais.",
+      "Hoje, trabalho conectando criatividade, tecnologia e comunicação para transformar ideias em experiências visuais.",
+      "Acredito que uma imagem não serve apenas para registrar momentos. Ela pode transmitir sentimentos, contar histórias e gerar conexões. Minha proposta é desenvolver trabalhos com identidade, propósito e atenção aos detalhes."
+    ],
+    "photo": null
+  },
+  "areas": [
+    {
+      "id": "fotografia",
+      "label": "Fotografia",
+      "intro": "Registro de pessoas, momentos e lugares, com cuidado na luz, no enquadramento e na edição final.",
+      "items": ["Eventos", "Ensaios", "Casais", "Festas de 15 anos", "Casamentos", "Retratos", "Institucional", "Ambientes e imóveis"]
+    },
+    {
+      "id": "audiovisual",
+      "label": "Audiovisual",
+      "intro": "Vídeos que contam uma história do começo ao fim: captação, edição, cor e finalização.",
+      "items": ["Vídeos cinematográficos", "Cobertura de eventos", "Aftermovies", "Reels", "Vídeos institucionais", "Vídeos promocionais", "Produção para marcas", "Storytelling visual"]
+    },
+    {
+      "id": "design-motion",
+      "label": "Design e Motion",
+      "intro": "Peças visuais e animações para redes sociais, eventos e marcas que precisam de uma cara própria.",
+      "items": ["Artes para redes sociais", "Identidade visual", "Rebranding", "Motion graphics", "Animações tipográficas", "Artes para eventos", "Apresentações", "Peças publicitárias"]
+    },
+    {
+      "id": "comunicacao-digital",
+      "label": "Comunicação Digital",
+      "intro": "Planejamento e produção de conteúdo com estratégia, inclusive para igrejas, pastorais e comunidades.",
+      "items": ["Estratégia de conteúdo", "Planejamento para Instagram", "Roteiros", "Campanhas", "Criação de conteúdo", "Consultoria criativa", "Comunicação para igrejas e comunidades"]
+    },
+    {
+      "id": "produtos-digitais",
+      "label": "Produtos Digitais",
+      "intro": "Recursos de edição e materiais para quem cria conteúdo e quer ganhar tempo sem perder identidade.",
+      "items": ["Presets para Lightroom", "LUTs cinematográficas", "Coleções de edição", "Materiais educativos", "Recursos para criadores"]
+    }
+  ],
+  "tools": [
+    {
+      "name": "Adobe Lightroom",
+      "uses": ["Tratamento e cor de fotografias", "Criação de presets"],
+      "context": "Fotografia"
+    },
+    {
+      "name": "CapCut",
+      "uses": ["Edição de Reels e vídeos curtos", "Legendas e cortes rápidos"],
+      "context": "Audiovisual"
+    },
+    {
+      "name": "VN Editor",
+      "uses": ["Edição de vídeo no celular", "Montagem e ajuste de ritmo"],
+      "context": "Audiovisual"
+    },
+    {
+      "name": "Blackmagic Camera",
+      "uses": ["Captação de vídeo no celular com controles manuais", "Gravação pensada para color grading e LUTs"],
+      "context": "Captação"
+    },
+    {
+      "name": "Adobe Express",
+      "uses": ["Artes para redes sociais", "Peças para eventos e campanhas"],
+      "context": "Design"
+    },
+    {
+      "name": "Remotion",
+      "uses": ["Motion graphics e animações tipográficas feitas em código"],
+      "context": "Motion"
+    },
+    {
+      "name": "Claude Code",
+      "uses": ["Apoio no desenvolvimento de sites e ferramentas digitais"],
+      "context": "Web e tecnologia"
+    },
+    {
+      "name": "Codex",
+      "uses": ["Apoio no desenvolvimento de sites e automações"],
+      "context": "Web e tecnologia"
+    }
+  ],
+  "equipment": {
+    "note": "Equipamentos já utilizados ou explorados ao longo da trajetória.",
+    "items": [
+      { "name": "iPhone 13 Pro Max", "kind": "Smartphone" },
+      { "name": "iPhone 16 Pro Max", "kind": "Smartphone" },
+      { "name": "Canon T3i + 18-55mm", "kind": "Câmera DSLR" },
+      { "name": "Canon RP", "kind": "Câmera mirrorless" },
+      { "name": "Canon R50", "kind": "Câmera mirrorless" }
+    ],
+    "knowledge": [
+      "Fotografia mobile",
+      "Composição",
+      "Iluminação",
+      "Enquadramento",
+      "Color grading",
+      "LUTs",
+      "Presets",
+      "Captação audiovisual",
+      "Edição e finalização"
+    ]
+  },
+  "timeline": [
+    {
+      "period": "2019",
+      "title": "O começo, com o celular",
+      "text": "A paixão pela fotografia e pela comunicação vira prática. O celular é a primeira ferramenta de criação."
+    },
+    {
+      "period": "Ao longo do caminho",
+      "title": "Edição, audiovisual e design",
+      "text": "Às fotos se somam edição, vídeo, design e produção de conteúdo, aprendidos na prática, projeto a projeto."
+    },
+    {
+      "period": "Comunidades",
+      "title": "Comunicação para igrejas e eventos",
+      "text": "Formação de equipes da PASCOM, liderança da comunicação do AVIVA 2 e cobertura de eventos como Lual Mariano e Retiro PAFIES."
+    },
+    {
+      "period": "Hoje",
+      "title": "CHAGAS CREATIVE",
+      "text": "Fotografia, audiovisual, design e comunicação digital reunidos em um só estúdio, em Campinas e região."
+    }
+  ],
+  "selected": [
+    {
+      "id": "pascom",
+      "title": "PASCOM",
+      "type": "realizado",
+      "status": null,
+      "year": null,
+      "role": "Formação e produção de conteúdo",
+      "summary": "Formação, comunicação e produção de conteúdo para equipes de comunicação da Igreja.",
+      "slogan": null,
+      "cover": null,
+      "media": [],
+      "links": []
+    },
+    {
+      "id": "aviva-2",
+      "title": "AVIVA 2",
+      "type": "realizado",
+      "status": null,
+      "year": null,
+      "role": "Liderança da comunicação",
+      "summary": "Atuação na liderança da comunicação do evento.",
+      "slogan": null,
+      "cover": null,
+      "media": [],
+      "links": []
+    },
+    {
+      "id": "gincana-solidaria-pafies",
+      "title": "Gincana Solidária PAFIES",
+      "type": "realizado",
+      "status": "previsto 2027",
+      "year": null,
+      "role": "Conteúdo, campanhas e divulgação",
+      "summary": "Conteúdo, campanhas, comunicação e divulgação da 10ª edição da gincana, prevista para 2027.",
+      "slogan": null,
+      "cover": null,
+      "media": [],
+      "links": []
+    },
+    {
+      "id": "lual-mariano",
+      "title": "Lual Mariano",
+      "type": "realizado",
+      "status": null,
+      "year": null,
+      "role": "Comunicação e cobertura",
+      "summary": "Comunicação e cobertura do evento.",
+      "slogan": null,
+      "cover": null,
+      "media": [],
+      "links": []
+    },
+    {
+      "id": "incendeia-campinas",
+      "title": "Incendeia Campinas",
+      "type": "realizado",
+      "status": null,
+      "year": null,
+      "role": "Comunicação e produção de conteúdo",
+      "summary": "Participação em projetos de comunicação e produção de conteúdo.",
+      "slogan": null,
+      "cover": null,
+      "media": [],
+      "links": []
+    },
+    {
+      "id": "retiro-pafies",
+      "title": "Retiro PAFIES",
+      "type": "realizado",
+      "status": null,
+      "year": null,
+      "role": "Registros e comunicação",
+      "summary": "Registros e comunicação dos eventos do retiro.",
+      "slogan": null,
+      "cover": null,
+      "media": [],
+      "links": []
+    },
+    {
+      "id": "semana-criativa",
+      "title": "Semana Criativa",
+      "type": "pessoal",
+      "status": null,
+      "year": null,
+      "role": "Criação de conteúdo",
+      "summary": "Conteúdo educativo com dicas de aplicativos, criatividade, fotografia e ferramentas digitais.",
+      "slogan": null,
+      "cover": null,
+      "media": [],
+      "links": []
+    },
+    {
+      "id": "catolicoemblocos",
+      "title": "CatolicoEmBlocos",
+      "type": "pessoal",
+      "status": null,
+      "year": null,
+      "role": "Criação de conteúdo",
+      "summary": "Conteúdo criativo com temática católica e estética LEGO.",
+      "slogan": null,
+      "cover": null,
+      "media": [],
+      "links": []
+    },
+    {
+      "id": "mediacatolica",
+      "title": "MediaCatolica",
+      "type": "pessoal",
+      "status": null,
+      "year": null,
+      "role": "Comunicação digital",
+      "summary": "Comunicação digital voltada ao universo católico.",
+      "slogan": null,
+      "cover": null,
+      "media": [],
+      "links": []
+    },
+    {
+      "id": "koinonia",
+      "title": "Koinonia",
+      "type": "conceitual",
+      "status": null,
+      "year": null,
+      "role": "Concepção do projeto",
+      "summary": "Conceito de plataforma de colaboração entre paróquias, comunidades, movimentos e voluntários.",
+      "slogan": "Talentos unidos. Uma só missão.",
+      "cover": null,
+      "media": [],
+      "links": []
+    },
+    {
+      "id": "pascom-plus",
+      "title": "PASCOM+",
+      "type": "conceitual",
+      "status": null,
+      "year": null,
+      "role": "Concepção do projeto",
+      "summary": "Conceito de plataforma para organizar, planejar e formar equipes de comunicação paroquiais.",
+      "slogan": null,
+      "cover": null,
+      "media": [],
+      "links": []
+    }
+  ],
+  "products": [
+    {
+      "id": "emaus-collection",
+      "name": "Emaús Collection",
+      "kind": "Coleção de presets",
+      "description": "Coleção de presets para dar um tratamento de cor consistente às suas fotos.",
+      "application": "Adobe Lightroom",
+      "image": null,
+      "availability": "a confirmar"
+    },
+    {
+      "id": "la-creme",
+      "name": "La Creme",
+      "kind": "Presets",
+      "description": "Presets de edição para fotos, aplicáveis em poucos toques.",
+      "application": "Adobe Lightroom",
+      "image": null,
+      "availability": "a confirmar"
+    },
+    {
+      "id": "spider-presets",
+      "name": "Spider Presets",
+      "kind": "Presets",
+      "description": "Presets de edição com uma linguagem visual própria para suas fotos.",
+      "application": "Adobe Lightroom",
+      "image": null,
+      "availability": "a confirmar"
+    },
+    {
+      "id": "combos-presets",
+      "name": "Combos de presets",
+      "kind": "Pacote de presets",
+      "description": "Coleções de presets reunidas em um só pacote.",
+      "application": "Adobe Lightroom",
+      "image": null,
+      "availability": "a confirmar"
+    },
+    {
+      "id": "luts-blackmagic",
+      "name": "LUTs para Blackmagic Camera",
+      "kind": "LUTs cinematográficas",
+      "description": "LUTs para dar cor cinematográfica a vídeos gravados no celular.",
+      "application": "Blackmagic Camera e editores compatíveis com LUTs",
+      "image": null,
+      "availability": "a confirmar"
+    }
+  ],
+  "categories": [
+    {
+      "id": "eventos",
+      "label": "Eventos",
+      "intro": "Cobertura fotográfica de eventos: as pessoas, os detalhes e o clima de cada momento."
+    },
+    {
+      "id": "ensaios",
+      "label": "Ensaios",
+      "intro": "Ensaios individuais e de casal, com direção leve e resultado natural."
+    },
+    {
+      "id": "casamentos-15-anos",
+      "label": "Casamentos e 15 anos",
+      "intro": "Do preparo à festa, um registro que acompanha o ritmo de um dia que não se repete."
+    },
+    {
+      "id": "retratos",
+      "label": "Retratos",
+      "intro": "Retratos com atenção à luz, à expressão e à personalidade de quem está diante da câmera."
+    },
+    {
+      "id": "institucional-imoveis",
+      "label": "Institucional e imóveis",
+      "intro": "Fotos de equipes, espaços, ambientes e imóveis para apresentar bem quem você é e onde está."
+    },
+    {
+      "id": "audiovisual",
+      "label": "Audiovisual",
+      "intro": "Captação, edição e finalização de vídeo, do material bruto ao arquivo pronto para publicar."
+    },
+    {
+      "id": "reels",
+      "label": "Reels",
+      "intro": "Vídeos curtos e verticais pensados para prender a atenção nos primeiros segundos."
+    },
+    {
+      "id": "motion-design",
+      "label": "Motion",
+      "intro": "Efeitos, animação e composição para dar movimento e personalidade ao vídeo."
+    },
+    {
+      "id": "design",
+      "label": "Design",
+      "intro": "Artes para redes sociais, identidade visual e peças para eventos e campanhas."
+    },
+    {
+      "id": "web-design",
+      "label": "Web",
+      "intro": "Sites e projetos digitais em que imagem, texto e interação trabalham juntos."
+    }
+  ],
+  "projects": [
+    {
+      "id": "comunica-fe",
+      "title": "Comunica+Fé",
+      "category": "web-design",
+      "year": "2026",
+      "client": null,
+      "description": "Site para a Pastoral da Comunicação de uma paróquia, reunindo liturgia do dia, escala das missas, agenda e formação num só lugar. A abertura é uma sequência em rolagem com objetos 3D de comunicação sobre fundo escuro e laranja, adaptada para computador e celular.",
+      "role": "A CONFIRMAR (design e desenvolvimento)",
+      "featured": true,
+      "cover": {
+        "src": "../resultado/abertura-computador.jpg",
+        "alt": "Seis telas da abertura do site Comunica+Fé no computador, com tipografia grande branca e objetos 3D sobre fundo escuro e laranja",
+        "w": 1646,
+        "h": 1456
+      },
+      "media": [
+        {
+          "type": "image",
+          "src": "../resultado/abertura-computador.jpg",
+          "alt": "Sequência de telas da abertura do site Comunica+Fé na versão para computador",
+          "w": 1646,
+          "h": 1456
+        },
+        {
+          "type": "image",
+          "src": "../resultado/abertura-celular.jpg",
+          "alt": "Telas da abertura do site Comunica+Fé na versão para celular",
+          "w": 1678,
+          "h": 590
+        },
+        {
+          "type": "image",
+          "src": "../social/comunicafe-1200x630.jpg",
+          "alt": "Imagem de compartilhamento do site Comunica+Fé",
+          "w": 1200,
+          "h": 630
+        }
+      ],
+      "status": "real"
+    },
+    {
+      "id": "gameplay-4k",
+      "title": "Gameplay em 4K",
+      "category": "audiovisual",
+      "year": "2026",
+      "client": null,
+      "description": "Tratamento de um trecho de gameplay de corrida: aumento de resolução para 4K (3840×1772) a 60 quadros por segundo, com foco em nitidez e detalhe. As imagens do jogo pertencem aos seus criadores; o trabalho apresentado é a finalização.",
+      "role": "A CONFIRMAR (tratamento e upscale de vídeo)",
+      "featured": false,
+      "cover": {
+        "src": "../videos/comparacao_antes_depois.jpg",
+        "alt": "Comparação lado a lado de um quadro do gameplay de corrida antes e depois do tratamento",
+        "w": 2560,
+        "h": 900
+      },
+      "media": [
+        {
+          "type": "video",
+          "src": "../videos/gameplay_4k_enhanced_leve.mp4",
+          "poster": "../videos/comparacao_antes_depois.jpg",
+          "alt": "Trecho de 14 segundos de gameplay de corrida tratado em 4K",
+          "w": 3840,
+          "h": 1772
+        },
+        {
+          "type": "image",
+          "src": "../videos/comparacao_antes_depois.jpg",
+          "alt": "Comparação antes e depois do tratamento do gameplay",
+          "w": 2560,
+          "h": 900
+        }
+      ],
+      "status": "real"
+    },
+    {
+      "id": "personagem-na-moto",
+      "title": "Personagem na moto",
+      "category": "motion-design",
+      "year": "2026",
+      "client": null,
+      "description": "Vídeo vertical em que o piloto de uma moto, numa cena de rua, é substituído por um personagem. Exercício de composição e efeito pensado para redes sociais.",
+      "role": "A CONFIRMAR (efeito e composição)",
+      "featured": false,
+      "cover": {
+        "type": "video",
+        "src": "../resultado/moto-personagem.mp4",
+        "alt": "Personagem de terno e chapéu pilotando uma moto numa rua",
+        "w": 1180,
+        "h": 2556
+      },
+      "media": [
+        {
+          "type": "video",
+          "src": "../resultado/moto-personagem.mp4",
+          "alt": "Vídeo vertical de 11 segundos: personagem de terno e chapéu no lugar do piloto de uma moto",
+          "w": 1180,
+          "h": 2556
+        }
+      ],
+      "status": "real"
+    }
+  ],
+  "missing": [
+    { "category": "eventos", "note": "Sem fotos de eventos no repositório. Pedir 3–5 eventos (ex.: Lual Mariano, Retiro PAFIES, AVIVA 2), 12–20 fotos cada, JPEG sRGB, lado maior ≥ 2560 px, com autorização de uso." },
+    { "category": "ensaios", "note": "Sem ensaios. Pedir 3–6 ensaios (individual/casal), 8–15 fotos cada, com autorização de imagem." },
+    { "category": "casamentos-15-anos", "note": "Sem casamentos nem 15 anos. Pedir 2–4 trabalhos, 15–25 fotos cada, com autorização escrita dos retratados (menores: responsáveis)." },
+    { "category": "retratos", "note": "Sem retratos. Pedir 6–12 retratos com autorização de imagem." },
+    { "category": "institucional-imoveis", "note": "Sem fotos institucionais, de ambientes ou imóveis. Pedir 1–3 trabalhos com autorização do contratante." },
+    { "category": "audiovisual", "note": "Só há o gameplay tratado (imagens de terceiros). Pedir vídeos autorais 1920×1080 (aftermovie, institucional, cinematográfico) e, se possível, showreel de 60–90 s." },
+    { "category": "reels", "note": "Nenhum reel autoral no repositório. Pedir 3–6 vídeos verticais 1080×1920 MP4 H.264 com poster." },
+    { "category": "motion-design", "note": "Item da moto sem poster e com barra de status do celular; pedir original limpo e confirmar autoria da filmagem. Pedir também animações tipográficas (Remotion)." },
+    { "category": "design", "note": "Nenhuma arte no repositório. Pedir 6–12 artes para redes/eventos (PNG/JPG ≥ 1080 px) e, se houver, uma identidade visual." },
+    { "category": "web-design", "note": "Confirmar papel e autorização de divulgação do Comunica+Fé." },
+    { "category": "projetos-selecionados", "note": "Nenhum projeto selecionado tem capa, mídia ou link. Pedir 1 imagem de capa (16:10, ≥ 1600 px) por projeto e links públicos, se existirem. Confirmar anos." },
+    { "category": "produtos", "note": "Faltam imagens dos produtos, preços, disponibilidade e links de compra (se houver)." },
+    { "category": "perfil", "note": "Falta foto de perfil (4:5, ≥ 1600 px). Domínio do site ainda não definido. Depoimentos só se reais e autorizados." }
+  ]
+}

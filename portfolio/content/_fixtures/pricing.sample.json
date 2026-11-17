@@ -1,0 +1,130 @@
+{
+  "_fixture": "Fixture v3 (espelho do conteúdo real). O site usa content/*.json quando existir; esta cópia só entra se o arquivo real falhar.",
+  "version": 3,
+  "currency": "BRL",
+  "reference": true,
+  "disclaimer": "Valores de referência iniciais, não são propostas comerciais definitivas.",
+  "note": "Os valores podem variar de acordo com a complexidade, duração, deslocamento e entregáveis de cada projeto. Solicite um orçamento personalizado.",
+  "groups": [
+    {
+      "id": "fotografia",
+      "label": "Fotografia",
+      "items": [
+        {
+          "id": "ensaio",
+          "label": "Ensaio",
+          "price_from": 250,
+          "unit": null,
+          "desc": "Referência: geralmente inclui sessão fotográfica com direção e fotos editadas."
+        },
+        {
+          "id": "cobertura-de-evento",
+          "label": "Cobertura de evento",
+          "price_from": 450,
+          "unit": null,
+          "desc": "Referência: geralmente inclui registro fotográfico do evento e fotos editadas."
+        },
+        {
+          "id": "15-anos",
+          "label": "15 anos",
+          "price_from": 600,
+          "unit": null,
+          "desc": "Referência: geralmente inclui cobertura da festa e fotos editadas."
+        },
+        {
+          "id": "casamento",
+          "label": "Casamento",
+          "price_from": 900,
+          "unit": null,
+          "desc": "Referência: geralmente inclui cobertura da cerimônia e/ou festa e fotos editadas."
+        }
+      ]
+    },
+    {
+      "id": "audiovisual",
+      "label": "Audiovisual",
+      "items": [
+        {
+          "id": "edicao-de-reels",
+          "label": "Edição de Reels",
+          "price_from": 120,
+          "unit": null,
+          "desc": "Referência: geralmente inclui edição de vídeo vertical a partir do material enviado."
+        },
+        {
+          "id": "video-cinematografico",
+          "label": "Vídeo cinematográfico",
+          "price_from": 350,
+          "unit": null,
+          "desc": "Referência: geralmente inclui captação, edição e tratamento de cor."
+        },
+        {
+          "id": "aftermovie",
+          "label": "Aftermovie",
+          "price_from": 500,
+          "unit": null,
+          "desc": "Referência: geralmente inclui captação no evento e um vídeo-resumo editado."
+        }
+      ]
+    },
+    {
+      "id": "design",
+      "label": "Design",
+      "items": [
+        {
+          "id": "arte-para-redes",
+          "label": "Arte para redes",
+          "price_from": 80,
+          "unit": null,
+          "desc": "Referência: geralmente inclui uma arte no formato da rede escolhida."
+        },
+        {
+          "id": "motion-design",
+          "label": "Motion Design",
+          "price_from": 250,
+          "unit": null,
+          "desc": "Referência: geralmente inclui uma peça animada curta, como vinheta ou animação tipográfica."
+        },
+        {
+          "id": "identidade-visual",
+          "label": "Identidade visual",
+          "price_from": 600,
+          "unit": null,
+          "desc": "Referência: geralmente inclui logotipo, cores e tipografia da marca."
+        },
+        {
+          "id": "pacote-5-artes",
+          "label": "Pacote 5 artes",
+          "price_from": 300,
+          "unit": null,
+          "desc": "Referência: cinco artes para redes sociais com a mesma linha visual."
+        }
+      ]
+    },
+    {
+      "id": "consultoria",
+      "label": "Consultoria",
+      "items": [
+        {
+          "id": "consultoria-criativa",
+          "label": "Consultoria criativa",
+          "price_from": 150,
+          "unit": null,
+          "desc": "Referência: geralmente inclui conversa de diagnóstico e orientações para conteúdo e comunicação."
+        }
+      ]
+    }
+  ],
+  "products": {
+    "emaus-collection": null,
+    "la-creme": null,
+    "spider-presets": null,
+    "combos-presets": null,
+    "luts-blackmagic": null
+  },
+  "terms": [
+    "Condições a combinar: a reserva de data pode exigir sinal, definido no orçamento.",
+    "Condições a combinar: deslocamento fora de Campinas e região é calculado sob orçamento.",
+    "Condições a combinar: prazos, formatos de entrega e número de revisões são definidos para cada projeto."
+  ]
+}

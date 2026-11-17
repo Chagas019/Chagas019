@@ -1,0 +1,292 @@
+{
+  "_generated": "2026-11-17T01:14:45Z",
+  "_note": "Gerado por scripts/optimize-media.sh. Chaves = src usado no portfolio.json (relativo a portfolio/index.html). Não edite à mão.",
+  "items": {
+    "../fotos/carlo-acutis.jpg": {
+      "type": "image",
+      "w": 600,
+      "h": 776,
+      "variants": [
+        {
+          "format": "webp",
+          "w": 600,
+          "h": 776,
+          "src": "media/fotos-carlo-acutis-600.webp"
+        },
+        {
+          "format": "avif",
+          "w": 600,
+          "h": 776,
+          "src": "media/fotos-carlo-acutis-600.avif"
+        }
+      ]
+    },
+    "../midia/carlo-acutis-ilustracao.webp": {
+      "type": "image",
+      "w": 900,
+      "h": 1600,
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 1136,
+          "src": "media/midia-carlo-acutis-ilustracao-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 1136,
+          "src": "media/midia-carlo-acutis-ilustracao-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 900,
+          "h": 1600,
+          "src": "media/midia-carlo-acutis-ilustracao-900.webp"
+        },
+        {
+          "format": "avif",
+          "w": 900,
+          "h": 1600,
+          "src": "media/midia-carlo-acutis-ilustracao-900.avif"
+        }
+      ]
+    },
+    "../resultado/abertura-celular.jpg": {
+      "type": "image",
+      "w": 1678,
+      "h": 590,
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 224,
+          "src": "media/resultado-abertura-celular-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 224,
+          "src": "media/resultado-abertura-celular-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1280,
+          "h": 450,
+          "src": "media/resultado-abertura-celular-1280.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1280,
+          "h": 450,
+          "src": "media/resultado-abertura-celular-1280.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1678,
+          "h": 590,
+          "src": "media/resultado-abertura-celular-1678.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1678,
+          "h": 590,
+          "src": "media/resultado-abertura-celular-1678.avif"
+        }
+      ]
+    },
+    "../resultado/abertura-computador.jpg": {
+      "type": "image",
+      "w": 1646,
+      "h": 1456,
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 566,
+          "src": "media/resultado-abertura-computador-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 566,
+          "src": "media/resultado-abertura-computador-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1280,
+          "h": 1132,
+          "src": "media/resultado-abertura-computador-1280.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1280,
+          "h": 1132,
+          "src": "media/resultado-abertura-computador-1280.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1646,
+          "h": 1456,
+          "src": "media/resultado-abertura-computador-1646.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1646,
+          "h": 1456,
+          "src": "media/resultado-abertura-computador-1646.avif"
+        }
+      ]
+    },
+    "../resultado/moto-personagem.mp4": {
+      "type": "video",
+      "w": 1180,
+      "h": 2556,
+      "poster": "media/resultado-moto-personagem-poster.jpg",
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 1386,
+          "src": "media/resultado-moto-personagem-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 1386,
+          "src": "media/resultado-moto-personagem-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1180,
+          "h": 2556,
+          "src": "media/resultado-moto-personagem-1180.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1180,
+          "h": 2556,
+          "src": "media/resultado-moto-personagem-1180.avif"
+        }
+      ]
+    },
+    "../social/comunicafe-1200x630.jpg": {
+      "type": "image",
+      "w": 1200,
+      "h": 630,
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 336,
+          "src": "media/social-comunicafe-1200x630-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 336,
+          "src": "media/social-comunicafe-1200x630-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1200,
+          "h": 630,
+          "src": "media/social-comunicafe-1200x630-1200.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1200,
+          "h": 630,
+          "src": "media/social-comunicafe-1200x630-1200.avif"
+        }
+      ]
+    },
+    "../videos/comparacao_antes_depois.jpg": {
+      "type": "image",
+      "w": 2560,
+      "h": 900,
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 224,
+          "src": "media/videos-comparacao-antes-depois-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 224,
+          "src": "media/videos-comparacao-antes-depois-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1280,
+          "h": 450,
+          "src": "media/videos-comparacao-antes-depois-1280.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1280,
+          "h": 450,
+          "src": "media/videos-comparacao-antes-depois-1280.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1920,
+          "h": 674,
+          "src": "media/videos-comparacao-antes-depois-1920.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1920,
+          "h": 674,
+          "src": "media/videos-comparacao-antes-depois-1920.avif"
+        }
+      ]
+    },
+    "../videos/gameplay_4k_enhanced_leve.mp4": {
+      "type": "video",
+      "w": 3840,
+      "h": 1772,
+      "poster": "media/videos-gameplay-4k-enhanced-leve-poster.jpg",
+      "variants": [
+        {
+          "format": "webp",
+          "w": 640,
+          "h": 294,
+          "src": "media/videos-gameplay-4k-enhanced-leve-640.webp"
+        },
+        {
+          "format": "avif",
+          "w": 640,
+          "h": 294,
+          "src": "media/videos-gameplay-4k-enhanced-leve-640.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1280,
+          "h": 590,
+          "src": "media/videos-gameplay-4k-enhanced-leve-1280.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1280,
+          "h": 590,
+          "src": "media/videos-gameplay-4k-enhanced-leve-1280.avif"
+        },
+        {
+          "format": "webp",
+          "w": 1920,
+          "h": 886,
+          "src": "media/videos-gameplay-4k-enhanced-leve-1920.webp"
+        },
+        {
+          "format": "avif",
+          "w": 1920,
+          "h": 886,
+          "src": "media/videos-gameplay-4k-enhanced-leve-1920.avif"
+        }
+      ]
+    }
+  }
+}

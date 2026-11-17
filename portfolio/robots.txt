@@ -1,0 +1,8 @@
+# CHAGAS CREATIVE — troque https://SEU-DOMINIO pelo domínio real (ver docs/SEO.md)
+User-agent: *
+Allow: /
+Disallow: /tests/
+Disallow: /scripts/
+Disallow: /content/_fixtures/
+
+Sitemap: https://SEU-DOMINIO/sitemap.xml
