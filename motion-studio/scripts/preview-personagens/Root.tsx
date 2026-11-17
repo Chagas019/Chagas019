@@ -55,7 +55,7 @@ const Cruz2DPrev: React.FC = () => {
   const {height} = useVideoConfig();
   return (
     <AbsoluteFill style={{background: '#0A0705'}}>
-      <Cruz2D altura={height * 0.42} luz={interpolate(frame, [0, 150], [0.1, 1.2], {extrapolateRight: 'clamp'})} entradaEm={0} duracaoEntrada={30} />
+      <Cruz2D altura={height * 0.42} modo={frame > 200 ? "silhueta" : "luz"} luz={interpolate(frame, [0, 150], [0.1, 1.2], {extrapolateRight: 'clamp'})} entradaEm={0} duracaoEntrada={30} />
     </AbsoluteFill>
   );
 };
