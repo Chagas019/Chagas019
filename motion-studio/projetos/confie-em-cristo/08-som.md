@@ -184,3 +184,33 @@ Contrato exportado: `TrilhaComNiveis`, `NivelSecao`, `ganhoTrilha`, `niveisNoFra
 Validação feita: `npx tsc --noEmit` ok · `npm run qa` ✓ nenhum erro (64 arquivos) · medição ebur128 por seção (acima) · `analisar-audio.mjs` OK nas duas pré-mixagens
 Pedidos a outros agentes: nenhum (a chamada em ConfieEmCristo.tsx continua compatível) · REVISÃO: refazer o balanço com a voz real quando ela existir
 Riscos/pendências: com a voz real, os blocos de fala mudam e a medição precisa ser refeita (os níveis por seção devem continuar valendo, já que dependem da trilha, não da voz)
+
+---
+
+# Rodada 3 — reancoragem da revelação de luz (T2 virou fade simples)
+
+O CÓDIGO trocou a T2 por um fade de 40 f (f650–690), então o feixe da transição não existe mais. A revelação acontece dentro da cena 3: o fio de luz cresce até "Mas" e a fenda **rompe em "escute"** (`g.escute`, f716), abrindo até "Deus" (`g.deus`, f784).
+**Esta seção substitui** as linhas da T2 nas tabelas de cues e de decisões acima.
+
+- `rupturaLuz = g.escute`. O **riser termina (pico) exatamente em f716**.
+- O riser completo (2,6 s) começaria em f560, em cima de "esperar" (f560). Agora `inicioRiser = max(início completo, g.respostaFim)` = **f634, o fim de "resposta"**: nada sobe sob "esperar por uma resposta". Os 74 f iniciais são pulados (`trimInicio`), com **fade-in de 10 f** (campo novo `fadeIn` em `CueCinema`, aplicado na `CamadaSomCinema`) para não entrar seco no meio do arquivo. A subida inteira (1,37 s) acontece no silêncio de 1200 ms antes de "Mas".
+- O brilho abre com a fenda: pico em f716 (início f705).
+- Volumes reduzidos (riser 0,38 → 0,32, brilho 0,18 → 0,16) porque o pico agora encosta na voz. O pico cai no "es-" átono de "escute", não na tônica "-cu-".
+- Removidos `feixeT2` e `PICO_REVELACAO`. Tudo é derivado dos gatilhos, sem números copiados.
+
+Medição (pré-mixagem sem voz, M de 400 ms): a trilha fica em −28 a −27 LUFS durante a subida (10,6–11,8 s) e chega a −24 LUFS logo após a ruptura (12,1 s). É um acento discreto, sem ataque seco. Espectrograma: `render/revisao/som/virada-r3-espectro.png` (8,5–13,5 s).
+
+| Frame | Som | Volume | Evento visual |
+|---|---|---|---|
+| 634 → pico 716 (trim 74 f, fade-in 10 f) | riser_luz | 0,32 | sobe após "resposta"; pico na ruptura da fenda ("escute") |
+| 705 → pico 716 | brilho | 0,16 | fenda de luz se abre (escute → Deus) |
+
+Demais cues sem mudança (412, 438, 1467, 1597, 1768, 1808, 1833, 2015, 2274, 2324, 2359, 2370).
+
+## ENTREGA — som — confie-em-cristo (rodada 3)
+Status: concluído
+Arquivos alterados: src/projetos/confie-em-cristo/som.ts (riser/brilho reancorados em `g.escute`, início em `g.respostaFim`), src/som/sfxCinema.ts (`CueCinema.fadeIn?`), src/som/CamadaSomCinema.tsx (aplica `fadeIn`), render/revisao/som/{premix-r3-com.wav, premix-r3-sem.wav, virada-r3-espectro.png}, projetos/confie-em-cristo/08-som.md
+Contrato exportado: `cuesConfie` (14 cues) · `CueCinema.fadeIn?: number` (opcional, compatível)
+Validação feita: `npx tsc --noEmit` ok · `npm run qa` ✓ nenhum erro · `analisar-audio.mjs` OK em riser_luz, brilho e nas duas pré-mixagens (com ducking: −27,7 LUFS / −8,5 dBTP; sem voz: −23,6 LUFS / −7,4 dBTP; 0 clip, 0 cliques, DC ~0)
+Pedidos a outros agentes: nenhum
+Riscos/pendências: com a voz real, conferir se o pico do riser em "escute" não mascara a palavra. Se mascarar, a correção é baixar para 0,25 ou atrasar o pico para `g.escute + 4`

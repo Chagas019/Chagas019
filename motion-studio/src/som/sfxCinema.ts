@@ -25,6 +25,8 @@ export type CueCinema = {
   volume?: number;
   /** frames do início do arquivo a pular (ex.: encurtar a subida do riser) */
   trimInicio?: number;
+  /** fade-in em frames (útil com `trimInicio`, para não entrar seco no meio do arquivo) */
+  fadeIn?: number;
   /** duração máxima em frames (corta com fade-out, sem clique) */
   duracao?: number;
   /** fade-out em frames aplicado no fim de `duracao` (padrão 8) */

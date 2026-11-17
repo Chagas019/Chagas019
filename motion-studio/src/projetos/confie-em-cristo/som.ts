@@ -33,17 +33,17 @@ const SUBIDA_RISER = pico('riser_luz');
 
 /** Mesmo default de `vazamentoDeLuz` (src/movimento/cinema.tsx, prop `pico`): flash em 46% da transição. */
 const PICO_VAZAMENTO = 0.46;
-/** Revelação de luz: o feixe fica mais forte em ~12–60% da T2 (MOVIMENTO: f655–674). Alvo do riser = 25%. */
-const PICO_REVELACAO = 0.25;
 /** Antecipação padrão do whoosh em relação ao início da transição. */
 const ANTECIPA_WHOOSH = 6;
 
 const flashT1 = t1.inicio + Math.round(PICO_VAZAMENTO * (t1.fim - t1.inicio));
-const feixeT2 = t2.inicio + Math.round(PICO_REVELACAO * (t2.fim - t2.inicio));
-// O riser completo começaria no meio de "esperar por uma resposta"; pulamos a parte inicial (quase inaudível)
-// para que ele só "apareça" ~1 s antes do fim da palavra "resposta" e cresça no silêncio de 1200 ms.
-const inicioRiserCompleto = feixeT2 - SUBIDA_RISER;
-const inicioRiser = Math.max(inicioRiserCompleto, g.respostaFim - FPS);
+// Revelação de luz (agora DENTRO da cena 3; a T2 virou fade simples): o fio de luz cresce até "Mas" e a
+// fenda ROMPE em "escute". O riser termina (pico) exatamente na ruptura.
+const rupturaLuz = g.escute;
+// O riser completo (2,6 s) começaria sobre "esperar por uma resposta". Ele só entra quando "resposta" acaba,
+// pulando a parte inicial (`trimInicio`) com fade-in curto, e sobe inteiro no silêncio de 1200 ms antes de "Mas".
+const inicioRiserCompleto = rupturaLuz - SUBIDA_RISER;
+const inicioRiser = Math.max(inicioRiserCompleto, g.respostaFim);
 // T5 (fade para preto): preto absoluto nos últimos 8 frames da 1ª metade; a cauda termina ali.
 const pretoT5 = t5.inicio + Math.round((t5.fim - t5.inicio) * 0.6);
 
@@ -51,9 +51,10 @@ export const cuesConfie: CueCinema[] = [
   // T1 — vazamento de luz: ar + brilho com pico no flash
   {som: 'whoosh_suave', frame: flashT1 - pico('whoosh_suave'), volume: 0.3, evento: 'T1 vazamento de luz (pico do flash)'},
   {som: 'brilho', frame: flashT1 - pico('brilho'), volume: 0.16, evento: 'T1 flash âmbar'},
-  // T2 — revelação de luz (a virada): riser terminando no feixe mais forte + brilho do feixe
-  {som: 'riser_luz', frame: inicioRiser, trimInicio: inicioRiser - inicioRiserCompleto, volume: 0.38, evento: 'T2 riser → feixe de luz'},
-  {som: 'brilho', frame: feixeT2 - pico('brilho'), volume: 0.18, evento: 'T2 feixe volumétrico'},
+  // Cena 3 — a virada: riser sobe no silêncio após "resposta" e termina na ruptura da fenda ("escute");
+  // o brilho abre junto com a fenda. Volumes menores que na versão T2 porque o pico agora encosta na voz.
+  {som: 'riser_luz', frame: inicioRiser, trimInicio: inicioRiser - inicioRiserCompleto, fadeIn: 10, volume: 0.32, evento: 'riser → fenda de luz rompe ("escute")'},
+  {som: 'brilho', frame: rupturaLuz - pico('brilho'), volume: 0.16, evento: 'fenda de luz se abre (escute → Deus)'},
   // T3 / T4 — dissolves com foco: só ar, discreto
   {som: 'whoosh_suave', frame: t3.inicio - ANTECIPA_WHOOSH, volume: 0.2, evento: 'T3 dissolve com foco (subida)'},
   {som: 'impacto_suave', frame: g.confie1, volume: 0.42, evento: 'CONFIE #1 bate em escala'},

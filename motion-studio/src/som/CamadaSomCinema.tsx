@@ -61,7 +61,12 @@ export const CamadaSomCinema: React.FC<Props> = ({cues, narracao, trilha, palavr
             <Html5Audio
               src={staticFile(s.arquivo)}
               trimBefore={c.trimInicio || undefined}
-              volume={(f) => (fade ? base * interpolate(f, [dur - fade, dur], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}) : base)}
+              volume={(f) => {
+                const cl = {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'} as const;
+                const entrada = c.fadeIn ? interpolate(f, [0, c.fadeIn], [0, 1], cl) : 1;
+                const saida = fade ? interpolate(f, [dur - fade, dur], [1, 0], cl) : 1;
+                return base * entrada * saida;
+              }}
             />
           </Sequence>
         );
