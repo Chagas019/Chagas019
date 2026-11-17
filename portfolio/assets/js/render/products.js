@@ -1,5 +1,5 @@
 import { h, slot, clear, item } from '../dom.js';
-import { picture, mediaPlaceholder } from './media.js';
+import { picture } from './media.js';
 import { priceText } from './pricing.js';
 import { waLink } from './contact.js';
 import { CONFIG } from '../config.js';
@@ -26,7 +26,9 @@ export function renderProducts({ products, site }, pricing) {
       h('div', { class: 'product-card__media' },
         img && img.src
           ? picture({ ...img, alt: img.alt || `Prévia: ${p.name}` }, { sizes: CONFIG.sizes.index })
-          : mediaPlaceholder(`Imagem de ${p.name} a confirmar`)),
+          : h('div', { class: 'product-card__placeholder', role: 'img', 'aria-label': `${p.name}: imagem de prévia em produção` },
+            h('span', { class: 'product-card__ph-name', 'aria-hidden': 'true' }, p.name),
+            h('span', { class: 'product-card__ph-note', 'aria-hidden': 'true' }, 'Prévia em produção'))),
       h('div', { class: 'product-card__body' },
         p.kind ? h('p', { class: 'product-card__kind' }, p.kind) : null,
         h('h3', { class: 'product-card__title', id: tid }, p.name),

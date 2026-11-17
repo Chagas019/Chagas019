@@ -32,15 +32,15 @@ export function renderSelectedFilters({ selected }, onChange) {
   if (!root) return;
   const counts = Object.fromEntries(Object.keys(TYPE_LABELS).map((t) => [t, selected.filter((p) => p.type === t).length]));
   const mk = (id, label, count) => h('button', {
-    class: 'filters__btn', type: 'button', 'aria-pressed': id === 'all' ? 'true' : 'false', dataset: { filterType: id },
+    class: 'filters__btn', type: 'button', 'aria-pressed': id === 'all' ? 'true' : 'false', dataset: { filter: id },
   }, label, h('span', { class: 'filters__count' }, count));
   root.append(mk('all', 'Todos', selected.length),
     ...Object.entries(TYPE_LABELS).filter(([t]) => counts[t]).map(([t, l]) => mk(t, l, counts[t])));
   root.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-filter-type]');
+    const btn = e.target.closest('[data-filter]');
     if (!btn || !root.contains(btn)) return;
-    root.querySelectorAll('[data-filter-type]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
-    onChange(btn.dataset.filterType);
+    root.querySelectorAll('[data-filter]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    onChange(btn.dataset.filter);
   });
 }
 
@@ -57,11 +57,16 @@ export function renderSelected({ selected }, filter, onOpen) {
       class: `selected-card selected-card--${p.type}${cover ? ' has-cover' : ''}`,
       'data-selected-project': p.id, 'data-type': p.type, 'data-reveal': true, 'aria-labelledby': tid,
     },
-      cover ? h('div', { class: 'selected-card__media' }, picture({ ...stillOf(cover), alt: '' }, { sizes: CONFIG.sizes.index })) : null,
+      cover
+        ? h('div', { class: 'selected-card__media' }, picture({ ...stillOf(cover), alt: '' }, { sizes: CONFIG.sizes.index }))
+        : h('div', { class: 'selected-card__frame', 'aria-hidden': 'true' },
+          h('span', { class: 'selected-card__frame-title' }, p.title),
+          h('span', { class: 'selected-card__frame-meta' }, `${String(i + 1).padStart(2, '0')} / ${String(list.length).padStart(2, '0')}`)),
       h('p', { class: 'selected-card__meta' },
         h('span', { class: 'selected-card__num', 'aria-hidden': 'true' }, String(i + 1).padStart(2, '0')),
         badge(p.type), statusTag(p.status)),
       h('h3', { class: 'selected-card__title', id: tid }, p.title),
+      p.role ? h('p', { class: 'selected-card__role' }, p.role) : null,
       p.slogan ? h('p', { class: 'selected-card__slogan' }, p.slogan) : null,
       p.summary ? h('p', { class: 'selected-card__summary' }, p.summary) : null,
       h('button', {

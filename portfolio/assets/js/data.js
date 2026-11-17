@@ -57,7 +57,7 @@ export function normalizePortfolio(raw) {
   // v3 — sobre (aceita legado site.about como parágrafo único)
   const ab = p.about && typeof p.about === 'object' ? p.about : {};
   const paragraphs = strs(ab.paragraphs);
-  const about = { paragraphs: paragraphs.length ? paragraphs : strs([site.about]), photo: ab.photo || null };
+  const about = { paragraphs: paragraphs.length ? paragraphs : strs([site.about]), photo: ab.photo || null, quote: str(ab.quote) || null };
 
   const areas = arr(p.areas).filter((a) => a && a.label)
     .map((a, i) => ({ id: a.id || `area-${i + 1}`, label: a.label, intro: str(a.intro), items: strs(a.items) }));

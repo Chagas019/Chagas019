@@ -8,17 +8,27 @@ export function initNav() {
   const nav = document.querySelector('[data-nav-menu]') || document.getElementById('site-nav');
   if (!header || !toggle || !nav) return;
 
+  const label = toggle.querySelector('.nav-toggle__label');
   const setOpen = (open) => {
     toggle.setAttribute('aria-expanded', String(open));
+    if (label) label.textContent = open ? 'Fechar' : 'Menu';
     header.classList.toggle('is-open', open);
     document.documentElement.classList.toggle('is-nav-open', open);
   };
   toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
   nav.addEventListener('click', (e) => { if (e.target.closest('a')) setOpen(false); });
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') { setOpen(false); toggle.focus(); }
+    if (toggle.getAttribute('aria-expanded') !== 'true') return;
+    if (e.key === 'Escape') { setOpen(false); toggle.focus(); return; }
+    // foco preso no menu aberto (botão + links)
+    if (e.key === 'Tab') {
+      const f = [toggle, ...nav.querySelectorAll('a[href]')];
+      const i = f.indexOf(document.activeElement);
+      if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+    }
   });
-  window.matchMedia('(min-width: 56.25em)').addEventListener('change', (mq) => { if (mq.matches) setOpen(false); });
+  window.matchMedia('(min-width: 75em)').addEventListener('change', (mq) => { if (mq.matches) setOpen(false); });
 
   // estado de scroll
   const sentinel = document.createElement('div');

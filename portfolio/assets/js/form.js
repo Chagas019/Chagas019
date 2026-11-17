@@ -61,7 +61,7 @@ export function initForm(site) {
     const err = errNode(name);
     const bad = !!text;
     inputs.filter(Boolean).forEach((i) => i.setAttribute('aria-invalid', String(bad)));
-    if (err) { err.textContent = text || ''; err.hidden = !bad; }
+    if (err) { err.textContent = bad ? `Erro: ${text}` : ''; err.hidden = !bad; }
     return !bad;
   };
 

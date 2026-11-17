@@ -25,5 +25,10 @@ export function initReveal() {
 export function observeReveal(root = document) {
   const nodes = root.querySelectorAll('[data-reveal]:not(.is-revealed)');
   if (!io) { nodes.forEach((n) => n.classList.add('is-revealed')); return; }
-  nodes.forEach((n) => io.observe(n));
+  const vh = window.innerHeight;
+  nodes.forEach((n) => {
+    // Acima da dobra: revela já (o clip-path do título impede o IO de detectá-lo).
+    if (n.getBoundingClientRect().top < vh) requestAnimationFrame(() => n.classList.add('is-revealed'));
+    else io.observe(n);
+  });
 }

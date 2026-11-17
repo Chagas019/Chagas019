@@ -15,6 +15,7 @@ export function renderAbout({ site, about }) {
     clear(root);
     const paras = about.paragraphs.length ? about.paragraphs : ['Apresentação em atualização.'];
     paras.forEach((t, i) => root.append(h('p', { class: `about__p${i === 0 ? ' about__p--lead' : ''}` }, t)));
+    if (about.quote) root.append(h('blockquote', { class: 'about__quote' }, h('p', {}, about.quote)));
   }
   const ph = clear(slot('about-photo'));
   if (!ph) return;
