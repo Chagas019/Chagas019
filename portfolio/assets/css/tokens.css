@@ -1,5 +1,7 @@
 /* ==========================================================================
-   CHAGAS CREATIVE — Design Tokens  v3 "Sala escura / Editorial"
+   CHAGAS CREATIVE — Design Tokens  v4 "Sala escura / Produto"
+   v4: superfícies em camadas (--surface-*), raios médios, hairline + brilho
+   interno, elevação sutil, papéis tipográficos e tokens de componente.
    Fonte de verdade: portfolio/docs/DESIGN_SYSTEM.md
    Conceito: estúdio criativo internacional. Preto profundo, grafite, branco,
    cinza neutro + UM acento: "tally" — o laranja-avermelhado da luz REC de
@@ -64,7 +66,7 @@
   /* ---------- Texto sobre escuro (nomes v1) ---------- */
   --c-paper:      #F2F1EE; /* principal 17.53:1 no preto, 14.59 no grafite */
   --c-paper-dim:  #ADADAD; /* secundário ≥7.34:1 */
-  --c-paper-mute: #8C8C8C; /* metadados ≥4.90:1 (preto, chrome-2/3, grafite) */
+  --c-paper-mute: #999999; /* metadados ≥4.77:1 em surface-0..2 de todos os temas escuros */
 
   /* ---------- Acento (alias v1) ---------- */
   --c-accent:      var(--c-signal);
@@ -79,7 +81,7 @@
   --c-line:        #D2D1CD; /* decorativo no papel */
   --c-line-strong: #7A7A7A; /* borda de input no papel 3.60:1 (≥3:1) */
   --c-line-dark:   #2E2E2E; /* decorativo no escuro */
-  --c-line-dark-strong: #6E6E6E; /* borda de input no escuro ≥3:1 */
+  --c-line-dark-strong: #808080; /* borda de input/UI no escuro ≥3.11:1 em todas as surfaces */
 
   /* ---------- Semânticas (padrão = preto) ---------- */
   --c-bg:        var(--c-chrome);
@@ -89,6 +91,7 @@
   --c-text-2:    var(--c-paper-dim);
   --c-text-3:    var(--c-paper-mute);
   --c-border:    var(--c-line-dark);
+  --c-border-strong: var(--c-line-dark-strong); /* UI ≥3:1 (input, chip) */
   --c-link:      var(--c-paper);        /* links = texto + sublinhado; acento só no hover */
   --c-link-hover:var(--c-signal-light);
   --c-focus:     var(--c-signal-light);
@@ -122,7 +125,7 @@
   --fw-display: 800;
 
   /* Escala fluida 360 → 1600px */
-  --fs-mono:  clamp(0.6875rem, 0.66rem + 0.12vw, 0.75rem);  /* 11–12 */
+  --fs-mono:  clamp(0.75rem,  0.74rem + 0.05vw, 0.8125rem); /* 12–13 (v4: nada abaixo de 12px) */
   --fs-xs:    clamp(0.75rem,  0.72rem + 0.15vw, 0.8125rem); /* 12–13 */
   --fs-sm:    clamp(0.875rem, 0.85rem + 0.12vw, 0.9375rem); /* 14–15 */
   --fs-base:  clamp(1rem,     0.96rem + 0.2vw,  1.125rem);  /* 16–18 */
@@ -136,7 +139,7 @@
   --fs-quote: clamp(1.5rem,   1.1rem + 1.8vw,   2.75rem);   /* frase em serifa itálica */
 
   --lh-tight:   0.88;
-  --lh-snug:    1.1;
+  --lh-snug:    1.12;
   --lh-normal:  1.45;
   --lh-relaxed: 1.6;
   --ls-display: -0.01em;  /* condensado não precisa de tracking negativo forte */
