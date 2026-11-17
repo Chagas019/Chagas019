@@ -24,3 +24,4 @@ export const errMsg = (m?: string) => {
   if (m.includes('row-level security')) return 'Você não tem permissão para isso.';
   return m;
 };
+export const pl = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;

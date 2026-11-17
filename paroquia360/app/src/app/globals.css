@@ -332,3 +332,4 @@ a{color:inherit}
 details.tile summary{cursor:pointer;font-weight:600;list-style:none}
 details.tile summary::-webkit-details-marker{display:none}
 @media (max-width:1020px){.split{grid-template-columns:1fr}}
+@media (max-width:760px){.rail.side .rail-group.extra{display:flex;width:auto}.rail.side .avatar{display:none}.brandbar{font-size:13px}}

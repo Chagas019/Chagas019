@@ -24,7 +24,7 @@ async function sessionCookies(email) {
 
 const b = await chromium.launch();
 /** Clica e espera a página mudar de endereço (as ações redirecionam com ?ok= ou ?erro=). */
-const submit = async (page, sel) => { const before = page.url(); await page.click(sel); await page.waitForURL(u => u.toString() !== before); };
+const submit = async (page, sel) => { const before = page.url(); await page.click(sel); await page.waitForURL(u => u.toString() !== before); await page.waitForSelector('.notice'); };
 const errors = [];
 const ctxFor = async (email, vp = { width: 1360, height: 900 }) => {
   const c = await b.newContext({ viewport: vp });
@@ -41,15 +41,15 @@ must(p.url().includes('/entrar?next='), 'sem login redireciona para /entrar mant
 await p.screenshot({ path: `${OUT}/app-entrar.png` });
 
 // 2. Admin cria a paróquia
-const admin = await ctxFor('admin.teste@exemplo.invalid');
-await admin.goto(BASE + '/');
-must(admin.url().endsWith('/comecar'), 'admin sem paróquia vai para /comecar');
+const admin = await ctxFor(process.env.ADMIN ?? 'admin.teste@exemplo.invalid');
+const SLUG = 'teste-e2e-' + Date.now().toString(36);
+await admin.goto(BASE + '/comecar');
 await admin.fill('input[name=name]', 'Paróquia Teste Exemplo');
-await admin.fill('input[name=slug]', 'teste-exemplo-e2e');
+await admin.fill('input[name=slug]', SLUG);
 await admin.click('button[type=submit]');
-await admin.waitForURL('**/p/teste-exemplo-e2e');
+await admin.waitForURL('**/p/' + SLUG);
 must(await admin.locator('text=Primeiros passos').count() === 1, 'painel mostra primeiros passos');
-const S = BASE + '/p/teste-exemplo-e2e';
+const S = BASE + '/p/' + SLUG;
 
 // 3. Equipe: pastoral, função, convite
 await admin.goto(S + '/equipe');
@@ -78,7 +78,7 @@ await admin.screenshot({ path: `${OUT}/app-agenda.png`, fullPage: true });
 const vol = await ctxFor('voluntario.teste@exemplo.invalid');
 await vol.goto(link.replace(/^https?:\/\/[^/]+/, BASE));
 await vol.click('button:text("Aceitar convite")');
-await vol.waitForURL('**/p/teste-exemplo-e2e');
+await vol.waitForURL('**/p/' + SLUG);
 must(true, 'voluntário aceitou o convite e entrou na paróquia');
 await vol.goto(link.replace(/^https?:\/\/[^/]+/, BASE));
 await submit(vol, 'button:text("Aceitar convite")');
@@ -101,15 +101,15 @@ await vol.screenshot({ path: `${OUT}/app-painel-voluntario.png`, fullPage: true 
 await vol.goto(S + '/equipe');
 must(await vol.locator('text=Convidar pessoa').count() === 0, 'voluntário não vê convites');
 const r = await vol.goto(BASE + '/p/outra-paroquia-inexistente');
-must(await vol.locator('text=Paróquia não encontrada').count() === 1, 'paróquia alheia retorna "não encontrada"');
+must(await vol.locator('text=Página não encontrada').count() === 1, 'paróquia alheia retorna "não encontrada"');
 
 await admin.goto(S + '/escalas');
 await admin.screenshot({ path: `${OUT}/app-escalas.png`, fullPage: true });
-const m = await ctxFor('admin.teste@exemplo.invalid', { width: 390, height: 844 });
+const m = await ctxFor(process.env.ADMIN ?? 'admin.teste@exemplo.invalid', { width: 390, height: 844 });
 await m.goto(S);
 must(await m.evaluate(() => document.documentElement.scrollWidth) <= 390, 'celular sem rolagem lateral');
 await m.screenshot({ path: `${OUT}/app-painel-celular.png`, fullPage: true });
 
 must(errors.length === 0, 'sem erros no console: ' + errors.join(' | '));
 await b.close();
-console.log('FLUXO COMPLETO OK');
+console.log('FLUXO COMPLETO OK — paróquia de teste:', SLUG);

@@ -12,4 +12,8 @@
 | 2026-11-17 | Voluntário vê nomes via `parish_directory`, não a tabela `profiles` | Telefone e nascimento ficam só para equipe/coordenação |
 | 2026-11-17 | Testes de RLS rodam em Postgres local com stub do `auth` | Validar segurança sem precisar de projeto Supabase |
 | 2026-11-17 | Supabase em sa-east-1 (São Paulo), plano gratuito | Menor latência para o Brasil e dados pessoais no país (LGPD) |
+| 2026-11-17 | Sem Tailwind/shadcn: app usa o CSS do protótipo | Evita manter dois design systems |
+| 2026-11-17 | Middleware do Next em runtime Node (Next 15.5) | Usa `getUser()` com a mesma pilha do servidor; funciona atrás de proxy |
+| 2026-11-17 | Login por link no e-mail, sem senha | Público pouco técnico; nada de senha para esquecer ou vazar |
+| 2026-11-17 | Convite por link copiado, sem envio de e-mail | Não simular integração; envio real fica para quando houver SMTP próprio |
 | 2026-11-17 | Visual inspirado na referência enviada (moldura, notch, vidro), paleta navy/dourado | Pedido do cliente |

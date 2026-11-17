@@ -3,7 +3,7 @@ import { getParish } from '@/lib/parish';
 import { upcomingEvents, fill } from '@/lib/queries';
 import { Band, Flash } from '@/components/Band';
 import { Icon } from '@/components/Icon';
-import { fmtDay, fmtTime, fmt, TYPE_LABEL, STATUS_LABEL, ROLE_LABEL } from '@/lib/format';
+import { fmtDay, fmtTime, fmt, pl, TYPE_LABEL, STATUS_LABEL, ROLE_LABEL } from '@/lib/format';
 import { respond } from './actions';
 
 export const metadata = { title: 'Painel' };
@@ -45,7 +45,7 @@ export default async function Painel({ params, searchParams }: { params: Promise
         <section className="grid">
           <div className="tile c3 kpi"><h3><span className="ic"><Icon name="cal" /></span>Missas</h3><strong>{masses.length}</strong><small>nos próximos 7 dias</small></div>
           <div className="tile c3 kpi"><h3><span className="ic"><Icon name="swap" /></span>Escalas</h3><strong>{conf.a ? Math.round(conf.c / conf.a * 100) + '%' : '–'}</strong><small>presenças confirmadas na semana</small></div>
-          <div className="tile c3 kpi"><h3><span className="ic"><Icon name="users" /></span>Pessoas</h3><strong>{members ?? 0}</strong><small>em {pastorals ?? 0} pastorais</small></div>
+          <div className="tile c3 kpi"><h3><span className="ic"><Icon name="users" /></span>Pessoas</h3><strong>{members ?? 0}</strong><small>em {pl(pastorals ?? 0, 'pastoral', 'pastorais')}</small></div>
           <div className="tile c3 kpi"><h3><span className="ic"><Icon name="layers" /></span>Trocas</h3><strong>{swaps}</strong><small>pedidos de substituição</small></div>
 
           <div className="tile c7">

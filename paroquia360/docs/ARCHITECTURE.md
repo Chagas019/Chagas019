@@ -6,7 +6,7 @@ O repositório `Chagas019` é uma coleção de sites estáticos (Comunica+Fé, b
 ## Stack
 | Camada | Escolha | Motivo |
 |---|---|---|
-| Front | Next.js (App Router) + TypeScript + Tailwind + shadcn/ui | SSR, rotas por paróquia, ecossistema maduro |
+| Front | Next.js 15.5 (App Router) + TypeScript + CSS do design system (`globals.css`) | SSR, rotas por paróquia; o CSS do protótipo já é o design system, Tailwind/shadcn não foram necessários |
 | Back | Supabase: Postgres, Auth, RLS, Storage, Edge Functions | RLS resolve isolamento por paróquia no próprio banco; Supabase já está conectado nesta conta |
 | Hospedagem | Vercel | Conector disponível; previews por PR |
 | Validação | Zod (front e server actions) | Um esquema só |
@@ -25,7 +25,7 @@ O repositório `Chagas019` é uma coleção de sites estáticos (Comunica+Fé, b
 
 ## Estrutura alvo
 ```
-paroquia360/app/            Next.js
+paroquia360/app/            Next.js (implementado)
   src/app/(auth)/           login, convite
   src/app/p/[slug]/         painel, agenda, escalas, pastorais, voluntarios
   src/components/ui/        design system (tokens do DESIGN_SYSTEM.md)

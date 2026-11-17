@@ -4,8 +4,8 @@
 |---|---|---|
 | 1 Descoberta | Diagnóstico, requisitos, MVP, docs | ✅ concluída |
 | 2 Design | Design system + protótipo navegável | ✅ painel, Escalas e Agenda |
-| 3 Fundação | Next.js + Supabase, migrations, RLS, auth por convite, papéis, audit_log | 🟡 banco + RLS aplicados no Supabase (projeto `paroquia360`, São Paulo) e testados · ⏳ scaffold Next.js, auth por convite |
-| 4 MVP | Dashboard, Pastorais, Agenda, Escalas, Voluntários + Preciso de Ajuda | — |
+| 3 Fundação | Next.js + Supabase, migrations, RLS, auth por convite, papéis, audit_log | ✅ banco, RLS, auth por link e convites |
+| 4 MVP | Dashboard, Pastorais, Agenda, Escalas, Voluntários + Preciso de Ajuda | 🟡 painel, agenda, escalas, equipe/pastorais no app · ⏳ disponibilidade, talentos, Preciso de Ajuda, publicação |
 | 5 Expansão | Inscrições/QR, Comunicação, Relatórios exportáveis | — |
 | 6 Qualidade | Testes e2e, revisão de segurança/LGPD, performance, produção | — |
 

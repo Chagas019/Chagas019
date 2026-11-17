@@ -7,3 +7,7 @@
 - Supabase: alerta "Signed-In Users Can Execute SECURITY DEFINER Function" em `parish_directory` é intencional — a função só devolve nomes se quem chama for membro da paróquia.
 - Protótipo: cena do hero é ilustração SVG; produto final deve permitir foto da própria igreja (Storage).
 - Protótipo mobile: Relatórios e tema ficam fora da barra inferior; irão para menu "Mais".
+- App: convites não são enviados por e-mail; o link é copiado e enviado pela administração.
+- App: o e-mail de login usa o servidor padrão do Supabase (limite baixo de envios por hora). Para produção, configurar SMTP próprio e as URLs de redirecionamento do Auth (Site URL) no painel do Supabase.
+- App: faltam disponibilidade, talentos, "Preciso de ajuda", comunicados e relatórios.
+- Supabase: há dados de teste a remover (usuários `*.teste@exemplo.invalid` e paróquias `teste-*`); a exclusão pelo conector pede confirmação.

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { getParish } from '@/lib/parish';
 import { upcomingEvents, directory, fill, canManage } from '@/lib/queries';
 import { Band, Flash } from '@/components/Band';
-import { fmt, fmtTime, initials, STATUS_LABEL } from '@/lib/format';
+import { fmt, fmtTime, initials, pl, STATUS_LABEL } from '@/lib/format';
 import { addSlot, assign, unassign, markConfirmed, respond } from '../actions';
 
 export const metadata = { title: 'Escalas' };
@@ -42,7 +42,7 @@ export default async function Escalas({ params, searchParams }: { params: Promis
               <div className="ev-head">
                 <div><h2>{e.title}</h2>
                   <p className="muted">{fmt(e.starts_at, { weekday: 'long', day: 'numeric', month: 'long' })}, {fmtTime(e.starts_at)}{e.location ? ` · ${e.location}` : ''}
-                    {f.t > 0 && ` · ${f.c} confirmados, ${f.a - f.c} aguardando, ${f.t - f.a} vagas`}</p></div>
+                    {f.t > 0 && ` · ${pl(f.c, 'confirmado', 'confirmados')}, ${f.a - f.c} aguardando, ${pl(f.t - f.a, 'vaga', 'vagas')}`}</p></div>
               </div>
               {e.roster_slots.length === 0 && <p className="muted">Sem escala para esta celebração.</p>}
               {e.roster_slots.map(s => {
