@@ -44,14 +44,9 @@
 /* âncoras internas (#valores, #quote-form): compensa o deslocamento do reveal (alvo ainda transladado) */
 :is(#valores, #quote-form, .pricing__group) { scroll-margin-top: 24px; }
 
-/* título do hero: mantém o clip-path de base.css (máscara de baixo para cima) */
-.js-reveal .hero__title[data-reveal] {
-  transition:
-    opacity var(--dur-slower, 1100ms) var(--m-ease),
-    transform var(--dur-slower, 1100ms) var(--m-ease),
-    clip-path var(--dur-slower, 1100ms) var(--ease-cine, cubic-bezier(0.77, 0, 0.18, 1));
-  transition-delay: calc(var(--reveal-i, 0) * var(--m-stagger));
-}
+/* título do hero: mantém o clip-path de base.css (máscara); sem atraso extra.
+   (duração/curva mais longas aumentavam o CLS na troca de fonte — medido.) */
+.js-reveal .hero__title[data-reveal] { transition-property: opacity, transform, clip-path; transition-delay: 0s; }
 
 /* ---------- 2. Botões ---------- */
 .btn {
