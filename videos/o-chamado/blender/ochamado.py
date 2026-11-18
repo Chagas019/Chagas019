@@ -556,8 +556,8 @@ def cena3(layer):  # OS TALENTOS — composição explodida, fundo azul acinzent
     hero = [  # objeto, posição base, escala, eixo de giro (rad/s), fase
         (camf, Vector((-.75, 0, 2.35)), .78, Vector((.15, .0, .55)), 0),
         (bib, Vector((.65, -.4, 1.05)), .72, Vector((.12, .1, -.3)), 1),
-        (mic, Vector((1.35, .6, 2.55)), .55, Vector((.3, .2, .4)), 2),
-        (brush, Vector((-1.45, .4, 1.15)), .6, Vector((.4, -.3, .2)), 3),
+        (mic, Vector((1.55, .5, 2.45)), .6, Vector((.3, .2, .4)), 2),
+        (brush, Vector((-1.6, .3, 1.2)), .7, Vector((.4, -.3, .2)), 3),
     ]
     for o, b, s, _, _ in hero: o.scale = (s, s, s)
     parts = particulas(mm, objs, 26, (2.6, 1.6, 1.8), 31, mats=('gold', 'white', 'red', 'blue', 'goldp'))
@@ -569,7 +569,12 @@ def cena3(layer):  # OS TALENTOS — composição explodida, fundo azul acinzent
         for i, (o, b, s, rs, ph) in enumerate(hero):
             ex = ease_out(prog(t, -.2 + i * .12, 1.6 + i * .12))  # “explosão”: saem do centro
             o.location = vlerp((0, 0, 1.8), b, ex) + Vector((math.sin(t * .7 + ph) * .06, math.cos(t * .5 + ph) * .05, math.sin(t * 1.1 + ph) * .08))
-            o.rotation_euler = Euler((rs.x * t + ph * .4 + (1 - ex) * 2, rs.y * t, rs.z * t + ph + (1 - ex) * 3), 'XYZ')
+            if o is bib:  # Bíblia: sempre aberta para a câmera, balanço suave
+                o.rotation_euler = Euler((math.radians(68) + math.sin(t * .7) * .12 + (1 - ex) * 1.2, math.sin(t * .5) * .15, math.radians(-12) + math.sin(t * .4) * .25 + (1 - ex) * 1.5), 'XYZ')
+            elif o is camf:  # câmera fotográfica: giro lento 360 com leve inclinação
+                o.rotation_euler = Euler((math.radians(8) + math.sin(t * .6) * .1 + (1 - ex) * 1.5, math.sin(t * .45) * .12, math.radians(-30) + t * math.radians(40) + (1 - ex) * 2), 'XYZ')
+            else:
+                o.rotation_euler = Euler((rs.x * t + ph * .4 + (1 - ex) * 2, rs.y * t, rs.z * t + ph + (1 - ex) * 3), 'XYZ')
             key_all([o], f)
         for k, (piv, pg, sd) in enumerate(flips):  # páginas virando em sequência
             p = ease_inout5(prog(t, 1.2 + k * .55, 2.4 + k * .55))
@@ -583,10 +588,10 @@ def cena3(layer):  # OS TALENTOS — composição explodida, fundo azul acinzent
         # câmera: começa perto da câmera fotográfica, recua (revela), orbita e termina na Bíblia
         p = ease_inout5(prog(t, -.3, 8.1))
         ang = lerp(math.radians(-38), math.radians(28), p)
-        dist = 4.2 + 3.0 * math.sin(p * math.pi) + (1 - p) * .2
-        tgt = vlerp((-.75, 0, 2.3), (.65, -.4, 1.1), ease_io(prog(t, 3.0, 7.6)))
+        dist = 8.2 + 2.2 * math.sin(p * math.pi)
+        tgt = vlerp((-.5, 0, 2.1), (.45, -.3, 1.35), ease_io(prog(t, 3.0, 7.6)))
         cam.location = Vector((math.sin(ang) * dist, -math.cos(ang) * dist, lerp(2.6, 2.0, p))) + Vector((tgt.x * .4, 0, 0))
-        look(cam, tgt, roll=math.radians(4) * math.sin(t * .4))
+        look(cam, tgt + Vector((0, 0, .75)), roll=math.radians(4) * math.sin(t * .4))
         focus.location = tgt
         w = prog(t, 7.75, 8.4)
         if w > 0: cam.location.z += ease_inout5(w) * 2.5; look(cam, tgt + Vector((0, 0, ease_inout5(w) * 5)))
