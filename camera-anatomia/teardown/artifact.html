@@ -1,0 +1,784 @@
+<title>Bancada de Engenharia Reversa</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* bancada escura em tela cheia: cena 3D ao fundo, roteiro à esquerda, ficha da peça à direita */
+:root {
+  --bg: #0a0c0f; --panel: rgba(15,17,21,.86); --line: rgba(232,236,241,.09); --fg: #e8ecf1; --muted: #8b939e; --dim: #5b636d;
+  --accent: #e2342d; --ok: #57c48a;
+  --sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font: 14px/1.5 var(--sans); -webkit-font-smoothing: antialiased; overflow: hidden; }
+.app { position: relative; height: 100%; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.stage { position: absolute; inset: 0; }
+#view { display: block; width: 100%; height: 100%; touch-action: none; outline: none; }
+#tags { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.tag { position: absolute; left: 0; top: 0; margin: 6px 0 0 -40px; width: 80px; text-align: center; font: 10px/1.2 var(--mono); letter-spacing: .06em; color: var(--muted); text-shadow: 0 1px 3px #000; white-space: nowrap; }
+.tag.on { color: var(--fg); }
+.top { position: absolute; left: max(16px, env(safe-area-inset-left, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); top: 14px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; pointer-events: none; }
+.brand { pointer-events: auto; }
+.kicker { margin: 0; font: 10.5px/1 var(--mono); letter-spacing: .2em; color: var(--muted); text-transform: uppercase; }
+.kicker b { color: var(--accent); font-weight: 400; margin-right: 8px; }
+h1 { margin: 6px 0 0; font-weight: 300; font-size: clamp(20px, 2.4vw, 28px); letter-spacing: -.01em; text-wrap: balance; }
+.meter { margin-top: 10px; width: 220px; }
+.meter .track { height: 2px; background: var(--line); border-radius: 2px; overflow: hidden; }
+.meter #bar { height: 100%; width: 0; background: var(--accent); transition: width 400ms ease; }
+.meter p { margin: 6px 0 0; font: 11px/1 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.tools { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; pointer-events: auto; }
+button { font: inherit; color: inherit; }
+.pill { border: 0; padding: 6px 12px; border-radius: 999px; background: var(--panel); color: var(--muted); box-shadow: inset 0 0 0 1px var(--line); cursor: pointer; font: 12px/1.2 var(--sans); backdrop-filter: blur(8px); transition: color 150ms, box-shadow 150ms; }
+.pill:hover, .pill:focus-visible, .pill[aria-pressed="true"] { color: var(--fg); box-shadow: inset 0 0 0 1px rgba(232,236,241,.28); outline: none; }
+.pill[aria-pressed="true"] { box-shadow: inset 0 0 0 1px var(--accent); }
+.panel { position: absolute; background: var(--panel); border-radius: 14px; box-shadow: inset 0 0 0 1px var(--line), 0 20px 40px -20px #000; backdrop-filter: blur(12px); }
+.left { left: max(16px, env(safe-area-inset-left, 0px)); top: 128px; bottom: 16px; width: 248px; display: flex; flex-direction: column; min-height: 0; }
+.left header { padding: 12px 14px 8px; font: 10.5px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; }
+#steps { list-style: none; margin: 0; padding: 0 6px 6px; overflow: auto; flex: 1; min-height: 0; }
+#steps button { width: 100%; display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; align-items: baseline; text-align: left; padding: 7px 8px; border: 0; border-radius: 8px; background: transparent; cursor: pointer; font-size: 13px; }
+#steps button:hover, #steps button:focus-visible, #steps button[aria-current] { background: rgba(232,236,241,.06); outline: none; }
+#steps .n { font: 10px var(--mono); color: var(--dim); }
+#steps .s { font: 10px var(--mono); color: var(--dim); }
+#steps [data-st="out"] .t { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--dim); }
+#steps [data-st="out"] .s { color: var(--ok); }
+#steps [data-st="ready"] .s { color: var(--fg); }
+#steps [data-next] .n, #steps [data-next] .s { color: var(--accent); }
+#steps [data-st="locked"] .t { color: var(--dim); }
+.left footer { padding: 8px; display: flex; gap: 6px; border-top: 1px solid var(--line); }
+.left footer .pill { flex: 1; }
+.right { right: max(16px, env(safe-area-inset-right, 0px)); top: 128px; width: 300px; padding: 16px 16px 14px; max-height: calc(100% - 144px); overflow: auto; }
+#card .eyebrow { margin: 0; font: 10.5px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+#card h2 { margin: 8px 0 8px; font-weight: 500; font-size: 19px; line-height: 1.25; }
+#card p { margin: 0 0 10px; color: #c3c9d1; }
+#card dl { margin: 10px 0 0; display: grid; gap: 8px; }
+#card dt { font: 10px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); margin-bottom: 3px; }
+#card dd { margin: 0; color: var(--fg); font-size: 13px; }
+#card .how { margin: 0; padding-left: 18px; color: #c3c9d1; display: grid; gap: 6px; }
+#card .how b { color: var(--fg); font-weight: 500; }
+.ctl { display: flex; justify-content: space-between; gap: 10px; margin: 14px 0 6px; font: 10.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.ctl output { color: var(--fg); text-transform: none; letter-spacing: .02em; text-align: right; font-variant-numeric: tabular-nums; }
+input[type=range] { width: 100%; accent-color: var(--accent); }
+.row { display: flex; gap: 6px; }
+.act { margin-top: 14px; width: 100%; border: 0; padding: 9px 12px; border-radius: 10px; background: var(--accent); color: #fff; font-weight: 500; cursor: pointer; }
+.act.ghost { background: transparent; color: var(--fg); box-shadow: inset 0 0 0 1px rgba(232,236,241,.25); }
+.act:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+.lock { margin-top: 12px !important; font: 12px/1.4 var(--mono); color: var(--muted) !important; }
+#readout { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); font: 11px/1 var(--mono); color: var(--muted); letter-spacing: .06em; pointer-events: none; white-space: nowrap; }
+#toast { position: absolute; left: 50%; bottom: 44px; transform: translateX(-50%); padding: 8px 14px; border-radius: 999px; background: var(--panel); box-shadow: inset 0 0 0 1px var(--accent); font-size: 13px; max-width: calc(100% - 32px); }
+.note { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); bottom: 16px; width: 300px; font: 10.5px/1.45 var(--mono); color: var(--dim); }
+.note::before { content: "※ "; color: var(--accent); }
+@media (max-width: 860px) {
+  .left { top: auto; bottom: 0; left: 0; right: 0; width: auto; height: 34%; border-radius: 14px 14px 0 0; padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .right { top: 104px; right: max(16px, env(safe-area-inset-right, 0px)); left: max(16px, env(safe-area-inset-left, 0px)); width: auto; max-height: 30%; }
+  .note, #readout { display: none; }
+  .meter { width: 160px; }
+  .tools .pill { padding: 5px 9px; font-size: 11px; }
+  #toast { bottom: 38%; }
+}
+@media (prefers-reduced-motion: reduce) { .meter #bar { transition: none; } }
+</style>
+<div class="app">
+  <div class="stage"><canvas id="view" tabindex="0" aria-label="Câmera em 3D sobre a bancada. Arraste para girar a vista; clique nas peças para desmontar."></canvas><div id="tags"></div></div>
+  <div class="top">
+    <div class="brand"><p class="kicker"><b>RE</b>Engenharia reversa</p><h1>Câmera sem espelho, peça por peça</h1>
+      <div class="meter"><div class="track"><div id="bar"></div></div><p id="progress"></p></div></div>
+    <div class="tools">
+      <button type="button" class="pill" data-view="camera">Câmera</button>
+      <button type="button" class="pill" data-view="costas">Costas</button>
+      <button type="button" class="pill" data-view="bancada">Bancada</button>
+      <button type="button" class="pill" id="xray" aria-pressed="false">Raio-X</button>
+    </div>
+  </div>
+  <aside class="panel left" aria-label="Roteiro de desmontagem">
+    <header><span>Roteiro</span><span>ordem real</span></header>
+    <ol id="steps"></ol>
+    <footer><button type="button" class="pill" id="all">Desmontar tudo</button><button type="button" class="pill" id="none">Montar tudo</button></footer>
+  </aside>
+  <aside class="panel right" aria-live="polite"><div id="card"></div></aside>
+  <p class="note">Câmera genérica, didática: a posição de placas, dissipador e bateria varia conforme o modelo.</p>
+  <p id="readout"></p>
+  <div id="toast" hidden></div>
+</div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script><script type="module">// Engenharia reversa de uma câmera — bancada 3D interativa (Three.js).
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { LineSegments2 } from 'three/addons/lines/LineSegments2.js';
+import { LineSegmentsGeometry } from 'three/addons/lines/LineSegmentsGeometry.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const ease = x => { x = clamp(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+const lerp = (a, b, k) => a + (b - a) * k;
+const D2R = Math.PI / 180;
+function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const view = document.getElementById('view');
+const DPR = Math.min(window.devicePixelRatio || 1, 2);
+const renderer = new THREE.WebGLRenderer({ canvas: view, antialias: true });
+renderer.setPixelRatio(DPR);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const RES = new THREE.Vector2(1, 1);
+const pmrem = new THREE.PMREMGenerator(renderer);
+const ENV = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+const sMain = new THREE.Scene();
+sMain.background = new THREE.Color(0x0a0c0f);
+sMain.environment = ENV;
+sMain.fog = new THREE.Fog(0x0a0c0f, 900, 1900);
+const cam = new THREE.PerspectiveCamera(34, 1, 1, 5000);
+
+// ---------- materiais ----------
+const allEdgeMats = [];
+function edgeMat(opacity = .55, color = 0xf2f4f6, width = 1.25) {
+  const m = new LineMaterial({ color, linewidth: width * DPR, transparent: true, opacity, depthWrite: false });
+  m.resolution.copy(RES); m.userData.base = opacity; allEdgeMats.push(m); return m;
+}
+function std(color, rough = .5, metal = .3, extra = {}) {
+  return new THREE.MeshStandardMaterial({ color, roughness: rough, metalness: metal, envMap: ENV, envMapIntensity: .9,
+    polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1, ...extra });
+}
+const C = { body: 0x1b1d21, body2: 0x24272c, metal: 0x8d939b, alu: 0x6f757d, rubber: 0x121315, pcb: 0x16201c,
+  chip: 0x0f1012, red: 0xd8322a, gold: 0xb8954f, glass: 0xa9c6e8 };
+
+function withEdges(mesh, { thr = 28, op = .55, color, width } = {}) {
+  const eg = new THREE.EdgesGeometry(mesh.geometry, thr);
+  const lg = new LineSegmentsGeometry().fromEdgesGeometry(eg);
+  const ln = new LineSegments2(lg, edgeMat(op, color, width));
+  ln.computeLineDistances();
+  mesh.add(ln); mesh.edgeLine = ln;
+  return mesh;
+}
+function mesh(geo, mat, edgeOpts) { const m = new THREE.Mesh(geo, mat); return edgeOpts === false ? m : withEdges(m, edgeOpts); }
+
+// ---------- geometria ----------
+function rrShape(w, h, r) {
+  const s = new THREE.Shape(), x = -w / 2, y = -h / 2;
+  s.moveTo(x + r, y); s.lineTo(x + w - r, y); s.quadraticCurveTo(x + w, y, x + w, y + r);
+  s.lineTo(x + w, y + h - r); s.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  s.lineTo(x + r, y + h); s.quadraticCurveTo(x, y + h, x, y + h - r);
+  s.lineTo(x, y + r); s.quadraticCurveTo(x, y, x + r, y); return s;
+}
+function circlePath(r, n = 64, rev = false) {
+  const p = new THREE.Path(); for (let i = 0; i <= n; i++) { const a = (rev ? -1 : 1) * i / n * Math.PI * 2; i ? p.lineTo(Math.cos(a) * r, Math.sin(a) * r) : p.moveTo(r, 0); } return p;
+}
+// placa arredondada w×h (XY), profundidade d (Z), centrada, com chanfro
+function slab(w, h, d, r = 2, bev = .8) {
+  const b = Math.min(bev, d / 3);
+  const g = new THREE.ExtrudeGeometry(rrShape(w - 2 * b, h - 2 * b, Math.max(.3, r - b)), { depth: d - 2 * b, bevelEnabled: b > 0, bevelSize: b, bevelThickness: b, bevelSegments: 1, curveSegments: 6 });
+  g.translate(0, 0, -(d - 2 * b) / 2); return g;
+}
+function slabHole(w, h, d, r, holes, bev = .6) {
+  const sh = rrShape(w - 2 * bev, h - 2 * bev, Math.max(.3, r - bev));
+  for (const ho of holes) { const p = new THREE.Path(); const s = rrShape(ho.w + 2 * bev, ho.h + 2 * bev, ho.r ?? 1); s.getPoints(6).reverse().forEach((q, i) => i ? p.lineTo(q.x + (ho.x || 0), q.y + (ho.y || 0)) : p.moveTo(q.x + (ho.x || 0), q.y + (ho.y || 0))); sh.holes.push(p); }
+  const g = new THREE.ExtrudeGeometry(sh, { depth: d - 2 * bev, bevelEnabled: true, bevelSize: bev, bevelThickness: bev, bevelSegments: 1, curveSegments: 6 });
+  g.translate(0, 0, -(d - 2 * bev) / 2); return g;
+}
+// anel/engrenagem extrudado ao longo de Z (serrilhado = dentes)
+function ring(rOut, rIn, d, teeth = 0, tooth = .6, bev = .3) {
+  const s = new THREE.Shape(); const n = teeth ? teeth * 2 : 96;
+  for (let i = 0; i <= n; i++) { const a = i / n * Math.PI * 2; const r = teeth ? (i % 2 ? rOut - tooth : rOut) : rOut; i ? s.lineTo(Math.cos(a) * r, Math.sin(a) * r) : s.moveTo(r, 0); }
+  if (rIn > 0) s.holes.push(circlePath(rIn, 96, true));
+  const g = new THREE.ExtrudeGeometry(s, { depth: Math.max(.05, d - 2 * bev), bevelEnabled: bev > 0, bevelSize: bev, bevelThickness: bev, bevelSegments: 1, curveSegments: 4 });
+  g.translate(0, 0, -(d - 2 * bev) / 2); return g;
+}
+const cylY = (r, h, n = 48) => new THREE.CylinderGeometry(r, r, h, n);
+function cylZ(r, h, n = 48) { const g = new THREE.CylinderGeometry(r, r, h, n); g.rotateX(Math.PI / 2); return g; }
+// sólido de revolução ao longo de Z: pontos [r, z]
+function latheZ(pts, n = 96) { const g = new THREE.LatheGeometry(pts.map(([r, z]) => new THREE.Vector2(r, z)), n); g.rotateX(Math.PI / 2); return g; }
+// elemento óptico: raio, espessura central, curvaturas (sag) frente/trás (+ convexo)
+function lensEl(r, t, sf, sb, n = 18) {
+  const pts = [];
+  for (let i = 0; i <= n; i++) { const x = i / n; pts.push([x * r, t / 2 + sf * (1 - x * x) - (sf < 0 ? sf : 0) * 0]); }
+  const edge = .9;
+  const back = [];
+  for (let i = n; i >= 0; i--) { const x = i / n; back.push([x * r, -t / 2 - sb * (1 - x * x)]); }
+  const prof = [[0.001, pts[0][1]], ...pts.slice(1), [r, pts[n][1] - 0.001], [r, back[0][1] + .001], ...back.slice(1), [0.001, back[n][1]]];
+  // revolve: Lathe needs points from bottom to top in "y" = z here; order is fine as a closed outline
+  void edge;
+  return latheZ(prof.map(([a, b]) => [Math.max(a, .001), b]).reverse(), 72);
+}
+
+function canvasTex(w, h, draw) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); draw(g, w, h);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
+}
+
+
+const rig = new THREE.Group(); sMain.add(rig);           // gira na apresentação
+const AX = new THREE.Vector3(8, -2, 0);                     // eixo óptico (x,y)
+const parts = {};
+function part(name, grp, off, label) { rig.add(grp); grp.userData.rest = grp.position.clone(); grp.userData.off = off; parts[name] = grp; return grp; }
+
+// ===== 1. corpo (frente + tampa traseira) =====
+const mBody = std(C.body, .62, .25), mBody2 = std(C.body2, .5, .35), mRub = std(C.rubber, .9, 0), mMetal = std(C.metal, .3, .9), mAlu = std(C.alu, .38, .85);
+const body = new THREE.Group();
+{
+  const shell = mesh(slabHole(124, 70, 30, 5, [], 1.2), mBody); shell.position.set(0, 0, 4); body.add(shell);
+  const grip = mesh(slab(28, 66, 26, 9, 1.5), mRub); grip.position.set(-46, -1, 26); body.add(grip);
+  const gripCap = mesh(slab(30, 8, 27, 3, .8), mBody); gripCap.position.set(-46, 31, 26); body.add(gripCap);
+  const plate = mesh(slab(118, 4, 30, 2, .6), mBody2); plate.position.set(0, 36.5, 4); body.add(plate);   // chapa superior
+  const hump = mesh(slab(40, 15, 34, 4, 1), mBody2); hump.position.set(AX.x, 44, 2); body.add(hump);          // capô do visor
+  const shoe = mesh(slab(20, 2.4, 20, .6, .3), mMetal); shoe.position.set(AX.x, 52.6, 2); body.add(shoe);       // sapata
+  const throat = new THREE.Mesh(new THREE.CircleGeometry(23, 64), new THREE.MeshBasicMaterial({ color: 0x030304 })); throat.position.set(AX.x, AX.y, 19.05); body.add(throat);
+  const mountRing = mesh(ring(30, 23, 3.2, 0, 0, .4), mMetal); mountRing.position.set(AX.x, AX.y, 20.6); body.add(mountRing);
+  for (let i = 0; i < 4; i++) { const a = (45 + i * 90) * D2R; const sc = mesh(cylZ(1, 1, 16), mAlu, { thr: 40, op: .4 }); sc.position.set(AX.x + Math.cos(a) * 26.5, AX.y + Math.sin(a) * 26.5, 22.4); body.add(sc); }
+  for (let i = 0; i < 3; i++) { const a = (90 + i * 120) * D2R; const tab = mesh(slab(11, 3, 1.2, .5, .2), mMetal, { op: .4 }); tab.position.set(AX.x + Math.cos(a) * 21.8, AX.y + Math.sin(a) * 21.8, 19.6); tab.rotation.z = a - Math.PI / 2; body.add(tab); }
+  const release = mesh(cylZ(3.2, 2.4, 32), mMetal); release.position.set(AX.x + 36, AX.y - 18, 20); body.add(release);
+  // controles do topo
+  const btnBase = mesh(cylY(6.5, 2, 48), mMetal); btnBase.position.set(-44, 36.5, 30); body.add(btnBase);
+  const shutterBtn = mesh(cylY(4.4, 3.4, 48), mMetal); shutterBtn.position.set(-44, 38.7, 30); body.add(shutterBtn);
+  const modeG = ring(11, 0, 6, 44, .7, .3); modeG.rotateX(-Math.PI / 2); const mode = mesh(modeG, mBody2, { thr: 35, op: .45 }); mode.position.set(-24, 41.5, 6); body.add(mode);
+  const modeTop = mesh(cylY(9, .6, 48), mMetal, { op: .5 }); modeTop.position.set(-24, 44.8, 6); body.add(modeTop);
+  const rearG = ring(8, 0, 4.4, 36, .6, .3); rearG.rotateX(-Math.PI / 2); const rear = mesh(rearG, mBody2, { thr: 35, op: .45 }); rear.position.set(40, 40.5, -6); body.add(rear);
+  const movie = mesh(cylY(2.6, 1.6, 32), new THREE.MeshStandardMaterial({ color: C.red, roughness: .5, emissive: 0x3a0705 })); movie.position.set(-12, 39.2, -6); body.add(movie);
+  // alças e tampa lateral
+  for (const sx of [-1, 1]) { const lug = mesh(slab(4, 7, 6, 1.5, .4), mMetal, { op: .4 }); lug.position.set(sx * 63.5, 26, 6); body.add(lug); }
+  const door = mesh(slab(1.4, 34, 18, 2, .3), mBody2, { op: .4 }); door.position.set(62.6, -4, 4); body.add(door);
+  // gravações frontais: régua de linhas (texto impresso) + ponto vermelho de alinhamento
+  const dot = mesh(cylZ(1.1, .6, 24), new THREE.MeshBasicMaterial({ color: C.red }), false); dot.position.set(AX.x, AX.y + 33.5, 19.4); body.add(dot);
+}
+part('corpo', body, new THREE.Vector3(0, 0, 0));
+
+const backCover = new THREE.Group();
+{
+  const cover = mesh(slab(120, 66, 6, 4, 1), mBody); backCover.add(cover);
+  const lcd = mesh(slab(76, 50, 2, 2, .4), new THREE.MeshStandardMaterial({ color: 0x050607, roughness: .15, metalness: .2, envMap: ENV }), { op: .5 }); lcd.position.set(-10, -4, -3.6); backCover.add(lcd);
+  const eyecup = mesh(slab(26, 20, 10, 6, 1.5), mRub); eyecup.position.set(AX.x, 44, -8); backCover.add(eyecup);
+  const eyeWin = mesh(slab(16, 11, 1, 2, .2), new THREE.MeshStandardMaterial({ color: 0x08090a, roughness: .1, envMap: ENV }), { op: .4 }); eyeWin.position.set(AX.x, 44, -13.4); backCover.add(eyeWin);
+  for (let i = 0; i < 4; i++) { const b = mesh(cylZ(3.2, 1.6, 32), mBody2, { op: .4 }); b.position.set(42, 16 - i * 11, -3.6); backCover.add(b); }
+  const pad = mesh(ring(8, 3, 2, 0, 0, .3), mBody2, { op: .45 }); pad.position.set(42, -22, -3.6); backCover.add(pad);
+}
+backCover.position.set(0, 0, -14);
+part('tampa', backCover, new THREE.Vector3(0, 0, -235));
+
+// ===== 2-4. lente: barril traseiro + diafragma + anel de foco + barril frontal + vidros =====
+const LZ = 22.2; // face frontal da baioneta (distância de registro de 18 mm até o sensor)
+const mGlass = new THREE.MeshPhysicalMaterial({ color: C.glass, roughness: .04, metalness: 0, transparent: true, opacity: .22, envMap: ENV, envMapIntensity: 1.6, depthWrite: false, side: THREE.DoubleSide, clearcoat: 1 });
+let diaphLight; const lensRear = new THREE.Group(), lensFocus = new THREE.Group(), lensFront = new THREE.Group(), diaph = new THREE.Group();
+{
+  const flange = mesh(ring(28, 21, 3, 0, 0, .3), mMetal); flange.position.z = 1.5; lensRear.add(flange);
+  const rb = mesh(latheZ([[24, 3], [29.5, 3.5], [30.5, 6], [30.5, 22], [29.5, 23]], 96), mBody, { thr: 30 }); lensRear.add(rb);
+  const mark = mesh(slab(1.2, 2.2, 3, .3, .1), new THREE.MeshBasicMaterial({ color: C.red }), false); mark.position.set(0, 30.6, 12); lensRear.add(mark);
+  const g5 = new THREE.Mesh(lensEl(13, 3.2, .8, 1.6), mGlass); g5.position.z = 8; lensRear.add(withEdges(g5, { thr: 40, op: .35 }));
+  const g4 = new THREE.Mesh(lensEl(15.5, 4, 1.8, .4), mGlass); g4.position.z = 16; lensRear.add(withEdges(g4, { thr: 40, op: .35 }));
+
+  const fr = mesh(ring(32.2, 29.2, 20, 90, .9, .3), mRub, { thr: 35, op: .4 }); fr.position.z = 36; lensFocus.add(fr);
+  const frCore = mesh(latheZ([[29.2, 25.5], [29.2, 46.5]], 96), mBody2, false); lensFocus.add(frCore);
+  const g3a = new THREE.Mesh(lensEl(17.5, 3, 1.2, -1.4), mGlass); g3a.position.z = 37; lensFocus.add(withEdges(g3a, { thr: 40, op: .35 }));
+  const g3b = new THREE.Mesh(lensEl(17.5, 5, 2.2, .6), mGlass); g3b.position.z = 41.5; lensFocus.add(withEdges(g3b, { thr: 40, op: .35 }));
+
+  const fb = mesh(latheZ([[30.8, 46.8], [31.2, 47.2], [31.2, 60], [30, 61.5], [26, 61.5], [25.6, 59.5]], 96), mBody, { thr: 30 }); lensFront.add(fb);
+  const nameTex = canvasTex(1024, 1024, (g, w) => {
+    g.fillStyle = '#0c0d0f'; g.fillRect(0, 0, w, w); g.translate(w / 2, w / 2); g.font = '500 44px Inter'; g.textAlign = 'center';
+    const txt = '50 mm  1:1.8  ·  ⌀52  ·  ÓPTICA DIDÁTICA  ·  '; const R = 430;
+    for (let i = 0, a0 = -Math.PI * .95; i < txt.length; i++) { const a = a0 + i * .052; g.save(); g.rotate(a + Math.PI / 2); g.fillStyle = i < 12 ? '#e2342d' : '#d9dde2'; g.fillText(txt[i], 0, -R); g.restore(); }
+  });
+  const nameRing = new THREE.Mesh(new THREE.RingGeometry(21, 26, 96), new THREE.MeshStandardMaterial({ map: nameTex, roughness: .6, metalness: .1 })); nameRing.position.z = 59.4; lensFront.add(nameRing);
+  const g1 = new THREE.Mesh(lensEl(21, 5.5, 3.2, 1.2), mGlass); g1.position.z = 55.5; lensFront.add(withEdges(g1, { thr: 40, op: .35 }));
+  const g2 = new THREE.Mesh(lensEl(18, 2.4, .6, -1.6), mGlass); g2.position.z = 49.5; lensFront.add(withEdges(g2, { thr: 40, op: .35 }));
+  const redRing = new THREE.Mesh(new THREE.TorusGeometry(31.25, .35, 8, 128), new THREE.MeshBasicMaterial({ color: C.red })); redRing.position.z = 57; lensFront.add(redRing);
+
+  const house = mesh(ring(28.5, 19.5, 2.4, 0, 0, .3), mAlu, { op: .5 }); diaph.add(house);
+  diaphLight = new THREE.Mesh(new THREE.CircleGeometry(19.6, 64), new THREE.MeshBasicMaterial({ color: 0xfff0d6, transparent: true, opacity: 0, depthWrite: false })); diaphLight.position.z = -1.6; diaph.add(diaphLight);
+}
+// lâminas do diafragma (7), redesenhadas a cada quadro conforme a abertura
+const BLADES = 7, R_MAX = 18.5;
+const mBlade = std(0x2b2e33, .35, .8, { side: THREE.DoubleSide });
+const blades = [];
+for (let i = 0; i < BLADES; i++) {
+  const m = new THREE.Mesh(new THREE.BufferGeometry(), mBlade);
+  const ln = new LineSegments2(new LineSegmentsGeometry(), edgeMat(.5)); m.add(ln); m.edgeLine = ln;
+  diaph.add(m); blades.push(m);
+}
+function setAperture(r) {
+  const tanH = Math.tan(Math.PI / BLADES);
+  for (let i = 0; i < BLADES; i++) {
+    const x0 = -r * tanH - 2, x1 = R_MAX * 1.25, y0 = r, y1 = R_MAX + 2;
+    const sh = new THREE.Shape(); sh.moveTo(x0, y0); sh.lineTo(x1, y0); sh.quadraticCurveTo(x1 + 2, (y0 + y1) / 2, x1 - 2, y1 + 1); sh.quadraticCurveTo((x0 + x1) / 2, y1 + 5, x0 - 3, y1); sh.lineTo(x0, y0);
+    const g = new THREE.ShapeGeometry(sh, 6); const a = i / BLADES * Math.PI * 2;
+    g.rotateZ(a); g.translate(0, 0, -.6 + i * .17);
+    const b = blades[i]; b.geometry.dispose(); b.geometry = g;
+    const eg = new THREE.EdgesGeometry(g, 10); b.edgeLine.geometry.dispose(); b.edgeLine.geometry = new LineSegmentsGeometry().fromEdgesGeometry(eg);
+  }
+}
+setAperture(R_MAX * .97);
+const lens = new THREE.Group(); lens.position.set(AX.x, AX.y, LZ);
+for (const g of [lensRear, lensFocus, lensFront, diaph]) lens.add(g);
+diaph.position.z = 28.5;
+lensRear.userData.rest = new THREE.Vector3(); lensFocus.userData.rest = new THREE.Vector3(); lensFront.userData.rest = new THREE.Vector3(); diaph.userData.rest = diaph.position.clone();
+part('lente', lens, new THREE.Vector3(0, 0, 92));
+
+// ===== 5. obturador de plano focal =====
+function makeShutter() {
+  const g = new THREE.Group();
+  const frame = mesh(slabHole(58, 52, 3, 3, [{ w: 37, h: 25, r: 1 }], .5), std(0x34383e, .42, .75)); frame.position.z = 1.5; g.add(frame);
+  const back = mesh(slabHole(58, 52, 1.6, 3, [{ w: 37, h: 25, r: 1 }], .3), mBody2, { op: .35 }); back.position.z = -3.4; g.add(back);
+  const motor = mesh(cylY(4.5, 14, 32), mMetal); motor.position.set(33, 10, -1); g.add(motor);
+  const gear = ring(5.5, 1.2, 1.6, 18, .6, .2); const gr = mesh(gear, mAlu, { thr: 35, op: .4 }); gr.position.set(33, -4, -1); g.add(gr);
+  const coil = mesh(slab(8, 10, 6, 1, .4), std(C.gold, .4, .9)); coil.position.set(33, -16, -1); g.add(coil);
+  for (const [x, y] of [[-25, 22], [25, 22], [-25, -22], [25, -22]]) { const s = mesh(cylZ(1.1, 1, 16), mMetal, { thr: 40, op: .35 }); s.position.set(x, y, 3.3); g.add(s); }
+  const mSlat = std(0x0f1012, .55, .4, { side: THREE.DoubleSide });
+  const mk = () => { const arr = []; for (let k = 0; k < 4; k++) { const s = mesh(slab(40, 7.2, .35, .6, 0), mSlat, { thr: 30, op: .4 }); s.position.z = -1.2 - k * .12; g.add(s); arr.push(s); } return arr; };
+  const c1 = mk(), c2 = mk();
+  c2.forEach(s => { s.position.z -= .55; });
+  // c: 0 = recolhida, 1 = cobrindo a janela
+  function set(a, b) {
+    c1.forEach((s, k) => { s.position.y = lerp(-16.5 - k * 1.3, 9.4 - k * 6.3, a); });
+    c2.forEach((s, k) => { s.position.y = lerp(16.5 + (3 - k) * 1.3, 9.4 - k * 6.3, b); });
+  }
+  set(0, 0);
+  return { g, set };
+}
+const shutter = makeShutter();
+shutter.g.position.set(AX.x, AX.y, 11);
+part('obturador', shutter.g, new THREE.Vector3(0, 0, -62));
+
+// ===== 6. sensor (com placa de estabilização) =====
+const sensor = new THREE.Group();
+const hatch = canvasTex(512, 342, (g, w, h) => {
+  g.fillStyle = '#3a0907'; g.fillRect(0, 0, w, h); g.strokeStyle = 'rgba(255,90,70,.55)'; g.lineWidth = 2;
+  for (let i = -h; i < w; i += 9) { g.beginPath(); g.moveTo(i, h); g.lineTo(i + h, 0); g.stroke(); }
+  g.strokeStyle = 'rgba(255,120,100,.25)'; for (let x = 0; x < w; x += 16) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); }
+});
+const mDie = new THREE.MeshStandardMaterial({ map: hatch, emissive: 0xff2a1a, emissiveIntensity: .18, emissiveMap: hatch, roughness: .25, metalness: .3 });
+{
+  const ibis = mesh(slab(60, 50, 2.6, 3, .4), mAlu); ibis.position.z = -1.6; sensor.add(ibis);
+  for (const [x, y] of [[-26, 21], [26, 21], [-26, -21], [26, -21]]) { const s = mesh(cylZ(1.4, 2, 16), mMetal, { thr: 40, op: .35 }); s.position.set(x, y, .2); sensor.add(s); }
+  const pkg = mesh(slab(46, 36, 2, 1.5, .3), std(0xc9c3b5, .6, .05)); pkg.position.z = 1; sensor.add(pkg);
+  const die = mesh(new THREE.PlaneGeometry(36, 24), mDie, { thr: 10, op: .7, color: 0xff6a5a }); die.position.z = 2.05; sensor.add(die);
+  const coverGlass = mesh(slab(40, 28, .7, .6, 0), mGlass, { op: .25 }); coverGlass.position.z = 2.9; sensor.add(coverGlass);
+  for (let i = 0; i < 24; i++) { const p = mesh(slab(.9, 1.6, .3, .2, 0), std(C.gold, .35, 1), false); p.position.set(-20 + i * 1.75, -16.5, 2.1); sensor.add(p); }
+  const mag = mesh(slab(10, 6, 3, 1, .3), std(0x3b3f45, .5, .6)); mag.position.set(-24, 0, -3.8); sensor.add(mag);
+  const mag2 = mag.clone(); mag2.position.set(24, 0, -3.8); sensor.add(mag2);
+}
+sensor.position.set(AX.x, AX.y, 2);
+part('sensor', sensor, new THREE.Vector3(0, 0, -112));
+const SENSOR_DIE = new THREE.Vector3(0, 0, 2.05); // local
+
+// ===== 7. dissipador =====
+const heat = new THREE.Group();
+{
+  const base = mesh(slab(52, 40, 2.4, 1.5, .3), mAlu); heat.add(base);
+  for (let i = 0; i < 9; i++) { const f = mesh(slab(1.4, 36, 10, .3, .2), mAlu, { thr: 30, op: .45 }); f.position.set(-22 + i * 5.5, 0, -6); heat.add(f); }
+  const pipeG = new THREE.TubeGeometry(new THREE.CatmullRomCurve3([new THREE.Vector3(-26, 14, -1.4), new THREE.Vector3(-34, 14, -2), new THREE.Vector3(-40, 4, -3), new THREE.Vector3(-40, -12, -3)]), 40, 1.6, 12);
+  heat.add(mesh(pipeG, std(C.gold, .35, 1), { thr: 50, op: .3 }));
+}
+heat.position.set(AX.x, AX.y, -4.5);
+part('dissipador', heat, new THREE.Vector3(0, 0, -150));
+
+// ===== 8-9. placa principal + processador + cartão =====
+const board = new THREE.Group();
+const pcbTex = canvasTex(1600, 900, (g, w, h) => {
+  g.fillStyle = '#121a17'; g.fillRect(0, 0, w, h); const r = rng(7); g.lineCap = 'round';
+  for (let i = 0; i < 230; i++) { g.strokeStyle = `rgba(200,230,215,${.06 + r() * .14})`; g.lineWidth = 1.5 + r() * 2.5; let x = r() * w, y = r() * h; g.beginPath(); g.moveTo(x, y); for (let k = 0; k < 3; k++) { if (r() < .5) x += (r() - .5) * 500; else y += (r() - .5) * 300; g.lineTo(x, y); } g.stroke(); }
+  for (let i = 0; i < 260; i++) { g.fillStyle = 'rgba(210,190,140,.45)'; g.beginPath(); g.arc(r() * w, r() * h, 3, 0, 7); g.fill(); }
+});
+const mProc = new THREE.MeshStandardMaterial({ color: 0x141518, roughness: .35, metalness: .5, emissive: C.red, emissiveIntensity: 0 });
+{
+  const pcb = mesh(slab(104, 58, 1.6, 2, .2), new THREE.MeshStandardMaterial({ map: pcbTex, roughness: .7, metalness: .1 }), { thr: 30, op: .6 }); board.add(pcb);
+  const proc = mesh(slab(17, 17, 2.4, .8, .3), mProc, { op: .8, color: 0xff6a5a }); proc.position.set(6, 4, -2); board.add(proc); board.userData.proc = proc;
+  const lid = new THREE.Mesh(new THREE.PlaneGeometry(13, 13), new THREE.MeshBasicMaterial({ map: canvasTex(256, 256, (g, w) => { g.fillStyle = '#17181b'; g.fillRect(0, 0, w, w); g.strokeStyle = '#e2342d'; g.lineWidth = 6; g.strokeRect(14, 14, w - 28, w - 28); g.fillStyle = '#d9dde2'; g.font = '600 46px Inter'; g.textAlign = 'center'; g.fillText('IMAGE', w / 2, 112); g.fillText('PROC', w / 2, 168); g.fillStyle = '#e2342d'; g.beginPath(); g.arc(44, 44, 9, 0, 7); g.fill(); }) }));
+  lid.rotation.y = Math.PI; lid.position.set(6, 4, -3.25); board.add(lid);
+  const chips = [[-22, 12, 11, 8], [-22, -6, 11, 8], [30, 14, 9, 9], [30, -2, 12, 6], [-40, 14, 7, 7], [24, -18, 8, 5]];
+  for (const [x, y, w, h] of chips) { const c = mesh(slab(w, h, 1.6, .5, .2), std(C.chip, .4, .4), { op: .5 }); c.position.set(x, y, -1.6); board.add(c); }
+  for (let i = 0; i < 14; i++) { const c = mesh(slab(1.6, .9, .8, .1, 0), std(0x8a7a5a, .5, .5), false); c.position.set(-10 + (i % 7) * 2.6, -14 - Math.floor(i / 7) * 2.2, -1.2); board.add(c); }
+  const conn = mesh(slab(16, 4, 3, .4, .2), std(0xe8e2d4, .7, 0), { op: .5 }); conn.position.set(-6, 24, -2.2); board.add(conn);
+  const slot = mesh(slab(30, 27, 3.4, .8, .3), mMetal, { op: .55 }); slot.position.set(-36, -12, -2.4); board.add(slot);
+  const card = mesh(slab(24, 32, 2.1, 1.2, .2), std(0x1d2a40, .5, .2), { op: .6 }); card.position.set(-36, -14, -4.6); board.add(card); board.userData.card = card;
+  const cardLbl = new THREE.Mesh(new THREE.PlaneGeometry(20, 14), new THREE.MeshBasicMaterial({ map: canvasTex(256, 180, (g, w, h) => { g.fillStyle = '#22314a'; g.fillRect(0, 0, w, h); g.fillStyle = '#e8edf3'; g.font = '600 40px Inter'; g.fillText('SD', 20, 64); g.font = '400 24px Inter'; g.fillText('UHS-II  V90', 20, 112); g.fillStyle = '#e2342d'; g.fillRect(20, 136, 120, 6); }) }));
+  cardLbl.rotation.y = Math.PI; cardLbl.position.set(-36, -18, -5.7); board.add(cardLbl);
+}
+board.position.set(0, -2, -11);
+part('placa', board, new THREE.Vector3(0, 0, -192));
+
+// ===== 10. circuitos: placa de E/S + flex do sensor =====
+const circ = new THREE.Group();
+{
+  const io = mesh(slab(1.6, 46, 26, 1.5, .2), new THREE.MeshStandardMaterial({ map: pcbTex, roughness: .7 }), { op: .55 }); io.position.set(0, 0, 0); circ.add(io);
+  for (const [y, h] of [[12, 7], [0, 5], [-12, 8]]) { const p = mesh(slab(3, h, 9, .6, .3), mMetal, { op: .45 }); p.position.set(2.3, y, 3); circ.add(p); }
+  const flexMat = std(0xb46a1f, .45, .5, { side: THREE.DoubleSide });
+  const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(-2, 18, -8), new THREE.Vector3(-14, 26, -10), new THREE.Vector3(-30, 26, -2), new THREE.Vector3(-46, 20, 2)]);
+  const flex = mesh(new THREE.TubeGeometry(curve, 48, 1.2, 4, false), flexMat, { thr: 60, op: .25 }); flex.scale.set(1, 1, 1); circ.add(flex);
+  const bat = mesh(slab(4, 8, 3, .6, .2), std(0xe8e2d4, .7, 0), { op: .4 }); bat.position.set(-1, -20, -6); circ.add(bat);
+}
+circ.position.set(56, 0, 2);
+part('circuitos', circ, new THREE.Vector3(80, 0, -60));
+
+// ===== 11. visor eletrônico =====
+const evf = new THREE.Group();
+{
+  const box = mesh(slab(24, 13, 22, 2, .5), mBody2); evf.add(box);
+  const oled = mesh(slab(14, 9, 1, .4, .1), new THREE.MeshStandardMaterial({ color: 0x0a0b0c, emissive: 0x1d2633, roughness: .2 }), { op: .5 }); oled.position.set(0, 0, 11.4); evf.add(oled);
+  const eyep = mesh(cylZ(7, 12, 48), mBody, { thr: 40 }); eyep.position.set(0, 0, -15); evf.add(eyep);
+  const eyeGlass = new THREE.Mesh(lensEl(6.2, 2, .8, .8), mGlass); eyeGlass.position.z = -21.4; evf.add(withEdges(eyeGlass, { thr: 40, op: .35 }));
+  const fl = mesh(slab(10, 2.4, 1, .3, 0), std(0xb46a1f, .45, .5), false); fl.position.set(0, -7.4, 6); evf.add(fl);
+}
+evf.position.set(AX.x, 44, 0);
+part('visor', evf, new THREE.Vector3(0, 70, 0));
+
+// ===== 12. bateria =====
+const battery = new THREE.Group();
+{
+  const batTex = canvasTex(512, 900, (g, w, h) => { g.fillStyle = '#1b1d21'; g.fillRect(0, 0, w, h); g.fillStyle = '#d9dde2'; g.font = '600 64px Inter'; g.fillText('Li-ion', 40, 120); g.font = '400 40px Mono'; g.fillText('7,2 V', 40, 200); g.fillText('2280 mAh', 40, 256); g.fillStyle = '#e2342d'; g.fillRect(40, 300, 160, 8); g.strokeStyle = 'rgba(217,221,226,.35)'; g.lineWidth = 3; for (let i = 0; i < 4; i++) { g.beginPath(); g.moveTo(40, 400 + i * 40); g.lineTo(w - 40, 400 + i * 40); g.stroke(); } });
+  const cell = mesh(slab(20, 54, 36, 2.5, .8), [std(0x1b1d21, .6, .1), std(0x1b1d21, .6, .1)], { op: .55 }); battery.add(cell);
+  const lab = new THREE.Mesh(new THREE.PlaneGeometry(30, 50), new THREE.MeshStandardMaterial({ map: batTex, roughness: .6 })); lab.rotation.y = -Math.PI / 2; lab.position.x = -10.05; battery.add(lab);
+  for (let i = 0; i < 4; i++) { const c = mesh(slab(4, 1, 2, .2, 0), std(C.gold, .3, 1), false); c.position.set(-4 + i * 2.8 - 1, -27.2, 6 - i * 3); battery.add(c); }
+}
+battery.position.set(-46, -6, 10);
+part('bateria', battery, new THREE.Vector3(0, -100, 0));
+
+
+
+// =====================================================================
+// bancada: luzes, tapete de corte, sombras
+const TABLE_Y = -35.4;
+sMain.add(new THREE.HemisphereLight(0xdfe8ff, 0x0b0c0e, .45));
+const key = new THREE.DirectionalLight(0xffffff, 1.7); key.position.set(-260, 520, 380); key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048); Object.assign(key.shadow.camera, { left: -420, right: 520, top: 380, bottom: -380, near: 10, far: 1600 }); key.shadow.bias = -0.0004; key.shadow.normalBias = .6;
+sMain.add(key);
+const rim = new THREE.DirectionalLight(0xbcd2ff, 1.0); rim.position.set(420, 220, -520); sMain.add(rim);
+const lamp = new THREE.PointLight(0xffe2c0, 0, 420, 1.6); sMain.add(lamp);
+
+const matTex = canvasTex(2048, 2048, (g, w) => {
+  g.fillStyle = '#0d1013'; g.fillRect(0, 0, w, w);
+  const s = w / 800; // 800 mm de tapete
+  for (let i = 0; i <= 800; i += 5) { g.strokeStyle = i % 50 === 0 ? 'rgba(200,215,230,.16)' : i % 10 === 0 ? 'rgba(200,215,230,.07)' : 'rgba(200,215,230,.035)'; g.lineWidth = i % 50 === 0 ? 2 : 1; g.beginPath(); g.moveTo(i * s, 0); g.lineTo(i * s, w); g.stroke(); g.beginPath(); g.moveTo(0, i * s); g.lineTo(w, i * s); g.stroke(); }
+  g.fillStyle = 'rgba(200,215,230,.28)'; g.font = `${10 * s}px monospace`;
+  for (let i = 50; i < 800; i += 50) { g.fillText(String(i), i * s + 4, 14 * s); g.fillText(String(i), 4, i * s - 4); }
+  g.strokeStyle = 'rgba(226,52,45,.55)'; g.lineWidth = 3; g.strokeRect(20 * s, 20 * s, 760 * s, 760 * s);
+});
+matTex.anisotropy = 8;
+const table = new THREE.Mesh(new THREE.PlaneGeometry(800, 800), new THREE.MeshStandardMaterial({ map: matTex, color: 0x8a8f96, roughness: .95, metalness: 0, envMapIntensity: .25 }));
+table.rotation.x = -Math.PI / 2; table.position.set(120, TABLE_Y, -40); table.receiveShadow = true; sMain.add(table);
+const below = new THREE.Mesh(new THREE.BoxGeometry(800, 20, 800), new THREE.MeshStandardMaterial({ color: 0x07080a, roughness: 1 }));
+below.position.set(120, TABLE_Y - 10.05, -40); sMain.add(below);
+
+// parafusos da tampa traseira (peças próprias)
+const screws = [];
+{
+  const head = cylZ(2.4, 1.4, 24), shank = cylZ(1.1, 6, 12); shank.translate(0, 0, 3.6);
+  const slotA = new THREE.BoxGeometry(3.4, .5, .5), slotB = new THREE.BoxGeometry(.5, 3.4, .5);
+  [[-54, 27], [54, 27], [-54, -27], [54, -27]].forEach(([x, y], i) => {
+    const g = new THREE.Group();
+    g.add(mesh(head, std(C.metal, .3, .9), { thr: 40, op: .5 }));
+    g.add(new THREE.Mesh(shank, std(C.metal, .35, .9)));
+    const sa = new THREE.Mesh(slotA, new THREE.MeshBasicMaterial({ color: 0x0a0a0a })); sa.position.z = -.6; g.add(sa);
+    const sb = new THREE.Mesh(slotB, new THREE.MeshBasicMaterial({ color: 0x0a0a0a })); sb.position.z = -.6; g.add(sb);
+    g.position.set(x, y, -17.6);
+    part('parafuso' + (i + 1), g, new THREE.Vector3());
+    screws.push(g);
+  });
+}
+// tirar as peças do modo "vídeo": tudo em repouso, aberturas e cortinas abertas
+diaphLight.visible = false;
+shutter.set(0, 0);
+
+// =====================================================================
+// catálogo de peças: ordem de desmontagem, dependências, saída e lugar na bancada
+const flat = (sign) => new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), sign * Math.PI / 2);
+const Q0 = new THREE.Quaternion();
+const yawQ = (deg, q = Q0) => new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), deg * D2R).multiply(q);
+const SPEC = [
+  { id: 'lente', obj: lens, name: 'Lente 50 mm f/1.8', axis: [0, 0, 1], lift: 70, tray: [140, .2, 92], q: flat(-1), twist: true,
+    fn: 'Forma a imagem: seus elementos de vidro fazem a luz convergir exatamente sobre o sensor.',
+    how: 'Presa pela baioneta. Gire cerca de 45° e ela solta.', tech: 'Baioneta a 18 mm do sensor · 6 elementos neste modelo didático' },
+  { id: 'bateria', obj: battery, name: 'Bateria', axis: [0, -1, 0], lift: 64, tray: [104, 27, -24], q: Q0,
+    fn: 'Alimenta tudo: sensor, processador, visor, motor do obturador e estabilização.',
+    how: 'Sai por baixo, pela porta da empunhadura.', tech: 'Íon-lítio · 7,2 V × 2,28 Ah = 16,4 Wh' },
+  { id: 'parafuso1', obj: screws[0], name: 'Parafuso da tampa', axis: [0, 0, -1], lift: 10, tray: [300, 2.2, -2], q: flat(1), screw: true, small: true,
+    fn: 'Prende a tampa traseira ao chassi.', how: 'Desparafuse (clique).', tech: 'M1,6 × 6 mm' },
+  { id: 'parafuso2', obj: screws[1], name: 'Parafuso da tampa', axis: [0, 0, -1], lift: 10, tray: [312, 2.2, -2], q: flat(1), screw: true, small: true, fn: 'Prende a tampa traseira ao chassi.', how: 'Desparafuse (clique).', tech: 'M1,6 × 6 mm' },
+  { id: 'parafuso3', obj: screws[2], name: 'Parafuso da tampa', axis: [0, 0, -1], lift: 10, tray: [300, 2.2, 10], q: flat(1), screw: true, small: true, fn: 'Prende a tampa traseira ao chassi.', how: 'Desparafuse (clique).', tech: 'M1,6 × 6 mm' },
+  { id: 'parafuso4', obj: screws[3], name: 'Parafuso da tampa', axis: [0, 0, -1], lift: 10, tray: [312, 2.2, 10], q: flat(1), screw: true, small: true, fn: 'Prende a tampa traseira ao chassi.', how: 'Desparafuse (clique).', tech: 'M1,6 × 6 mm' },
+  { id: 'tampa', obj: backCover, name: 'Tampa traseira e LCD', axis: [0, 0, -1], lift: 40, tray: [222, 3.2, 2], q: flat(1), needs: ['parafuso1', 'parafuso2', 'parafuso3', 'parafuso4'],
+    fn: 'Fecha a câmera e carrega a tela LCD, a ocular e os botões traseiros.', how: 'Depois dos 4 parafusos, puxe para trás.', tech: 'Tela de ~3″ · ocular com borracha' },
+  { id: 'placa', obj: board, name: 'Placa principal', axis: [0, 0, -1], lift: 60, tray: [150, .9, -96], q: flat(1), needs: ['tampa'],
+    fn: 'O cérebro da câmera: o processador de imagem transforma os dados do sensor em foto e grava no cartão.', how: 'Solte o flex do sensor e puxe para trás.', tech: 'Processador de imagem · memória · slot SD' },
+  { id: 'circuitos', obj: circ, name: 'Placa de E/S e flex', axis: [1, 0, 0], lift: 40, tray: [330, 2, -176], q: new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI / 2), needs: ['placa'],
+    fn: 'Liga conectores (USB, HDMI, microfone) e leva sinais entre as placas pelo cabo flex.', how: 'Sai pela lateral, depois da placa principal.', tech: 'Circuito flexível de cobre sobre poliimida' },
+  { id: 'dissipador', obj: heat, name: 'Dissipador de calor', axis: [0, 0, -1], lift: 70, tray: [252, 1.4, -96], q: flat(1), needs: ['placa'],
+    fn: 'Tira o calor do sensor e do processador: aquecido, o sensor gera mais ruído.', how: 'Atrás do sensor; sai depois da placa.', tech: 'Alumínio · aletas + heat pipe de cobre' },
+  { id: 'visor', obj: evf, name: 'Visor eletrônico', axis: [0, 1, 0], lift: 50, tray: [330, 6.6, -96], q: Q0, needs: ['tampa'],
+    fn: 'Mostra ao olho a imagem ao vivo do sensor, já com a exposição final.', how: 'Sobe pelo capô depois da tampa.', tech: 'Tela micro-OLED + ocular de aumento' },
+  { id: 'sensor', obj: sensor, name: 'Sensor de imagem', axis: [0, 0, -1], lift: 90, tray: [140, 6.2, -180], q: flat(-1), needs: ['dissipador'],
+    fn: 'Converte a luz em carga elétrica, pixel por pixel, sob um filtro de cores Bayer.', how: 'Montado numa placa flutuante (estabilização), sai por trás.', tech: 'Full frame 36 × 24 mm · 6000 × 4000 px · pixel de 6 µm' },
+  { id: 'obturador', obj: shutter.g, name: 'Obturador', axis: [0, 0, -1], lift: 110, tray: [232, 5.6, -180], q: flat(-1), needs: ['sensor'],
+    fn: 'Duas cortinas de lâminas decidem por quanto tempo a luz atinge o sensor.', how: 'Último módulo antes da baioneta; sai por trás.', tech: 'Plano focal · janela 36 × 24 mm' },
+  // desmontagem da lente (depois que ela está na bancada)
+  { id: 'frente', obj: lensFront, name: 'Grupo óptico frontal', sub: true, axis: [0, 0, 1], lift: 26, tray: [214, -46.5, 96], q: flat(-1), needs: ['lente'], spin: true,
+    fn: 'Os primeiros elementos de vidro: recolhem a luz e começam a convergência.', how: 'Desrosqueia do barril.', tech: 'Elemento frontal ⌀42 mm · rosca de filtro ⌀52' },
+  { id: 'foco', obj: lensFocus, name: 'Anel de foco e grupo central', sub: true, axis: [0, 0, 1], lift: 44, tray: [282, -25.4, 96], q: flat(-1), needs: ['frente'],
+    fn: 'Girar o anel move o grupo óptico: assim a imagem fica nítida a outras distâncias.', how: 'Sai do barril depois do grupo frontal.', tech: 'Avanço = f² ÷ (d − f): 6,25 mm a 45 cm' },
+  { id: 'diafragma', obj: diaph, name: 'Diafragma', sub: true, axis: [0, 0, 1], lift: 50, tray: [346, 1.3, 96], q: flat(-1), needs: ['foco'],
+    fn: 'Sete lâminas formam uma abertura variável: controlam a luz e a profundidade de campo.', how: 'Último item dentro do barril traseiro.', tech: 'f/1.8 a f/16 · luz ∝ 1/N²' },
+];
+const BY = Object.fromEntries(SPEC.map(s => [s.id, s]));
+const ORDER = ['lente', 'bateria', 'parafuso1', 'parafuso2', 'parafuso3', 'parafuso4', 'tampa', 'placa', 'circuitos', 'dissipador', 'visor', 'sensor', 'obturador', 'frente', 'foco', 'diafragma'];
+const NON_PART = new Set(['corpo']);
+const tableY = (y) => TABLE_Y + y;
+for (const s of [...SPEC].reverse()) {
+  s.state = 'home'; s.t = 0; s.dir = 0; s.twist = s.twist ? 0 : null;
+  s.parent = s.obj.parent; s.localP = s.obj.position.clone(); s.localQ = s.obj.quaternion.clone();
+  s.trayP = new THREE.Vector3(s.tray[0], tableY(s.tray[1]), s.tray[2]); s.trayQ = s.q.clone();
+  s.obj.traverse(o => { o.userData.pid = o.userData.pid || s.id; });
+}
+body.traverse(o => { o.userData.pid = 'corpo'; });
+// materiais próprios por peça (destaque e raio-X sem vazar para outras peças)
+const partMats = {};
+for (const id of ['corpo', ...ORDER]) {
+  const root = id === 'corpo' ? body : BY[id].obj; partMats[id] = [];
+  root.traverse(o => {
+    if (!o.isMesh || o.isLineSegments2 || o.userData.pid !== id) return;
+    o.castShadow = true; o.receiveShadow = true;
+    o.material = Array.isArray(o.material) ? o.material.map(m => m.clone()) : o.material.clone();
+    [].concat(o.material).forEach(m => { if (m.emissive) { m.userData.e0 = m.emissive.clone(); m.userData.ei0 = m.emissiveIntensity; } partMats[id].push(m); });
+  });
+}
+
+// =====================================================================
+// estado da desmontagem
+const isOut = (id) => BY[id].state === 'out' || BY[id].state === 'going';
+const isHome = (id) => BY[id].state === 'home';
+function canRemove(id) { const s = BY[id]; return s.state === 'home' && (s.needs || []).every(n => BY[n].state === 'out'); }
+function canReturn(id) { const s = BY[id]; return s.state === 'out' && SPEC.every(z => !(z.needs || []).includes(id) || z.state === 'home'); }
+function blocker(id) { const s = BY[id]; const n = (s.needs || []).find(n => BY[n].state !== 'out'); return n ? BY[n] : null; }
+function worldPose(o) { o.updateWorldMatrix(true, false); const p = new THREE.Vector3(), q = new THREE.Quaternion(), sc = new THREE.Vector3(); o.matrixWorld.decompose(p, q, sc); return { p, q }; }
+function remove(id) {
+  const s = BY[id]; if (!canRemove(id)) return false;
+  s.started = false;
+  s.state = 'going'; s.dir = 1; if (s.twist !== null && s.twist > -44.9) s.twistTarget = -45;
+  select(id); refresh(); return true;
+}
+function reinstall(id) {
+  const s = BY[id]; if (!canReturn(id)) return false;
+  if (s.sub) { const { p, q } = poseFromLocal(s); s.homeP = p; s.homeQ = q; }
+  s.state = 'coming'; s.dir = -1; select(id); refresh(); return true;
+}
+function poseFromLocal(s) { const m = new THREE.Matrix4().compose(s.localP, s.localQ, new THREE.Vector3(1, 1, 1)); s.parent.updateWorldMatrix(true, false); m.premultiply(s.parent.matrixWorld); const p = new THREE.Vector3(), q = new THREE.Quaternion(), sc = new THREE.Vector3(); m.decompose(p, q, sc); return { p, q }; }
+const tmpA = new THREE.Vector3(), tmpB = new THREE.Vector3(), tmpC = new THREE.Vector3(), tmpD = new THREE.Vector3();
+function pose(s) {
+  const t = s.t, A = .34;
+  if (t < A) {
+    const k = ease(t / A); s.obj.position.copy(s.homeP).addScaledVector(s.axisW, s.lift * k); s.obj.quaternion.copy(s.homeQ);
+    if (s.screw || s.spin) s.obj.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), -k * Math.PI * (s.screw ? 8 : 3)));
+  } else {
+    const k = ease((t - A) / (1 - A));
+    const P0 = tmpA.copy(s.homeP).addScaledVector(s.axisW, s.lift), P1 = tmpB.copy(P0).add(new THREE.Vector3(0, 70, 0)), P3 = tmpD.copy(s.trayP), P2 = tmpC.copy(P3).add(new THREE.Vector3(0, 90, 0));
+    const u = 1 - k; s.obj.position.set(0, 0, 0).addScaledVector(P0, u * u * u).addScaledVector(P1, 3 * u * u * k).addScaledVector(P2, 3 * u * k * k).addScaledVector(P3, k * k * k);
+    const qh = s.homeQ.clone(); if (s.screw || s.spin) qh.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * (s.screw ? 8 : 3)));
+    s.obj.quaternion.slerpQuaternions(qh, s.trayQ, k);
+  }
+}
+function step(dt) {
+  let moving = false;
+  for (const s of SPEC) {
+    if (s.twist !== null && s.twistTarget !== undefined) {
+      const before = s.twist; s.twist += clamp(s.twistTarget - s.twist, -120 * dt, 120 * dt); if (REDUCED) s.twist = s.twistTarget;
+      if (s.twist !== before) moving = true;
+      if (s.t === 0) s.obj.rotation.z = s.twist * D2R;
+    }
+    if (s.state === 'going') {
+      if (s.twist !== null && s.twist > -44.9) { moving = true; continue; }
+      if (!s.started) { const { p, q } = worldPose(s.obj); s.axisW = new THREE.Vector3(...s.axis).applyQuaternion(s.sub ? worldPose(s.parent).q : Q0).normalize(); rig.attach(s.obj); s.homeP = p; s.homeQ = q; s.started = true; }
+      s.t = Math.min(1, s.t + dt / (s.small ? 1.1 : 1.7)); if (REDUCED) s.t = 1; pose(s); moving = true;
+      if (s.t >= 1) { s.state = 'out'; refresh(); }
+    } else if (s.state === 'coming') {
+      if (s.t > 0) { s.t = Math.max(0, s.t - dt / (s.small ? 1.1 : 1.7)); if (REDUCED) s.t = 0; pose(s); moving = true; }
+      if (s.t <= 0) {
+        if (s.obj.parent !== s.parent) { s.parent.add(s.obj); s.obj.position.copy(s.localP); s.obj.quaternion.copy(s.localQ); }
+        if (s.twist !== null && s.twist < -.05) { s.twistTarget = 0; s.obj.rotation.z = s.twist * D2R; moving = true; continue; }
+        if (s.twist !== null) { s.twist = 0; s.obj.rotation.z = 0; }
+        s.started = false; s.state = 'home'; refresh();
+      }
+    }
+  }
+  return moving;
+}
+
+// =====================================================================
+// controles da cena
+const controls = new OrbitControls(cam, view);
+controls.enableDamping = true; controls.dampingFactor = .08; controls.minDistance = 90; controls.maxDistance = 1300;
+controls.maxPolarAngle = Math.PI * .49; controls.target.set(150, -30, -50);
+cam.position.set(130, 380, 600);
+controls.autoRotate = false; controls.autoRotateSpeed = .5;
+function frameView(target, pos) { flyFrom = { t: cam.position.clone(), g: controls.target.clone() }; flyTo = { t: pos, g: target }; flyK = 0; }
+let flyFrom = null, flyTo = null, flyK = 1;
+const VIEWS = {
+  camera: [new THREE.Vector3(4, 0, 10), new THREE.Vector3(120, 90, 260)],
+  bancada: [new THREE.Vector3(170, -30, -50), new THREE.Vector3(190, 420, 560)],
+  costas: [new THREE.Vector3(0, 0, -40), new THREE.Vector3(-160, 140, -320)],
+};
+
+// =====================================================================
+// interação: passar, clicar, arrastar (girar lente, anel de foco)
+const ray = new THREE.Raycaster(), ptr = new THREE.Vector2();
+const pickables = []; sMain.traverse(o => { if (o.isMesh && !o.isLineSegments2 && o.userData.pid) pickables.push(o); });
+function pick(e) {
+  const r = view.getBoundingClientRect(); ptr.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ptr, cam);
+  const hit = ray.intersectObjects(pickables, false).find(h => h.object.visible && h.object.userData.pid);
+  if (!hit) return null;
+  let id = hit.object.userData.pid;
+  // peça da lente ainda montada na câmera = a lente inteira
+  if (['frente', 'foco', 'diafragma'].includes(id) && BY.lente.state === 'home') id = hit.object.userData.pid === 'foco' ? 'foco@cam' : 'lente';
+  else if (['frente', 'foco', 'diafragma'].includes(id) && BY.lente.state !== 'out') id = 'lente';
+  return { id, point: hit.point };
+}
+let hover = null, drag = null, downAt = null;
+function setHover(id) {
+  const real = id === 'foco@cam' ? 'lente' : id;
+  if (hover === real) return; hover = real;
+  for (const [pid, ms] of Object.entries(partMats)) { const on = pid === real || (real === 'lente' && ['frente', 'foco', 'diafragma'].includes(pid) && BY[pid].parent === lens && isHome(pid)); for (const m of ms) if (m.emissive) { m.emissive.copy(on ? new THREE.Color(0x5a1410) : m.userData.e0); m.emissiveIntensity = on ? .55 : m.userData.ei0; } }
+  view.style.cursor = id ? (id === 'lente' && isHome('lente') ? 'grab' : id === 'foco@cam' || (id === 'foco' && isHome('foco')) ? 'ew-resize' : 'pointer') : 'default';
+  wake();
+}
+view.addEventListener('pointermove', (e) => {
+  if (drag) {
+    const dx = e.clientX - drag.x; drag.x = e.clientX; drag.moved += Math.abs(dx);
+    if (drag.kind === 'twist') { const s = BY.lente; s.twistTarget = undefined; s.twist = clamp(s.twist - dx * .35, -45, 0); lens.rotation.z = s.twist * D2R; if (s.twist <= -44.9) { drag = null; controls.enabled = true; remove('lente'); } setReadout(`baioneta: ${Math.round(-s.twist)}° de 45°`); }
+    if (drag.kind === 'focus') { setFocus(clamp(focusS + dx / 260)); }
+    wake(); return;
+  }
+  const h = pick(e); setHover(h ? h.id : null);
+});
+view.addEventListener('pointerdown', (e) => {
+  downAt = { x: e.clientX, y: e.clientY };
+  const h = pick(e); if (!h) return;
+  if (h.id === 'lente' && isHome('lente')) { drag = { kind: 'twist', x: e.clientX, moved: 0 }; controls.enabled = false; view.setPointerCapture(e.pointerId); view.style.cursor = 'grabbing'; select('lente'); }
+  else if (h.id === 'foco@cam' || (h.id === 'foco' && BY.lente.state === 'out' && isHome('foco'))) { drag = { kind: 'focus', x: e.clientX, moved: 0 }; controls.enabled = false; view.setPointerCapture(e.pointerId); select('foco'); }
+});
+view.addEventListener('pointerup', (e) => {
+  const was = drag; drag = null; controls.enabled = true;
+  if (was && was.kind === 'twist' && BY.lente.state === 'home') { if (was.moved < 4 || BY.lente.twist < -30) remove('lente'); else BY.lente.twistTarget = 0; wake(); return; }
+  if (was && was.moved > 4) return;
+  if (!downAt || Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) > 5) return;
+  const h = pick(e); if (!h) { select(null); return; }
+  const id = h.id === 'foco@cam' ? 'lente' : h.id;
+  if (id === 'corpo') { select('corpo'); return; }
+  if (BY[id] && canRemove(id) && !BY[id].sub) { remove(id); return; }
+  if (BY[id] && BY[id].sub && canRemove(id)) { remove(id); return; }
+  select(id);
+  if (BY[id] && isHome(id) && !canRemove(id)) { const b = blocker(id); toast(b ? `Antes, remova: ${b.name.toLowerCase()}.` : ''); }
+});
+view.addEventListener('pointerleave', () => setHover(null));
+
+// =====================================================================
+// foco, abertura, obturador (controles das peças)
+let focusS = 0, focusRing = 0;
+function setFocus(s) {
+  focusS = s; const d = s < 1e-3 ? Infinity : 450 / s, e = d === Infinity ? 0 : 2500 / (d - 50);
+  lensFocus.rotation.z = -s * 80 * D2R; if (isHome('frente')) lensFront.position.z = BY.frente.localP.z + e;
+  focusRing = e; const el = document.getElementById('focusVal'); if (el) el.textContent = `${d === Infinity ? '∞' : (d / 1000).toFixed(2).replace('.', ',') + ' m'} · avanço ${e.toFixed(2).replace('.', ',')} mm`;
+  const sl = document.getElementById('focus'); if (sl && +sl.value !== Math.round(s * 1000)) sl.value = Math.round(s * 1000);
+  wake();
+}
+const STOPS = [1.8, 2, 2.2, 2.5, 2.8, 3.2, 3.5, 4, 4.5, 5, 5.6, 6.3, 7.1, 8, 9, 10, 11, 13, 14, 16];
+let fIdx = 0;
+function setStop(i) { fIdx = i; const N = STOPS[i]; setAperture(R_MAX * 1.8 / N * .97); const el = document.getElementById('apVal'); if (el) el.textContent = `f/${String(N).replace('.', ',')} · ${Math.max(1, Math.round(100 * (1.8 / N) ** 2))}% da luz de f/1,8`; wake(); }
+let shot = null;
+function fire(speed) { const T = 1000 / speed; shot = { t: 0, T, slow: Math.round(1.6 / ((6 + T) / 1000) / 10) * 10 }; const el = document.getElementById('shVal'); if (el) el.textContent = `1/${speed} s · câmera lenta ×${shot.slow}`; wake(); }
+function shutterStep(dt) {
+  if (!shot) return false; shot.t += dt; const TAU = 3, ms = (shot.t / 1.6) * (TAU * 2 + shot.T);
+  const a = 1 - clamp(ms / TAU), b = clamp((ms - shot.T) / TAU);
+  if (shot.t < .25) shutter.set(clamp(shot.t / .25), 0); else shutter.set(a, b);
+  lamp.intensity = 0;
+  if (shot.t > 2.4) { shutter.set(0, 0); shot = null; }
+  return true;
+}
+
+// =====================================================================
+// interface
+const $ = (id) => document.getElementById(id);
+const stepsEl = $('steps'), card = $('card');
+let selected = null;
+function select(id) { selected = id; renderCard(); renderSteps(); }
+function setReadout(t) { $('readout').textContent = t; }
+let toastT = 0; function toast(msg) { if (!msg) return; const el = $('toast'); el.textContent = msg; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => (el.hidden = true), 2600); }
+const LABEL = { parafuso1: 'Parafuso 1', parafuso2: 'Parafuso 2', parafuso3: 'Parafuso 3', parafuso4: 'Parafuso 4' };
+function renderSteps() {
+  const done = SPEC.filter(s => s.state === 'out').length;
+  $('progress').textContent = `${done} de ${SPEC.length} peças na bancada`;
+  $('bar').style.width = `${(done / SPEC.length) * 100}%`;
+  const next = ORDER.find(id => canRemove(id));
+  stepsEl.innerHTML = ORDER.map((id, i) => {
+    const s = BY[id], st = s.state === 'out' ? 'out' : s.state === 'home' ? (canRemove(id) ? 'ready' : 'locked') : 'moving';
+    return `<li><button type="button" data-id="${id}" data-st="${st}"${id === next ? ' data-next' : ''}${id === selected ? ' aria-current="true"' : ''}><span class="n">${String(i + 1).padStart(2, '0')}</span><span class="t">${LABEL[id] || s.name}</span><span class="s">${st === 'out' ? 'na bancada' : st === 'ready' ? 'remover' : st === 'moving' ? '…' : 'bloqueada'}</span></button></li>`;
+  }).join('');
+}
+stepsEl.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; const id = b.dataset.id; if (canRemove(id)) remove(id); else { select(id); if (!isOut(id)) { const bl = blocker(id); toast(bl ? `Antes, remova: ${bl.name.toLowerCase()}.` : ''); } } });
+stepsEl.addEventListener('pointerover', (e) => { const b = e.target.closest('button'); setHover(b ? b.dataset.id : null); });
+stepsEl.addEventListener('pointerleave', () => setHover(null));
+const CORPO = { name: 'Corpo (chassi)', fn: 'A estrutura que mantém lente, obturador e sensor alinhados com precisão de centésimos de milímetro.', how: 'Fica na bancada: é a base de todo o resto.', tech: 'Liga de magnésio · baioneta metálica' };
+function renderCard() {
+  if (!selected) { card.innerHTML = `<p class="eyebrow">Como usar</p><h2>Desmonte a câmera</h2><ul class="how"><li><b>Arraste o fundo</b> para girar a vista e <b>role</b> para aproximar.</li><li><b>Arraste a lente</b> para o lado para girar a baioneta até soltar.</li><li><b>Clique numa peça</b> livre para tirá-la. Ela vai para a bancada.</li><li>Na bancada, clique numa peça para ver como funciona ou reinstalar.</li></ul>`; return; }
+  const s = selected === 'corpo' ? CORPO : BY[selected]; const id = selected;
+  const st = id === 'corpo' ? '' : s.state === 'out' ? 'Na bancada' : canRemove(id) ? 'Pronta para sair' : s.state === 'home' ? 'Presa' : 'Em movimento';
+  let ctrl = '';
+  if (['lente', 'foco', 'frente'].includes(id)) ctrl += `<label class="ctl" for="focus"><span>Foco</span><output id="focusVal"></output></label><input id="focus" type="range" min="0" max="1000" value="${Math.round(focusS * 1000)}">`;
+  if (['lente', 'diafragma'].includes(id)) ctrl += `<label class="ctl" for="ap"><span>Abertura</span><output id="apVal"></output></label><input id="ap" type="range" min="0" max="${STOPS.length - 1}" value="${fIdx}">`;
+  if (id === 'obturador') ctrl += `<div class="ctl"><span>Disparar</span><output id="shVal">escolha a velocidade</output></div><div class="row">${[1000, 250, 30].map(v => `<button type="button" class="pill" data-fire="${v}">1/${v} s</button>`).join('')}</div>`;
+  let act = '';
+  if (id !== 'corpo') {
+    if (canRemove(id)) act = `<button type="button" class="act" data-act="remove">Remover peça</button>`;
+    else if (s.state === 'out') act = canReturn(id) ? `<button type="button" class="act ghost" data-act="return">Reinstalar</button>` : `<p class="lock">Para reinstalar, recoloque antes as peças que vão por dentro dela.</p>`;
+    else if (s.state === 'home') { const b = blocker(id); act = `<p class="lock">Antes, remova: ${b ? b.name.toLowerCase() : ''}.</p>`; }
+  }
+  card.innerHTML = `<p class="eyebrow">${st}</p><h2>${s.name}</h2><p>${s.fn}</p><dl><div><dt>Como sai</dt><dd>${s.how}</dd></div><div><dt>Dados</dt><dd>${s.tech}</dd></div></dl>${ctrl}${act}`;
+  if ($('focus')) { $('focus').addEventListener('input', (e) => setFocus(e.target.value / 1000)); setFocus(focusS); }
+  if ($('ap')) { $('ap').addEventListener('input', (e) => setStop(+e.target.value)); setStop(fIdx); }
+  card.querySelectorAll('[data-fire]').forEach(b => b.addEventListener('click', () => { if (isHome('obturador') && !xray) toast('O obturador está dentro da câmera: remova-o ou ative o raio-X para ver as cortinas.'); fire(+b.dataset.fire); }));
+  const a = card.querySelector('[data-act]'); if (a) a.addEventListener('click', () => (a.dataset.act === 'remove' ? remove(id) : reinstall(id)));
+}
+function refresh() { renderSteps(); renderCard(); wake(); }
+$('all').addEventListener('click', async () => { for (const id of ORDER) { while (!canRemove(id) && BY[id].state !== 'out') await new Promise(r => setTimeout(r, 120)); if (canRemove(id)) { remove(id); await new Promise(r => setTimeout(r, REDUCED ? 0 : 380)); } } });
+$('none').addEventListener('click', async () => { for (const id of [...ORDER].reverse()) { while (BY[id].state === 'going') await new Promise(r => setTimeout(r, 120)); if (canReturn(id)) { reinstall(id); await new Promise(r => setTimeout(r, REDUCED ? 0 : 300)); } } });
+let xray = false;
+$('xray').addEventListener('click', () => { xray = !xray; $('xray').setAttribute('aria-pressed', xray); const ids = ['corpo', 'tampa']; for (const id of ids) for (const m of partMats[id]) { m.transparent = xray; m.opacity = xray ? .16 : 1; m.depthWrite = !xray; m.needsUpdate = true; } wake(); });
+document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => { const v = VIEWS[b.dataset.view]; frameView(v[0], v[1]); wake(); }));
+
+// rótulos das peças na bancada
+const tags = $('tags');
+function renderTags() {
+  let html = ''; const r = view.getBoundingClientRect();
+  for (const s of SPEC) {
+    if (s.state !== 'out' || s.screw && s.id !== 'parafuso1') continue;
+    const p = s.trayP.clone(); p.y = TABLE_Y + 1; p.z += s.screw ? 22 : 0; p.project(cam);
+    if (p.z > 1) continue;
+    const x = (p.x * .5 + .5) * r.width, y = (-p.y * .5 + .5) * r.height;
+    html += `<span class="tag${s.id === selected ? ' on' : ''}" style="transform:translate(${x.toFixed(0)}px,${y.toFixed(0)}px)">${s.screw ? '4 parafusos' : s.name.split(' ')[0] === 'Grupo' ? 'Grupo frontal' : s.name.replace(' de imagem', '').replace(' e grupo central', '').replace(' traseira e LCD', ' traseira')}</span>`;
+  }
+  if (tags.innerHTML !== html) tags.innerHTML = html;
+}
+
+// =====================================================================
+// laço
+let last = 0, awake = 0, raf = 0;
+function wake() { awake = performance.now() + 900; if (!raf) raf = requestAnimationFrame(loop); }
+controls.addEventListener('change', wake);
+function resize() {
+  const r = view.parentElement.getBoundingClientRect(); renderer.setSize(r.width, r.height, false);
+  cam.aspect = r.width / Math.max(1, r.height); cam.updateProjectionMatrix();
+  RES.set(r.width * DPR, r.height * DPR); for (const m of allEdgeMats) m.resolution.copy(RES);
+  wake();
+}
+new ResizeObserver(resize).observe(view.parentElement);
+function loop(now) {
+  const dt = (window.__TS || 1) * (last ? Math.min((now - last) / 1000, 1 / 30) : 1 / 60); last = now;
+  let busy = step(dt) | shutterStep(dt);
+  if (flyTo) { flyK = Math.min(1, flyK + dt / 1.1); const k = ease(flyK); cam.position.lerpVectors(flyFrom.t, flyTo.t, k); controls.target.lerpVectors(flyFrom.g, flyTo.g, k); if (flyK >= 1) flyTo = null; busy = true; }
+  controls.update();
+  renderer.render(sMain, cam); renderTags();
+  if (busy || drag || now < awake) raf = requestAnimationFrame(loop); else { raf = 0; last = 0; }
+}
+resize(); setStop(0); setFocus(0); renderSteps(); renderCard(); wake();
+window.TEARDOWN = { remove, reinstall, BY, select, setFocus, setStop, fire, frameView, VIEWS, cam, controls };
+window.READY = true;
+</script>
