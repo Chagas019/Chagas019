@@ -267,12 +267,12 @@ def build():
     random.seed(7)
     # S1 — megafone no escuro, luz subindo com batimentos
     s = Scene("S1", 180, THEMES["S1"]); s.dolly(180, -11, -9.2, 6)
-    mg = s.megaphone(); mg.location = (-0.7, 0, 0.4); mg.scale = (0.8,) * 3; mg.rotation_euler = (0, math.radians(-14), math.radians(-48)); s.float_bob(mg, 180, 0.1, 30)
+    mg = s.megaphone(); mg.location = (0.35, 0, 0.5); mg.scale = (0.75,) * 3; mg.rotation_euler = (0, math.radians(-14), math.radians(-48)); s.float_bob(mg, 180, 0.1, 30)
     rim = s.sc.objects["Rim"]; rim.data.energy = 50; rim.data.keyframe_insert("energy", frame=1)
     for f, e in ((14, 900), (20, 300), (45, 1100), (52, 400), (100, 1400), (150, 1600)):
         rim.data.energy = e; rim.data.keyframe_insert("energy", frame=f)
     s.explode([s.obj(k, c, sz) for k, c, sz in [("sphere", "#FFC300", 0.5), ("star", "#FFC300", 0.7), ("torus", "#3A63F0", 0.6), ("confetti", "#FFFFFF", 1), ("confetti", "#FFC300", 1), ("sphere", "#3A63F0", 0.4), ("star", "#FFFFFF", 0.5), ("capsule", "#E63946", 0.6)]],
-              (-0.6, -0.5, 0.6), 98, spread=(1.8, 1.0, 2.8), seed=11, end=180)
+              (-0.3, -0.6, 0.7), 98, spread=(1.6, 1.0, 2.6), seed=11, end=180)
     # S2 — logo em disco + explosão azul, "10"
     s = Scene("S2", 240, THEMES["S2"]); s.dolly(240, -11.5, -10, 5)
     lg = s.logo_disc(2.6); lg.location = (0, 0, 0.9)
