@@ -16,4 +16,5 @@
 | 2026-11-17 | Middleware do Next em runtime Node (Next 15.5) | Usa `getUser()` com a mesma pilha do servidor; funciona atrás de proxy |
 | 2026-11-17 | Login por link no e-mail, sem senha | Público pouco técnico; nada de senha para esquecer ou vazar |
 | 2026-11-17 | Convite por link copiado, sem envio de e-mail | Não simular integração; envio real fica para quando houver SMTP próprio |
+| 2026-11-18 | Publicação no Floot (projeto "Paróquia360") como interface React, falando com o mesmo Supabase via HTTP (Auth + PostgREST) | Pedido do cliente; o Floot não aceita o cliente oficial do Supabase, então `helpers/sb.tsx` usa fetch. Banco, RLS e login continuam só no Supabase |
 | 2026-11-17 | Visual inspirado na referência enviada (moldura, notch, vidro), paleta navy/dourado | Pedido do cliente |
