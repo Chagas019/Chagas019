@@ -93,6 +93,10 @@ for x, n in [(1.95, 74), (2.05, 77), (2.15, 81), (2.8, 86),
              (23.7, 77), (24.0, 81), (24.3, 84), (24.6, 89), (25.0, 93)]:
     bell(x, n, .10, pan=rng.uniform(-.6, .6))
 
+# ---- cintilações (brilhos em estrela) ----
+for x in [2.65, 3.6, 7.95, 10.4, 12.5, 17.7, 18.6, 21.85, 24.45, 25.1]:
+    for j, n in enumerate([96, 100, 103]): bell(x + j * .04, n, .045, pan=rng.uniform(-.8, .8))
+
 # ---- reverb (convolução com cauda exponencial estéreo) ----
 def reverb(x, seed):
     r = np.random.default_rng(seed); n = int(SR * 2.4); d = np.arange(n) / SR

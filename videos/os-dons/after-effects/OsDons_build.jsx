@@ -485,6 +485,33 @@
     vm.property("ADBE Mask Shape").setValue(ve); vm.inverted = true; vm.property("ADBE Mask Feather").setValue([600, 600]); vig.property("ADBE Transform Group").property("ADBE Opacity").setValue(70);
     var fade = solid(M, BLACK, "FX  fade in/out"); keys(fade.property("ADBE Transform Group").property("ADBE Opacity"), [0, .35, 25.45, 26], [100, 0, 0, 100], 33, 33);
 
+    // ---- acabamento premium: névoa, lens flares, moldura, versículo ----
+    var fog = solid(M, BLACK, "ATM  nevoa volumetrica"); var fn = fx(fog, "ADBE Fractal Noise");
+    if (fn) { setp(fn, "ADBE Fractal Noise-0003", 160);
+        try { fn.property("ADBE Fractal Noise-0023").expression = "time*40"; } catch (e) {} }
+    var tf = fx(fog, "ADBE Tint"); setp(tf, "ADBE Tint-0001", DRED); setp(tf, "ADBE Tint-0002", RED);
+    fog.blendingMode = BlendingMode.SCREEN; fog.property("ADBE Transform Group").property("ADBE Opacity").setValue(22);
+    var FL = [[0.5, 1060], [2.35, 1290], [7.62, 1010], [13.55, 960], [16.9, 1330], [21.45, 1180], [24.0, 1150]];
+    for (i = 0; i < FL.length; i++) {
+        var lf = solid(M, BLACK, "FX  lens flare " + (i + 1)); var lfx = fx(lf, "ADBE Lens Flare");
+        setp(lfx, "ADBE Lens Flare-0001", [W / 2, FL[i][1]]); setp(lfx, "ADBE Lens Flare-0003", 3);
+        if (lfx) keys(lfx.property("ADBE Lens Flare-0002"), [FL[i][0], FL[i][0] + .05, FL[i][0] + 1.4], [0, 140, 0], 33, 80);
+        var sq = fx(lf, "ADBE Geometry2"); // estica na horizontal = flare anamórfico
+        try { sq.property("ADBE Geometry2-0011").setValue(false); sq.property("ADBE Geometry2-0003").setValue(100); sq.property("ADBE Geometry2-0004").setValue(8); } catch (e) {}
+        lf.blendingMode = BlendingMode.ADD; lf.inPoint = FL[i][0] - .05; lf.outPoint = FL[i][0] + 1.5;
+    }
+    var hud = M.layers.addShape(); hud.name = "HUD  moldura"; var hr = hud.property("ADBE Root Vectors Group");
+    var CN = [[56, 56, 1, 1], [W - 56, 56, -1, 1], [56, H - 56, 1, -1], [W - 56, H - 56, -1, -1]];
+    for (i = 0; i < 4; i++) { var hp = hr.addProperty("ADBE Vector Shape - Group"), hs = new Shape(); var c0 = CN[i];
+        hs.vertices = [[c0[0], c0[1] + c0[3] * 46], [c0[0], c0[1]], [c0[0] + c0[2] * 46, c0[1]]]; hs.closed = false; hp.property("ADBE Vector Shape").setValue(hs); }
+    var hst = hr.addProperty("ADBE Vector Graphic - Stroke"); hst.property("ADBE Vector Stroke Color").setValue(WHITE); hst.property("ADBE Vector Stroke Width").setValue(2);
+    hud.property("ADBE Transform Group").property("ADBE Anchor Point").setValue([0, 0]); hud.property("ADBE Transform Group").property("ADBE Position").setValue([0, 0]);
+    opacityWindow(hud, 1.2, 25.7, 1, .5); hud.property("ADBE Transform Group").property("ADBE Opacity").expression = "value*.55";
+    var hT = text(M, "OS DONS", FONT_DISPLAY, 26, WHITE, 160, 80, 300); opacityWindow(hT, 1.2, 25.7, 1, .5);
+    var hR = text(M, "— 1 Pedro 4,10 —", FONT_ITALIC, 24, GOLD, W / 2, H - 62, 60); opacityWindow(hR, 1.2, 25.7, 1, .5);
+    var vs = text(M, "“Cada um exerça o dom que recebeu\rpara servir aos outros.”", FONT_ITALIC, 38, hex("#FFE9EB"), W / 2, 1645, 0);
+    vs.name = "TXT  versiculo 1Pd 4,10"; opacityWindow(vs, 21.9, 23.6, .6, .45);
+
     // ---- trilha + marcadores de sincronização ----
     var audioFile = new File(BASE.fsName + "/audio/trilha_os_dons.wav");
     if (audioFile.exists) {
