@@ -1,0 +1,31 @@
+<title>Holograma da Câmera</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* só o holograma: tela cheia, dois botões discretos, dica que some no primeiro toque */
+:root { --bg: #020409; --cyan: #5fe0ff; --line: rgba(95, 224, 255, .35); color-scheme: dark; }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--cyan); overflow: hidden; font: 11px/1.4 ui-monospace, Menlo, monospace; -webkit-font-smoothing: antialiased; }
+.app { position: relative; height: 100%; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+#view { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; outline: none; }
+.vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 85% 75% at 50% 45%, transparent 50%, rgba(0,0,0,.75) 100%); }
+.tools { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px)); display: flex; gap: 10px; opacity: 0; transition: opacity 900ms ease; }
+body.ui-on .tools { opacity: 1; }
+.tools button { width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--line); background: rgba(4, 20, 32, .55); color: var(--cyan); backdrop-filter: blur(8px); cursor: pointer; display: grid; place-items: center; box-shadow: 0 0 18px -6px var(--cyan), inset 0 0 12px -6px var(--cyan); transition: transform 90ms, background 150ms; }
+.tools button:hover, .tools button:focus-visible { background: rgba(20, 60, 90, .6); outline: none; }
+.tools button:active { transform: scale(.92); }
+.tools svg { width: 20px; height: 20px; }
+.hint { position: absolute; left: 50%; bottom: max(26px, env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); letter-spacing: .22em; color: rgba(95, 224, 255, .55); white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 900ms ease; text-shadow: 0 0 10px rgba(95,224,255,.5); }
+body.ui-on .hint { opacity: 1; }
+body.touched .hint { opacity: 0; transition-delay: 1.5s; }
+@media (max-width: 640px) { .hint { bottom: 86px; font-size: 9.5px; letter-spacing: .14em; } }
+@media (prefers-reduced-motion: reduce) { .tools, .hint { transition: none; } }
+</style>
+<div class="app">
+  <canvas id="view" tabindex="0" aria-label="Holograma de uma câmera. Arraste para girar, pegue uma peça para puxá-la, pince para zoom, dois toques para abrir ou fechar."></canvas>
+  <div class="vig"></div>
+  <p class="hint">ARRASTE PARA GIRAR · PEGUE UMA PEÇA · PINCE · DOIS TOQUES ABREM</p>
+  <div class="tools">
+    <button type="button" id="bOpen" aria-label="Abrir ou fechar a câmera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><circle cx="12" cy="12" r="2.4"/></svg></button>
+    <button type="button" id="bReset" aria-label="Montar e centralizar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/></svg></button>
+  </div>
+</div>

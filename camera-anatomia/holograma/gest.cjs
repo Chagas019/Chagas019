@@ -1,0 +1,20 @@
+const { chromium } = require('playwright'); const http = require('http'), fs = require('fs'), path = require('path');
+const ROOT = path.join(__dirname, '..');
+const srv = http.createServer((q, r) => { const p = path.join(ROOT, decodeURIComponent(q.url.split('?')[0])); fs.readFile(p, (e, b) => { if (e) { r.writeHead(404); r.end(); return; } r.writeHead(200, { 'content-type': p.endsWith('.js') ? 'text/javascript' : 'text/html' }); r.end(b); }); }).listen(0);
+(async () => {
+  const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+  const p = await b.newPage({ viewport: { width: 1200, height: 800 } }); await p.addInitScript(() => { window.__TS = 6; window.__DBL = 1200; });
+  const errs = []; p.on('pageerror', e => errs.push(e.stack));
+  await p.goto(`http://localhost:${srv.address().port}/holograma/index.html`); await p.waitForFunction('window.READY'); await p.waitForTimeout(2500);
+  const yaw0 = await p.evaluate('HOLO.rot.yaw');
+  await p.mouse.move(150, 400); await p.mouse.down(); for (let i = 1; i <= 10; i++) await p.mouse.move(150 + i * 20, 400); await p.mouse.up();
+  await p.waitForTimeout(300); console.log('rotate: yaw', yaw0.toFixed(2), '->', (await p.evaluate('HOLO.rot.yaw')).toFixed(2));
+  const [x, y] = await p.evaluate("HOLO.screenOf('bateria')"); console.log('battery at', Math.round(x), Math.round(y));
+  await p.mouse.move(x, y); await p.mouse.down(); for (let i = 1; i <= 10; i++) await p.mouse.move(x + i * 14, y - i * 8); await p.mouse.up();
+  await p.waitForTimeout(400); console.log('grab battery: user len', await p.evaluate('HOLO.BY.bateria.user.length().toFixed(1)'));
+  await p.screenshot({ path: __dirname + '/g1.png' });
+  const [x2, y2] = await p.evaluate("HOLO.screenOf('bateria')"); await p.mouse.click(x2, y2); await p.mouse.click(x2, y2); await p.waitForTimeout(1500); console.log('taps', await p.evaluate('JSON.stringify(window.__taps)'));
+  console.log('double-tap home: user len', await p.evaluate('HOLO.BY.bateria.user.length().toFixed(1)'));
+  await p.mouse.move(600, 400); await p.mouse.wheel(0, -400); await p.waitForTimeout(400); console.log('zoom scale', await p.evaluate('HOLO.view3.scale.toFixed(2)'));
+  console.log(errs.join('\n') || 'no errors'); await b.close(); srv.close();
+})();
