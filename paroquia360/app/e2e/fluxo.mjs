@@ -43,7 +43,7 @@ await p.screenshot({ path: `${OUT}/app-entrar.png` });
 // 1b. Criar conta e entrar pela tela (e-mail e senha)
 {
   const c = await b.newContext(); const u = await c.newPage(); u.on('pageerror', e => errors.push(e.message));
-  const email = 'cadastro.teste@exemplo.invalid', senha = 'senha-de-teste-123';
+  const email = `cadastro${Date.now().toString(36)}.teste@exemplo.invalid`, senha = 'senha-de-teste-123';
   await u.goto(BASE + '/entrar?modo=criar');
   await u.fill('input[name=name]', 'Cadastro Teste'); await u.fill('input[name=email]', email);
   await u.fill('input[name=password]', senha); await u.fill('input[name=password2]', senha);
@@ -55,11 +55,13 @@ await p.screenshot({ path: `${OUT}/app-entrar.png` });
   await u.fill('input[name=password]', 'outra-senha-99'); await u.fill('input[name=password2]', 'outra-senha-99');
   await u.check('input[name=consent]');
   await Promise.all([u.waitForURL('**erro=*'), u.click('button:text("Criar conta")')]);
+  await u.waitForSelector('.notice');
   must(await u.locator('text=Este e-mail já tem conta').count() === 1, 'não cria duas contas com o mesmo e-mail');
   const c2 = await b.newContext(); const v = await c2.newPage();
   await v.goto(BASE + '/entrar');
   await v.fill('input[name=email]', email); await v.fill('input[name=password]', 'senha-errada-000');
   await Promise.all([v.waitForURL('**erro=*'), v.click('button:text("Entrar")')]);
+  await v.waitForSelector('.notice');
   must(await v.locator('text=E-mail ou senha incorretos').count() === 1, 'senha errada é recusada');
   await v.fill('input[name=password]', senha);
   await Promise.all([v.waitForURL('**/comecar'), v.click('button:text("Entrar")')]);
