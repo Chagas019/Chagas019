@@ -26,3 +26,11 @@ Pill, Notch de filtros, Rail (grupos), CardWhite (cantos invertidos), CardGlass,
 - Ícones de traço 1.7px, mesmo set.
 - Alvos de toque ≥ 44px; foco visível dourado; `prefers-reduced-motion` respeitado.
 - Mobile: trilho vira barra inferior; cards empilham; notch some (filtros vão para uma folha).
+
+## Tema "Vidro e céu" (18/11/2026, em produção)
+Escolhido pelo responsável a partir de referências do Inspora (direção 3 + "vitral" da direção 2). Implementado em `app/src/app/theme.css`, carregado depois de `globals.css` e redefinindo os tokens:
+- Fundo azul-marinho com 4 manchas de cor desfocadas e animadas (`.bgfx` no layout raiz); cartões, barra e pílulas em vidro fosco (`backdrop-filter`).
+- Faixa de título com reflexo de luz periódico; botão principal branco; dourado nos ícones e nas ações de ajuda.
+- Painel: aviso em pílula com a próxima celebração e quantas confirmações faltam (`.island`).
+- Escalas: "vitral" (cada quadrado é uma vaga; cor = pastoral; cheio = confirmado, translúcido = aguardando, tracejado = aberta).
+- `prefers-reduced-motion` desliga todas as animações. Prévia estática: `prototipo/vidro.html`.
