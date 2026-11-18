@@ -4,3 +4,7 @@ render/fila_log.txt
 blender/__pycache__/
 after-effects/*.aep
 render_ae/
+render/*_log.txt
+render/*.done
+render/cena3_obj_v2_old/
+blender/projeto/*.blend1
