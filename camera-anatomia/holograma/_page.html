@@ -17,7 +17,7 @@ body.ui-on .tools { opacity: 1; }
 .hint { position: absolute; left: 50%; bottom: max(26px, env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); letter-spacing: .22em; color: rgba(95, 224, 255, .55); white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 900ms ease; text-shadow: 0 0 10px rgba(95,224,255,.5); }
 body.ui-on .hint { opacity: 1; }
 body.touched .hint { opacity: 0; transition-delay: 1.5s; }
-@media (max-width: 640px) { .hint { bottom: 86px; font-size: 9.5px; letter-spacing: .14em; } }
+@media (max-width: 640px) { .hint { bottom: 86px; font-size: 9px; letter-spacing: .08em; white-space: normal; width: 80%; text-align: center; line-height: 1.7; } }
 @media (prefers-reduced-motion: reduce) { .tools, .hint { transition: none; } }
 </style>
 <div class="app">
