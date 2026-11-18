@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+<fcpxml version="1.9">
+  <resources>
+    <format id="r1" name="FFVideoFormat1080x1920p30" frameDuration="1/30s" width="1080" height="1920" colorSpace="1-1-1 (Rec. 709)"/>
+    <asset id="r2" name="CENA_01_ABERTURA" start="0s" duration="180/30s" hasVideo="1" hasAudio="0" format="r1" videoSources="1"><media-rep kind="original-media" src="file:///home/user/Chagas019/PAFIES_2027/06_DAVINCI/media_v1/CENA_01_ABERTURA.mp4"/></asset><asset id="r3" name="CENA_02_REVELACAO" start="0s" duration="240/30s" hasVideo="1" hasAudio="0" format="r1" videoSources="1"><media-rep kind="original-media" src="file:///home/user/Chagas019/PAFIES_2027/06_DAVINCI/media_v1/CENA_02_REVELACAO.mp4"/></asset><asset id="r4" name="CENA_03_SOLIDARIEDADE" start="0s" duration="300/30s" hasVideo="1" hasAudio="0" format="r1" videoSources="1"><media-rep kind="original-media" src="file:///home/user/Chagas019/PAFIES_2027/06_DAVINCI/media_v1/CENA_03_SOLIDARIEDADE.mp4"/></asset><asset id="r5" name="CENA_04_EXPECTATIVA" start="0s" duration="240/30s" hasVideo="1" hasAudio="0" format="r1" videoSources="1"><media-rep kind="original-media" src="file:///home/user/Chagas019/PAFIES_2027/06_DAVINCI/media_v1/CENA_04_EXPECTATIVA.mp4"/></asset><asset id="r6" name="CENA_05_FINAL" start="0s" duration="240/30s" hasVideo="1" hasAudio="0" format="r1" videoSources="1"><media-rep kind="original-media" src="file:///home/user/Chagas019/PAFIES_2027/06_DAVINCI/media_v1/CENA_05_FINAL.mp4"/></asset><asset id="r10" name="TRILHA" start="0s" duration="1200/30s" hasAudio="1" audioSources="1" audioChannels="2" audioRate="48000"><media-rep kind="original-media" src="file:///home/user/Chagas019/PAFIES_2027/08_AUDIO/stems/PAFIES2027_music.wav"/></asset><asset id="r11" name="SFX" start="0s" duration="1200/30s" hasAudio="1" audioSources="1" audioChannels="2" audioRate="48000"><media-rep kind="original-media" src="file:///home/user/Chagas019/PAFIES_2027/08_AUDIO/stems/PAFIES2027_sfx.wav"/></asset>
+  </resources>
+  <library>
+    <event name="PAFIES 2027">
+      <project name="PAFIES2027_10a_EDICAO">
+        <sequence format="r1" duration="1200/30s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48k">
+          <spine>
+            <asset-clip ref="r2" offset="0/30s" name="CENA_01_ABERTURA" duration="180/30s" start="0s" format="r1" tcFormat="NDF"><marker start="0s" duration="1/30s" value="CENA_01_ABERTURA"/><asset-clip ref="r10" lane="-1" offset="0s" name="TRILHA" duration="1200/30s" start="0s" role="music"/><asset-clip ref="r11" lane="-2" offset="0s" name="SFX" duration="1200/30s" start="0s" role="effects"/></asset-clip><asset-clip ref="r3" offset="180/30s" name="CENA_02_REVELACAO" duration="240/30s" start="0s" format="r1" tcFormat="NDF"><marker start="0s" duration="1/30s" value="CENA_02_REVELACAO"/></asset-clip><asset-clip ref="r4" offset="420/30s" name="CENA_03_SOLIDARIEDADE" duration="300/30s" start="0s" format="r1" tcFormat="NDF"><marker start="0s" duration="1/30s" value="CENA_03_SOLIDARIEDADE"/></asset-clip><asset-clip ref="r5" offset="720/30s" name="CENA_04_EXPECTATIVA" duration="240/30s" start="0s" format="r1" tcFormat="NDF"><marker start="0s" duration="1/30s" value="CENA_04_EXPECTATIVA"/></asset-clip><asset-clip ref="r6" offset="960/30s" name="CENA_05_FINAL" duration="240/30s" start="0s" format="r1" tcFormat="NDF"><marker start="0s" duration="1/30s" value="CENA_05_FINAL"/></asset-clip>
+          </spine>
+        </sequence>
+      </project>
+    </event>
+  </library>
+</fcpxml>
