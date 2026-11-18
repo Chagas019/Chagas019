@@ -2,9 +2,9 @@
 // embutindo a fonte Anton (OFL) para que os textos renderizem corretamente.
 const { chromium } = require('/opt/node22/lib/node_modules/playwright');
 const fs = require('fs'), path = require('path');
-const ROOT = path.resolve(__dirname, '..');
-const FONT = path.resolve(ROOT, '../05_REMOTION/node_modules/@fontsource/anton/files/anton-latin-400-normal.woff2');
-const FONT_EXT = path.resolve(ROOT, '../05_REMOTION/node_modules/@fontsource/anton/files/anton-latin-ext-400-normal.woff2');
+const ROOT = process.argv[2] ? path.resolve(process.argv[2]) : path.resolve(__dirname, '..');
+const FONT = path.resolve(__dirname, '../../05_REMOTION/node_modules/@fontsource/anton/files/anton-latin-400-normal.woff2');
+const FONT_EXT = path.resolve(__dirname, '../../05_REMOTION/node_modules/@fontsource/anton/files/anton-latin-ext-400-normal.woff2');
 const b64 = f => fs.readFileSync(f).toString('base64');
 (async () => {
   const browser = await chromium.launch();

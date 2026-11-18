@@ -1,15 +1,18 @@
 # PAFIES 2027 — 10ª Edição · Campanha audiovisual
 
+**v2 (atual):** reconstrução visual em animação editorial 2D, inspirada nas referências (ilustração chapada com sombra recortada, fitas de velocidade, spray, match-cuts). Ilustrações originais (megafone, mãos, caixa de doação, alimentos, galera, corredor, estádio), câmera 2.5D por camadas, morph círculo→coração, texto palavra por palavra com máscara e wipes no tempo da trilha. Código: `05_REMOTION/src/v2`. Roteiro, timing e trilha são os mesmos da v1.
+
 **A CONTAGEM REGRESSIVA COMEÇOU!** · vertical 1080×1920 · 30 fps · 40 s · H.264
 
 ## Entregáveis
 
 | # | Entregável | Onde |
 |---|---|---|
-| 1 | **MP4 final 1080×1920** | `10_FINAL/PAFIES2027_10a_EDICAO_1080x1920.mp4` |
-| 1b | Versão alternativa: teaser 16 s | `10_FINAL/PAFIES2027_TEASER_16s_1080x1920.mp4` |
-| 2 | Projeto After Effects (construtor) | `03_AFTER_EFFECTS/PAFIES2027_build_project.jsx` → gera `PAFIES2027_MASTER.aep` |
-| 3 | Vetores editáveis (SVG + PDF compatível com Illustrator) e PNG | `02_ILLUSTRATOR/svg`, `/pdf`, `/png` |
+| 1 | **MP4 final v2 (direção editorial 2D) 1080×1920** | `10_FINAL/PAFIES2027_10a_EDICAO_1080x1920.mp4` |
+| 1b | Teaser 16 s (v2) | `10_FINAL/PAFIES2027_TEASER_16s_1080x1920.mp4` |
+| 1c | Versão anterior (v1, 3D) | `10_FINAL/PAFIES2027_v1_3D_1080x1920.mp4` |
+| 2 | Projeto After Effects v2 (construtor) | `03_AFTER_EFFECTS/PAFIES2027_v2_editorial_build.jsx` → gera `PAFIES2027_v2_MASTER.aep` (o da v1 também está na pasta) |
+| 3 | Ilustrações vetoriais v2 (SVG + PDF para Illustrator) e vetores v1 | `02_ILLUSTRATOR/v2_editorial`, `02_ILLUSTRATOR/svg`, `/pdf` |
 | 4 | Arquivos do Blender (master + 1 por elemento) e renders RGBA | `04_BLENDER/blend`, `04_BLENDER/renders` |
 | 5 | Código-fonte Remotion | `05_REMOTION/src` |
 | 6 | Timeline do DaVinci Resolve (FCPXML) + LUT + clipes por cena | `06_DAVINCI` |

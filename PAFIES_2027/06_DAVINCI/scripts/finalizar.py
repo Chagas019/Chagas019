@@ -119,7 +119,7 @@ if __name__ == "__main__":
     os.makedirs(os.path.dirname(final), exist_ok=True)
     run(["ffmpeg", "-y", "-loglevel", "error", "-i", master, "-i", mix,
          "-filter_complex", f"[0:v]lut3d=file='{lut}':interp=tetrahedral,format=yuv420p[v];[1:a]loudnorm=I=-14:TP=-1.0:LRA=11[a]",
-         "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-profile:v", "high", "-level", "4.2", "-preset", "slow", "-crf", "16",
+         "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-profile:v", "high", "-level", "4.2", "-preset", "slow", "-crf", "17", "-maxrate", "14M", "-bufsize", "28M",
          "-r", "30", "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709",
          "-c:a", "aac", "-b:a", "320k", "-ar", "48000", "-movflags", "+faststart", "-t", "40", final])
     print("FINAL:", final)
