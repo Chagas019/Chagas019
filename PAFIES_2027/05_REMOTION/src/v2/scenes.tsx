@@ -167,7 +167,7 @@ export const V2S3: React.FC = () => {
 };
 
 /* ================= CENA 04 — EXPECTATIVA ================= */
-const Countdown: React.FC = () => {
+export const Countdown: React.FC = () => {
   const f = useCurrentFrame(); // local 0–60
   const idx = f < 15 ? 0 : f < 30 ? 1 : 2;
   const bgs = [P.cream, P.royal, P.red], nums = ['3', '2', '1'], circ = [P.navy, P.yellow, P.navy], numC = [P.yellow, P.navy, P.yellow];
