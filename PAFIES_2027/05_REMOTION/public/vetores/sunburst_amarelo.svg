@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1600" width="1600" height="1600">
+<title>PAFIES 2027 — sunburst_amarelo</title>
+
+<g id="SUNBURST_RAIOS" >
+<polygon points="800,800 2400.0,800.0 2392.7,952.4" fill="#FFD000"/>
+<polygon points="800,800 2359.9,1156.0 2318.9,1303.0" fill="#FFD000"/>
+<polygon points="800,800 2241.6,1494.2 2168.9,1628.3" fill="#FFD000"/>
+<polygon points="800,800 2050.9,1797.6 1950.3,1912.2" fill="#FFD000"/>
+<polygon points="800,800 1797.6,2050.9 1673.9,2140.2" fill="#FFD000"/>
+<polygon points="800,800 1494.2,2241.6 1353.8,2301.1" fill="#FFD000"/>
+<polygon points="800,800 1156.0,2359.9 1005.9,2386.7" fill="#FFD000"/>
+<polygon points="800,800 800.0,2400.0 647.6,2392.7" fill="#FFD000"/>
+<polygon points="800,800 444.0,2359.9 297.0,2318.9" fill="#FFD000"/>
+<polygon points="800,800 105.8,2241.6 -28.3,2168.9" fill="#FFD000"/>
+<polygon points="800,800 -197.6,2050.9 -312.2,1950.3" fill="#FFD000"/>
+<polygon points="800,800 -450.9,1797.6 -540.2,1673.9" fill="#FFD000"/>
+<polygon points="800,800 -641.6,1494.2 -701.1,1353.8" fill="#FFD000"/>
+<polygon points="800,800 -759.9,1156.0 -786.7,1005.9" fill="#FFD000"/>
+<polygon points="800,800 -800.0,800.0 -792.7,647.6" fill="#FFD000"/>
+<polygon points="800,800 -759.9,444.0 -718.9,297.0" fill="#FFD000"/>
+<polygon points="800,800 -641.6,105.8 -568.9,-28.3" fill="#FFD000"/>
+<polygon points="800,800 -450.9,-197.6 -350.3,-312.2" fill="#FFD000"/>
+<polygon points="800,800 -197.6,-450.9 -73.9,-540.2" fill="#FFD000"/>
+<polygon points="800,800 105.8,-641.6 246.2,-701.1" fill="#FFD000"/>
+<polygon points="800,800 444.0,-759.9 594.1,-786.7" fill="#FFD000"/>
+<polygon points="800,800 800.0,-800.0 952.4,-792.7" fill="#FFD000"/>
+<polygon points="800,800 1156.0,-759.9 1303.0,-718.9" fill="#FFD000"/>
+<polygon points="800,800 1494.2,-641.6 1628.3,-568.9" fill="#FFD000"/>
+<polygon points="800,800 1797.6,-450.9 1912.2,-350.3" fill="#FFD000"/>
+<polygon points="800,800 2050.9,-197.6 2140.2,-73.9" fill="#FFD000"/>
+<polygon points="800,800 2241.6,105.8 2301.1,246.2" fill="#FFD000"/>
+<polygon points="800,800 2359.9,444.0 2386.7,594.1" fill="#FFD000"/>
+</g>
+</svg>

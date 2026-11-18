@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 260" width="140" height="260">
+<title>PAFIES 2027 — raio_c</title>
+
+<g id="RAIO_C" >
+<polygon id="RAIO_C_SOMBRA" points="58,10 18,140 56,136 44,250 130,106 88,110 108,10" fill="#1E40C8"/>
+<polygon id="RAIO_C_CONTORNO" points="48,0 8,130 46,126 34,240 120,96 78,100 98,0" fill="#0A0A0F" stroke="#0A0A0F" stroke-width="14" stroke-linejoin="round"/>
+<polygon id="RAIO_C_PREENCHIMENTO" points="48,0 8,130 46,126 34,240 120,96 78,100 98,0" fill="#FFD000"/>
+<polyline id="RAIO_C_BRILHO" points="48,0 8,130 46,126" fill="none" stroke="#FFF6B0" stroke-width="5" stroke-linecap="round" transform="translate(6,8) scale(0.9)"/>
+</g>
+</svg>

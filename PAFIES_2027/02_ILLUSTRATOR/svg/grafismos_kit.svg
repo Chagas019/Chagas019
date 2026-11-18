@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 380" width="1000" height="380">
+<title>PAFIES 2027 — grafismos_kit</title>
+
+<g id="BRILHO_4PONTAS" >
+<polygon points="100.0,10.0 117.8,82.2 190.0,100.0 117.8,117.8 100.0,190.0 82.2,117.8 10.0,100.0 82.2,82.2" fill="#FFD000"/>
+</g>
+<g id="CRUZ_PLUS" >
+<path d="M280.8,40.0h38.4v40.8h40.8v38.4h-40.8v40.8h-38.4v-40.8h-40.8v-38.4h40.8z" fill="#F5F5F2"/>
+</g>
+<g id="ANEL_CONTAGEM" >
+<circle cx="500" cy="100" r="80" fill="none" stroke="#FFD000" stroke-width="18" stroke-dasharray="40 14"/>
+</g>
+<g id="SETA_DUPLA" >
+<path d="M640,40l60,60l-60,60M700,40l60,60l-60,60" fill="none" stroke="#FFD000" stroke-width="22" stroke-linejoin="miter"/>
+</g>
+<g id="CIRCULO_CHEIO" >
+<circle cx="900" cy="100" r="70" fill="#1E40C8" stroke="#0A0A0F" stroke-width="10"/>
+</g>
+<g id="ONDAS" >
+<path d="M40,300 q40,-40 80,0 t80,0 t80,0 t80,0" fill="none" stroke="#F5F5F2" stroke-width="14" stroke-linecap="round"/>
+</g>
+<g id="FITA_ZIGZAG" >
+<polyline points="420,300 470,250 520,300 570,250 620,300 670,250 720,300" fill="none" stroke="#FFD000" stroke-width="18" stroke-linejoin="miter"/>
+</g>
+<g id="MAOS_CORACAO" >
+<path d="M900,330 C820,270 830,210 880,215 C900,218 905,235 900,250 C895,235 900,218 920,215 C970,210 980,270 900,330Z" fill="#FFD000" stroke="#0A0A0F" stroke-width="8"/>
+</g>
+</svg>

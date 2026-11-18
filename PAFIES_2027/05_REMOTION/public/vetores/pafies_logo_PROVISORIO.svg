@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="800" height="400">
+<title>PAFIES 2027 — pafies_logo_PROVISORIO</title>
+
+<g id="LOGO_PROVISORIO_SUBSTITUIR" >
+<rect x="20" y="20" width="760" height="360" rx="48" fill="#1E40C8" stroke="#0A0A0F" stroke-width="16"/>
+<text x="400" y="250" text-anchor="middle" font-family="Anton, 'Archivo Black', Impact, sans-serif" font-size="210" fill="#F5F5F2" letter-spacing="6">PAFIES</text>
+<rect x="150" y="285" width="500" height="54" rx="10" fill="#FFD000"/>
+<text x="400" y="326" text-anchor="middle" font-family="Anton, 'Archivo Black', Impact, sans-serif" font-size="42" fill="#0A0A0F" letter-spacing="8">GINCANA SOLIDÁRIA</text>
+</g>
+</svg>
