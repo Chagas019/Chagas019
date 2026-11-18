@@ -1,0 +1,34 @@
+[
+ {"id":"s1","min":12,"lead":2.2,"lines":[
+  "Anatomia de uma câmera.",
+  "Por fora, um objeto compacto. Por dentro, um sistema preciso, que transforma luz em imagem."]},
+ {"id":"s2","min":19,"lead":1.0,"lines":[
+  "Vamos desmontá-la.",
+  "Na frente, a lente, com o anel de foco e o diafragma.",
+  "Atrás da baioneta, o obturador e o sensor de imagem.",
+  "No alto, o visor eletrônico.",
+  "Na traseira, a placa principal com o processador, os circuitos, o dissipador de calor e a bateria."]},
+ {"id":"s3","min":19,"lead":0.8,"lines":[
+  "Tudo começa com a luz.",
+  "Ela atravessa os elementos ópticos da lente, que a fazem convergir.",
+  "O diafragma controla quanto dela entra.",
+  "Em f/1.8, a abertura é grande. Em f/8, é bem menor, e chega cerca de vinte vezes menos luz.",
+  "Então o obturador se abre, e a luz atinge o sensor."]},
+ {"id":"s4","min":21,"lead":0.8,"lines":[
+  "O sensor é uma matriz de milhões de fotossítios: os pixels.",
+  "Cada um converte a luz que recebe em carga elétrica.",
+  "Um filtro de cores, no padrão Bayer, faz cada pixel registrar só vermelho, verde ou azul.",
+  "Um sensor full frame mede 36 por 24 milímetros. Um APS-C, cerca de 23,5 por 15,6: menos da metade da área."]},
+ {"id":"s5","min":20,"lead":0.8,"lines":[
+  "O obturador define por quanto tempo a luz atinge o sensor.",
+  "Duas cortinas percorrem a janela: a primeira abre, a segunda fecha.",
+  "Em velocidades altas, elas viajam juntas, formando uma fenda estreita.",
+  "Em um milésimo de segundo, o movimento congela. Em 1/250, ainda é nítido. Em 1/30, o que se move vira um rastro."]},
+ {"id":"s6","min":19,"lead":0.8,"lines":[
+  "Ao fim da exposição, a carga de cada pixel é lida e convertida em números.",
+  "O processador de imagem reconstrói as cores, reduz o ruído e ajusta tons e balanço de branco.",
+  "Por fim, tudo é gravado no cartão como um arquivo: JPEG, HEIF ou RAW."]},
+ {"id":"s7","min":13,"lead":0.6,"lines":[
+  "Peça por peça, a câmera volta a ser uma só.",
+  "Por trás de cada fotografia, existe uma engenharia extraordinária."]}
+]
