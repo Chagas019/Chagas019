@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Paróquia360 — Painel</title>
+<meta name="description" content="Protótipo navegável do painel do Paróquia360. Dados de exemplo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="p360.css">
+</head>
+<body>
+
+
+<div class="page">
+  <header class="brandbar">
+    <span><b>PARÓQUIA360</b> &nbsp;·&nbsp; Toda a vida paroquial em um só lugar</span>
+    <span class="chip-demo">Protótipo · dados de exemplo</span>
+  </header>
+
+  <main class="shell">
+    <section class="hero" aria-label="Visão geral">
+      <svg class="scene" viewBox="0 0 1260 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#7d9ad1"/><stop offset=".45" stop-color="#a9bfe6"/><stop offset=".72" stop-color="#e4c9c4"/><stop offset="1" stop-color="#c7cbe0"/>
+          </linearGradient>
+          <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfd6ea"/><stop offset="1" stop-color="#9eabd2"/></linearGradient>
+          <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f6fc"/><stop offset="1" stop-color="#b9c4e3"/></linearGradient>
+          <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd9a0"/><stop offset="1" stop-color="#e08a52"/></linearGradient>
+          <radialGradient id="halo" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffe2b0" stop-opacity=".55"/><stop offset="1" stop-color="#ffe2b0" stop-opacity="0"/></radialGradient>
+          <filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
+        </defs>
+        <rect width="1260" height="720" fill="url(#sky)"/>
+        <g filter="url(#soft)" opacity=".55">
+          <ellipse cx="300" cy="200" rx="260" ry="34" fill="#fff"/><ellipse cx="900" cy="150" rx="320" ry="40" fill="#5f79b6"/><ellipse cx="1050" cy="260" rx="200" ry="26" fill="#f3d7d2"/><ellipse cx="180" cy="330" rx="200" ry="22" fill="#f1cfd6"/>
+        </g>
+        <path d="M0 520 C200 490 340 505 520 498 S900 480 1260 505 V720 H0z" fill="#aab6d8" opacity=".7"/>
+        <ellipse cx="820" cy="470" rx="360" ry="170" fill="url(#halo)"/>
+        <!-- Igreja moderna -->
+        <g transform="translate(70 120) scale(.9)">
+          <path d="M520 470 V330 C520 280 600 250 700 250 H930 C1010 250 1060 290 1060 340 V470z" fill="url(#wall)"/>
+          <path d="M520 330 C520 280 600 250 700 250 H930 C1010 250 1060 290 1060 340" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+          <path d="M560 470 V350 C560 312 620 292 700 292 H920 C985 292 1020 318 1020 352 V470z" fill="url(#glow)" opacity=".92"/>
+          <g stroke="#7b5a54" stroke-opacity=".35" stroke-width="3">
+            <path d="M640 296 V470M720 292 V470M800 292 V470M880 292 V470M950 298 V470"/>
+          </g>
+          <path d="M760 470 V360 a40 40 0 0 1 80 0 V470z" fill="#fff3dc" opacity=".9"/>
+          <rect x="1090" y="170" width="54" height="300" rx="27" fill="url(#wall)"/>
+          <rect x="1103" y="210" width="28" height="70" rx="14" fill="url(#glow)"/>
+          <path d="M1117 112 V160 M1101 128 H1133" stroke="#f6e6c3" stroke-width="6" stroke-linecap="round"/>
+          <path d="M480 470 H1180" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
+        </g>
+        <path d="M0 540 C260 528 520 548 760 536 S1100 528 1260 548 V720 H0z" fill="url(#ground)"/>
+        <g fill="#8090bf" opacity=".55"><ellipse cx="610" cy="580" rx="60" ry="10"/><ellipse cx="1000" cy="600" rx="80" ry="12"/></g>
+      </svg>
+
+      <div class="top">
+        <button class="pill" id="parish" aria-label="Trocar de paróquia"><svg class="i arrow"><use href="#arrowl"/></svg><span>Paróquia São José</span></button>
+        <form class="notch" aria-label="Filtros do painel" onsubmit="return false">
+          <div class="filter">
+            <label for="f-past"><svg class="i"><use href="#layers"/></svg>Pastoral</label>
+            <select id="f-past"><option value="all">Todas</option><option>Liturgia</option><option>PASCOM</option><option>Música</option><option>Catequese</option></select>
+          </div>
+          <div class="filter">
+            <label for="f-tipo"><svg class="i"><use href="#cal"/></svg>Tipo</label>
+            <select id="f-tipo"><option value="all">Tudo</option><option>Missa</option><option>Reunião</option><option>Formação</option><option>Festa</option></select>
+          </div>
+          <div class="filter">
+            <label for="f-per"><svg class="i"><use href="#clock"/></svg>Período</label>
+            <select id="f-per"><option value="7">Esta semana</option><option value="30">Este mês</option></select>
+          </div>
+        </form>
+        <a class="pill rent" href="escalas.html">Escalas <svg class="i arrow"><use href="#arrow"/></svg></a>
+      </div>
+
+      <nav class="rail" data-active="painel" aria-label="Navegação principal"></nav>
+
+      <h1 class="headline">Toda a vida<br>paroquial</h1>
+      <p class="lede">Escalas, pastorais, agenda e voluntários organizados em um só lugar — para que a equipe gaste tempo servindo, não procurando planilha.</p>
+
+      <article class="card-white">
+        <h2>Voluntários ativos</h2>
+        <p>Pessoas servindo nas pastorais neste mês. Toque para ver quem está disponível no próximo fim de semana.</p>
+        <div class="big">
+          <div><strong id="volCount">–</strong><small id="volSub"></small></div>
+          <div class="faces" id="faces" aria-hidden="true"></div>
+          <a class="circle-btn" href="#ajuda" aria-label="Ver necessidades de voluntários"><svg class="i"><use href="#arrow"/></svg></a>
+        </div>
+      </article>
+
+      <div class="seal" aria-hidden="true">
+        <svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="30" r="21" stroke="#c9a45c" stroke-width="3" stroke-dasharray="104 30" stroke-linecap="round" transform="rotate(-60 30 30)"/><path d="M30 17v26M21 26h18" stroke="#fff" stroke-width="4.5" stroke-linecap="round"/></svg>
+      </div>
+
+      <article class="glass" aria-labelledby="nextMass">
+        <h3 id="nextMass">–</h3>
+        <div class="meta"><svg class="i"><use href="#clock"/></svg><span id="nmWhen"></span></div>
+        <div class="meta"><svg class="i"><use href="#pin"/></svg><span id="nmWhere"></span></div>
+        <a class="go" id="nmGo" href="escalas.html" aria-label="Abrir escala desta missa"><svg class="i"><use href="#arrow"/></svg></a>
+        <div class="roles" id="roles"></div>
+        <div class="actions">
+          <div class="act"><button id="remind" aria-label="Lembrar quem não confirmou"><svg class="i"><use href="#bell"/></svg></button><span>Lembrar</span></div>
+          <div class="act"><button id="swapBtn" aria-label="Ver pedidos de troca"><svg class="i"><use href="#swap"/></svg></button><span>Trocas</span></div>
+          <div class="act"><button id="shareBtn" aria-label="Compartilhar escala"><svg class="i"><use href="#share"/></svg></button><span>Enviar</span></div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <div class="section-head" id="resumo">
+    <div><h2>Esta semana</h2><p>Resumo do que precisa da sua atenção.</p></div>
+  </div>
+  <section class="grid">
+    <div class="tile c3 kpi"><h3><span class="ic"><svg class="i"><use href="#cal"/></svg></span>Missas</h3><strong id="kMass">–</strong><small>nos próximos 7 dias</small><span class="trend" id="kMassT"></span></div>
+    <div class="tile c3 kpi"><h3><span class="ic"><svg class="i"><use href="#swap"/></svg></span>Escalas</h3><strong id="kConf">–</strong><small>presenças confirmadas</small><span class="trend" id="kConfT"></span></div>
+    <div class="tile c3 kpi"><h3><span class="ic"><svg class="i"><use href="#layers"/></svg></span>Pastorais</h3><strong id="kPast">–</strong><small>com atividade no mês</small><span class="trend" id="kPastT"></span></div>
+    <div class="tile c3 kpi"><h3><span class="ic"><svg class="i"><use href="#alert"/></svg></span>Trocas</h3><strong id="kSwap">–</strong><small>pedidos de substituição</small><a class="trend" href="escalas.html?f=swap">resolver nas Escalas →</a></div>
+
+    <div class="tile c7" id="agenda">
+      <h3><span class="ic"><svg class="i"><use href="#cal"/></svg></span>Próximos compromissos <a class="more" href="agenda.html">Agenda completa →</a></h3>
+      <ul class="list" id="events"></ul>
+    </div>
+
+    <div class="tile c5 help" id="ajuda">
+      <h3><span class="ic"><svg class="i"><use href="#hand"/></svg></span>Preciso de ajuda</h3>
+      <p>Pastorais publicam uma necessidade e voluntários com o talento e a disponibilidade certos recebem o convite.</p>
+      <div id="needs"></div>
+    </div>
+
+    <div class="tile c5" id="comunicados">
+      <h3><span class="ic"><svg class="i"><use href="#msg"/></svg></span>Comunicados recentes</h3>
+      <ul class="list">
+        <li><div class="t"><b>Reunião geral de coordenadores</b><small>Para: coordenadores · há 2 dias</small></div><span class="tag">Interno</span></li>
+        <li><div class="t"><b>Inscrições abertas — Retiro de Advento</b><small>Para: todos · há 4 dias</small></div><span class="tag ok">Público</span></li>
+        <li><div class="t"><b>Novo horário da secretaria</b><small>Para: todos · há 1 semana</small></div><span class="tag ok">Público</span></li>
+      </ul>
+    </div>
+
+    <div class="tile c7" id="relatorios">
+      <h3><span class="ic"><svg class="i"><use href="#chart"/></svg></span>Escalas preenchidas · próximas 6 semanas</h3>
+      <div class="bars" id="bars" role="img"></div>
+    </div>
+  </section>
+</div>
+
+<script src="p360.js"></script>
+<script src="painel.js"></script>
+</body>
+</html>

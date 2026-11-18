@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Paróquia360 — Escalas</title>
+<meta name="description" content="Protótipo da tela de escalas do Paróquia360. Dados de exemplo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="p360.css">
+</head>
+<body>
+<div class="page">
+  <header class="brandbar">
+    <span><b>PARÓQUIA360</b> &nbsp;·&nbsp; Escalas</span>
+    <button class="chip-demo" id="resetDemo" title="Volta os dados de exemplo ao estado inicial">Protótipo · dados de exemplo · reiniciar</button>
+  </header>
+
+  <div class="app">
+    <nav class="rail side" data-active="escalas" aria-label="Navegação principal"></nav>
+    <main class="shell">
+      <section class="band" aria-labelledby="pageTitle">
+        <div class="top">
+          <a class="pill" href="index.html"><svg class="i arrow"><use href="#arrowl"/></svg><span>Painel</span></a>
+          <form class="notch" aria-label="Filtros das escalas" onsubmit="return false">
+            <div class="filter">
+              <label for="f-role"><svg class="i"><use href="#layers"/></svg>Função</label>
+              <select id="f-role"><option value="all">Todas</option></select>
+            </div>
+            <div class="filter">
+              <label for="f-st"><svg class="i"><use href="#alert"/></svg>Situação</label>
+              <select id="f-st"><option value="all">Todas</option><option value="gap">Com vagas</option><option value="pending">Sem resposta</option><option value="swap">Com troca</option></select>
+            </div>
+            <div class="filter">
+              <label for="f-per"><svg class="i"><use href="#clock"/></svg>Período</label>
+              <select id="f-per"><option value="14">2 semanas</option><option value="31">Este mês</option><option value="60">2 meses</option></select>
+            </div>
+          </form>
+          <a class="pill rent" href="agenda.html">Agenda <svg class="i arrow"><use href="#arrow"/></svg></a>
+        </div>
+        <h1 class="band-title" id="pageTitle">Escalas</h1>
+        <p class="band-sub">Monte, acompanhe e resolva trocas sem grupo de mensagem.</p>
+      </section>
+
+      <div class="workspace">
+        <div id="swapStrip"></div>
+        <div class="esc">
+          <div class="ev-list" id="evList" role="list" aria-label="Celebrações"></div>
+          <section class="tile" id="detail" aria-live="polite"></section>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<dialog class="sheet" id="picker" aria-labelledby="pkTitle">
+  <div class="sheet-in">
+    <div class="sheet-head">
+      <div><h2 id="pkTitle">Escalar</h2><p id="pkSub"></p></div>
+      <button class="icon-btn" data-close aria-label="Fechar"><svg class="i"><use href="#x"/></svg></button>
+    </div>
+    <div class="sheet-body" id="pkBody"></div>
+  </div>
+</dialog>
+
+<script src="p360.js"></script>
+<script src="escalas.js"></script>
+</body>
+</html>
