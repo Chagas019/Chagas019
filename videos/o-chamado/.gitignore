@@ -1,0 +1,6 @@
+render/cena*/
+render/log_*.txt
+render/fila_log.txt
+blender/__pycache__/
+after-effects/*.aep
+render_ae/

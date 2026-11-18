@@ -1,0 +1,209 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:'InterL';src:url('../fonts/InterDisplay-Light.otf')}
+@font-face{font-family:'InterM';src:url('../fonts/InterDisplay-Medium.otf')}
+@font-face{font-family:'Corm';src:url('../fonts/CormorantGaramond-MediumItalic.ttf');font-style:italic}
+@font-face{font-family:'CormS';src:url('../fonts/CormorantGaramond-SemiBold.ttf')}
+html,body{margin:0;background:#000}
+</style></head><body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// =====================================================================
+//  O CHAMADO — composição final (camadas 3D do Blender + luz + tipografia)
+// =====================================================================
+const W = 1080, H = 1920, FPS = 30, HANDLE = 12;
+const G = [0, 6.5, 12.5, 20.5, 26.5, 32];                       // início de cada cena
+const SCN = [195, 180, 240, 180, 165];                          // quadros por cena
+const RENDER = '../render/';
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const mk = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
+const buf = mk(W, H), bx = buf.getContext('2d');
+const sceneA = mk(W, H), sa = sceneA.getContext('2d');
+const sceneB = mk(W, H), sb = sceneB.getContext('2d');
+const small = mk(54, 96), smx = small.getContext('2d', { willReadFrequently: true });
+const bloom = mk(270, 480), blx = bloom.getContext('2d');
+const txt = mk(W, H), tx = txt.getContext('2d');
+
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, p) => a + (b - a) * p;
+const eOut = p => 1 - Math.pow(1 - p, 3);
+const eIO = p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+const hash = n => { const x = Math.sin(n * 127.1) * 43758.5453; return x - Math.floor(x); };
+
+const cache = new Map();
+function img(path) {
+  if (cache.has(path)) return cache.get(path);
+  const p = new Promise(res => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = path; });
+  cache.set(path, p); if (cache.size > 40) cache.delete(cache.keys().next().value);
+  return p;
+}
+const fname = (dir, f) => `${RENDER}${dir}/f_${String(f).padStart(4, '0')}.png`;
+
+// ---------- desenha uma cena (fundo + objetos) num canvas ----------
+async function drawScene(c, s, t) {
+  const lf = clamp(HANDLE + Math.round((t - G[s]) * FPS) + 1, 1, SCN[s] + 2 * HANDLE);
+  c.save(); c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high';
+  c.fillStyle = '#000'; c.fillRect(0, 0, W, H);
+  let light = null;
+  if (s === 3) { // chama: cena completa numa passada
+    const o = await img(fname('cena4_obj', lf)); if (o) c.drawImage(o, 0, 0, W, H);
+  } else {
+    // fundo renderizado a 15 qps -> interpola quadros pares
+    const odd = lf % 2 === 1;
+    const a = await img(fname(`cena${s + 1}_bg`, odd ? lf : lf - 1));
+    if (a) c.drawImage(a, 0, 0, W, H);
+    if (!odd) { const b = await img(fname(`cena${s + 1}_bg`, lf + 1)); if (b) { c.globalAlpha = .5; c.drawImage(b, 0, 0, W, H); c.globalAlpha = 1; } }
+    const o = await img(fname(`cena${s + 1}_obj`, lf));
+    if (o) {
+      // sombra de contato suave (ambient occlusion de tela)
+      c.save(); c.filter = 'blur(28px) brightness(0)'; c.globalAlpha = s === 4 ? .0 : .16; c.drawImage(o, 0, 26, W, H); c.restore();
+      c.drawImage(o, 0, 0, W, H);
+      if (s === 1) light = findLight(o);
+    }
+  }
+  c.restore();
+  return light;
+}
+// centro da luz da porta (pixels mais brilhantes da camada de objetos)
+function findLight(o) {
+  smx.clearRect(0, 0, 54, 96); smx.drawImage(o, 0, 0, 54, 96);
+  const d = smx.getImageData(0, 0, 54, 96).data; let sx = 0, sy = 0, n = 0;
+  for (let i = 0; i < d.length; i += 4) {
+    const l = (d[i] + d[i + 1] + d[i + 2]) / 3;
+    if (l > 236 && d[i + 3] > 200 && d[i + 2] < 252) { const p = i / 4; sx += p % 54; sy += Math.floor(p / 54); n++; }
+  }
+  return n > 8 ? { x: sx / n * 20, y: sy / n * 20, a: clamp(n / 160) } : null;
+}
+function godRays(c, L, t) {
+  if (!L) return;
+  c.save(); c.globalCompositeOperation = 'screen';
+  const g = c.createRadialGradient(L.x, L.y, 0, L.x, L.y, 900);
+  g.addColorStop(0, `rgba(255,244,222,${.45 * L.a})`); g.addColorStop(1, 'rgba(255,240,220,0)');
+  c.fillStyle = g; c.fillRect(0, 0, W, H);
+  for (let i = 0; i < 18; i++) {
+    const a = -Math.PI / 2 + (i / 17 - .5) * 2.6 + Math.sin(t * .4 + i) * .03 + Math.PI;
+    const w = .025 + hash(i) * .05, len = 1500 + hash(i + 3) * 700;
+    const gr = c.createLinearGradient(L.x, L.y, L.x + Math.cos(a) * len, L.y + Math.sin(a) * len);
+    gr.addColorStop(0, `rgba(255,240,215,${.16 * L.a * (.5 + .5 * Math.sin(t * .7 + i * 1.7))})`); gr.addColorStop(1, 'rgba(255,240,215,0)');
+    c.fillStyle = gr; c.beginPath(); c.moveTo(L.x, L.y);
+    c.lineTo(L.x + Math.cos(a - w) * len, L.y + Math.sin(a - w) * len); c.lineTo(L.x + Math.cos(a + w) * len, L.y + Math.sin(a + w) * len); c.fill();
+  }
+  c.restore();
+}
+
+// ---------- tipografia ----------
+const STYLE = [
+  { ink: '#2B2118', acc: '#8E0B1A', y: 300 },   // bege
+  { ink: '#1F1D1B', acc: '#8E0B1A', y: 300 },   // branco
+  { ink: '#FFFFFF', acc: '#F6DDA8', y: 290 },   // azul acinzentado
+  { ink: '#FFFFFF', acc: '#F2B544', y: 300 },   // vermelho escuro
+  { ink: '#FFFFFF', acc: '#E9C27A', y: 300 },   // escuro (cruz)
+];
+// [início, fim, cena, linha sans, linha serifada]
+const CAPS = [
+  [1.75, 6.15, 0, 'EXISTE UM PROPÓSITO', 'para a sua vida.'],
+  [8.25, 12.2, 1, 'DEUS CONTINUA', 'chamando.'],
+  [13.4, 15.45, 2, 'ELE TE DEU', 'dons.'],
+  [15.45, 17.45, 2, 'ELE TE DEU', 'talentos.'],
+  [17.45, 20.25, 2, 'ELE TE DEU', 'uma missão.'],
+  [21.35, 23.85, 3, 'O CHAMADO NÃO É SOBRE', 'ser perfeito.'],
+  [23.95, 26.3, 3, 'É SOBRE ESTAR', 'disponível.'],
+  [27.15, 31.9, 4, 'QUAL É A SUA', 'resposta?'],
+];
+function spaced(c, s, x, y, track) { // texto centralizado com tracking
+  const ws = [...s].map(ch => c.measureText(ch).width); const tot = ws.reduce((a, b) => a + b, 0) + track * (ws.length - 1);
+  let cx = x - tot / 2; [...s].forEach((ch, i) => { c.fillText(ch, cx, y); cx += ws[i] + track; }); return tot;
+}
+function caption(c, t, [a, b, s, l1, l2], prevSame, nextSame) {
+  if (t < a - .1 || t > b + .1) return;
+  const st = STYLE[s], y = st.y;
+  const inP = k => eOut(prog(t, a + k * .16, a + .9 + k * .16));
+  const outP = prog(t, b - .55, b);
+  c.save(); c.textBaseline = 'alphabetic';
+  // linha 1 — sans light com tracking (fica fixa se a próxima legenda repete)
+  const p1 = prevSame ? 1 : inP(0), o1 = nextSame ? 0 : outP;
+  if (p1 > 0 && o1 < 1) {
+    c.save(); c.globalAlpha = p1 * (1 - o1); c.filter = `blur(${(1 - p1) * 10 + o1 * 6}px)`;
+    c.fillStyle = st.ink; c.font = '52px InterL';
+    spaced(c, l1, W / 2, y + (1 - p1) * 26 - o1 * 14, lerp(24, 11, p1));
+    c.restore();
+  }
+  // linha 2 — serifada itálica grande (cor de destaque)
+  const p2 = inP(1);
+  if (p2 > 0 && outP < 1) {
+    c.save(); c.globalAlpha = p2 * (1 - outP); c.filter = `blur(${(1 - p2) * 14 + outP * 8}px)`;
+    c.fillStyle = st.acc; c.font = 'italic 128px Corm';
+    let size = 128; c.font = `italic ${size}px Corm`; while (c.measureText(l2).width > 900) { size -= 4; c.font = `italic ${size}px Corm`; }
+    c.textAlign = 'center'; c.fillText(l2, W / 2, y + 128 + (1 - p2) * 34 - outP * 16);
+    c.restore();
+  }
+  // filete
+  const p3 = prevSame ? 1 : inP(2);
+  const lw = 70 * p3 * (1 - (nextSame ? 0 : outP));
+  if (lw > 1) { c.fillStyle = st.acc; c.globalAlpha = .8; c.fillRect(W / 2 - lw / 2, y + 178, lw, 2); }
+  c.restore();
+}
+function secondary(c, t) { // SIM, SENHOR. EIS-ME AQUI.
+  const a = 29.45, p = eOut(prog(t, a, a + 1.2)), o = prog(t, 31.5, 32);
+  if (p <= 0) return;
+  c.save(); c.globalAlpha = p * (1 - o); c.filter = `blur(${(1 - p) * 10}px)`; c.textAlign = 'center';
+  c.fillStyle = '#E9C27A'; c.font = 'italic 76px Corm';
+  c.fillText('Sim, Senhor.', W / 2, 1585 + (1 - p) * 24);
+  c.fillStyle = '#FFFFFF'; c.font = '40px InterL'; c.textAlign = 'left';
+  spaced(c, 'EIS-ME AQUI', W / 2, 1660 + (1 - p) * 24, lerp(22, 12, p));
+  c.restore();
+}
+
+// ---------- quadro final ----------
+const GRADE = [ // tinta (soft-light), intensidade, bloom
+  ['#FFD3A1', .10, .16], ['#FFF4E6', .05, .26], ['#A9BEFF', .08, .14], ['#FF4A1A', .07, .42], ['#FFC98A', .08, .3],
+];
+async function frame(i) {
+  const t = i / FPS;
+  let s = 0; while (s < 4 && t >= G[s + 1]) s++;
+  // transição suave nas fronteiras (aproveita o whip de câmera do render + motion blur)
+  const B = G[s], Bn = G[s + 1];
+  let mixInto = null, m = 0;
+  if (s < 4 && t > Bn - .2) { mixInto = s + 1; m = eIO(prog(t, Bn - .2, Bn + .2)); }
+  else if (s > 0 && t < B + .2) { mixInto = s; s = s - 1; m = eIO(prog(t, B - .2, B + .2)); }
+  const L = await drawScene(sa, s, t);
+  if (s === 1) godRays(sa, L, t);
+  bx.globalAlpha = 1; bx.filter = 'none'; bx.drawImage(sceneA, 0, 0);
+  if (mixInto !== null) {
+    const L2 = await drawScene(sb, mixInto, t); if (mixInto === 1) godRays(sb, L2, t);
+    bx.globalAlpha = m; bx.drawImage(sceneB, 0, 0); bx.globalAlpha = 1;
+  }
+  const gs = mixInto !== null && m > .5 ? mixInto : s;
+  // bloom
+  blx.filter = 'none'; blx.clearRect(0, 0, 270, 480); blx.filter = 'blur(10px)'; blx.drawImage(buf, 0, 0, 270, 480); blx.filter = 'none';
+  bx.save(); bx.globalCompositeOperation = 'screen'; bx.globalAlpha = GRADE[gs][2]; bx.drawImage(bloom, 0, 0, W, H); bx.restore();
+  // color grading
+  bx.save(); bx.globalCompositeOperation = 'soft-light'; bx.globalAlpha = GRADE[gs][1]; bx.fillStyle = GRADE[gs][0]; bx.fillRect(0, 0, W, H); bx.restore();
+  ctx.filter = 'contrast(1.05) saturate(1.04)'; ctx.drawImage(buf, 0, 0); ctx.filter = 'none';
+  // vinheta
+  const vg = ctx.createRadialGradient(W / 2, H / 2, 560, W / 2, H / 2, 1250);
+  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, `rgba(0,0,0,${gs >= 3 ? .55 : .22})`);
+  ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+  // tipografia
+  tx.clearRect(0, 0, W, H);
+  CAPS.forEach((c, k) => caption(tx, t, c, k > 0 && CAPS[k - 1][3] === c[3] && Math.abs(CAPS[k - 1][1] - c[0]) < .05, k < CAPS.length - 1 && CAPS[k + 1][3] === c[3] && Math.abs(CAPS[k + 1][0] - c[1]) < .05));
+  secondary(tx, t);
+  // sombra suave para legibilidade em fundo claro/escuro
+  ctx.save(); ctx.filter = 'blur(18px)'; ctx.globalAlpha = gs <= 1 ? .0 : .35; ctx.globalCompositeOperation = 'multiply'; ctx.drawImage(txt, 0, 4); ctx.restore();
+  ctx.drawImage(txt, 0, 0);
+  // grão de filme
+  ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = .045;
+  const ox = Math.floor(hash(i) * 256), oy = Math.floor(hash(i + 9) * 256);
+  for (let x = -ox; x < W; x += 256) for (let y = -oy; y < H; y += 256) ctx.drawImage(grain, x, y);
+  ctx.restore();
+  // fades
+  const f = Math.max(1 - prog(t, 0, .6), prog(t, 31.3, 32));
+  if (f > 0) { ctx.fillStyle = `rgba(0,0,0,${f})`; ctx.fillRect(0, 0, W, H); }
+  return cv.toDataURL('image/jpeg', .94);
+}
+const grain = mk(256, 256); (() => { const g = grain.getContext('2d'), d = g.createImageData(256, 256); for (let i = 0; i < d.data.length; i += 4) { const v = Math.random() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; } g.putImageData(d, 0, 0); })();
+window.ready = (async () => { for (const f of ['52px InterL', 'italic 100px Corm', '40px InterM']) await document.fonts.load(f); return true; })();
+window.frame = frame;
+</script></body></html>
