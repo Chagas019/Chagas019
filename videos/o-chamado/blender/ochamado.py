@@ -81,8 +81,6 @@ def M():
 def paper_mat():
     m = bpy.data.materials.new("Papel com texto"); m.use_nodes = True; nt = m.node_tree
     b = nt.nodes["Principled BSDF"]; b.inputs["Roughness"].default_value = .75
-    try: b.inputs["Subsurface Weight"].default_value = .15
-    except Exception: pass
     tc = nt.nodes.new("ShaderNodeTexCoord"); sep = nt.nodes.new("ShaderNodeSeparateXYZ")
     nt.links.new(tc.outputs["UV"], sep.inputs[0])
     # linhas de texto: seno em V, quebrado por ruído em U (palavras), margens
