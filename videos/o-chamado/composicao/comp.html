@@ -48,7 +48,8 @@ async function drawScene(c, s, t) {
   c.fillStyle = '#000'; c.fillRect(0, 0, W, H);
   let light = null;
   if (s === 3) { // chama: cena completa numa passada
-    const o = await img(fname('cena4_obj', lf)); if (o) c.drawImage(o, 0, 0, W, H);
+    const o = await img(fname('cena4_obj', lf));
+    if (o) { const z = 1.3, fx = W / 2, fy = 1180; c.drawImage(o, fx - fx * z, fy - fy * z, W * z, H * z); } // aproxima a chama
   } else {
     // fundo renderizado a 15 qps -> interpola quadros pares
     const odd = lf % 2 === 1;
@@ -126,8 +127,10 @@ function caption(c, t, [a, b, s, l1, l2], prevSame, nextSame) {
   const p1 = prevSame ? 1 : inP(0), o1 = nextSame ? 0 : outP;
   if (p1 > 0 && o1 < 1) {
     c.save(); c.globalAlpha = p1 * (1 - o1); c.filter = `blur(${(1 - p1) * 10 + o1 * 6}px)`;
-    c.fillStyle = st.ink; c.font = '52px InterL';
-    spaced(c, l1, W / 2, y + (1 - p1) * 26 - o1 * 14, lerp(24, 11, p1));
+    c.fillStyle = st.ink; let fs = 52; c.font = fs + 'px InterL';
+    const trk = lerp(24, 11, p1);
+    while (c.measureText(l1).width + 11 * (l1.length - 1) > 880) { fs -= 2; c.font = fs + 'px InterL'; }
+    spaced(c, l1, W / 2, y + (1 - p1) * 26 - o1 * 14, trk * fs / 52);
     c.restore();
   }
   // linha 2 — serifada itálica grande (cor de destaque)

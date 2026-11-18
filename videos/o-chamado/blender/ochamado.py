@@ -237,7 +237,7 @@ def biblia(mm, coll, pages=6):
     # páginas soltas que viram (bend)
     flips = []
     for i in range(pages):
-        piv = empty("Página %d (pivô)" % (i + 1), (0, 0, .1 + i * .004), coll); piv.parent = root
+        piv = empty("Página %d (pivô)" % (i + 1), (0, 0, .2 + i * .006), coll); piv.parent = root
         pg = add_prim('plane', "Página %d" % (i + 1), pm, piv, coll, size=1, location=(.55, 0, 0)); pg.scale = (1.1, 1.5, 1)
         bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.subdivide(number_cuts=24); bpy.ops.object.mode_set(mode='OBJECT')
         sd = pg.modifiers.new("Curvatura", 'SIMPLE_DEFORM'); sd.deform_method = 'BEND'; sd.deform_axis = 'Y'
