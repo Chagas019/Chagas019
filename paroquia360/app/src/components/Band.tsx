@@ -5,7 +5,7 @@ export function Band({ title, sub, parish, action }: { title: string; sub?: stri
   return (
     <section className="band" aria-labelledby="pageTitle">
       <div className="top">
-        <Link className="pill" href={`/p/${parish.slug}`}><Icon name="arrowl" /><span>{parish.name}</span></Link>
+        <Link className="pill" href={`/p/${parish.slug}`} aria-label={`Início de ${parish.name}`}><Icon name="arrowl" /><span>{parish.name}</span></Link>
         {action}
       </div>
       <h1 className="band-title" id="pageTitle">{title}</h1>

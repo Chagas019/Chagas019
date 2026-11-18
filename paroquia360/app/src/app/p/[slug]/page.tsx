@@ -26,12 +26,16 @@ export default async function Painel({ params, searchParams }: { params: Promise
   const help = (helpRes.data ?? []) as unknown as { id: string; title: string; needed: number; pastorals: { name: string } | null }[];
   const masses = week.filter(e => e.type === 'mass');
   const conf = masses.reduce((a, e) => { const f = fill(e); a.a += f.a; a.c += f.c; return a; }, { a: 0, c: 0 });
+  const next = events.find(e => e.roster_slots.length > 0);
+  const nextF = next ? fill(next) : { t: 0, a: 0, c: 0 };
   const empty = events.length === 0 && (pastorals ?? 0) === 0;
 
   return (
     <>
       <Band title="Painel" sub={`Você está como ${ROLE_LABEL[role]}. Aqui fica o que precisa da sua atenção.`} parish={parish}
-        action={<Link className="pill rent" href={`/p/${slug}/escalas`}>Escalas <Icon name="arrow" /></Link>} />
+        action={<div className="top-actions">
+          {next && <Link className={`island ${nextF.c < nextF.t ? 'warn' : ''}`} href={`/p/${slug}/escalas#e-${next.id}`}><span className="dot" /><span className="txt">{next.title} {fmtTime(next.starts_at)} · {nextF.c < nextF.t ? pl(nextF.t - nextF.c, 'confirmação pendente', 'confirmações pendentes') : 'escala completa'}</span></Link>}
+          <Link className="pill rent" href={`/p/${slug}/escalas`}>Escalas <Icon name="arrow" /></Link></div>} />
       <div className="workspace stack">
         <Flash ok={sp.ok} erro={sp.erro} />
         {empty && ctx.staff && (
@@ -78,7 +82,7 @@ export default async function Painel({ params, searchParams }: { params: Promise
           </div>
 
           <div className="tile c12 help" style={{ gridColumn: 'span 12' }}>
-            <h3><span className="ic"><Icon name="heart" /></span>Preciso de ajuda <Link className="more" style={{ color: 'rgba(255,255,255,.7)' }} href={`/p/${slug}/ajuda`}>Ver todos →</Link></h3>
+            <h3><span className="ic"><Icon name="heart" /></span>Preciso de ajuda <Link className="more" href={`/p/${slug}/ajuda`}>Ver todos →</Link></h3>
             {help.length ? help.map(h => (
               <div className="need" key={h.id}><div><b>{h.needed} × {h.title}</b><small>{h.pastorals?.name}</small></div>
                 <Link className="btn-gold" style={{ display: 'inline-grid', placeItems: 'center', textDecoration: 'none' }} href={`/p/${slug}/ajuda`}>Posso ajudar</Link></div>

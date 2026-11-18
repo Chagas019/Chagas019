@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import './theme.css';
 
 export const metadata: Metadata = {
   title: { default: 'Paróquia360', template: '%s · Paróquia360' },
@@ -16,7 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </head>
-      <body>{children}</body>
+      <body><div className="bgfx" aria-hidden="true"><i /><i /><i /><i /></div>{children}</body>
     </html>
   );
 }

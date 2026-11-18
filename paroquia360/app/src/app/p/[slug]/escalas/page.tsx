@@ -7,6 +7,7 @@ import { addSlot, assign, unassign, markConfirmed, respond } from '../actions';
 
 export const metadata = { title: 'Escalas' };
 
+const PALETTE = ['#4f7dff', '#c9a45c', '#9fc3ff', '#f0b7c4', '#6be3a4', '#b9a2ff', '#ff9f6b'];
 const Hidden = ({ v }: { v: Record<string, string> }) => <>{Object.entries(v).map(([k, val]) => <input key={k} type="hidden" name={k} value={val} />)}</>;
 
 export default async function Escalas({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ ok?: string; erro?: string; dias?: string }> }) {
@@ -23,6 +24,10 @@ export default async function Escalas({ params, searchParams }: { params: Promis
   const roles = (rolesRes.data ?? []) as unknown as { id: string; name: string; pastoral_id: string; pastorals: { name: string } | null }[];
   const myRoles = roles.filter(r => canManage(ctx, r.pastoral_id));
   const people = [...dir.values()].sort((a, b) => a.display_name.localeCompare(b.display_name));
+  const pastoralIds = [...new Set(roles.map(r => r.pastoral_id))];
+  const colorOf = (id?: string) => PALETTE[Math.max(0, pastoralIds.indexOf(id ?? '')) % PALETTE.length];
+  const vitral = events.filter(e => e.roster_slots.length > 0);
+  const pastoralNames = new Map(vitral.flatMap(e => e.roster_slots.map(s => [s.roster_roles?.pastoral_id ?? '', roles.find(r => r.pastoral_id === s.roster_roles?.pastoral_id)?.pastorals?.name ?? 'Pastoral'] as [string, string])));
   const back = `/p/${slug}/escalas${dias === 90 ? '?dias=90' : ''}`;
   const base = { slug, back };
 
@@ -34,6 +39,28 @@ export default async function Escalas({ params, searchParams }: { params: Promis
         <Flash ok={sp.ok} erro={sp.erro} />
         {roles.length === 0 && ctx.staff && <div className="notice info">Antes de montar escalas, crie as funções (Leitor, Ministro…) em <Link href={`/p/${slug}/equipe`}>Equipe</Link>.</div>}
         {events.length === 0 && <div className="empty-state"><b>Nenhuma celebração nos próximos {dias} dias</b>Cadastre na <Link href={`/p/${slug}/agenda`}>Agenda</Link>.</div>}
+        {vitral.length > 0 && (
+          <section className="tile" aria-labelledby="vitralT">
+            <h3 id="vitralT">Visão geral · cada quadrado é uma vaga</h3>
+            <div className="vitral">{vitral.map(e => (
+              <a className="vitral-row" href={`#e-${e.id}`} key={e.id}>
+                <span><b>{e.title}</b><small>{fmt(e.starts_at, { weekday: 'short', day: 'numeric', month: 'short' })}, {fmtTime(e.starts_at)}</small></span>
+                <span className="vitral-cells">{e.roster_slots.flatMap(s => {
+                  const c = colorOf(s.roster_roles?.pastoral_id);
+                  return Array.from({ length: Math.max(s.quantity, s.roster_assignments.length) }, (_, i) => {
+                    const a = s.roster_assignments[i];
+                    const st = !a ? 'open' : a.status === 'confirmed' ? '' : 'pend';
+                    return <i key={s.id + i} className={st} style={{ '--c': c } as React.CSSProperties} title={`${s.roster_roles?.name}: ${!a ? 'vaga aberta' : STATUS_LABEL[a.status]}`} />;
+                  });
+                })}</span>
+              </a>))}
+            </div>
+            <div className="legend">
+              {[...pastoralNames].map(([id, name]) => <span key={id}><i style={{ background: colorOf(id) }} />{name}</span>)}
+              <span><i />Confirmado</span><span><i className="pend" />Aguardando</span><span><i className="open" />Vaga aberta</span>
+            </div>
+          </section>
+        )}
         {events.map(e => {
           const f = fill(e);
           const inEvent = new Set(e.roster_slots.flatMap(s => s.roster_assignments.map(a => a.user_id)));
