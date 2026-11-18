@@ -561,6 +561,7 @@ def cena3(layer):  # OS TALENTOS — composição explodida, fundo azul acinzent
     parts = particulas(mm, objs, 26, (2.6, 1.6, 1.8), 31, mats=('gold', 'white', 'red', 'blue', 'goldp'))
     focus = empty("Foco (anim)", coll=objs)
     cam = make_camera(55); setup_render(sc, layer, cam, focus, 2.8); hide_for_layer(layer, objs, sets)
+    sc.render.use_persistent_data = False  # páginas com modificador animado (bend) exigem re-sincronização por quadro
     N = SCENES[3] + 2 * HANDLE
     for f in range(1, N + 1):
         t = (f - 1 - HANDLE) / FPS
