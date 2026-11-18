@@ -1,0 +1,43 @@
+/* prancha técnica: grafite, linhas brancas, acento vermelho */
+.iso.wf { --anatomy-page: #0b0d10; --anatomy-card: #0f1216; --wire: #eef2f6; --grid: rgba(200,215,230,.055); --grid2: rgba(200,215,230,.1); --dimc: #ff8a80; }
+.wf .tile { background-color: var(--anatomy-card); background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px), linear-gradient(var(--grid2) 1px, transparent 1px), linear-gradient(90deg, var(--grid2) 1px, transparent 1px); background-size: 12px 12px, 12px 12px, 60px 60px, 60px 60px; background-position: -1px -1px; }
+.wf .tile::before { content: ""; position: absolute; inset: 8px; border: 1px solid rgba(238,242,246,.08); border-radius: 12px; pointer-events: none; }
+.modes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+.modes .chip { font-family: var(--anatomy-mono); font-size: 11.5px; letter-spacing: .04em; }
+#redraw { margin-left: 6px; }
+
+/* wireframe: tudo vira linha */
+.wf[data-mode="wire"] .iso-fill, .wf[data-mode="wire"] .iso-shade, .wf[data-mode="wire"] .iso-top, .wf[data-mode="wire"] .iso-halo { fill: none !important; stroke: none !important; }
+.wf[data-mode="wire"] .iso-line[data-tone="hi"], .wf[data-mode="wire"] .iso-edge { stroke: var(--wire); opacity: .92; }
+.wf[data-mode="wire"] .iso-line[data-tone="mid"] { stroke: var(--wire); opacity: .62; }
+.wf[data-mode="wire"] .iso-line[data-tone="lo"] { stroke: var(--wire); opacity: .4; }
+.wf[data-mode="wire"] .iso-line[data-tone="faint"] { stroke: var(--wire); opacity: .24; }
+.wf[data-mode="wire"] .iso-edge[data-tone="mid"] { opacity: .7; }
+.wf[data-mode="wire"] .iso-edge[data-tone="lo"] { opacity: .5; }
+.wf[data-mode="wire"] .px-top { opacity: .12; }
+.wf[data-mode="wire"] .iso-dots circle { fill: var(--wire); }
+.wf[data-mode="wire"] .it[data-on] .iso-line, .wf[data-mode="wire"] .it[data-on] .iso-edge { stroke: var(--anatomy-red); opacity: 1; }
+/* raio-X: sólidos translúcidos */
+.wf[data-mode="xray"] .iso-fill { fill: var(--anatomy-card); opacity: .35; }
+.wf[data-mode="xray"] .iso-shade, .wf[data-mode="xray"] .iso-top { opacity: .28; }
+.wf[data-mode="xray"] .iso-halo { opacity: .25; }
+.wf[data-mode="xray"] .iso-line { stroke: var(--wire); }
+
+/* cotas */
+.dims { pointer-events: none; transition: opacity 260ms var(--anatomy-ease); }
+.dim-ext { fill: none; stroke: var(--dimc); stroke-width: .45; opacity: .55; vector-effect: non-scaling-stroke; }
+.dim-line { fill: none; stroke: var(--dimc); stroke-width: .7; vector-effect: non-scaling-stroke; }
+.dim text { fill: var(--dimc); font: 6.4px var(--anatomy-mono); letter-spacing: .04em; paint-order: stroke; stroke: var(--anatomy-card); stroke-width: 2.4px; stroke-linejoin: round; }
+.t-hero .dim text, .t-wide .dim text { font-size: 9px; }
+.stage[data-apart] .dims, .wf[data-mode="solid"] .dims { opacity: 0; }
+
+/* traço sendo desenhado */
+.drawing .iso-line:not([data-flow]), .drawing .iso-edge, .drawing .dim-line, .drawing .dim-ext { stroke-dasharray: 1 1; stroke-dashoffset: 1; animation: wf-draw 1.5s cubic-bezier(.32,.72,0,1) forwards; animation-delay: var(--d, 0s); }
+@keyframes wf-draw { to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) { .drawing .iso-line, .drawing .iso-edge, .drawing .dim-line, .drawing .dim-ext { animation: none; stroke-dasharray: none; } }
+.wf[data-mode="wire"] [style*="anatomy-lit"] { fill: rgba(238,242,246,.07) !important; stroke: var(--wire); stroke-width: .5; opacity: 1 !important; }
+.wf[data-mode="wire"] [style*="anatomy-shade-0"] { fill: rgba(0,0,0,.25) !important; }
+.wf[data-mode="wire"] .iris-blades path { fill: rgba(15,18,22,.55); stroke: var(--wire); }
+.wf[data-mode="wire"] .shut-curtains rect { fill: rgba(15,18,22,.6); stroke: var(--wire); }
+.dim text { font-size: 8.6px; }
+.t-hero .dim text, .t-wide .dim text { font-size: 11px; }
