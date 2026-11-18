@@ -16,6 +16,8 @@ O repositório `Chagas019` é uma coleção de sites estáticos (Comunica+Fé, b
 - Supabase: projeto `paroquia360` (ref `gyhnmnzaxrlamvptczek`, região sa-east-1, plano gratuito). URL: https://gyhnmnzaxrlamvptczek.supabase.co
 - Migrações aplicadas: `init`, `harden`. Sem dados (o `seed.sql` é só para desenvolvimento local).
 
+- Site publicado (Vercel, time "chagas", projeto `paroquia360`, região gru1): https://paroquia360.vercel.app — publicado por envio direto de arquivos (a integração Vercel↔GitHub ainda não está instalada, então não há deploy automático a cada push).
+
 ## Multi-tenant
 - Banco único, coluna `parish_id` em toda tabela de domínio.
 - Tabela `memberships(user_id, parish_id, role)` é a fonte da verdade de acesso.

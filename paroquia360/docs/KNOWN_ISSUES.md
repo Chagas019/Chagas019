@@ -11,4 +11,4 @@
 - App: o e-mail de login usa o servidor padrão do Supabase (limite baixo de envios por hora). Para produção, configurar SMTP próprio e as URLs de redirecionamento do Auth (Site URL) no painel do Supabase.
 - App: faltam disponibilidade, talentos, "Preciso de ajuda", comunicados e relatórios.
 - Supabase: banco zerado em 18/11 (sem paróquias, usuários ou auditoria de teste).
-- Login no site publicado: o domínio do Floot precisa estar em Authentication → URL Configuration do Supabase (Site URL e Redirect URLs), senão o link do e-mail volta para localhost.
+- Login no site publicado: `https://paroquia360.vercel.app` (e o domínio do Floot, se for usado) precisa estar em Authentication → URL Configuration do Supabase (Site URL e Redirect URLs), senão o link do e-mail volta para localhost.
