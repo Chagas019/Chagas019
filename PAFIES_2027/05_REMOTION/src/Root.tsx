@@ -9,6 +9,7 @@ import { S5Final } from './scenes/S5_Final';
 import { CountdownHUD, Grain, Vignette } from './components/fx';
 import { PAFIES2027V3, TeaserV3 } from './v3';
 import { PAFIES2027V4, TeaserV4 } from './v4';
+import { PAFIES2027V5, TeaserV5 } from './v5';
 import { V2S1, V2S2, V2S3, V2S4, V2S5 } from './v2/scenes';
 import { PaperGrain, Wipe, P as PV2 } from './v2/kit';
 
@@ -72,6 +73,8 @@ export const Teaser16: React.FC = () => (
 export const RemotionRoot: React.FC = () => (
   <>
     <Composition id="PAFIES2027" component={PAFIES2027} durationInFrames={TOTAL} fps={FPS} width={W} height={H} defaultProps={{ withAudio: true }} />
+    <Composition id="PAFIES2027-v5" component={PAFIES2027V5} durationInFrames={TOTAL} fps={FPS} width={W} height={H} defaultProps={{ withAudio: true }} />
+    <Composition id="PAFIES2027-v5-Teaser16" component={TeaserV5} durationInFrames={480} fps={FPS} width={W} height={H} />
     <Composition id="PAFIES2027-v4" component={PAFIES2027V4} durationInFrames={TOTAL} fps={FPS} width={W} height={H} defaultProps={{ withAudio: true }} />
     <Composition id="PAFIES2027-v4-Teaser16" component={TeaserV4} durationInFrames={480} fps={FPS} width={W} height={H} />
     <Composition id="PAFIES2027-v3" component={PAFIES2027V3} durationInFrames={TOTAL} fps={FPS} width={W} height={H} defaultProps={{ withAudio: true }} />

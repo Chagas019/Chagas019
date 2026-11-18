@@ -1,6 +1,8 @@
 # PAFIES 2027 — 10ª Edição · Campanha audiovisual
 
-**v4 (atual):** animação por recortes. Personagens e objetos gerados como elementos separados no Floot (`07_ASSETS/elementos_v4`), recortados e montados com articulações: braço com megafone girando no ombro, galera pulando no tempo da música, corredores com balanço, mãos e caixa. Cenários em camadas feitos em código, câmera 2.5D, paleta marinho/vermelho-coral/amarelo/azul-claro/branco e tipografia Big Shoulders Display (`05_REMOTION/src/v4.tsx`).
+**v5 (atual):** mesmo sistema da v4, refeito no estilo exato da ilustração de referência (skate): formas chapadas sem contorno, figuras sem rosto, sombras vinho/marrom, POV de mãos e pernas, fundo cinza-claro, estrada com faixas coral e montanha azul-clara. Elementos em `07_ASSETS/elementos_v5`, código em `05_REMOTION/src/v5.tsx`.
+
+**v4:** animação por recortes. Personagens e objetos gerados como elementos separados no Floot (`07_ASSETS/elementos_v4`), recortados e montados com articulações: braço com megafone girando no ombro, galera pulando no tempo da música, corredores com balanço, mãos e caixa. Cenários em camadas feitos em código, câmera 2.5D, paleta marinho/vermelho-coral/amarelo/azul-claro/branco e tipografia Big Shoulders Display (`05_REMOTION/src/v4.tsx`).
 
 **v3:** ilustrações editoriais geradas com IA no Floot (projeto "PAFIES 2027 Assets"), no estilo das referências, animadas com câmera 2.5D, logo oficial, fitas, texto palavra por palavra, morph e wipes (`05_REMOTION/src/v3.tsx`, artes em `07_ASSETS/ilustracoes_ia`). As versões v2 e v1 continuam em `10_FINAL`.
 
