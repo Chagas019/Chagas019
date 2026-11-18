@@ -80,8 +80,8 @@ export const Morph: React.FC<{ a: Shape; b: Shape; p: number; x: number; y: numb
 /* ---------------- tipografia: palavra por palavra com máscara ---------------- */
 export const Words: React.FC<{
   text: string; start: number; size: number; y: number; color?: string; x?: number; stagger?: number; exit?: number;
-  align?: 'center' | 'left'; shadow?: string; tracking?: number; rot?: number; lineH?: number; dur?: number;
-}> = ({ text, start, size, y, color = P.cream, x = 540, stagger = 4, exit, align = 'center', shadow, tracking = 0.005, rot = 0, lineH = 1, dur = 14 }) => {
+  align?: 'center' | 'left'; shadow?: string; tracking?: number; rot?: number; lineH?: number; dur?: number; font?: string;
+}> = ({ text, start, size, y, color = P.cream, x = 540, stagger = 4, exit, align = 'center', shadow, tracking = 0.005, rot = 0, lineH = 1, dur = 14, font = F }) => {
   const f = useCurrentFrame();
   if (f < start - 1) return null;
   const words = text.split(' ');
@@ -97,7 +97,7 @@ export const Words: React.FC<{
         return (
           <span key={i} style={{ display: 'inline-block', overflow: 'hidden', verticalAlign: 'top', padding: `${size * 0.22}px ${size * 0.06}px ${size * 0.12}px`, margin: `${-size * 0.22}px ${size * 0.04}px 0` }}>
             <span style={{
-              display: 'inline-block', fontFamily: F, fontSize: size, lineHeight: lineH, color, letterSpacing: `${tracking}em`,
+              display: 'inline-block', fontFamily: font, fontWeight: font === F ? 400 : 900, fontSize: size, lineHeight: lineH, color, letterSpacing: `${tracking}em`,
               transform: `translateY(${(1 - p) * 140 - px * 150}%) skewY(${(1 - p) * 6}deg)`, opacity: px >= 1 ? 0 : 1,
               textShadow: shadow ? `${size * 0.035}px ${size * 0.045}px 0 ${shadow}` : undefined,
             }}>{w}</span>
@@ -109,8 +109,8 @@ export const Words: React.FC<{
 };
 
 /* número/título com sombra longa (extrusão 2D editorial) */
-export const LongShadow: React.FC<{ text: string; size: number; x: number; y: number; color: string; shade: string; len?: number; start: number; angle?: number }> =
-  ({ text, size, x, y, color, shade, len = 40, start, angle = 45 }) => {
+export const LongShadow: React.FC<{ text: string; size: number; x: number; y: number; color: string; shade: string; len?: number; start: number; angle?: number; font?: string }> =
+  ({ text, size, x, y, color, shade, len = 40, start, angle = 45, font = F }) => {
     const f = useCurrentFrame();
     const { fps } = useVideoConfig();
     const s = spring({ frame: f - start, fps, config: { damping: 12, stiffness: 140 } });
@@ -119,7 +119,7 @@ export const LongShadow: React.FC<{ text: string; size: number; x: number; y: nu
     const dx = Math.cos((angle * Math.PI) / 180), dy = Math.sin((angle * Math.PI) / 180);
     const sh = new Array(L).fill(0).map((_, i) => `${(i + 1) * dx}px ${(i + 1) * dy}px 0 ${shade}`).join(',');
     if (f < start) return null;
-    return <div style={{ position: 'absolute', left: x - 600, width: 1200, top: y - size * 0.55, textAlign: 'center', fontFamily: F, fontSize: size, lineHeight: 1, color, textShadow: sh, transform: `scale(${0.4 + 0.6 * s}) rotate(${(1 - s) * -8}deg)`, opacity: Math.min(1, s * 3) }}>{text}</div>;
+    return <div style={{ position: 'absolute', left: x - 600, width: 1200, top: y - size * 0.55, textAlign: 'center', fontFamily: font, fontWeight: font === F ? 400 : 900, fontSize: size, lineHeight: 1, color, textShadow: sh, transform: `scale(${0.4 + 0.6 * s}) rotate(${(1 - s) * -8}deg)`, opacity: Math.min(1, s * 3) }}>{text}</div>;
   };
 
 /* faixa/tarja revelada por máscara */
