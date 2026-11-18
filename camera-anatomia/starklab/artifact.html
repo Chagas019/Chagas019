@@ -1,0 +1,929 @@
+<title>Stark Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap">
+<style>
+/* laboratório holográfico: preto profundo, ciano, painéis de vidro; cena 3D em tela cheia */
+:root {
+  --bg: #020409; --glass: rgba(6, 18, 30, .62); --glass-hi: rgba(10, 30, 48, .78); --line: rgba(80, 220, 255, .22); --line-hi: rgba(120, 235, 255, .55);
+  --fg: #dff7ff; --muted: #7fa8bd; --dim: #4b6d80; --cyan: #35d8ff; --cyan-hi: #9ff0ff; --warn: #ffb547;
+  --display: Orbitron, "JetBrains Mono", ui-monospace, monospace; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace; --sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font: 14px/1.5 var(--sans); overflow: hidden; -webkit-font-smoothing: antialiased; }
+.app { position: relative; height: 100%; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.stage { position: absolute; inset: 0; }
+#view { display: block; width: 100%; height: 100%; touch-action: none; outline: none; cursor: grab; }
+.vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 80% 70% at 50% 45%, transparent 55%, rgba(0,0,0,.7) 100%); }
+.ui { opacity: 0; transform: translateY(6px); transition: opacity 700ms ease, transform 900ms cubic-bezier(.32,.72,0,1); }
+body.ui-on .ui { opacity: 1; transform: none; }
+.glass { background: var(--glass); backdrop-filter: blur(14px) saturate(140%); border: 1px solid var(--line); border-radius: 14px; box-shadow: inset 0 1px 0 rgba(160, 240, 255, .12), 0 0 0 1px rgba(0,0,0,.4), 0 20px 50px -24px rgba(0, 180, 255, .25); }
+button { font: inherit; color: inherit; }
+/* HUD */
+.hud { position: absolute; top: max(12px, env(safe-area-inset-top, 0px)); left: max(16px, env(safe-area-inset-left, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); display: flex; gap: 10px; align-items: stretch; pointer-events: none; }
+.brand { padding: 10px 16px; display: flex; flex-direction: column; justify-content: center; }
+.brand h1 { margin: 0; font: 700 15px/1 var(--display); letter-spacing: .32em; color: var(--cyan-hi); text-shadow: 0 0 18px rgba(53,216,255,.55); }
+.brand p { margin: 5px 0 0; font: 10px/1 var(--mono); letter-spacing: .24em; color: var(--muted); }
+.stats { flex: 1; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 8px 6px; }
+.stat { padding: 2px 12px; border-left: 1px solid var(--line); min-width: 0; }
+.stat:first-child { border-left: 0; }
+.stat span { display: block; font: 9.5px/1.2 var(--mono); letter-spacing: .18em; color: var(--dim); }
+.stat b { display: block; margin-top: 4px; font: 500 12px/1.2 var(--mono); color: var(--cyan-hi); letter-spacing: .06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #3dff9e; box-shadow: 0 0 8px #3dff9e; margin-right: 6px; vertical-align: 1px; }
+/* listas e painéis */
+.left { position: absolute; left: max(16px, env(safe-area-inset-left, 0px)); top: 92px; bottom: 96px; width: 250px; display: flex; flex-direction: column; min-height: 0; }
+.ph { padding: 12px 14px 8px; font: 10.5px/1 var(--mono); letter-spacing: .22em; color: var(--muted); display: flex; justify-content: space-between; align-items: center; }
+.ph b { color: var(--cyan); font-weight: 500; }
+#complist { list-style: none; margin: 0; padding: 0 6px 8px; overflow: auto; flex: 1; min-height: 0; }
+#complist button { width: 100%; display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; align-items: baseline; padding: 7px 8px; border: 0; border-radius: 8px; background: transparent; text-align: left; cursor: pointer; font-size: 13px; color: #c6e6f2; transition: background 150ms, color 150ms; }
+#complist button:hover, #complist button:focus-visible { background: rgba(53,216,255,.08); outline: none; color: var(--fg); }
+#complist button[aria-current] { background: rgba(53,216,255,.14); color: #fff; box-shadow: inset 2px 0 0 var(--cyan); }
+#complist .n { font: 10px var(--mono); color: var(--dim); }
+#complist .sim { font: 9px var(--mono); letter-spacing: .1em; color: var(--cyan); border: 1px solid var(--line); border-radius: 4px; padding: 1px 4px; }
+#inspector { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); top: 92px; width: 320px; max-height: calc(100% - 196px); overflow: auto; }
+#insp { padding: 14px 16px 16px; }
+.eyebrow { margin: 0; font: 10px/1.2 var(--mono); letter-spacing: .2em; color: var(--muted); }
+.eyebrow .ok { color: #3dff9e; } .eyebrow .gen { color: var(--warn); }
+#insp h2 { margin: 8px 0 10px; font: 500 18px/1.25 var(--sans); color: #fff; letter-spacing: -.01em; }
+#insp dl { margin: 0; display: grid; gap: 9px; }
+#insp dt { font: 9.5px/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--cyan); margin-bottom: 3px; }
+#insp dd { margin: 0; font-size: 13px; color: #c6e6f2; }
+.muted { color: var(--muted); font-size: 12.5px; margin: 8px 0; }
+.row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.btn { border: 1px solid var(--line); background: rgba(53,216,255,.06); border-radius: 8px; padding: 6px 10px; font: 500 11px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--cyan-hi); cursor: pointer; transition: background 150ms, border-color 150ms, transform 90ms; }
+.btn:hover, .btn:focus-visible { background: rgba(53,216,255,.16); border-color: var(--line-hi); outline: none; }
+.btn:active { transform: scale(.96); }
+.btn[aria-pressed="true"], .btn.hi { background: rgba(53,216,255,.22); border-color: var(--cyan); color: #fff; box-shadow: 0 0 14px -4px var(--cyan); }
+.close { display: none; }
+/* barra de ações */
+.bar { position: absolute; left: 50%; bottom: max(16px, env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); display: flex; gap: 6px; align-items: center; padding: 8px; flex-wrap: wrap; justify-content: center; max-width: calc(100% - 32px); }
+body.ui-on .bar { transform: translateX(-50%); }
+.slider { display: flex; align-items: center; gap: 8px; padding: 0 8px; font: 10px var(--mono); letter-spacing: .14em; color: var(--muted); }
+.slider input { width: 96px; accent-color: var(--cyan); }
+.slider output { width: 36px; color: var(--cyan-hi); font-variant-numeric: tabular-nums; }
+/* simulações */
+#sims { position: absolute; left: 50%; bottom: 84px; width: min(620px, calc(100% - 640px)); min-width: 420px; transform: translate(-50%, 12px); opacity: 0; pointer-events: none; transition: opacity 260ms ease, transform 320ms cubic-bezier(.32,.72,0,1); }
+#sims.open { opacity: 1; pointer-events: auto; transform: translate(-50%, 0); }
+#simTabs { display: flex; gap: 2px; padding: 8px 8px 0; overflow-x: auto; scrollbar-width: none; }
+#simTabs button { border: 0; background: transparent; padding: 7px 10px; border-radius: 8px 8px 0 0; font: 500 10.5px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); cursor: pointer; white-space: nowrap; }
+#simTabs button[aria-current] { color: #fff; background: rgba(53,216,255,.12); box-shadow: inset 0 -2px 0 var(--cyan); }
+#simBody { padding: 10px 14px 14px; border-top: 1px solid var(--line); }
+#simBody canvas { display: block; width: 100%; height: auto; margin-top: 10px; border-radius: 8px; background: rgba(0, 12, 22, .6); border: 1px solid var(--line); }
+.ctl { display: flex; justify-content: space-between; margin: 8px 0 4px; font: 10px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.ctl output { color: var(--cyan-hi); text-transform: none; letter-spacing: .04em; font-variant-numeric: tabular-nums; }
+#simBody input[type=range] { width: 100%; accent-color: var(--cyan); }
+.steps { margin: 10px 0 0; padding-left: 20px; display: grid; gap: 3px; font: 12px var(--mono); color: var(--dim); }
+.steps li[data-on] { color: var(--cyan-hi); }
+.simclose { float: right; border: 0; background: transparent; color: var(--muted); font-size: 18px; cursor: pointer; padding: 4px 10px; }
+#skip { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px)); font: 10px var(--mono); letter-spacing: .2em; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer; transition: opacity 400ms; }
+body.ui-on #skip { opacity: 0; pointer-events: none; }
+.hint { position: absolute; left: 50%; bottom: 76px; transform: translateX(-50%); font: 10px var(--mono); letter-spacing: .2em; color: var(--dim); pointer-events: none; white-space: nowrap; }
+body.touched .hint, #sims.open ~ .hint { opacity: 0; transition: opacity 400ms; }
+@media (max-width: 1100px) { #sims { width: calc(100% - 32px); min-width: 0; bottom: 140px; } }
+@media (max-width: 860px) {
+  .hud { flex-direction: column; gap: 6px; }
+  .brand { padding: 8px 12px; } .brand h1 { font-size: 12px; } .brand p { display: none; }
+  .stats { grid-template-columns: repeat(3, minmax(0,1fr)); padding: 6px 2px; }
+  .stat:nth-child(3), .stat:nth-child(5) { display: none; }
+  .stat { padding: 0 8px; } .stat b { font-size: 11px; }
+  .left { top: auto; bottom: 68px; left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); width: auto; height: 54px; }
+  .left .ph { display: none; }
+  #complist { display: flex; gap: 6px; overflow-x: auto; padding: 8px; scrollbar-width: none; }
+  #complist li { flex: none; } #complist button { grid-template-columns: auto auto; padding: 6px 10px; white-space: nowrap; }
+  #complist .sim { display: none; }
+  #inspector { top: auto; bottom: 0; left: 0; right: 0; width: auto; max-height: 52%; border-radius: 18px 18px 0 0; transform: translateY(105%); transition: transform 320ms cubic-bezier(.32,.72,0,1); z-index: 5; padding-bottom: env(safe-area-inset-bottom, 0px); }
+  #inspector.open { transform: none; }
+  .close { display: block; position: sticky; top: 0; float: right; margin: 8px 8px 0 0; border: 1px solid var(--line); background: var(--glass-hi); color: var(--fg); border-radius: 50%; width: 30px; height: 30px; z-index: 2; }
+  .bar, body.ui-on .bar { left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); transform: none; max-width: none; bottom: max(10px, env(safe-area-inset-bottom, 0px)); padding: 6px; gap: 4px; flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; }
+  .bar::-webkit-scrollbar { display: none; }
+  .bar .btn, .slider { flex: none; }
+  .bar .btn { padding: 6px 8px; font-size: 10px; }
+  .slider { padding: 0 4px; } .slider input { width: 70px; } .slider span { display: none; }
+  #sims { bottom: 130px; width: calc(100% - 24px); max-height: 50%; overflow: auto; }
+  .hint { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .ui, #sims, #inspector { transition: none; } }
+@media (prefers-reduced-transparency: reduce) { .glass { background: #06121e; backdrop-filter: none; } }
+</style>
+<div class="app">
+  <div class="stage"><canvas id="view" tabindex="0" aria-label="Câmera 3D no laboratório. Arraste para girar, role ou pince para zoom, botão direito ou dois dedos para mover; toque numa peça para selecionar."></canvas><div class="vignette"></div></div>
+  <header class="hud ui">
+    <div class="brand glass"><h1>STARK LAB</h1><p>CAMERA ENGINEERING SYSTEM</p></div>
+    <div class="stats glass">
+      <div class="stat"><span>SYSTEM STATUS</span><b><i class="dot"></i><span id="hudSys" style="display:inline;font:inherit;color:inherit;letter-spacing:inherit">BOOT</span></b></div>
+      <div class="stat"><span>COMPONENT SELECTED</span><b id="hudSel">—</b></div>
+      <div class="stat"><span>3D ENGINE</span><b id="hudEngine">—</b></div>
+      <div class="stat"><span>FPS</span><b id="hudFps">—</b></div>
+      <div class="stat"><span>MODEL STATUS</span><b id="hudModel">CARREGANDO</b></div>
+    </div>
+  </header>
+  <p class="hint ui">ARRASTE PARA GIRAR · ROLE PARA ZOOM · TOQUE NUMA PEÇA</p>
+  <aside class="left glass ui" aria-label="Componentes"><div class="ph"><span>COMPONENTES</span><b>16</b></div><ol id="complist"></ol></aside>
+  <aside id="inspector" class="glass ui" aria-live="polite"><button type="button" class="close" id="closeInsp" aria-label="Fechar inspetor">×</button><div id="insp"></div></aside>
+  <section id="sims" class="glass" aria-label="Simulações"><button type="button" class="simclose" id="closeSims" aria-label="Fechar simulações">×</button><div id="simTabs"></div><div id="simBody"></div></section>
+  <nav class="bar glass ui" aria-label="Ações">
+    <button type="button" class="btn" id="bExplore" aria-pressed="false">Explorar</button>
+    <button type="button" class="btn" id="bExplode">Desmontar</button>
+    <button type="button" class="btn" id="bAssemble">Remontar</button>
+    <button type="button" class="btn" id="bXray" aria-pressed="false">Raio-X</button>
+    <button type="button" class="btn" id="bMove" aria-pressed="false">Mover peça</button>
+    <button type="button" class="btn" id="bCenter">Centralizar</button>
+    <button type="button" class="btn" id="bSims" aria-pressed="false">Simulações</button>
+    <label class="slider" for="dist"><span>DISTÂNCIA</span><input id="dist" type="range" min="20" max="180" value="100"><output id="distV">100%</output></label>
+    <label class="slider" for="opac"><span>CORPO</span><input id="opac" type="range" min="5" max="100" value="100"><output id="opacV">100%</output></label>
+  </nav>
+  <button type="button" id="skip">PULAR ABERTURA</button>
+</div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script><script type="module">// STARK LAB — CAMERA ENGINEERING SYSTEM · Three.js (r170)
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { TransformControls } from 'three/addons/controls/TransformControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { LineSegments2 } from 'three/addons/lines/LineSegments2.js';
+import { LineSegmentsGeometry } from 'three/addons/lines/LineSegmentsGeometry.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+import { Line2 } from 'three/addons/lines/Line2.js';
+import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
+
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const ease = x => { x = clamp(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+const lerp = (a, b, k) => a + (b - a) * k;
+const D2R = Math.PI / 180;
+function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const view = document.getElementById('view');
+const DPR = Math.min(window.devicePixelRatio || 1, 2);
+const renderer = new THREE.WebGLRenderer({ canvas: view, antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(DPR);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+const RES = new THREE.Vector2(1, 1);
+const pmrem = new THREE.PMREMGenerator(renderer);
+const ENV = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+const sMain = new THREE.Scene();
+sMain.background = new THREE.Color(0x020409);
+sMain.environment = ENV;
+sMain.environmentIntensity = .55;
+sMain.fog = new THREE.FogExp2(0x020409, 0.0011);
+const cam = new THREE.PerspectiveCamera(36, 1, 1, 6000);
+
+// ---------- materiais ----------
+const allEdgeMats = [];
+function edgeMat(opacity = .55, color = 0xf2f4f6, width = 1.25) {
+  const m = new LineMaterial({ color, linewidth: width * DPR, transparent: true, opacity, depthWrite: false });
+  m.resolution.copy(RES); m.userData.base = opacity; allEdgeMats.push(m); return m;
+}
+function std(color, rough = .5, metal = .3, extra = {}) {
+  return new THREE.MeshStandardMaterial({ color, roughness: rough, metalness: metal, envMap: ENV, envMapIntensity: .9,
+    polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1, ...extra });
+}
+const C = { body: 0x1b1d21, body2: 0x24272c, metal: 0x8d939b, alu: 0x6f757d, rubber: 0x121315, pcb: 0x16201c,
+  chip: 0x0f1012, red: 0xd8322a, gold: 0xb8954f, glass: 0xa9c6e8 };
+
+function withEdges(mesh, { thr = 28, op = .55, color, width } = {}) {
+  const eg = new THREE.EdgesGeometry(mesh.geometry, thr);
+  const lg = new LineSegmentsGeometry().fromEdgesGeometry(eg);
+  const ln = new LineSegments2(lg, edgeMat(op, color, width));
+  ln.computeLineDistances();
+  mesh.add(ln); mesh.edgeLine = ln;
+  return mesh;
+}
+function mesh(geo, mat, edgeOpts) { const m = new THREE.Mesh(geo, mat); return edgeOpts === false ? m : withEdges(m, edgeOpts); }
+
+// ---------- geometria ----------
+function rrShape(w, h, r) {
+  const s = new THREE.Shape(), x = -w / 2, y = -h / 2;
+  s.moveTo(x + r, y); s.lineTo(x + w - r, y); s.quadraticCurveTo(x + w, y, x + w, y + r);
+  s.lineTo(x + w, y + h - r); s.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  s.lineTo(x + r, y + h); s.quadraticCurveTo(x, y + h, x, y + h - r);
+  s.lineTo(x, y + r); s.quadraticCurveTo(x, y, x + r, y); return s;
+}
+function circlePath(r, n = 64, rev = false) {
+  const p = new THREE.Path(); for (let i = 0; i <= n; i++) { const a = (rev ? -1 : 1) * i / n * Math.PI * 2; i ? p.lineTo(Math.cos(a) * r, Math.sin(a) * r) : p.moveTo(r, 0); } return p;
+}
+// placa arredondada w×h (XY), profundidade d (Z), centrada, com chanfro
+function slab(w, h, d, r = 2, bev = .8) {
+  const b = Math.min(bev, d / 3);
+  const g = new THREE.ExtrudeGeometry(rrShape(w - 2 * b, h - 2 * b, Math.max(.3, r - b)), { depth: d - 2 * b, bevelEnabled: b > 0, bevelSize: b, bevelThickness: b, bevelSegments: 1, curveSegments: 6 });
+  g.translate(0, 0, -(d - 2 * b) / 2); return g;
+}
+function slabHole(w, h, d, r, holes, bev = .6) {
+  const sh = rrShape(w - 2 * bev, h - 2 * bev, Math.max(.3, r - bev));
+  for (const ho of holes) { const p = new THREE.Path(); const s = rrShape(ho.w + 2 * bev, ho.h + 2 * bev, ho.r ?? 1); s.getPoints(6).reverse().forEach((q, i) => i ? p.lineTo(q.x + (ho.x || 0), q.y + (ho.y || 0)) : p.moveTo(q.x + (ho.x || 0), q.y + (ho.y || 0))); sh.holes.push(p); }
+  const g = new THREE.ExtrudeGeometry(sh, { depth: d - 2 * bev, bevelEnabled: true, bevelSize: bev, bevelThickness: bev, bevelSegments: 1, curveSegments: 6 });
+  g.translate(0, 0, -(d - 2 * bev) / 2); return g;
+}
+// anel/engrenagem extrudado ao longo de Z (serrilhado = dentes)
+function ring(rOut, rIn, d, teeth = 0, tooth = .6, bev = .3) {
+  const s = new THREE.Shape(); const n = teeth ? teeth * 2 : 96;
+  for (let i = 0; i <= n; i++) { const a = i / n * Math.PI * 2; const r = teeth ? (i % 2 ? rOut - tooth : rOut) : rOut; i ? s.lineTo(Math.cos(a) * r, Math.sin(a) * r) : s.moveTo(r, 0); }
+  if (rIn > 0) s.holes.push(circlePath(rIn, 96, true));
+  const g = new THREE.ExtrudeGeometry(s, { depth: Math.max(.05, d - 2 * bev), bevelEnabled: bev > 0, bevelSize: bev, bevelThickness: bev, bevelSegments: 1, curveSegments: 4 });
+  g.translate(0, 0, -(d - 2 * bev) / 2); return g;
+}
+const cylY = (r, h, n = 48) => new THREE.CylinderGeometry(r, r, h, n);
+function cylZ(r, h, n = 48) { const g = new THREE.CylinderGeometry(r, r, h, n); g.rotateX(Math.PI / 2); return g; }
+// sólido de revolução ao longo de Z: pontos [r, z]
+function latheZ(pts, n = 96) { const g = new THREE.LatheGeometry(pts.map(([r, z]) => new THREE.Vector2(r, z)), n); g.rotateX(Math.PI / 2); return g; }
+// elemento óptico: raio, espessura central, curvaturas (sag) frente/trás (+ convexo)
+function lensEl(r, t, sf, sb, n = 18) {
+  const pts = [];
+  for (let i = 0; i <= n; i++) { const x = i / n; pts.push([x * r, t / 2 + sf * (1 - x * x) - (sf < 0 ? sf : 0) * 0]); }
+  const edge = .9;
+  const back = [];
+  for (let i = n; i >= 0; i--) { const x = i / n; back.push([x * r, -t / 2 - sb * (1 - x * x)]); }
+  const prof = [[0.001, pts[0][1]], ...pts.slice(1), [r, pts[n][1] - 0.001], [r, back[0][1] + .001], ...back.slice(1), [0.001, back[n][1]]];
+  // revolve: Lathe needs points from bottom to top in "y" = z here; order is fine as a closed outline
+  void edge;
+  return latheZ(prof.map(([a, b]) => [Math.max(a, .001), b]).reverse(), 72);
+}
+
+function canvasTex(w, h, draw) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); draw(g, w, h);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
+}
+
+
+const rig = new THREE.Group(); sMain.add(rig);           // gira na apresentação
+const AX = new THREE.Vector3(8, -2, 0);                     // eixo óptico (x,y)
+const parts = {};
+function part(name, grp, off, label) { rig.add(grp); grp.userData.rest = grp.position.clone(); grp.userData.off = off; parts[name] = grp; return grp; }
+
+// ===== 1. corpo (frente + tampa traseira) =====
+const mBody = std(C.body, .62, .25), mBody2 = std(C.body2, .5, .35), mRub = std(C.rubber, .9, 0), mMetal = std(C.metal, .3, .9), mAlu = std(C.alu, .38, .85);
+const body = new THREE.Group();
+{
+  const shell = mesh(slabHole(124, 70, 30, 5, [], 1.2), mBody); shell.position.set(0, 0, 4); body.add(shell);
+  const grip = mesh(slab(28, 66, 26, 9, 1.5), mRub); grip.position.set(-46, -1, 26); body.add(grip);
+  const gripCap = mesh(slab(30, 8, 27, 3, .8), mBody); gripCap.position.set(-46, 31, 26); body.add(gripCap);
+  const plate = mesh(slab(118, 4, 30, 2, .6), mBody2); plate.position.set(0, 36.5, 4); body.add(plate);   // chapa superior
+  const hump = mesh(slab(40, 15, 34, 4, 1), mBody2); hump.position.set(AX.x, 44, 2); body.add(hump);          // capô do visor
+  const shoe = mesh(slab(20, 2.4, 20, .6, .3), mMetal); shoe.position.set(AX.x, 52.6, 2); body.add(shoe);       // sapata
+  const throat = new THREE.Mesh(new THREE.CircleGeometry(23, 64), new THREE.MeshBasicMaterial({ color: 0x030304 })); throat.position.set(AX.x, AX.y, 19.05); body.add(throat);
+  const mountRing = mesh(ring(30, 23, 3.2, 0, 0, .4), mMetal); mountRing.position.set(AX.x, AX.y, 20.6); body.add(mountRing);
+  for (let i = 0; i < 4; i++) { const a = (45 + i * 90) * D2R; const sc = mesh(cylZ(1, 1, 16), mAlu, { thr: 40, op: .4 }); sc.position.set(AX.x + Math.cos(a) * 26.5, AX.y + Math.sin(a) * 26.5, 22.4); body.add(sc); }
+  for (let i = 0; i < 3; i++) { const a = (90 + i * 120) * D2R; const tab = mesh(slab(11, 3, 1.2, .5, .2), mMetal, { op: .4 }); tab.position.set(AX.x + Math.cos(a) * 21.8, AX.y + Math.sin(a) * 21.8, 19.6); tab.rotation.z = a - Math.PI / 2; body.add(tab); }
+  const release = mesh(cylZ(3.2, 2.4, 32), mMetal); release.position.set(AX.x + 36, AX.y - 18, 20); body.add(release);
+  // controles do topo
+  const btnBase = mesh(cylY(6.5, 2, 48), mMetal); btnBase.position.set(-44, 36.5, 30); body.add(btnBase);
+  const shutterBtn = mesh(cylY(4.4, 3.4, 48), mMetal); shutterBtn.position.set(-44, 38.7, 30); body.add(shutterBtn);
+  const modeG = ring(11, 0, 6, 44, .7, .3); modeG.rotateX(-Math.PI / 2); const mode = mesh(modeG, mBody2, { thr: 35, op: .45 }); mode.position.set(-24, 41.5, 6); body.add(mode);
+  const modeTop = mesh(cylY(9, .6, 48), mMetal, { op: .5 }); modeTop.position.set(-24, 44.8, 6); body.add(modeTop);
+  const rearG = ring(8, 0, 4.4, 36, .6, .3); rearG.rotateX(-Math.PI / 2); const rear = mesh(rearG, mBody2, { thr: 35, op: .45 }); rear.position.set(40, 40.5, -6); body.add(rear);
+  const movie = mesh(cylY(2.6, 1.6, 32), new THREE.MeshStandardMaterial({ color: C.red, roughness: .5, emissive: 0x3a0705 })); movie.position.set(-12, 39.2, -6); body.add(movie);
+  // alças e tampa lateral
+  for (const sx of [-1, 1]) { const lug = mesh(slab(4, 7, 6, 1.5, .4), mMetal, { op: .4 }); lug.position.set(sx * 63.5, 26, 6); body.add(lug); }
+  const door = mesh(slab(1.4, 34, 18, 2, .3), mBody2, { op: .4 }); door.position.set(62.6, -4, 4); body.add(door);
+  // gravações frontais: régua de linhas (texto impresso) + ponto vermelho de alinhamento
+  const dot = mesh(cylZ(1.1, .6, 24), new THREE.MeshBasicMaterial({ color: C.red }), false); dot.position.set(AX.x, AX.y + 33.5, 19.4); body.add(dot);
+}
+part('corpo', body, new THREE.Vector3(0, 0, 0));
+
+const backCover = new THREE.Group();
+{
+  const cover = mesh(slab(120, 66, 6, 4, 1), mBody); backCover.add(cover);
+  const lcd = mesh(slab(76, 50, 2, 2, .4), new THREE.MeshStandardMaterial({ color: 0x050607, roughness: .15, metalness: .2, envMap: ENV }), { op: .5 }); lcd.position.set(-10, -4, -3.6); backCover.add(lcd);
+  const eyecup = mesh(slab(26, 20, 10, 6, 1.5), mRub); eyecup.position.set(AX.x, 44, -8); backCover.add(eyecup);
+  const eyeWin = mesh(slab(16, 11, 1, 2, .2), new THREE.MeshStandardMaterial({ color: 0x08090a, roughness: .1, envMap: ENV }), { op: .4 }); eyeWin.position.set(AX.x, 44, -13.4); backCover.add(eyeWin);
+  for (let i = 0; i < 4; i++) { const b = mesh(cylZ(3.2, 1.6, 32), mBody2, { op: .4 }); b.position.set(42, 16 - i * 11, -3.6); backCover.add(b); }
+  const pad = mesh(ring(8, 3, 2, 0, 0, .3), mBody2, { op: .45 }); pad.position.set(42, -22, -3.6); backCover.add(pad);
+}
+backCover.position.set(0, 0, -14);
+part('tampa', backCover, new THREE.Vector3(0, 0, -235));
+
+// ===== 2-4. lente: barril traseiro + diafragma + anel de foco + barril frontal + vidros =====
+const LZ = 22.2; // face frontal da baioneta (distância de registro de 18 mm até o sensor)
+const mGlass = new THREE.MeshPhysicalMaterial({ color: C.glass, roughness: .04, metalness: 0, transparent: true, opacity: .22, envMap: ENV, envMapIntensity: 1.6, depthWrite: false, side: THREE.DoubleSide, clearcoat: 1 });
+let diaphLight; const lensRear = new THREE.Group(), lensFocus = new THREE.Group(), lensFront = new THREE.Group(), diaph = new THREE.Group();
+{
+  const flange = mesh(ring(28, 21, 3, 0, 0, .3), mMetal); flange.position.z = 1.5; lensRear.add(flange);
+  const rb = mesh(latheZ([[24, 3], [29.5, 3.5], [30.5, 6], [30.5, 22], [29.5, 23]], 96), mBody, { thr: 30 }); lensRear.add(rb);
+  const mark = mesh(slab(1.2, 2.2, 3, .3, .1), new THREE.MeshBasicMaterial({ color: C.red }), false); mark.position.set(0, 30.6, 12); lensRear.add(mark);
+  const g5 = new THREE.Mesh(lensEl(13, 3.2, .8, 1.6), mGlass); g5.position.z = 8; lensRear.add(withEdges(g5, { thr: 40, op: .35 }));
+  const g4 = new THREE.Mesh(lensEl(15.5, 4, 1.8, .4), mGlass); g4.position.z = 16; lensRear.add(withEdges(g4, { thr: 40, op: .35 }));
+
+  const fr = mesh(ring(32.2, 29.2, 20, 90, .9, .3), mRub, { thr: 35, op: .4 }); fr.position.z = 36; lensFocus.add(fr);
+  const frCore = mesh(latheZ([[29.2, 25.5], [29.2, 46.5]], 96), mBody2, false); lensFocus.add(frCore);
+  const g3a = new THREE.Mesh(lensEl(17.5, 3, 1.2, -1.4), mGlass); g3a.position.z = 37; lensFocus.add(withEdges(g3a, { thr: 40, op: .35 }));
+  const g3b = new THREE.Mesh(lensEl(17.5, 5, 2.2, .6), mGlass); g3b.position.z = 41.5; lensFocus.add(withEdges(g3b, { thr: 40, op: .35 }));
+
+  const fb = mesh(latheZ([[30.8, 46.8], [31.2, 47.2], [31.2, 60], [30, 61.5], [26, 61.5], [25.6, 59.5]], 96), mBody, { thr: 30 }); lensFront.add(fb);
+  const nameTex = canvasTex(1024, 1024, (g, w) => {
+    g.fillStyle = '#0c0d0f'; g.fillRect(0, 0, w, w); g.translate(w / 2, w / 2); g.font = '500 44px Inter'; g.textAlign = 'center';
+    const txt = '50 mm  1:1.8  ·  ⌀52  ·  ÓPTICA DIDÁTICA  ·  '; const R = 430;
+    for (let i = 0, a0 = -Math.PI * .95; i < txt.length; i++) { const a = a0 + i * .052; g.save(); g.rotate(a + Math.PI / 2); g.fillStyle = i < 12 ? '#e2342d' : '#d9dde2'; g.fillText(txt[i], 0, -R); g.restore(); }
+  });
+  const nameRing = new THREE.Mesh(new THREE.RingGeometry(21, 26, 96), new THREE.MeshStandardMaterial({ map: nameTex, roughness: .6, metalness: .1 })); nameRing.position.z = 59.4; lensFront.add(nameRing);
+  const g1 = new THREE.Mesh(lensEl(21, 5.5, 3.2, 1.2), mGlass); g1.position.z = 55.5; lensFront.add(withEdges(g1, { thr: 40, op: .35 }));
+  const g2 = new THREE.Mesh(lensEl(18, 2.4, .6, -1.6), mGlass); g2.position.z = 49.5; lensFront.add(withEdges(g2, { thr: 40, op: .35 }));
+  const redRing = new THREE.Mesh(new THREE.TorusGeometry(31.25, .35, 8, 128), new THREE.MeshBasicMaterial({ color: C.red })); redRing.position.z = 57; lensFront.add(redRing);
+
+  const house = mesh(ring(28.5, 19.5, 2.4, 0, 0, .3), mAlu, { op: .5 }); diaph.add(house);
+  diaphLight = new THREE.Mesh(new THREE.CircleGeometry(19.6, 64), new THREE.MeshBasicMaterial({ color: 0xfff0d6, transparent: true, opacity: 0, depthWrite: false })); diaphLight.position.z = -1.6; diaph.add(diaphLight);
+}
+// lâminas do diafragma (7), redesenhadas a cada quadro conforme a abertura
+const BLADES = 7, R_MAX = 18.5;
+const mBlade = std(0x2b2e33, .35, .8, { side: THREE.DoubleSide });
+const blades = [];
+for (let i = 0; i < BLADES; i++) {
+  const m = new THREE.Mesh(new THREE.BufferGeometry(), mBlade);
+  const ln = new LineSegments2(new LineSegmentsGeometry(), edgeMat(.5)); m.add(ln); m.edgeLine = ln;
+  diaph.add(m); blades.push(m);
+}
+function setAperture(r) {
+  const tanH = Math.tan(Math.PI / BLADES);
+  for (let i = 0; i < BLADES; i++) {
+    const x0 = -r * tanH - 2, x1 = R_MAX * 1.25, y0 = r, y1 = R_MAX + 2;
+    const sh = new THREE.Shape(); sh.moveTo(x0, y0); sh.lineTo(x1, y0); sh.quadraticCurveTo(x1 + 2, (y0 + y1) / 2, x1 - 2, y1 + 1); sh.quadraticCurveTo((x0 + x1) / 2, y1 + 5, x0 - 3, y1); sh.lineTo(x0, y0);
+    const g = new THREE.ShapeGeometry(sh, 6); const a = i / BLADES * Math.PI * 2;
+    g.rotateZ(a); g.translate(0, 0, -.6 + i * .17);
+    const b = blades[i]; b.geometry.dispose(); b.geometry = g;
+    const eg = new THREE.EdgesGeometry(g, 10); b.edgeLine.geometry.dispose(); b.edgeLine.geometry = new LineSegmentsGeometry().fromEdgesGeometry(eg);
+  }
+}
+setAperture(R_MAX * .97);
+const lens = new THREE.Group(); lens.position.set(AX.x, AX.y, LZ);
+for (const g of [lensRear, lensFocus, lensFront, diaph]) lens.add(g);
+diaph.position.z = 28.5;
+lensRear.userData.rest = new THREE.Vector3(); lensFocus.userData.rest = new THREE.Vector3(); lensFront.userData.rest = new THREE.Vector3(); diaph.userData.rest = diaph.position.clone();
+part('lente', lens, new THREE.Vector3(0, 0, 92));
+
+// ===== 5. obturador de plano focal =====
+function makeShutter() {
+  const g = new THREE.Group();
+  const frame = mesh(slabHole(58, 52, 3, 3, [{ w: 37, h: 25, r: 1 }], .5), std(0x34383e, .42, .75)); frame.position.z = 1.5; g.add(frame);
+  const back = mesh(slabHole(58, 52, 1.6, 3, [{ w: 37, h: 25, r: 1 }], .3), mBody2, { op: .35 }); back.position.z = -3.4; g.add(back);
+  const motor = mesh(cylY(4.5, 14, 32), mMetal); motor.position.set(33, 10, -1); g.add(motor);
+  const gear = ring(5.5, 1.2, 1.6, 18, .6, .2); const gr = mesh(gear, mAlu, { thr: 35, op: .4 }); gr.position.set(33, -4, -1); g.add(gr);
+  const coil = mesh(slab(8, 10, 6, 1, .4), std(C.gold, .4, .9)); coil.position.set(33, -16, -1); g.add(coil);
+  for (const [x, y] of [[-25, 22], [25, 22], [-25, -22], [25, -22]]) { const s = mesh(cylZ(1.1, 1, 16), mMetal, { thr: 40, op: .35 }); s.position.set(x, y, 3.3); g.add(s); }
+  const mSlat = std(0x0f1012, .55, .4, { side: THREE.DoubleSide });
+  const mk = () => { const arr = []; for (let k = 0; k < 4; k++) { const s = mesh(slab(40, 7.2, .35, .6, 0), mSlat, { thr: 30, op: .4 }); s.position.z = -1.2 - k * .12; g.add(s); arr.push(s); } return arr; };
+  const c1 = mk(), c2 = mk();
+  c2.forEach(s => { s.position.z -= .55; });
+  // c: 0 = recolhida, 1 = cobrindo a janela
+  function set(a, b) {
+    c1.forEach((s, k) => { s.position.y = lerp(-16.5 - k * 1.3, 9.4 - k * 6.3, a); });
+    c2.forEach((s, k) => { s.position.y = lerp(16.5 + (3 - k) * 1.3, 9.4 - k * 6.3, b); });
+  }
+  set(0, 0);
+  return { g, set };
+}
+const shutter = makeShutter();
+shutter.g.position.set(AX.x, AX.y, 11);
+part('obturador', shutter.g, new THREE.Vector3(0, 0, -62));
+
+// ===== 6. sensor (com placa de estabilização) =====
+const sensor = new THREE.Group();
+const hatch = canvasTex(512, 342, (g, w, h) => {
+  g.fillStyle = '#3a0907'; g.fillRect(0, 0, w, h); g.strokeStyle = 'rgba(255,90,70,.55)'; g.lineWidth = 2;
+  for (let i = -h; i < w; i += 9) { g.beginPath(); g.moveTo(i, h); g.lineTo(i + h, 0); g.stroke(); }
+  g.strokeStyle = 'rgba(255,120,100,.25)'; for (let x = 0; x < w; x += 16) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); }
+});
+const mDie = new THREE.MeshStandardMaterial({ map: hatch, emissive: 0xff2a1a, emissiveIntensity: .18, emissiveMap: hatch, roughness: .25, metalness: .3 });
+{
+  const ibis = mesh(slab(60, 50, 2.6, 3, .4), mAlu); ibis.position.z = -1.6; sensor.add(ibis);
+  for (const [x, y] of [[-26, 21], [26, 21], [-26, -21], [26, -21]]) { const s = mesh(cylZ(1.4, 2, 16), mMetal, { thr: 40, op: .35 }); s.position.set(x, y, .2); sensor.add(s); }
+  const pkg = mesh(slab(46, 36, 2, 1.5, .3), std(0xc9c3b5, .6, .05)); pkg.position.z = 1; sensor.add(pkg);
+  const die = mesh(new THREE.PlaneGeometry(36, 24), mDie, { thr: 10, op: .7, color: 0xff6a5a }); die.position.z = 2.05; sensor.add(die);
+  const coverGlass = mesh(slab(40, 28, .7, .6, 0), mGlass, { op: .25 }); coverGlass.position.z = 2.9; sensor.add(coverGlass);
+  for (let i = 0; i < 24; i++) { const p = mesh(slab(.9, 1.6, .3, .2, 0), std(C.gold, .35, 1), false); p.position.set(-20 + i * 1.75, -16.5, 2.1); sensor.add(p); }
+  const mag = mesh(slab(10, 6, 3, 1, .3), std(0x3b3f45, .5, .6)); mag.position.set(-24, 0, -3.8); sensor.add(mag);
+  const mag2 = mag.clone(); mag2.position.set(24, 0, -3.8); sensor.add(mag2);
+}
+sensor.position.set(AX.x, AX.y, 2);
+part('sensor', sensor, new THREE.Vector3(0, 0, -112));
+const SENSOR_DIE = new THREE.Vector3(0, 0, 2.05); // local
+
+// ===== 7. dissipador =====
+const heat = new THREE.Group();
+{
+  const base = mesh(slab(52, 40, 2.4, 1.5, .3), mAlu); heat.add(base);
+  for (let i = 0; i < 9; i++) { const f = mesh(slab(1.4, 36, 10, .3, .2), mAlu, { thr: 30, op: .45 }); f.position.set(-22 + i * 5.5, 0, -6); heat.add(f); }
+  const pipeG = new THREE.TubeGeometry(new THREE.CatmullRomCurve3([new THREE.Vector3(-26, 14, -1.4), new THREE.Vector3(-34, 14, -2), new THREE.Vector3(-40, 4, -3), new THREE.Vector3(-40, -12, -3)]), 40, 1.6, 12);
+  heat.add(mesh(pipeG, std(C.gold, .35, 1), { thr: 50, op: .3 }));
+}
+heat.position.set(AX.x, AX.y, -4.5);
+part('dissipador', heat, new THREE.Vector3(0, 0, -150));
+
+// ===== 8-9. placa principal + processador + cartão =====
+const board = new THREE.Group();
+const pcbTex = canvasTex(1600, 900, (g, w, h) => {
+  g.fillStyle = '#121a17'; g.fillRect(0, 0, w, h); const r = rng(7); g.lineCap = 'round';
+  for (let i = 0; i < 230; i++) { g.strokeStyle = `rgba(200,230,215,${.06 + r() * .14})`; g.lineWidth = 1.5 + r() * 2.5; let x = r() * w, y = r() * h; g.beginPath(); g.moveTo(x, y); for (let k = 0; k < 3; k++) { if (r() < .5) x += (r() - .5) * 500; else y += (r() - .5) * 300; g.lineTo(x, y); } g.stroke(); }
+  for (let i = 0; i < 260; i++) { g.fillStyle = 'rgba(210,190,140,.45)'; g.beginPath(); g.arc(r() * w, r() * h, 3, 0, 7); g.fill(); }
+});
+const mProc = new THREE.MeshStandardMaterial({ color: 0x141518, roughness: .35, metalness: .5, emissive: C.red, emissiveIntensity: 0 });
+{
+  const pcb = mesh(slab(104, 58, 1.6, 2, .2), new THREE.MeshStandardMaterial({ map: pcbTex, roughness: .7, metalness: .1 }), { thr: 30, op: .6 }); board.add(pcb);
+  const proc = mesh(slab(17, 17, 2.4, .8, .3), mProc, { op: .8, color: 0xff6a5a }); proc.position.set(6, 4, -2); board.add(proc); board.userData.proc = proc;
+  const lid = new THREE.Mesh(new THREE.PlaneGeometry(13, 13), new THREE.MeshBasicMaterial({ map: canvasTex(256, 256, (g, w) => { g.fillStyle = '#17181b'; g.fillRect(0, 0, w, w); g.strokeStyle = '#e2342d'; g.lineWidth = 6; g.strokeRect(14, 14, w - 28, w - 28); g.fillStyle = '#d9dde2'; g.font = '600 46px Inter'; g.textAlign = 'center'; g.fillText('IMAGE', w / 2, 112); g.fillText('PROC', w / 2, 168); g.fillStyle = '#e2342d'; g.beginPath(); g.arc(44, 44, 9, 0, 7); g.fill(); }) }));
+  lid.rotation.y = Math.PI; lid.position.set(6, 4, -3.25); board.add(lid);
+  const chips = [[-22, 12, 11, 8], [-22, -6, 11, 8], [30, 14, 9, 9], [30, -2, 12, 6], [-40, 14, 7, 7], [24, -18, 8, 5]];
+  for (const [x, y, w, h] of chips) { const c = mesh(slab(w, h, 1.6, .5, .2), std(C.chip, .4, .4), { op: .5 }); c.position.set(x, y, -1.6); board.add(c); }
+  for (let i = 0; i < 14; i++) { const c = mesh(slab(1.6, .9, .8, .1, 0), std(0x8a7a5a, .5, .5), false); c.position.set(-10 + (i % 7) * 2.6, -14 - Math.floor(i / 7) * 2.2, -1.2); board.add(c); }
+  const conn = mesh(slab(16, 4, 3, .4, .2), std(0xe8e2d4, .7, 0), { op: .5 }); conn.position.set(-6, 24, -2.2); board.add(conn);
+  const slot = mesh(slab(30, 27, 3.4, .8, .3), mMetal, { op: .55 }); slot.position.set(-36, -12, -2.4); board.add(slot);
+  const card = mesh(slab(24, 32, 2.1, 1.2, .2), std(0x1d2a40, .5, .2), { op: .6 }); card.position.set(-36, -14, -4.6); board.add(card); board.userData.card = card;
+  const cardLbl = new THREE.Mesh(new THREE.PlaneGeometry(20, 14), new THREE.MeshBasicMaterial({ map: canvasTex(256, 180, (g, w, h) => { g.fillStyle = '#22314a'; g.fillRect(0, 0, w, h); g.fillStyle = '#e8edf3'; g.font = '600 40px Inter'; g.fillText('SD', 20, 64); g.font = '400 24px Inter'; g.fillText('UHS-II  V90', 20, 112); g.fillStyle = '#e2342d'; g.fillRect(20, 136, 120, 6); }) }));
+  cardLbl.rotation.y = Math.PI; cardLbl.position.set(-36, -18, -5.7); board.add(cardLbl);
+}
+board.position.set(0, -2, -11);
+part('placa', board, new THREE.Vector3(0, 0, -192));
+
+// ===== 10. circuitos: placa de E/S + flex do sensor =====
+const circ = new THREE.Group();
+{
+  const io = mesh(slab(1.6, 46, 26, 1.5, .2), new THREE.MeshStandardMaterial({ map: pcbTex, roughness: .7 }), { op: .55 }); io.position.set(0, 0, 0); circ.add(io);
+  for (const [y, h] of [[12, 7], [0, 5], [-12, 8]]) { const p = mesh(slab(3, h, 9, .6, .3), mMetal, { op: .45 }); p.position.set(2.3, y, 3); circ.add(p); }
+  const flexMat = std(0xb46a1f, .45, .5, { side: THREE.DoubleSide });
+  const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(-2, 18, -8), new THREE.Vector3(-14, 26, -10), new THREE.Vector3(-30, 26, -2), new THREE.Vector3(-46, 20, 2)]);
+  const flex = mesh(new THREE.TubeGeometry(curve, 48, 1.2, 4, false), flexMat, { thr: 60, op: .25 }); flex.scale.set(1, 1, 1); circ.add(flex);
+  const bat = mesh(slab(4, 8, 3, .6, .2), std(0xe8e2d4, .7, 0), { op: .4 }); bat.position.set(-1, -20, -6); circ.add(bat);
+}
+circ.position.set(56, 0, 2);
+part('circuitos', circ, new THREE.Vector3(80, 0, -60));
+
+// ===== 11. visor eletrônico =====
+const evf = new THREE.Group();
+{
+  const box = mesh(slab(24, 13, 22, 2, .5), mBody2); evf.add(box);
+  const oled = mesh(slab(14, 9, 1, .4, .1), new THREE.MeshStandardMaterial({ color: 0x0a0b0c, emissive: 0x1d2633, roughness: .2 }), { op: .5 }); oled.position.set(0, 0, 11.4); evf.add(oled);
+  const eyep = mesh(cylZ(7, 12, 48), mBody, { thr: 40 }); eyep.position.set(0, 0, -15); evf.add(eyep);
+  const eyeGlass = new THREE.Mesh(lensEl(6.2, 2, .8, .8), mGlass); eyeGlass.position.z = -21.4; evf.add(withEdges(eyeGlass, { thr: 40, op: .35 }));
+  const fl = mesh(slab(10, 2.4, 1, .3, 0), std(0xb46a1f, .45, .5), false); fl.position.set(0, -7.4, 6); evf.add(fl);
+}
+evf.position.set(AX.x, 44, 0);
+part('visor', evf, new THREE.Vector3(0, 70, 0));
+
+// ===== 12. bateria =====
+const battery = new THREE.Group();
+{
+  const batTex = canvasTex(512, 900, (g, w, h) => { g.fillStyle = '#1b1d21'; g.fillRect(0, 0, w, h); g.fillStyle = '#d9dde2'; g.font = '600 64px Inter'; g.fillText('Li-ion', 40, 120); g.font = '400 40px Mono'; g.fillText('7,2 V', 40, 200); g.fillText('2280 mAh', 40, 256); g.fillStyle = '#e2342d'; g.fillRect(40, 300, 160, 8); g.strokeStyle = 'rgba(217,221,226,.35)'; g.lineWidth = 3; for (let i = 0; i < 4; i++) { g.beginPath(); g.moveTo(40, 400 + i * 40); g.lineTo(w - 40, 400 + i * 40); g.stroke(); } });
+  const cell = mesh(slab(20, 54, 36, 2.5, .8), [std(0x1b1d21, .6, .1), std(0x1b1d21, .6, .1)], { op: .55 }); battery.add(cell);
+  const lab = new THREE.Mesh(new THREE.PlaneGeometry(30, 50), new THREE.MeshStandardMaterial({ map: batTex, roughness: .6 })); lab.rotation.y = -Math.PI / 2; lab.position.x = -10.05; battery.add(lab);
+  for (let i = 0; i < 4; i++) { const c = mesh(slab(4, 1, 2, .2, 0), std(C.gold, .3, 1), false); c.position.set(-4 + i * 2.8 - 1, -27.2, 6 - i * 3); battery.add(c); }
+}
+battery.position.set(-46, -6, 10);
+part('bateria', battery, new THREE.Vector3(0, -100, 0));
+
+
+
+// =====================================================================
+// LABORATÓRIO: luzes, grade holográfica, partículas, plataforma
+const CYAN = new THREE.Color(0x35d8ff), CYAN_HI = new THREE.Color(0x9ff0ff);
+sMain.add(new THREE.HemisphereLight(0x5fa8ff, 0x020409, .5));
+const key = new THREE.DirectionalLight(0xe6f6ff, 1.6); key.position.set(-260, 420, 380); sMain.add(key);
+const rimA = new THREE.PointLight(0x2fc8ff, 1.2, 0, 0); rimA.position.set(260, 120, -260); sMain.add(rimA);
+const rimB = new THREE.PointLight(0x2f6bff, .9, 0, 0); rimB.position.set(-300, -40, -200); sMain.add(rimB);
+const under = new THREE.PointLight(0x3ae0ff, .7, 0, 0); under.position.set(0, -140, 60); sMain.add(under);
+for (const m of allEdgeMats) { m.color.set(0x8fe9ff); m.userData.base = Math.min(.75, m.userData.base * 1.15); m.opacity = m.userData.base; }
+
+const FLOOR_Y = -120;
+const gridMat = new THREE.ShaderMaterial({
+  transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+  uniforms: { uT: { value: 0 }, uA: { value: 0 }, uScan: { value: -1 } },
+  vertexShader: `varying vec2 vP; void main(){ vec4 w = modelMatrix * vec4(position,1.); vP = w.xz; gl_Position = projectionMatrix * viewMatrix * w; }`,
+  fragmentShader: `uniform float uT; uniform float uA; uniform float uScan; varying vec2 vP;
+    float line(float v, float s, float w){ float d = abs(fract(v / s - .5) - .5) * s; return 1. - smoothstep(0., w, d); }
+    void main(){ float r = length(vP);
+      float g = max(line(vP.x, 20., .6), line(vP.y, 20., .6)) * .35 + max(line(vP.x, 100., .9), line(vP.y, 100., .9)) * .6;
+      float rings = line(r, 60., .7) * .5;
+      float pulse = exp(-pow((r - mod(uT * 90., 900.)) / 18., 2.)) * .8;
+      float scan = uScan > -1. ? exp(-pow((vP.y - uScan) / 10., 2.)) * 1.4 : 0.;
+      float fade = 1. - smoothstep(180., 820., r);
+      vec3 c = vec3(.18, .78, 1.) * (g + rings + pulse * .5) + vec3(.6, .95, 1.) * scan;
+      gl_FragColor = vec4(c * fade * uA, 1.); }`,
+});
+const grid = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000), gridMat); grid.rotation.x = -Math.PI / 2; grid.position.y = FLOOR_Y; sMain.add(grid);
+// plataforma: anéis com marcas, girando devagar
+const pad = new THREE.Group(); pad.position.y = FLOOR_Y + .5; sMain.add(pad);
+const padMat = new THREE.LineBasicMaterial({ color: 0x40d8ff, transparent: true, opacity: .55, blending: THREE.AdditiveBlending, depthWrite: false });
+for (const [r, n] of [[150, 128], [158, 128], [190, 160]]) { const pts = []; for (let i = 0; i <= n; i++) { const a = i / n * Math.PI * 2; pts.push(new THREE.Vector3(Math.cos(a) * r, 0, Math.sin(a) * r)); } pad.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), padMat)); }
+{ const pts = []; for (let i = 0; i < 120; i++) { const a = i / 120 * Math.PI * 2, l = i % 10 === 0 ? 14 : 6; pts.push(new THREE.Vector3(Math.cos(a) * 158, 0, Math.sin(a) * 158), new THREE.Vector3(Math.cos(a) * (158 + l), 0, Math.sin(a) * (158 + l))); } pad.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), padMat)); }
+const beam = new THREE.Mesh(new THREE.CylinderGeometry(150, 150, 120, 64, 1, true), new THREE.ShaderMaterial({ transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, uniforms: { uA: { value: 0 } },
+  vertexShader: `varying float vY; void main(){ vY = uv.y; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.); }`,
+  fragmentShader: `uniform float uA; varying float vY; void main(){ gl_FragColor = vec4(vec3(.2,.8,1.) * pow(1. - vY, 3.) * .16 * uA, 1.); }` }));
+beam.position.y = FLOOR_Y + 60; sMain.add(beam);
+// partículas
+const NPART = 700; const pr = rng(11); const ppos = new Float32Array(NPART * 3), pseed = new Float32Array(NPART);
+for (let i = 0; i < NPART; i++) { ppos[i * 3] = (pr() - .5) * 1400; ppos[i * 3 + 1] = FLOOR_Y + pr() * 520; ppos[i * 3 + 2] = (pr() - .5) * 1400; pseed[i] = pr(); }
+const pgeo = new THREE.BufferGeometry(); pgeo.setAttribute('position', new THREE.BufferAttribute(ppos, 3)); pgeo.setAttribute('seed', new THREE.BufferAttribute(pseed, 1));
+const pmat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { uT: { value: 0 }, uA: { value: 0 }, uPx: { value: DPR } },
+  vertexShader: `attribute float seed; uniform float uT; uniform float uPx; varying float vA; void main(){ vec3 p = position; p.y += mod(uT * (4. + seed * 8.) + seed * 520., 520.) - 260. * 0.; p.y = ${FLOOR_Y.toFixed(1)} + mod(p.y - ${FLOOR_Y.toFixed(1)}, 520.); p.x += sin(uT * .2 + seed * 40.) * 8.; vec4 mv = modelViewMatrix * vec4(p, 1.); gl_Position = projectionMatrix * mv; gl_PointSize = (1.2 + seed * 2.2) * uPx * (600. / -mv.z); vA = .25 + .75 * fract(seed * 7.3 + uT * .05); }`,
+  fragmentShader: `uniform float uA; varying float vA; void main(){ float d = length(gl_PointCoord - .5); if (d > .5) discard; gl_FragColor = vec4(vec3(.35,.85,1.) * (1. - d * 2.) * vA * .7 * uA, 1.); }` });
+sMain.add(new THREE.Points(pgeo, pmat));
+// linha de varredura da abertura
+const scanMat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, uniforms: { uA: { value: 0 } },
+  vertexShader: `varying vec2 vU; void main(){ vU = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.); }`,
+  fragmentShader: `uniform float uA; varying vec2 vU; void main(){ float l = exp(-pow((vU.y - .5) / .04, 2.)); float e = 1. - smoothstep(.35, .5, abs(vU.x - .5)); gl_FragColor = vec4(vec3(.4,.9,1.) * l * e * uA, 1.); }` });
+const scan = new THREE.Mesh(new THREE.PlaneGeometry(700, 40), scanMat); scan.rotation.x = -Math.PI / 2; sMain.add(scan);
+
+// =====================================================================
+// MODELO: reorganizar em componentes independentes
+rig.position.y = -10;
+diaphLight.visible = false; shutter.set(0, 0);
+const Q = (o) => o;
+// elementos ópticos: um grupo próprio dentro da lente
+const optics = new THREE.Group(); lens.add(optics);
+const glassMeshes = []; for (const g of [lensRear, lensFocus, lensFront]) g.traverse(o => { if (o.isMesh && o.material === mGlass) glassMeshes.push(o); });
+glassMeshes.sort((a, b) => a.getWorldPosition(new THREE.Vector3()).z - b.getWorldPosition(new THREE.Vector3()).z);
+for (const g of glassMeshes) optics.attach(g);
+// cartão de memória: sai da placa
+const cardG = new THREE.Group(); rig.add(cardG); cardG.position.copy(board.position);
+{ const kids = board.children.filter(c => c === board.userData.card || (c.isMesh && c.geometry && c.geometry.type === 'PlaneGeometry' && c.position.x < -30)); for (const c of kids) cardG.add(c); }
+// sensor: plataforma IBIS (placa + ímãs) carrega o CMOS; o filtro Bayer fica sobre o die
+const cmos = new THREE.Group(); sensor.add(cmos);
+{ const kids = sensor.children.slice(5, 32); for (const c of kids) cmos.attach(c); }
+const bayerTex = (() => { const c = document.createElement('canvas'); c.width = 576; c.height = 384; const g = c.getContext('2d'); const s = 12; const col = { R: '#ff4d4d', G: '#3df08a', B: '#3d8bff' };
+  for (let y = 0; y < 32; y++) for (let x = 0; x < 48; x++) { const k = y % 2 ? (x % 2 ? 'B' : 'G') : (x % 2 ? 'G' : 'R'); g.fillStyle = col[k]; g.fillRect(x * s + 1, y * s + 1, s - 2, s - 2); }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; })();
+const bayerG = new THREE.Group(); cmos.add(bayerG);
+const bayerMesh = mesh(new THREE.PlaneGeometry(36, 24), new THREE.MeshBasicMaterial({ map: bayerTex, transparent: true, opacity: .55, depthWrite: false }), { thr: 10, op: .6 });
+bayerMesh.position.set(0, 0, 2.35); bayerG.add(bayerMesh);
+
+// catálogo: o que é cada peça, de onde sai e para onde vai na vista explodida
+const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
+const COMP = [
+  { id: 'corpo', obj: body, name: 'Corpo da câmera', off: V3(0, 0, 0), sim: null, kind: 'genérico',
+    fn: 'Chassi que mantém baioneta, obturador e sensor alinhados em centésimos de milímetro e protege a eletrônica.', mat: 'Liga de magnésio (comum em corpos profissionais) · empunhadura de borracha', loc: 'Estrutura externa; todos os módulos se prendem a ele.', how: 'A baioneta fixa a lente a uma distância exata do sensor (registro).', rel: 'Recebe lente, obturador, plataforma IBIS, placa, visor e bateria.' },
+  { id: 'tampa', obj: backCover, name: 'Tampa traseira e LCD', off: V3(0, 0, -235), sim: null, kind: 'genérico',
+    fn: 'Fecha a traseira e carrega a tela LCD, a ocular e os botões.', mat: 'Liga de magnésio · vidro da tela', loc: 'Traseira do corpo.', how: 'Liga-se à placa principal por cabos flex.', rel: 'Cobre placa, dissipador e plataforma do sensor.' },
+  { id: 'lente', obj: lens, name: 'Lente 50 mm f/1.8', off: V3(0, 0, 92), sim: 'lente', kind: 'genérico',
+    fn: 'Forma a imagem: seus elementos fazem a luz de cada ponto da cena convergir num ponto do sensor.', mat: 'Barril de alumínio e policarbonato · vidro óptico', loc: 'Frente da câmera, presa pela baioneta.', how: 'Distância focal de 50 mm: para objetos no infinito, o plano de imagem fica a 50 mm do ponto nodal traseiro.', rel: 'Contém anel de foco, diafragma e elementos ópticos; projeta a imagem no sensor.' },
+  { id: 'opticos', obj: optics, name: 'Elementos ópticos', off: V3(0, 0, 0), spread: true, sim: 'lente', kind: 'genérico',
+    fn: 'Lentes de vidro convergentes e divergentes que formam a imagem e corrigem aberrações.', mat: 'Vidro óptico com revestimento antirreflexo', loc: 'Dentro do barril da lente, ao longo do eixo óptico.', how: 'Cada superfície curva desvia a luz (refração); a combinação corrige cor e distorção.', rel: 'O diafragma fica entre os grupos; o foco desloca parte deles.' },
+  { id: 'foco', obj: lensFocus, name: 'Anel de foco', off: V3(0, 0, 40), sim: 'lente', kind: 'genérico',
+    fn: 'Desloca o grupo óptico para deixar nítida a distância escolhida.', mat: 'Borracha serrilhada sobre anel de plástico', loc: 'Meio do barril da lente.', how: 'Avanço do grupo = f² ÷ (d − f): 6,25 mm para focar a 45 cm com 50 mm.', rel: 'Em lentes modernas, aciona um motor de foco comandado pela câmera.' },
+  { id: 'diafragma', obj: diaph, name: 'Diafragma', off: V3(0, 0, 20), sim: 'diafragma', kind: 'genérico',
+    fn: 'Abertura variável que controla a luz e a profundidade de campo.', mat: 'Lâminas de aço fino ou plástico preto', loc: 'Entre os grupos ópticos, no plano da pupila.', how: 'Número f = distância focal ÷ diâmetro da abertura; a luz cai com 1/N².', rel: 'Comandado por motor de passo a partir do processador.' },
+  { id: 'cartao', obj: cardG, name: 'Cartão de memória', off: V3(-70, 0, -192), sim: 'processamento', kind: 'genérico',
+    fn: 'Armazena os arquivos de imagem e vídeo.', mat: 'Memória flash NAND em invólucro plástico', loc: 'Slot ligado à placa principal.', how: 'Recebe os dados já comprimidos (JPEG, HEIF) ou brutos (RAW).', rel: 'Último destino do caminho sensor → processador → cartão.' },
+  { id: 'visor', obj: evf, name: 'Visor eletrônico', off: V3(0, 70, 0), sim: null, kind: 'genérico',
+    fn: 'Mostra a imagem ao vivo do sensor, com a exposição final.', mat: 'Tela micro-OLED · ocular de vidro', loc: 'Capô superior do corpo.', how: 'O processador envia a imagem ao micro-OLED; a ocular a amplia.', rel: 'Recebe vídeo da placa principal.' },
+  { id: 'bateria', obj: battery, name: 'Bateria', off: V3(0, -100, 0), sim: null, kind: 'genérico',
+    fn: 'Fornece energia a todo o sistema.', mat: 'Células de íon-lítio · invólucro plástico', loc: 'Dentro da empunhadura.', how: '7,2 V × 2,28 Ah = 16,4 Wh (valores típicos).', rel: 'Alimenta placa, sensor, IBIS, visor e motores.' },
+  { id: 'obturador', obj: shutter.g, name: 'Obturador', off: V3(0, 0, -62), sim: 'obturador', kind: 'genérico',
+    fn: 'Define por quanto tempo a luz atinge o sensor.', mat: 'Lâminas de alumínio ou fibra de carbono · motor e eletroímã', loc: 'Logo atrás da baioneta, na frente do sensor.', how: 'Duas cortinas: a primeira abre, a segunda fecha; em alta velocidade viajam juntas formando uma fenda.', rel: 'Disparado pelo processador; em muitas sem espelho a 1ª cortina é eletrônica (varia por modelo).' },
+  { id: 'ibis', obj: sensor, name: 'Estabilização IBIS', off: V3(0, 0, -112), sim: 'ibis', kind: 'genérico',
+    fn: 'Move o sensor para compensar o tremor da mão.', mat: 'Placa flutuante · ímãs e bobinas (atuadores de voz)', loc: 'Atrás do obturador; o sensor fica montado sobre ela.', how: 'Giroscópios medem o tremor e os atuadores deslocam o sensor no sentido oposto, em X, Y e rotação.', rel: 'Carrega o sensor CMOS; comandada pelo processador.' },
+  { id: 'sensor', obj: cmos, name: 'Sensor CMOS', off: V3(0, 0, 20), sim: 'sensor', kind: 'verificado: princípio',
+    fn: 'Converte a luz em carga elétrica, pixel por pixel, e a lê como números.', mat: 'Silício em encapsulamento cerâmico, com vidro de proteção', loc: 'Sobre a plataforma IBIS, no plano focal.', how: 'Full frame mede 36 × 24 mm; com 6000 × 4000 pixels, cada um tem 6 µm.', rel: 'Recebe a imagem da lente e envia os dados à placa principal.' },
+  { id: 'bayer', obj: bayerG, name: 'Filtro de cores Bayer', off: V3(0, 0, 16), sim: 'sensor', kind: 'verificado: padrão',
+    fn: 'Faz cada pixel registrar só uma cor; as outras duas são reconstruídas depois.', mat: 'Filtros de corante sobre o silício, sob microlentes', loc: 'Diretamente sobre os pixels do sensor.', how: 'Padrão RGGB: 50% verde, 25% vermelho, 25% azul.', rel: 'O processador faz o demosaico para recompor as cores.' },
+  { id: 'placa', obj: board, name: 'Placa principal', off: V3(0, 0, -192), sim: 'processamento', kind: 'genérico',
+    fn: 'Abriga o processador de imagem, a memória e a gestão de energia.', mat: 'Circuito impresso multicamada', loc: 'Atrás do sensor, sob a tampa traseira.', how: 'O processador faz demosaico, redução de ruído, tons e compressão.', rel: 'Liga sensor, cartão, visor, LCD e bateria.' },
+  { id: 'dissipador', obj: heat, name: 'Dissipador térmico', off: V3(0, 0, -150), sim: null, kind: 'genérico',
+    fn: 'Retira o calor do sensor e do processador; calor gera ruído na imagem.', mat: 'Alumínio · heat pipe de cobre', loc: 'Entre o sensor e a placa principal.', how: 'Conduz o calor às aletas e ao corpo, que o espalha.', rel: 'Encosta no sensor e no processador.' },
+  { id: 'circuitos', obj: circ, name: 'Circuitos internos', off: V3(80, 0, -60), sim: 'processamento', kind: 'genérico',
+    fn: 'Placa de entradas e saídas e cabos flex que interligam os módulos.', mat: 'Cobre sobre poliimida (flex) · conectores', loc: 'Lateral do corpo.', how: 'Levam dados e energia entre placa, sensor e conectores.', rel: 'Ponte entre a placa principal e o resto.' },
+];
+const BY = Object.fromEntries(COMP.map(c => [c.id, c]));
+// espalhar os elementos ópticos numa fila à frente da lente
+glassMeshes.forEach((g, i) => { g.userData.rest = g.position.clone(); g.userData.spread = V3(0, 0, (118 + i * 14) - g.position.z); });
+// ids por malha: do geral para o específico
+for (const c of COMP) c.obj.traverse(o => { o.userData.pid = c.id; });
+for (const c of COMP) { c.rest = c.obj.position.clone(); c.user = V3(0, 0, 0); }
+// materiais próprios por malha (destaque e raio-X)
+const meshesOf = {};
+sMain.updateMatrixWorld(true);
+rig.traverse(o => {
+  if (!o.isMesh || o.isLineSegments2 || !o.userData.pid) return;
+  o.material = Array.isArray(o.material) ? o.material.map(m => m.clone()) : o.material.clone();
+  for (const m of [].concat(o.material)) if (m.clearcoat === 1 && m.transparent) { m.color.set(0x7fdcff); m.opacity = .13; m.envMapIntensity = .55; m.clearcoat = .4; }
+  for (const m of [].concat(o.material)) { m.userData.op0 = m.opacity; m.userData.tr0 = m.transparent; m.userData.dw0 = m.depthWrite; if (m.emissive) { m.userData.e0 = m.emissive.clone(); m.userData.ei0 = m.emissiveIntensity; } }
+  (meshesOf[o.userData.pid] ||= []).push(o);
+});
+const LENS_SPLIT = { rear: 0 };
+
+// =====================================================================
+// ESTADO: vista explodida, raio-X, seleção
+let E = 0, Etarget = 0, Edist = 1, xray = false, bodyOp = 1, selected = null, hover = null;
+function applyPose() {
+  const e = E * Edist;
+  for (const c of COMP) {
+    if (c.spread) continue;
+    c.obj.position.copy(c.rest).addScaledVector(c.off, e).add(c.user);
+  }
+  optics.position.copy(BY.opticos.rest).add(BY.opticos.user);
+  for (const g of glassMeshes) g.position.copy(g.userData.rest).addScaledVector(g.userData.spread, e);
+  lensFront.position.z = 62 * e + focusE;
+  lensRear.position.z = 0;
+}
+// destaque holográfico
+function paint() {
+  for (const [pid, ms] of Object.entries(meshesOf)) {
+    const sel = pid === selected, hov = pid === hover && !sel;
+    const ghost = xray ? (pid === 'corpo' || pid === 'tampa' || pid === 'lente') ? .08 : .55 : (pid === 'corpo' || pid === 'tampa') ? bodyOp : 1;
+    for (const o of ms) {
+      for (const m of [].concat(o.material)) {
+        const op = (m.userData.tr0 ? m.userData.op0 : 1) * ghost * intro.mat;
+        const t = op < .999 || m.userData.tr0; m.transparent = t; m.opacity = op; m.depthWrite = !t ? true : m.userData.dw0 && op > .6;
+        if (m.emissive) { if (sel) { m.emissive.copy(CYAN); m.emissiveIntensity = .35 + .2 * pulse; } else if (hov) { m.emissive.copy(CYAN); m.emissiveIntensity = .18; } else { m.emissive.copy(m.userData.e0); m.emissiveIntensity = m.userData.ei0; } }
+      }
+      const ln = o.edgeLine; if (ln) { const b = ln.material.userData.base; ln.material.opacity = (sel ? 1 : hov ? .9 : xray ? Math.max(b, .45) : b) * intro.edge; ln.material.color.copy(sel ? CYAN_HI : hov ? CYAN_HI : new THREE.Color(0x8fe9ff)); }
+    }
+  }
+}
+let pulse = 0;
+
+// =====================================================================
+// CONTROLES
+const controls = new OrbitControls(cam, view);
+controls.enableDamping = true; controls.dampingFactor = .07; controls.minDistance = 80; controls.maxDistance = 1400; controls.screenSpacePanning = true;
+controls.target.set(0, 0, 10); cam.position.set(260, 150, 420);
+const tc = new TransformControls(cam, view); tc.setSize(.85); tc.setSpace('local'); tc.enabled = false;
+const tcHelper = tc.getHelper(); sMain.add(tcHelper); tcHelper.visible = false;
+tc.addEventListener('dragging-changed', (e) => { controls.enabled = !e.value; });
+tc.addEventListener('objectChange', () => { const c = BY[selected]; if (!c) return; const base = c.spread ? BY.opticos.rest.clone() : c.rest.clone().addScaledVector(c.off, E * Edist); c.user.copy(c.obj.position).sub(base); status(); });
+let moveMode = false;
+function attachGizmo() { const c = BY[selected]; if (moveMode && c) { tc.attach(c.obj); tc.enabled = true; tcHelper.visible = true; } else { tc.detach(); tc.enabled = false; tcHelper.visible = false; } }
+let fly = null;
+function flyTo(target, pos, dur = 1.2) { fly = { t0: performance.now(), dur: dur * 1000, a: { p: cam.position.clone(), t: controls.target.clone() }, b: { p: pos, t: target } }; }
+function centerView() {
+  const box = new THREE.Box3(); for (const c of COMP) box.expandByObject(c.obj); const ctr = box.getCenter(new THREE.Vector3()), sz = box.getSize(new THREE.Vector3()).length();
+  const dir = cam.position.clone().sub(controls.target).normalize(); const fit = sz * .62 / Math.tan(cam.fov * D2R / 2) / Math.min(1, cam.aspect * 1.1);
+  flyTo(ctr, ctr.clone().addScaledVector(dir, clamp(fit, 160, 1200)));
+}
+function focusOn(id) { const c = BY[id]; const box = new THREE.Box3().expandByObject(c.obj); const ctr = box.getCenter(new THREE.Vector3()), sz = Math.max(40, box.getSize(new THREE.Vector3()).length());
+  const dir = cam.position.clone().sub(controls.target).normalize(); flyTo(ctr, ctr.clone().addScaledVector(dir, sz * 1.7 / Math.min(1, cam.aspect * 1.1))); }
+
+// seleção por raio
+const ray = new THREE.Raycaster(), ptr = new THREE.Vector2();
+const pickables = []; rig.traverse(o => { if (o.isMesh && !o.isLineSegments2 && o.userData.pid) pickables.push(o); });
+function pick(e) {
+  const r = view.getBoundingClientRect(); ptr.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ptr, cam);
+  const hits = ray.intersectObjects(pickables, false).filter(h => { const m = [].concat(h.object.material)[0]; return m.opacity > .2 || h.object.userData.pid !== 'corpo' && h.object.userData.pid !== 'tampa'; });
+  return hits[0] ? hits[0].object.userData.pid : null;
+}
+let down = null;
+view.addEventListener('pointerdown', (e) => { document.body.classList.add('touched'); down = { x: e.clientX, y: e.clientY, gizmo: tc.dragging || (tc.enabled && tc.axis) }; skipIntro(); stopTour(); });
+view.addEventListener('pointermove', (e) => { if (e.pointerType !== 'mouse' || down) return; const id = pick(e); if (id !== hover) { hover = id; view.style.cursor = id ? 'pointer' : 'grab'; } });
+view.addEventListener('pointerup', (e) => { if (!down || down.gizmo || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 6) { down = null; return; } down = null; const id = pick(e); select(id); });
+view.addEventListener('pointerleave', () => { hover = null; });
+
+// =====================================================================
+// SIMULAÇÕES
+// foco
+let focusS = 0, focusE = 0;
+function setFocus(s) { focusS = s; const d = s < 1e-3 ? Infinity : 450 / s; focusE = d === Infinity ? 0 : 2500 / (d - 50); lensFocus.rotation.z = -s * 80 * D2R; return { d, e: focusE }; }
+// abertura
+const STOPS = [1.8, 2, 2.2, 2.5, 2.8, 3.2, 3.5, 4, 4.5, 5, 5.6, 6.3, 7.1, 8, 9, 10, 11, 13, 14, 16];
+let fIdx = 0, fAuto = false; function setStop(i) { fIdx = i; setAperture(R_MAX * 1.8 / STOPS[i] * .97); }
+// obturador
+const SPEEDS = [30, 60, 125, 250, 500, 1000, 2000, 4000, 8000];
+let shot = null, speedIdx = 3, slowmo = 1;
+const TAU = 3; // ms: trânsito das cortinas (ilustrativo; varia conforme o modelo)
+function fire() { const T = 1000 / SPEEDS[speedIdx]; shot = { t: 0, T, dur: (T + 2 * TAU) }; }
+function shutterStep(dt) {
+  if (!shot) return; shot.t += dt;
+  const show = 1.4 * slowmo; const ms = (shot.t - .3) / show * shot.dur;
+  if (shot.t < .3) shutter.set(ease(shot.t / .3), 0);
+  else { const a = 1 - clamp(ms / TAU), b = clamp((ms - shot.T) / TAU); shutter.set(a, b); }
+  if (shot.t > .3 + show + .6) { shutter.set(0, 0); shot = null; }
+}
+// IBIS
+let ibisOn = false, ibisComp = true, ibisT = 0; const ibisHist = [];
+function ibisStep(dt) {
+  if (!ibisOn) { rig.position.x = 0; rig.rotation.z = 0; return; }
+  ibisT += dt; const sx = Math.sin(ibisT * 7.3) * 1.6 + Math.sin(ibisT * 13.1) * .7, sy = Math.cos(ibisT * 6.1) * 1.3 + Math.sin(ibisT * 17.7) * .5, sr = Math.sin(ibisT * 5.3) * .6 * D2R;
+  rig.position.x = sx; rig.position.y = -10 + sy; rig.rotation.z = sr;
+  const cx = ibisComp ? -sx : 0, cy = ibisComp ? -sy : 0, cr = ibisComp ? -sr : 0;
+  BY.ibis.user.set(cx, cy, 0); sensor.rotation.z = cr;
+  ibisHist.push([sx, cx]); if (ibisHist.length > 160) ibisHist.shift();
+}
+// raios de luz (lente → sensor)
+const rayMat = new LineMaterial({ color: 0x9ff0ff, linewidth: 1.6 * DPR, transparent: true, opacity: .9, blending: THREE.AdditiveBlending, depthTest: false, depthWrite: false });
+const rays = Array.from({ length: 7 }, () => { const l = new Line2(new LineGeometry(), rayMat); l.visible = false; l.renderOrder = 10; sMain.add(l); return l; });
+let raysOn = false;
+function updateRays() {
+  for (const l of rays) l.visible = raysOn;
+  if (!raysOn) return;
+  const g1 = glassMeshes[glassMeshes.length - 1], die = cmos.children.find(c => c.geometry && c.geometry.type === 'PlaneGeometry');
+  const front = g1.getWorldPosition(new THREE.Vector3()), focus = (die || cmos).getWorldPosition(new THREE.Vector3());
+  const axis = new THREE.Vector3(0, 0, 1).applyQuaternion(lens.getWorldQuaternion(new THREE.Quaternion()));
+  const up = new THREE.Vector3(0, 1, 0).applyQuaternion(lens.getWorldQuaternion(new THREE.Quaternion()));
+  const ap = 18 * 1.8 / STOPS[fIdx];
+  rays.forEach((l, i) => {
+    const h = (i - 3) / 3 * 18; const pass = Math.abs(h) <= ap + .01;
+    const a = front.clone().addScaledVector(axis, 220).addScaledVector(up, h), b = front.clone().addScaledVector(up, h);
+    const pts = pass ? [a, b, focus] : [a, b, b.clone().lerp(focus, .35)];
+    l.geometry.dispose(); l.geometry = new LineGeometry(); l.geometry.setPositions(pts.flatMap(p => [p.x, p.y, p.z])); l.computeLineDistances();
+  });
+}
+// processamento: pulsos sensor → processador → cartão
+const pulseGeo = new THREE.SphereGeometry(1.6, 10, 8), pulseMat = new THREE.MeshBasicMaterial({ color: 0x8ff0ff, transparent: true, blending: THREE.AdditiveBlending, depthTest: false });
+const pulses = new THREE.InstancedMesh(pulseGeo, pulseMat, 60); pulses.count = 0; pulses.renderOrder = 11; pulses.frustumCulled = false; sMain.add(pulses);
+let procOn = false, procT = 0, procGlow = 0;
+const PROC_STEPS = ['Leitura dos pixels', 'Conversão A/D', 'Demosaico (Bayer → RGB)', 'Redução de ruído', 'Tons e balanço de branco', 'Compressão → cartão'];
+function procStep(dt) {
+  if (!procOn) { pulses.count = 0; procGlow = 0; return; }
+  procT += dt; const w = (o, x, y, z) => o.localToWorld(new THREE.Vector3(x, y, z));
+  const path = new THREE.CatmullRomCurve3([w(cmos, 0, 0, 2), w(sensor, 0, 22, -4), w(board, -6, 24, -2), w(board, 6, 4, -3.4)]);
+  const path2 = new THREE.CatmullRomCurve3([w(board, 6, 4, -3.4), w(board, -16, -6, -3), cardG.localToWorld(new THREE.Vector3(-36, -14, -4.6))]);
+  const m = new THREE.Matrix4(); let n = 0;
+  for (let i = 0; i < 36; i++) { const k = ((procT * .5 + i / 36) % 1); const p = (i % 3 ? path : path2).getPointAt(k); m.makeTranslation(p.x, p.y, p.z); pulses.setMatrixAt(n++, m); }
+  pulses.count = n; pulses.instanceMatrix.needsUpdate = true; procGlow = .6 + .4 * Math.sin(procT * 8);
+}
+function mProcSet(v) { for (const o of meshesOf.placa || []) for (const m of [].concat(o.material)) if (m.emissive && m.userData.ei0 === 0 && m.color && m.color.getHex() === 0x141518) { m.emissive.setHex(0x22d0ff); m.emissiveIntensity = v; } }
+
+// =====================================================================
+// ABERTURA CINEMATOGRÁFICA
+const intro = { t: REDUCED ? 99 : 0, mat: REDUCED ? 1 : 0, edge: REDUCED ? 1 : 0, done: REDUCED };
+function skipIntro() { if (!intro.done) { intro.t = 99; } }
+function introStep(dt) {
+  if (intro.done) return;
+  intro.t += dt; const t = intro.t;
+  gridMat.uniforms.uA.value = ease(t / 1.2); pmat.uniforms.uA.value = ease((t - .6) / 1.5); beam.material.uniforms.uA.value = ease((t - 1.4) / 1.2);
+  const sy = lerp(260, FLOOR_Y, ease((t - .9) / 1.8)); scan.position.y = sy; scanMat.uniforms.uA.value = t > .9 && t < 2.9 ? 1 : 0; gridMat.uniforms.uScan.value = t > 1.4 && t < 3.4 ? lerp(-500, 500, (t - 1.4) / 2) : -9999;
+  intro.edge = ease((t - 1.5) / 1.2); intro.mat = ease((t - 2.4) / 1.3);
+  rig.rotation.y = lerp(-70, 0, ease((t - 1.5) / 4.5)) * D2R; rig.scale.setScalar(lerp(.94, 1, ease((t - 1.5) / 2.5)));
+  if (t > 4.6 && Etarget === 0 && !intro.exploded) { intro.exploded = true; Etarget = .65; }
+  document.body.classList.toggle('ui-on', t > 5.4);
+  if (t > 6.4) { intro.done = true; intro.mat = 1; intro.edge = 1; rig.rotation.y = 0; rig.scale.setScalar(1); scanMat.uniforms.uA.value = 0; gridMat.uniforms.uScan.value = -9999; gridMat.uniforms.uA.value = 1; pmat.uniforms.uA.value = 1; beam.material.uniforms.uA.value = 1; document.body.classList.add('ui-on'); if (!intro.exploded) Etarget = .65; }
+}
+
+// =====================================================================
+// INTERFACE
+const $ = (id) => document.getElementById(id);
+function select(id) {
+  selected = id; $('hudSel').textContent = id ? BY[id].name.toUpperCase() : '—';
+  renderList(); renderInspector(); attachGizmo();
+  if (id && BY[id].sim) openSim(BY[id].sim, false);
+  if (id && matchMedia('(max-width: 860px)').matches) $('inspector').classList.add('open');
+}
+function renderList() {
+  $('complist').innerHTML = COMP.map((c, i) => `<li><button type="button" data-id="${c.id}"${c.id === selected ? ' aria-current="true"' : ''}><span class="n">${String(i + 1).padStart(2, '0')}</span><span>${c.name}</span>${c.sim ? '<span class="sim" title="Tem simulação">SIM</span>' : ''}</button></li>`).join('');
+}
+$('complist').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; stopTour(); skipIntro(); select(b.dataset.id); focusOn(b.dataset.id); });
+$('complist').addEventListener('pointerover', (e) => { const b = e.target.closest('button'); hover = b ? b.dataset.id : null; });
+$('complist').addEventListener('pointerleave', () => { hover = null; });
+function renderInspector() {
+  const c = BY[selected];
+  if (!c) { $('insp').innerHTML = `<p class="eyebrow">COMPONENT INSPECTOR</p><h2>Nenhuma peça selecionada</h2><p class="muted">Toque numa peça da câmera ou escolha na lista. Arraste o fundo para girar, use a pinça ou a roda para aproximar e dois dedos ou o botão direito para mover a vista.</p>`; return; }
+  $('insp').innerHTML = `<p class="eyebrow">COMPONENT INSPECTOR · <span class="${c.kind.startsWith('verificado') ? 'ok' : 'gen'}">${c.kind.toUpperCase()}</span></p><h2>${c.name}</h2>
+  <dl><div><dt>Função</dt><dd>${c.fn}</dd></div><div><dt>Material</dt><dd>${c.mat}</dd></div><div><dt>Localização</dt><dd>${c.loc}</dd></div><div><dt>Funcionamento</dt><dd>${c.how}</dd></div><div><dt>Relação com outras peças</dt><dd>${c.rel}</dd></div></dl>
+  <div class="row"><button type="button" class="btn" data-a="focus">Focar peça</button><button type="button" class="btn" data-a="move" aria-pressed="${moveMode}">Mover nos 3 eixos</button>${c.user.lengthSq() > .01 ? '<button type="button" class="btn" data-a="reset">Voltar ao lugar</button>' : ''}${c.sim ? `<button type="button" class="btn hi" data-a="sim">Simular</button>` : ''}</div>`;
+}
+$('insp').addEventListener('click', (e) => { const b = e.target.closest('[data-a]'); if (!b) return; const c = BY[selected]; if (!c) return;
+  if (b.dataset.a === 'focus') focusOn(c.id);
+  if (b.dataset.a === 'move') { moveMode = !moveMode; $('bMove').setAttribute('aria-pressed', moveMode); attachGizmo(); renderInspector(); }
+  if (b.dataset.a === 'reset') { tween(c.user, V3(0, 0, 0)); }
+  if (b.dataset.a === 'sim') openSim(c.sim, true); });
+const tweens = []; function tween(v, to, dur = .7) { tweens.push({ v, from: v.clone(), to, t: 0, dur }); }
+function tweenStep(dt) { for (let i = tweens.length - 1; i >= 0; i--) { const w = tweens[i]; w.t += dt; w.v.lerpVectors(w.from, w.to, ease(w.t / w.dur)); if (w.t >= w.dur) { tweens.splice(i, 1); renderInspector(); } } }
+
+// barra de ações
+$('bExplore').addEventListener('click', () => { skipIntro(); tour.on ? stopTour() : startTour(); });
+$('bExplode').addEventListener('click', () => { skipIntro(); Etarget = 1; $('dist').value = Math.round(Edist * 100); });
+$('bAssemble').addEventListener('click', () => { skipIntro(); Etarget = 0; for (const c of COMP) if (c.user.lengthSq() > 0) tween(c.user, V3(0, 0, 0)); moveMode = false; $('bMove').setAttribute('aria-pressed', false); attachGizmo(); });
+$('bXray').addEventListener('click', () => { xray = !xray; $('bXray').setAttribute('aria-pressed', xray); });
+$('bCenter').addEventListener('click', () => { skipIntro(); centerView(); });
+$('bMove').addEventListener('click', () => { moveMode = !moveMode; $('bMove').setAttribute('aria-pressed', moveMode); if (moveMode && !selected) select('lente'); attachGizmo(); renderInspector(); });
+$('dist').addEventListener('input', (e) => { Edist = e.target.value / 100; if (Etarget === 0) Etarget = 1; $('distV').textContent = `${Math.round(Edist * 100)}%`; });
+$('opac').addEventListener('input', (e) => { bodyOp = e.target.value / 100; $('opacV').textContent = `${e.target.value}%`; });
+$('bSims').addEventListener('click', () => openSim(curSim || 'diafragma', true));
+$('closeInsp').addEventListener('click', () => $('inspector').classList.remove('open'));
+
+// tour (EXPLORAR)
+const tour = { on: false, t: 0, i: 0 };
+function startTour() { tour.on = true; tour.t = 0; tour.i = 0; controls.autoRotate = true; controls.autoRotateSpeed = .8; Etarget = .8; $('bExplore').setAttribute('aria-pressed', true); }
+function stopTour() { if (!tour.on) return; tour.on = false; controls.autoRotate = false; $('bExplore').setAttribute('aria-pressed', false); }
+function tourStep(dt) { if (!tour.on) return; tour.t += dt; if (tour.t > 3.2) { tour.t = 0; tour.i = (tour.i + 1) % COMP.length; select(COMP[tour.i].id); } }
+
+// painel de simulações
+let curSim = null;
+const SIMS = {
+  diafragma: { title: 'Diafragma', html: () => `<label class="ctl"><span>Abertura</span><output id="apV"></output></label><input id="ap" type="range" min="0" max="${STOPS.length - 1}" value="${fIdx}"><div class="row"><button type="button" class="btn" id="apAuto" aria-pressed="${fAuto}">Ciclo automático</button><button type="button" class="btn" id="apSee">Ver no modelo</button></div><canvas id="cv" width="560" height="200"></canvas><p class="muted">N = f ÷ D. A luz que entra cai com 1/N²: f/8 deixa passar ~1/20 da luz de f/1,8.</p>` },
+  obturador: { title: 'Obturador', html: () => `<label class="ctl"><span>Velocidade</span><output id="spV"></output></label><input id="sp" type="range" min="0" max="${SPEEDS.length - 1}" value="${speedIdx}"><label class="ctl"><span>Câmera lenta</span><output id="slV"></output></label><input id="sl" type="range" min="50" max="400" value="${slowmo * 100}"><div class="row"><button type="button" class="btn hi" id="fire">Disparar</button><button type="button" class="btn" id="shSee">Ver no modelo</button></div><canvas id="cv" width="560" height="200"></canvas><p class="muted">Trânsito das cortinas ≈ 3 ms (ilustrativo; varia conforme o modelo). Abaixo dele, as cortinas correm juntas e só uma fenda expõe o sensor.</p>` },
+  sensor: { title: 'Sensor e Bayer', html: () => `<p class="muted">Passe o dedo ou o mouse na matriz: é um feixe de luz. Cada pixel só vê a cor do seu filtro.</p><canvas id="cv" width="560" height="300" style="touch-action:none"></canvas><div class="row"><button type="button" class="btn hi" id="cap">Capturar imagem</button><button type="button" class="btn" id="bay" aria-pressed="${bayerG.visible}">Filtro Bayer no modelo</button></div>` },
+  lente: { title: 'Lente e foco', html: () => `<label class="ctl"><span>Foco</span><output id="fcV"></output></label><input id="fc" type="range" min="0" max="1000" value="${Math.round(focusS * 1000)}"><div class="row"><button type="button" class="btn hi" id="rays" aria-pressed="${raysOn}">Caminho da luz</button><button type="button" class="btn" id="lnSee">Ver no modelo</button></div><canvas id="cv" width="560" height="200"></canvas><p class="muted">Distância focal de 50 mm: a lente forma a imagem do infinito 50 mm atrás do seu ponto nodal. Para focar mais perto, o grupo óptico avança f² ÷ (d − f).</p>` },
+  ibis: { title: 'Estabilização IBIS', html: () => `<div class="row"><button type="button" class="btn hi" id="ibOn" aria-pressed="${ibisOn}">Simular tremor</button><button type="button" class="btn" id="ibComp" aria-pressed="${ibisComp}">Compensação ligada</button><button type="button" class="btn" id="ibSee">Ver no modelo</button></div><canvas id="cv" width="560" height="200"></canvas><p class="muted">Linha clara: tremor do corpo. Linha ciano: deslocamento do sensor. Com a compensação, as duas se anulam e a imagem fica parada.</p>` },
+  processamento: { title: 'Processamento', html: () => `<div class="row"><button type="button" class="btn hi" id="prOn" aria-pressed="${procOn}">Processar foto</button><button type="button" class="btn" id="prSee">Ver no modelo</button></div><ol class="steps" id="prSteps">${PROC_STEPS.map(s => `<li>${s}</li>`).join('')}</ol><canvas id="cv" width="560" height="160"></canvas>` },
+};
+function openSim(id, show) {
+  curSim = id; $('simTabs').innerHTML = Object.entries(SIMS).map(([k, s]) => `<button type="button" data-sim="${k}"${k === id ? ' aria-current="true"' : ''}>${s.title}</button>`).join('');
+  $('simBody').innerHTML = SIMS[id].html(); bindSim(id);
+  if (show) { $('sims').classList.add('open'); $('bSims').setAttribute('aria-pressed', true); }
+}
+$('simTabs').addEventListener('click', (e) => { const b = e.target.closest('[data-sim]'); if (b) openSim(b.dataset.sim, true); });
+$('closeSims').addEventListener('click', () => { $('sims').classList.remove('open'); $('bSims').setAttribute('aria-pressed', false); });
+const see = (id, xr = true) => { select(id); focusOn(id); if (xr && !xray) { xray = true; $('bXray').setAttribute('aria-pressed', true); } };
+let sensorLight = { x: .5, y: .5, on: 0 }, captured = null;
+function bindSim(id) {
+  const q = (s) => $('simBody').querySelector(s);
+  if (id === 'diafragma') { const f = () => { setStop(+q('#ap').value); }; q('#ap').addEventListener('input', f); q('#apAuto').addEventListener('click', (e) => { fAuto = !fAuto; e.target.setAttribute('aria-pressed', fAuto); }); q('#apSee').addEventListener('click', () => { Etarget = Math.max(Etarget, .6); see('diafragma'); }); }
+  if (id === 'obturador') { q('#sp').addEventListener('input', (e) => { speedIdx = +e.target.value; }); q('#sl').addEventListener('input', (e) => { slowmo = e.target.value / 100; }); q('#fire').addEventListener('click', fire); q('#shSee').addEventListener('click', () => { see('obturador'); }); }
+  if (id === 'sensor') { const cv = q('#cv'); const mv = (e) => { const r = cv.getBoundingClientRect(); sensorLight = { x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height, on: 1 }; }; cv.addEventListener('pointermove', mv); cv.addEventListener('pointerdown', mv); cv.addEventListener('pointerleave', () => { sensorLight.on = 0; }); q('#cap').addEventListener('click', () => { captured = { t: 0 }; }); q('#bay').addEventListener('click', (e) => { bayerG.visible = !bayerG.visible; e.target.setAttribute('aria-pressed', bayerG.visible); }); }
+  if (id === 'lente') { q('#fc').addEventListener('input', (e) => { setFocus(e.target.value / 1000); }); q('#rays').addEventListener('click', (e) => { raysOn = !raysOn; e.target.setAttribute('aria-pressed', raysOn); if (raysOn) { Etarget = 0; } }); q('#lnSee').addEventListener('click', () => { Etarget = 0; raysOn = true; q('#rays').setAttribute('aria-pressed', true); see('lente'); }); }
+  if (id === 'ibis') { q('#ibOn').addEventListener('click', (e) => { ibisOn = !ibisOn; e.target.setAttribute('aria-pressed', ibisOn); if (!ibisOn) { BY.ibis.user.set(0, 0, 0); sensor.rotation.z = 0; rig.position.set(0, -10, 0); rig.rotation.z = 0; } }); q('#ibComp').addEventListener('click', (e) => { ibisComp = !ibisComp; e.target.setAttribute('aria-pressed', ibisComp); }); q('#ibSee').addEventListener('click', () => { see('ibis'); }); }
+  if (id === 'processamento') { q('#prOn').addEventListener('click', (e) => { procOn = !procOn; procT = 0; e.target.setAttribute('aria-pressed', procOn); }); q('#prSee').addEventListener('click', () => { Etarget = Math.max(Etarget, .7); see('placa', false); }); }
+}
+// desenho dos gráficos das simulações (canvas 2D, ~30 fps)
+const BAY = (x, y) => (y % 2 ? (x % 2 ? 'B' : 'G') : (x % 2 ? 'G' : 'R'));
+const BC = { R: [255, 77, 77], G: [61, 240, 138], B: [61, 139, 255] };
+const SCENE = (u, v) => { const sky = [40 + 180 * v, 60 + 90 * v, 120 - 40 * v]; const sun = Math.exp(-((u - .66) ** 2 + (v - .45) ** 2) / .006) * 255; const mtn = v > .55 + .12 * Math.sin(u * 9) ? 1 : 0; return mtn ? [50, 45, 70] : [Math.min(255, sky[0] + sun), Math.min(255, sky[1] + sun * .9), Math.min(255, sky[2] + sun * .6)]; };
+function drawSim(dt) {
+  const cv = $('simBody') && $('simBody').querySelector('#cv'); if (!cv || !$('sims').classList.contains('open')) return;
+  const g = cv.getContext('2d'), W = cv.width, H = cv.height; g.clearRect(0, 0, W, H);
+  g.font = '12px "JetBrains Mono", monospace';
+  if (curSim === 'diafragma') {
+    const N = STOPS[fIdx], r = 80 * 1.8 / N; $('apV') && ($('apV').textContent = `f/${String(N).replace('.', ',')} · ${Math.max(1, Math.round(100 * (1.8 / N) ** 2))}% da luz`);
+    g.strokeStyle = 'rgba(120,230,255,.4)'; g.beginPath(); g.arc(110, 100, 84, 0, 7); g.stroke();
+    g.fillStyle = 'rgba(160,240,255,.85)'; g.beginPath(); for (let i = 0; i < 7; i++) { const a = i / 7 * Math.PI * 2 - Math.PI / 2; const R = r / Math.cos(Math.PI / 7); g[i ? 'lineTo' : 'moveTo'](110 + Math.cos(a) * R, 100 + Math.sin(a) * R); } g.closePath(); g.fill();
+    STOPS.forEach((s, i) => { const x = 240 + i * 15.5, h = 150 * (1.8 / s) ** 2; g.fillStyle = i === fIdx ? '#35d8ff' : 'rgba(120,230,255,.25)'; g.fillRect(x, 170 - h, 10, h); });
+    g.fillStyle = 'rgba(200,240,255,.7)'; g.fillText('luz relativa por número f', 240, 190);
+  }
+  if (curSim === 'obturador') {
+    $('spV') && ($('spV').textContent = `1/${SPEEDS[speedIdx]} s`); $('slV') && ($('slV').textContent = `replay ×${slowmo.toFixed(1).replace('.', ',')}`);
+    const T = 1000 / SPEEDS[speedIdx], tot = T + 2 * TAU, x0 = 40, x1 = W - 20, sx = (ms) => x0 + (x1 - x0) * ms / tot, y0 = 30, y1 = 170;
+    g.strokeStyle = 'rgba(120,230,255,.25)'; g.strokeRect(x0, y0, x1 - x0, y1 - y0);
+    g.strokeStyle = '#9ff0ff'; g.lineWidth = 2; g.beginPath(); g.moveTo(sx(0), y0); g.lineTo(sx(TAU), y1); g.stroke();
+    g.strokeStyle = '#35d8ff'; g.beginPath(); g.moveTo(sx(T), y0); g.lineTo(sx(T + TAU), y1); g.stroke(); g.lineWidth = 1;
+    g.fillStyle = 'rgba(53,216,255,.12)'; g.beginPath(); g.moveTo(sx(0), y0); g.lineTo(sx(TAU), y1); g.lineTo(sx(T + TAU), y1); g.lineTo(sx(T), y0); g.fill();
+    g.fillStyle = 'rgba(200,240,255,.75)'; g.fillText('topo do sensor', 2, y0 + 4); g.fillText('base', 2, y1); g.fillText('1ª cortina', sx(TAU / 2) + 6, y0 + 30); g.fillText('2ª cortina', sx(T + TAU / 2) + 6, y1 - 20);
+    g.fillText(T < TAU ? `fenda de ${(24 * T / TAU).toFixed(1).replace('.', ',')} mm` : 'janela toda aberta', x0 + 8, 196);
+    g.fillText(`${tot.toFixed(1).replace('.', ',')} ms`, x1 - 70, 196);
+    if (shot && shot.t > .3) { const ms = (shot.t - .3) / (1.4 * slowmo) * shot.dur; g.strokeStyle = '#fff'; g.beginPath(); g.moveTo(sx(Math.min(ms, tot)), y0); g.lineTo(sx(Math.min(ms, tot)), y1); g.stroke(); }
+  }
+  if (curSim === 'sensor') {
+    const NX = 28, NY = 15, cw = W / NX, ch = (H - 0) / NY; const L = sensorLight;
+    for (let y = 0; y < NY; y++) for (let x = 0; x < NX; x++) {
+      const u = (x + .5) / NX, v = (y + .5) / NY, k = BAY(x, y), c = BC[k];
+      const lit = L.on ? Math.exp(-((u - L.x) ** 2 * 3 + (v - L.y) ** 2) / .02) : 0;
+      let col;
+      if (captured && captured.t > .6) { const s = SCENE(u, v); const ch3 = k === 'R' ? 0 : k === 'G' ? 1 : 2; const mono = captured.t < 1.8; col = mono ? c.map((cc, i) => i === ch3 ? s[ch3] : s[ch3] * .1) : s; }
+      else col = c.map(cc => cc * (.18 + .82 * lit));
+      g.fillStyle = `rgb(${col.map(Math.round).join(',')})`; g.fillRect(x * cw + 1, y * ch + 1, cw - 2, ch - 2);
+    }
+    if (captured) { captured.t += dt; g.fillStyle = 'rgba(2,4,9,.7)'; g.fillRect(0, H - 22, W, 22); g.fillStyle = '#9ff0ff'; g.fillText(captured.t < .6 ? 'expondo…' : captured.t < 1.8 ? 'dados brutos: uma cor por pixel (mosaico Bayer)' : 'demosaico: cores reconstruídas a partir dos vizinhos', 8, H - 7); if (captured.t > 5) captured = null; }
+  }
+  if (curSim === 'lente') {
+    const { d, e } = { d: focusS < 1e-3 ? Infinity : 450 / focusS, e: focusE }; $('fcV') && ($('fcV').textContent = `${d === Infinity ? '∞' : (d / 1000).toFixed(2).replace('.', ',') + ' m'} · avanço ${e.toFixed(2).replace('.', ',')} mm`);
+    const ax = 100, lx = 300 + e * 6, sxp = 470; g.strokeStyle = 'rgba(120,230,255,.3)'; g.beginPath(); g.moveTo(10, ax); g.lineTo(W - 10, ax); g.stroke();
+    g.strokeStyle = '#9ff0ff'; g.beginPath(); g.ellipse(lx, ax, 8, 60, 0, 0, 7); g.stroke(); g.fillStyle = 'rgba(160,240,255,.15)'; g.fill();
+    g.strokeStyle = '#35d8ff'; g.beginPath(); g.moveTo(sxp, ax - 50); g.lineTo(sxp, ax + 50); g.stroke();
+    const objX = d === Infinity ? -1 : Math.max(20, lx - 2200 / (d / 100));
+    for (let i = -2; i <= 2; i++) { const h = i * 22; g.strokeStyle = 'rgba(200,245,255,.8)'; g.beginPath(); if (objX < 0) g.moveTo(10, ax + h); else g.moveTo(objX, ax); g.lineTo(lx, ax + h); g.lineTo(sxp, ax); g.stroke(); }
+    g.fillStyle = 'rgba(200,240,255,.75)'; g.fillText('lente', lx - 18, 30); g.fillText('sensor', sxp - 20, 30); g.fillText(objX < 0 ? 'objeto no infinito: raios paralelos' : 'objeto próximo', 12, 190);
+  }
+  if (curSim === 'ibis') {
+    const mid = 100; g.strokeStyle = 'rgba(120,230,255,.2)'; g.beginPath(); g.moveTo(0, mid); g.lineTo(W, mid); g.stroke();
+    const n = ibisHist.length; const dx = W / 160;
+    g.strokeStyle = 'rgba(230,245,255,.85)'; g.beginPath(); ibisHist.forEach(([s], i) => g[i ? 'lineTo' : 'moveTo'](i * dx, mid - s * 22)); g.stroke();
+    g.strokeStyle = '#35d8ff'; g.beginPath(); ibisHist.forEach(([, c], i) => g[i ? 'lineTo' : 'moveTo'](i * dx, mid - c * 22)); g.stroke();
+    g.fillStyle = 'rgba(200,240,255,.75)'; g.fillText(ibisOn ? (ibisComp ? 'tremor + compensação = imagem parada' : 'sem compensação: a imagem treme') : 'toque em "Simular tremor"', 10, 190);
+    if (n === 0) g.fillText('tremor (claro) · sensor (ciano)', 10, 20);
+  }
+  if (curSim === 'processamento') {
+    const k = procOn ? Math.min(PROC_STEPS.length - 1, Math.floor((procT % 7.2) / 1.2)) : -1;
+    $('prSteps') && [...$('prSteps').children].forEach((li, i) => li.toggleAttribute('data-on', i <= k));
+    for (let y = 0; y < 8; y++) for (let x = 0; x < 34; x++) { const u = x / 34, v = y / 8, s = SCENE(u, v * .9 + .05), kk = BAY(x, y), ci = kk === 'R' ? 0 : kk === 'G' ? 1 : 2;
+      const col = k < 2 ? [s[ci] * .5, s[ci] * .5, s[ci] * .5] : k < 3 ? s.map((c, i) => i === ci ? c : 0) : s.map(c => c * (k >= 4 ? 1 : .8)); g.fillStyle = `rgb(${col.map(c => Math.round(c + (k === 2 ? (Math.random() - .5) * 40 : 0))).join(',')})`; g.fillRect(x * 16.4, y * 19, 15.4, 18); }
+  }
+}
+
+// =====================================================================
+// HUD e laço
+let frames = 0, fpsT = 0;
+function status() {
+  const moved = COMP.filter(c => c.user.lengthSq() > .01 && !(c.id === 'ibis' && ibisOn)).length;
+  $('hudModel').textContent = (E < .02 ? 'MONTADO' : `EXPLODIDO ${Math.round(E * Edist * 100)}%`) + (moved ? ` · ${moved} MOVIDA${moved > 1 ? 'S' : ''}` : '') + (xray ? ' · RAIO-X' : '');
+}
+function resize() {
+  const r = view.parentElement.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); cam.aspect = r.width / Math.max(1, r.height); cam.updateProjectionMatrix();
+  RES.set(r.width * DPR, r.height * DPR); for (const m of allEdgeMats) m.resolution.copy(RES); rayMat.resolution.copy(RES);
+  if (cam.aspect < .8) { controls.maxDistance = 1800; }
+}
+new ResizeObserver(resize).observe(view.parentElement);
+let last = 0;
+function loop(now) {
+  const dt = (window.__TS || 1) * (last ? Math.min((now - last) / 1000, 1 / 20) : 1 / 60); last = now;
+  introStep(dt); tourStep(dt); tweenStep(dt);
+  const wE = 2 * Math.PI / .9; E += (Etarget - E) * (1 - Math.exp(-dt * wE / 2)); if (Math.abs(Etarget - E) < 1e-4) E = Etarget;
+  if (fAuto) setStop(Math.round((Math.sin(now / 1400) * .5 + .5) * (STOPS.length - 1)));
+  shutterStep(dt); ibisStep(dt); procStep(dt);
+  applyPose(); pulse = .5 + .5 * Math.sin(now / 300); paint(); if (procGlow) mProcSet(procGlow); updateRays();
+  gridMat.uniforms.uT.value += dt; pmat.uniforms.uT.value += dt; pad.rotation.y += dt * .05;
+  if (fly) { const k = ease((now - fly.t0) / fly.dur); cam.position.lerpVectors(fly.a.p, fly.b.p, k); controls.target.lerpVectors(fly.a.t, fly.b.t, k); if (k >= 1) fly = null; }
+  controls.update(); renderer.render(sMain, cam);
+  drawSim(dt);
+  frames++; fpsT += (window.__TS ? dt / window.__TS : dt); if (fpsT > .5) { $('hudFps').textContent = Math.round(frames / fpsT); frames = 0; fpsT = 0; status(); }
+  requestAnimationFrame(loop);
+}
+resize();
+{ const aspect = cam.aspect; const k = aspect < .8 ? 1.9 : aspect < 1.2 ? 1.35 : 1; cam.position.set(260 * k, 150 * k, 420 * k); }
+$('hudEngine').textContent = `${renderer.capabilities.isWebGL2 ? 'WEBGL 2' : 'WEBGL'} · THREE r${THREE.REVISION}`;
+$('hudSys').textContent = 'ONLINE';
+renderList(); renderInspector(); openSim('diafragma', false); setStop(0); setFocus(0);
+$('skip').addEventListener('click', () => { skipIntro(); });
+addEventListener('keydown', (e) => { if (e.key === 'Escape') { select(null); moveMode = false; attachGizmo(); } if (e.key.toLowerCase() === 'x' && e.target === document.body) $('bXray').click(); });
+requestAnimationFrame(loop);
+window.STARK = { tc, get moveMode() { return moveMode; }, get shot() { return shot; }, select, BY, COMP, setStop, fire, setFocus, centerView, get E() { return E; }, set Etarget(v) { Etarget = v; }, openSim, intro, skipIntro };
+window.READY = true;
+</script>

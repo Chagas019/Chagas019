@@ -1,0 +1,137 @@
+<title>Stark Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap">
+<style>
+/* laboratório holográfico: preto profundo, ciano, painéis de vidro; cena 3D em tela cheia */
+:root {
+  --bg: #020409; --glass: rgba(6, 18, 30, .62); --glass-hi: rgba(10, 30, 48, .78); --line: rgba(80, 220, 255, .22); --line-hi: rgba(120, 235, 255, .55);
+  --fg: #dff7ff; --muted: #7fa8bd; --dim: #4b6d80; --cyan: #35d8ff; --cyan-hi: #9ff0ff; --warn: #ffb547;
+  --display: Orbitron, "JetBrains Mono", ui-monospace, monospace; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace; --sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font: 14px/1.5 var(--sans); overflow: hidden; -webkit-font-smoothing: antialiased; }
+.app { position: relative; height: 100%; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.stage { position: absolute; inset: 0; }
+#view { display: block; width: 100%; height: 100%; touch-action: none; outline: none; cursor: grab; }
+.vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 80% 70% at 50% 45%, transparent 55%, rgba(0,0,0,.7) 100%); }
+.ui { opacity: 0; transform: translateY(6px); transition: opacity 700ms ease, transform 900ms cubic-bezier(.32,.72,0,1); }
+body.ui-on .ui { opacity: 1; transform: none; }
+.glass { background: var(--glass); backdrop-filter: blur(14px) saturate(140%); border: 1px solid var(--line); border-radius: 14px; box-shadow: inset 0 1px 0 rgba(160, 240, 255, .12), 0 0 0 1px rgba(0,0,0,.4), 0 20px 50px -24px rgba(0, 180, 255, .25); }
+button { font: inherit; color: inherit; }
+/* HUD */
+.hud { position: absolute; top: max(12px, env(safe-area-inset-top, 0px)); left: max(16px, env(safe-area-inset-left, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); display: flex; gap: 10px; align-items: stretch; pointer-events: none; }
+.brand { padding: 10px 16px; display: flex; flex-direction: column; justify-content: center; }
+.brand h1 { margin: 0; font: 700 15px/1 var(--display); letter-spacing: .32em; color: var(--cyan-hi); text-shadow: 0 0 18px rgba(53,216,255,.55); }
+.brand p { margin: 5px 0 0; font: 10px/1 var(--mono); letter-spacing: .24em; color: var(--muted); }
+.stats { flex: 1; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 8px 6px; }
+.stat { padding: 2px 12px; border-left: 1px solid var(--line); min-width: 0; }
+.stat:first-child { border-left: 0; }
+.stat span { display: block; font: 9.5px/1.2 var(--mono); letter-spacing: .18em; color: var(--dim); }
+.stat b { display: block; margin-top: 4px; font: 500 12px/1.2 var(--mono); color: var(--cyan-hi); letter-spacing: .06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #3dff9e; box-shadow: 0 0 8px #3dff9e; margin-right: 6px; vertical-align: 1px; }
+/* listas e painéis */
+.left { position: absolute; left: max(16px, env(safe-area-inset-left, 0px)); top: 92px; bottom: 96px; width: 250px; display: flex; flex-direction: column; min-height: 0; }
+.ph { padding: 12px 14px 8px; font: 10.5px/1 var(--mono); letter-spacing: .22em; color: var(--muted); display: flex; justify-content: space-between; align-items: center; }
+.ph b { color: var(--cyan); font-weight: 500; }
+#complist { list-style: none; margin: 0; padding: 0 6px 8px; overflow: auto; flex: 1; min-height: 0; }
+#complist button { width: 100%; display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; align-items: baseline; padding: 7px 8px; border: 0; border-radius: 8px; background: transparent; text-align: left; cursor: pointer; font-size: 13px; color: #c6e6f2; transition: background 150ms, color 150ms; }
+#complist button:hover, #complist button:focus-visible { background: rgba(53,216,255,.08); outline: none; color: var(--fg); }
+#complist button[aria-current] { background: rgba(53,216,255,.14); color: #fff; box-shadow: inset 2px 0 0 var(--cyan); }
+#complist .n { font: 10px var(--mono); color: var(--dim); }
+#complist .sim { font: 9px var(--mono); letter-spacing: .1em; color: var(--cyan); border: 1px solid var(--line); border-radius: 4px; padding: 1px 4px; }
+#inspector { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); top: 92px; width: 320px; max-height: calc(100% - 196px); overflow: auto; }
+#insp { padding: 14px 16px 16px; }
+.eyebrow { margin: 0; font: 10px/1.2 var(--mono); letter-spacing: .2em; color: var(--muted); }
+.eyebrow .ok { color: #3dff9e; } .eyebrow .gen { color: var(--warn); }
+#insp h2 { margin: 8px 0 10px; font: 500 18px/1.25 var(--sans); color: #fff; letter-spacing: -.01em; }
+#insp dl { margin: 0; display: grid; gap: 9px; }
+#insp dt { font: 9.5px/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--cyan); margin-bottom: 3px; }
+#insp dd { margin: 0; font-size: 13px; color: #c6e6f2; }
+.muted { color: var(--muted); font-size: 12.5px; margin: 8px 0; }
+.row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.btn { border: 1px solid var(--line); background: rgba(53,216,255,.06); border-radius: 8px; padding: 6px 10px; font: 500 11px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--cyan-hi); cursor: pointer; transition: background 150ms, border-color 150ms, transform 90ms; }
+.btn:hover, .btn:focus-visible { background: rgba(53,216,255,.16); border-color: var(--line-hi); outline: none; }
+.btn:active { transform: scale(.96); }
+.btn[aria-pressed="true"], .btn.hi { background: rgba(53,216,255,.22); border-color: var(--cyan); color: #fff; box-shadow: 0 0 14px -4px var(--cyan); }
+.close { display: none; }
+/* barra de ações */
+.bar { position: absolute; left: 50%; bottom: max(16px, env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); display: flex; gap: 6px; align-items: center; padding: 8px; flex-wrap: wrap; justify-content: center; max-width: calc(100% - 32px); }
+body.ui-on .bar { transform: translateX(-50%); }
+.slider { display: flex; align-items: center; gap: 8px; padding: 0 8px; font: 10px var(--mono); letter-spacing: .14em; color: var(--muted); }
+.slider input { width: 96px; accent-color: var(--cyan); }
+.slider output { width: 36px; color: var(--cyan-hi); font-variant-numeric: tabular-nums; }
+/* simulações */
+#sims { position: absolute; left: 50%; bottom: 84px; width: min(620px, calc(100% - 640px)); min-width: 420px; transform: translate(-50%, 12px); opacity: 0; pointer-events: none; transition: opacity 260ms ease, transform 320ms cubic-bezier(.32,.72,0,1); }
+#sims.open { opacity: 1; pointer-events: auto; transform: translate(-50%, 0); }
+#simTabs { display: flex; gap: 2px; padding: 8px 8px 0; overflow-x: auto; scrollbar-width: none; }
+#simTabs button { border: 0; background: transparent; padding: 7px 10px; border-radius: 8px 8px 0 0; font: 500 10.5px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); cursor: pointer; white-space: nowrap; }
+#simTabs button[aria-current] { color: #fff; background: rgba(53,216,255,.12); box-shadow: inset 0 -2px 0 var(--cyan); }
+#simBody { padding: 10px 14px 14px; border-top: 1px solid var(--line); }
+#simBody canvas { display: block; width: 100%; height: auto; margin-top: 10px; border-radius: 8px; background: rgba(0, 12, 22, .6); border: 1px solid var(--line); }
+.ctl { display: flex; justify-content: space-between; margin: 8px 0 4px; font: 10px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.ctl output { color: var(--cyan-hi); text-transform: none; letter-spacing: .04em; font-variant-numeric: tabular-nums; }
+#simBody input[type=range] { width: 100%; accent-color: var(--cyan); }
+.steps { margin: 10px 0 0; padding-left: 20px; display: grid; gap: 3px; font: 12px var(--mono); color: var(--dim); }
+.steps li[data-on] { color: var(--cyan-hi); }
+.simclose { float: right; border: 0; background: transparent; color: var(--muted); font-size: 18px; cursor: pointer; padding: 4px 10px; }
+#skip { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px)); font: 10px var(--mono); letter-spacing: .2em; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer; transition: opacity 400ms; }
+body.ui-on #skip { opacity: 0; pointer-events: none; }
+.hint { position: absolute; left: 50%; bottom: 76px; transform: translateX(-50%); font: 10px var(--mono); letter-spacing: .2em; color: var(--dim); pointer-events: none; white-space: nowrap; }
+body.touched .hint, #sims.open ~ .hint { opacity: 0; transition: opacity 400ms; }
+@media (max-width: 1100px) { #sims { width: calc(100% - 32px); min-width: 0; bottom: 140px; } }
+@media (max-width: 860px) {
+  .hud { flex-direction: column; gap: 6px; }
+  .brand { padding: 8px 12px; } .brand h1 { font-size: 12px; } .brand p { display: none; }
+  .stats { grid-template-columns: repeat(3, minmax(0,1fr)); padding: 6px 2px; }
+  .stat:nth-child(3), .stat:nth-child(5) { display: none; }
+  .stat { padding: 0 8px; } .stat b { font-size: 11px; }
+  .left { top: auto; bottom: 68px; left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); width: auto; height: 54px; }
+  .left .ph { display: none; }
+  #complist { display: flex; gap: 6px; overflow-x: auto; padding: 8px; scrollbar-width: none; }
+  #complist li { flex: none; } #complist button { grid-template-columns: auto auto; padding: 6px 10px; white-space: nowrap; }
+  #complist .sim { display: none; }
+  #inspector { top: auto; bottom: 0; left: 0; right: 0; width: auto; max-height: 52%; border-radius: 18px 18px 0 0; transform: translateY(105%); transition: transform 320ms cubic-bezier(.32,.72,0,1); z-index: 5; padding-bottom: env(safe-area-inset-bottom, 0px); }
+  #inspector.open { transform: none; }
+  .close { display: block; position: sticky; top: 0; float: right; margin: 8px 8px 0 0; border: 1px solid var(--line); background: var(--glass-hi); color: var(--fg); border-radius: 50%; width: 30px; height: 30px; z-index: 2; }
+  .bar, body.ui-on .bar { left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); transform: none; max-width: none; bottom: max(10px, env(safe-area-inset-bottom, 0px)); padding: 6px; gap: 4px; flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; }
+  .bar::-webkit-scrollbar { display: none; }
+  .bar .btn, .slider { flex: none; }
+  .bar .btn { padding: 6px 8px; font-size: 10px; }
+  .slider { padding: 0 4px; } .slider input { width: 70px; } .slider span { display: none; }
+  #sims { bottom: 130px; width: calc(100% - 24px); max-height: 50%; overflow: auto; }
+  .hint { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .ui, #sims, #inspector { transition: none; } }
+@media (prefers-reduced-transparency: reduce) { .glass { background: #06121e; backdrop-filter: none; } }
+</style>
+<div class="app">
+  <div class="stage"><canvas id="view" tabindex="0" aria-label="Câmera 3D no laboratório. Arraste para girar, role ou pince para zoom, botão direito ou dois dedos para mover; toque numa peça para selecionar."></canvas><div class="vignette"></div></div>
+  <header class="hud ui">
+    <div class="brand glass"><h1>STARK LAB</h1><p>CAMERA ENGINEERING SYSTEM</p></div>
+    <div class="stats glass">
+      <div class="stat"><span>SYSTEM STATUS</span><b><i class="dot"></i><span id="hudSys" style="display:inline;font:inherit;color:inherit;letter-spacing:inherit">BOOT</span></b></div>
+      <div class="stat"><span>COMPONENT SELECTED</span><b id="hudSel">—</b></div>
+      <div class="stat"><span>3D ENGINE</span><b id="hudEngine">—</b></div>
+      <div class="stat"><span>FPS</span><b id="hudFps">—</b></div>
+      <div class="stat"><span>MODEL STATUS</span><b id="hudModel">CARREGANDO</b></div>
+    </div>
+  </header>
+  <p class="hint ui">ARRASTE PARA GIRAR · ROLE PARA ZOOM · TOQUE NUMA PEÇA</p>
+  <aside class="left glass ui" aria-label="Componentes"><div class="ph"><span>COMPONENTES</span><b>16</b></div><ol id="complist"></ol></aside>
+  <aside id="inspector" class="glass ui" aria-live="polite"><button type="button" class="close" id="closeInsp" aria-label="Fechar inspetor">×</button><div id="insp"></div></aside>
+  <section id="sims" class="glass" aria-label="Simulações"><button type="button" class="simclose" id="closeSims" aria-label="Fechar simulações">×</button><div id="simTabs"></div><div id="simBody"></div></section>
+  <nav class="bar glass ui" aria-label="Ações">
+    <button type="button" class="btn" id="bExplore" aria-pressed="false">Explorar</button>
+    <button type="button" class="btn" id="bExplode">Desmontar</button>
+    <button type="button" class="btn" id="bAssemble">Remontar</button>
+    <button type="button" class="btn" id="bXray" aria-pressed="false">Raio-X</button>
+    <button type="button" class="btn" id="bMove" aria-pressed="false">Mover peça</button>
+    <button type="button" class="btn" id="bCenter">Centralizar</button>
+    <button type="button" class="btn" id="bSims" aria-pressed="false">Simulações</button>
+    <label class="slider" for="dist"><span>DISTÂNCIA</span><input id="dist" type="range" min="20" max="180" value="100"><output id="distV">100%</output></label>
+    <label class="slider" for="opac"><span>CORPO</span><input id="opac" type="range" min="5" max="100" value="100"><output id="opacV">100%</output></label>
+  </nav>
+  <button type="button" id="skip">PULAR ABERTURA</button>
+</div>
