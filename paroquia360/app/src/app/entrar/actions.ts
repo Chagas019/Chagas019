@@ -1,25 +1,30 @@
 'use server';
-import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { safeNext } from '@/lib/format';
 
-export async function sendLink(formData: FormData) {
-  const email = String(formData.get('email') ?? '').trim().toLowerCase();
-  const next = safeNext(formData.get('next'));
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) redirect(`/entrar?erro=email&next=${encodeURIComponent(next)}`);
-  if (!formData.get('consent')) redirect(`/entrar?erro=consent&next=${encodeURIComponent(next)}`);
-  const h = await headers();
-  const origin = h.get('origin') ?? `https://${h.get('host')}`;
+const val = (f: FormData, k: string) => String(f.get(k) ?? '').trim();
+const back = (modo: string, next: string, erro: string, email = '') =>
+  `/entrar?modo=${modo}&erro=${encodeURIComponent(erro)}&next=${encodeURIComponent(next)}${email ? `&email=${encodeURIComponent(email)}` : ''}`;
+
+export async function login(f: FormData) {
+  const email = val(f, 'email').toLowerCase(), password = String(f.get('password') ?? ''), next = safeNext(f.get('next'));
+  if (!email || !password) redirect(back('entrar', next, 'Digite seu e-mail e sua senha.', email));
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: { emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}`, shouldCreateUser: true },
-  });
-  // Pedido repetido em menos de 60 s: o link anterior já foi enviado.
-  if (error && /seconds/i.test(error.message)) redirect(`/entrar?enviado=1&repetido=1`);
-  // Limite de e-mails por hora do servidor de e-mail do projeto: nenhum e-mail foi enviado.
-  if (error && (error.status === 429 || /rate limit/i.test(error.message))) redirect(`/entrar?erro=limite&next=${encodeURIComponent(next)}`);
-  if (error) redirect(`/entrar?erro=envio&next=${encodeURIComponent(next)}`);
-  redirect(`/entrar?enviado=1`);
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) redirect(back('entrar', next, /invalid/i.test(error.message) ? 'E-mail ou senha incorretos.' : 'Não foi possível entrar agora. Tente de novo.', email));
+  redirect(next);
+}
+
+export async function signup(f: FormData) {
+  const name = val(f, 'name'), email = val(f, 'email').toLowerCase(), password = String(f.get('password') ?? ''), next = safeNext(f.get('next'));
+  if (!f.get('consent')) redirect(back('criar', next, 'Para continuar, aceite a política de privacidade.', email));
+  if (password !== String(f.get('password2') ?? '')) redirect(back('criar', next, 'As duas senhas não são iguais.', email));
+  const supabase = await createClient();
+  const { error } = await supabase.rpc('sign_up', { p_email: email, p_password: password, p_name: name });
+  if (error) redirect(back('criar', next, error.message, email));
+  const { data, error: e2 } = await supabase.auth.signInWithPassword({ email, password });
+  if (e2) redirect(back('entrar', next, 'Conta criada. Entre com seu e-mail e senha.', email));
+  await supabase.from('profiles').update({ privacy_consent_at: new Date().toISOString() }).eq('user_id', data.user.id).is('privacy_consent_at', null);
+  redirect(next);
 }

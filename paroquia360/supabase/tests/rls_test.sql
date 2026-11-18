@@ -132,4 +132,16 @@ select tests.eq((select count(*) from public.memberships where user_id=auth.uid(
 select tests.denied($$select public.accept_invitation((select token from tok))$$, 'convite reutilizado');
 select tests.denied($$update public.memberships set role='parish_admin' where user_id=auth.uid()$$, 'convidado se promove');
 reset role;
+
+-- ===== Cadastro com senha (sign_up)
+set role anon;
+select set_config('request.jwt.claims','',false);
+select tests.allowed($$select 1 from (select public.sign_up('nova.pessoa@exemplo.invalid','senha-segura-1','Nova Pessoa')) x$$, 'visitante cria conta com senha');
+select tests.denied($$select public.sign_up('nova.pessoa@exemplo.invalid','outra-senha-2','Intrusa')$$, 'não cria conta com e-mail já usado');
+select tests.denied($$select public.sign_up('leitor@exemplo.invalid','tomei-a-conta','Intruso')$$, 'não toma conta de quem já participa de paróquia');
+select tests.denied($$select public.sign_up('curta@exemplo.invalid','123','X Y')$$, 'senha curta recusada');
+select tests.denied($$select * from auth.users$$, 'visitante não lê usuários');
+reset role;
+select tests.eq((select count(*) from auth.users where email='nova.pessoa@exemplo.invalid' and email_confirmed_at is not null and encrypted_password = extensions.crypt('senha-segura-1', encrypted_password)), 1, 'senha gravada com hash e conta confirmada');
+select tests.eq((select count(*) from public.profiles p join auth.users u on u.id=p.user_id where u.email='nova.pessoa@exemplo.invalid' and p.full_name='Nova Pessoa'), 1, 'perfil criado com o nome');
 \echo 'TODOS OS TESTES PASSARAM'

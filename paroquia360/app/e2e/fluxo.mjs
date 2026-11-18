@@ -40,6 +40,34 @@ await p.goto(BASE + '/p/qualquer/escalas');
 must(p.url().includes('/entrar?next='), 'sem login redireciona para /entrar mantendo o destino');
 await p.screenshot({ path: `${OUT}/app-entrar.png` });
 
+// 1b. Criar conta e entrar pela tela (e-mail e senha)
+{
+  const c = await b.newContext(); const u = await c.newPage(); u.on('pageerror', e => errors.push(e.message));
+  const email = 'cadastro.teste@exemplo.invalid', senha = 'senha-de-teste-123';
+  await u.goto(BASE + '/entrar?modo=criar');
+  await u.fill('input[name=name]', 'Cadastro Teste'); await u.fill('input[name=email]', email);
+  await u.fill('input[name=password]', senha); await u.fill('input[name=password2]', senha);
+  await u.check('input[name=consent]');
+  await Promise.all([u.waitForURL('**/comecar'), u.click('button:text("Criar conta")')]);
+  must(true, 'cria conta pela tela e cai no cadastro da paróquia');
+  await u.goto(BASE + '/entrar?modo=criar');
+  await u.fill('input[name=name]', 'Outra'); await u.fill('input[name=email]', email);
+  await u.fill('input[name=password]', 'outra-senha-99'); await u.fill('input[name=password2]', 'outra-senha-99');
+  await u.check('input[name=consent]');
+  await Promise.all([u.waitForURL('**erro=*'), u.click('button:text("Criar conta")')]);
+  must(await u.locator('text=Este e-mail já tem conta').count() === 1, 'não cria duas contas com o mesmo e-mail');
+  const c2 = await b.newContext(); const v = await c2.newPage();
+  await v.goto(BASE + '/entrar');
+  await v.fill('input[name=email]', email); await v.fill('input[name=password]', 'senha-errada-000');
+  await Promise.all([v.waitForURL('**erro=*'), v.click('button:text("Entrar")')]);
+  must(await v.locator('text=E-mail ou senha incorretos').count() === 1, 'senha errada é recusada');
+  await v.fill('input[name=password]', senha);
+  await Promise.all([v.waitForURL('**/comecar'), v.click('button:text("Entrar")')]);
+  must(true, 'entra com e-mail e senha');
+  await v.goto(BASE + '/entrar'); await v.screenshot({ path: `${OUT}/app-login.png` });
+  await c.close(); await c2.close();
+}
+
 // 2. Admin cria a paróquia
 const admin = await ctxFor(process.env.ADMIN ?? 'admin.teste@exemplo.invalid');
 const SLUG = 'teste-e2e-' + Date.now().toString(36);
