@@ -7,6 +7,7 @@ const P: Record<string, string> = {
   arrowl: 'M17 17 7 7M7 16V7h9',
   check: 'm5 12.5 4.5 4.5L19 7.5',
   out: 'M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 17l5-5-5-5M15 12H3',
+  heart: 'M12 20s-7-4.4-8.6-8.8C2.3 8 4.2 5 7.3 5c1.9 0 3.1 1 4.7 2.8C13.6 6 14.8 5 16.7 5c3.1 0 5 3 3.9 6.2C19 15.6 12 20 12 20z',
   layers: 'm12 3 9 5-9 5-9-5zM3 13l9 5 9-5',
 };
 export function Icon({ name, size = 20 }: { name: keyof typeof P | string; size?: number }) {

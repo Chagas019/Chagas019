@@ -100,6 +100,31 @@ must(await vol.locator('text=Confirmado').count() >= 1, 'voluntário confirmou a
 await vol.screenshot({ path: `${OUT}/app-painel-voluntario.png`, fullPage: true });
 await vol.goto(S + '/equipe');
 must(await vol.locator('text=Convidar pessoa').count() === 0, 'voluntário não vê convites');
+// 8. Talentos, disponibilidade e "Preciso de ajuda"
+await admin.goto(S + '/equipe');
+await admin.fill('input[aria-label="Novo talento"]', 'Fotografia');
+await submit(admin, 'button:text("Adicionar ao catálogo")');
+await vol.goto(S + '/equipe');
+await submit(vol, 'button:text("Fotografia")');
+must(await vol.locator('button[aria-pressed="true"]:has-text("Fotografia")').count() === 1, 'voluntário marca talento');
+await vol.selectOption('select[aria-label="Dia da semana"]', '6');
+await submit(vol, 'form:has(select[aria-label="Dia da semana"]) button:text("Adicionar")');
+must(await vol.locator('text=Sábado').count() >= 1, 'voluntário informa disponibilidade');
+await admin.goto(S + '/ajuda');
+await admin.fill('input[name=title]', 'Fotógrafo para a festa');
+await admin.selectOption('select[name=skill_id]', { label: 'Fotografia' });
+await submit(admin, 'button:text("Publicar pedido")');
+must(await admin.locator('text=Voluntário Teste').count() >= 1, 'sistema sugere quem tem o talento');
+await vol.goto(S);
+must(await vol.locator('text=Fotógrafo para a festa').count() >= 1, 'pedido aparece no painel do voluntário');
+await vol.goto(S + '/ajuda');
+await submit(vol, 'button:text("Posso ajudar")');
+must(await vol.locator('text=Você: Ofereceu ajuda').count() === 1, 'voluntário se oferece');
+await admin.goto(S + '/ajuda');
+await submit(admin, 'button[aria-label="Aceitar Voluntário Teste"]');
+must(await admin.locator('text=1/1 confirmados').count() === 1, 'coordenação aceita a oferta');
+await admin.screenshot({ path: `${OUT}/app-ajuda.png`, fullPage: true });
+
 const r = await vol.goto(BASE + '/p/outra-paroquia-inexistente');
 must(await vol.locator('text=Página não encontrada').count() === 1, 'paróquia alheia retorna "não encontrada"');
 

@@ -87,3 +87,59 @@ export async function updateProfile(f: FormData) {
   await run(f, 'Perfil atualizado.', ({ supabase, user }) =>
     supabase.from('profiles').update({ full_name: s(f, 'full_name'), phone: s(f, 'phone') || null }).eq('user_id', user.id));
 }
+
+/* ---------- talentos e disponibilidade ---------- */
+export async function createSkill(f: FormData) {
+  await run(f, 'Talento adicionado ao catálogo.', ({ supabase, parish }) =>
+    supabase.from('skills').insert({ parish_id: parish.id, name: s(f, 'name') }));
+}
+export async function toggleSkill(f: FormData) {
+  const on = s(f, 'on') === '1';
+  await run(f, on ? 'Talento marcado.' : 'Talento desmarcado.', ({ supabase, parish, user }) =>
+    on ? supabase.from('volunteer_skills').insert({ parish_id: parish.id, user_id: user.id, skill_id: s(f, 'skill_id') })
+       : supabase.from('volunteer_skills').delete().eq('user_id', user.id).eq('skill_id', s(f, 'skill_id')));
+}
+export async function addAvailability(f: FormData) {
+  const wd = Number(s(f, 'weekday')), start = s(f, 'start'), end = s(f, 'end');
+  if (!(wd >= 0 && wd <= 6) || !/^\d{2}:\d{2}$/.test(start) || !/^\d{2}:\d{2}$/.test(end) || end <= start) {
+    redirect(`${back(f, s(f, 'slug'))}?erro=${encodeURIComponent('Escolha o dia e um horário de fim depois do início.')}`);
+  }
+  await run(f, 'Disponibilidade salva.', ({ supabase, parish, user }) =>
+    supabase.from('availability').insert({ parish_id: parish.id, user_id: user.id, weekday: wd, start_time: start, end_time: end }));
+}
+export async function removeAvailability(f: FormData) {
+  await run(f, 'Horário removido.', ({ supabase, user }) => supabase.from('availability').delete().eq('id', s(f, 'id')).eq('user_id', user.id));
+}
+
+/* ---------- preciso de ajuda ---------- */
+export async function createHelpRequest(f: FormData) {
+  const needed = Math.min(50, Math.max(1, Number(s(f, 'needed')) || 1));
+  if (s(f, 'title').length < 2 || !s(f, 'pastoral_id')) redirect(`${back(f, s(f, 'slug'))}?erro=${encodeURIComponent('Informe o que precisa e a pastoral.')}`);
+  await run(f, 'Pedido publicado. Quem tem o talento já pode se oferecer.', ({ supabase, parish, user }) =>
+    supabase.from('help_requests').insert({
+      parish_id: parish.id, created_by: user.id, pastoral_id: s(f, 'pastoral_id'), title: s(f, 'title'),
+      description: s(f, 'description') || null, event_id: s(f, 'event_id') || null, skill_id: s(f, 'skill_id') || null, needed,
+    }));
+}
+export async function setHelpStatus(f: FormData) {
+  const st = s(f, 'status');
+  if (!['open', 'filled', 'cancelled'].includes(st)) return;
+  await run(f, st === 'open' ? 'Pedido reaberto.' : st === 'filled' ? 'Pedido marcado como atendido.' : 'Pedido cancelado.', ({ supabase }) =>
+    supabase.from('help_requests').update({ status: st as 'open' }).eq('id', s(f, 'id')));
+}
+export async function offerHelp(f: FormData) {
+  const existing = s(f, 'offer_id');
+  await run(f, 'Obrigado! A coordenação vai ver sua oferta.', ({ supabase, parish, user }) =>
+    existing ? supabase.from('help_offers').update({ status: 'offered' }).eq('id', existing).eq('user_id', user.id)
+             : supabase.from('help_offers').insert({ parish_id: parish.id, help_request_id: s(f, 'request_id'), user_id: user.id }));
+}
+export async function withdrawOffer(f: FormData) {
+  await run(f, 'Oferta retirada.', ({ supabase, user }) =>
+    supabase.from('help_offers').update({ status: 'withdrawn' }).eq('id', s(f, 'offer_id')).eq('user_id', user.id));
+}
+export async function decideOffer(f: FormData) {
+  const st = s(f, 'status');
+  if (!['accepted', 'declined'].includes(st)) return;
+  await run(f, st === 'accepted' ? 'Oferta aceita — combine os detalhes com a pessoa.' : 'Oferta recusada.', ({ supabase }) =>
+    supabase.from('help_offers').update({ status: st as 'accepted' }).eq('id', s(f, 'offer_id')));
+}

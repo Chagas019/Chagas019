@@ -3,7 +3,9 @@ import { getParish } from '@/lib/parish';
 import { directory } from '@/lib/queries';
 import { Band, Flash } from '@/components/Band';
 import { initials, ROLE_LABEL, fmt } from '@/lib/format';
-import { invite, cancelInvite, setRole, createPastoral, addToPastoral, createRosterRole, updateProfile } from '../actions';
+import { invite, cancelInvite, setRole, createPastoral, addToPastoral, createRosterRole, updateProfile, createSkill, toggleSkill, addAvailability, removeAvailability } from '../actions';
+
+const DAYS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
 export const metadata = { title: 'Equipe' };
 const Hidden = ({ v }: { v: Record<string, string> }) => <>{Object.entries(v).map(([k, val]) => <input key={k} type="hidden" name={k} value={val} />)}</>;
@@ -20,7 +22,7 @@ export default async function Equipe({ params, searchParams }: { params: Promise
   const h = await headers();
   const origin = `${h.get('x-forwarded-proto') ?? 'https'}://${h.get('host')}`;
 
-  const [dir, me, members, invites, pastorals, pm, rroles] = await Promise.all([
+  const [dir, me, members, invites, pastorals, pm, rroles, skills, mySkills, myAvail] = await Promise.all([
     directory(ctx),
     supabase.from('profiles').select('full_name, phone').eq('user_id', user.id).maybeSingle(),
     supabase.from('memberships').select('id, user_id, role').eq('parish_id', parish.id).eq('active', true),
@@ -28,7 +30,11 @@ export default async function Equipe({ params, searchParams }: { params: Promise
     supabase.from('pastorals').select('id, name, description').eq('parish_id', parish.id).eq('active', true).order('name'),
     supabase.from('pastoral_members').select('pastoral_id, user_id, is_coordinator').eq('parish_id', parish.id).eq('active', true),
     supabase.from('roster_roles').select('id, name, pastoral_id').eq('parish_id', parish.id).order('name'),
+    supabase.from('skills').select('id, name').eq('parish_id', parish.id).order('name'),
+    supabase.from('volunteer_skills').select('skill_id').eq('parish_id', parish.id).eq('user_id', user.id),
+    supabase.from('availability').select('id, weekday, start_time, end_time').eq('parish_id', parish.id).eq('user_id', user.id).not('weekday', 'is', null).order('weekday'),
   ]);
+  const mine = new Set((mySkills.data ?? []).map(x => x.skill_id));
   const name = (id: string) => dir.get(id)?.display_name || 'Sem nome';
   const people = [...dir.values()].sort((a, b) => a.display_name.localeCompare(b.display_name));
 
@@ -99,6 +105,41 @@ export default async function Equipe({ params, searchParams }: { params: Promise
                 <label className="field">Nome<input name="full_name" required minLength={2} maxLength={120} defaultValue={me.data?.full_name ?? ''} /></label>
                 <label className="field">Telefone (opcional)<input name="phone" type="tel" maxLength={20} defaultValue={me.data?.phone ?? ''} /></label>
                 <button className="btn primary block">Salvar perfil</button>
+              </form>
+            </section>
+            <section className="tile">
+              <h3>Seus talentos</h3>
+              {(skills.data ?? []).length === 0 ? <p className="muted">{staff ? 'Cadastre os talentos da paróquia logo abaixo.' : 'A administração ainda não cadastrou talentos.'}</p> : (
+                <div className="inline-form">
+                  {(skills.data ?? []).map(k => (
+                    <form action={toggleSkill} key={k.id}><Hidden v={{ ...base, skill_id: k.id, on: mine.has(k.id) ? '0' : '1' }} />
+                      <button className={`btn sm${mine.has(k.id) ? ' primary' : ''}`} aria-pressed={mine.has(k.id)}>{mine.has(k.id) ? '✓ ' : ''}{k.name}</button></form>
+                  ))}
+                </div>
+              )}
+              {staff && (
+                <form action={createSkill} className="inline-form" style={{ marginTop: 12 }}>
+                  <Hidden v={base} />
+                  <input name="name" required minLength={2} maxLength={60} placeholder="Novo talento (ex.: Fotografia)" style={sel} aria-label="Novo talento" />
+                  <button className="btn sm">Adicionar ao catálogo</button>
+                </form>
+              )}
+            </section>
+            <section className="tile">
+              <h3>Quando você pode servir</h3>
+              {(myAvail.data ?? []).length === 0 && <p className="muted" style={{ marginBottom: 10 }}>Informe os dias e horários em que costuma estar livre. A coordenação usa isso para sugerir quem escalar.</p>}
+              <ul className="list">
+                {(myAvail.data ?? []).map(a => (
+                  <li key={a.id}><div className="t"><b>{DAYS[a.weekday as number]}</b><small>{String(a.start_time).slice(0, 5)} às {String(a.end_time).slice(0, 5)}</small></div>
+                    <form action={removeAvailability}><Hidden v={{ ...base, id: a.id }} /><button className="icon-btn" aria-label={`Remover ${DAYS[a.weekday as number]}`}>✕</button></form></li>
+                ))}
+              </ul>
+              <form action={addAvailability} className="inline-form" style={{ marginTop: 8 }}>
+                <Hidden v={base} />
+                <select name="weekday" style={sel} aria-label="Dia da semana">{DAYS.map((d, i) => <option key={d} value={i}>{d}</option>)}</select>
+                <input type="time" name="start" defaultValue="07:00" required style={sel} aria-label="Início" />
+                <input type="time" name="end" defaultValue="12:00" required style={sel} aria-label="Fim" />
+                <button className="btn sm">Adicionar</button>
               </form>
             </section>
             {staff && (

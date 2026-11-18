@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { getParish } from '@/lib/parish';
 import { upcomingEvents, directory, fill, canManage } from '@/lib/queries';
 import { Band, Flash } from '@/components/Band';
-import { fmt, fmtTime, initials, pl, STATUS_LABEL } from '@/lib/format';
+import { fmt, fmtTime, initials, pl, STATUS_LABEL, TZ } from '@/lib/format';
 import { addSlot, assign, unassign, markConfirmed, respond } from '../actions';
 
 export const metadata = { title: 'Escalas' };
@@ -14,10 +14,12 @@ export default async function Escalas({ params, searchParams }: { params: Promis
   const sp = await searchParams;
   const ctx = await getParish(slug);
   const dias = sp.dias === '90' ? 90 : 30;
-  const [events, dir, rolesRes] = await Promise.all([
+  const [events, dir, rolesRes, availRes] = await Promise.all([
     upcomingEvents(ctx, dias), directory(ctx),
     ctx.supabase.from('roster_roles').select('id, name, pastoral_id, pastorals(name)').eq('parish_id', ctx.parish.id).order('name'),
+    ctx.supabase.from('availability').select('user_id, weekday').eq('parish_id', ctx.parish.id).eq('available', true),
   ]);
+  const freeOn = (uid: string, iso: string) => { const wd = new Date(new Date(iso).toLocaleString('en-US', { timeZone: TZ })).getDay(); return (availRes.data ?? []).some(a => a.user_id === uid && a.weekday === wd); };
   const roles = (rolesRes.data ?? []) as unknown as { id: string; name: string; pastoral_id: string; pastorals: { name: string } | null }[];
   const myRoles = roles.filter(r => canManage(ctx, r.pastoral_id));
   const people = [...dir.values()].sort((a, b) => a.display_name.localeCompare(b.display_name));
@@ -71,7 +73,7 @@ export default async function Escalas({ params, searchParams }: { params: Promis
                           <Hidden v={{ ...base, slot_id: s.id }} />
                           <select name="user_id" required aria-label={`Escolher ${s.roster_roles?.name}`} className="field" style={{ height: 36, borderRadius: 12, border: '1px solid var(--line)', background: 'var(--surface)', padding: '0 10px', flex: 1 }}>
                             <option value="">Escalar… ({free} vaga{free > 1 ? 's' : ''})</option>
-                            {people.filter(p => !inEvent.has(p.user_id)).map(p => <option key={p.user_id} value={p.user_id}>{p.display_name || 'Sem nome'}</option>)}
+                            {people.filter(p => !inEvent.has(p.user_id)).sort((a, b) => Number(freeOn(b.user_id, e.starts_at)) - Number(freeOn(a.user_id, e.starts_at))).map(p => <option key={p.user_id} value={p.user_id}>{freeOn(p.user_id, e.starts_at) ? '✓ ' : ''}{p.display_name || 'Sem nome'}</option>)}
                           </select>
                           <button className="btn sm primary">Escalar</button>
                         </form>

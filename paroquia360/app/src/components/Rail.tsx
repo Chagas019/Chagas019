@@ -7,7 +7,7 @@ export function Rail({ slug, initials }: { slug: string; initials: string }) {
   const path = usePathname();
   const base = `/p/${slug}`;
   const items = [
-    [base, 'home', 'Painel'], [`${base}/agenda`, 'cal', 'Agenda'], [`${base}/escalas`, 'swap', 'Escalas'], [`${base}/equipe`, 'users', 'Equipe'],
+    [base, 'home', 'Painel'], [`${base}/agenda`, 'cal', 'Agenda'], [`${base}/escalas`, 'swap', 'Escalas'], [`${base}/ajuda`, 'heart', 'Preciso de ajuda'], [`${base}/equipe`, 'users', 'Equipe'],
   ] as const;
   return (
     <nav className="rail side" aria-label="Navegação principal">

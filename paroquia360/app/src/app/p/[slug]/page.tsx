@@ -18,10 +18,12 @@ export default async function Painel({ params, searchParams }: { params: Promise
   const mine = events.flatMap(e => e.roster_slots.flatMap(s => s.roster_assignments.filter(a => a.user_id === user.id).map(a => ({ e, s, a }))));
   const gaps = events.flatMap(e => e.roster_slots.filter(s => s.roster_assignments.length < s.quantity).map(s => ({ e, s, n: s.quantity - s.roster_assignments.length })));
   const swaps = events.reduce((n, e) => n + e.roster_slots.reduce((m, s) => m + s.roster_assignments.filter(a => a.status === 'swap_requested').length, 0), 0);
-  const [{ count: members }, { count: pastorals }] = await Promise.all([
+  const [{ count: members }, { count: pastorals }, helpRes] = await Promise.all([
     supabase.from('memberships').select('id', { count: 'exact', head: true }).eq('parish_id', parish.id).eq('active', true),
     supabase.from('pastorals').select('id', { count: 'exact', head: true }).eq('parish_id', parish.id).eq('active', true),
+    supabase.from('help_requests').select('id, title, needed, pastorals(name)').eq('parish_id', parish.id).eq('status', 'open').order('created_at', { ascending: false }).limit(4),
   ]);
+  const help = (helpRes.data ?? []) as unknown as { id: string; title: string; needed: number; pastorals: { name: string } | null }[];
   const masses = week.filter(e => e.type === 'mass');
   const conf = masses.reduce((a, e) => { const f = fill(e); a.a += f.a; a.c += f.c; return a; }, { a: 0, c: 0 });
   const empty = events.length === 0 && (pastorals ?? 0) === 0;
@@ -75,9 +77,17 @@ export default async function Painel({ params, searchParams }: { params: Promise
               : <div className="empty-state"><b>Você não está escalado</b>Quando a coordenação te escalar, aparece aqui para confirmar.</div>}
           </div>
 
+          <div className="tile c12 help" style={{ gridColumn: 'span 12' }}>
+            <h3><span className="ic"><Icon name="heart" /></span>Preciso de ajuda <Link className="more" style={{ color: 'rgba(255,255,255,.7)' }} href={`/p/${slug}/ajuda`}>Ver todos →</Link></h3>
+            {help.length ? help.map(h => (
+              <div className="need" key={h.id}><div><b>{h.needed} × {h.title}</b><small>{h.pastorals?.name}</small></div>
+                <Link className="btn-gold" style={{ display: 'inline-grid', placeItems: 'center', textDecoration: 'none' }} href={`/p/${slug}/ajuda`}>Posso ajudar</Link></div>
+            )) : <p>Nenhum pedido aberto. Quando uma pastoral precisar de ajuda, aparece aqui.</p>}
+          </div>
+
           {(ctx.staff || ctx.coordinates.length > 0) && (
             <div className="tile c12 help" style={{ gridColumn: 'span 12' }}>
-              <h3><span className="ic"><Icon name="users" /></span>Vagas abertas · próximos 30 dias</h3>
+              <h3><span className="ic"><Icon name="users" /></span>Vagas nas escalas · próximos 30 dias</h3>
               {gaps.length ? gaps.slice(0, 6).map(({ e, s, n }) => (
                 <div className="need" key={s.id}><div><b>{n} × {s.roster_roles?.name}</b><small>{e.title} · {fmtDay(e.starts_at)} {fmtTime(e.starts_at)}</small></div>
                   <Link className="btn-gold" style={{ display: 'inline-grid', placeItems: 'center', textDecoration: 'none' }} href={`/p/${slug}/escalas#e-${e.id}`}>Escalar</Link></div>

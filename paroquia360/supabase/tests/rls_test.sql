@@ -73,6 +73,12 @@ select tests.eq((select count(*) from public.profiles where user_id='00000000-00
 select tests.allowed($$insert into public.help_offers (parish_id,help_request_id,user_id) select parish_id,id,auth.uid() from public.help_requests$$, 'voluntária se oferece para ajudar');
 select tests.allowed($$update public.help_offers set status='withdrawn' where user_id=auth.uid()$$, 'voluntária retira oferta');
 select tests.denied($$update public.help_offers set status='accepted' where user_id=auth.uid()$$, 'voluntária se aceita sozinha');
+select tests.allowed($$update public.help_offers set status='offered' where user_id=auth.uid()$$, 'voluntária refaz a oferta');
+select tests.allowed($$insert into public.volunteer_skills (parish_id,user_id,skill_id) values ('10000000-0000-0000-0000-000000000001',auth.uid(),'30000000-0000-0000-0000-000000000001')$$, 'voluntária marca um talento');
+select tests.allowed($$delete from public.volunteer_skills where user_id=auth.uid() and skill_id='30000000-0000-0000-0000-000000000001'$$, 'voluntária desmarca talento');
+select tests.denied($$insert into public.volunteer_skills (parish_id,user_id,skill_id) values ('10000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000004','30000000-0000-0000-0000-000000000002')$$, 'voluntária marca talento de outro');
+select tests.allowed($$insert into public.availability (parish_id,user_id,weekday,start_time,end_time) values ('10000000-0000-0000-0000-000000000001',auth.uid(),6,'08:00','12:00')$$, 'voluntária informa disponibilidade');
+select tests.denied($$insert into public.skills (parish_id,name) values ('10000000-0000-0000-0000-000000000001','Hackear')$$, 'voluntária cria talento no catálogo');
 
 -- ===== Coordenadora da Liturgia (Carla)
 select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-000000000003',false);
