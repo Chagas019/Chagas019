@@ -65,7 +65,7 @@ const HOLO_FS = `uniform float uT; uniform float uHi; uniform float uA; uniform 
     float scan = .62 + .38 * sin(vW.y * 1.4 - uT * 5.);
     float band = smoothstep(.0, .02, abs(fract(vW.y * .02 - uT * .25) - .5) - .45);
     float flick = .93 + .07 * sin(uT * 47. + vW.x * .3);
-    vec3 col = uC * (.006 + f * .2) * scan * flick + uC * band * .03 + vec3(.7, .95, 1.) * uHi * (.04 + f * .3);
+    vec3 col = uC * (.003 + f * .11) * scan * flick + uC * band * .015 + vec3(.7, .95, 1.) * uHi * (.03 + f * .22);
     gl_FragColor = vec4(col * uA, 1.); }`;
 const holoMats = {};
 const T = { value: 0 }, A = { value: 0 };
@@ -75,8 +75,8 @@ rig.traverse(o => {
     uniforms: { uT: T, uA: A, uHi: { value: 0 }, uC: { value: new THREE.Color(0x7fd8ff) } } });
   o.material = holoMats[id];
 });
-const edgeBy = {}; rig.traverse(o => { if (o.isMesh && o.edgeLine && o.userData.pid) { const m = o.edgeLine.material; m.color.set(0xbcefff); m.blending = THREE.AdditiveBlending; m.depthTest = false; (edgeBy[o.userData.pid] ||= []).push(m); } });
-const EDGE = .62;
+const edgeBy = {}; rig.traverse(o => { if (o.isMesh && o.edgeLine && o.userData.pid) { const m = o.edgeLine.material; m.color.set(0x8fdcff); m.blending = THREE.AdditiveBlending; m.depthTest = false; (edgeBy[o.userData.pid] ||= []).push(m); } });
+const EDGE = .38;
 
 // =====================================================================
 // POSE: abrir/fechar + peças soltas com inércia
@@ -231,8 +231,8 @@ function hudStep(dt, t) {
     k.a.position.copy(from); k.b.position.copy(corner); conMat.opacity = .5 * show; k.a.material.opacity = .85 * show;
   });
   const cp = cmos.getWorldPosition(V3(0, 0, 0)); const pulse = .85 + .15 * Math.sin(t * 2.3) + .05 * Math.sin(t * 13);
-  core.position.copy(cp); coreHalo.position.copy(cp); core.scale.setScalar(64 * pulse * holo.scale.x); coreHalo.scale.setScalar(240 * pulse * holo.scale.x);
-  core.material.opacity = A.value; coreHalo.material.opacity = .32 * A.value;
+  core.position.copy(cp); coreHalo.position.copy(cp); core.scale.setScalar(34 * pulse * holo.scale.x); coreHalo.scale.setScalar(130 * pulse * holo.scale.x);
+  core.material.opacity = .7 * A.value; coreHalo.material.opacity = .14 * A.value;
 }
 // toque: um anel de luz se abre onde o dedo encosta
 const ringTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'); g.strokeStyle = 'rgba(220,250,255,1)'; g.lineWidth = 5; g.beginPath(); g.arc(64, 64, 56, 0, 7); g.stroke(); return new THREE.CanvasTexture(c); })();
@@ -246,11 +246,11 @@ addEventListener('pointermove', (e) => { look.tx = (e.clientX / innerWidth - .5)
 // RENDER: bloom para o brilho do holograma
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(sMain, cam));
-const bloom = new UnrealBloomPass(new THREE.Vector2(512, 512), .5, .7, .08); composer.addPass(bloom);
+const bloom = new UnrealBloomPass(new THREE.Vector2(512, 512), .28, .6, .15); composer.addPass(bloom);
 composer.addPass(new OutputPass());
 function resize() {
   const r = view.parentElement.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); composer.setSize(r.width, r.height); composer.setPixelRatio(DPR);
-  bloom.resolution.set(Math.max(512, r.width * DPR / 2), Math.max(512, r.height * DPR / 2)); bloom.strength = r.width < 640 ? .32 : .5; core.scale.setScalar(1);
+  bloom.resolution.set(Math.max(512, r.width * DPR / 2), Math.max(512, r.height * DPR / 2)); bloom.strength = r.width < 640 ? .18 : .28; core.scale.setScalar(1);
   cam.aspect = r.width / Math.max(1, r.height); cam.updateProjectionMatrix(); RES.set(r.width * DPR, r.height * DPR); for (const m of allEdgeMats) m.resolution.copy(RES);
   camDist = cam.aspect < .8 ? 760 : cam.aspect < 1.2 ? 600 : 470;
 }
@@ -268,7 +268,7 @@ function loop(now) {
   qYaw.setFromAxisAngle(UP, rot.yaw); qPitch.setFromAxisAngle(RIGHT, rot.pitch); holo.quaternion.copy(qPitch).multiply(qYaw);
   view3.s += (view3.scale - view3.s) * (1 - Math.exp(-dt * 10)); holo.scale.setScalar(view3.s); holo.position.copy(view3.pan); holo.position.y += Math.sin(now / 1600) * 3;
   T.value += dt; gridMat.uniforms.uT.value += dt; pmat.uniforms.uT.value += dt; beamMat.uniforms.uT.value += dt; pad.rotation.y += dt * .06;
-  for (const c of COMP) { const m = holoMats[c.id]; if (!m) continue; const target = c.grab ? 1 : c.id === hover ? .5 : 0; m.uniforms.uHi.value += (target - m.uniforms.uHi.value) * (1 - Math.exp(-dt * 12)); const el = edgeBy[c.id]; if (el && intro.done) for (const em of el) { em.opacity = EDGE + .3 * m.uniforms.uHi.value; em.color.setRGB(.44 + .5 * m.uniforms.uHi.value, .89 + .1 * m.uniforms.uHi.value, 1); } }
+  for (const c of COMP) { const m = holoMats[c.id]; if (!m) continue; const target = c.grab ? 1 : c.id === hover ? .5 : 0; m.uniforms.uHi.value += (target - m.uniforms.uHi.value) * (1 - Math.exp(-dt * 12)); const el = edgeBy[c.id]; if (el && intro.done) for (const em of el) { em.opacity = EDGE + .35 * m.uniforms.uHi.value; em.color.setRGB(.44 + .5 * m.uniforms.uHi.value, .89 + .1 * m.uniforms.uHi.value, 1); } }
   look.x += (look.tx - look.x) * (1 - Math.exp(-dt * 2)); look.y += (look.ty - look.y) * (1 - Math.exp(-dt * 2));
   cam.position.set(look.x * 28, 60 - look.y * 18, camDist); cam.lookAt(0, -10, 0);
   hudStep(dt, T.value); rippleStep(dt);

@@ -23,7 +23,7 @@ const DPR = Math.min(window.devicePixelRatio || 1, 2);
 const renderer = new THREE.WebGLRenderer({ canvas: view, antialias: true, powerPreference: 'high-performance' });
 renderer.setPixelRatio(DPR);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.1;
+renderer.toneMappingExposure = .9;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 const RES = new THREE.Vector2(1, 1);
 const pmrem = new THREE.PMREMGenerator(renderer);
