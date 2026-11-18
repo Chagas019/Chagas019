@@ -9,6 +9,7 @@ const ERR: Record<string, string> = {
   consent: 'Para continuar, aceite a política de privacidade.',
   envio: 'Não foi possível enviar o link agora. Aguarde um minuto e tente de novo.',
   link: 'O link expirou ou já foi usado. Peça um novo.',
+  limite: 'O envio de e-mails está temporariamente no limite. Tente de novo em alguns minutos (até 1 hora).',
 };
 
 export default async function Entrar({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {

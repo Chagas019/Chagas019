@@ -16,8 +16,10 @@ export async function sendLink(formData: FormData) {
     email,
     options: { emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}`, shouldCreateUser: true },
   });
-  // O Supabase só permite um novo envio para o mesmo e-mail depois de ~60 s: nesse caso o link anterior já foi enviado.
-  if (error && (error.status === 429 || /rate limit|seconds/i.test(error.message))) redirect(`/entrar?enviado=1&repetido=1`);
+  // Pedido repetido em menos de 60 s: o link anterior já foi enviado.
+  if (error && /seconds/i.test(error.message)) redirect(`/entrar?enviado=1&repetido=1`);
+  // Limite de e-mails por hora do servidor de e-mail do projeto: nenhum e-mail foi enviado.
+  if (error && (error.status === 429 || /rate limit/i.test(error.message))) redirect(`/entrar?erro=limite&next=${encodeURIComponent(next)}`);
   if (error) redirect(`/entrar?erro=envio&next=${encodeURIComponent(next)}`);
   redirect(`/entrar?enviado=1`);
 }
