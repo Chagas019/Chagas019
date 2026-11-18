@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { sendLink } from './actions';
 import { safeNext } from '@/lib/format';
+import { SubmitButton } from '@/components/SubmitButton';
 
 export const metadata = { title: 'Entrar' };
 const ERR: Record<string, string> = {
@@ -20,7 +21,7 @@ export default async function Entrar({ searchParams }: { searchParams: Promise<R
         {sp.enviado ? (
           <>
             <h1>Confira seu e-mail</h1>
-            <p>Enviamos um link de acesso. Abra-o neste mesmo aparelho para entrar. Ele vale por alguns minutos.</p>
+            <p>{sp.repetido ? 'O link já foi enviado há poucos segundos. ' : ''}Enviamos um link de acesso. Abra-o neste mesmo aparelho para entrar. Ele vale por alguns minutos. Se não chegar, olhe a caixa de spam e peça de novo depois de 1 minuto.</p>
             <Link className="btn" href="/entrar">Usar outro e-mail</Link>
           </>
         ) : (
@@ -35,7 +36,7 @@ export default async function Entrar({ searchParams }: { searchParams: Promise<R
                 <input type="checkbox" name="consent" required style={{ marginTop: 3 }} />
                 <span>Li e aceito a <Link href="/privacidade" target="_blank">política de privacidade</Link>.</span>
               </label>
-              <button className="btn primary block" type="submit">Enviar link de acesso</button>
+              <SubmitButton pending="Enviando…">Enviar link de acesso</SubmitButton>
             </form>
           </>
         )}

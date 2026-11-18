@@ -16,6 +16,8 @@ export async function sendLink(formData: FormData) {
     email,
     options: { emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}`, shouldCreateUser: true },
   });
+  // O Supabase só permite um novo envio para o mesmo e-mail depois de ~60 s: nesse caso o link anterior já foi enviado.
+  if (error && (error.status === 429 || /rate limit|seconds/i.test(error.message))) redirect(`/entrar?enviado=1&repetido=1`);
   if (error) redirect(`/entrar?erro=envio&next=${encodeURIComponent(next)}`);
   redirect(`/entrar?enviado=1`);
 }

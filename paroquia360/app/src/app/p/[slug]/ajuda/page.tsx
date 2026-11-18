@@ -43,7 +43,6 @@ export default async function Ajuda({ params, searchParams }: { params: Promise<
   const name = (id: string) => dir.get(id)?.display_name || 'Pessoa';
   const weekday = (iso: string) => new Date(new Date(iso).toLocaleString('en-US', { timeZone: TZ })).getDay();
 
-  // Sugestões: quem tem o talento pedido e, se houver evento, disponibilidade naquele dia da semana.
   const suggest = (r: Req) => {
     if (!r.skill_id) return [];
     const offered = new Set(r.help_offers.filter(o => o.status !== 'withdrawn').map(o => o.user_id));

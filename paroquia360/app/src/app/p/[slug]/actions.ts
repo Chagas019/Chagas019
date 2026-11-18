@@ -16,7 +16,6 @@ async function run(f: FormData, ok: string, op: (c: Awaited<ReturnType<typeof ge
   redirect(error ? `${to}${sep}erro=${encodeURIComponent(errMsg(error.message))}` : `${to}${sep}ok=${encodeURIComponent(ok)}`);
 }
 
-/* ---------- escalas: resposta do próprio voluntário ---------- */
 export async function respond(f: FormData) {
   const status = s(f, 'status');
   if (!['confirmed', 'swap_requested', 'declined'].includes(status)) return;
@@ -25,7 +24,6 @@ export async function respond(f: FormData) {
       .eq('id', s(f, 'id')).eq('user_id', user.id));
 }
 
-/* ---------- escalas: coordenação ---------- */
 export async function addSlot(f: FormData) {
   const qty = Math.min(50, Math.max(1, Number(s(f, 'quantity')) || 1));
   await run(f, 'Função adicionada à celebração.', ({ supabase, parish }) =>
@@ -42,7 +40,6 @@ export async function markConfirmed(f: FormData) {
   await run(f, 'Confirmação registrada.', ({ supabase }) => supabase.from('roster_assignments').update({ status: 'confirmed' }).eq('id', s(f, 'id')));
 }
 
-/* ---------- agenda ---------- */
 export async function createEvent(f: FormData) {
   const date = s(f, 'date'), time = s(f, 'time');
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{2}:\d{2}$/.test(time) || s(f, 'title').length < 2) {
@@ -58,7 +55,6 @@ export async function deleteEvent(f: FormData) {
   await run(f, 'Evento excluído.', ({ supabase }) => supabase.from('events').delete().eq('id', s(f, 'id')));
 }
 
-/* ---------- equipe ---------- */
 export async function invite(f: FormData) {
   const email = s(f, 'email').toLowerCase();
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) redirect(`${back(f, s(f, 'slug'))}?erro=${encodeURIComponent('E-mail inválido.')}`);
@@ -88,7 +84,6 @@ export async function updateProfile(f: FormData) {
     supabase.from('profiles').update({ full_name: s(f, 'full_name'), phone: s(f, 'phone') || null }).eq('user_id', user.id));
 }
 
-/* ---------- talentos e disponibilidade ---------- */
 export async function createSkill(f: FormData) {
   await run(f, 'Talento adicionado ao catálogo.', ({ supabase, parish }) =>
     supabase.from('skills').insert({ parish_id: parish.id, name: s(f, 'name') }));
@@ -111,7 +106,6 @@ export async function removeAvailability(f: FormData) {
   await run(f, 'Horário removido.', ({ supabase, user }) => supabase.from('availability').delete().eq('id', s(f, 'id')).eq('user_id', user.id));
 }
 
-/* ---------- preciso de ajuda ---------- */
 export async function createHelpRequest(f: FormData) {
   const needed = Math.min(50, Math.max(1, Number(s(f, 'needed')) || 1));
   if (s(f, 'title').length < 2 || !s(f, 'pastoral_id')) redirect(`${back(f, s(f, 'slug'))}?erro=${encodeURIComponent('Informe o que precisa e a pastoral.')}`);
