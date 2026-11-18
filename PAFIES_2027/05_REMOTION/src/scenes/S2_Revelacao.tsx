@@ -11,8 +11,8 @@ export const S2Revelacao: React.FC = () => {
   const { fps } = useVideoConfig();
   // logo sobe para o topo quando o "10" 3D entra (Null de controle)
   const lift = interpolate(f, [92, 118], [0, 1], { ...clamp, easing: ease });
-  const logoY = interpolate(lift, [0, 1], [900, 560]);
-  const logoW = interpolate(lift, [0, 1], [880, 620]);
+  const logoY = interpolate(lift, [0, 1], [900, 510]);
+  const logoW = interpolate(lift, [0, 1], [660, 380]);
   const num = spring({ frame: f - 96, fps, config: { damping: 13, stiffness: 120 } });
   // parallax: camadas em profundidades diferentes deslocam em velocidades distintas
   const camY = interpolate(f, [0, 240], [30, -30], { ...clamp, easing: Easing.inOut(Easing.sin) });

@@ -29,11 +29,11 @@ export const S5Final: React.FC = () => {
         <div style={{ position: 'absolute', left: 540 - 400, top: 860 - 400, width: 800, height: 800, borderRadius: '50%', border: `16px solid ${C.yellow}`, transform: `scale(${ringS})`, opacity: f >= 180 ? ringO : 0 }} />
         <AbsoluteFill style={{ transform: `scale(${pop})` }}>
           <KText text="ESTÃO PREPARADOS?" size={118} start={4} mode="up" y={430} color={C.white} />
-          <Logo start={0} y={880} width={900} depth={18} />
-          <KText text="PAFIES 2027" size={185} start={60} mode="slam" y={1330} color={C.yellow} stagger={1.6} />
-          <Highlight x={540} y={1530} w={980} h={130} start={120} color={C.white} rot={-2} />
-          <KText text="VAMOS FAZER HISTÓRIA!" size={104} start={124} mode="wide" y={1530} color={C.royal} shadow={null} rot={-2} />
-          <KText text="10ª EDIÇÃO  ·  UMA SÓ MISSÃO: FAZER A DIFERENÇA" size={40} start={150} mode="blur" y={1660} color={C.white} shadow={null} stagger={0.3} tracking={0.06} />
+          <Logo start={0} y={880} width={680} depth={18} />
+          <KText text="PAFIES 2027" size={185} start={60} mode="slam" y={1355} color={C.yellow} stagger={1.6} />
+          <Highlight x={540} y={1550} w={980} h={130} start={120} color={C.white} rot={-2} />
+          <KText text="VAMOS FAZER HISTÓRIA!" size={104} start={124} mode="wide" y={1550} color={C.royal} shadow={null} rot={-2} />
+          <KText text="10ª EDIÇÃO  ·  UMA SÓ MISSÃO: FAZER A DIFERENÇA" size={40} start={150} mode="blur" y={1675} color={C.white} shadow={null} stagger={0.3} tracking={0.06} />
         </AbsoluteFill>
       </Camera>
       <Flash at={1} dur={14} />

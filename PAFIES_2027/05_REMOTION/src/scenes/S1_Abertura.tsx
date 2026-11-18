@@ -2,7 +2,7 @@
 import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from 'remotion';
 import { C, HEARTBEATS } from '../theme';
-import { Camera, Halftone, KText, Particles, Flash } from '../components/fx';
+import { Camera, Halftone, KText, Particles, Flash, Megaphone } from '../components/fx';
 
 const clamp = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' } as const;
 
@@ -38,6 +38,7 @@ export const S1Abertura: React.FC = () => {
         {HEARTBEATS.map(ring)}
         <Particles mode="float" count={40} seed="s1" color={C.royalLight} />
         <AbsoluteFill style={{ transform: `scale(${0.2 + 0.8 * suck})`, opacity: suck }}>
+          <Megaphone start={28} x={540} y={560} width={560} rot={-8} exit={86} />
           <KText text="EI, GALERA…" size={120} start={33} mode="blur" y={820} color={C.white} stagger={1.2} exit={88} />
           <KText text="ESTÃO" size={240} start={93} mode="slam" y={1000} color={C.yellow} stagger={2} />
           <KText text="PREPARADOS?" size={165} start={103} mode="slam" y={1210} color={C.yellow} stagger={1.5} />

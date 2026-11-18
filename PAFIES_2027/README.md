@@ -33,9 +33,9 @@ Nenhum software pago foi contratado ou instalado. Toda a trilha e os efeitos for
 
 ## Pendências para a versão de veiculação
 
-1. **Logo oficial:** substitua `05_REMOTION/public/logo/pafies_logo.png` pelo logo original (PNG transparente) e renderize de novo.
-2. **Locução:** grave seguindo o guia e mixe na faixa A3 do Resolve, ou entregue o WAV para remixar.
-3. **Vídeo de referência e ilustração:** não chegaram ao ambiente. Com eles dá para ajustar ritmo e estilo.
+1. **Locução:** grave seguindo o guia em `01_DIRECAO_CRIATIVA` e mixe na faixa A3 do Resolve.
+2. **Logo em alta resolução:** o logo foi recortado de uma captura de tela (≈780 px de diâmetro, ampliado para 1600 px). Se existir o arquivo original (PNG/AI/SVG), basta substituir `05_REMOTION/public/logo/pafies_logo.png` e renderizar de novo.
+3. **Vídeo de referência:** não chegou ao ambiente. Com ele dá para ajustar ritmo e transições.
 
 ## Como renderizar de novo
 

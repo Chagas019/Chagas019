@@ -2,7 +2,7 @@
 import React from 'react';
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
 import { C, FONT, BEAT } from '../theme';
-import { Bolt, Camera, Flash, Halftone, KText, Particles, Sunburst } from '../components/fx';
+import { Bolt, Camera, Flash, Halftone, KText, Megaphone, Particles, Sunburst } from '../components/fx';
 
 const clamp = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' } as const;
 
@@ -80,6 +80,7 @@ export const S4Expectativa: React.FC = () => {
             <Halftone src="halftone_radial_preto" opacity={0.9} />
             <Bolt v="a" x={160} y={1480} size={300} rot={-8} delay={124} />
             <Bolt v="b" x={920} y={420} size={260} rot={14} delay={126} flip />
+            <Megaphone start={130} x={560} y={1430} width={600} rot={-10} />
             <KText text="ESSA EDIÇÃO" size={170} start={120} mode="wide" y={760} color={C.white} />
             <KText text="PROMETE!" size={260} start={128} mode="slam" y={1030} color={C.yellow} shadow={C.royal} stagger={1.4} />
           </AbsoluteFill>

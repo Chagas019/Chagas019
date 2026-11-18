@@ -146,7 +146,7 @@ export const Highlight: React.FC<{ x: number; y: number; w: number; h: number; s
 
 /* ---------- logotipo (arquivo substituível) com profundidade/extrusão ---------- */
 export const Logo: React.FC<{ start: number; width?: number; x?: number; y?: number; depth?: number }> =
-  ({ start, width = 820, x = 540, y = 760, depth = 14 }) => {
+  ({ start, width = 640, x = 540, y = 760, depth = 14 }) => {
     const f = useCurrentFrame() - start;
     const { fps } = useVideoConfig();
     const s = spring({ frame: f, fps, config: { damping: 12, stiffness: 90, mass: 1.1 } });
@@ -156,7 +156,7 @@ export const Logo: React.FC<{ start: number; width?: number; x?: number; y?: num
     const shadows = new Array(depth).fill(0).map((_, i) => `drop-shadow(0 ${1.5}px 0 ${i < depth - 2 ? C.royalDeep : C.black})`).join(' ');
     const glint = interpolate(f, [18, 42], [-0.4, 1.4], clamp);
     return (
-      <div style={{ position: 'absolute', left: x - width / 2, top: y - width * 0.25 + float, width, perspective: 1400 }}>
+      <div style={{ position: 'absolute', left: x - width / 2, top: y - width / 2 + float, width, perspective: 1400 }}>
         <div style={{ transform: `translateZ(${z}px) rotateX(${rx}deg) rotateY(${Math.sin(f / 40) * 6}deg)`, opacity: Math.min(1, s * 3), position: 'relative' }}>
           <Img src={staticFile('logo/pafies_logo.png')} style={{ width, filter: `${shadows} drop-shadow(0 30px 40px rgba(0,0,0,0.5))` }} />
           <div style={{
@@ -237,6 +237,22 @@ export const Marquee: React.FC<{ words: string[]; y: number; rot?: number; bg?: 
         <div style={{ whiteSpace: 'nowrap', fontFamily: FONT, fontSize: size, color, transform: `translateX(${-(f * speed) % 2400}px)`, letterSpacing: '0.03em' }}>{line}</div>
       </div>
     );
+  };
+
+/* ---------- ilustração enviada (megafone halftone) com pop + vibração ---------- */
+export const Megaphone: React.FC<{ start: number; x: number; y: number; width?: number; rot?: number; flip?: boolean; exit?: number }> =
+  ({ start, x, y, width = 620, rot = -8, flip, exit }) => {
+    const f = useCurrentFrame() - start;
+    const { fps } = useVideoConfig();
+    if (f < 0) return null;
+    const s = spring({ frame: f, fps, config: { damping: 9, stiffness: 170 } });
+    const shout = Math.sin(f * 2.2) * 3 * Math.exp(-f / 30); // tremor de "grito"
+    const out = exit !== undefined ? interpolate(f + start, [exit, exit + 8], [1, 0], clamp) : 1;
+    return <Img src={staticFile('ilustracao/megafone_recorte.png')} style={{
+      position: 'absolute', left: x - width / 2, top: y - width * 0.4, width,
+      transform: `scale(${s * out * (flip ? -1 : 1)}, ${s * out}) rotate(${rot + shout}deg)`,
+      filter: 'drop-shadow(14px 16px 0 rgba(0,0,0,0.85))',
+    }} />;
   };
 
 export const Bg: React.FC<{ from: string; to: string; at?: string }> = ({ from, to, at = '50% 40%' }) => (

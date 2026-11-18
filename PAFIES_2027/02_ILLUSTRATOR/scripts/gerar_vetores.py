@@ -141,17 +141,9 @@ type_layout("tipo_03_solidariedade", [("MUITO MAIS QUE", 120, WHITE, 760, 0), ("
 type_layout("tipo_04_expectativa", [("PREPARE", 240, YELLOW, 640, -4), ("SUA EQUIPE!", 170, WHITE, 830, -4), ("REÚNA A GALERA!", 140, WHITE, 1120, 0), ("ESSA EDIÇÃO", 150, YELLOW, 1390, 3), ("PROMETE!", 230, YELLOW, 1610, 3)])
 type_layout("tipo_05_final", [("ESTÃO PREPARADOS?", 120, WHITE, 420, 0), ("PAFIES 2027", 200, YELLOW, 1440, 0), ("VAMOS FAZER HISTÓRIA!", 100, WHITE, 1600, 0)])
 
-# ---------- 6. LOGO — SLOT PROVISÓRIO ----------
-# O logotipo oficial PAFIES NÃO foi enviado para o ambiente. Este arquivo é um
-# marcador tipográfico neutro, para ser SUBSTITUÍDO pelo logo original
-# (mesmo nome de arquivo: 05_REMOTION/public/logo/pafies_logo.svg ou .png).
-logo = g("LOGO_PROVISORIO_SUBSTITUIR", "\n".join([
-    f'<rect x="20" y="20" width="760" height="360" rx="48" fill="{ROYAL}" stroke="{BLACK}" stroke-width="16"/>',
-    f'<text x="400" y="250" text-anchor="middle" font-family="{FONT}" font-size="210" fill="{WHITE}" letter-spacing="6">PAFIES</text>',
-    f'<rect x="150" y="285" width="500" height="54" rx="10" fill="{YELLOW}"/>',
-    f'<text x="400" y="326" text-anchor="middle" font-family="{FONT}" font-size="42" fill="{BLACK}" letter-spacing="8">GINCANA SOLIDÁRIA</text>',
-]))
-svg("pafies_logo_PROVISORIO", 800, 400, logo)
+# ---------- 6. LOGO ----------
+# O logo oficial PAFIES foi recebido e é usado como arquivo original (07_ASSETS/logo),
+# sem redesenho. Nenhum vetor de logo é gerado aqui.
 
 # ---------- cópia para o Remotion ----------
 os.makedirs(REMOTION, exist_ok=True)

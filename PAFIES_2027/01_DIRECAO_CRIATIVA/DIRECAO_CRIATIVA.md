@@ -17,7 +17,8 @@
 
 - **Tipografia:** Anton (OFL, Google Fonts) para títulos condensados; Inter 800 para HUD/legendas.
 - **Linguagem gráfica:** sombra dura deslocada (offset preto), halftone, raios amarelos com contorno, sunburst giratório, tarjas editoriais inclinadas (-2° a -5°), grão de filme e vinheta.
-- **Logo:** o arquivo oficial **não foi recebido** no ambiente. Está em uso um marcador provisório (`pafies_logo_PROVISORIO`). Para trocar, salve o logo original como `05_REMOTION/public/logo/pafies_logo.png` (PNG com transparência, ~1600 px de largura) e renderize de novo. Toda a animação usa o arquivo como imagem e não redesenha a marca.
+- **Logo:** logo oficial PAFIES (círculo azul com letras brancas desenhadas à mão), recortado do arquivo enviado com fundo transparente (`07_ASSETS/logo/pafies_logo_oficial_1600.png`). A marca é usada como imagem e não foi redesenhada. A animação só acrescenta profundidade (extrusão e sombra), rotação 3D de entrada e brilho.
+- **Ilustração enviada:** megafone halftone com raios amarelos, recortado do fundo (`07_ASSETS/ilustracao/megafone_recorte.png`). Aparece no "EI, GALERA…" (cena 1) e no "ESSA EDIÇÃO PROMETE!" (cena 4). A linguagem dela (halftone, raios amarelos, recorte tipo adesivo com sombra dura) orientou toda a direção gráfica.
 
 ## Decupagem + guia de locução
 

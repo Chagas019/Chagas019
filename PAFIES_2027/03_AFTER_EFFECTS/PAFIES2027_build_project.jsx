@@ -42,11 +42,13 @@
     }
     var AI = {};
     var aiNames = ["raio_a", "raio_b", "raio_c", "sunburst_amarelo", "sunburst_azul", "halftone_linear_preto", "halftone_radial_preto",
-        "halftone_diagonal_amarelo", "grafismos_kit", "pafies_logo_PROVISORIO"];
+        "halftone_diagonal_amarelo", "grafismos_kit"];
     for (var i = 0; i < aiNames.length; i++) AI[aiNames[i]] = imp("02_ILLUSTRATOR/pdf/" + aiNames[i] + ".pdf", fAI, false);
     var B = {};
     var bl = ["phone", "num10", "apple", "can", "rice", "milk", "heart"];
     for (i = 0; i < bl.length; i++) B[bl[i]] = imp("04_BLENDER/renders/" + bl[i] + "/" + bl[i] + "_0001.png", f3D, true);
+    var LOGO = imp("07_ASSETS/logo/pafies_logo_oficial_1600.png", fAI, false);
+    var MEGA = imp("07_ASSETS/ilustracao/megafone_recorte.png", fAI, false);
     var MUSIC = imp("08_AUDIO/PAFIES2027_mix.wav", fAud, false);
 
     // ---------- helpers ----------
@@ -174,6 +176,7 @@
     keys(glow.property("Transform").property("Opacity"), [0, 2.0, 5.5], [5, 45, 90]);
     glow.property("Transform").property("Scale").expression = "b=[0.4,1.45,2.4,3.25,4.0,4.7]; s=100; for(i=0;i<b.length;i++){d=time-b[i]; if(d>0) s=Math.max(s,100+25*Math.exp(-d*6));} [s,s]";
     footage(s1, AI["halftone_radial_preto"], W / 2, H / 2, 100).property("Transform").property("Opacity").setValue(55);
+    var mg = footage(s1, MEGA, W / 2, 560, 48, 0.93); if (mg) { keys(mg.property("Transform").property("Scale"), [0.93, 1.2], [[0, 0], [48, 48]]); mg.property("Transform").property("Rotation").expression = "-8 + Math.sin(time*66)*3*Math.exp(-(time-0.93)*1)"; }
     text(s1, "EI, GALERA…", 120, WHITE, 820, 1.1, { mode: "up", out: 2.95 });
     text(s1, "ESTÃO", 240, YELLOW, 1000, 3.1);
     text(s1, "PREPARADOS?", 165, YELLOW, 1210, 3.43);
@@ -187,11 +190,11 @@
     particles(s2, 60, YELLOW);
     bolt(s2, "a", 150, 420, 180, -18, 0.2); bolt(s2, "b", 930, 470, 160, 16, 0.33);
     bolt(s2, "c", 120, 1500, 140, 12, 3.47); bolt(s2, "a", 960, 1430, 170, -14, 3.6);
-    var logo = footage(s2, AI["pafies_logo_PROVISORIO"], W / 2, 900, 110, 0, 0);
+    var logo = footage(s2, LOGO, W / 2, 900, 41, 0, 0);
     if (logo) {
-        logo.name = "LOGO_PAFIES (substituir pelo original)";
+        logo.name = "LOGO_PAFIES_OFICIAL";
         keys(logo.property("Transform").property("X Rotation"), [0, 1.0], [75, 0]);
-        keys(logo.property("Transform").property("Position"), [0, 1.0, 3.07, 3.93], [[W / 2, 900, -900], [W / 2, 900, 0], [W / 2, 900, 0], [W / 2, 560, 0]]);
+        keys(logo.property("Transform").property("Position"), [0, 1.0, 3.07, 3.93], [[W / 2, 900, -900], [W / 2, 900, 0], [W / 2, 900, 0], [W / 2, 510, 0]]);
         var ex = logo.property("Effects").addProperty("ADBE Drop Shadow"); ex.property("Shadow Color").setValue(ROYAL_D); ex.property("Opacity").setValue(255); ex.property("Distance").setValue(18); ex.property("Softness").setValue(0); ex.property("Direction").setValue(180);
     }
     var n10 = footage(s2, B["num10"], W / 2, 1140, 95, 3.07, 0);
@@ -256,8 +259,8 @@
     particles(s5, 80, YELLOW);
     bolt(s5, "a", 130, 820, 200, -16, 0.27); bolt(s5, "b", 950, 880, 200, 14, 0.4);
     bolt(s5, "c", 190, 1290, 140, 20, 0.53); bolt(s5, "a", 900, 1330, 150, -18, 0.67);
-    var lg = footage(s5, AI["pafies_logo_PROVISORIO"], W / 2, 880, 112, 0, 0);
-    if (lg) { lg.name = "LOGO_PAFIES (substituir pelo original)"; keys(lg.property("Transform").property("X Rotation"), [0, 1.0], [75, 0]); keys(lg.property("Transform").property("Scale"), [6, 6.15, 6.4], [[112, 112, 112], [122, 122, 122], [112, 112, 112]]); }
+    var lg = footage(s5, LOGO, W / 2, 880, 42, 0, 0);
+    if (lg) { lg.name = "LOGO_PAFIES_OFICIAL"; keys(lg.property("Transform").property("X Rotation"), [0, 1.0], [75, 0]); keys(lg.property("Transform").property("Scale"), [6, 6.15, 6.4], [[42, 42, 42], [46, 46, 46], [42, 42, 42]]); }
     text(s5, "ESTÃO PREPARADOS?", 118, WHITE, 430, 0.13, { mode: "up" });
     text(s5, "PAFIES 2027", 185, YELLOW, 1330, 2.0);
     text(s5, "VAMOS FAZER HISTÓRIA!", 104, ROYAL, 1530, 4.13, { mode: "wide", rot: -2 });
