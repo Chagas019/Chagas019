@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Anatomia de uma Câmera</title>
+<style>
+@font-face { font-family: Inter; font-weight: 300; src: url(node_modules/@fontsource/inter/files/inter-latin-300-normal.woff2); }
+@font-face { font-family: Inter; font-weight: 400; src: url(node_modules/@fontsource/inter/files/inter-latin-400-normal.woff2); }
+@font-face { font-family: Inter; font-weight: 500; src: url(node_modules/@fontsource/inter/files/inter-latin-500-normal.woff2); }
+@font-face { font-family: Inter; font-weight: 600; src: url(node_modules/@fontsource/inter/files/inter-latin-600-normal.woff2); }
+@font-face { font-family: Mono; font-weight: 400; src: url(node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2); }
+:root { --ink: #eef1f4; --dim: rgba(238,241,244,.55); --red: #e2342d; --bg: #0a0c0f; }
+html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: var(--ink);
+  font-family: Inter, sans-serif; -webkit-font-smoothing: antialiased; }
+#gl { position: absolute; inset: 0; width: 1920px; height: 1080px; }
+.layer { position: absolute; inset: 0; pointer-events: none; }
+#vignette { background: radial-gradient(ellipse 75% 70% at 50% 48%, transparent 55%, rgba(0,0,0,.55) 100%); }
+#chapter { text-shadow: 0 0 12px #000, 0 0 4px #000; position: absolute; left: 72px; top: 60px; font: 400 15px/1 Mono, monospace; letter-spacing: .22em; color: var(--dim); }
+#chapter b { color: var(--red); font-weight: 400; margin-right: 14px; }
+#chapter .bar { display: inline-block; width: 46px; height: 1px; background: var(--dim); vertical-align: middle; margin: 0 14px; }
+#mark { position: absolute; right: 72px; top: 60px; font: 400 13px/1 Mono, monospace; letter-spacing: .22em; color: rgba(238,241,244,.35); text-align: right; }
+#title { position: absolute; left: 0; right: 0; top: 700px; text-align: center; }
+#title h1 { margin: 0; font-weight: 300; font-size: 76px; letter-spacing: .18em; }
+#title p { margin: 20px 0 0; font-weight: 300; font-size: 26px; letter-spacing: .04em; color: var(--dim); }
+#title .rule { width: 120px; height: 1px; background: var(--red); margin: 26px auto 0; }
+#subs { position: absolute; left: 0; right: 0; bottom: 64px; text-align: center; }
+#subs span { display: inline-block; max-width: 1280px; font-weight: 400; font-size: 30px; line-height: 1.35;
+  padding: 8px 20px; background: rgba(6,8,10,.62); border-radius: 6px; }
+#labels text { font-family: Inter; font-weight: 500; font-size: 19px; letter-spacing: .03em; fill: var(--ink); }
+#labels text.n { font-family: Mono; font-size: 13px; fill: var(--red); letter-spacing: .1em; }
+.panel { position: absolute; font-family: Inter; }
+.mono { font-family: Mono, monospace; }
+#final { position: absolute; left: 0; right: 0; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+#final h2 { margin: 0; font-weight: 300; font-size: 54px; letter-spacing: .02em; text-align: center; line-height: 1.3; }
+#final .rule { width: 120px; height: 1px; background: var(--red); margin: 34px 0 0; }
+#note { position: absolute; right: 72px; top: 110px; text-align: right; font: 400 15px/1.4 Mono, monospace; color: rgba(238,241,244,.5); letter-spacing: .04em; max-width: 520px; }
+#note::before { content: "※ "; color: var(--red); }
+</style>
+<script type="importmap">
+{ "imports": { "three": "./node_modules/three/build/three.module.js", "three/addons/": "./node_modules/three/examples/jsm/" } }
+</script>
+</head>
+<body>
+<canvas id="gl"></canvas>
+<canvas id="fx" class="layer" width="3840" height="2160" style="width:1920px;height:1080px"></canvas>
+<svg id="labels" class="layer" viewBox="0 0 1920 1080" width="1920" height="1080"></svg>
+<div id="vignette" class="layer"></div>
+<div id="hud" class="layer">
+  <div id="chapter"></div>
+  <div id="mark">ANATOMIA · ENGENHARIA DA IMAGEM</div>
+  <div id="title"><h1>ANATOMIA DE UMA CÂMERA</h1><div class="rule"></div><p>Descubra o que acontece dentro de uma câmera fotográfica.</p></div>
+  <div id="note"></div>
+  <div id="final"><h2>Por trás de cada fotografia existe<br>uma engenharia extraordinária.</h2><div class="rule"></div></div>
+  <div id="subs"><span></span></div>
+</div>
+<script type="module" src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+html, body { margin: 0 !important; background: #0b0b0b !important; overflow: hidden !important; }
+.iso-page { width: 760px !important; margin: 0 !important; }
+.iso-legend, .iso-plate-corners, .iso-plate-pdf, figcaption { display: none !important; }
+.iso-plate { border: 0 !important; box-shadow: none !important; background: transparent !important; padding: 0 !important; margin: 0 !important; border-radius: 0 !important; }
+.iso-plate::before, .iso-plate::after { display: none !important; }
+.iso-figure { margin: 0 !important; }

@@ -1,0 +1,138 @@
+<title>Bancada de Engenharia Reversa</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* bancada escura em tela cheia: cena 3D ao fundo, roteiro à esquerda, ficha da peça à direita */
+:root {
+  --bg: #0a0c0f; --panel: rgba(15,17,21,.86); --line: rgba(232,236,241,.09); --fg: #e8ecf1; --muted: #8b939e; --dim: #5b636d;
+  --accent: #e2342d; --ok: #57c48a;
+  --sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font: 14px/1.5 var(--sans); -webkit-font-smoothing: antialiased; overflow: hidden; }
+.app { position: relative; height: 100%; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.stage { position: absolute; inset: 0; }
+#view { display: block; width: 100%; height: 100%; touch-action: none; outline: none; }
+#tags { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.tag { position: absolute; left: 0; top: 0; margin: 6px 0 0 -40px; width: 80px; text-align: center; font: 10px/1.2 var(--mono); letter-spacing: .06em; color: var(--muted); text-shadow: 0 1px 3px #000; white-space: nowrap; }
+.tag.on { color: var(--fg); }
+.top { position: absolute; left: max(16px, env(safe-area-inset-left, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); top: 14px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; pointer-events: none; }
+.brand { pointer-events: auto; }
+.kicker { margin: 0; font: 10.5px/1 var(--mono); letter-spacing: .2em; color: var(--muted); text-transform: uppercase; }
+.kicker b { color: var(--accent); font-weight: 400; margin-right: 8px; }
+h1 { margin: 6px 0 0; font-weight: 300; font-size: clamp(20px, 2.4vw, 28px); letter-spacing: -.02em; line-height: 1.1; text-wrap: balance; }
+.meter { margin-top: 10px; width: 220px; }
+.meter .track { height: 2px; background: var(--line); border-radius: 2px; overflow: hidden; }
+.meter #bar { height: 100%; width: 0; background: var(--accent); transition: width 400ms ease; }
+.meter p { margin: 6px 0 0; font: 11px/1 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.tools { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; pointer-events: auto; }
+button { font: inherit; color: inherit; }
+.pill { border: 0; padding: 6px 12px; border-radius: 999px; background: var(--panel); color: var(--muted); box-shadow: inset 0 0 0 1px var(--line); cursor: pointer; font: 12px/1.2 var(--sans); backdrop-filter: blur(8px); transition: color 150ms, box-shadow 150ms; }
+.pill:hover, .pill:focus-visible, .pill[aria-pressed="true"] { color: var(--fg); box-shadow: inset 0 0 0 1px rgba(232,236,241,.28); outline: none; }
+.pill[aria-pressed="true"] { box-shadow: inset 0 0 0 1px var(--accent); }
+.panel { position: absolute; background: var(--panel); border-radius: 14px; box-shadow: inset 0 0 0 1px var(--line), 0 20px 40px -20px #000; backdrop-filter: blur(12px); }
+.left { left: max(16px, env(safe-area-inset-left, 0px)); top: 128px; bottom: 16px; width: 248px; display: flex; flex-direction: column; min-height: 0; }
+.left header { padding: 12px 14px 8px; font: 10.5px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; }
+#steps { list-style: none; margin: 0; padding: 0 6px 6px; overflow: auto; flex: 1; min-height: 0; }
+#steps button { width: 100%; display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; align-items: baseline; text-align: left; padding: 7px 8px; border: 0; border-radius: 8px; background: transparent; cursor: pointer; font-size: 13px; }
+#steps button:hover, #steps button:focus-visible, #steps button[aria-current] { background: rgba(232,236,241,.06); outline: none; }
+#steps .n { font: 10px var(--mono); color: var(--dim); }
+#steps .s { font: 10px var(--mono); color: var(--dim); }
+#steps [data-st="out"] .t { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--dim); }
+#steps [data-st="out"] .s { color: var(--ok); }
+#steps [data-st="ready"] .s { color: var(--fg); }
+#steps [data-next] .n, #steps [data-next] .s { color: var(--accent); }
+#steps [data-st="locked"] .t { color: var(--dim); }
+.left footer { padding: 8px; display: flex; gap: 6px; border-top: 1px solid var(--line); }
+.left footer .pill { flex: 1; }
+.sheet { right: max(16px, env(safe-area-inset-right, 0px)); top: 128px; width: 300px; max-height: calc(100% - 200px); display: flex; flex-direction: column; overflow: hidden; transition: opacity 220ms ease, transform 260ms cubic-bezier(.32,.72,0,1); }
+.sheet[data-collapsed] { transform: translateX(calc(100% + 24px)); opacity: 0; pointer-events: none; }
+.card-wrap { position: relative; overflow: auto; padding: 16px 16px 14px; min-height: 0; }
+.close { position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; border: 0; border-radius: 50%; background: rgba(232,236,241,.06); color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; }
+.close:hover, .close:focus-visible { color: var(--fg); background: rgba(232,236,241,.12); outline: none; }
+.close:active, .pill:active, #steps button:active, .act:active { transform: scale(.96); transition: transform 90ms ease-out; }
+.grab, .strip-wrap { display: none; }
+#info { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); top: 128px; }
+#card .eyebrow { margin: 0; font: 10.5px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+#card h2 { margin: 8px 0 8px; font-weight: 500; font-size: 19px; line-height: 1.25; }
+#card p { margin: 0 0 10px; color: #c3c9d1; }
+#card dl { margin: 10px 0 0; display: grid; gap: 8px; }
+#card dt { font: 10px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); margin-bottom: 3px; }
+#card dd { margin: 0; color: var(--fg); font-size: 13px; }
+#card .how { margin: 0; padding-left: 18px; color: #c3c9d1; display: grid; gap: 6px; }
+#card .how b { color: var(--fg); font-weight: 500; }
+.ctl { display: flex; justify-content: space-between; gap: 10px; margin: 14px 0 6px; font: 10.5px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.ctl output { color: var(--fg); text-transform: none; letter-spacing: .02em; text-align: right; font-variant-numeric: tabular-nums; }
+input[type=range] { width: 100%; accent-color: var(--accent); }
+.row { display: flex; gap: 6px; }
+.act { margin-top: 14px; width: 100%; border: 0; padding: 9px 12px; border-radius: 10px; background: var(--accent); color: #fff; font-weight: 500; cursor: pointer; }
+.act.ghost { background: transparent; color: var(--fg); box-shadow: inset 0 0 0 1px rgba(232,236,241,.25); }
+.act:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+.lock { margin-top: 12px !important; font: 12px/1.4 var(--mono); color: var(--muted) !important; }
+#readout { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); font: 11px/1 var(--mono); color: var(--muted); letter-spacing: .06em; pointer-events: none; white-space: nowrap; }
+#toast { position: absolute; left: 50%; bottom: 44px; transform: translateX(-50%); padding: 8px 14px; border-radius: 999px; background: var(--panel); box-shadow: inset 0 0 0 1px var(--accent); font-size: 13px; max-width: calc(100% - 32px); }
+.note { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); bottom: 16px; width: 300px; font: 10.5px/1.45 var(--mono); color: var(--dim); }
+.note::before { content: "※ "; color: var(--accent); }
+@media (max-width: 860px) {
+  .top { top: max(10px, env(safe-area-inset-top, 0px)); }
+  h1 { font-size: 17px; margin-top: 4px; }
+  .kicker { font-size: 9.5px; }
+  .meter { width: 130px; margin-top: 6px; }
+  .tools { max-width: 52%; }
+  .tools .pill { padding: 5px 9px; font-size: 11px; }
+  #info { display: none; }
+  .left, .note, #readout, #tags { display: none; }
+  /* gaveta inferior com três posições (recolhida, metade, cheia) */
+  .sheet { left: 0; right: 0; top: auto; bottom: 0; width: auto; height: 84%; max-height: none; border-radius: 18px 18px 0 0; transform: translateY(var(--y, 70%)); transition: none; opacity: 1; padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: rgba(13,15,19,.82); backdrop-filter: blur(22px) saturate(160%); box-shadow: inset 0 1px 0 rgba(232,236,241,.12), 0 -20px 40px -20px #000; will-change: transform; }
+  .sheet[data-collapsed] { transform: translateY(var(--y, 70%)); opacity: 1; pointer-events: auto; }
+  .grab { display: flex; justify-content: center; padding: 10px 0 6px; cursor: grab; touch-action: none; }
+  .grab span { width: 40px; height: 5px; border-radius: 3px; background: rgba(232,236,241,.28); }
+  .strip-wrap { display: block; padding: 0 0 8px; touch-action: none; }
+  #nextline { margin: 0 16px 8px; font: 11px/1.3 var(--mono); color: var(--muted); letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #nextline b { color: var(--accent); font-weight: 400; }
+  #strip { list-style: none; margin: 0; padding: 0 16px 2px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; touch-action: pan-x; }
+  #strip::-webkit-scrollbar { display: none; }
+  #strip button { flex: none; display: inline-flex; gap: 6px; align-items: baseline; padding: 7px 11px; border: 0; border-radius: 999px; background: rgba(232,236,241,.06); color: var(--fg); font-size: 12.5px; white-space: nowrap; cursor: pointer; box-shadow: inset 0 0 0 1px var(--line); }
+  #strip .n { font: 10px var(--mono); color: var(--dim); }
+  #strip [data-st="out"] { color: var(--dim); text-decoration: line-through; }
+  #strip [data-st="locked"] { color: var(--dim); }
+  #strip [data-next] { box-shadow: inset 0 0 0 1px var(--accent); }
+  #strip [data-next] .n { color: var(--accent); }
+  .card-wrap { flex: 1; border-top: 1px solid var(--line); padding: 14px 16px 24px; overscroll-behavior: contain; }
+  .close { display: none; }
+  #card h2 { font-size: 18px; }
+  #toast { bottom: calc(100% - var(--sheet-top, 70%) + 12px); top: auto; }
+}
+@media (prefers-reduced-transparency: reduce) { .panel, .sheet, .pill { background: #12151a !important; backdrop-filter: none !important; } }
+@media (prefers-reduced-motion: reduce) { .meter #bar { transition: none; } }
+</style>
+<div class="app">
+  <div class="stage"><canvas id="view" tabindex="0" aria-label="Câmera em 3D sobre a bancada. Arraste para girar a vista; clique nas peças para desmontar."></canvas><div id="tags"></div></div>
+  <div class="top">
+    <div class="brand"><p class="kicker"><b>RE</b>Engenharia reversa</p><h1>Câmera sem espelho, peça por peça</h1>
+      <div class="meter"><div class="track"><div id="bar"></div></div><p id="progress"></p></div></div>
+    <div class="tools">
+      <button type="button" class="pill" data-view="camera">Câmera</button>
+      <button type="button" class="pill" data-view="costas">Costas</button>
+      <button type="button" class="pill" data-view="bancada">Bancada</button>
+      <button type="button" class="pill" id="xray" aria-pressed="false">Raio-X</button>
+      <button type="button" class="pill" id="info" hidden>Ficha</button>
+    </div>
+  </div>
+  <aside class="panel left" aria-label="Roteiro de desmontagem">
+    <header><span>Roteiro</span><span>ordem real</span></header>
+    <ol id="steps"></ol>
+    <footer><button type="button" class="pill" id="all">Desmontar tudo</button><button type="button" class="pill" id="none">Montar tudo</button></footer>
+  </aside>
+  <section id="sheet" class="panel sheet" aria-label="Ficha da peça">
+    <div class="grab" id="grab" role="button" tabindex="0" aria-label="Arrastar a ficha"><span></span></div>
+    <div class="strip-wrap"><p id="nextline"></p><ol id="strip"></ol></div>
+    <div class="card-wrap"><button type="button" class="close" id="close" aria-label="Recolher a ficha">×</button><div id="card" aria-live="polite"></div></div>
+  </section>
+  <p class="note">Câmera genérica, didática: a posição de placas, dissipador e bateria varia conforme o modelo.</p>
+  <p id="readout"></p>
+  <div id="toast" hidden></div>
+</div>

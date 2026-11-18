@@ -1,0 +1,179 @@
+{
+ "duration": 130.933,
+ "scenes": [
+  {
+   "id": "s1",
+   "t0": 0.0,
+   "t1": 12.0,
+   "lines": [
+    {
+     "text": "Anatomia de uma câmera.",
+     "t0": 2.2,
+     "t1": 3.715
+    },
+    {
+     "text": "Por fora, um objeto compacto. Por dentro, um sistema preciso, que transforma luz em imagem.",
+     "t0": 4.065,
+     "t1": 9.227
+    }
+   ]
+  },
+  {
+   "id": "s2",
+   "t0": 12.0,
+   "t1": 31.0,
+   "lines": [
+    {
+     "text": "Vamos desmontá-la.",
+     "t0": 13.0,
+     "t1": 14.408
+    },
+    {
+     "text": "Na frente, a lente, com o anel de foco e o diafragma.",
+     "t0": 14.758,
+     "t1": 17.958
+    },
+    {
+     "text": "Atrás da baioneta, o obturador e o sensor de imagem.",
+     "t0": 18.308,
+     "t1": 21.551
+    },
+    {
+     "text": "No alto, o visor eletrônico.",
+     "t0": 21.901,
+     "t1": 23.778
+    },
+    {
+     "text": "Na traseira, a placa principal com o processador, os circuitos, o dissipador de calor e a bateria.",
+     "t0": 24.128,
+     "t1": 29.717
+    }
+   ]
+  },
+  {
+   "id": "s3",
+   "t0": 31.0,
+   "t1": 51.901,
+   "lines": [
+    {
+     "text": "Tudo começa com a luz.",
+     "t0": 31.8,
+     "t1": 33.4
+    },
+    {
+     "text": "Ela atravessa os elementos ópticos da lente, que a fazem convergir.",
+     "t0": 33.75,
+     "t1": 37.547
+    },
+    {
+     "text": "O diafragma controla quanto dela entra.",
+     "t0": 37.897,
+     "t1": 40.393
+    },
+    {
+     "text": "Em f/1.8, a abertura é grande. Em f/8, é bem menor, e chega cerca de vinte vezes menos luz.",
+     "t0": 40.743,
+     "t1": 47.165
+    },
+    {
+     "text": "Então o obturador se abre, e a luz atinge o sensor.",
+     "t0": 47.515,
+     "t1": 50.651
+    }
+   ]
+  },
+  {
+   "id": "s4",
+   "t0": 51.901,
+   "t1": 75.886,
+   "lines": [
+    {
+     "text": "O sensor é uma matriz de milhões de fotossítios: os pixels.",
+     "t0": 52.701,
+     "t1": 56.306
+    },
+    {
+     "text": "Cada um converte a luz que recebe em carga elétrica.",
+     "t0": 56.656,
+     "t1": 59.621
+    },
+    {
+     "text": "Um filtro de cores, no padrão Bayer, faz cada pixel registrar só vermelho, verde ou azul.",
+     "t0": 59.971,
+     "t1": 64.899
+    },
+    {
+     "text": "Um sensor full frame mede 36 por 24 milímetros. Um APS-C, cerca de 23,5 por 15,6: menos da metade da área.",
+     "t0": 65.249,
+     "t1": 74.636
+    }
+   ]
+  },
+  {
+   "id": "s5",
+   "t0": 75.886,
+   "t1": 98.933,
+   "lines": [
+    {
+     "text": "O obturador define por quanto tempo a luz atinge o sensor.",
+     "t0": 76.686,
+     "t1": 80.185
+    },
+    {
+     "text": "Duas cortinas percorrem a janela: a primeira abre, a segunda fecha.",
+     "t0": 80.535,
+     "t1": 84.609
+    },
+    {
+     "text": "Em velocidades altas, elas viajam juntas, formando uma fenda estreita.",
+     "t0": 84.959,
+     "t1": 89.226
+    },
+    {
+     "text": "Em um milésimo de segundo, o movimento congela. Em 1/250, ainda é nítido. Em 1/30, o que se move vira um rastro.",
+     "t0": 89.576,
+     "t1": 97.683
+    }
+   ]
+  },
+  {
+   "id": "s6",
+   "t0": 98.933,
+   "t1": 117.933,
+   "lines": [
+    {
+     "text": "Ao fim da exposição, a carga de cada pixel é lida e convertida em números.",
+     "t0": 99.733,
+     "t1": 104.149
+    },
+    {
+     "text": "O processador de imagem reconstrói as cores, reduz o ruído e ajusta tons e balanço de branco.",
+     "t0": 104.499,
+     "t1": 110.003
+    },
+    {
+     "text": "Por fim, tudo é gravado no cartão como um arquivo: JPEG, HEIF ou RAW.",
+     "t0": 110.353,
+     "t1": 114.385
+    }
+   ]
+  },
+  {
+   "id": "s7",
+   "t0": 117.933,
+   "t1": 130.933,
+   "lines": [
+    {
+     "text": "Peça por peça, a câmera volta a ser uma só.",
+     "t0": 118.533,
+     "t1": 121.114
+    },
+    {
+     "text": "Por trás de cada fotografia, existe uma engenharia extraordinária.",
+     "t0": 121.464,
+     "t1": 125.411
+    }
+   ]
+  }
+ ]
+}
