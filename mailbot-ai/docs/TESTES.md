@@ -21,6 +21,17 @@ Mesma lógica publicada no Floot, com banco, Gmail e IA simulados:
 - **MAIL TRIAGE**: regras, depois IA em lote; grava só campos estruturados, sem nenhum texto do e-mail; refs inventados pela IA são descartados; cache funciona; mensagens já em memória não são buscadas de novo; com o orçamento esgotado os e-mails continuam pendentes; com a conta desconectada nada é feito.
 - **MAIL CHAT**: perguntas estruturadas respondidas sem IA, com referências; sem resultado não chama a IA; perguntas abertas com contexto reduzido e só citações válidas; busca por remetente e período convertida em consulta do Gmail.
 
+## 1c. Integração no Floot (API real do app): 17/17 passaram
+Script `floot/tests/integration.vm.mjs`, executado no ambiente do Floot contra a API do app (banco real do Floot):
+- 401 sem login em `status`, `usage`, `chat`, `sync`, `emails` e na sonda de IA.
+- Cadastro de 2 usuários com e-mail e senha; e-mail repetido (maiúsculas) recusado com 409.
+- Isolamento: cada usuário vê só o próprio nome e contadores; o usuário B recebe 404 ao tentar usar a conversa do usuário A.
+- Chat determinístico: "Quais e-mails estão aguardando resposta?" respondido por consulta, sem IA (`usedAi: false`).
+- **IA real do Floot**: `gpt-6-luna` respondeu "ok" em 945 ms; consumo (1 crédito) registrado só para o usuário A.
+- Logout invalida a sessão (401 depois).
+
+Produção (https://mailbot-ai.floot.app): `/` e `/login` 200; APIs sem login 401; sonda de desenvolvimento 404 (não vai para produção). Login conferido em iPhone 15 e desktop.
+
 ## 2. Banco de dados e isolamento (`npm run test:rls`) — passou
 Postgres 16 temporário + migration + stub do Supabase Auth: cada usuário só lê os próprios dados; busca textual não vaza; tokens, cache e rate limit inacessíveis ao cliente; escrita direta bloqueada; anônimo não vê nada; `service_role` acessa o rate limit; exclusão em cascata.
 

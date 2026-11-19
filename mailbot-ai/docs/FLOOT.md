@@ -2,6 +2,8 @@
 
 Projeto Floot: `92a17f09-27cb-4fe9-88c9-f9409ff82bf9` (app "MAILBOT AI").
 
+**Produção: https://mailbot-ai.floot.app** (publicado em 19/11/2026).
+
 Por que Floot: entrega **banco exclusivo** (Postgres gerenciado), **conexão Gmail intermediada** (sem cliente OAuth próprio no Google Cloud) e **IA cobrada em créditos Floot** (sem cartão/chave) — eliminando as três pendências de conta da versão Vercel/Supabase deste repositório.
 
 ## Arquitetura
@@ -14,7 +16,8 @@ Por que Floot: entrega **banco exclusivo** (Postgres gerenciado), **conexão Gma
 ## Observações
 - O pacote Gmail do Floot pede escopo de leitura **e envio** (é o único oferecido); o MAILBOT nunca chama envio, arquivamento ou exclusão — o cliente só implementa leitura.
 - Tarefas agendadas do Floot exigem plano pago; por isso a sincronização roda ao abrir o app (na frequência configurada) e pelo botão Sincronizar, e o resumo do dia é gerado ao abrir o app após o horário escolhido.
-- Login: e-mail e senha. A conta do dono já existe sem senha: em Entrar → "Forgot password?" com o e-mail do dono.
+- Login: e-mail e senha. A conta do dono já existe sem senha: em Entrar → "Esqueci a senha" com o e-mail do dono.
+- Movimento: tokens de mola do Vetro (`docs/MOTION.md`) no `base.css` do Floot; cartões, painéis, balões do chat e troca de tela entram com mola; botões, cartões, chips e abas encolhem para 0,96 ao toque; tab bar e caixa do chat com vidro.
 
 ## Código no repositório
 `mailbot-ai/floot/` guarda uma cópia do código do Floot para versionamento e testes locais:
@@ -24,5 +27,8 @@ Por que Floot: entrega **banco exclusivo** (Postgres gerenciado), **conexão Gma
 
 A fonte de verdade é o projeto no Floot; endpoints e telas ainda não estão espelhados aqui.
 
-## Estado (19/11/2026)
-Backend, banco, 3 agentes e todas as telas escritos; typecheck limpo no Floot; 31 testes da lógica passando localmente. Pendentes (limite diário de ações do plano Floot gratuito, retomada automática às 22:05 UTC): screenshots, specs, teste real da IA, testes de integração e publicação.
+## Estado (19/11/2026, 22h UTC)
+- Publicado em https://mailbot-ai.floot.app.
+- Typecheck limpo; 31 testes da lógica passando localmente; testes de integração na API do Floot passando (ver `docs/TESTES.md`, seção 1c; script em `floot/tests/integration.vm.mjs`).
+- IA do Floot comprovada com uma chamada real (`gpt-6-luna`, resposta "ok" em ~1 s, consumo registrado em `ai_usage`) pelo endpoint só de desenvolvimento `endpoints/__dev/ai_probe` — em produção ele responde 404.
+- Falta só o que depende do dono: definir a senha ("Esqueci a senha") e autorizar o Gmail na tela do Google.

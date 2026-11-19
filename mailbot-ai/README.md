@@ -6,7 +6,9 @@ Assistente pessoal que conecta ao Gmail (somente leitura), classifica cada mensa
 
 **Stack:** Next.js 16 (App Router) · Supabase exclusivo (Postgres + Auth + RLS) · Gmail API (OAuth 2.0 + PKCE, `gmail.readonly`) · Claude via Vercel AI Gateway (OIDC) ou API da Anthropic · Vercel · Vitest.
 
-**Produção:** https://mailbot-ai-chagas7.vercel.app · status: `/api/health` · relatório de testes: [`docs/TESTES.md`](docs/TESTES.md)
+**Produção (versão principal, Floot):** https://mailbot-ai.floot.app · detalhes em [`docs/FLOOT.md`](docs/FLOOT.md)
+
+**Versão Vercel (modo de instalação):** https://mailbot-ai-chagas7.vercel.app · status: `/api/health` · relatório de testes: [`docs/TESTES.md`](docs/TESTES.md)
 
 ## Funcionalidades
 
