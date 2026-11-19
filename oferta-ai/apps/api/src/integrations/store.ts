@@ -20,7 +20,7 @@ const ENV_CONFIG: Record<IntegrationProvider, () => Record<string, string>> = {
   SHOPEE_AFFILIATE: () => ({ apiUrl: env.SHOPEE_API_URL, subId: env.SHOPEE_SUB_ID }),
   WHATSAPP_CLOUD: () => ({ phoneNumberId: env.WHATSAPP_PHONE_NUMBER_ID, groupId: env.WHATSAPP_GROUP_ID, graphVersion: env.WHATSAPP_GRAPH_VERSION }),
   TELEGRAM_BOT: () => ({ chatId: env.TELEGRAM_CHAT_ID }),
-  ANTHROPIC: () => ({ model: env.AI_MODEL, fallbackModels: env.AI_FALLBACK_MODELS }),
+  ANTHROPIC: () => ({ model: env.AI_MODEL, fallbackModels: env.AI_FALLBACK_MODELS, baseURL: env.ANTHROPIC_BASE_URL }),
 };
 
 export const REQUIRED_CREDS: Record<IntegrationProvider, string[]> = {
