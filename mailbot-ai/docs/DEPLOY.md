@@ -10,7 +10,7 @@
 ## Verificação pós-deploy
 
 - `GET /login` responde 200.
-- Login por link mágico funciona e redireciona para `/`.
+- Criar conta e entrar com e-mail e senha funciona e redireciona para `/`.
 - Em Configurações → **Conectar Gmail** → autorizar → volta com "Gmail conectado!" e a sincronização inicial começa.
 - `curl -H "Authorization: Bearer $CRON_SECRET" https://SEU-DOMINIO/api/cron` retorna `{"synced":…}`; sem o cabeçalho retorna 401.
 - Supabase → Advisors → Security sem alertas de RLS.

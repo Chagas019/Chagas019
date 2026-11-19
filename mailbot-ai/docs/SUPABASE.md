@@ -11,7 +11,7 @@
    - Site URL: `https://SEU-DOMINIO` (ou `http://localhost:3000` em dev)
    - Redirect URLs: `http://localhost:3000/auth/callback`, `https://SEU-DOMINIO/auth/callback`
 5. **Authentication → Providers**:
-   - **Email** (link mágico) já vem ativo. Para produção configure um SMTP próprio (o SMTP padrão tem limite baixo de envios).
+   - **Email** (e-mail + senha) já vem ativo. Por padrão o Supabase exige confirmar o e-mail no cadastro; para dispensar, desative **Confirm email**. Se mantiver a confirmação, configure um SMTP próprio em produção (o SMTP padrão tem limite baixo de envios).
    - **Google** (opcional, para "Entrar com Google"): use o mesmo Client ID/Secret do Google Cloud e adicione `https://SEU-PROJETO.supabase.co/auth/v1/callback` nos redirecionamentos do cliente OAuth.
 6. Depois de aplicar a migration, rode **Advisors → Security** para conferir que nenhuma tabela ficou sem RLS.
 
