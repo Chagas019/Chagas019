@@ -34,6 +34,7 @@ const schema = z.object({
   SHOPEE_SUB_ID: z.string().default("ofertaai"),
 
   ANTHROPIC_API_KEY: z.string().optional().default(""),
+  ANTHROPIC_BASE_URL: z.string().optional().default(""),
   AI_MODEL: z.string().default("claude-opus-5-5"),
   AI_FALLBACK_MODELS: z.string().default("claude-sonnet-5-5,claude-haiku-5-5"),
   AI_EFFORT: z.enum(["low", "medium", "high"]).default("low"),

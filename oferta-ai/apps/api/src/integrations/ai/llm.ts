@@ -23,7 +23,7 @@ export async function getLlm() {
   const models = [r.config.model || "claude-opus-5-5", ...(r.config.fallbackModels || "").split(",")]
     .map((m) => m.trim())
     .filter(Boolean);
-  return new LlmClient(new Anthropic({ apiKey: r.creds.apiKey, maxRetries: 2, timeout: 60_000 }), [...new Set(models)]);
+  return new LlmClient(new Anthropic({ apiKey: r.creds.apiKey, ...(r.config.baseURL ? { baseURL: r.config.baseURL } : {}), maxRetries: 2, timeout: 60_000 }), [...new Set(models)]);
 }
 
 export class LlmClient {
