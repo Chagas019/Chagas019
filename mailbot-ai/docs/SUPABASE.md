@@ -15,14 +15,14 @@
    - **Google** (opcional, para "Entrar com Google"): use o mesmo Client ID/Secret do Google Cloud e adicione `https://SEU-PROJETO.supabase.co/auth/v1/callback` nos redirecionamentos do cliente OAuth.
 6. Depois de aplicar a migration, rode **Advisors → Security** para conferir que nenhuma tabela ficou sem RLS.
 
-## Projeto compartilhado
+## Banco exclusivo
 
-Todas as tabelas e funções do MAILBOT usam o prefixo `mailbot_`, então a migration pode ser aplicada num projeto que já tem outro sistema (como o `paroquia360`) sem colidir com nada. Nesse caso:
+O MAILBOT usa um projeto Supabase **só dele**: não aplique a migration no banco de outro sistema. As tabelas usam o prefixo `mailbot_` e a migration não cria gatilho em `auth.users` (perfil e preferências são criados pelo servidor na primeira visita).
 
-- O login (`auth.users`) é compartilhado: a mesma pessoa usa a mesma conta nos dois apps.
-- A migration **não** cria gatilho em `auth.users`; perfil e preferências do MAILBOT são criados pelo servidor na primeira visita.
-- "Excluir meus dados" apaga só os dados `mailbot_*`; o login continua existindo para o outro sistema.
-- As configurações de Authentication (Site URL, Redirect URLs, provedores) são do projeto inteiro: adicione as URLs do MAILBOT sem remover as do outro app.
+### Caminho recomendado: integração oficial Supabase + Vercel
+Na Vercel, abra o projeto **mailbot-ai** → **Storage** → **Create Database** → **Supabase** → conecte ao projeto. A integração cria o banco e sincroniza sozinha `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` e `SUPABASE_SERVICE_ROLE_KEY` — ninguém copia chaves. Depois, aplique a migration (SQL Editor ou `supabase db push`) e faça um redeploy.
+
+> O plano gratuito do Supabase permite 2 projetos ativos por usuário. Se a conta já estiver no limite, pause um projeto gratuito sem uso ou faça upgrade antes de criar o banco do MAILBOT.
 
 ## O que a migration cria
 

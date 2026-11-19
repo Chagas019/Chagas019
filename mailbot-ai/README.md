@@ -4,7 +4,9 @@
 
 Assistente pessoal que conecta ao Gmail (somente leitura), classifica cada mensagem, gera resumos diários/semanais e responde perguntas sobre os e-mails reais da conta — com referências às mensagens usadas.
 
-**Stack:** Next.js 16 (App Router) · Supabase (Postgres + Auth + RLS) · Gmail API (OAuth 2.0 + PKCE, `gmail.readonly`) · Claude (Anthropic SDK) · Vitest.
+**Stack:** Next.js 16 (App Router) · Supabase exclusivo (Postgres + Auth + RLS) · Gmail API (OAuth 2.0 + PKCE, `gmail.readonly`) · Claude via Vercel AI Gateway (OIDC) ou API da Anthropic · Vercel · Vitest.
+
+**Produção:** https://mailbot-ai-chagas7.vercel.app · status: `/api/health` · relatório de testes: [`docs/TESTES.md`](docs/TESTES.md)
 
 ## Funcionalidades
 
@@ -48,7 +50,7 @@ npm run dev                  # http://localhost:3000
 1. Configure o Supabase → [`docs/SUPABASE.md`](docs/SUPABASE.md)
 2. Configure o Google Cloud → [`docs/GOOGLE_CLOUD.md`](docs/GOOGLE_CLOUD.md)
 3. Gere os segredos: `openssl rand -base64 32` (TOKEN_ENCRYPTION_KEY) e `openssl rand -hex 32` (CRON_SECRET)
-4. Crie uma chave em console.anthropic.com → `ANTHROPIC_API_KEY`
+4. IA: na Vercel é automática (AI Gateway via OIDC). Localmente, defina `AI_GATEWAY_API_KEY` ou `ANTHROPIC_API_KEY`.
 
 Dados de demonstração (somente desenvolvimento, recusa produção):
 ```bash
@@ -58,7 +60,7 @@ NODE_ENV=development SEED_USER_EMAIL=voce@exemplo.com npm run seed:dev
 ## Testes
 
 ```bash
-npm test          # 51 testes: OAuth, cliente Gmail (retry/refresh/429), sincronização inicial/incremental/expirada,
+npm test          # 58 testes: OAuth, cliente Gmail (retry/refresh/429), sincronização inicial/incremental/expirada,
                   # 3 agentes, orquestrador, prompt injection, cache, orçamento, custo, criptografia
 npm run test:rls  # sobe um Postgres temporário, aplica a migration e testa isolamento entre usuários (RLS)
 npm run typecheck
