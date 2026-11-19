@@ -8,7 +8,7 @@ const known = new Set<string>();
 
 /** Cria perfil e preferências na primeira visita (sem gatilho em auth.users, que pode ser compartilhado). */
 async function ensureUserRows(userId: string, email: string | null, fullName: string | null) {
-  if (known.has(userId)) return;
+  if (known.has(userId) || !process.env.SUPABASE_SERVICE_ROLE_KEY) return; // sem chave do servidor: telas abrem e Configurações mostra o que falta
   const admin = adminClient();
   await admin.from('mailbot_profiles').upsert({ id: userId, display_name: fullName || email?.split('@')[0] || null }, { onConflict: 'id', ignoreDuplicates: true });
   await admin.from('mailbot_user_preferences').upsert({ user_id: userId }, { onConflict: 'user_id', ignoreDuplicates: true });
