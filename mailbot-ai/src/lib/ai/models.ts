@@ -8,6 +8,12 @@ export function modelFor(tier: Tier): string {
   return tier === 'fast' ? env.modelFast() : env.modelSmart();
 }
 
+/** ID do modelo no provedor: a Vercel AI Gateway usa "anthropic/claude-haiku-5.5". */
+export function providerModelId(model: string, provider: 'anthropic' | 'gateway'): string {
+  if (provider === 'anthropic' || model.includes('/')) return model;
+  return `anthropic/${model.replace(/-(\d+)-(\d+)$/, '-$1.$2')}`;
+}
+
 // US$ por 1M tokens (entrada, saída, leitura de cache). Fonte: tabela de preços da Anthropic (nov/2026).
 const PRICES: Record<string, { in: number; out: number; cacheRead: number }> = {
   'claude-haiku-5-5': { in: 0.10, out: 0.50, cacheRead: 0.01 },
@@ -16,7 +22,8 @@ const PRICES: Record<string, { in: number; out: number; cacheRead: number }> = {
 };
 
 export function costUsd(model: string, usage: { input_tokens: number; output_tokens: number; cache_read_input_tokens?: number | null; cache_creation_input_tokens?: number | null }): number {
-  const p = PRICES[model] ?? PRICES['claude-sonnet-5-5'];
+  const key = model.replace(/^anthropic\//, '').replace(/(\d+)\.(\d+)$/, '$1-$2');
+  const p = PRICES[key] ?? PRICES['claude-sonnet-5-5'];
   const cacheRead = usage.cache_read_input_tokens ?? 0;
   const cacheWrite = usage.cache_creation_input_tokens ?? 0;
   return (usage.input_tokens * p.in + cacheWrite * p.in * 1.25 + cacheRead * p.cacheRead + usage.output_tokens * p.out) / 1_000_000;

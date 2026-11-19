@@ -2,6 +2,7 @@ import 'server-only';
 import { redirect } from 'next/navigation';
 import { sessionClient } from '../supabase/server';
 import { adminClient } from '../supabase/admin';
+import { env } from '../env';
 import type { MailCardData } from '@/components/MailCard';
 
 const known = new Set<string>();
@@ -17,6 +18,7 @@ async function ensureUserRows(userId: string, email: string | null, fullName: st
 
 /** Contexto de página: sessão do usuário + cliente com RLS (só enxerga os próprios dados). */
 export async function pageContext() {
+  if (!env.supabaseConfigured()) redirect('/login');
   const sb = await sessionClient();
   const { data } = await sb.auth.getUser();
   if (!data.user) redirect('/login');

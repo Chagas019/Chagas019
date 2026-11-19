@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 // Renova a sessão do Supabase e protege as telas do app.
-const PUBLIC = ['/login', '/privacidade', '/auth/callback', '/api/cron', '/api/gmail/callback'];
+const PUBLIC = ['/login', '/privacidade', '/auth/callback', '/api/cron', '/api/gmail/callback', '/api/health'];
 
 export async function proxy(req: NextRequest) {
   let res = NextResponse.next({ request: req });
