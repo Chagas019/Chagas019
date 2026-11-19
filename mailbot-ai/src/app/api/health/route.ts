@@ -27,7 +27,7 @@ async function probeAi(): Promise<{ ok: boolean; provider: string; model: string
     const text = m.content.filter((b) => b.type === 'text').map((b) => (b as Anthropic.TextBlock).text).join('').trim();
     return { ok: text.length > 0, provider, model, detail: `stop=${m.stop_reason} tokens=${m.usage.input_tokens}/${m.usage.output_tokens}` };
   } catch (e) {
-    return { ok: false, provider, model, detail: e instanceof Anthropic.APIError ? `http_${e.status}` : errorCode(e) };
+    return { ok: false, provider, model, detail: e instanceof Anthropic.APIError ? `http_${e.status}: ${String(e.message).replace(/[A-Za-z0-9_-]{32,}/g, '[…]').slice(0, 300)}` : errorCode(e) };
   }
 }
 
