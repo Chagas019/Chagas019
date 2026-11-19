@@ -1,6 +1,7 @@
 import { Queue, Worker, type Job } from "bullmq";
 import { env } from "../config/env";
 import { prisma, redis, logEvent, errMsg, logger } from "../lib/core";
+import { kv, redisEnabled } from "../lib/kv";
 import { getSettings, updateSettings } from "../lib/settings";
 import { ensureToday } from "../lib/metrics";
 import { localDate, localMinutes, startOfLocalDay } from "../lib/time";
@@ -16,6 +17,8 @@ import { transition } from "./states";
  * Filas BullMQ:
  *   - "oferta-orchestrator": scout-cycle, distributor-tick, supply-check, recovery, daily-close (repetíveis)
  *   - "oferta-copywriter":   uma tarefa por produto aprovado (jobId = copy:<id> evita duplicidade)
+ * Sem REDIS_URL (modo serverless), as mesmas etapas rodam em runCronCycle(), acionado por um
+ * agendador externo (pg_cron → POST /api/cron/run) a cada poucos minutos.
  */
 export const ORCH_QUEUE = "oferta-orchestrator";
 export const COPY_QUEUE = "oferta-copywriter";
@@ -31,7 +34,22 @@ export const queues = () => {
   return { orchQueue, copyQueue };
 };
 
+/** Modo serverless: gera copies em linha (limitado por chamada para caber no tempo da função). */
+async function generateCopiesInline(limit: number): Promise<number> {
+  const approved = await prisma.product.findMany({ where: { state: "APPROVED" }, select: { id: true }, orderBy: { priority: "desc" }, take: limit });
+  for (const p of approved) {
+    try {
+      await generateCopy(p.id);
+    } catch (err) {
+      if (err instanceof SystemHaltedError) break;
+      await logEvent("error", "orchestrator", `copy falhou (${p.id}): ${errMsg(err)}`);
+    }
+  }
+  return approved.length;
+}
+
 export async function enqueueCopies(): Promise<number> {
+  if (!redisEnabled()) return generateCopiesInline(15);
   const approved = await prisma.product.findMany({ where: { state: "APPROVED" }, select: { id: true }, orderBy: { priority: "desc" }, take: 200 });
   const { copyQueue } = queues();
   for (const p of approved) {
@@ -41,12 +59,14 @@ export async function enqueueCopies(): Promise<number> {
 }
 
 export async function triggerScout(trigger: string) {
+  if (!redisEnabled()) return handleScout(trigger);
   const { orchQueue } = queues();
   await orchQueue.add("scout-cycle", { trigger }, { jobId: `scout-${trigger}`, removeOnComplete: 100, removeOnFail: 100 });
 }
 
 /** Reconfigura os jobs repetíveis conforme as configurações atuais. */
 export async function scheduleRepeatables() {
+  if (!redisEnabled()) return; // modo agendado: o ritmo é dado por runCronCycle()
   const s = await getSettings();
   const { orchQueue } = queues();
   const opts = { removeOnComplete: 200, removeOnFail: 200 };
@@ -60,7 +80,7 @@ export async function scheduleRepeatables() {
 
 async function handleScout(trigger: string) {
   const r = await runScoutCycle(`${trigger}:${Date.now()}`);
-  await redis().set(LAST_SCOUT_KEY, String(Date.now()));
+  await kv().set(LAST_SCOUT_KEY, String(Date.now()));
   const n = await enqueueCopies();
   await logEvent("info", "orchestrator", `scout finalizado; ${n} produtos aprovados enviados ao Copywriter`, { approved: r?.approved.length ?? 0 });
 }
@@ -74,7 +94,7 @@ async function supplyCheck() {
     prisma.publication.count({ where: { sentAt: { gte: since }, status: { in: ["SENT", "DRY_RUN", "MANUAL_CONFIRMED"] } } }),
   ]);
   const remaining = s.dailyGoal - published;
-  const last = Number((await redis().get(LAST_SCOUT_KEY)) ?? 0);
+  const last = Number((await kv().get(LAST_SCOUT_KEY)) ?? 0);
   if (remaining > 0 && ready < remaining && Date.now() - last > 30 * 60_000) {
     await logEvent("info", "orchestrator", `estoque baixo (${ready} prontos para ${remaining} restantes): antecipando pesquisa`);
     await triggerScout(`supply-${Date.now()}`);
@@ -82,7 +102,7 @@ async function supplyCheck() {
 }
 
 /** Recupera tarefas travadas e reenvia aprovados sem copy. */
-async function recovery() {
+export async function recovery() {
   const stale = new Date(Date.now() - 15 * 60_000);
   const stuck = await prisma.product.findMany({ where: { state: "PUBLISHING", updatedAt: { lt: stale } }, select: { id: true } });
   for (const p of stuck) {
@@ -154,24 +174,92 @@ export function startWorkers() {
 /** STOP ALL: interrompe todos os agentes imediatamente. */
 export async function stopAll(by: string) {
   await updateSettings({ systemHalted: true }, by);
-  const { orchQueue, copyQueue } = queues();
-  await orchQueue.pause();
-  await copyQueue.pause();
+  if (redisEnabled()) {
+    const { orchQueue, copyQueue } = queues();
+    await orchQueue.pause();
+    await copyQueue.pause();
+  }
   for (const k of ["SCOUT", "COPYWRITER", "DISTRIBUTOR", "ORCHESTRATOR"] as const) await setAgentStatus(k, "STOPPED", null);
   await logEvent("warn", "orchestrator", `STOP ALL acionado por ${by}`);
 }
 
 export async function resumeAll(by: string) {
   await updateSettings({ systemHalted: false }, by);
-  const { orchQueue, copyQueue } = queues();
-  await orchQueue.resume();
-  await copyQueue.resume();
+  if (redisEnabled()) {
+    const { orchQueue, copyQueue } = queues();
+    await orchQueue.resume();
+    await copyQueue.resume();
+  }
   for (const k of ["SCOUT", "COPYWRITER", "DISTRIBUTOR", "ORCHESTRATOR"] as const) await setAgentStatus(k, "IDLE", null);
   await logEvent("info", "orchestrator", `sistema retomado por ${by}`);
 }
 
 export async function queueStats() {
+  if (!redisEnabled()) {
+    const empty = { active: 0, waiting: 0, delayed: 0, failed: 0 };
+    const [ready, approved, lastRun] = await Promise.all([
+      prisma.product.count({ where: { state: "READY_TO_PUBLISH" } }),
+      prisma.product.count({ where: { state: "APPROVED" } }),
+      kv().get(LAST_CRON_KEY),
+    ]);
+    return {
+      mode: "cron",
+      orchestrator: { ...empty, waiting: ready },
+      copywriter: { ...empty, waiting: approved },
+      orchestratorPaused: false,
+      copywriterPaused: false,
+      lastCronRun: lastRun ? new Date(Number(lastRun)).toISOString() : null,
+      localMinutes: localMinutes(),
+    };
+  }
   const { orchQueue, copyQueue } = queues();
   const [o, c] = await Promise.all([orchQueue.getJobCounts(), copyQueue.getJobCounts()]);
   return { orchestrator: o, copywriter: c, orchestratorPaused: await orchQueue.isPaused(), copywriterPaused: await copyQueue.isPaused(), localMinutes: localMinutes() };
+}
+
+const LAST_CRON_KEY = "oferta:orch:lastCron";
+const CLOSED_KEY = (d: string) => `oferta:orch:closed:${d}`;
+
+/**
+ * Modo serverless: um ciclo completo do Orchestrator, chamado periodicamente pelo agendador.
+ * Executa (na ordem) pesquisa quando devida, copies pendentes, recuperação, publicação e fechamento do dia.
+ * Protegido por lock para nunca rodar em paralelo.
+ */
+export async function runCronCycle(): Promise<Record<string, unknown>> {
+  const s = await getSettings();
+  if (s.systemHalted) return { skipped: "STOP ALL" };
+  if (!(await kv().setNx("oferta:orch:cronLock", "1", 280_000))) return { skipped: "ciclo anterior ainda em execução" };
+  const out: Record<string, unknown> = {};
+  try {
+    await setAgentStatus("ORCHESTRATOR", "RUNNING", "ciclo agendado");
+    const last = Number((await kv().get(LAST_SCOUT_KEY)) ?? 0);
+    if (Date.now() - last >= s.researchIntervalMinutes * 60_000) {
+      await kv().set(LAST_SCOUT_KEY, String(Date.now()));
+      await handleScout("cron");
+      out.scout = "executado";
+    } else {
+      await supplyCheck();
+    }
+    out.copies = await generateCopiesInline(15);
+    await recovery();
+    out.distributor = await distributorTick();
+    if (localMinutes() >= 23 * 60 + 55) {
+      const d = localDate();
+      if (!(await kv().get(CLOSED_KEY(d)))) {
+        await dailyClose(d);
+        await kv().set(CLOSED_KEY(d), "1");
+        out.dailyClose = d;
+      }
+    }
+    await kv().set(LAST_CRON_KEY, String(Date.now()));
+    await setAgentStatus("ORCHESTRATOR", "IDLE", null, null);
+    return out;
+  } catch (err) {
+    if (err instanceof SystemHaltedError) return { skipped: "STOP ALL" };
+    await setAgentStatus("ORCHESTRATOR", "ERROR", null, errMsg(err));
+    await logEvent("error", "orchestrator", `ciclo agendado falhou: ${errMsg(err)}`);
+    throw err;
+  } finally {
+    await kv().del("oferta:orch:cronLock");
+  }
 }

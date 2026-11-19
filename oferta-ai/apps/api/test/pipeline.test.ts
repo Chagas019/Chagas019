@@ -20,6 +20,11 @@ let token = "";
 
 beforeAll(async () => {
   await redis().flushdb();
+  // isolamento entre arquivos de teste (o banco de testes é compartilhado)
+  await prisma.publication.deleteMany();
+  await prisma.product.deleteMany();
+  await prisma.dailyMetrics.deleteMany();
+  await prisma.kvStore.deleteMany();
   await ensureBootstrap();
   // janela 24h e sem intervalo para o teste
   await updateSettings({ publishWindowStart: "00:00", publishWindowEnd: "00:00", minIntervalMinutes: 1, dailyGoal: 30, dailyLimit: 30, keywordsPerCycle: 3, productsPerKeyword: 20 });

@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { Router, type Request, type Response, type NextFunction } from "express";
 import rateLimit from "express-rate-limit";
 import { z } from "zod";
@@ -13,9 +14,10 @@ import { publicIntegration, saveIntegration, resolveIntegration, markVerificatio
 import { getLiveShopeeClient } from "../integrations/shopee";
 import { WhatsAppCloudClient } from "../integrations/whatsapp/cloudApi";
 import { verifyChannel, channelReadiness } from "../agents/distributor/channels";
-import { effectiveChannel, confirmManual, cancelManual } from "../agents/distributor/distributor";
+import { effectiveChannel, confirmManual, cancelManual, distributorTick } from "../agents/distributor/distributor";
+import { redisEnabled } from "../lib/kv";
 import { effectiveIntervalMinutes } from "../agents/distributor/schedule";
-import { triggerScout, enqueueCopies, stopAll, resumeAll, queueStats, scheduleRepeatables, queues } from "../orchestrator/orchestrator";
+import { triggerScout, enqueueCopies, stopAll, resumeAll, queueStats, scheduleRepeatables, queues, runCronCycle } from "../orchestrator/orchestrator";
 import { transition } from "../orchestrator/states";
 import { getLlm } from "../integrations/ai/llm";
 import { ALL_CATEGORIES } from "../agents/scout/categories";
@@ -26,6 +28,19 @@ const wrap = (fn: (req: Request, res: Response) => Promise<unknown>) => (req: Re
 export const api = Router();
 
 const loginLimiter = rateLimit({ windowMs: 15 * 60_000, limit: 10, standardHeaders: true, legacyHeaders: false, message: { error: "muitas tentativas, aguarde" } });
+
+/** Ciclo agendado (modo serverless). Chamado pelo pg_cron com o cabeçalho x-cron-secret. */
+api.post(
+  "/cron/run",
+  wrap(async (req, res) => {
+    const secret = env.CRON_SECRET;
+    const given = String(req.headers["x-cron-secret"] ?? "");
+    if (!secret || given.length !== secret.length || !crypto.timingSafeEqual(Buffer.from(given), Buffer.from(secret))) {
+      return res.status(401).json({ error: "não autorizado" });
+    }
+    res.json({ ok: true, result: await runCronCycle() });
+  }),
+);
 
 api.post(
   "/auth/login",
@@ -119,9 +134,9 @@ api.post(
   "/agents/scout/run",
   requireRole("OPERATOR"),
   wrap(async (req, res) => {
-    await triggerScout(`manual-${Date.now()}`);
     await audit(req, "agent.scout.run");
-    res.json({ ok: true, message: "pesquisa enfileirada" });
+    await triggerScout(`manual-${Date.now()}`);
+    res.json({ ok: true, message: redisEnabled() ? "pesquisa enfileirada" : "pesquisa concluída" });
   }),
 );
 
@@ -139,8 +154,9 @@ api.post(
   "/agents/distributor/tick",
   requireRole("OPERATOR"),
   wrap(async (req, res) => {
-    await queues().orchQueue.add("distributor-tick", {}, { removeOnComplete: 50 });
     await audit(req, "agent.distributor.tick");
+    if (!redisEnabled()) return res.json({ ok: true, result: await distributorTick() });
+    await queues().orchQueue.add("distributor-tick", {}, { removeOnComplete: 50 });
     res.json({ ok: true });
   }),
 );

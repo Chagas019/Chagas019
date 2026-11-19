@@ -6,7 +6,8 @@ import pinoHttp from "pino-http";
 import { ZodError } from "zod";
 import { Prisma } from "@prisma/client";
 import { env } from "./config/env";
-import { logger, prisma, redis } from "./lib/core";
+import { logger, prisma } from "./lib/core";
+import { kv, redisEnabled } from "./lib/kv";
 import { sha256 } from "./lib/crypto";
 import { incr } from "./lib/metrics";
 import { api } from "./routes/api";
@@ -23,7 +24,7 @@ export function createApp() {
   app.get("/health", async (_req, res) => {
     const checks: Record<string, string> = {};
     try { await prisma.$queryRaw`SELECT 1`; checks.database = "ok"; } catch { checks.database = "fail"; }
-    try { await redis().ping(); checks.redis = "ok"; } catch { checks.redis = "fail"; }
+    if (redisEnabled()) { try { await kv().ping(); checks.redis = "ok"; } catch { checks.redis = "fail"; } }
     const ok = Object.values(checks).every((v) => v === "ok");
     res.status(ok ? 200 : 503).json({ status: ok ? "ok" : "degraded", mode: env.DATA_MODE, checks });
   });

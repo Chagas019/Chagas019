@@ -8,7 +8,10 @@ const schema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().default(4000),
   DATABASE_URL: z.string().min(1),
-  REDIS_URL: z.string().default("redis://localhost:6379"),
+  /** Opcional: sem Redis, a plataforma roda em modo agendado (serverless) usando o PostgreSQL. */
+  REDIS_URL: z.string().optional().default(""),
+  /** Segredo exigido pelo endpoint /api/cron/run (agendador externo, ex.: pg_cron). */
+  CRON_SECRET: z.string().optional().default(""),
   JWT_SECRET: z.string().min(32, "JWT_SECRET deve ter ao menos 32 caracteres"),
   JWT_EXPIRES_IN: z.string().default("12h"),
   /** Chave AES-256 em base64 (32 bytes). Gere com: openssl rand -base64 32 */
