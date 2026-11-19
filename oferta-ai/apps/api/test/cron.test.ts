@@ -35,8 +35,8 @@ describe("Modo serverless (pg_cron)", () => {
     await new Promise((r) => setTimeout(r, 80));
     expect(await kv().setNx("t:lock", "x", 50)).toBe(true);
     await kv().del("t:c");
-    const n = await Promise.all([kv().incr("t:c"), kv().incr("t:c"), kv().incr("t:c")]);
-    expect(n.sort()).toEqual([1, 2, 3]);
+    const n = await Promise.all(Array.from({ length: 10 }, () => kv().incr("t:c")));
+    expect(n.sort((x: number, y: number) => x - y)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     await kv().sadd("t:s", "a", "b");
     await kv().srem("t:s", "a");
     expect(await kv().smembers("t:s")).toEqual(["b"]);

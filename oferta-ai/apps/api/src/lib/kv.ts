@@ -60,15 +60,23 @@ const pgKv: Kv = {
     await prisma.kvStore.deleteMany({ where: { key } });
   },
   async incr(key) {
-    // incremento atômico no banco
-    const rows = await prisma.$transaction(async (tx) => {
-      await tx.kvStore.upsert({ where: { key }, create: { key, value: "0" }, update: {} });
-      const cur = await tx.kvStore.findUniqueOrThrow({ where: { key } });
+    // incremento atômico por compare-and-set (seguro com chamadas concorrentes)
+    for (let attempt = 0; attempt < 50; attempt++) {
+      const cur = await prisma.kvStore.findUnique({ where: { key } });
+      if (!cur) {
+        try {
+          await prisma.kvStore.create({ data: { key, value: "1" } });
+          return 1;
+        } catch (err) {
+          if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") continue;
+          throw err;
+        }
+      }
       const next = Number(cur.value ?? 0) + 1;
-      const u = await tx.kvStore.updateMany({ where: { key, value: cur.value }, data: { value: String(next) } });
-      return u.count === 1 ? next : null;
-    });
-    return rows ?? this.incr(key);
+      const u = await prisma.kvStore.updateMany({ where: { key, value: cur.value }, data: { value: String(next), expiresAt: null } });
+      if (u.count === 1) return next;
+    }
+    throw new Error(`kv.incr: contenção excessiva em ${key}`);
   },
   async smembers(key) {
     const v = await this.get(key);
