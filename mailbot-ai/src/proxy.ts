@@ -8,7 +8,13 @@ export async function proxy(req: NextRequest) {
   let res = NextResponse.next({ request: req });
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) return res;
+  if (!url || !key) {
+    // banco ainda não conectado: telas internas vão direto para a página de instalação/login
+    const path = req.nextUrl.pathname;
+    const isPublic = PUBLIC.some((p) => path === p || path.startsWith(`${p}/`));
+    if (!isPublic && !path.startsWith('/api/')) return NextResponse.redirect(new URL('/login', req.url));
+    return res;
+  }
   const sb = createServerClient(url, key, {
     cookies: {
       getAll: () => req.cookies.getAll(),
