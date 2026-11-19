@@ -83,3 +83,13 @@ src/lib/data/         interface Repo + implementação Supabase
 supabase/migrations/  schema + RLS
 tests/                testes (Vitest) + testes SQL de RLS
 ```
+
+## Dependências externas (o que ainda exige autorização do proprietário)
+
+Tudo o que podia ser automatizado já está feito: código, testes, projeto na Vercel, segredos internos (`TOKEN_ENCRYPTION_KEY`, `CRON_SECRET`), IA via Vercel AI Gateway (OIDC, sem chave) e deploy em produção. Restam somente ações de conta:
+
+1. **Banco exclusivo (Supabase).** A conta já usa os 2 projetos gratuitos permitidos, então o Supabase recusa criar outro. Ação: pausar um projeto gratuito sem uso (ou fazer upgrade) e, na Vercel, projeto `mailbot-ai` → **Storage → Create Database → Supabase**. A integração oficial cria o banco e sincroniza as variáveis sozinha; depois é aplicar `supabase/migrations/` e fazer redeploy.
+2. **Google (Gmail).** Para um app ler o Gmail, o Google exige que o dono registre um cliente OAuth (Gmail API + tela de consentimento) e autorize o acesso. Passo a passo em `docs/GOOGLE_CLOUD.md`; o resultado são `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET` nas variáveis da Vercel. Depois disso, a única etapa no app é o botão **Conectar Gmail**.
+3. **IA (se a sonda acusar bloqueio).** A Vercel AI Gateway precisa estar habilitada no time (créditos/forma de pagamento no painel da Vercel → AI Gateway). Alternativa: cadastrar `ANTHROPIC_API_KEY`.
+
+Status ao vivo: `GET /api/health` lista exatamente o que ainda falta.
