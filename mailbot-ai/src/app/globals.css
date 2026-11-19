@@ -24,6 +24,22 @@
   --radius-sm: 14px;
   --shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 20px 50px -20px rgba(0, 0, 0, 0.8);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Molas no estilo iOS (tokens do guia de movimento do Vetro, convertidos por scripts/spring-tokens.mjs) */
+  --spring-standard: linear(0, 0.054, 0.175, 0.323, 0.470, 0.603, 0.714, 0.804, 0.872, 0.922, 0.957, 0.981, 0.996, 1.004, 1.009, 1.010, 1.010, 1.009, 1.007, 1.006, 1.005, 1.003, 1.002, 1.002, 1);
+  --spring-standard-ms: 760ms;
+  --spring-press: linear(0, 0.078, 0.256, 0.469, 0.672, 0.840, 0.963, 1.041, 1.082, 1.095, 1.089, 1.072, 1.052, 1.033, 1.016, 1.004, 0.997, 0.992, 0.991, 0.992, 0.993, 0.995, 0.997, 0.998, 1);
+  --spring-press-ms: 330ms;
+  --spring-sheet: linear(0, 0.054, 0.176, 0.322, 0.466, 0.595, 0.704, 0.791, 0.858, 0.907, 0.943, 0.968, 0.984, 0.994, 1.000, 1.003, 1.005, 1.005, 1.005, 1.004, 1.003, 1.003, 1.002, 1.001, 1);
+  --spring-sheet-ms: 450ms;
+  --spring-hero: linear(0, 0.075, 0.242, 0.438, 0.621, 0.774, 0.888, 0.966, 1.013, 1.038, 1.046, 1.044, 1.037, 1.028, 1.019, 1.012, 1.006, 1.002, 1.000, 0.998, 0.998, 0.998, 0.998, 0.999, 1);
+  --spring-hero-ms: 820ms;
+  --spring-pop: linear(0, 0.047, 0.160, 0.301, 0.448, 0.585, 0.704, 0.802, 0.879, 0.936, 0.976, 1.002, 1.018, 1.026, 1.028, 1.027, 1.024, 1.021, 1.016, 1.012, 1.009, 1.006, 1.004, 1.002, 1);
+  --spring-pop-ms: 360ms;
+  --spring-bar: linear(0, 0.051, 0.165, 0.301, 0.438, 0.562, 0.667, 0.754, 0.822, 0.874, 0.914, 0.942, 0.963, 0.977, 0.987, 0.993, 0.997, 0.999, 1.001, 1.001, 1.002, 1.001, 1.001, 1.001, 1);
+  --spring-bar-ms: 380ms;
+  --press-scale: 0.96;
+  --glass-thin: saturate(180%) blur(20px);
+  --glass-regular: saturate(180%) blur(28px);
   --nav-h: 72px;
   color-scheme: dark;
 }
@@ -71,13 +87,12 @@ button { font: inherit; color: inherit; }
 .tabbar {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; height: calc(var(--nav-h) + env(safe-area-inset-bottom));
   padding: 8px 8px env(safe-area-inset-bottom); display: grid; grid-template-columns: repeat(5, 1fr);
-  background: rgba(10, 10, 10, 0.82); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px);
+  background: rgba(10, 10, 10, 0.82); backdrop-filter: var(--glass-thin); -webkit-backdrop-filter: var(--glass-thin);
   border-top: 1px solid var(--line-soft);
 }
 .tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-3); font-size: 10.5px; font-weight: 500; border-radius: 12px; transition: color 0.2s; }
 .tab svg { width: 23px; height: 23px; }
 .tab[aria-current='page'] { color: var(--white); }
-.tab:active { transform: scale(0.94); }
 
 @media (min-width: 900px) {
   .sidebar { display: flex; }
@@ -135,7 +150,6 @@ button { font: inherit; color: inherit; }
   transition: transform 0.15s var(--ease), opacity 0.2s, background 0.2s;
 }
 .btn:hover { opacity: 0.92; }
-.btn:active { transform: scale(0.97); }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 .btn-block { width: 100%; }
 .btn-ghost { background: var(--card-2); color: var(--text); border: 1px solid var(--line); }
@@ -190,7 +204,6 @@ textarea.input { height: auto; min-height: 88px; padding: 12px 16px; resize: ver
   transition: transform 0.2s var(--ease), border-color 0.2s, background 0.2s;
 }
 .mail:hover { border-color: var(--line); background: #181818; }
-.mail:active { transform: scale(0.99); }
 .mail-top { display: flex; align-items: center; gap: 10px; }
 .avatar {
   width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; font-weight: 700; font-size: 15px; color: #fff;
@@ -211,7 +224,7 @@ textarea.input { height: auto; min-height: 88px; padding: 12px 16px; resize: ver
 /* ------------------------------------------------------------------ chat */
 .chat-wrap { display: flex; flex-direction: column; min-height: calc(100dvh - 140px); }
 .chat-log { flex: 1; display: flex; flex-direction: column; gap: 14px; padding: 6px 0 16px; }
-.bubble { max-width: 86%; padding: 12px 15px; border-radius: 20px; font-size: 15px; white-space: pre-wrap; word-break: break-word; animation: pop 0.35s var(--ease) both; }
+.bubble { max-width: 86%; padding: 12px 15px; border-radius: 20px; font-size: 15px; white-space: pre-wrap; word-break: break-word; animation: pop var(--spring-pop-ms) var(--spring-pop) both; }
 .bubble.user { align-self: flex-end; background: var(--white); color: #000; border-bottom-right-radius: 6px; }
 .bubble.bot { align-self: flex-start; background: var(--card); border: 1px solid var(--line-soft); border-bottom-left-radius: 6px; }
 .bubble .agent { font-size: 11px; color: var(--text-3); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
@@ -221,7 +234,7 @@ textarea.input { height: auto; min-height: 88px; padding: 12px 16px; resize: ver
 .ref b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
 .composer {
   position: sticky; bottom: calc(var(--nav-h) + 10px); display: flex; gap: 8px; padding: 8px; border-radius: 999px;
-  background: rgba(21, 21, 21, 0.9); border: 1px solid var(--line); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  background: rgba(21, 21, 21, 0.72); border: 1px solid var(--line); backdrop-filter: var(--glass-regular); -webkit-backdrop-filter: var(--glass-regular);
 }
 @media (min-width: 900px) { .composer { bottom: 20px; } }
 .composer input { flex: 1; background: transparent; border: 0; outline: 0; color: var(--text); font-size: 15px; padding: 0 12px; min-width: 0; }
@@ -268,10 +281,12 @@ textarea.input { height: auto; min-height: 88px; padding: 12px 16px; resize: ver
 .skel::after { content: ''; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent); animation: shimmer 1.4s infinite; }
 
 /* ------------------------------------------------------------------ motion */
-.enter { animation: fadeUp 0.6s var(--ease) both; }
+.btn, .icon-btn, .chip, .mail, .tab, .ref, .nav-link { transition: transform var(--spring-press-ms) var(--spring-press), background 0.2s, border-color 0.2s, color 0.2s, opacity 0.2s; }
+.btn:active, .icon-btn:active, .chip:active, .mail:active, .tab:active, .ref:active { transform: scale(var(--press-scale)); }
+.enter { animation: fadeUp var(--spring-standard-ms) var(--spring-standard) both; }
 .enter-1 { animation-delay: 0.05s; } .enter-2 { animation-delay: 0.1s; } .enter-3 { animation-delay: 0.15s; }
 .enter-4 { animation-delay: 0.2s; } .enter-5 { animation-delay: 0.25s; } .enter-6 { animation-delay: 0.3s; }
-.page { animation: pageIn 0.45s var(--ease) both; }
+.page { animation: pageIn var(--spring-sheet-ms) var(--spring-sheet) both; }
 .spin { animation: spin 0.9s linear infinite; }
 
 @keyframes fadeUp { from { opacity: 0; transform: translateY(14px) scale(0.985); } to { opacity: 1; transform: none; } }
