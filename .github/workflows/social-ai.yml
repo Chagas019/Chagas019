@@ -1,0 +1,26 @@
+name: SOCIAL AI — testes
+
+on:
+  push:
+    paths: ['social-ai/**', '.github/workflows/social-ai.yml']
+  pull_request:
+    paths: ['social-ai/**', '.github/workflows/social-ai.yml']
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: social-ai
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: social-ai/package-lock.json
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-inter
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build

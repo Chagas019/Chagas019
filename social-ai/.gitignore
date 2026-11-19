@@ -1,0 +1,10 @@
+node_modules/
+dist/
+storage/
+backups/
+.env
+*.db
+*.db-wal
+*.db-shm
+coverage/
+dist-web/

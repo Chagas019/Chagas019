@@ -1,0 +1,11 @@
+services:
+  social-ai:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8080:8080"
+    volumes:
+      - social-ai-data:/data
+volumes:
+  social-ai-data:
