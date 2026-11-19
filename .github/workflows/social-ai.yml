@@ -1,0 +1,44 @@
+name: SOCIAL AI — testes
+
+on:
+  push:
+    paths: ['social-ai/**', '.github/workflows/social-ai.yml']
+  pull_request:
+    paths: ['social-ai/**', '.github/workflows/social-ai.yml']
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: social-ai
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: social-ai/package-lock.json
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-inter
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Construir imagem
+        run: docker build -t social-ai:ci social-ai
+      - name: Subir container e checar saúde
+        run: |
+          docker run -d --name sai -p 8080:8080 \
+            -e NODE_ENV=production -e SOCIAL_AI_PRESET=catolico \
+            -e ENCRYPTION_KEY=$(openssl rand -base64 32) -e SESSION_SECRET=$(openssl rand -base64 48) \
+            -e ADMIN_EMAIL=ci@exemplo.invalid -e ADMIN_PASSWORD=senha-de-teste-ci-123 \
+            -e WORKER_ENABLED=false -e SCHEDULER_ENABLED=false social-ai:ci
+          for i in $(seq 1 30); do curl -fsS localhost:8080/api/health && break; sleep 2; done
+          curl -fsS localhost:8080/api/health
+          docker exec sai sh -c 'ffmpeg -version | head -1 && ls -la /data/storage'
+          docker logs sai
