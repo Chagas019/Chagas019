@@ -12,6 +12,15 @@ Data: 19/11/2026 · Branch: `claude/eager-archimedes-dedprd` · Produção: http
 | `agents.test.ts` | Orquestrador (11 perguntas → agente certo); **Triagem**: regras sem IA, enviados ignorados, lote para a IA, isolamento entre usuários, processamento incremental, cache por conteúdo, prompt injection neutralizado, refs inventados descartados, orçamento diário, sem IA não simula; **Resumo**: agregação a partir da triagem, reaproveitamento enquanto não chega e-mail novo, semanal reaproveita os diários; **Chat**: respostas por SQL sem IA com referências, "aguardando resposta" exclui conversas respondidas, sem resultado não chama IA, pergunta aberta com contexto reduzido e citações validadas, filtros de remetente/data | 30/30 |
 | `llm.test.ts` | Provedor de IA: Vercel AI Gateway (ID `anthropic/claude-haiku-5.5`) e API direta; registro de tokens/custo; JSON inválido, recusa e truncamento tratados; orçamento esgotado não chama a IA; IA não configurada | 7/7 |
 
+## 1b. Versão Floot (`npm run test:floot`): 31/31 passaram
+Mesma lógica publicada no Floot, com banco, Gmail e IA simulados:
+- **Orquestrador**: 11 perguntas encaminhadas ao agente certo.
+- **Regras de triagem**: mensagens enviadas são puladas; remetentes ignorados e promoções em massa resolvidos sem IA; VIP nunca descartado; sinais do Gmail usados.
+- **Parser**: conteúdo processado só em memória; o hash do remetente não revela o endereço; HTML sem scripts.
+- **Proteção contra prompt injection**: os delimitadores do prompt não podem ser fechados nem imitados pelo texto do e-mail.
+- **MAIL TRIAGE**: regras, depois IA em lote; grava só campos estruturados, sem nenhum texto do e-mail; refs inventados pela IA são descartados; cache funciona; mensagens já em memória não são buscadas de novo; com o orçamento esgotado os e-mails continuam pendentes; com a conta desconectada nada é feito.
+- **MAIL CHAT**: perguntas estruturadas respondidas sem IA, com referências; sem resultado não chama a IA; perguntas abertas com contexto reduzido e só citações válidas; busca por remetente e período convertida em consulta do Gmail.
+
 ## 2. Banco de dados e isolamento (`npm run test:rls`) — passou
 Postgres 16 temporário + migration + stub do Supabase Auth: cada usuário só lê os próprios dados; busca textual não vaza; tokens, cache e rate limit inacessíveis ao cliente; escrita direta bloqueada; anônimo não vê nada; `service_role` acessa o rate limit; exclusão em cascata.
 

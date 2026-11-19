@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:rls": "bash scripts/test-rls.sh",
+    "test:floot": "vitest run --config vitest.floot.config.ts",
     "seed:dev": "node --experimental-strip-types scripts/seed-dev.ts"
   },
   "engines": {

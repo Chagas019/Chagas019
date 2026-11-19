@@ -16,5 +16,13 @@ Por que Floot: entrega **banco exclusivo** (Postgres gerenciado), **conexão Gma
 - Tarefas agendadas do Floot exigem plano pago; por isso a sincronização roda ao abrir o app (na frequência configurada) e pelo botão Sincronizar, e o resumo do dia é gerado ao abrir o app após o horário escolhido.
 - Login: e-mail e senha. A conta do dono já existe sem senha: em Entrar → "Forgot password?" com o e-mail do dono.
 
+## Código no repositório
+`mailbot-ai/floot/` guarda uma cópia do código do Floot para versionamento e testes locais:
+- `floot/helpers/`: a lógica de backend (3 agentes, orquestrador, regras, parser, proteção contra prompt injection, cliente Gmail, chamada de IA). `db.tsx` e `mailQueries.tsx` são simplificados aqui; a implementação completa está no Floot.
+- `floot/sql/001_mailbot_floot.sql`: o schema aplicado no banco do Floot.
+- `floot/tests/`: 31 testes (`npm run test:floot`), com banco, Gmail e IA simulados.
+
+A fonte de verdade é o projeto no Floot; endpoints e telas ainda não estão espelhados aqui.
+
 ## Estado (19/11/2026)
-Backend, banco, 3 agentes e todas as telas escritos; typecheck limpo. Pendentes (limite diário de ações do plano Floot gratuito, retomada automática às 22:05 UTC): screenshots, specs, teste real da IA, testes de integração e publicação.
+Backend, banco, 3 agentes e todas as telas escritos; typecheck limpo no Floot; 31 testes da lógica passando localmente. Pendentes (limite diário de ações do plano Floot gratuito, retomada automática às 22:05 UTC): screenshots, specs, teste real da IA, testes de integração e publicação.
