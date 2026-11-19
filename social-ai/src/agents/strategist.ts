@@ -5,6 +5,7 @@ import { getLLM } from '../integrations/llm/provider.js';
 import { addDays } from '../lib/time.js';
 import { allocateCalendar, findConsecutiveRepeats } from './calendar.js';
 import { getMemory, runAgent } from './base.js';
+import { fetchLiturgy, liturgyContext } from '../integrations/liturgy.js';
 
 const ThemesSchema = z.object({
   items: z.array(z.object({ date: z.string(), slot: z.string(), theme: z.string(), notes: z.string() })),
@@ -43,6 +44,7 @@ export async function buildCalendar(startDate: string, days = 30, jobId?: number
       times: s.publish_times,
       previous: Object.fromEntries(prevRows.filter((r) => r.slot !== 'stories').map((r) => [r.slot, r.pillar])),
       startIndex: Math.floor(Date.parse(startDate) / 86400000),
+      storyPillars: s.story_pillars,
     });
     const brand = getBrand();
     const trends = db.all(`SELECT title, topic, format, momentum, adaptation_potential FROM trends WHERE report_date >= date(?, '-7 days') ORDER BY adaptation_potential DESC LIMIT 25`, startDate);
@@ -112,6 +114,7 @@ export async function dailyStrategy(date: string, jobId?: number) {
     const report = db.get(`SELECT summary, data FROM daily_reports WHERE type='trends' AND period_start = ?`, date);
     const trends = db.all(`SELECT id, title, summary, format, hook_pattern, narrative_structure, cta_pattern, momentum FROM trends WHERE report_date = ? ORDER BY adaptation_potential DESC LIMIT 12`, date);
     const recs = getMemory('strategist').analyst_recommendations ?? [];
+    const liturgy = await fetchLiturgy(date, ctx.addUsage).catch((e) => (ctx.log('warn', `Liturgia indisponível: ${e.message}`), null));
     const res = await getLLM().json({
       system: ctx.instructions,
       schema: BriefSchema,
@@ -120,7 +123,8 @@ Janela de publicação: ${s.publish_window.start}–${s.publish_window.end}.
 Relatório de tendências: ${report?.summary ?? 'indisponível'}
 Tendências do dia: ${JSON.stringify(trends)}
 Recomendações do Analyst: ${JSON.stringify(recs)}
-Para cada slot, crie a pauta completa: tema, objetivo, público-alvo, gancho, CTA, horário sugerido e justificativa estratégica.
+${liturgyContext(liturgy)}
+Para cada slot, crie a pauta completa (pilar de liturgia/Evangelho do dia deve se basear na liturgia acima): tema, objetivo, público-alvo, gancho, CTA, horário sugerido e justificativa estratégica.
 Se uma tendência inspirar a pauta, informe o título dela em trend_title (adaptação original, nunca cópia).
 Slots: ${JSON.stringify(slots.map((x) => ({ slot: x.slot, format: x.format, pillar: x.pillar, theme: x.theme, horario_padrao: x.scheduled_time })))}`,
     });

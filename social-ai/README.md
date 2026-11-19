@@ -8,6 +8,8 @@ Sistema multiagente que **pesquisa, planeja, cria, edita, agenda, publica e anal
 - **Painel** dark premium com 12 páginas (React)
 - Português brasileiro, operação 7 dias por semana, tudo configurável
 
+> **Para o @chagas_catolico:** o sistema já vem com o perfil católico pronto (liturgia diária, santo do dia, catequese, oração, regras de fidelidade à doutrina). Siga o guia simples **[docs/COLOCAR-NO-AR.md](docs/COLOCAR-NO-AR.md)** — deploy em um clique no Render.
+
 > **Nada é simulado.** Sem as chaves reais, os agentes falham de forma explícita e registram o motivo. A publicação real exige três travas independentes (veja [Ativar produção](#ativar-a-publicação-automática)).
 
 ---
@@ -59,6 +61,15 @@ social-ai/
 ```
 
 ---
+
+## Perfis prontos
+
+`SOCIAL_AI_PRESET` define o perfil aplicado no primeiro start; depois dá para trocar em **Configurações → Perfil pronto**.
+
+| Perfil | Conteúdo |
+|---|---|
+| `catolico` | Marca Chagas Católico (@chagas_catolico), pilares de Evangelho do dia, reflexão, santo do dia, catequese, oração, Bíblia, tempo litúrgico, devoção, testemunho e interação; Stories diários do Evangelho; **liturgia do dia** buscada em fontes oficiais (Canção Nova, CNBB, Vatican News) — só referências e refrão, nunca o texto integral nem nada inventado; regras de fidelidade doutrinal |
+| `fotografia_mobile` | Fotografia mobile, edição, apps e criação de conteúdo |
 
 ## Instalação (desenvolvimento)
 

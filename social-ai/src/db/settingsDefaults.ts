@@ -1,3 +1,6 @@
+export type Format = 'REELS' | 'CAROUSEL' | 'IMAGE' | 'STORIES';
+export interface PillarSetting { key: string; label: string; weight: number; formats?: Format[] }
+
 /** Configurações operacionais editáveis no painel. */
 export const DEFAULT_SETTINGS = {
   /** Modo de produção: só pode ser ligado após conectar conta + confirmar permissões. */
@@ -35,7 +38,12 @@ export const DEFAULT_SETTINGS = {
     hashtags: ['fotografiamobile', 'fotografiacomcelular', 'edicaodefotos', 'criacaodeconteudo', 'reelsbrasil'],
     reference_accounts: [] as string[],
     web_search: true,
+    web_topics: ['fotografia mobile', 'apps de edição de foto e vídeo', 'recursos novos do Instagram e Reels', 'tendências de edição', 'formatos de conteúdo em alta no Brasil'],
   },
+  /** Liturgia diária (perfis católicos): referências buscadas em fontes oficiais via pesquisa web. */
+  liturgy: { enabled: false, domains: [] as string[] },
+  /** Pilares que se alternam nos Stories diários. */
+  story_pillars: ['interacao', 'bastidores', 'dica_rapida'],
   pillars: [
     { key: 'reel_educativo', label: 'Reels educativos', weight: 3 },
     { key: 'tutorial', label: 'Tutoriais', weight: 3 },
@@ -47,7 +55,7 @@ export const DEFAULT_SETTINGS = {
     { key: 'tendencias', label: 'Tendências', weight: 2 },
     { key: 'autoridade', label: 'Conteúdos de autoridade', weight: 1 },
     { key: 'interacao', label: 'Conteúdos de interação', weight: 1 },
-  ],
+  ] as PillarSetting[],
   publishing_rules: {
     max_hashtags: 15,
     max_caption_length: 2200,

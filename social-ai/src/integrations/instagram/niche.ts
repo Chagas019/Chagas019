@@ -8,6 +8,7 @@ import { PermanentError } from '../../lib/errors.js';
 export const NICHES = [
   'Fotografia mobile', 'Criação de conteúdo', 'Fotografia e audiovisual', 'Edição de fotos e vídeos',
   'Comunicação visual', 'Tutoriais de aplicativos', 'Criatividade e tecnologia', 'Conteúdo de inspiração e educação',
+  'Conteúdo católico e evangelização',
 ];
 
 const NicheSchema = z.object({

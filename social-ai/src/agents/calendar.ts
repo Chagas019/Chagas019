@@ -1,6 +1,6 @@
 /** Alocação determinística de pilares/formatos do calendário editorial (sem LLM — testável). */
 export type Format = 'REELS' | 'CAROUSEL' | 'IMAGE' | 'STORIES';
-export interface Pillar { key: string; label: string; weight: number }
+export interface Pillar { key: string; label: string; weight: number; formats?: Format[] }
 export interface PlannedSlot { date: string; slot: string; format: Format; pillar: string; time: string }
 
 export const PILLAR_FORMATS: Record<string, Format[]> = {
@@ -15,7 +15,8 @@ export const PILLAR_FORMATS: Record<string, Format[]> = {
   autoridade: ['CAROUSEL', 'IMAGE'],
   interacao: ['IMAGE', 'CAROUSEL'],
 };
-const STORY_PILLARS = ['interacao', 'bastidores', 'dica_rapida'];
+const DEFAULT_STORY_PILLARS = ['interacao', 'bastidores', 'dica_rapida'];
+const formatsOf = (p: Pillar): Format[] => p.formats ?? PILLAR_FORMATS[p.key] ?? ['REELS', 'CAROUSEL', 'IMAGE'];
 
 function addDays(dateStr: string, n: number) {
   const [y, m, d] = dateStr.split('-').map(Number);
@@ -29,7 +30,9 @@ export function allocateCalendar(o: {
   /** Último pilar usado por slot antes do início (para continuidade). */
   previous?: Record<string, string>;
   startIndex?: number;
+  storyPillars?: string[];
 }): PlannedSlot[] {
+  const storyPillars = o.storyPillars?.length ? o.storyPillars : DEFAULT_STORY_PILLARS;
   const out: PlannedSlot[] = [];
   const usage: Record<string, number> = Object.fromEntries(o.pillars.map((p) => [p.key, 0]));
   const totalWeight = o.pillars.reduce((a, p) => a + p.weight, 0) || 1;
@@ -39,11 +42,11 @@ export function allocateCalendar(o: {
 
   const pick = (format: Format, slot: string, todays: Set<string>) => {
     const candidates = o.pillars
-      .filter((p) => (PILLAR_FORMATS[p.key] ?? ['REELS', 'CAROUSEL', 'IMAGE']).includes(format))
+      .filter((p) => formatsOf(p).includes(format))
       .filter((p) => !todays.has(p.key) && !prevDayPillars.has(p.key) && prevBySlot[slot] !== p.key);
     const pool = candidates.length
       ? candidates
-      : o.pillars.filter((p) => !todays.has(p.key) && prevBySlot[slot] !== p.key && (PILLAR_FORMATS[p.key] ?? []).includes(format));
+      : o.pillars.filter((p) => !todays.has(p.key) && prevBySlot[slot] !== p.key && formatsOf(p).includes(format));
     const fallback = pool.length ? pool : o.pillars;
     // Escolhe o pilar mais "atrasado" em relação ao peso desejado.
     let best = fallback[0];
@@ -75,7 +78,7 @@ export function allocateCalendar(o: {
       todays.add(pillar);
       out.push({ date, slot, format, pillar, time: o.times.feed });
     }
-    out.push({ date, slot: 'stories', format: 'STORIES', pillar: STORY_PILLARS[dayIndex % STORY_PILLARS.length], time: o.times.stories[0] ?? '09:30' });
+    out.push({ date, slot: 'stories', format: 'STORIES', pillar: storyPillars[dayIndex % storyPillars.length], time: o.times.stories[0] ?? '09:30' });
     for (const s of out.filter((x) => x.date === date && x.format !== 'STORIES')) prevBySlot[s.slot] = s.pillar;
     prevDayPillars = todays;
   }

@@ -38,7 +38,8 @@ async function backgroundFor(prompt: string, ctx: AgentContext, size: '1024x1536
   const gen = getImageGen();
   if (!gen || !prompt) return undefined;
   try {
-    const buf = await gen.generate(`${prompt}. Fotografia original, estética editorial, sem texto, sem marcas d'água, sem logotipos.`, size);
+    const rules = getBrand().rules.filter((r) => /imagem|imagens/i.test(r)).join(' ');
+    const buf = await gen.generate(`${prompt}. Fotografia original, estética editorial, sem texto, sem marcas d'água, sem logotipos. ${rules}`, size);
     const q = await sharp(buf).stats();
     if (q.entropy < 3) {
       ctx.log('warn', 'Imagem gerada descartada (baixa informação visual)');

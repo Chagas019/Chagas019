@@ -69,3 +69,16 @@ export function setIntegrationStatus(key: string, status: 'not_configured' | 'ok
 export function getActiveAccount() {
   return getDb().get(`SELECT * FROM instagram_accounts WHERE status = 'connected' ORDER BY id DESC LIMIT 1`);
 }
+
+/** Aplica um perfil pronto (marca + editorial). Não altera modo de produção nem pausa de emergência. */
+export async function applyPreset(key: string) {
+  const { PRESETS, presetSettings } = await import('../config/presets.js');
+  const p = PRESETS[key];
+  if (!p) throw new Error(`Perfil desconhecido: ${key}`);
+  const s = presetSettings(key) as any;
+  for (const k of Object.keys(s)) {
+    if (k === 'production_mode' || k === 'publishing_paused') continue;
+    setSetting(k as any, s[k]);
+  }
+  return updateBrand(p.brand as any);
+}

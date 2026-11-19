@@ -62,6 +62,10 @@ const EnvSchema = z.object({
   WORKER_ENABLED: bool.default(true),
   SCHEDULER_ENABLED: bool.default(true),
   LOG_LEVEL: z.string().default('info'),
+  /** Perfil pronto aplicado no primeiro start: fotografia_mobile | catolico */
+  SOCIAL_AI_PRESET: z.string().default('fotografia_mobile'),
+  /** Definida automaticamente pelo Render; usada como PUBLIC_BASE_URL se esta estiver vazia. */
+  RENDER_EXTERNAL_URL: z.string().optional(),
 });
 
 export type Env = z.infer<typeof EnvSchema>;
@@ -70,6 +74,10 @@ let cached: Env | null = null;
 
 export function loadEnv(overrides: Partial<Record<keyof Env, unknown>> = {}): Env {
   const parsed = EnvSchema.parse({ ...process.env, ...overrides });
+  if (!parsed.PUBLIC_BASE_URL && parsed.RENDER_EXTERNAL_URL) parsed.PUBLIC_BASE_URL = parsed.RENDER_EXTERNAL_URL;
+  if (!parsed.META_REDIRECT_URI && /^https:\/\//.test(parsed.PUBLIC_BASE_URL)) {
+    parsed.META_REDIRECT_URI = `${parsed.PUBLIC_BASE_URL.replace(/\/$/, '')}/api/instagram/oauth/callback`;
+  }
   if (parsed.NODE_ENV === 'production') {
     const missing: string[] = [];
     if (!parsed.ENCRYPTION_KEY) missing.push('ENCRYPTION_KEY');

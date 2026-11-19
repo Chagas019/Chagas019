@@ -4,7 +4,7 @@ import path from 'node:path';
 import { migrations } from './migrations.js';
 import { env } from '../config/env.js';
 import { AGENT_DEFINITIONS } from '../agents/definitions.js';
-import { DEFAULT_SETTINGS } from './settingsDefaults.js';
+import { PRESETS, presetSettings } from '../config/presets.js';
 import { DEFAULT_BRAND } from '../creative/brandDefaults.js';
 
 export type Row = Record<string, any>;
@@ -70,15 +70,17 @@ export class Database {
         a.key, a.name, a.role, a.instructions, JSON.stringify(a.tools),
       );
     }
-    for (const [key, value] of Object.entries(DEFAULT_SETTINGS)) {
+    // Perfil pronto: só define valores ainda inexistentes (nunca sobrescreve ajustes do painel).
+    const presetKey = env().SOCIAL_AI_PRESET in PRESETS ? env().SOCIAL_AI_PRESET : 'fotografia_mobile';
+    for (const [key, value] of Object.entries(presetSettings(presetKey))) {
       this.run('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)', key, JSON.stringify(value));
     }
+    const b: any = { ...DEFAULT_BRAND, handle: null, audience: null, tone: null, ...PRESETS[presetKey].brand };
     this.run(
-      `INSERT OR IGNORE INTO brand_settings (id, brand_name, niche, colors, fonts, layout, base_hashtags, forbidden_words, rules)
-       VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      DEFAULT_BRAND.brand_name, DEFAULT_BRAND.niche, JSON.stringify(DEFAULT_BRAND.colors), JSON.stringify(DEFAULT_BRAND.fonts),
-      JSON.stringify(DEFAULT_BRAND.layout), JSON.stringify(DEFAULT_BRAND.base_hashtags),
-      JSON.stringify(DEFAULT_BRAND.forbidden_words), JSON.stringify(DEFAULT_BRAND.rules),
+      `INSERT OR IGNORE INTO brand_settings (id, brand_name, handle, niche, audience, tone, colors, fonts, layout, base_hashtags, forbidden_words, rules)
+       VALUES (1, ?, ?, ?, ?, COALESCE(?, 'Próximo, criativo, didático e direto. Fala como um criador experiente conversando com um amigo.'), ?, ?, ?, ?, ?, ?)`,
+      b.brand_name, b.handle, b.niche, b.audience, b.tone, JSON.stringify(b.colors), JSON.stringify(b.fonts),
+      JSON.stringify(b.layout), JSON.stringify(b.base_hashtags), JSON.stringify(b.forbidden_words), JSON.stringify(b.rules),
     );
     const integrations: [string, string][] = [
       ['instagram', 'Instagram Graph API (Meta)'],

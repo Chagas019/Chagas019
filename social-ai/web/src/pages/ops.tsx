@@ -53,6 +53,7 @@ export function Publications() {
 
 export function SettingsPage() {
   const { data, error, reload } = useApi<any>('/api/settings');
+  const presets = useApi<any[]>('/api/presets');
   const { run, busy } = useAction();
   const [s, setS] = useState<any>(null);
   const [b, setB] = useState<any>(null);
@@ -70,6 +71,12 @@ export function SettingsPage() {
     <Page title="Configurações" subtitle="Rotina, frequência, horários, regras e identidade visual"
       actions={<button className="btn primary" disabled={busy || (!s && !b)} onClick={async () => { if (s) await run(() => api('/api/settings', { method: 'PUT', body: s }), 'Configurações salvas'); if (b) await run(() => api('/api/brand', { method: 'PUT', body: b }), 'Marca salva'); setS(null); setB(null); reload(); }}>Salvar alterações</button>}>
       <div className="grid g2">
+        <Card title="Perfil pronto" className="span2">
+          <div className="row">
+            <span className="muted">Aplica de uma vez marca, pilares, horários, hashtags e regras de um perfil pronto (os ajustes atuais serão substituídos):</span>
+            {presets.data?.map((p) => <button key={p.key} className="btn" disabled={busy} onClick={() => confirm(`Aplicar o perfil "${p.label}"?`) && run(() => api(`/api/presets/${p.key}`, { method: 'POST', body: {} }), 'Perfil aplicado').then(() => { setS(null); setB(null); reload(); })}>{p.label}</button>)}
+          </div>
+        </Card>
         <Card title="Rotina automática diária">
           <div className="field-row">
             {data.stages.map((x: any) => <label key={x.key}>{x.label}<input type="time" value={st.routine[x.key]} onChange={(e) => upd(['routine', x.key], e.target.value)} /></label>)}

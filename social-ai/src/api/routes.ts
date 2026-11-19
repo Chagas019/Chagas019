@@ -4,7 +4,9 @@ import path from 'node:path';
 import { z } from 'zod';
 import { env } from '../config/env.js';
 import { getDb, json } from '../db/db.js';
-import { audit, getActiveAccount, getBrand, getSettings, setSetting, updateBrand } from '../db/repo.js';
+import { applyPreset, audit, getActiveAccount, getBrand, getSettings, setSetting, updateBrand } from '../db/repo.js';
+import { PRESETS } from '../config/presets.js';
+import { fetchLiturgy, getStoredLiturgy } from '../integrations/liturgy.js';
 import { DEFAULT_SETTINGS, type Settings } from '../db/settingsDefaults.js';
 import { authenticate, createSession, destroySession } from '../security/auth.js';
 import { cookieOptions, requireRole, SESSION_COOKIE } from './server.js';
@@ -318,6 +320,21 @@ export async function registerRoutes(app: FastifyInstance) {
     }
     audit('settings.update', { userId: req.user!.id, details: Object.keys(b) });
     return getSettings();
+  });
+  app.get('/api/presets', viewer, async () => Object.values(PRESETS).map((p) => ({ key: p.key, label: p.label })));
+  app.post('/api/presets/:key', admin, async (req) => {
+    const { key } = req.params as { key: string };
+    const brand = await applyPreset(key);
+    audit('preset.apply', { userId: req.user!.id, details: { key } });
+    return { brand, settings: getSettings() };
+  });
+  app.get('/api/liturgy', viewer, async (req) => {
+    const date = (req.query as any).date ?? todayIn(tz());
+    return { date, enabled: getSettings().liturgy.enabled, liturgy: getStoredLiturgy(date) };
+  });
+  app.post('/api/liturgy/fetch', editor, async (req) => {
+    const date = (req.body as any)?.date ?? todayIn(tz());
+    return { date, liturgy: await fetchLiturgy(date) };
   });
   app.put('/api/brand', admin, async (req) => {
     const hex = z.string().regex(/^#[0-9a-fA-F]{6}$/);

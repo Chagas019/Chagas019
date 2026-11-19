@@ -5,6 +5,7 @@ import { graphClientFor } from '../integrations/instagram/account.js';
 import { getLLM } from '../integrations/llm/provider.js';
 import { IntegrationUnavailableError } from '../lib/errors.js';
 import { runAgent, getMemory, type AgentContext } from './base.js';
+import { fetchLiturgy, liturgyContext } from '../integrations/liturgy.js';
 
 const TrendSchema = z.object({
   report_summary: z.string(),
@@ -131,16 +132,18 @@ export async function researchTrends(date: string, jobId?: number) {
       throw new IntegrationUnavailableError('instagram', 'Nenhuma fonte de tendências disponível (conecte o Instagram ou habilite a pesquisa web).');
     }
     const sum = summarizeSignals(signals);
+    const liturgy = await fetchLiturgy(date, ctx.addUsage).catch((e) => (ctx.log('warn', `Liturgia indisponível: ${e.message}`), null));
     const prompt = `Data: ${date}. Nicho do perfil: ${brand.niche}. Público: ${brand.audience ?? 'criadores e entusiastas brasileiros'}.
 
 SINAIS DA GRAPH API OFICIAL (${sum.total} publicações públicas; apenas curtidas e comentários são públicos):
 ${JSON.stringify({ porFormato: sum.byFormat, topPublicacoes: sum.top }, null, 1)}
 
 Observações de coleta: ${notes.join(' | ') || 'nenhuma'}
+${liturgyContext(liturgy)}
 
-${sources.web_search ? `Pesquise também na web (fontes públicas: portais de tecnologia, blogs de fotografia, notas de lançamento de apps, central de criadores do Instagram) as novidades das últimas 2 semanas sobre: fotografia mobile, apps de edição de foto/vídeo, recursos novos do Instagram/Reels, tendências de edição e formatos de conteúdo no Brasil.` : 'Não use pesquisa web.'}
+${sources.web_search ? `Pesquise também na web, em fontes públicas e confiáveis, as novidades das últimas 2 semanas sobre: ${(sources.web_topics ?? []).join('; ') || brand.niche}.` : 'Não use pesquisa web.'}
 
-Entregue de 6 a 12 tendências acionáveis para o nicho. Para cada uma, descreva o PADRÃO (gancho, estrutura, duração, estilo visual, CTA) de forma abstrata — nunca reproduza legendas ou roteiros de terceiros. Em "evidence" diga o que foi observado e o quão forte é o sinal.`;
+Entregue de 6 a 12 tendências acionáveis para o nicho, respeitando as regras da marca: ${brand.rules.join(' ')} Para cada uma, descreva o PADRÃO (gancho, estrutura, duração, estilo visual, CTA) de forma abstrata — nunca reproduza legendas ou roteiros de terceiros. Em "evidence" diga o que foi observado e o quão forte é o sinal.`;
     const res = await llm.json({
       system: ctx.instructions,
       prompt,
@@ -165,7 +168,7 @@ Entregue de 6 a 12 tendências acionáveis para o nicho. Para cada uma, descreva
         `INSERT INTO daily_reports (type, period_start, period_end, summary, data) VALUES ('trends', ?, ?, ?, ?)
          ON CONFLICT(type, period_start) DO UPDATE SET summary=excluded.summary, data=excluded.data, created_at=datetime('now')`,
         date, date, res.data.report_summary,
-        JSON.stringify({ limitations: res.data.data_limitations, notes, opportunities: res.data.opportunities, apps: res.data.new_apps_or_tools, signals: { total: sum.total, byFormat: sum.byFormat }, web_sources: res.sources }),
+        JSON.stringify({ limitations: res.data.data_limitations, notes, liturgy, opportunities: res.data.opportunities, apps: res.data.new_apps_or_tools, signals: { total: sum.total, byFormat: sum.byFormat }, web_sources: res.sources }),
       );
     });
     return { trends: res.data.trends.length, signals: sum.total, webSources: res.sources.length };

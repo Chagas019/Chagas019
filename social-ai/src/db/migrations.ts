@@ -320,4 +320,25 @@ CREATE TABLE hashtag_queries (
 );
 `,
   },
+  {
+    id: 2,
+    name: 'liturgy_days',
+    sql: `
+CREATE TABLE liturgy_days (
+  date TEXT PRIMARY KEY,
+  celebration TEXT,
+  liturgical_season TEXT,
+  liturgical_color TEXT,
+  first_reading TEXT,
+  psalm TEXT,
+  psalm_refrain TEXT,
+  second_reading TEXT,
+  gospel TEXT,
+  saint_of_day TEXT,
+  sources TEXT NOT NULL DEFAULT '[]',
+  confidence TEXT,
+  fetched_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+`,
+  },
 ];

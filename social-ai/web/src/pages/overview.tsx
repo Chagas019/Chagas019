@@ -120,6 +120,15 @@ export function Trends() {
         <button className="btn primary" disabled={busy} onClick={() => run(() => api('/api/agents/run', { method: 'POST', body: { type: 'trend_scout.research' } }), 'Pesquisa enfileirada')}>Pesquisar agora</button>
       </>}>
       <div className="grid" style={{ gap: 16 }}>
+        {rep.liturgy && (
+          <Card title={`Liturgia do dia${rep.liturgy.celebration ? ` · ${rep.liturgy.celebration}` : ''}`} actions={rep.liturgy.liturgical_color && <span className="badge">{rep.liturgy.liturgical_color}</span>}>
+            <div className="grid g4">
+              {[['1ª leitura', rep.liturgy.first_reading], ['Salmo', rep.liturgy.psalm], ['2ª leitura', rep.liturgy.second_reading], ['Evangelho', rep.liturgy.gospel]].filter(([, v]) => v).map(([k, v]) => <div key={k}><div className="dim small">{k}</div><b>{v}</b></div>)}
+            </div>
+            {rep.liturgy.psalm_refrain && <p style={{ marginBottom: 0, fontStyle: 'italic' }}>“{rep.liturgy.psalm_refrain}”</p>}
+            <div className="dim small" style={{ marginTop: 8 }}>{rep.liturgy.saint_of_day && `Santo do dia: ${rep.liturgy.saint_of_day} · `}Fonte: {rep.liturgy.sources?.[0] ?? 'oficial'}</div>
+          </Card>
+        )}
         {data.report ? (
           <div className="grid g3">
             <Card title="Relatório do dia" className="span2">

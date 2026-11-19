@@ -17,7 +17,7 @@ export const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 
 /** Largura média aproximada de caractere para Inter (em fração do tamanho da fonte). */
-const CHAR_W = (weight: number) => (weight >= 700 ? 0.58 : 0.53);
+const CHAR_W = (weight: number, family = '') => (/serif/i.test(family) && !/sans/i.test(family) ? 0.62 : weight >= 700 ? 0.58 : 0.53);
 
 export function wrap(text: string, maxChars: number): string[] {
   const words = text.replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
@@ -46,7 +46,7 @@ export function textBlock(o: {
   let lines: string[] = [];
   let overflow = false;
   for (;;) {
-    const maxChars = Math.max(4, Math.floor(o.width / (size * CHAR_W(o.weight))));
+    const maxChars = Math.max(4, Math.floor(o.width / (size * CHAR_W(o.weight, o.family))));
     lines = wrap(o.text, maxChars);
     const longestWord = Math.max(0, ...o.text.split(/\s+/).map((w) => w.length));
     const fits = lines.length * size * lh <= o.maxHeight && longestWord <= maxChars;
@@ -71,7 +71,7 @@ function frame(w: number, h: number, brand: Brand, inner: string, bgImage?: stri
     ? `<image href="${bgImage}" x="0" y="0" width="${w}" height="${h}" preserveAspectRatio="xMidYMid slice"/>
        <rect width="${w}" height="${h}" fill="url(#shade)"/>`
     : `<rect width="${w}" height="${h}" fill="url(#bg)"/>
-       <circle cx="${w * 0.88}" cy="${h * 0.08}" r="${w * 0.42}" fill="${c.primary}" opacity="0.16"/>
+       <circle cx="${w * 0.88}" cy="${h * 0.08}" r="${w * 0.42}" fill="${c.primary}" opacity="0.11"/>
        <circle cx="${w * 0.05}" cy="${h * 0.95}" r="${w * 0.3}" fill="${c.accent}" opacity="0.07"/>`;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
 <defs>

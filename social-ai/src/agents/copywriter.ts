@@ -4,6 +4,7 @@ import { getBrand, getSettings } from '../db/repo.js';
 import { getLLM } from '../integrations/llm/provider.js';
 import { buildCaption, checkCopy } from '../quality/copy.js';
 import { runAgent } from './base.js';
+import { fetchLiturgy, liturgyContext } from '../integrations/liturgy.js';
 
 export const CopySchema = z.object({
   title: z.string(),
@@ -49,15 +50,17 @@ export async function writeDay(date: string, jobId?: number) {
     const s = getSettings();
     const rules = { maxHashtags: s.publishing_rules.max_hashtags, maxLength: s.publishing_rules.max_caption_length, forbidden: [...brand.forbidden_words, ...s.publishing_rules.blocked_terms] };
     const results: { projectId: number; format: string; issues: number }[] = [];
+    const liturgy = await fetchLiturgy(date, ctx.addUsage).catch(() => null);
 
     for (const r of rows) {
       const base = `Marca: ${brand.brand_name}${brand.handle ? ` (@${brand.handle})` : ''}. Nicho: ${brand.niche}. Tom de voz: ${brand.tone}.
 Regras da marca: ${brand.rules.join(' | ')}
 Hashtags-base da marca (use as relevantes): ${brand.base_hashtags.join(', ')}
+${liturgyContext(liturgy)}
 Pauta: ${JSON.stringify({ titulo: r.title, tema: r.theme, objetivo: r.objective, formato: r.format, publico: r.audience, gancho_sugerido: r.hook, cta: r.cta, justificativa: r.rationale })}
 ${FORMAT_RULES[r.format]}
 Legenda: gancho na 1ª linha, corpo com valor real e específico, CTA único. Hashtags sem '#', 5 a 12.
-kicker: rótulo curto do pilar para a arte (1–2 palavras). visual_prompt: descrição de uma imagem ORIGINAL, sem texto, que ilustre o tema (para geração de imagem).`;
+kicker: rótulo curto do pilar para a arte (1–2 palavras). visual_prompt: descrição de uma imagem ORIGINAL, sem texto, que ilustre o tema (para geração de imagem), respeitando as regras da marca.`;
       let res = await getLLM().json({ system: ctx.instructions, schema: CopySchema, prompt: base });
       ctx.addUsage(res.usage);
       let copy = res.data;

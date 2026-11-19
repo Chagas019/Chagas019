@@ -1,0 +1,39 @@
+# Deploy do SOCIAL AI no Render (Blueprint). Botão: https://render.com/deploy?repo=https://github.com/Chagas019/Chagas019
+services:
+  - type: web
+    name: chagas-social-ai
+    runtime: docker
+    rootDir: social-ai
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: starter            # necessário para disco persistente
+    region: virginia
+    healthCheckPath: /api/health
+    autoDeploy: true
+    disk:
+      name: social-ai-data
+      mountPath: /data
+      sizeGB: 5
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SOCIAL_AI_PRESET
+        value: catolico
+      - key: ALLOW_PUBLISHING
+        value: "false"          # mude para "true" só depois de revisar tudo no painel
+      - key: ENCRYPTION_KEY
+        generateValue: true
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: META_APP_ID
+        sync: false
+      - key: META_APP_SECRET
+        sync: false
+      - key: IMAGE_GEN_PROVIDER
+        value: none
