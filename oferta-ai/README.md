@@ -121,6 +121,9 @@ docker compose up -d --build
 - Serviços: `postgres`, `redis`, `api` (aplica migrações ao iniciar), `worker` (agentes), `web`, `backup` (pg_dump diário, retenção 14 dias em `./backups`).
 - Em produção, coloque um proxy HTTPS (Caddy, Nginx, Traefik) na frente de `web` e, se usar rastreamento de cliques, de `api` (`PUBLIC_BASE_URL`).
 
+### Modo serverless (Vercel + Supabase)
+Sem `REDIS_URL`, a plataforma dispensa Redis e o processo `worker`: locks, cursores e contadores ficam no PostgreSQL (tabela `KvStore`) e o Orchestrator roda um ciclo completo a cada chamada de `POST /api/cron/run` (cabeçalho `x-cron-secret: $CRON_SECRET`). No Supabase, um job `pg_cron` + `pg_net` chama esse endpoint a cada 5 minutos. A API é publicada como função serverless (`apps/api/api/index.ts`, região `gru1`) e o painel como projeto Next.js (`apps/web`, variável `API_URL`).
+
 ### Desenvolvimento local
 ```bash
 npm install

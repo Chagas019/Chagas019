@@ -8,7 +8,7 @@ export default function () {
   execSync("npx prisma migrate deploy", { env, stdio: "ignore" });
   const tables = [
     "ClickLog", "PublicationLog", "Publication", "GeneratedCopy", "AffiliateLink", "ProductStateHistory", "ProductPrice",
-    "ProductReview", "Product", "Campaign", "AgentExecution", "Agent", "DailyMetrics", "Integration", "Setting", "AuditLog", "SystemLog", "User",
+    "ProductReview", "Product", "Campaign", "AgentExecution", "Agent", "DailyMetrics", "Integration", "Setting", "AuditLog", "SystemLog", "User", "KvStore",
   ].map((t) => `"${t}"`).join(", ");
   execSync(`npx prisma db execute --stdin --schema prisma/schema.prisma`, { env, input: `TRUNCATE ${tables} CASCADE;`, stdio: ["pipe", "ignore", "ignore"] });
 }

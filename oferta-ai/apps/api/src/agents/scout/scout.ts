@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import { Prisma, Product } from "@prisma/client";
-import { prisma, redis, logEvent, errMsg } from "../../lib/core";
+import { prisma, logEvent, errMsg } from "../../lib/core";
+import { kv } from "../../lib/kv";
 import { getSettings } from "../../lib/settings";
 import { incr } from "../../lib/metrics";
 import { getOfferProvider, type OfferProvider, type RawOffer } from "../../integrations/shopee";
@@ -32,7 +33,7 @@ export interface ScoutSummary {
 
 async function extraKeywords(categories: string[]): Promise<Record<string, string[]>> {
   const out: Record<string, string[]> = {};
-  for (const c of categories) out[c] = await redis().smembers(EXTRA_KW_KEY(c));
+  for (const c of categories) out[c] = await kv().smembers(EXTRA_KW_KEY(c));
   return out;
 }
 
@@ -54,10 +55,10 @@ async function discoverKeywords(category: string): Promise<string[]> {
     });
     const kws = r.data.keywords.map((k) => k.toLowerCase().trim()).filter((k) => k.length >= 3 && k.length <= 40).slice(0, 3);
     if (kws.length) {
-      await redis().sadd(EXTRA_KW_KEY(category), ...kws);
+      await kv().sadd(EXTRA_KW_KEY(category), ...kws);
       // limita o conjunto para não crescer indefinidamente
-      const all = await redis().smembers(EXTRA_KW_KEY(category));
-      if (all.length > 12) await redis().srem(EXTRA_KW_KEY(category), ...all.slice(0, all.length - 12));
+      const all = await kv().smembers(EXTRA_KW_KEY(category));
+      if (all.length > 12) await kv().srem(EXTRA_KW_KEY(category), ...all.slice(0, all.length - 12));
     }
     return kws;
   } catch (err) {
@@ -227,10 +228,10 @@ export async function runScoutCycle(trigger: string): Promise<ScoutSummary | nul
     { trigger, keywordsPerCycle: settings.keywordsPerCycle },
     async () => {
       const provider = await getOfferProvider();
-      const cursor = Number((await redis().get(CURSOR_KEY)) ?? 0);
+      const cursor = Number((await kv().get(CURSOR_KEY)) ?? 0);
       const cats = settings.enabledCategories.length ? settings.enabledCategories : Object.keys(CATEGORIES);
       const plan = planRotation(cats, cursor, settings.keywordsPerCycle, await extraKeywords(cats));
-      await redis().set(CURSOR_KEY, String(cursor + plan.length));
+      await kv().set(CURSOR_KEY, String(cursor + plan.length));
       discoverKeywords(plan[0].category).catch(() => undefined);
 
       const recent = await recentlyPublishedIds(settings.dedupDays);

@@ -1,0 +1,8 @@
+{
+ "regions": ["gru1"],
+ "installCommand": "mkdir -p app && curl -sL https://codeload.github.com/Chagas019/Chagas019/tar.gz/911bd3eac27ad027f4b1ae688329762c56f1154a | tar xz -C app --strip-components=4 Chagas019-911bd3eac27ad027f4b1ae688329762c56f1154a/oferta-ai/apps/api && npm install --no-audit --no-fund",
+ "buildCommand": "npx prisma generate --schema app/prisma/schema.prisma && npx esbuild app/api/index.ts --bundle --platform=node --target=node22 --format=cjs --packages=external --outfile=dist/app.js && mkdir -p public && echo ok > public/index.txt",
+ "outputDirectory": "public",
+ "functions": { "api/index.js": { "maxDuration": 300, "includeFiles": "dist/**" } },
+ "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
+}

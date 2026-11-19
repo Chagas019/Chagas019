@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
-import { prisma, redis, logEvent, errMsg } from "../../lib/core";
+import { prisma, logEvent, errMsg } from "../../lib/core";
+import { kv } from "../../lib/kv";
 import { getSettings, type Settings } from "../../lib/settings";
 import { incr, addEstimatedCommission } from "../../lib/metrics";
 import { localDate, localMinutes, startOfLocalDay } from "../../lib/time";
@@ -57,7 +58,7 @@ export interface TickResult {
 
 export async function distributorTick(): Promise<TickResult> {
   // lock distribuído: só um tick por vez
-  const got = await redis().set(LOCK_KEY, "1", "PX", 55_000, "NX");
+  const got = await kv().setNx(LOCK_KEY, "1", 55_000);
   if (!got) return { action: "waiting", reason: "outro tick em execução" };
   try {
     const settings = await getSettings();
@@ -87,7 +88,7 @@ export async function distributorTick(): Promise<TickResult> {
       })) ?? { action: "idle" }
     );
   } finally {
-    await redis().del(LOCK_KEY);
+    await kv().del(LOCK_KEY);
   }
 }
 

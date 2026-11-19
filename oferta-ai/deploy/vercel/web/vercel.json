@@ -1,0 +1,4 @@
+{
+ "regions": ["gru1"],
+ "installCommand": "curl -sL https://codeload.github.com/Chagas019/Chagas019/tar.gz/911bd3eac27ad027f4b1ae688329762c56f1154a | tar xz --strip-components=4 --exclude=package.json Chagas019-911bd3eac27ad027f4b1ae688329762c56f1154a/oferta-ai/apps/web && npm install --no-audit --no-fund"
+}
