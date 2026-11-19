@@ -36,7 +36,7 @@ export async function requireUser() {
 
 /** Rate limit por usuário/ação (janela fixa no Postgres). */
 export async function rateLimit(key: string, max: number, windowSeconds: number) {
-  const { data, error } = await adminClient().rpc('rate_limit_hit', { p_key: key, p_max: max, p_window_seconds: windowSeconds });
+  const { data, error } = await adminClient().rpc('mailbot_rate_limit_hit', { p_key: key, p_max: max, p_window_seconds: windowSeconds });
   if (error) { log.warn('ratelimit.unavailable', { code: error.code }); return; }
   if (data === false) throw new HttpError(429, 'Muitas requisições. Aguarde um instante e tente novamente.');
 }

@@ -20,10 +20,10 @@ export default async function Importantes({ searchParams }: { searchParams: Prom
   const tab = TABS.find((t) => t.slug === c) ?? TABS[0];
   const { sb, tz } = await pageContext();
 
-  let q = sb.from('emails').select(`${CARD_COLS},email_summaries!inner(${SUMMARY_COLS})`).eq('is_sent', false);
-  if (tab.slug === 'urgentes') q = q.eq('email_summaries.priority', 'urgente');
-  else if (tab.slug === 'responder') q = q.eq('email_summaries.needs_reply', true).neq('email_summaries.priority', 'spam');
-  else q = q.eq('email_summaries.category', tab.slug).neq('email_summaries.priority', 'spam');
+  let q = sb.from('mailbot_emails').select(`${CARD_COLS},mailbot_email_summaries!inner(${SUMMARY_COLS})`).eq('is_sent', false);
+  if (tab.slug === 'urgentes') q = q.eq('mailbot_email_summaries.priority', 'urgente');
+  else if (tab.slug === 'responder') q = q.eq('mailbot_email_summaries.needs_reply', true).neq('mailbot_email_summaries.priority', 'spam');
+  else q = q.eq('mailbot_email_summaries.category', tab.slug).neq('mailbot_email_summaries.priority', 'spam');
   const { data } = await q.order('received_at', { ascending: false }).limit(50);
   const items = toCards(data);
 

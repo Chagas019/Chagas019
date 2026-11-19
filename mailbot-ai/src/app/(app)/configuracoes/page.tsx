@@ -20,7 +20,7 @@ const MESSAGES: Record<string, { kind: 'ok' | 'err' | 'warn'; text: string }> = 
 export default async function Configuracoes({ searchParams }: { searchParams: Promise<{ gmail?: string }> }) {
   const { gmail } = await searchParams;
   const { sb, user, account, prefs, tz } = await pageContext();
-  const { data: syncs } = await sb.from('sync_history').select('kind,status,added,updated,deleted,error,started_at').order('started_at', { ascending: false }).limit(5);
+  const { data: syncs } = await sb.from('mailbot_sync_history').select('kind,status,added,updated,deleted,error,started_at').order('started_at', { ascending: false }).limit(5);
   const missing = missingConfig();
   const notice = gmail ? MESSAGES[gmail] : undefined;
   const connected = account?.status === 'connected';

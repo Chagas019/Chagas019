@@ -3,27 +3,19 @@
 -- Tabelas internas (tokens, cache, rate limit) têm RLS ligado e NENHUMA policy:
 -- só o backend (service role) acessa.
 
-create extension if not exists pgcrypto;
 
 -- ---------------------------------------------------------------- Users
-create table public.profiles (
+create table public.mailbot_profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   display_name text,
   created_at timestamptz not null default now()
 );
 
-create or replace function public.handle_new_user()
-returns trigger language plpgsql security definer set search_path = public as $$
-begin
-  insert into public.profiles (id, display_name)
-  values (new.id, coalesce(new.raw_user_meta_data->>'full_name', split_part(new.email, '@', 1)))
-  on conflict (id) do nothing;
-  insert into public.user_preferences (user_id) values (new.id) on conflict (user_id) do nothing;
-  return new;
-end $$;
+-- Sem gatilho em auth.users: o projeto pode compartilhar o Auth com outros sistemas.
+-- Perfil e preferências são criados pelo servidor na primeira visita (ensureUserRows).
 
 -- ---------------------------------------------------------------- UserPreferences
-create table public.user_preferences (
+create table public.mailbot_user_preferences (
   user_id uuid primary key references auth.users(id) on delete cascade,
   timezone text not null default 'America/Sao_Paulo',
   sync_frequency_minutes int not null default 60 check (sync_frequency_minutes in (0, 15, 30, 60, 180, 360, 720, 1440)),
@@ -37,11 +29,9 @@ create table public.user_preferences (
   updated_at timestamptz not null default now()
 );
 
-create trigger on_auth_user_created
-  after insert on auth.users for each row execute function public.handle_new_user();
 
 -- ---------------------------------------------------------------- GmailAccounts
-create table public.gmail_accounts (
+create table public.mailbot_gmail_accounts (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
   email text not null,
@@ -57,8 +47,8 @@ create table public.gmail_accounts (
 );
 
 -- Tokens OAuth criptografados (AES-256-GCM na aplicação). Sem policies: só service role.
-create table public.gmail_tokens (
-  account_id uuid primary key references public.gmail_accounts(id) on delete cascade,
+create table public.mailbot_gmail_tokens (
+  account_id uuid primary key references public.mailbot_gmail_accounts(id) on delete cascade,
   user_id uuid not null references auth.users(id) on delete cascade,
   refresh_token_enc text not null,
   access_token_enc text,
@@ -68,7 +58,7 @@ create table public.gmail_tokens (
 );
 
 -- ---------------------------------------------------------------- EmailCategories
-create table public.email_categories (
+create table public.mailbot_email_categories (
   slug text primary key,
   label text not null,
   description text not null,
@@ -76,7 +66,7 @@ create table public.email_categories (
   sort int not null
 );
 
-insert into public.email_categories (slug, label, description, derived, sort) values
+insert into public.mailbot_email_categories (slug, label, description, derived, sort) values
   ('urgentes',     'Urgentes',              'Prazos próximos, problemas importantes, atenção imediata', true, 1),
   ('responder',    'Precisam de resposta',  'Alguém espera uma resposta sua',                            true, 2),
   ('trabalho',     'Trabalho',              'Assuntos profissionais, clientes e projetos',               false, 3),
@@ -86,10 +76,10 @@ insert into public.email_categories (slug, label, description, derived, sort) va
   ('informativos', 'Informativos',          'Newsletters, notificações e comunicações sem ação',         false, 7);
 
 -- ---------------------------------------------------------------- Emails
-create table public.emails (
+create table public.mailbot_emails (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
-  account_id uuid not null references public.gmail_accounts(id) on delete cascade,
+  account_id uuid not null references public.mailbot_gmail_accounts(id) on delete cascade,
   gmail_id text not null,
   thread_id text not null,
   from_name text,
@@ -114,17 +104,17 @@ create table public.emails (
   ) stored,
   unique (account_id, gmail_id)
 );
-create index emails_user_received_idx on public.emails (user_id, received_at desc);
-create index emails_user_thread_idx on public.emails (user_id, thread_id);
-create index emails_user_triage_idx on public.emails (user_id, triage_status) where triage_status = 'pending';
-create index emails_user_from_idx on public.emails (user_id, from_email);
-create index emails_search_idx on public.emails using gin (search);
+create index mailbot_emails_user_received_idx on public.mailbot_emails (user_id, received_at desc);
+create index mailbot_emails_user_thread_idx on public.mailbot_emails (user_id, thread_id);
+create index mailbot_emails_user_triage_idx on public.mailbot_emails (user_id, triage_status) where triage_status = 'pending';
+create index mailbot_emails_user_from_idx on public.mailbot_emails (user_id, from_email);
+create index mailbot_emails_search_idx on public.mailbot_emails using gin (search);
 
 -- ---------------------------------------------------------------- EmailSummaries (resultado do MAIL TRIAGE)
-create table public.email_summaries (
-  email_id uuid primary key references public.emails(id) on delete cascade,
+create table public.mailbot_email_summaries (
+  email_id uuid primary key references public.mailbot_emails(id) on delete cascade,
   user_id uuid not null references auth.users(id) on delete cascade,
-  category text not null references public.email_categories(slug),
+  category text not null references public.mailbot_email_categories(slug),
   priority text not null check (priority in ('urgente', 'importante', 'normal', 'baixa', 'spam')),
   relevance_score int not null check (relevance_score between 0 and 100),
   summary text not null,
@@ -140,22 +130,22 @@ create table public.email_summaries (
   model text,
   created_at timestamptz not null default now()
 );
-create index email_summaries_user_priority_idx on public.email_summaries (user_id, priority, relevance_score desc);
-create index email_summaries_user_category_idx on public.email_summaries (user_id, category);
+create index mailbot_email_summaries_user_priority_idx on public.mailbot_email_summaries (user_id, priority, relevance_score desc);
+create index mailbot_email_summaries_user_category_idx on public.mailbot_email_summaries (user_id, category);
 
 -- ---------------------------------------------------------------- AIConversations / Messages
-create table public.ai_conversations (
+create table public.mailbot_ai_conversations (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
   title text not null default 'Nova conversa',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-create index ai_conversations_user_idx on public.ai_conversations (user_id, updated_at desc);
+create index mailbot_ai_conversations_user_idx on public.mailbot_ai_conversations (user_id, updated_at desc);
 
-create table public.ai_conversation_messages (
+create table public.mailbot_ai_conversation_messages (
   id uuid primary key default gen_random_uuid(),
-  conversation_id uuid not null references public.ai_conversations(id) on delete cascade,
+  conversation_id uuid not null references public.mailbot_ai_conversations(id) on delete cascade,
   user_id uuid not null references auth.users(id) on delete cascade,
   role text not null check (role in ('user', 'assistant')),
   content text not null,
@@ -164,10 +154,10 @@ create table public.ai_conversation_messages (
   refs jsonb not null default '[]',
   created_at timestamptz not null default now()
 );
-create index ai_conv_messages_conv_idx on public.ai_conversation_messages (conversation_id, created_at);
+create index mailbot_ai_conv_messages_conv_idx on public.mailbot_ai_conversation_messages (conversation_id, created_at);
 
 -- ---------------------------------------------------------------- DailyReports (MAIL SUMMARY)
-create table public.daily_reports (
+create table public.mailbot_daily_reports (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
   kind text not null check (kind in ('daily', 'weekly')),
@@ -183,10 +173,10 @@ create table public.daily_reports (
 );
 
 -- ---------------------------------------------------------------- SyncHistory
-create table public.sync_history (
+create table public.mailbot_sync_history (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
-  account_id uuid not null references public.gmail_accounts(id) on delete cascade,
+  account_id uuid not null references public.mailbot_gmail_accounts(id) on delete cascade,
   kind text not null check (kind in ('initial', 'incremental', 'full_resync')),
   status text not null default 'running' check (status in ('running', 'success', 'partial', 'error')),
   fetched int not null default 0,
@@ -197,10 +187,10 @@ create table public.sync_history (
   started_at timestamptz not null default now(),
   finished_at timestamptz
 );
-create index sync_history_user_idx on public.sync_history (user_id, started_at desc);
+create index mailbot_sync_history_user_idx on public.mailbot_sync_history (user_id, started_at desc);
 
 -- ---------------------------------------------------------------- Consumo de IA (custos por agente/usuário)
-create table public.ai_usage (
+create table public.mailbot_ai_usage (
   id bigint generated always as identity primary key,
   user_id uuid not null references auth.users(id) on delete cascade,
   agent text not null check (agent in ('triage', 'summary', 'chat')),
@@ -211,10 +201,10 @@ create table public.ai_usage (
   cost_usd numeric(12,6) not null default 0,
   created_at timestamptz not null default now()
 );
-create index ai_usage_user_day_idx on public.ai_usage (user_id, created_at desc);
+create index mailbot_ai_usage_user_day_idx on public.mailbot_ai_usage (user_id, created_at desc);
 
 -- Cache de resultados de IA (chave inclui o user_id). Sem policies: só service role.
-create table public.ai_cache (
+create table public.mailbot_ai_cache (
   key text primary key,
   user_id uuid not null references auth.users(id) on delete cascade,
   agent text not null,
@@ -223,58 +213,58 @@ create table public.ai_cache (
 );
 
 -- Rate limiting (janela fixa). Sem policies: só service role.
-create table public.rate_limits (
+create table public.mailbot_rate_limits (
   key text primary key,
   window_start timestamptz not null,
   count int not null
 );
 
-create or replace function public.rate_limit_hit(p_key text, p_max int, p_window_seconds int)
+create or replace function public.mailbot_rate_limit_hit(p_key text, p_max int, p_window_seconds int)
 returns boolean language plpgsql security definer set search_path = public as $$
 declare v_count int;
 begin
-  insert into public.rate_limits as r (key, window_start, count) values (p_key, now(), 1)
+  insert into public.mailbot_rate_limits as r (key, window_start, count) values (p_key, now(), 1)
   on conflict (key) do update set
     count = case when r.window_start < now() - make_interval(secs => p_window_seconds) then 1 else r.count + 1 end,
     window_start = case when r.window_start < now() - make_interval(secs => p_window_seconds) then now() else r.window_start end
   returning count into v_count;
   return v_count <= p_max;
 end $$;
-revoke all on function public.rate_limit_hit(text, int, int) from public, anon, authenticated;
-grant execute on function public.rate_limit_hit(text, int, int) to service_role;
+revoke all on function public.mailbot_rate_limit_hit(text, int, int) from public, anon, authenticated;
+grant execute on function public.mailbot_rate_limit_hit(text, int, int) to service_role;
 
 -- ---------------------------------------------------------------- RLS
-alter table public.profiles enable row level security;
-alter table public.user_preferences enable row level security;
-alter table public.gmail_accounts enable row level security;
-alter table public.gmail_tokens enable row level security;
-alter table public.email_categories enable row level security;
-alter table public.emails enable row level security;
-alter table public.email_summaries enable row level security;
-alter table public.ai_conversations enable row level security;
-alter table public.ai_conversation_messages enable row level security;
-alter table public.daily_reports enable row level security;
-alter table public.sync_history enable row level security;
-alter table public.ai_usage enable row level security;
-alter table public.ai_cache enable row level security;
-alter table public.rate_limits enable row level security;
+alter table public.mailbot_profiles enable row level security;
+alter table public.mailbot_user_preferences enable row level security;
+alter table public.mailbot_gmail_accounts enable row level security;
+alter table public.mailbot_gmail_tokens enable row level security;
+alter table public.mailbot_email_categories enable row level security;
+alter table public.mailbot_emails enable row level security;
+alter table public.mailbot_email_summaries enable row level security;
+alter table public.mailbot_ai_conversations enable row level security;
+alter table public.mailbot_ai_conversation_messages enable row level security;
+alter table public.mailbot_daily_reports enable row level security;
+alter table public.mailbot_sync_history enable row level security;
+alter table public.mailbot_ai_usage enable row level security;
+alter table public.mailbot_ai_cache enable row level security;
+alter table public.mailbot_rate_limits enable row level security;
 
 -- Leitura: somente o dono
-create policy "own profile" on public.profiles for select to authenticated using (id = (select auth.uid()));
-create policy "own profile update" on public.profiles for update to authenticated using (id = (select auth.uid())) with check (id = (select auth.uid()));
-create policy "own prefs" on public.user_preferences for select to authenticated using (user_id = (select auth.uid()));
-create policy "own account" on public.gmail_accounts for select to authenticated using (user_id = (select auth.uid()));
-create policy "categories readable" on public.email_categories for select to authenticated using (true);
-create policy "own emails" on public.emails for select to authenticated using (user_id = (select auth.uid()));
-create policy "own summaries" on public.email_summaries for select to authenticated using (user_id = (select auth.uid()));
-create policy "own conversations" on public.ai_conversations for select to authenticated using (user_id = (select auth.uid()));
-create policy "own conversations delete" on public.ai_conversations for delete to authenticated using (user_id = (select auth.uid()));
-create policy "own conv messages" on public.ai_conversation_messages for select to authenticated using (user_id = (select auth.uid()));
-create policy "own reports" on public.daily_reports for select to authenticated using (user_id = (select auth.uid()));
-create policy "own sync history" on public.sync_history for select to authenticated using (user_id = (select auth.uid()));
-create policy "own ai usage" on public.ai_usage for select to authenticated using (user_id = (select auth.uid()));
+create policy "own profile" on public.mailbot_profiles for select to authenticated using (id = (select auth.uid()));
+create policy "own profile update" on public.mailbot_profiles for update to authenticated using (id = (select auth.uid())) with check (id = (select auth.uid()));
+create policy "own prefs" on public.mailbot_user_preferences for select to authenticated using (user_id = (select auth.uid()));
+create policy "own account" on public.mailbot_gmail_accounts for select to authenticated using (user_id = (select auth.uid()));
+create policy "categories readable" on public.mailbot_email_categories for select to authenticated using (true);
+create policy "own emails" on public.mailbot_emails for select to authenticated using (user_id = (select auth.uid()));
+create policy "own summaries" on public.mailbot_email_summaries for select to authenticated using (user_id = (select auth.uid()));
+create policy "own conversations" on public.mailbot_ai_conversations for select to authenticated using (user_id = (select auth.uid()));
+create policy "own conversations delete" on public.mailbot_ai_conversations for delete to authenticated using (user_id = (select auth.uid()));
+create policy "own conv messages" on public.mailbot_ai_conversation_messages for select to authenticated using (user_id = (select auth.uid()));
+create policy "own reports" on public.mailbot_daily_reports for select to authenticated using (user_id = (select auth.uid()));
+create policy "own sync history" on public.mailbot_sync_history for select to authenticated using (user_id = (select auth.uid()));
+create policy "own ai usage" on public.mailbot_ai_usage for select to authenticated using (user_id = (select auth.uid()));
 -- Escritas (preferências, sync, classificação, chat) passam pelas rotas de API do servidor,
 -- que validam a entrada, aplicam rate limit e gravam com o user_id da sessão.
 
 -- Tokens nunca expostos via API pública
-revoke all on public.gmail_tokens, public.ai_cache, public.rate_limits from anon, authenticated;
+revoke all on public.mailbot_gmail_tokens, public.mailbot_ai_cache, public.mailbot_rate_limits from anon, authenticated;

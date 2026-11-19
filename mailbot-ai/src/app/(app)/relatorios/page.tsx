@@ -33,8 +33,8 @@ export default async function Relatorios({ searchParams }: { searchParams: Promi
   const kind = sp.k === 'weekly' ? 'weekly' : 'daily';
   const { sb, tz, account } = await pageContext();
   const [{ data: reports }, { data: usage }] = await Promise.all([
-    sb.from('daily_reports').select('id,period_start,period_end,narrative,content,email_count,model,created_at').eq('kind', kind).order('period_start', { ascending: false }).limit(30),
-    sb.from('ai_usage').select('agent,input_tokens,output_tokens,cost_usd').gte('created_at', new Date(Date.now() - 30 * 86400_000).toISOString()),
+    sb.from('mailbot_daily_reports').select('id,period_start,period_end,narrative,content,email_count,model,created_at').eq('kind', kind).order('period_start', { ascending: false }).limit(30),
+    sb.from('mailbot_ai_usage').select('agent,input_tokens,output_tokens,cost_usd').gte('created_at', new Date(Date.now() - 30 * 86400_000).toISOString()),
   ]);
   const list = reports ?? [];
   const current = list.find((r) => r.period_start === sp.d) ?? list[0];

@@ -22,7 +22,7 @@ const { data: users } = await sb.auth.admin.listUsers({ perPage: 1000 });
 const user = users?.users.find((u) => u.email?.toLowerCase() === email.toLowerCase());
 if (!user) { console.error('Usuário não encontrado. Faça login no app primeiro.'); process.exit(1); }
 
-const { data: acc, error } = await sb.from('gmail_accounts').upsert({
+const { data: acc, error } = await sb.from('mailbot_gmail_accounts').upsert({
   user_id: user.id, email: 'demo@mailbot.dev', status: 'disconnected', initial_sync_done: true,
   last_error: 'Dados de demonstração (desenvolvimento). Conecte o Gmail real em Configurações.',
 }, { onConflict: 'user_id' }).select('id').single();
@@ -42,12 +42,12 @@ const demo = [
 
 for (const [i, d] of demo.entries()) {
   const m = d.from.match(/^(.*) <(.*)>$/)!;
-  const { data: e, error: err } = await sb.from('emails').upsert({
+  const { data: e, error: err } = await sb.from('mailbot_emails').upsert({
     user_id: user.id, account_id: acc.id, gmail_id: `demo-${i}`, thread_id: `demo-t${i}`, from_name: m[1], from_email: m[2],
     to_emails: user.email, subject: d.subject, snippet: d.body.slice(0, 120), body_text: d.body, received_at: d.at,
     label_ids: ['INBOX', 'UNREAD'], is_unread: true, content_hash: createHash('sha256').update(d.body).digest('hex'), triage_status: 'done',
   }, { onConflict: 'account_id,gmail_id' }).select('id').single();
   if (err || !e) { console.error(err?.message); continue; }
-  await sb.from('email_summaries').upsert({ email_id: e.id, user_id: user.id, source: 'rules', model: null, ...d.s });
+  await sb.from('mailbot_email_summaries').upsert({ email_id: e.id, user_id: user.id, source: 'rules', model: null, ...d.s });
 }
 console.log(`seed-dev: ${demo.length} e-mails de demonstração criados para ${email}.`);

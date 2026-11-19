@@ -9,7 +9,7 @@ import { applyRules } from './rules';
 
 // AGENTE 01 — MAIL TRIAGE
 // Classifica e-mails pendentes: categoria, prioridade, relevância, resumo, prazo,
-// necessidade de resposta, ação recomendada. Grava em email_summaries.
+// necessidade de resposta, ação recomendada. Grava em mailbot_email_summaries.
 
 const TriageItem = z.object({
   ref: z.string(),

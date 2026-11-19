@@ -113,12 +113,13 @@ export function DeleteAccount() {
     setBusy(true); setErr('');
     try {
       await call('/api/account', 'DELETE', { confirm: text });
+      await fetch('/auth/signout', { method: 'POST', redirect: 'manual' }).catch(() => null);
       window.location.href = '/login?excluido=1';
     } catch (e) { setErr(e instanceof Error ? e.message : 'Erro'); setBusy(false); }
   }
   return (
     <div className="stack" style={{ gap: 10 }}>
-      <p className="small muted" style={{ margin: 0 }}>Apaga definitivamente sua conta, e-mails sincronizados, classificações, conversas, relatórios e tokens, e revoga o acesso ao Gmail. Digite <b>EXCLUIR</b> para confirmar.</p>
+      <p className="small muted" style={{ margin: 0 }}>Apaga definitivamente todos os seus dados do MAILBOT: e-mails sincronizados, classificações, conversas, relatórios e tokens, e revoga o acesso ao Gmail. Digite <b>EXCLUIR</b> para confirmar.</p>
       <div className="row wrap">
         <input className="input" style={{ maxWidth: 220 }} value={text} onChange={(e) => setText(e.target.value)} aria-label="Confirmação" placeholder="EXCLUIR" />
         <button className="btn btn-danger btn-sm" onClick={go} disabled={busy || text !== 'EXCLUIR'}>{busy ? 'Excluindo…' : 'Excluir meus dados'}</button>

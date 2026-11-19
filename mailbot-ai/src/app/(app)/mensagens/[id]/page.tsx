@@ -11,11 +11,11 @@ export default async function Mensagem({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   if (!/^[0-9a-f-]{36}$/.test(id)) notFound();
   const { sb, tz, account } = await pageContext();
-  const { data: m } = await sb.from('emails')
-    .select(`id,gmail_id,thread_id,from_name,from_email,to_emails,subject,body_text,snippet,received_at,label_ids,email_summaries(${SUMMARY_COLS},appointment_at)`)
+  const { data: m } = await sb.from('mailbot_emails')
+    .select(`id,gmail_id,thread_id,from_name,from_email,to_emails,subject,body_text,snippet,received_at,label_ids,mailbot_email_summaries(${SUMMARY_COLS},appointment_at)`)
     .eq('id', id).maybeSingle();
   if (!m) notFound();
-  const s = (Array.isArray(m.email_summaries) ? m.email_summaries[0] : m.email_summaries) as Record<string, string | boolean | number | null> | null;
+  const s = (Array.isArray(m.mailbot_email_summaries) ? m.mailbot_email_summaries[0] : m.mailbot_email_summaries) as Record<string, string | boolean | number | null> | null;
   const name = m.from_name || m.from_email;
   const gmailUrl = `https://mail.google.com/mail/u/${encodeURIComponent(account?.email ?? '0')}/#all/${m.gmail_id}`;
 

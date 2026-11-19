@@ -21,14 +21,14 @@ export default async function Home() {
   const connected = account?.status === 'connected';
 
   const [total, important, report, pend] = await Promise.all([
-    sb.from('emails').select('id', { count: 'exact', head: true }).eq('is_sent', false),
-    sb.from('email_summaries').select('email_id', { count: 'exact', head: true }).in('priority', ['urgente', 'importante']),
-    sb.from('daily_reports').select('narrative,content,created_at').eq('kind', 'daily').eq('period_start', today).maybeSingle(),
-    sb.from('emails').select(`${CARD_COLS},email_summaries!inner(${SUMMARY_COLS})`).eq('is_sent', false)
-      .or('needs_reply.eq.true,priority.eq.urgente,is_bill.eq.true', { referencedTable: 'email_summaries' })
+    sb.from('mailbot_emails').select('id', { count: 'exact', head: true }).eq('is_sent', false),
+    sb.from('mailbot_email_summaries').select('email_id', { count: 'exact', head: true }).in('priority', ['urgente', 'importante']),
+    sb.from('mailbot_daily_reports').select('narrative,content,created_at').eq('kind', 'daily').eq('period_start', today).maybeSingle(),
+    sb.from('mailbot_emails').select(`${CARD_COLS},mailbot_email_summaries!inner(${SUMMARY_COLS})`).eq('is_sent', false)
+      .or('needs_reply.eq.true,priority.eq.urgente,is_bill.eq.true', { referencedTable: 'mailbot_email_summaries' })
       .gte('received_at', new Date(now.getTime() - 7 * 86400_000).toISOString()).order('received_at', { ascending: false }).limit(4),
   ]);
-  const todayCount = await sb.from('emails').select('id', { count: 'exact', head: true }).eq('is_sent', false).gte('received_at', since);
+  const todayCount = await sb.from('mailbot_emails').select('id', { count: 'exact', head: true }).eq('is_sent', false).gte('received_at', since);
   const content = report.data?.content as ReportContent | undefined;
   const pending = toCards(pend.data);
 

@@ -15,11 +15,20 @@
    - **Google** (opcional, para "Entrar com Google"): use o mesmo Client ID/Secret do Google Cloud e adicione `https://SEU-PROJETO.supabase.co/auth/v1/callback` nos redirecionamentos do cliente OAuth.
 6. Depois de aplicar a migration, rode **Advisors → Security** para conferir que nenhuma tabela ficou sem RLS.
 
+## Projeto compartilhado
+
+Todas as tabelas e funções do MAILBOT usam o prefixo `mailbot_`, então a migration pode ser aplicada num projeto que já tem outro sistema (como o `paroquia360`) sem colidir com nada. Nesse caso:
+
+- O login (`auth.users`) é compartilhado: a mesma pessoa usa a mesma conta nos dois apps.
+- A migration **não** cria gatilho em `auth.users`; perfil e preferências do MAILBOT são criados pelo servidor na primeira visita.
+- "Excluir meus dados" apaga só os dados `mailbot_*`; o login continua existindo para o outro sistema.
+- As configurações de Authentication (Site URL, Redirect URLs, provedores) são do projeto inteiro: adicione as URLs do MAILBOT sem remover as do outro app.
+
 ## O que a migration cria
 
 | Tabela | Conteúdo | Acesso do cliente (RLS) |
 |---|---|---|
-| `profiles` (Users) | nome de exibição | lê/edita o próprio |
+| `mailbot_profiles` (Users) | nome de exibição | lê/edita o próprio |
 | `user_preferences` | fuso, sincronização, horário do resumo, VIP/trabalho/ignorados, orçamento de IA | lê o próprio (escrita via API) |
 | `gmail_accounts` | caixa conectada, status, cursor de sincronização | lê a própria |
 | `gmail_tokens` | refresh/access token **criptografados** | nenhum (só servidor) |
@@ -32,7 +41,7 @@
 | `ai_usage` | tokens e custo por agente | lê o próprio |
 | `ai_cache`, `rate_limits` | cache de IA e limitação de taxa | nenhum (só servidor) |
 
-Todas as tabelas têm `on delete cascade` a partir de `auth.users`: excluir o usuário apaga todos os dados dele.
+Os nomes abaixo omitem o prefixo `mailbot_`. Todas as tabelas têm `on delete cascade` a partir de `auth.users`: excluir o usuário apaga todos os dados dele.
 
 ## Agendamento sem Vercel Pro (opcional)
 

@@ -38,17 +38,17 @@ export async function GET(req: NextRequest) {
 
     const sb = adminClient();
     const key = env.tokenEncryptionKey();
-    const { data: prev } = await sb.from('gmail_accounts').select('id,email').eq('user_id', user.id).maybeSingle();
+    const { data: prev } = await sb.from('mailbot_gmail_accounts').select('id,email').eq('user_id', user.id).maybeSingle();
     const sameMailbox = prev?.email?.toLowerCase() === profile.emailAddress.toLowerCase();
-    if (prev && !sameMailbox) await sb.from('gmail_accounts').delete().eq('id', prev.id); // outra caixa: remove dados antigos
+    if (prev && !sameMailbox) await sb.from('mailbot_gmail_accounts').delete().eq('id', prev.id); // outra caixa: remove dados antigos
 
-    const { data: account, error } = await sb.from('gmail_accounts').upsert({
+    const { data: account, error } = await sb.from('mailbot_gmail_accounts').upsert({
       ...(prev && sameMailbox ? { id: prev.id } : {}),
       user_id: user.id, email: profile.emailAddress, status: 'connected', messages_total: profile.messagesTotal, last_error: null,
     }, { onConflict: 'user_id' }).select('id').single();
     if (error || !account) throw new Error('account_upsert_failed');
 
-    const { error: tErr } = await sb.from('gmail_tokens').upsert({
+    const { error: tErr } = await sb.from('mailbot_gmail_tokens').upsert({
       account_id: account.id, user_id: user.id,
       refresh_token_enc: encrypt(tokens.refresh_token, key),
       access_token_enc: encrypt(tokens.access_token, key),

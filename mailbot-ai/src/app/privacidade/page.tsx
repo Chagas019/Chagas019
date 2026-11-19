@@ -18,7 +18,7 @@ export default function Privacidade() {
         <h2>Isolamento e segurança</h2>
         <p>Cada usuário só acessa os próprios dados (Row Level Security). Os registros técnicos (logs) não contêm conteúdo de e-mails nem tokens.</p>
         <h2>Seus controles</h2>
-        <p>Em Configurações você pode desconectar o Gmail (revogando o acesso no Google), apagar os dados sincronizados ou excluir definitivamente toda a sua conta e dados.</p>
+        <p>Em Configurações você pode desconectar o Gmail (revogando o acesso no Google), apagar os dados sincronizados ou excluir definitivamente todos os seus dados do MAILBOT.</p>
         <p>O uso de informações recebidas das APIs do Google obedece à Política de Dados do Usuário dos Serviços de API do Google, incluindo os requisitos de Uso Limitado.</p>
       </article>
     </main>

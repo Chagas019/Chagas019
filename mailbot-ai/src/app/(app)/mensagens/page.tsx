@@ -20,10 +20,10 @@ export default async function Mensagens({ searchParams }: { searchParams: Promis
   const { sb, tz } = await pageContext();
 
   const priority = ['urgente', 'importante', 'normal', 'baixa', 'spam'].includes(f);
-  let query = sb.from('emails').select(`${CARD_COLS},email_summaries${priority ? '!inner' : ''}(${SUMMARY_COLS})`, { count: 'exact' });
+  let query = sb.from('mailbot_emails').select(`${CARD_COLS},mailbot_email_summaries${priority ? '!inner' : ''}(${SUMMARY_COLS})`, { count: 'exact' });
   query = f === 'enviadas' ? query.eq('is_sent', true) : query.eq('is_sent', false);
   if (f === 'nao-lidas') query = query.eq('is_unread', true);
-  if (priority) query = query.eq('email_summaries.priority', f);
+  if (priority) query = query.eq('mailbot_email_summaries.priority', f);
   if (q) query = query.textSearch('search', q, { type: 'websearch', config: 'portuguese' });
   const { data, count } = await query.order('received_at', { ascending: false }).range(page * PAGE, page * PAGE + PAGE - 1);
   const items = toCards(data);

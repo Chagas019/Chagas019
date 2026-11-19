@@ -25,8 +25,8 @@ export async function GET(req: NextRequest) {
   const now = new Date();
   const out = { synced: 0, reports: 0, errors: 0 };
 
-  const { data: accounts } = await sb.from('gmail_accounts').select('*').eq('status', 'connected');
-  const { data: prefsRows } = await sb.from('user_preferences').select('*');
+  const { data: accounts } = await sb.from('mailbot_gmail_accounts').select('*').eq('status', 'connected');
+  const { data: prefsRows } = await sb.from('mailbot_user_preferences').select('*');
   const prefs = new Map((prefsRows as Preferences[] | null ?? []).map((p) => [p.user_id, p]));
 
   for (const acc of (accounts as AccountRow[] | null) ?? []) {
