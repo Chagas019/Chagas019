@@ -6,3 +6,4 @@ apps/*/.env
 backups
 *.log
 *.tsbuildinfo
+dump.rdb
