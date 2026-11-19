@@ -1,0 +1,373 @@
+// OFERTA AI — modelo de dados
+// Todas as datas em UTC no banco; conversão para America/Sao_Paulo na aplicação.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  OPERATOR
+  VIEWER
+}
+
+enum ProductState {
+  PENDING
+  RESEARCHING
+  APPROVED
+  COPY_GENERATED
+  READY_TO_PUBLISH
+  PUBLISHING
+  PUBLISHED
+  FAILED
+  REJECTED
+}
+
+enum AgentKind {
+  SCOUT
+  COPYWRITER
+  DISTRIBUTOR
+  ORCHESTRATOR
+}
+
+enum AgentStatus {
+  IDLE
+  RUNNING
+  PAUSED
+  ERROR
+  STOPPED
+}
+
+enum ExecutionStatus {
+  RUNNING
+  SUCCESS
+  FAILED
+  SKIPPED
+}
+
+enum PublicationStatus {
+  QUEUED
+  SENDING
+  SENT
+  MANUAL_PENDING
+  MANUAL_CONFIRMED
+  DRY_RUN
+  FAILED
+  CANCELLED
+}
+
+enum IntegrationProvider {
+  SHOPEE_AFFILIATE
+  WHATSAPP_CLOUD
+  TELEGRAM_BOT
+  ANTHROPIC
+}
+
+enum IntegrationStatus {
+  NOT_CONFIGURED
+  CONFIGURED
+  VERIFIED
+  ERROR
+}
+
+enum DataSource {
+  LIVE
+  SANDBOX
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  name         String
+  passwordHash String
+  role         Role       @default(VIEWER)
+  active       Boolean    @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  auditLogs    AuditLog[]
+}
+
+model Product {
+  id              String       @id @default(cuid())
+  /// Identificador do item na Shopee (itemId). Único por fonte.
+  externalId      String
+  shopId          String?
+  source          DataSource   @default(LIVE)
+  name            String
+  category        String
+  keyword         String?
+  shopName        String?
+  /// shopType bruto informado pela API (ex.: [1] = Mall). null = não informado.
+  shopType        Json?
+  imageUrl        String?
+  productLink     String?
+  currentPrice    Decimal?     @db.Decimal(12, 2)
+  /// Preço original derivado do desconto informado pela plataforma (null se não informado)
+  originalPrice   Decimal?     @db.Decimal(12, 2)
+  discountRate    Float?
+  discountSource  String?
+  rating          Float?
+  sales           Int?
+  commissionRate  Float?
+  commissionValue Decimal?     @db.Decimal(12, 2)
+  offerEndsAt     DateTime?
+  state           ProductState @default(PENDING)
+  score           Float?
+  scoreBreakdown  Json?
+  /// Campos que a API não forneceu (registrados como indisponíveis)
+  unavailableData String[]     @default([])
+  rejectionReason String?
+  retries         Int          @default(0)
+  lastError       String?
+  priority        Int          @default(0)
+  campaignId      String?
+  campaign        Campaign?    @relation(fields: [campaignId], references: [id])
+  firstSeenAt     DateTime     @default(now())
+  lastSeenAt      DateTime     @default(now())
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  prices         ProductPrice[]
+  reviews        ProductReview[]
+  affiliateLinks AffiliateLink[]
+  copies         GeneratedCopy[]
+  publications   Publication[]
+  stateHistory   ProductStateHistory[]
+
+  @@unique([source, externalId])
+  @@index([state])
+  @@index([category])
+  @@index([score])
+}
+
+model ProductStateHistory {
+  id        String        @id @default(cuid())
+  productId String
+  product   Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  fromState ProductState?
+  toState   ProductState
+  actor     String
+  reason    String?
+  createdAt DateTime      @default(now())
+
+  @@index([productId, createdAt])
+}
+
+model ProductPrice {
+  id            String   @id @default(cuid())
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  price         Decimal  @db.Decimal(12, 2)
+  priceMax      Decimal? @db.Decimal(12, 2)
+  discountRate  Float?
+  capturedAt    DateTime @default(now())
+
+  @@index([productId, capturedAt])
+}
+
+model ProductReview {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  rating      Float?
+  sales       Int?
+  capturedAt  DateTime @default(now())
+
+  @@index([productId, capturedAt])
+}
+
+model AffiliateLink {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url        String
+  /// Código curto para rastreamento de cliques próprio (/r/:code), opcional
+  trackCode  String   @unique
+  origin     String   // "offerLink" | "generateShortLink" | "sandbox"
+  clicks     Int      @default(0)
+  createdAt  DateTime @default(now())
+  clickLogs  ClickLog[]
+}
+
+model ClickLog {
+  id              String        @id @default(cuid())
+  affiliateLinkId String
+  affiliateLink   AffiliateLink @relation(fields: [affiliateLinkId], references: [id], onDelete: Cascade)
+  userAgentHash   String?
+  createdAt       DateTime      @default(now())
+
+  @@index([createdAt])
+}
+
+model GeneratedCopy {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  headline    String
+  description String
+  message     String
+  model       String   // modelo de IA usado ou "template"
+  promptVersion String
+  valid       Boolean  @default(false)
+  validationErrors String[] @default([])
+  createdAt   DateTime @default(now())
+  publications Publication[]
+
+  @@index([productId])
+}
+
+model Agent {
+  id           String      @id @default(cuid())
+  kind         AgentKind   @unique
+  name         String
+  identity     String
+  systemPrompt String
+  status       AgentStatus @default(IDLE)
+  currentTask  String?
+  lastRunAt    DateTime?
+  lastError    String?
+  updatedAt    DateTime    @updatedAt
+  executions   AgentExecution[]
+}
+
+model AgentExecution {
+  id          String          @id @default(cuid())
+  agentId     String
+  agent       Agent           @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  /// Chave de idempotência da tarefa (evita tarefas duplicadas)
+  taskKey     String?
+  task        String
+  status      ExecutionStatus @default(RUNNING)
+  input       Json?
+  output      Json?
+  error       String?
+  model       String?
+  attempts    Int             @default(1)
+  durationMs  Int?
+  startedAt   DateTime        @default(now())
+  finishedAt  DateTime?
+
+  @@index([agentId, startedAt])
+  @@index([taskKey])
+}
+
+model Campaign {
+  id         String    @id @default(cuid())
+  name       String
+  categories String[]
+  keywords   String[]
+  active     Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  products   Product[]
+}
+
+model Publication {
+  id             String            @id @default(cuid())
+  productId      String
+  product        Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
+  copyId         String
+  copy           GeneratedCopy     @relation(fields: [copyId], references: [id])
+  channel        String            // whatsapp_cloud | telegram | manual | dry_run
+  target         String?
+  /// Idempotência: um produto só pode ser publicado uma vez por canal/dia
+  idempotencyKey String            @unique
+  status         PublicationStatus @default(QUEUED)
+  externalId     String?
+  attempts       Int               @default(0)
+  scheduledFor   DateTime?
+  sentAt         DateTime?
+  error          String?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  logs           PublicationLog[]
+
+  @@index([status])
+  @@index([sentAt])
+}
+
+model PublicationLog {
+  id            String      @id @default(cuid())
+  publicationId String
+  publication   Publication @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+  level         String
+  message       String
+  meta          Json?
+  createdAt     DateTime    @default(now())
+
+  @@index([publicationId])
+}
+
+model DailyMetrics {
+  id                String   @id @default(cuid())
+  /// Data local (America/Sao_Paulo) no formato YYYY-MM-DD
+  date              String   @unique
+  goal              Int      @default(30)
+  researched        Int      @default(0)
+  approved          Int      @default(0)
+  rejected          Int      @default(0)
+  copiesGenerated   Int      @default(0)
+  published         Int      @default(0)
+  dryRunPublished   Int      @default(0)
+  failed            Int      @default(0)
+  clicks            Int      @default(0)
+  estimatedCommission Decimal @default(0) @db.Decimal(12, 2)
+  reportedCommission  Decimal? @db.Decimal(12, 2)
+  goalReached       Boolean  @default(false)
+  goalNote          String?
+  updatedAt         DateTime @updatedAt
+}
+
+model Integration {
+  id                   String              @id @default(cuid())
+  provider             IntegrationProvider @unique
+  status               IntegrationStatus   @default(NOT_CONFIGURED)
+  /// Credenciais criptografadas (AES-256-GCM). Nunca enviadas ao frontend.
+  encryptedCredentials String?
+  /// Configuração não sensível (ex.: groupId, chatId)
+  config               Json?
+  consentConfirmed     Boolean             @default(false)
+  consentBy            String?
+  consentAt            DateTime?
+  lastVerifiedAt       DateTime?
+  lastVerification     Json?
+  lastError            String?
+  updatedAt            DateTime            @updatedAt
+}
+
+model Setting {
+  key       String   @id
+  value     Json
+  updatedBy String?
+  updatedAt DateTime @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  target    String?
+  meta      Json?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model SystemLog {
+  id        String   @id @default(cuid())
+  level     String
+  source    String
+  message   String
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([source])
+}
