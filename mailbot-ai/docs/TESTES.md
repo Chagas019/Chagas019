@@ -28,7 +28,10 @@ Postgres 16 temporário + migration + stub do Supabase Auth: cada usuário só l
 | `GET /api/gmail/connect` sem login/banco | ✅ recusado (503), não inicia OAuth |
 | `GET /api/cron` sem segredo | ✅ 401 |
 | Cabeçalhos HSTS, `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy` | ✅ |
-| Chamada real à IA (sonda `/api/health?probe=…`) | ver seção 5 |
+| Chamada real à IA (sonda `/api/health?probe=…`) | ⚠️ token OIDC aceito e requisição chegou à Vercel AI Gateway; o gateway respondeu 403 `customer_verification_required` (exige cartão no time) |
 
 ## 5. Pendências que dependem de autorização externa
-Ver a lista objetiva no README (seção "Dependências externas").
+Ver a lista objetiva no README (seção "Dependências externas"): banco Supabase exclusivo (limite de projetos gratuitos), cliente OAuth do Google e cartão na AI Gateway.
+
+## 6. Não executado (depende das pendências acima)
+Login real, conexão Gmail real, sincronização com caixa real e respostas da IA em produção. Esses fluxos estão cobertos pelos testes automatizados com Gmail e IA simulados (seção 1) e serão verificados em produção assim que as pendências forem resolvidas.
