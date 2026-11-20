@@ -5,7 +5,7 @@
 <title>JESUS Remix — Frames</title>
 <!--
   JESUS Remix · André Castro — fonte editável das artes estáticas.
-  Uso: frames.html?f=capa|story|wide|post_data[&w=3000]
+  Uso: frames.html?f=capa|story|wide|post_data|feed45|story_em_breve|story_capa|story_hoje|cd_post|cd_story[&n=7][&w=3000]
   Todas as medidas de layout são escritas na grade nativa de cada formato
   (capa em grade 1080) e multiplicadas por --s (escala) quando renderizadas maiores.
 -->
@@ -38,7 +38,10 @@ canvas.grain{left:0;top:0;pointer-events:none}
 /* ---------- parâmetros ---------- */
 const Q = new URLSearchParams(location.search);
 const F = Q.get('f') || 'capa';
-const FORMATS = { capa:[1080,1080], story:[1080,1920], wide:[1920,1080], post_data:[1080,1080] };
+const FORMATS = { capa:[1080,1080], story:[1080,1920], wide:[1920,1080], post_data:[1080,1080],
+  feed45:[1080,1350], story_em_breve:[1080,1920], story_capa:[1080,1920], story_hoje:[1080,1920],
+  cd_post:[1080,1080], cd_story:[1080,1920] };
+const N = +(Q.get('n') || 7);              // countdown: dias restantes (7|5|3|1)
 const [BW,BH] = FORMATS[F];
 const OUTW = +(Q.get('w') || BW);
 const S = OUTW / BW;                       // escala de saída
@@ -215,6 +218,85 @@ post_data(){
   script('remix',{cx:660, top:716, size:80, rot:-6});
   mono('nas plataformas digitais',{cx:540, top:820, size:24, align:'center', track:0.16});
   mono('andré × castro',{cx:540, top:866, size:24, align:'center', track:0.16, weight:700});
+},
+
+/* ===== Fase 2 ===== */
+/* Instagram feed 4:5 — derivado da capa; conteúdo-chave dentro do recorte 3:4 central do grid */
+feed45(){
+  const s=svgLayer();
+  checker(s,{x:-14*S,y:0,w:250*S,h:H,cell:[122*S,124*S],A:20,B:8,lv:3.4,lu:2.2,ph:0.4,ph2:1.1,uMax:2,clip:[0,0,W,H]});
+  checker(s,{x:828*S,y:0,w:270*S,h:H,cell:[122*S,124*S],A:20,B:8,lv:3.4,lu:2.2,ph:2.3,ph2:0.2,offset:1,uMin:0,clip:[0,0,W,H]});
+  marks(540, 120, 50);
+  photo({cx:532, top:300, width:640});
+  title('JESUS',{cx:540, top:632, size:204, depth:14});
+  script('remix',{cx:560, top:758, size:192});
+  signature({cx:540, top:980, size:40});
+  mono('lançamento · 15.12.2026',{cx:540, top:1130, size:26, align:'center', track:0.24});
+},
+/* Story (a) EM BREVE */
+story_em_breve(){
+  const s=svgLayer();
+  checker(s,{x:-30*S,y:0,w:170*S,h:H,cell:[100*S,112*S],A:16,B:7,lv:3.6,lu:2.0,ph:0.9,ph2:0.4,uMax:2,clip:[0,0,W,H]});
+  checker(s,{x:910*S,y:0,w:200*S,h:H,cell:[100*S,112*S],A:16,B:7,lv:3.6,lu:2.0,ph:2.8,ph2:1.3,offset:1,uMin:0,clip:[0,0,W,H]});
+  marks(540, 300, 46);
+  photo({cx:532, top:404, width:740});
+  title('JESUS',{cx:540, top:784, size:196, depth:14});
+  script('remix',{cx:560, top:902, size:184});
+  el('div','',{left:px(390),top:px(1210),width:px(300),height:px(3),background:tok('branco'),opacity:.9});
+  title('EM BREVE',{cx:540, top:1258, size:118, depth:9, color:tok('branco')});
+  signature({cx:540, top:1516, size:40});
+},
+/* Story (b) capa apresentada como objeto */
+story_capa(){
+  const s=svgLayer();
+  checker(s,{x:0,y:-40*S,w:W,h:260*S,cell:[112*S,76*S],A:10,B:14,lv:2.0,lu:3.6,ph:0.3,ph2:0.8,vMax:3,clip:[0,0,W,H]});
+  checker(s,{x:0,y:1700*S,w:W,h:260*S,cell:[112*S,76*S],A:10,B:14,lv:2.0,lu:3.6,ph:1.6,ph2:2.2,offset:1,vMin:0,clip:[0,0,W,H]});
+  mono('lançamento',{cx:540, top:356, size:30, align:'center', track:0.32});
+  const cv=el('img','',{left:px(120),top:px(440),width:px(840),height:px(840),
+    boxShadow:`0 ${30*S}px ${60*S}px rgba(4,30,80,.55), ${14*S}px ${22*S}px 0 ${tok('azul-profundo')}`});
+  cv.src='../capa_3000.png';
+  title('15.12.2026',{cx:540, top:1366, size:104, depth:8, color:tok('branco')});
+  mono('nas plataformas digitais',{cx:540, top:1524, size:28, align:'center', track:0.16});
+},
+/* Story (d) HOJE — dia do lançamento */
+story_hoje(){
+  const s=svgLayer();
+  checker(s,{x:-30*S,y:0,w:170*S,h:H,cell:[100*S,112*S],A:16,B:7,lv:3.6,lu:2.0,ph:0.9,ph2:0.4,uMax:2,clip:[0,0,W,H]});
+  checker(s,{x:910*S,y:0,w:200*S,h:H,cell:[100*S,112*S],A:16,B:7,lv:3.6,lu:2.0,ph:2.8,ph2:1.3,offset:1,uMin:0,clip:[0,0,W,H]});
+  title('HOJE',{cx:540, top:290, size:236, depth:17, color:tok('branco')});
+  photo({cx:532, top:600, width:720});
+  title('JESUS',{cx:540, top:960, size:190, depth:14});
+  script('remix',{cx:560, top:1074, size:178});
+  el('div','',{left:px(390),top:px(1350),width:px(300),height:px(3),background:tok('branco'),opacity:.9});
+  mono('nas plataformas digitais',{cx:540, top:1388, size:30, align:'center', track:0.16});
+  signature({cx:540, top:1478, size:40});
+},
+/* Countdown post 1080×1080 — mesma família do post_data */
+cd_post(){
+  const s=svgLayer();
+  checker(s,{x:0,y:-40*S,w:W,h:150*S,cell:[112*S,76*S],A:10,B:14,lv:2.0,lu:3.6,ph:0.3,ph2:0.8,vMax:2,clip:[0,0,W,H]});
+  checker(s,{x:0,y:948*S,w:W,h:150*S,cell:[112*S,76*S],A:10,B:14,lv:2.0,lu:3.6,ph:1.6,ph2:2.2,offset:1,vMin:0,clip:[0,0,W,H]});
+  const one=N===1;
+  mono(one?'falta':'faltam',{cx:540, top:170, size:32, align:'center', track:0.32});
+  title(String(N),{cx:540, top:196, size:372, depth:24});
+  title(one?'DIA':'DIAS',{cx:540, top:652, size:96, depth:7, color:tok('branco')});
+  title('JESUS',{cx:540, top:784, size:76, depth:5});
+  script('remix',{cx:640, top:836, size:66, rot:-6});
+},
+/* Countdown story 1080×1920 */
+cd_story(){
+  const s=svgLayer();
+  checker(s,{x:-30*S,y:0,w:170*S,h:H,cell:[100*S,112*S],A:16,B:7,lv:3.6,lu:2.0,ph:0.9,ph2:0.4,uMax:2,clip:[0,0,W,H]});
+  checker(s,{x:910*S,y:0,w:200*S,h:H,cell:[100*S,112*S],A:16,B:7,lv:3.6,lu:2.0,ph:2.8,ph2:1.3,offset:1,uMin:0,clip:[0,0,W,H]});
+  const one=N===1;
+  marks(540, 300, 46);
+  mono(one?'falta':'faltam',{cx:540, top:380, size:40, align:'center', track:0.32});
+  title(String(N),{cx:540, top:430, size:620, depth:40});
+  title(one?'DIA':'DIAS',{cx:540, top:1130, size:130, depth:10, color:tok('branco')});
+  el('div','',{left:px(390),top:px(1325),width:px(300),height:px(3),background:tok('branco'),opacity:.9});
+  title('JESUS',{cx:540, top:1370, size:120, depth:9});
+  script('remix',{cx:610, top:1448, size:110, rot:-6});
+  mono('15.12.2026',{cx:540, top:1600, size:28, align:'center', track:0.32});
 }
 };
 L[F]();
