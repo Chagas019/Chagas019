@@ -35,3 +35,13 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)("repos postgres", () => {
     }
   });
 });
+
+describe("sslFor com CA do Supabase", () => {
+  it("pooler do Supabase usa a CA fixada com verificação ligada", async () => {
+    const { sslFor } = await import("../../src/server/repos/postgres.js");
+    const s = sslFor("postgresql://u:p@aws-1-sa-east-1.pooler.supabase.com:6543/postgres", {}) as { rejectUnauthorized: boolean; ca?: string };
+    expect(s.rejectUnauthorized).toBe(true);
+    expect(s.ca).toContain("BEGIN CERTIFICATE");
+    expect((sslFor("postgresql://u:p@db.example.com/x", {}) as { ca?: string }).ca).toBeUndefined();
+  });
+});

@@ -1,4 +1,5 @@
 import pg from "pg";
+import { SUPABASE_ROOT_CA_2021 } from "./supabaseCa.js";
 import type {
   AuditEvent, Conversation, Device, IntegrationToken, JarvisTask, Memory, MemoryKind, Message, Repos, UsageRecord,
 } from "../../core/types.js";
@@ -37,7 +38,11 @@ export function sslFor(url: string, env: NodeJS.ProcessEnv = process.env): pg.Po
   let host = "";
   try { host = new URL(url).hostname.toLowerCase(); } catch { /* URL inválida: trata como remoto (TLS verificado) */ }
   if (host === "localhost" || host === "127.0.0.1" || host === "[::1]" || host === "::1") return undefined;
-  return { rejectUnauthorized: env.PGSSL_NO_VERIFY !== "1" };
+  if (env.PGSSL_NO_VERIFY === "1") return { rejectUnauthorized: false };
+  // Supabase assina o Postgres/pooler com CA própria: confia somente nela (além de DATABASE_CA, se definido).
+  if (env.DATABASE_CA) return { rejectUnauthorized: true, ca: env.DATABASE_CA };
+  if (host.endsWith(".supabase.com") || host.endsWith(".supabase.co")) return { rejectUnauthorized: true, ca: SUPABASE_ROOT_CA_2021 };
+  return { rejectUnauthorized: true };
 }
 
 /**
