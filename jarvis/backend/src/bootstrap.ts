@@ -22,7 +22,7 @@ async function loadIntegrationPlugins(deps: Record<string, unknown>): Promise<Fa
 /** Monta o app completo (usado pelo servidor local e pela função serverless). */
 export async function createJarvisApp(env: NodeJS.ProcessEnv = process.env): Promise<FastifyInstance> {
   const config = loadConfig(env);
-  const repos = config.databaseUrl ? createPostgresRepos(config.databaseUrl) : createMemoryRepos();
+  const repos = config.databaseUrl ? createPostgresRepos(config.databaseUrl, { schema: config.databaseSchema }) : createMemoryRepos();
   const tools = createToolRegistry();
   const orchestrator = createOrchestrator({ repos, tools, env });
   const plugins = await loadIntegrationPlugins({ repos, config, tools, orchestrator, env });

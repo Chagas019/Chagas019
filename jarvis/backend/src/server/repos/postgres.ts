@@ -44,10 +44,15 @@ export function sslFor(url: string, env: NodeJS.ProcessEnv = process.env): pg.Po
  * Repos Postgres (Supabase, conexão de serviço). SQL sempre parametrizado e filtrado por user_id.
  * Exceção: messages.list/touch operam por conversation_id — o chamador (rotas) valida a posse da conversa antes.
  */
-export function createPostgresRepos(poolOrUrl: pg.Pool | string): Repos & { pool: pg.Pool; close(): Promise<void> } {
+export function createPostgresRepos(poolOrUrl: pg.Pool | string, opts: { schema?: string } = {}): Repos & { pool: pg.Pool; close(): Promise<void> } {
   const pool = typeof poolOrUrl === "string"
     ? new pg.Pool({ connectionString: poolOrUrl, max: 5, ssl: sslFor(poolOrUrl) })
     : poolOrUrl;
+  // Schema dedicado (ex.: "jarvis") num banco compartilhado. Exige conexão direta ou pooler em modo sessão
+  // (porta 5432); no modo transação (6543) o SET não é garantido entre consultas.
+  const schema = opts.schema ?? "public";
+  if (!/^[a-z_][a-z0-9_]{0,62}$/.test(schema)) throw new Error("schema inválido");
+  if (schema !== "public") pool.on("connect", (c) => { void c.query(`set search_path to ${schema}, public`); });
   const q = async (text: string, params: unknown[] = []): Promise<Row[]> => (await pool.query(text, params)).rows;
 
   return {

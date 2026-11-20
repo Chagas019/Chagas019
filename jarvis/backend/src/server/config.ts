@@ -11,6 +11,9 @@ const EnvSchema = z.object({
   SUPABASE_URL: z.preprocess(emptyToUndef, z.string().url().optional()),
   SUPABASE_JWT_SECRET: optStr,
   JARVIS_DEV_TOKEN: optStr,
+  JARVIS_OWNER_TOKEN: optStr,
+  JARVIS_OWNER_ID: optStr,
+  DATABASE_SCHEMA: optStr,
   JARVIS_ENCRYPTION_KEY: optStr,
   AI_DAILY_BUDGET_USD: z.preprocess(emptyToUndef, z.coerce.number().positive().default(1)),
   CORS_ORIGINS: optStr,
@@ -23,6 +26,9 @@ export interface Config {
   isProduction: boolean;
   /** Token de dev só vale com NODE_ENV explícito "development" ou "test". */
   devTokenAllowed: boolean;
+  ownerToken?: string;
+  ownerId: string;
+  databaseSchema: string;
   databaseUrl?: string;
   supabaseUrl?: string;
   supabaseJwtSecret?: string;
@@ -55,8 +61,13 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   } else if (isProduction) {
     throw new Error("Configuração inválida: JARVIS_ENCRYPTION_KEY é obrigatória em produção.");
   }
-  if (isProduction && !e.SUPABASE_URL && !e.SUPABASE_JWT_SECRET) {
-    throw new Error("Configuração inválida: defina SUPABASE_URL e/ou SUPABASE_JWT_SECRET em produção.");
+  if (e.JARVIS_OWNER_TOKEN && e.JARVIS_OWNER_TOKEN.length < 32) {
+    throw new Error("Configuração inválida: JARVIS_OWNER_TOKEN deve ter ao menos 32 caracteres.");
+  }
+  const databaseSchema = e.DATABASE_SCHEMA ?? "public";
+  if (!/^[a-z_][a-z0-9_]{0,62}$/.test(databaseSchema)) throw new Error("Configuração inválida: DATABASE_SCHEMA inválido.");
+  if (isProduction && !e.SUPABASE_URL && !e.SUPABASE_JWT_SECRET && !e.JARVIS_OWNER_TOKEN) {
+    throw new Error("Configuração inválida: defina SUPABASE_URL/SUPABASE_JWT_SECRET ou JARVIS_OWNER_TOKEN em produção.");
   }
 
   return {
@@ -68,6 +79,9 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     supabaseUrl: e.SUPABASE_URL,
     supabaseJwtSecret: e.SUPABASE_JWT_SECRET,
     devToken: e.JARVIS_DEV_TOKEN,
+    ownerToken: e.JARVIS_OWNER_TOKEN,
+    ownerId: e.JARVIS_OWNER_ID ?? "owner",
+    databaseSchema,
     encryptionKey,
     dailyBudgetUsd: e.AI_DAILY_BUDGET_USD,
     corsOrigins: (e.CORS_ORIGINS ?? "").split(",").map((s) => s.trim()).filter(Boolean),

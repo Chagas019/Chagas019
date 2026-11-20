@@ -16,7 +16,7 @@ function safeEqual(a: string, b: string): boolean {
  * Cria o verificador de Bearer. Retorna null se inválido (nunca lança).
  * JWT Supabase: HS256 (SUPABASE_JWT_SECRET) ou assimétrico via JWKS remoto (SUPABASE_URL).
  */
-export function createAuthenticator(config: Pick<Config, "supabaseUrl" | "supabaseJwtSecret" | "devToken" | "isProduction"> & { devTokenAllowed?: boolean }) {
+export function createAuthenticator(config: Pick<Config, "supabaseUrl" | "supabaseJwtSecret" | "devToken" | "isProduction"> & { devTokenAllowed?: boolean; ownerToken?: string; ownerId?: string }) {
   const secret = config.supabaseJwtSecret ? new TextEncoder().encode(config.supabaseJwtSecret) : undefined;
   let jwks: JWTVerifyGetKey | undefined;
   if (config.supabaseUrl) {
@@ -33,6 +33,8 @@ export function createAuthenticator(config: Pick<Config, "supabaseUrl" | "supaba
     const token = m[1]!;
 
     if (devEnabled && safeEqual(token, config.devToken!)) return { userId: DEV_USER_ID };
+    // Modo pessoal (um único dono): token estático longo, válido também em produção.
+    if (config.ownerToken && safeEqual(token, config.ownerToken)) return { userId: config.ownerId ?? "owner" };
 
     try {
       const { alg } = decodeProtectedHeader(token);

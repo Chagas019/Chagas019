@@ -49,3 +49,12 @@ describe("config", () => {
     expect(c.rateLimitPerMin).toBe(60);
   });
 });
+
+describe("token do dono (modo pessoal)", () => {
+  const ownerToken = "o".repeat(40);
+  it("aceita em produção e mapeia para ownerId", async () => {
+    const auth = createAuthenticator({ isProduction: true, ownerToken, ownerId: "eu" });
+    expect(await auth(`Bearer ${ownerToken}`)).toEqual({ userId: "eu" });
+    expect(await auth(`Bearer ${"x".repeat(40)}`)).toBeNull();
+  });
+});
