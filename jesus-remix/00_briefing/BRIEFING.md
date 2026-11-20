@@ -4,8 +4,8 @@ Lançamento: **15.12.2026** · Campanha visual + motion
 ## Status das fases
 | Fase | Status |
 |---|---|
-| 1. Estrutura, equipe, identidade, proposta visual | ✅ entregue para aprovação |
-| 2. Produção completa (estáticos + motion sem áudio) | ⏳ aguarda aprovação |
+| 1. Estrutura, equipe, identidade, proposta visual | ✅ aprovada (fonte A) |
+| 2. Produção completa (estáticos + motion sem áudio) | 🔄 em produção |
 | 3. Sincronização com a música | ⏳ aguarda arquivo de áudio |
 | 4. QA final + entregas | ⏳ |
 
