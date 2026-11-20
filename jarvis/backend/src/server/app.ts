@@ -106,7 +106,7 @@ export async function buildApp(opts: BuildAppOptions): Promise<FastifyInstance> 
       code = status === 404 ? "not_found" : "bad_request";
       message = err.statusCode === 413 ? "Corpo excede 32KB." : "Requisição inválida.";
     }
-    if (status >= 500) req.log.error({ err: { message: err.message, name: err.name } }, "erro não tratado");
+    if (status >= 500 && !(err instanceof AppError) && !(err instanceof ProvidersFailedError)) req.log.error({ err: { message: err.message, name: err.name } }, "erro não tratado");
     return reply.code(status).send({ error: { code, message } });
   });
   app.setNotFoundHandler((_req, reply) => reply.code(404).send({ error: { code: "not_found", message: "Rota não encontrada." } }));
