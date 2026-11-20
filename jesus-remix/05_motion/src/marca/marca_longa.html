@@ -48,12 +48,13 @@ svg{overflow:visible}
 /* ═════════════ Tempo — grade do beatmap.json (arquivo inteiro) ═════════════ */
 const BPM = 133.03, BEAT = 60 / BPM, OFFSET = 0.087;
 const FPS = 30, DURATION = 886 / FPS;              // 29,533 s (áudio 29,538 s)
-const T = b => OFFSET + b * BEAT;                  // batida → segundos
+const TRAW = b => OFFSET + b * BEAT;               // batida → segundos (grade do beatmap)
+const T = b => Math.round(TRAW(b) * FPS) / FPS - 1e-4;   // ... quantizada ao quadro mais próximo: toda ação começa/termina NO quadro da batida
 const IMPACTOS = [0.035, 2.612, 3.866, 4.412, 6.281, 6.734, 7.407, 8.684, 12.225, 14.791, 15.697, 17.566, 18.483, 19.412, 19.876,
   20.329, 20.793, 21.258, 21.722, 23.081, 23.545, 24.218, 24.903, 25.588, 28.642, 29.327];   // beatmap.json → impactos
-const CUT = b => Math.round(T(b) * FPS) / FPS - 1e-4;   // corte no quadro mais próximo da batida
+const CUT = T;
 const SYNC = [];                                   // log de ações (QA de sincronia)
-const ev = (name, b) => { SYNC.push({ name, b, t: +T(b).toFixed(3) }); return T(b); };
+const ev = (name, b) => { SYNC.push({ name, b, t: +TRAW(b).toFixed(3), f: Math.round(TRAW(b) * FPS) }); return T(b); };
 window.FPS = FPS; window.DURATION = DURATION; window.MARCA = { modo: 'longa', AUDIO_IN: 0, BPM, SYNC };
 
 const FMT = JR.format(), W = FMT.W, H = FMT.H, KIND = FMT.kind;
@@ -227,7 +228,7 @@ const BB = LET.map(L => bbox(L.cont));
 
 // ── estados de edição (todos terminam na geometria aprovada) ──
 const E_OFF0 = [230, -170];
-const offE = t => { const k = p3io(PB(t, 18.5, 19.5)); return [E_OFF0[0] * (1 - k), E_OFF0[1] * (1 - k)]; };
+const offE = t => { const k = p3o(PB(t, 18.5, 19.5)); return [E_OFF0[0] * (1 - k), E_OFF0[1] * (1 - k)]; };
 const KERN = [240, 180, 120, 60, 0], KB = [25, 25.5, 26, 26.5];
 const kernVal = t => { let v = KERN[0]; KB.forEach((b, i) => { v -= (KERN[i] - KERN[i + 1]) * eo(P(t, T(b), .16)); }); return v; };
 // âncora do S que será girada: suave (C dos dois lados), metade de cima, alças longas
@@ -470,7 +471,7 @@ ev('título JESUS entra', 60); ev('remix entra', 60.5); ev('✕ chega na posiç�
 /* — flash + grão — */
 const flash = el(stage, 'div', 'ly', { background: '#ffffff', opacity: 0 });
 const grn = JR.grain(stage, W, H);
-grn.c.style.opacity = .09;
+grn.c.style.opacity = FMT.q.get('nograin') ? 0 : .09;   // ?nograin=1 só para o QA de sincronia
 
 /* ═════════════ Render(t) ═════════════ */
 const ALL = [S1, S2, S3, S4, S6, S7];
@@ -488,6 +489,8 @@ function render(t) {
   else { show(S7); s7(t); }
   // flashes de impacto: 2 quadros cheios + 3 de decaimento (b4 e clímax b60)
   for (const b of [4, 60]) { const f = (t - CUT(b)) * FPS; if (f >= -0.01 && f < 5) fl = Math.max(fl, f < 2 ? 1 : 1 - (f - 2) / 3); }
+  // compasso de entrada da grade (b36): micro-flash de 2 quadros
+  { const f = (t - CUT(36)) * FPS; if (f >= -0.01 && f < 2) fl = Math.max(fl, .22); }
   // micro-flash nos impactos da frase B (14,52 → 25,3)
   for (const x of IMPACTOS) if (x > T(32.5) && x < T(56)) { const f = (t - x) * FPS; if (f >= 0 && f < 2) fl = Math.max(fl, .16); }
   flash.style.opacity = fl.toFixed(3);
@@ -526,7 +529,7 @@ function s3(t) {
     backgroundSize: `${gs}px ${gs}px`, backgroundPosition: `${gx.toFixed(1)}px ${gy.toFixed(1)}px`, opacity: (1 - PB(t, 30, 31)).toFixed(3) });
   // preenchimento / extrusão
   FILLB.forEach((b, i) => { const on = t >= CUT(b) ? 1 : 0; fG[i].style.opacity = on; fM[i].style.opacity = on ? p2io(PB(t, b, b + .5)).toFixed(3) : 0; });
-  let nV = 0; EXB.forEach(b => { nV += 6 * eo(P(t, T(b), .2)); });
+  let nV = 0; EXB.forEach(b => { if (t >= T(b)) nV += 6; });   // cada passo de extrusão (6 camadas) entra NO quadro da meia-batida
   extLayers.forEach((L, i) => { const v = clamp(nV - i); L.style.visibility = v > 0 ? 'visible' : 'hidden'; L.style.opacity = v.toFixed(3); });
   cam3.style.display = t >= CUT(28) ? 'block' : 'none';
   // painel
@@ -639,7 +642,8 @@ function overlay(t) {
     o += `<path d="${g.map(c => contD(c, proj)).join('')}" fill="none" stroke="${t >= T(22) ? C_BLUE : lineCol}" stroke-width="${(sw0 * 1.4).toFixed(2)}"/>`;
     const c0 = g[0], cpt = cursorAt(t).pt;
     for (let si = 0; si < c0.length; si++) { const A = c0[si].p[0], pA = proj(A); const d = Math.hypot(pA[0] - cpt[0], pA[1] - cpt[1]);
-      const hov = Math.max(0, 1 - d / (34 * US)), sel = si === MORPH.si && t >= T(22);
+      const hovOn = (A === An1 && t >= T(21) && t < T(21.5)) || (A === An2 && t >= T(21.5) && t < T(22)) || (si === MORPH.si && t >= T(22) && t < T(22.5));
+      const hov = hovOn ? 1 : 0, sel = si === MORPH.si && t >= T(22);
       o += sq(pA, { fill: sel ? C_BLUE : (hov > .1 ? '#ffffff' : '#0d1020'), stroke: hov > .1 ? '#ffffff' : C_BLUE, sc: 1 + .45 * hov, glow: hov > .1 ? C_MAG : null }); }
     if (t >= T(22)) { const s = c0[MORPH.si], pv = c0[MORPH.prev];
       o += hdl(proj(s.p[0]), proj(s.p[1])) + hdl(proj(s.p[0]), proj(pv.p[2]));
@@ -684,8 +688,8 @@ function s4(t) {
   const shx = 6 * U * sh * Math.sin(tl * 97), shy = 4 * U * sh * Math.cos(tl * 83);
   const textW = lockW.reduce((a, b) => a + b, 0);
   let off = 0, gulp = 0;
-  LOCKB.forEach((b, i) => { const d = lockW[i] + (i === 0 ? gap : 0); off += d * eio(PB(t, b, b + .5));
-    const a = t - T(b + .5); if (a >= 0 && a < .16) gulp = Math.max(gulp, 1 - a / .16); });
+  LOCKB.forEach((b, i) => { const d = lockW[i] + (i === 0 ? gap : 0); off += d * p3o(PB(t, b, b + .5));
+    const a = t - T(b); if (a >= 0 && a < .2) gulp = Math.max(gulp, 1 - a / .2); });   // ✕ "engole" no quadro da meia-batida
   const allIn = t >= T(35.5) - 1e-3;
   const totalW = mk + gap + textW - Math.min(off, textW + gap);
   const kr = p3io(PB(t, 35.5, 36));
@@ -745,7 +749,7 @@ function grid(t) {
 function s6(t) {
   const k = PB(t, 56, 57), e = p2i(k);
   const sMax = 1.25 * (W + H) / (Math.SQRT2 * XW);
-  wpG.setAttribute('transform', `translate(${cx} ${cy}) rotate(${lerp(-38, 0, eo(k)).toFixed(2)}) scale(${lerp(.9 * U, sMax, e).toFixed(4)})`);
+  wpG.setAttribute('transform', `translate(${cx} ${cy}) rotate(${lerp(-38, 0, eo(k)).toFixed(2)}) scale(${lerp(1.6 * U, sMax, e).toFixed(4)})`);
 }
 /* S7 — estúdio (corte seco b57) → clímax b60 */
 function s7(t) {
