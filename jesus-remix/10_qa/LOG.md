@@ -9,3 +9,4 @@
 - 2026-11-20 Editor/SD/VFX: teaser 3 formatos 29,53 s; reels 15,63 s; countdown 7/5/3/1 5 s; visualizer 16:9 e 9:16 29,53 s (energia do WAV real). Impactos ≤1 quadro. SHA-256 do WAV OK. Safe zone reels OK.
 - 2026-11-20 QA Diretor de Pós: quadros-chave revisados (teaser, reels, motion), sem texto inventado, data correta no quadro final. Aprovado → 99_entregas. Decisões abertas com cliente: frase A só com esfera/palco; peso do grão (tamanho dos arquivos); thumb YouTube dedicado.
 - 2026-11-20 Cliente pediu vinheta/animação de logo no estilo motion_ref2 (mascote flat construído por manchas líquidas + inversão para lettering). Motion produzindo: ilustração vetorial do André + vinheta 3 formatos.
+- 2026-11-20 Cliente enviou referência 3 (animação de marca: símbolo cromado 3D, bezier visível, tela azul chapada, padrão de ícones, wipe). Segundo motion designer produzindo animação de marca do ✕ em paralelo à vinheta do mascote.
