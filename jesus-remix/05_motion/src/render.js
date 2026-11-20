@@ -14,7 +14,8 @@ async function open(scene, W, H) {
   const browser = await chromium.launch({ args: ['--allow-file-access-from-files', '--disable-gpu-vsync'] });
   const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 });
   page.on('pageerror', e => { console.error('PAGE ERROR', e.message); process.exitCode = 2; });
-  await page.goto('file://' + path.resolve(__dirname, scene) + `?render=1&w=${W}&h=${H}`);
+  const [file, qs] = scene.split('?');   // aceita parâmetros extras: cena.html?modo=longa
+  await page.goto('file://' + path.resolve(__dirname, file) + `?render=1&w=${W}&h=${H}` + (qs ? '&' + qs : ''));
   await page.evaluate(() => window.ready);
   return { browser, page };
 }
@@ -28,7 +29,7 @@ const shot = (page, W, H, file) => page.screenshot({ path: file, clip: { x: 0, y
     const { browser, page } = await open(scene, W, H);
     for (const t of times.split(',').map(Number)) {
       await page.evaluate(t => window.seek(t), t);
-      await shot(page, W, H, path.join(dir, `${path.basename(scene, '.html')}_${W}x${H}_t${t.toFixed(3)}.png`));
+      await shot(page, W, H, path.join(dir, `${path.basename(scene.split('?')[0], '.html')}_${W}x${H}_t${t.toFixed(3)}.png`));
     }
     await browser.close(); return;
   }

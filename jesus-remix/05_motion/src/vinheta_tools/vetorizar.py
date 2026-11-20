@@ -105,6 +105,15 @@ def main(out, q_dark=.36, q_mid=.28):
     dark = clean(dark, 17, 1500, 3000) & base
     mid = clean(mid, 41, 6000, 4000) & base & (1 - dark)
     light = clean(light, 25, 2500, 600) & dark
+    # limpeza dedicada da região das mãos: sem brilhos soltos, sem fragmentos; só dedos e contorno
+    h = base.shape[0]; hands = np.zeros_like(base); hands[int(h * .60):] = 1
+    light = light & (1 - hands)
+    dh = clean(dark & hands, 25, 4000, 6000)          # escuro (camisa + vãos dos dedos) suavizado
+    # vãos dos dedos: mantém só traços longos (área mínima maior) dentro da pele
+    skin_h = hands & base & (1 - dh)
+    skin_h = clean(skin_h, 21, 8000, 3000)              # pele das mãos sem lascas/ilhas
+    dark = (dark & (1 - hands)) | (hands & base & (1 - skin_h))
+    mid = mid & (1 - hands)
     W, H = (CROP[2] - CROP[0]), (CROP[3] - CROP[1])
     paths = {k: trace(v) for k, v in dict(base=base, mid=mid, dark=dark, shine=light).items()}
     import aura

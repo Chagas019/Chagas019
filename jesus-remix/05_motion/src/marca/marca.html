@@ -61,15 +61,15 @@ const LAYOUTS = {
   square: { s1: 470, s2: 330, word: { font: 1000, k0: .44, k1: .78, f0: .30, f1: .60, fy: .52 },
     lock: { mark: 112, text: 64, gap: 34 }, grid: { cell: 150 },
     fin: { x: 540, y: 420, size: 400, title: { cx: 540, top: 744, size: 104 }, remix: { cx: 600, top: 818, size: 74 },
-      date: { cx: 540, top: 990, size: 22 } } },
+      date: { cx: 540, top: 990, size: 24 } } },
   story: { s1: 560, s2: 390, word: { font: 1000, k0: .56, k1: .98, f0: .30, f1: .60, fy: .52 },
     lock: { mark: 116, text: 62, gap: 32 }, grid: { cell: 150 },
     fin: { x: 540, y: 780, size: 500, title: { cx: 540, top: 1196, size: 132 }, remix: { cx: 610, top: 1290, size: 94 },
-      date: { cx: 540, top: 1590, size: 26 } } },
+      date: { cx: 540, top: 1590, size: 30 } } },
   wide: { s1: 470, s2: 330, word: { font: 1000, k0: .44, k1: .80, f0: .26, f1: .60, fy: .52 },
     lock: { mark: 132, text: 78, gap: 40 }, grid: { cell: 150 },
-    fin: { x: 700, y: 500, size: 440, title: { left: 1050, top: 392, size: 124 }, remix: { left: 1150, top: 480, size: 88 },
-      date: { left: 1058, top: 650, size: 24 } } },
+    fin: { x: 680, y: 500, size: 440, title: { left: 1090, top: 392, size: 124 }, remix: { left: 1190, top: 480, size: 88 },
+      date: { left: 1098, top: 650, size: 26 } } },
 };
 const LY = LAYOUTS[KIND];
 
@@ -196,8 +196,8 @@ const S3 = scene('#030409');
 el(S3, 'div', 'ly', { background: 'radial-gradient(ellipse 60% 80% at 10% 20%, rgba(3,122,244,.22), rgba(0,0,0,0) 65%), radial-gradient(ellipse 50% 60% at 95% 90%, rgba(248,51,248,.10), rgba(0,0,0,0) 65%)' });
 const s3Root = el(S3, 'div', 'ly', { perspective: 1700 * U + 'px', perspectiveOrigin: '50% 50%' });
 const WD = buildWord(s3Root, LY.word);
-const cursor = el(S3, 'div', 'abs', { left: 0, top: 0, width: 40 * U + 'px', height: 52 * U + 'px', filter: `drop-shadow(0 ${3 * U}px ${5 * U}px rgba(0,0,0,.6))` },
-  `<svg viewBox="0 0 20 26" width="${40 * U}" height="${52 * U}"><path d="M1 1 L1 20.5 L5.8 16.3 L9.2 24.2 L12.6 22.7 L9.3 15 L15.6 15 Z" fill="#f4f6fb" stroke="#0b0b14" stroke-width="1.2" stroke-linejoin="round"/></svg>`);
+const cursor = el(S3, 'div', 'abs', { left: 0, top: 0, width: 50 * U + 'px', height: 65 * U + 'px', filter: `drop-shadow(0 ${3 * U}px ${5 * U}px rgba(0,0,0,.6))` },
+  `<svg viewBox="0 0 20 26" width="${50 * U}" height="${65 * U}"><path d="M1 1 L1 20.5 L5.8 16.3 L9.2 24.2 L12.6 22.7 L9.3 15 L15.6 15 Z" fill="#f4f6fb" stroke="#0b0b14" stroke-width="1.2" stroke-linejoin="round"/></svg>`);
 
 function buildWord(parent, o) {
   const G = window.GLIFOS, fs = o.font * U, sc = fs / G.upm, SX = .8 * sc, SY = 1.16 * sc;
@@ -313,7 +313,7 @@ const rm = F.remix;
 const remix = JR.script(txt, 'remix', rm.left != null ? { left: rm.left, top: rm.top, size: rm.size * U } : { cx: rm.cx, top: rm.top, size: rm.size * U });
 if (KIND !== 'wide') { remix.wrap.style.left = rm.cx + 'px'; remix.wrap.style.top = rm.top + 'px'; }
 const dt = F.date;
-const date = JR.mono(txt, '15.12.2026', { size: dt.size * U, weight: 300, track: .32, top: dt.top, cx: dt.cx, left: dt.left, align: dt.cx != null ? 'center' : 'left', color: 'rgba(249,249,249,.78)' });
+const date = JR.mono(txt, '15.12.2026', { size: dt.size * U, weight: 300, track: .32, top: dt.top, cx: dt.cx, left: dt.left, align: dt.cx != null ? 'center' : 'left', color: 'rgba(249,249,249,.86)' });
 
 /* — flash + grão — */
 const flash = el(stage, 'div', 'ly', { background: '#ffffff', opacity: 0 });
@@ -333,7 +333,7 @@ function render(t) {
   else if (t < c2) { show(S2); s2(t - c1); }
   else if (t < DROP) { show(S3); s3(t - c2, DROP - c2); }
   else if (t < c12) { show(S4); s4(t); }
-  else if (t < c13 + .5) { if (t < c13) { show(S4, S6); s4(t); s6(t); } else { show(S7); s7(t); fl = 1 - eo(P(t, c13, .45)); fl = fl * fl; } }
+  else if (t < c13 + .5) { if (t < c13) { show(S4, S6); s4(t); s6(t); } else { show(S7); s7(t); fl = Math.pow(1 - P(t, c13, .24), 2.6); } }
   else { show(S7); s7(t); }
   // flash branco de 2 quadros no b1 (linguagem: impacto = flash 2q), decai em 3
   const f1 = (t - c1) * FPS; if (f1 >= -0.01 && f1 < 5) fl = Math.max(fl, f1 < 2 ? 1 : 1 - (f1 - 2) / 3);
@@ -400,12 +400,12 @@ function s4(t) {
   const allIn = off >= textW + gap - .5;
   const totalW = mk + gap + textW - off;
   // ✕ sozinho: gira 90° e encolhe até o ícone central da grade (b7.25 → b8)
-  const kr = p3i(P(t, B(7.25), B(.75)));
+  const kr = p3i(P(t, B(7.4), B(.6)));
   const mScale = lerp(1, ICON * 1.22 / mk, kr) * (1 + .08 * Math.sin(Math.PI * P(t, B(7.4), B(.45))));
   const left = cx - totalW / 2;
   const mx = left + mk / 2, my = cy;
   const sMark = (1 + .04 * imp) * mScale * (1 + .06 * gulp);
-  const rot = 83 * eo(P(t, B(7.25), B(.75)));
+  const rot = 83 * eo(P(t, B(7.4), B(.45)));
   const S = lk.mark * U * 1.2;
   lockMark.style.left = (mx - S / 2) + 'px'; lockMark.style.top = (my - S / 2) + 'px';
   lockMark.style.transform = `scale(${sMark.toFixed(4)}) rotate(${rot.toFixed(2)}deg)`;
