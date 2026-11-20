@@ -18,7 +18,7 @@ o "remix" é manuscrito, vivo, quase um gesto de mão — a assinatura do remix 
 Regra 60/25/10/5: azul / amarelo / magenta / branco.
 
 ## Tipografia
-- **JESUS** — Dela Gothic One (peso bloco, cortes retos), extrusão sólida azul-profundo 6–8% da altura da letra, deslocada para baixo-direita.
+- **JESUS** — EM APROVAÇÃO: (A) Dela Gothic One comprimida 0.8×1.16 (estáticos) ou (B) Bungee esticada 1.32× vertical (motion). Uma só será adotada em todas as peças, extrusão sólida azul-profundo 6–8% da altura da letra, deslocada para baixo-direita.
 - **remix** — Yellowtail (script contínuo), branco, rotação −6°, sobrepondo a base do título.
 - **ANDRÉ × CASTRO / datas / UI** — Roboto Mono 300/400, caixa alta, tracking +6%.
 - Números do countdown — Dela Gothic One.
