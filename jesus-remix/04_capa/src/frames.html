@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>JESUS Remix — Frames</title>
+<!--
+  JESUS Remix · André Castro — fonte editável das artes estáticas.
+  Uso: frames.html?f=capa|story|wide|post_data|feed45|story_em_breve|story_capa|story_hoje|cd_post|cd_story[&n=7][&w=3000]
+  Todas as medidas de layout são escritas na grade nativa de cada formato
+  (capa em grade 1080) e multiplicadas por --s (escala) quando renderizadas maiores.
+-->
+<style>
+@font-face{font-family:"Dela Gothic One";src:url(../../02_identidade/fontes/dela-gothic-one-latin-400-normal.woff2) format("woff2");}
+@font-face{font-family:"Yellowtail";src:url(../../02_identidade/fontes/yellowtail-latin-400-normal.woff2) format("woff2");}
+@font-face{font-family:"Roboto Mono";font-weight:300;src:url(../../02_identidade/fontes/roboto-mono-latin-300-normal.woff2) format("woff2");}
+@font-face{font-family:"Roboto Mono";font-weight:400;src:url(../../02_identidade/fontes/roboto-mono-latin-400-normal.woff2) format("woff2");}
+@font-face{font-family:"Roboto Mono";font-weight:700;src:url(../../02_identidade/fontes/roboto-mono-latin-700-normal.woff2) format("woff2");}
+
+:root{
+  --azul:#037AF4; --azul-profundo:#0A4F96; --amarelo:#EAC11A;
+  --magenta:#F833F8; --branco:#F9F9F9; --tinta:#0B0B14;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#000}
+#art{position:relative;overflow:hidden;background:var(--azul)}
+#art > *{position:absolute}
+.svgfull{left:0;top:0}
+.title{font-family:"Dela Gothic One";color:var(--magenta);line-height:1;white-space:nowrap;letter-spacing:-0.01em}
+.script{font-family:"Yellowtail";color:var(--branco);line-height:1;white-space:nowrap}
+.mono{font-family:"Roboto Mono";color:var(--branco);text-transform:uppercase;white-space:nowrap}
+.photo{display:block}
+canvas.grain{left:0;top:0;pointer-events:none}
+</style>
+</head>
+<body>
+<div id="art"></div>
+<script>
+/* ---------- parâmetros ---------- */
+const Q = new URLSearchParams(location.search);
+const F = Q.get('f') || 'capa';
+const FORMATS = { capa:[1080,1080], story:[1080,1920], wide:[1920,1080], post_data:[1080,1080],
+  feed45:[1080,1350], story_em_breve:[1080,1920], story_capa:[1080,1920], story_hoje:[1080,1920],
+  cd_post:[1080,1080], cd_story:[1080,1920] };
+const N = +(Q.get('n') || 7);              // countdown: dias restantes (7|5|3|1)
+const [BW,BH] = FORMATS[F];
+const OUTW = +(Q.get('w') || BW);
+const S = OUTW / BW;                       // escala de saída
+const W = BW*S, H = BH*S;
+const art = document.getElementById('art');
+art.style.width = W+'px'; art.style.height = H+'px';
+const C = getComputedStyle(document.documentElement);
+const tok = n => C.getPropertyValue('--'+n).trim();
+const NS = 'http://www.w3.org/2000/svg';
+const PHOTO = '../../03_assets/foto/artista_recorte.png'; // 1080×796, base cortada
+
+/* ---------- utilidades ---------- */
+function el(tag, cls, css, html){ const e=document.createElement(tag); if(cls) e.className=cls;
+  Object.assign(e.style, css||{}); if(html!=null) e.innerHTML=html; art.appendChild(e); return e; }
+const px = v => (v*S)+'px';
+
+// PRNG determinístico (mulberry32) — grão e speckles idênticos a cada render
+function rng(seed){ return function(){ seed|=0; seed=seed+0x6D2B79F5|0; let t=Math.imul(seed^seed>>>15,1|seed);
+  t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+/* Tabuleiro ondulado: grade (u,v) deformada por senos.
+   x = x0 + u*cw + A*sin(2π v/λv + φ + u*0.55)
+   y = y0 + v*ch + B*sin(2π u/λu + φ2 + v*0.35)
+   Cada célula é amostrada nas 4 arestas → polígono suave. Recortado por clip. */
+function checker(svg, {x,y,w,h,cols,rows,A=18,B=10,lv=3.2,lu=2.6,ph=0,ph2=0,cell=null,color,offset=0,uMin=-1,uMax=null,vMin=-1,vMax=null,clip=null}){
+  const cw = cell ? cell[0] : w/cols, ch = cell ? cell[1] : h/rows;
+  const id='clip'+Math.random().toString(36).slice(2);
+  const defs=document.createElementNS(NS,'defs'), cp=document.createElementNS(NS,'clipPath');
+  cp.id=id; const r=document.createElementNS(NS,'rect');
+  const cl=clip||[x,y,w,h]; r.setAttribute('x',cl[0]);r.setAttribute('y',cl[1]);r.setAttribute('width',cl[2]);r.setAttribute('height',cl[3]);
+  cp.appendChild(r);defs.appendChild(cp);svg.appendChild(defs);
+  const g=document.createElementNS(NS,'g'); g.setAttribute('clip-path',`url(#${id})`); svg.appendChild(g);
+  const P=(u,v)=>[ x + u*cw + A*S*Math.sin(2*Math.PI*v/lv + ph + u*0.55),
+                   y + v*ch + B*S*Math.sin(2*Math.PI*u/lu + ph2 + v*0.35) ];
+  const N=10; let d='';
+  const nc=Math.ceil(w/cw)+2, nr=Math.ceil(h/ch)+2;
+  for(let v=vMin; v<(vMax??nr); v++) for(let u=uMin; u<(uMax??nc); u++){
+    if(((u+v+offset)%2+2)%2) continue;
+    const pts=[];
+    for(let i=0;i<N;i++) pts.push(P(u+i/N, v));
+    for(let i=0;i<N;i++) pts.push(P(u+1, v+i/N));
+    for(let i=0;i<N;i++) pts.push(P(u+1-i/N, v+1));
+    for(let i=0;i<N;i++) pts.push(P(u, v+1-i/N));
+    d+='M'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join('L')+'Z';
+  }
+  const p=document.createElementNS(NS,'path'); p.setAttribute('d',d); p.setAttribute('fill',color||tok('amarelo'));
+  g.appendChild(p);
+}
+function svgLayer(){ const s=document.createElementNS(NS,'svg'); s.setAttribute('width',W); s.setAttribute('height',H);
+  s.setAttribute('viewBox',`0 0 ${W} ${H}`); s.classList.add('svgfull'); s.style.position='absolute'; art.appendChild(s); return s; }
+
+/* Marca ✕ + globo (vetor próprio) */
+function marks(cx, cy, size){ // size = altura dos ícones na grade
+  const s=size*S, gap=s*0.42, sw=s*0.27;
+  const svg=document.createElementNS(NS,'svg'); const w=s*2+gap;
+  svg.setAttribute('width',w); svg.setAttribute('height',s); svg.style.position='absolute';
+  svg.style.left=(cx*S-w/2)+'px'; svg.style.top=(cy*S-s/2)+'px';
+  const B=tok('branco');
+  svg.innerHTML=`<g stroke="${B}" stroke-width="${sw}" stroke-linecap="square">
+      <line x1="${sw*0.6}" y1="${sw*0.6}" x2="${s-sw*0.6}" y2="${s-sw*0.6}"/>
+      <line x1="${s-sw*0.6}" y1="${sw*0.6}" x2="${sw*0.6}" y2="${s-sw*0.6}"/></g>
+    <g fill="none" stroke="${B}" stroke-width="${s*0.075}" transform="translate(${s+gap+s/2} ${s/2})">
+      <circle r="${s*0.46}"/>
+      <ellipse rx="${s*0.2}" ry="${s*0.46}"/>
+      <line x1="0" y1="${-s*0.46}" x2="0" y2="${s*0.46}"/>
+      <line x1="${-s*0.46}" y1="0" x2="${s*0.46}" y2="0"/>
+      <line x1="${-s*0.41}" y1="${-s*0.21}" x2="${s*0.41}" y2="${-s*0.21}"/>
+      <line x1="${-s*0.41}" y1="${s*0.21}" x2="${s*0.41}" y2="${s*0.21}"/></g>`;
+  art.appendChild(svg); return svg;
+}
+
+/* Título JESUS com extrusão sólida (camadas de text-shadow 1px) */
+function extrusion(depth, color, dx=1, dy=1){ const n=Math.max(1,Math.round(depth*S)); const a=[];
+  for(let i=1;i<=n;i++) a.push(`${(i*dx).toFixed(1)}px ${(i*dy).toFixed(1)}px 0 ${color}`);
+  return a.join(','); }
+function title(text, {cx, top, size, depth, color, ext, align='center', left, sx=0.8, sy=1.16}){
+  const e=el('div','title',{fontSize:px(size), color:color||tok('magenta'),
+    textShadow: extrusion(depth, ext||tok('azul-profundo'), 0.55, 1)}, text);
+  e.style.top=px(top);
+  e.style.transformOrigin = align==='center' ? '50% 0' : '0 0';
+  if(align==='center'){ e.style.left=px(cx); e.style.transform=`translateX(-50%) scale(${sx},${sy})`; }
+  else { e.style.left=px(left); e.style.transform=`scale(${sx},${sy})`; }
+  return e;
+}
+function script(text,{cx,top,size,rot=-6,left,shadow=true}){
+  const e=el('div','script',{fontSize:px(size), transform:`translateX(${left!=null?0:-50}%) rotate(${rot}deg)`,
+    textShadow: shadow ? extrusion(size*0.035, 'rgba(10,79,150,0.85)', 0.6, 1) : 'none'}, text);
+  e.style.top=px(top); e.style.left=px(left!=null?left:cx); return e;
+}
+function mono(text,{left,top,size,weight=400,track=0.06,align='left',cx,color}){
+  const e=el('div','mono',{fontSize:px(size),fontWeight:weight,letterSpacing:track+'em',top:px(top),color:color||tok('branco')},text);
+  if(align==='center'){ e.style.left=px(cx); e.style.transform='translateX(-50%)'; e.style.textAlign='center'; }
+  else e.style.left=px(left);
+  return e;
+}
+/* Assinatura ANDRÉ × CASTRO (duas linhas + ✕ alinhado à direita da 1ª linha) */
+function signature({cx, top, size}){
+  const e=el('div','mono',{fontSize:px(size),fontWeight:400,letterSpacing:'0.05em',lineHeight:'1.02',top:px(top),left:px(cx),
+    transform:'translateX(-50%)',textAlign:'left'},
+    `ANDRÉ<span style="font-weight:700;font-size:.62em;vertical-align:.32em;margin-left:.18em">✕</span><br>CASTRO`);
+  return e;
+}
+function photo({cx, top, width, tint=true, fade=0.16}){
+  const m=`linear-gradient(to bottom, #000 ${(1-fade)*100}%, transparent 100%)`;
+  const e=el('img','photo',{width:px(width),left:px(cx-width/2),top:px(top),maskImage:m,webkitMaskImage:m,
+    filter: tint ? 'contrast(1.06) saturate(1.04) drop-shadow(0 '+(18*S)+'px '+(30*S)+'px rgba(5,40,90,.35))' : 'none'});
+  e.src=PHOTO; return e;
+}
+/* Grão de papel + speckles (seed fixa) */
+function grain(){
+  const c=el('canvas','grain'); c.width=W; c.height=H; c.style.width=W+'px'; c.style.height=H+'px';
+  c.style.mixBlendMode='overlay'; c.style.opacity='0.13';
+  const x=c.getContext('2d'); const img=x.createImageData(W,H); const R=rng(1512);
+  for(let i=0;i<img.data.length;i+=4){ const v=(R()*255)|0; img.data[i]=img.data[i+1]=img.data[i+2]=v; img.data[i+3]=255; }
+  x.putImageData(img,0,0);
+  const c2=el('canvas','grain'); c2.width=W; c2.height=H; c2.style.width=W+'px'; c2.style.height=H+'px'; c2.style.opacity='0.5';
+  const y=c2.getContext('2d'); const R2=rng(2026); const n=Math.round(W*H/2600);
+  for(let i=0;i<n;i++){ const a=R2(); y.fillStyle=a<.7?'rgba(255,255,255,.35)':'rgba(10,40,90,.35)';
+    const r=(0.4+R2()*1.4)*S; y.beginPath(); y.ellipse(R2()*W,R2()*H,r,r*(0.4+R2()*0.8),R2()*3,0,7); y.fill(); }
+  // vinheta muito suave
+  const v=el('div','',{left:0,top:0,width:W+'px',height:H+'px',
+    background:'radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(4,30,80,.22) 100%)'});
+}
+
+/* ---------- composições ---------- */
+const L = {
+capa(){
+  const s=svgLayer();
+  // Tabuleiros laterais: células 112×118, 2,2 colunas visíveis por lado, ondulação própria
+  checker(s,{x:-14*S,y:0,w:250*S,h:H,cell:[122*S,124*S],A:20,B:8,lv:3.4,lu:2.2,ph:0.4,ph2:1.1,uMax:2,clip:[0,0,W,H]});
+  checker(s,{x:828*S,y:0,w:270*S,h:H,cell:[122*S,124*S],A:20,B:8,lv:3.4,lu:2.2,ph:2.3,ph2:0.2,offset:1,uMin:0,clip:[0,0,W,H]});
+  marks(540, 92, 50);
+  photo({cx:532, top:262, width:610});
+  title('JESUS',{cx:540, top:578, size:198, depth:14});
+  script('remix',{cx:560, top:700, size:188});
+  signature({cx:540, top:915, size:40});
+},
+story(){
+  const s=svgLayer();
+  checker(s,{x:-30*S,y:0,w:170*S,h:H,cell:[100*S,112*S],A:16,B:7,lv:3.6,lu:2.0,ph:0.9,ph2:0.4,uMax:2,clip:[0,0,W,H]});
+  checker(s,{x:910*S,y:0,w:200*S,h:H,cell:[100*S,112*S],A:16,B:7,lv:3.6,lu:2.0,ph:2.8,ph2:1.3,offset:1,uMin:0,clip:[0,0,W,H]});
+  marks(540, 300, 46);
+  mono('lançamento',{cx:540, top:378, size:30, align:'center', track:0.32, weight:400});
+  photo({cx:532, top:470, width:730});
+  title('JESUS',{cx:540, top:860, size:186, depth:13});
+  script('remix',{cx:560, top:972, size:176});
+  el('div','',{left:px(390),top:px(1250),width:px(300),height:px(3),background:tok('branco'),opacity:.9});
+  title('15.12.2026',{cx:540, top:1296, size:92, depth:7, color:tok('branco')});
+  mono('nas plataformas digitais',{cx:540, top:1436, size:27, align:'center', track:0.16});
+  signature({cx:540, top:1536, size:40});
+},
+wide(){
+  const s=svgLayer();
+  checker(s,{x:-40*S,y:0,w:330*S,h:H,cell:[124*S,124*S],A:22,B:9,lv:3.0,lu:2.4,ph:0.6,ph2:0.9,uMax:3,clip:[0,0,W,H]});
+  checker(s,{x:1760*S,y:0,w:220*S,h:H,cell:[124*S,124*S],A:22,B:9,lv:3.0,lu:2.4,ph:2.0,ph2:0.1,offset:1,uMin:0,clip:[0,0,W,H]});
+  photo({cx:620, top:1080-737, width:1000, fade:0});
+  title('JESUS',{left:1090, top:262, size:178, depth:13, align:'left'});
+  script('remix',{left:1290, top:384, size:160, rot:-6});
+  el('div','',{left:px(1096),top:px(626),width:px(120),height:px(3),background:tok('branco'),opacity:.9});
+  title('15.12.2026',{left:1092, top:660, size:80, depth:6, color:tok('branco'), align:'left'});
+  mono('lançamento · nas plataformas digitais',{left:1096, top:770, size:22, track:0.14});
+  marks(1610, 110, 38);
+  const sg=signature({cx:0, top:880, size:34}); sg.style.left=px(1096); sg.style.transform='none';
+},
+post_data(){
+  const s=svgLayer();
+  // faixa ondulada horizontal no topo e na base (variação do tabuleiro), borda interna ondulada
+  checker(s,{x:0,y:-40*S,w:W,h:150*S,cell:[112*S,76*S],A:10,B:14,lv:2.0,lu:3.6,ph:0.3,ph2:0.8,vMax:2,clip:[0,0,W,H]});
+  checker(s,{x:0,y:948*S,w:W,h:150*S,cell:[112*S,76*S],A:10,B:14,lv:2.0,lu:3.6,ph:1.6,ph2:2.2,offset:1,vMin:0,clip:[0,0,W,H]});
+  mono('lançamento',{cx:540, top:178, size:30, align:'center', track:0.32});
+  title('15.12',{cx:540, top:232, size:236, depth:17});
+  title('2026',{cx:540, top:482, size:120, depth:9, color:tok('branco')});
+  title('JESUS',{cx:540, top:654, size:88, depth:6});
+  script('remix',{cx:660, top:716, size:80, rot:-6});
+  mono('nas plataformas digitais',{cx:540, top:820, size:24, align:'center', track:0.16});
+  mono('andré × castro',{cx:540, top:866, size:24, align:'center', track:0.16, weight:700});
+},
+
+/* ===== Fase 2 ===== */
+/* Instagram feed 4:5 — derivado da capa; conteúdo-chave dentro do recorte 3:4 central do grid */
+feed45(){
+  const s=svgLayer();
+  checker(s,{x:-14*S,y:0,w:250*S,h:H,cell:[122*S,124*S],A:20,B:8,lv:3.4,lu:2.2,ph:0.4,ph2:1.1,uMax:2,clip:[0,0,W,H]});
+  checker(s,{x:828*S,y:0,w:270*S,h:H,cell:[122*S,124*S],A:20,B:8,lv:3.4,lu:2.2,ph:2.3,ph2:0.2,offset:1,uMin:0,clip:[0,0,W,H]});
+  marks(540, 120, 50);
+  photo({cx:532, top:300, width:640});
+  title('JESUS',{cx:540, top:632, size:204, depth:14});
+  script('remix',{cx:560, top:758, size:192});
+  signature({cx:540, top:980, size:40});
+  mono('lançamento · 15.12.2026',{cx:540, top:1130, size:26, align:'center', track:0.24});
+},
+/* Story (a) EM BREVE */
+story_em_breve(){
+  const s=svgLayer();
+  checker(s,{x:-30*S,y:0,w:170*S,h:H,cell:[100*S,112*S],A:16,B:7,lv:3.6,lu:2.0,ph:0.9,ph2:0.4,uMax:2,clip:[0,0,W,H]});
+  checker(s,{x:910*S,y:0,w:200*S,h:H,cell:[100*S,112*S],A:16,B:7,lv:3.6,lu:2.0,ph:2.8,ph2:1.3,offset:1,uMin:0,clip:[0,0,W,H]});
+  marks(540, 300, 46);
+  photo({cx:532, top:404, width:740});
+  title('JESUS',{cx:540, top:784, size:196, depth:14});
+  script('remix',{cx:560, top:902, size:184});
+  el('div','',{left:px(390),top:px(1210),width:px(300),height:px(3),background:tok('branco'),opacity:.9});
+  title('EM BREVE',{cx:540, top:1258, size:118, depth:9, color:tok('branco')});
+  signature({cx:540, top:1516, size:40});
+},
+/* Story (b) capa apresentada como objeto */
+story_capa(){
+  const s=svgLayer();
+  checker(s,{x:0,y:-40*S,w:W,h:260*S,cell:[112*S,76*S],A:10,B:14,lv:2.0,lu:3.6,ph:0.3,ph2:0.8,vMax:3,clip:[0,0,W,H]});
+  checker(s,{x:0,y:1700*S,w:W,h:260*S,cell:[112*S,76*S],A:10,B:14,lv:2.0,lu:3.6,ph:1.6,ph2:2.2,offset:1,vMin:0,clip:[0,0,W,H]});
+  mono('lançamento',{cx:540, top:356, size:30, align:'center', track:0.32});
+  const cv=el('img','',{left:px(120),top:px(440),width:px(840),height:px(840),
+    boxShadow:`0 ${30*S}px ${60*S}px rgba(4,30,80,.55), ${14*S}px ${22*S}px 0 ${tok('azul-profundo')}`});
+  cv.src='../capa_3000.png';
+  title('15.12.2026',{cx:540, top:1366, size:104, depth:8, color:tok('branco')});
+  mono('nas plataformas digitais',{cx:540, top:1524, size:28, align:'center', track:0.16});
+},
+/* Story (d) HOJE — dia do lançamento */
+story_hoje(){
+  const s=svgLayer();
+  checker(s,{x:-30*S,y:0,w:170*S,h:H,cell:[100*S,112*S],A:16,B:7,lv:3.6,lu:2.0,ph:0.9,ph2:0.4,uMax:2,clip:[0,0,W,H]});
+  checker(s,{x:910*S,y:0,w:200*S,h:H,cell:[100*S,112*S],A:16,B:7,lv:3.6,lu:2.0,ph:2.8,ph2:1.3,offset:1,uMin:0,clip:[0,0,W,H]});
+  title('HOJE',{cx:540, top:290, size:236, depth:17, color:tok('branco')});
+  photo({cx:532, top:600, width:720});
+  title('JESUS',{cx:540, top:960, size:190, depth:14});
+  script('remix',{cx:560, top:1074, size:178});
+  el('div','',{left:px(390),top:px(1350),width:px(300),height:px(3),background:tok('branco'),opacity:.9});
+  mono('nas plataformas digitais',{cx:540, top:1388, size:30, align:'center', track:0.16});
+  signature({cx:540, top:1478, size:40});
+},
+/* Countdown post 1080×1080 — mesma família do post_data */
+cd_post(){
+  const s=svgLayer();
+  checker(s,{x:0,y:-40*S,w:W,h:150*S,cell:[112*S,76*S],A:10,B:14,lv:2.0,lu:3.6,ph:0.3,ph2:0.8,vMax:2,clip:[0,0,W,H]});
+  checker(s,{x:0,y:948*S,w:W,h:150*S,cell:[112*S,76*S],A:10,B:14,lv:2.0,lu:3.6,ph:1.6,ph2:2.2,offset:1,vMin:0,clip:[0,0,W,H]});
+  const one=N===1;
+  mono(one?'falta':'faltam',{cx:540, top:170, size:32, align:'center', track:0.32});
+  title(String(N),{cx:540, top:196, size:372, depth:24});
+  title(one?'DIA':'DIAS',{cx:540, top:652, size:96, depth:7, color:tok('branco')});
+  title('JESUS',{cx:540, top:784, size:76, depth:5});
+  script('remix',{cx:640, top:836, size:66, rot:-6});
+},
+/* Countdown story 1080×1920 */
+cd_story(){
+  const s=svgLayer();
+  checker(s,{x:-30*S,y:0,w:170*S,h:H,cell:[100*S,112*S],A:16,B:7,lv:3.6,lu:2.0,ph:0.9,ph2:0.4,uMax:2,clip:[0,0,W,H]});
+  checker(s,{x:910*S,y:0,w:200*S,h:H,cell:[100*S,112*S],A:16,B:7,lv:3.6,lu:2.0,ph:2.8,ph2:1.3,offset:1,uMin:0,clip:[0,0,W,H]});
+  const one=N===1;
+  marks(540, 300, 46);
+  mono(one?'falta':'faltam',{cx:540, top:380, size:40, align:'center', track:0.32});
+  title(String(N),{cx:540, top:430, size:620, depth:40});
+  title(one?'DIA':'DIAS',{cx:540, top:1130, size:130, depth:10, color:tok('branco')});
+  el('div','',{left:px(390),top:px(1325),width:px(300),height:px(3),background:tok('branco'),opacity:.9});
+  title('JESUS',{cx:540, top:1370, size:120, depth:9});
+  script('remix',{cx:610, top:1448, size:110, rot:-6});
+  mono('15.12.2026',{cx:540, top:1600, size:28, align:'center', track:0.32});
+}
+};
+L[F]();
+grain();
+
+window.__ready = (async()=>{ await document.fonts.ready;
+  await Promise.all([...document.images].map(i=>i.complete?1:new Promise(r=>{i.onload=i.onerror=r;})));
+  document.body.dataset.ready='1'; })();
+</script>
+</body>
+</html>

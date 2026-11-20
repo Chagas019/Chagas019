@@ -1,0 +1,16 @@
+# LOG do estúdio
+- 2026-11-20 Fase 1: estrutura, agentes, identidade, recorte do artista (rembg/BRIA RMBG 2.0). Designer e Motion produzindo proposta em paralelo.
+- 2026-11-20 Proposta fase 1 entregue: 5 estáticos + abertura 10s. QA: OK técnico (1080², 30fps, H.264 yuv420p, 10.0s). Pendência: unificar fonte do título (A Dela × B Bungee); MP4 pesado (30 MB/10s por causa do grão) — ajustar bitrate no final.
+- 2026-11-20 Cliente aprovou a proposta, fonte A (Dela Gothic One). Fase 2: Motion, Designer e Editor em paralelo.
+- 2026-11-20 Cliente enviou referência de motion (showreel 3D/física/morph). Direção v2 repassada a Motion e Editor.
+- 2026-11-20 QA estáticos fase 2 OK: 4 stories, 8 countdowns, capa Spotify 3000 (sRGB, 5,2 MB), thumb YouTube, feed 4:5. Dimensões (identify) e safe zones 250px conferidas. story_data movido para stories/story_03.
+- 2026-11-20 Música recebida (Corte_Jesus.wav, 29,5s). Análise: 133 BPM, drop 14,52s, clímax 27,15s. beatmap.json gerado.
+- 2026-11-20 Motion v2 com música real: motion_principal 3 formatos 29,53 s (886 q) + AAC 320k do original; capa_animada/canvas loop 7,200 s (216 q) sem áudio. Impactos q436/q557/q814 (±0,5 q). Loop seek(DURATION)==seek(0).
+- 2026-11-20 Editor/SD/VFX: teaser 3 formatos 29,53 s; reels 15,63 s; countdown 7/5/3/1 5 s; visualizer 16:9 e 9:16 29,53 s (energia do WAV real). Impactos ≤1 quadro. SHA-256 do WAV OK. Safe zone reels OK.
+- 2026-11-20 QA Diretor de Pós: quadros-chave revisados (teaser, reels, motion), sem texto inventado, data correta no quadro final. Aprovado → 99_entregas. Decisões abertas com cliente: frase A só com esfera/palco; peso do grão (tamanho dos arquivos); thumb YouTube dedicado.
+- 2026-11-20 Cliente pediu vinheta/animação de logo no estilo motion_ref2 (mascote flat construído por manchas líquidas + inversão para lettering). Motion produzindo: ilustração vetorial do André + vinheta 3 formatos.
+- 2026-11-20 Cliente enviou referência 3 (animação de marca: símbolo cromado 3D, bezier visível, tela azul chapada, padrão de ícones, wipe). Segundo motion designer produzindo animação de marca do ✕ em paralelo à vinheta do mascote.
+- 2026-11-20 Vinheta mascote (ref2) pronta: 3 formatos, 5s, com/sem áudio, drop no quadro 54 (14,520s). QA: técnica OK; ilustração legível em estilo pop-art/stencil, mas região das mãos com fragmentos ruidosos e traço menos limpo que o mascote da referência → retoque manual sugerido. Fica fora de 99_entregas até aprovação.
+- 2026-11-20 Animação de marca (ref3) pronta: 3 formatos, 7,2s, com/sem áudio, corte no drop q54 (0,1 q). QA: cromado convincente, bezier visível OK. Pendências menores: resto do 'O' em 1 quadro de transição (f99), bloom de 2 quadros na saída do wipe, assinatura pequena no story.
+- 2026-11-20 Vinheta longa (música inteira 29,54s) pronta nos 3 formatos; drop q436, clímax q814 (±0,5 q). Mãos da ilustração limpas; vinheta curta re-renderizada.
+- 2026-11-20 Marca longa (música inteira) pronta, 3 formatos. Sync: drop q436, clímax q814 exatos; 59 ações medidas: 41 ±1q, 4 com +2q (imperceptível, ~66ms), 14 em movimento contínuo não mensuráveis. Correções: resto do 'O' e bloom do wipe resolvidos.

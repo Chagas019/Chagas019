@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>JESUS Remix — Reels promocional 1080×1920</title>
+<!--
+  JESUS Remix · André Castro — reels. Trecho da música: break (13,90) → fim (29,54) ≈ 15,6 s.
+  Gancho: o reel abre no break (esfera no ápice, palco escuro) e o DROP cai em 0,62 s → morph em JESUS.
+  Depois: corte a cada 2 beats, tipografia cinética com motion blur e squash
+  (remix / ANDRÉ / ✕ / CASTRO / 15.12.2026 / nas plataformas digitais), wipes magenta→amarelo→azul,
+  final no layout da capa (story) com a data travando no "final" (28,95).
+  Safe zone Instagram: 250 px topo e base, 120 px à direita — todo texto entre x 60–960, y 250–1670.
+  Motor e kit compartilhados: 06_teaser/src/lib (scene.js, kit.js).
+-->
+</head>
+<body>
+<div id="stage"></div>
+<script src="../../../06_teaser/src/lib/glyphs.js"></script>
+<script src="../../../06_teaser/src/lib/kit.js"></script>
+<script src="../../../06_teaser/src/lib/scene.js"></script>
+<script>
+(() => {
+const { TOK, E, seg, clamp, lerp, wobble, spring, impact } = KIT;
+const W = 1080, H = 1920, FPS = 30, CX = 510;          // eixo ótico deslocado 30 px p/ esquerda (UI do Instagram à direita)
+
+// ───────── CUES: trecho break → fim ─────────
+const C = KIT.cues(K => [K.break, K.dur]);
+const b = C.b, DROP = C.k('drop'), CLIM = C.k('climax'), FIN = C.k('final');
+window.FPS = FPS; window.DURATION = C.duracao;
+const SC = makeScene(W, H, 'story', C);
+const WIPES = [b(36), b(48), b(56)];
+
+// esfera: arco final da frase A (pouso b30) → ápice no break → drop
+const jCenter = SC.J.x0 + KIT.morphPath('J', 1, { r: 1, size: SC.SIZE }).gx;
+const BALL = { bounces: [{ t: b(30), h: 60, fall: .3 }, { t: DROP, h: 380, sq: .6 }], x0: jCenter - 60, x1: jCenter, morph: { t0: DROP + .02, dur: .3 } };
+
+const CAM = {
+  hero: k => ({ rx: 12, ry: lerp(-12, 10, k), z: lerp(40, 120, k), cy: H * .56 }),
+  low: k => ({ rx: 2, ry: lerp(30, 22, k), z: lerp(380, 440, k), cy: H * .52 }),
+  side: k => ({ rx: 16, ry: lerp(-50, -40, k), z: 160, cy: H * .56 }),
+  high: k => ({ rx: 46, ry: lerp(-12, -4, k), z: -40, cy: H * .55 }),
+};
+const SHOTS = [
+  { t: 0, type: 'break' },
+  { t: DROP, type: 'title', cam: 'hero' }, { t: b(34), type: 'title', cam: 'low', whip: 1 },
+  { t: b(36), type: 'word', word: 'remix' }, { t: b(38), type: 'artist', f0: [560, 285], f1: [565, 290], z0: 1.75, z1: 1.9, whip: -1 },
+  { t: b(40), type: 'word', word: 'ANDRÉ' }, { t: b(42), type: 'word', word: 'x' }, { t: b(44), type: 'word', word: 'CASTRO' },
+  { t: b(46), type: 'artist', f0: [500, 520], f1: [500, 505], z0: 1.75, z1: 1.85, whip: 1 },
+  { t: b(48), type: 'date' }, { t: b(52), type: 'title', cam: 'side', whip: -1 }, { t: b(54), type: 'title', cam: 'high', whip: 1 },
+  { t: b(56), type: 'capa', zoom: 1 }, { t: b(58), type: 'capa', zoom: 1.2, at: '50% 33%' }, { t: CLIM, type: 'capa', zoom: 1, final: true },
+];
+SHOTS.forEach((s, i) => s.end = i < SHOTS.length - 1 ? SHOTS[i + 1].t : C.duracao);
+
+function titleState(i, t) {
+  if (t < DROP) return { on: false };
+  if (i === 0) { const t1 = DROP + .32; if (t < t1) return { on: false }; return { on: true, depth: clamp(spring(t - t1, 2.6, 7)) }; }
+  const a = DROP + .04 + i * .055, d = .34, k = E.expoOut(seg(t, a, a + d));
+  if (t < a) return { on: false };
+  const v = (E.expoOut(seg(t + 1 / 60, a, a + d)) - E.expoOut(seg(t - 1 / 60, a, a + d))) * 30;
+  const w = wobble(t - (a + d * .35), 5, 9) * (t > a + d * .35 ? 1 : 0);
+  return { on: true, dx: (1 - k) * 1100, sx: 1 + .25 * clamp(v) - .12 * w, sy: 1 - .1 * clamp(v) + .16 * w, depth: k, blur: clamp(v) * 40 };
+}
+// entrada cinética: posição + motion blur proporcional à velocidade + squash ao parar
+function slam(t, a, d, dist) {
+  const f = x => E.expoOut(seg(x, a, a + d)); const k = f(t), v = (f(t + 1 / 60) - f(t - 1 / 60)) * 30;
+  const w = t > a + d * .3 ? wobble(t - a - d * .3, 5, 8) : 0;
+  return { off: (1 - k) * dist, blur: Math.min(60, Math.abs(v * dist) * .03), sx: 1 + .22 * clamp(v * .4) + .14 * w, sy: 1 - .12 * clamp(v * .4) - .18 * w, k };
+}
+const ext = (n, c) => Array.from({ length: n }, (_, i) => `${((i + 1) * .55).toFixed(2)}px ${i + 1}px 0 ${c}`).join(',');
+
+function render(t) {
+  SC.hideAll();
+  const sh = SHOTS.findLast(s => t >= s.t) || SHOTS[0];
+  const k = seg(t, sh.t, sh.end), lt = t - sh.t;
+  let flash = 0, black = 0;
+  const hit = impact(t, DROP, FPS), hitF = impact(t, FIN, FPS), hitD = impact(t, b(50), FPS), hitC = impact(t, b(56), FPS);
+  const whipK = sh.whip ? (1 - E.expoOut(seg(lt, 0, .3))) : 0;
+  const whipBlur = sh.whip ? Math.abs((E.expoOut(seg(lt + 1 / 60, 0, .3)) - E.expoOut(seg(lt - 1 / 60, 0, .3))) * 30) * 12 : 0;
+  const pulse = C.pulse(t, 9);
+
+  if (sh.type === 'break') {
+    const bs = SC.ballAt(t, BALL) || { x: BALL.x0, y: 0 };
+    SC.world(t, { cam: { rx: 12, ry: 0, z: lerp(-80, 0, E.sineInOut(k)), cx: W / 2 - bs.x * .6, cy: H * .6 + bs.y * .3 }, floorGlow: .35, ballOn: BALL });
+    black = .45 * (1 - E.power2InOut(seg(t, 0, DROP)));
+  } else if (sh.type === 'title') {
+    const c = CAM[sh.cam](E.sineInOut(k));
+    c.ry += (sh.whip || 0) * 28 * whipK; c.cx = W / 2 - 30 + hit.sx; c.cy += hit.sy; c.s = hit.scale;
+    const rA = sh.t >= b(52) ? b(52) : b(34);
+    const rk = E.power2InOut(seg(t, rA, rA + .7)), rv = (E.power2InOut(seg(t + 1 / 60, rA, rA + .7)) - E.power2InOut(seg(t - 1 / 60, rA, rA + .7))) * 30;
+    SC.world(t, { cam: c, whip: whipBlur, floorGlow: 1 + 1.2 * Math.exp(-Math.max(0, t - DROP) * 3) + .3 * pulse, ballOn: BALL, titleOn: true, titleState, remixK: rk, remixBlur: rv * 10 });
+    flash = hit.flash;
+  } else if (sh.type === 'artist') {
+    SC.artist(t, { f0: sh.f0, f1: sh.f1, z0: sh.z0, z1: sh.z1, k: E.sineInOut(k), light: 1 + .15 * pulse, whip: whipBlur, shift: (sh.whip || 0) * -300 * whipK });
+  } else if (sh.type === 'word') {
+    const a = sh.t;
+    if (sh.word === 'remix') {
+      // escrito da esquerda p/ direita (clip) com blur horizontal; acento no 2º beat
+      const wk = E.power2InOut(seg(t, a, a + .55)), wv = (E.power2InOut(seg(t + 1 / 60, a, a + .55)) - E.power2InOut(seg(t - 1 / 60, a, a + .55))) * 30;
+      const acc = t > b(37) ? wobble(t - b(37), 5, 8) : 0;
+      SC.kinetic(t, { html: `<span style="display:inline-block;padding:0 50px;clip-path:inset(-40% ${100 - 100 * wk}% -40% 0)">remix</span>`, cls: 'script', size: 330, x: CX, y: 900,
+        rot: -6, blurX: wv * 14, sx: 1 + .08 * acc, sy: 1 - .1 * acc, shadow: ext(11, 'rgba(10,79,150,.85)') });
+    } else if (sh.word === 'x') {
+      const s = slam(t, a, .4, 1); const rot = (1 - s.k) * -270;
+      const st = 1 + 1.2 * clamp(Math.abs(s.blur) / 30);
+      SC.kinetic(t, { html: '✕', cls: 'mono', size: 420, x: CX, y: 930, rot, sx: s.sx * (.4 + .6 * s.k) * st, sy: s.sy * (.4 + .6 * s.k), blurX: s.blur * .6, shadow: ext(10, TOK.azulProfundo), color: TOK.branco, ck: true });
+    } else {
+      const fromL = sh.word === 'ANDRÉ', s = slam(t, a, .38, fromL ? -1100 : 1100);
+      SC.kinetic(t, { html: sh.word, cls: 'mono', size: 200, x: CX, y: 930, dx: s.off, blurX: s.blur, sx: s.sx, sy: s.sy, shadow: ext(9, TOK.azulProfundo) });
+      // ✕ menor acompanha ANDRÉ (assinatura: ANDRÉ ✕ / CASTRO)
+    }
+  } else if (sh.type === 'date') {
+    const U = x => E.power3Out(seg(x, b(48), b(50))); const lockW = t >= b(50) ? wobble(t - b(50), 5.5, 7) : 0;
+    const p = slam(t, b(50.5), .4, 900);
+    SC.kinetic(t, { html: null, odo: { u: U(t), du: t >= b(50) ? 0 : (U(t + 1 / 30) - U(t - 1 / 30)) / 2, x: CX, y: 900, sx: (1 + .12 * lockW) * hitD.scale, sy: (1 - .2 * lockW) * hitD.scale },
+      sub: t >= b(50.5) ? { text: 'nas plataformas digitais', size: 40, x: CX, y: 1080, dx: p.off, blur: p.blur } : null });
+    flash = hitD.flash;
+  } else if (sh.type === 'capa') {
+    const tIn = i => { const a = b(56) + i * .045; return { k: E.expoOut(seg(t, a, a + .3)), w: t > a + .1 ? wobble(t - a - .1, 5, 9) : 0 }; };
+    const rk = E.power2InOut(seg(t, b(57), b(58.4))), rv = (E.power2InOut(seg(t + 1 / 60, b(57), b(58.4))) - E.power2InOut(seg(t - 1 / 60, b(57), b(58.4)))) * 30;
+    let date = null;
+    if (t >= CLIM) { const U = x => E.power3Out(seg(x, CLIM, FIN)); const lw = t >= FIN ? wobble(t - FIN, 5.5, 7) : 0;
+      date = { u: U(t), du: t >= FIN ? 0 : (U(t + 1 / 30) - U(t - 1 / 30)) / 2, sx: (1 + .12 * lw) * hitF.scale, sy: (1 - .18 * lw) * hitF.scale }; }
+    const zk = E.expoOut(seg(lt, 0, .35));
+    SC.capa(t, { ck: 1, photo: E.expoOut(seg(t, b(56), b(56) + .5)), marks: E.expoOut(seg(t, b(56.5), b(58))), title: tIn, remix: rk, remixBlur: rv * 8,
+      sign: sh.final ? E.expoOut(seg(t, CLIM, CLIM + .5)) : 0, rule: sh.final ? E.expoOut(seg(t, CLIM + .1, CLIM + .6)) : 0, date,
+      plat: E.expoOut(seg(t, FIN + .1, FIN + .5)), zoom: lerp(sh.zoom * 1.05, sh.zoom, zk) * hitC.scale, origin: sh.at || '50% 50%', px: hitF.sx + hitC.sx, py: hitF.sy + hitC.sy });
+    flash = Math.max(hitF.flash, hitC.flash);
+  }
+  SC.wipes(t, WIPES);
+  SC.fx(t, { flash, black });
+}
+window.seek = render;
+window.ready = (async () => { await KIT.fontsReady(); await Promise.all([...document.images].map(i => i.complete ? 1 : new Promise(r => i.onload = i.onerror = r))); render(0); return true; })();
+if (!location.search.includes('render=1')) window.ready.then(() => { const t0 = performance.now(); const L = () => { render(((performance.now() - t0) / 1000) % window.DURATION); requestAnimationFrame(L); }; L(); });
+})();
+</script>
+</body>
+</html>

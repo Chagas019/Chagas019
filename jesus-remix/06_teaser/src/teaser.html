@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>JESUS Remix — Teaser (corte inteiro)</title>
+<!--
+  JESUS Remix · André Castro — teaser cinematográfico.  teaser.html?w=1920&h=1080 | 1080×1920 | 1080×1080
+  Roteiro amarrado à música (09_audio/analise/beatmap.json; placeholder 120 BPM se não existir):
+    frase A  0 → b8    piso em detalhe (macro), escuro, grão — tensão
+             b8 → b16  close lento no artista (óculos → mãos)
+             b16       WIPE magenta→amarelo→azul → esfera magenta quica no beat (squash & stretch), cortes de câmera
+                       a cada 4 → 2 → 1 beat (construção)
+    break    13,90     câmera para, luz cai, esfera no ápice (silêncio visual)
+    DROP     14,52     esfera esmaga no piso e MORPHA em J; E-S-U-S batem com motion blur; flash + shake
+    frase B            cortes a cada 2 beats (whip com blur) · b40 wipe → artista revelado · b48 wipe → layout da capa
+    clímax   27,15     ANDRÉ × CASTRO + data em odômetro → trava no "final" (28,95) · cauda: hold 15.12.2026
+-->
+</head>
+<body>
+<div id="stage"></div>
+<script src="lib/glyphs.js"></script>
+<script src="lib/kit.js"></script>
+<script src="lib/scene.js"></script>
+<script>
+(() => {
+const { TOK, E, seg, clamp, lerp, wobble, spring, impact } = KIT;
+const Q = new URLSearchParams(location.search);
+const W = +(Q.get('w') || 1920), H = +(Q.get('h') || 1080);
+const fmt = W > H ? 'wide' : H > W ? 'story' : 'square';
+const FPS = 30;
+
+// ───────── CUES (único ponto de sincronia: trecho = música inteira) ─────────
+const C = KIT.cues(K => [0, K.dur]);
+const b = C.b, DROP = C.k('drop'), BRK = C.k('break'), MFA = C.k('meio_fraseA'), MFB = C.k('meio_fraseB'), CLIM = C.k('climax'), FIN = C.k('final');
+window.FPS = FPS; window.DURATION = C.duracao;
+const SC = makeScene(W, H, fmt, C);
+const WIPES = [MFA, b(40), b(44), MFB];
+
+// esfera: pousos no beat (2 em 2 → 1 em 1) e arco alto que atravessa o break até o drop
+const bounces = [{ t: b(17), h: 620, fall: .62, sq: .45 }];
+for (let n = 19; n <= 27; n += 2) bounces.push({ t: b(n), h: 210 });
+for (let n = 28; n <= 30; n++) bounces.push({ t: b(n), h: 60, sq: .3 });
+bounces.push({ t: DROP, h: 380, sq: .6 });
+const jCenter = SC.J.x0 + KIT.morphPath('J', 1, { r: 1, size: SC.SIZE }).gx;
+const BALL = { bounces, x0: -760, x1: jCenter, morph: { t0: DROP + .02, dur: .3 } };
+
+// câmeras (unidades do mundo; cy padrão por formato)
+const CAM = {
+  macro: k => ({ rx: lerp(58, 50, k), ry: lerp(-24, -10, k), rz: lerp(-8, -3, k), z: lerp(520, 760, k), cy: H * .5 }),
+  wide: k => ({ rx: 13, ry: lerp(-4, 4, k), z: lerp(-320, -240, k) }),
+  side: k => ({ rx: 16, ry: lerp(-50, -42, k), z: 120 }),
+  low: k => ({ rx: 2, ry: lerp(30, 24, k), z: lerp(360, 420, k), cy: H * .56 }),
+  high: k => ({ rx: 46, ry: lerp(-12, -6, k), z: -120 }),
+  close: k => ({ rx: 10, ry: lerp(12, 4, k), z: lerp(260, 330, k) }),
+  side2: k => ({ rx: 20, ry: lerp(44, 38, k), z: 80 }),
+  hero: k => ({ rx: 12, ry: lerp(-12, 10, k), z: lerp(-60, 40, k) }),
+};
+const SHOTS = [
+  { t: 0, type: 'macro' },
+  { t: b(8), type: 'artist', f0: [560, 280], f1: [585, 300], z0: 2.35, z1: 2.55, l0: .3, l1: .62 },
+  { t: b(12), type: 'artist', f0: [505, 500], f1: [500, 520], z0: 2.1, z1: 2.25, l0: .5, l1: .8 },
+  { t: MFA, type: 'ball', cam: 'wide' }, { t: b(20), type: 'ball', cam: 'side' }, { t: b(24), type: 'ball', cam: 'low' },
+  { t: b(26), type: 'ball', cam: 'high' }, { t: b(28), type: 'ball', cam: 'close' }, { t: b(29), type: 'ball', cam: 'side2' },
+  { t: b(30), type: 'ball', cam: 'low' }, { t: BRK, type: 'break' },
+  { t: DROP, type: 'title', cam: 'hero' }, { t: b(36), type: 'title', cam: 'low', whip: 1 }, { t: b(38), type: 'title', cam: 'high', whip: -1 },
+  { t: b(40), type: 'reveal' }, { t: b(42), type: 'artist', f0: [560, 285], f1: [560, 285], z0: 1.9, z1: 2.05, l0: 1, l1: 1, whip: 1 },
+  { t: b(44), type: 'title', cam: 'side', whip: 0 }, { t: b(46), type: 'title', cam: 'side2', whip: -1 },
+  { t: MFB, type: 'capa', zoom: 1 }, { t: b(50), type: 'capa', zoom: 1.0 }, { t: b(52), type: 'capa', zoom: 1.14, at: 'title' },
+  { t: b(54), type: 'capa', zoom: 1.28, at: 'face' }, { t: b(56), type: 'capa', zoom: 1 }, { t: b(58), type: 'capa', zoom: 1.12, at: 'title' },
+  { t: CLIM, type: 'capa', zoom: 1, final: true },
+];
+SHOTS.forEach((s, i) => s.end = i < SHOTS.length - 1 ? SHOTS[i + 1].t : C.duracao);
+
+// estado do título 3D: morph do J + E-S-U-S batendo da direita (motion blur + squash)
+function titleState(i, t) {
+  if (t < DROP) return { on: false };
+  if (i === 0) { const t1 = DROP + .32; if (t < t1) return { on: false }; return { on: true, depth: clamp(spring(t - t1, 2.6, 7)) }; }
+  const a = DROP + .04 + i * .055, d = .34, k = E.expoOut(seg(t, a, a + d));
+  if (t < a) return { on: false };
+  const v = (E.expoOut(seg(t + 1 / 60, a, a + d)) - E.expoOut(seg(t - 1 / 60, a, a + d))) * 30;
+  const w = wobble(t - (a + d * .35), 5, 9) * (t > a + d * .35 ? 1 : 0);
+  return { on: true, dx: (1 - k) * 1100, sx: 1 + .25 * clamp(v) - .12 * w, sy: 1 - .1 * clamp(v) + .16 * w, depth: k, blur: clamp(v) * 40 };
+}
+const FOCUS = { title: fmt === 'wide' ? '72% 32%' : fmt === 'story' ? '50% 49%' : '50% 60%', face: fmt === 'wide' ? '32% 42%' : fmt === 'story' ? '50% 36%' : '50% 40%' };
+
+function render(t) {
+  SC.hideAll();
+  const sh = SHOTS.findLast(s => t >= s.t) || SHOTS[0];
+  const k = seg(t, sh.t, sh.end), lt = t - sh.t;
+  let flash = 0, black = 0;
+  const hit = impact(t, DROP, FPS), hitF = impact(t, FIN, FPS), hitB = impact(t, MFB, FPS);
+  const whipK = sh.whip ? (1 - E.expoOut(seg(lt, 0, .3))) : 0;
+  const whipBlur = sh.whip ? Math.abs((E.expoOut(seg(lt + 1 / 60, 0, .3)) - E.expoOut(seg(lt - 1 / 60, 0, .3))) * 30) * 12 : 0;
+
+  if (sh.type === 'macro') {
+    SC.world(t, { cam: CAM.macro(E.sineInOut(k)), floorGlow: .45 + .6 * E.power2InOut(seg(t, 0, sh.end)) + .25 * C.pulse(t, 6), floorTint: .5 });
+    black = 1 - E.power2InOut(seg(t, 0, 1.6));
+  } else if (sh.type === 'artist') {
+    SC.artist(t, { f0: sh.f0, f1: sh.f1, z0: sh.z0, z1: sh.z1, k: E.sineInOut(k), light: lerp(sh.l0, sh.l1, k) + .12 * C.pulse(t, 8), whip: whipBlur, shift: (sh.whip || 0) * -300 * whipK });
+  } else if (sh.type === 'ball' || sh.type === 'break') {
+    const cam = sh.type === 'break' ? { rx: 12, ry: 0, z: lerp(-240, -200, E.sineInOut(k)), cy: H * (fmt === 'story' ? .66 : .72) } : CAM[sh.cam](E.sineInOut(k));
+    // câmera segue a esfera (mantém no quadro) — siga suave, sem tremer
+    const bs = SC.ballAt(t, BALL) || { x: BALL.x0, y: 600 };
+    cam.cx = W / 2 - bs.x * SC.fs * .6; cam.cy = (cam.cy || H * (fmt === 'story' ? .6 : .66)) + bs.y * SC.fs * .38;
+    SC.world(t, { cam, floorGlow: sh.type === 'break' ? .35 : .9, ballOn: BALL });
+    if (sh.type === 'break') black = .18 * E.sineInOut(seg(t, BRK, BRK + .2));
+  } else if (sh.type === 'title') {
+    const c = CAM[sh.cam](E.sineInOut(k));
+    c.ry += (sh.whip || 0) * 28 * whipK; c.cx = W / 2 + hit.sx; c.cy = (c.cy || H * (fmt === 'story' ? .6 : .66)) + hit.sy;
+    c.s = SC.fs * hit.scale;
+    const rk = E.power2InOut(seg(t, b(34), b(35.6)));
+    const rv = (E.power2InOut(seg(t + 1 / 60, b(34), b(35.6))) - E.power2InOut(seg(t - 1 / 60, b(34), b(35.6)))) * 30;
+    SC.world(t, { cam: c, whip: whipBlur, floorGlow: 1 + 1.2 * Math.exp(-Math.max(0, t - DROP) * 3), ballOn: BALL, titleOn: true, titleState, remixK: rk, remixBlur: rv * 10 });
+    flash = hit.flash;
+  } else if (sh.type === 'reveal') {
+    // artista revelado pelo wipe: só tabuleiro + foto + marcas, com subida curta
+    SC.capa(t, { ck: E.expoOut(seg(lt, 0, .6)), photo: E.expoOut(seg(lt, .05, .7)), marks: E.expoOut(seg(lt, .2, 1)), title: () => ({ k: 0 }), remix: 0, sign: 0, rule: 0, date: null, zoom: lerp(1.04, 1, E.expoOut(k)) });
+  } else if (sh.type === 'capa') {
+    const tIn = i => { const a = MFB + i * .045; return { k: E.expoOut(seg(t, a, a + .3)), w: t > a + .1 ? wobble(t - a - .1, 5, 9) : 0 }; };
+    const rk = E.power2InOut(seg(t, b(49), b(50.6)));
+    const rv = (E.power2InOut(seg(t + 1 / 60, b(49), b(50.6))) - E.power2InOut(seg(t - 1 / 60, b(49), b(50.6)))) * 30;
+    // data: rola do clímax e trava no "final" (impacto + squash)
+    let date = null;
+    if (t >= CLIM) {
+      const U = x => E.power3Out(seg(x, CLIM, FIN)); const lockW = t >= FIN ? wobble(t - FIN, 5.5, 7) : 0;
+      date = { u: U(t), du: t >= FIN ? 0 : (U(t + 1 / 30) - U(t - 1 / 30)) / 2, sx: (1 + .12 * lockW) * hitF.scale, sy: (1 - .18 * lockW) * hitF.scale };
+    }
+    const zk = E.expoOut(seg(lt, 0, .35));
+    const zoom = lerp(sh.zoom * 1.05, sh.zoom, zk) * (sh.t === MFB ? hitB.scale : 1);
+    SC.capa(t, { ck: 1, photo: 1, marks: 1, title: tIn, remix: rk, remixBlur: rv * 8, sign: sh.final ? E.expoOut(seg(t, CLIM, CLIM + .5)) : 0,
+      rule: sh.final ? E.expoOut(seg(t, CLIM + .1, CLIM + .6)) : 0, date, zoom, origin: sh.at ? FOCUS[sh.at] : '50% 50%',
+      px: hitF.sx + hitB.sx, py: hitF.sy + hitB.sy });
+    flash = Math.max(hitB.flash, hitF.flash);
+  }
+  SC.wipes(t, WIPES);
+  SC.fx(t, { flash, black });
+}
+window.seek = render;
+window.ready = (async () => { await KIT.fontsReady(); await Promise.all([...document.images].map(i => i.complete ? 1 : new Promise(r => i.onload = i.onerror = r))); render(0); return true; })();
+if (!location.search.includes('render=1')) window.ready.then(() => { const t0 = performance.now(); const L = () => { render(((performance.now() - t0) / 1000) % window.DURATION); requestAnimationFrame(L); }; L(); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>JESUS Remix — Vinheta de logo</title>
+<!--
+  JESUS Remix · André Castro — vinheta/animação de logo (~5 s), estilo 2D quadro-a-quadro.
+  vinheta.html?w=1080&h=1080 | ?w=1080&h=1920 | ?w=1920&h=1080
+  Trecho da música: Corte_Jesus.wav 12,72 → 17,72 s (o DROP 14,52 cai no corte seco = 1,80 s locais).
+  Ilustração: 03_assets/vetores/andre_flat.svg (gerada por src/vinheta_tools/vetorizar.py + aura.py).
+  Ato 1 (fundo creme): manchas surgem, voam com smear frames e squash, colidem e se fundem no desenho
+        (revelado por máscara de blobs com filtro gooey); aura em chama "boiling" (troca a cada 2 quadros).
+  DROP: corte seco + inversão — fundo azul-profundo, silhueta magenta/branca à esquerda, partículas,
+        JESUS / remix / ANDRÉ × CASTRO montados bloco a bloco nas batidas. Hold.
+-->
+<style>
+@font-face{font-family:"Dela Gothic One";src:url(../../02_identidade/fontes/dela-gothic-one-latin-400-normal.woff2) format("woff2");}
+@font-face{font-family:"Yellowtail";src:url(../../02_identidade/fontes/yellowtail-latin-400-normal.woff2) format("woff2");}
+@font-face{font-family:"Roboto Mono";font-weight:300;src:url(../../02_identidade/fontes/roboto-mono-latin-300-normal.woff2) format("woff2");}
+@font-face{font-family:"Roboto Mono";font-weight:400;src:url(../../02_identidade/fontes/roboto-mono-latin-400-normal.woff2) format("woff2");}
+@font-face{font-family:"Roboto Mono";font-weight:700;src:url(../../02_identidade/fontes/roboto-mono-latin-700-normal.woff2) format("woff2");}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#000}
+#stage{position:relative;overflow:hidden;background:#F9F9F9}
+.abs{position:absolute}
+.ly{position:absolute;left:0;top:0;width:100%;height:100%}
+#art svg{position:absolute;left:0;top:0;overflow:visible}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script src="vendor/gsap.min.js"></script>
+<script src="lib/jr.js"></script>
+<script>
+(() => {
+/* ═════════════ CUES — batidas da grade do beatmap.json (133,03 BPM, 1º downbeat 0,087 s) ═════════════ */
+const LONG = new URLSearchParams(location.search).get('modo') === 'longa';
+// ?modo=longa → música inteira (0 → 29,54 s). Sem parâmetro → vinheta curta (12,72 → 17,72 s).
+const CUES = LONG ? {
+  bpm: 133.03, offset: 0.087, fps: 30,
+  audioStart: 0, duration: 29.538,
+  beats: {
+    groups: [0, 4, 8],       // frase A: um grupo de manchas por compasso → base/camisa · cabelo/óculos · rosto/barba/mãos
+    aura: 12,                // compasso 4: aura acende
+    alive: 16,               // compasso 5: ilustração viva (respira, órbitas, zoom por compasso, fundo alterna)
+    antic: 30.63,            // 13,90 s respiro: squash longo + manchas sugadas
+    drop: 32,                // 14,52 s DROP: corte seco + inversão
+    blocks: [32.5, 33, 36, 60, 60.5],   // JE · SUS · remix (escrito) · ANDRÉ × · CASTRO (clímax)
+    swap: 40, creme: 48, back: 56,      // frase B: variação a cada 2 compassos
+    cutEvery: 2,                         // cortes a cada 2 batidas na seção creme
+    climax: 60, date: 61, year: 62.5,    // 27,15 s ANDRÉ × CASTRO + contador
+    tail: 64,                            // 28,95 s hold
+    bursts: [32, 40, 56, 60],
+  },
+} : {
+  bpm: 133.03, offset: 0.087, fps: 30,
+  audioStart: 12.72, duration: 5.0,   // recorte do Corte_Jesus.wav
+  beats: {
+    pop: 28,                // manchas surgem (12,72 s)
+    fly: 29,                // voam para o desenho
+    merge: 29.75,           // colidem / fundem (máscara gooey cresce)
+    aura: 30.5,             // aura acende e ferve
+    antic: 31.5,            // antecipação (squash) antes do drop
+    drop: 32,               // 14,52 s — corte seco + inversão
+    blocks: [32.5, 33, 34, 35, 35.5],   // JE · SUS · remix · ANDRÉ × · CASTRO
+  },
+};
+const FMT = JR.format(); JR.cuesFromQuery(CUES, FMT.q);
+const BEAT = 60 / CUES.bpm;
+const T = b => CUES.offset + b * BEAT - CUES.audioStart;   // tempo local da vinheta
+const B = CUES.beats;
+window.FPS = CUES.fps; window.DURATION = CUES.duration; window.CUES = CUES;
+const W = FMT.W, H = FMT.H, K = FMT.kind;
+const { el, clamp, lerp, prog, E, TOK } = JR;
+const eo = E('expo.out'), bo = E('back.out(2.2)'), p3i = E('power3.in'), p3o = E('power3.out'), el2 = E('elastic.out(1,0.45)');
+
+/* ═════════════ Layouts ═════════════
+   viewBox da ilustração: x −120…720, y −300…796 (busto em 0…600 × 0…796, cabeça ~(300,250)) */
+const LAY = {
+  wide:   { a1: { cx: 960, cy: 560, s: .9 },  a2: { cx: 560, bottom: 1080, s: 1.15 },
+            txt: { left: 1030, top: 330, title: 196, remix: 150, sign: 44, gap: 1.0, align: 'left' } },
+  square: { a1: { cx: 540, cy: 560, s: .88 }, a2: { cx: 300, bottom: 1080, s: .98 },
+            txt: { left: 592, top: 390, title: 118, remix: 96, sign: 30, gap: 1.0, align: 'left' } },
+  story:  { a1: { cx: 540, cy: 900, s: 1.12 }, a2: { cx: 540, bottom: 1250, s: 1.08 },
+            txt: { cx: 540, top: 1130, title: 190, remix: 160, sign: 44, gap: 1.0, align: 'center' } },
+}[K];
+if (LONG) Object.assign(LAY, {
+  wide:   { txt: { left: 1030, top: 250, title: 196, remix: 150, sign: 44, date: 100, align: 'left' }, swapDx: -910, swapCx: 1360 },
+  square: { txt: { left: 592, top: 290, title: 118, remix: 96, sign: 30, date: 62, align: 'left' }, swapDx: -552, swapCx: 780 },
+  story:  { a2: { cx: 540, bottom: 1150, s: 1.08 }, txt: { cx: 540, top: 1030, title: 190, remix: 160, sign: 44, date: 88, align: 'center' }, swapDx: 0, swapCx: 540 },
+}[K]);
+
+/* ═════════════ Montagem ═════════════ */
+const stage = document.getElementById('stage');
+stage.style.width = W + 'px'; stage.style.height = H + 'px';
+const bg = el(stage, 'div', 'ly', { background: TOK.branco });
+const world = el(stage, 'div', 'ly', { transformOrigin: '0 0' });
+const pc = el(world, 'canvas', 'ly', {}); pc.width = W; pc.height = H; const px = pc.getContext('2d');
+const art = el(world, 'div', 'ly', {}); art.id = 'art';
+const xhr = new XMLHttpRequest(); xhr.open('GET', '../../03_assets/vetores/andre_flat.svg', false); xhr.send();
+art.innerHTML = xhr.responseText;
+const svg = art.querySelector('svg');
+const VB = { x: -120, y: -300, w: 840, h: 1096 };
+const NS = JR.NS;
+const ilustra = svg.querySelector('#ilustra'), auraG = svg.querySelector('#aura');
+const boils = [...svg.querySelectorAll('.boil')];
+const P = id => svg.querySelector('#' + id);
+const parts = { base: P('base'), mid: P('mid'), dark: P('dark'), hi: P('hi') };
+
+// máscara de revelação: blobs que crescem, fundidos por filtro gooey
+const defs = document.createElementNS(NS, 'defs');
+defs.innerHTML = `<filter id="gooR" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+    <feGaussianBlur stdDeviation="22"/><feColorMatrix values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 30 -12"/></filter>
+  <filter id="gooB" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+    <feGaussianBlur stdDeviation="9"/><feColorMatrix values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 22 -9"/></filter>
+  <mask id="rev" maskUnits="userSpaceOnUse" x="-600" y="-800" width="2000" height="2400">
+    <rect x="-600" y="-800" width="2000" height="2400" fill="#000"/><g id="revBlobs" filter="url(#gooR)"></g></mask>`;
+svg.insertBefore(defs, svg.firstChild);
+ilustra.setAttribute('mask', 'url(#rev)');
+const revG = defs.querySelector('#revBlobs');
+const blobsG = document.createElementNS(NS, 'g'); blobsG.setAttribute('filter', 'url(#gooB)'); svg.appendChild(blobsG);
+const smearG = document.createElementNS(NS, 'g'); svg.appendChild(smearG);
+
+// sementes: cada mancha voa até uma região do desenho e ali vira o "núcleo" da máscara
+const SEEDS = [
+  { x: 300, y: 110, r: 230, c: TOK.azulProf, from: [-.42, -.30] },   // cabelo
+  { x: 150, y: 250, r: 170, c: TOK.azulProf, from: [-.30, .26] },
+  { x: 340, y: 285, r: 170, c: TOK.azulProf, from: [.40, -.34] },    // óculos
+  { x: 330, y: 380, r: 190, c: TOK.magenta, from: [.36, .12] },      // rosto
+  { x: 410, y: 455, r: 150, c: TOK.azulProf, from: [.44, .36] },     // barba
+  { x: 290, y: 600, r: 210, c: TOK.magenta, from: [-.40, .40] },     // mãos
+  { x: 110, y: 690, r: 230, c: TOK.azulProf, from: [-.46, .04] },    // camisa
+  { x: 500, y: 690, r: 230, c: TOK.azulProf, from: [.10, .46] },
+  { x: 300, y: 740, r: 200, c: TOK.amarelo, from: [-.12, -.44] },
+];
+const rng = JR.rng(2026);
+const GROUP = [1, 1, 1, 2, 2, 2, 0, 0, 0];   // modo longo: camisa+amarelo → cabelo/óculos → rosto/barba/mãos
+SEEDS.forEach((s, i) => {
+  s.r0 = 38 + rng() * 34; s.tPop = T(B.pop ?? 0) + i * .035 + rng() * .05;
+  s.tFly = T(B.fly ?? 0) + i * .028; s.dFly = .3 + rng() * .1; s.tHit = s.tFly + s.dFly;
+  if (LONG) { const g = GROUP[i], k = GROUP.slice(0, i).filter(x => x === g).length;
+    s.tPop = T(B.groups[g] + k * .5); s.tFly = T(B.groups[g] + 2) + k * .05; s.dFly = .34 + rng() * .08; s.tHit = s.tFly + s.dFly; }
+  s.arc = (rng() - .5) * 260;
+  s.blob = document.createElementNS(NS, 'ellipse'); s.blob.setAttribute('fill', s.c); blobsG.appendChild(s.blob);
+  s.smear = document.createElementNS(NS, 'path'); s.smear.setAttribute('fill', s.c); smearG.appendChild(s.smear);
+  s.mask = document.createElementNS(NS, 'circle'); s.mask.setAttribute('fill', '#fff'); revG.appendChild(s.mask);
+});
+// gotas soltas (spray) que passam e somem — dão a textura da animação 2D
+const DROPS = []; for (let i = 0; i < 14; i++) { const d = { a: rng() * Math.PI * 2, r: 300 + rng() * 260, s: 5 + rng() * 12, t0: LONG ? T(B.groups[i % 3]) + rng() * 2.4 : T(B.pop) + rng() * .9, life: .35 + rng() * .3,
+  c: [TOK.azulProf, TOK.magenta, TOK.amarelo][i % 3], spin: (rng() - .5) * 3 }; d.e = document.createElementNS(NS, 'ellipse'); d.e.setAttribute('fill', d.c); smearG.appendChild(d.e); DROPS.push(d); }
+
+const ORBS = []; if (LONG) for (let i = 0; i < 6; i++) { const o = { a0: i / 6 * Math.PI * 2, r: 400 + (i % 2) * 70, s: 16 + (i % 3) * 6, c: [TOK.magenta, TOK.amarelo, TOK.azulProf][i % 3], frags: [] };
+  o.e = document.createElementNS(NS, 'ellipse'); o.e.setAttribute('fill', o.c); smearG.appendChild(o.e);
+  for (let k = 0; k < 4; k++) { const f = document.createElementNS(NS, 'ellipse'); f.setAttribute('fill', o.c); smearG.appendChild(f); o.frags.push(f); } ORBS.push(o); }
+
+// texto do ato 2 (montado bloco a bloco)
+const txtL = el(world, 'div', 'ly', {});
+const TX = LAY.txt;
+function block(text, css, cls) {
+  const wrap = el(txtL, 'div', 'abs', css);
+  const inner = el(wrap, 'div', cls || '', {}, text);
+  const bar = el(wrap, 'div', 'abs', { left: '-.04em', top: '.06em', right: '-.04em', bottom: '.02em', background: TOK.magenta, transformOrigin: '0 50%' });
+  return { wrap, inner, bar };
+}
+const sh = []; const nE = Math.round(TX.title * .05); for (let i = 1; i <= nE; i++) sh.push(`${(i * .55).toFixed(2)}px ${i}px 0 ${TOK.azul}`);
+const titleCss = { fontFamily: '"Dela Gothic One"', fontSize: TX.title + 'px', lineHeight: 1, letterSpacing: '-0.01em', color: TOK.magenta, whiteSpace: 'nowrap', textShadow: sh.join(',') };
+const titleRow = el(txtL, 'div', 'abs', Object.assign({ whiteSpace: 'nowrap', top: TX.top + 'px', transform: 'scale(.8,1.16)', transformOrigin: TX.align === 'left' ? '0 0' : '50% 0' }, TX.align === 'left' ? { left: TX.left + 'px' } : { left: (TX.cx) + 'px' }));
+if (TX.align !== 'left') titleRow.style.transform = 'translateX(-50%) scale(.8,1.16)';
+const bJE = { wrap: el(titleRow, 'span', '', Object.assign({ position: 'relative', display: 'inline-block' }, titleCss)) };
+bJE.inner = el(bJE.wrap, 'span', '', {}, 'JE'); bJE.bar = el(bJE.wrap, 'div', 'abs', { left: 0, top: '.05em', right: 0, bottom: '.05em', background: TOK.branco, transformOrigin: '0 50%' });
+const bSUS = { wrap: el(titleRow, 'span', '', Object.assign({ position: 'relative', display: 'inline-block' }, titleCss)) };
+bSUS.inner = el(bSUS.wrap, 'span', '', {}, 'SUS'); bSUS.bar = el(bSUS.wrap, 'div', 'abs', { left: 0, top: '.05em', right: 0, bottom: '.05em', background: TOK.amarelo, transformOrigin: '0 50%' });
+const titleH = TX.title * 1.16;
+const remixCss = { fontFamily: 'Yellowtail', fontSize: TX.remix + 'px', lineHeight: 1, color: TOK.branco, whiteSpace: 'nowrap', transform: 'rotate(-6deg)', padding: '0 .1em' };
+const rTop = TX.top + titleH * .66;
+const bRemix = block('remix', Object.assign({ top: rTop + 'px' }, remixCss, TX.align === 'left' ? { left: (TX.left + TX.title * 1.2) + 'px' } : { left: (TX.cx - TX.remix * 1.05) + 'px' }));
+bRemix.bar.style.background = TOK.magenta;
+const sTop = rTop + TX.remix * 1.25;
+const monoCss = { fontFamily: '"Roboto Mono"', fontWeight: 400, fontSize: TX.sign + 'px', letterSpacing: '.06em', color: TOK.branco, whiteSpace: 'nowrap', lineHeight: 1.1 };
+const sLeft = TX.align === 'left' ? TX.left + 6 : TX.cx - TX.sign * 2.6;
+const bAndre = block('ANDRÉ<span style="font-weight:700;font-size:.62em;vertical-align:.32em;margin-left:.18em">✕</span>', Object.assign({ top: sTop + 'px', left: sLeft + 'px' }, monoCss));
+const bCastro = block('CASTRO', Object.assign({ top: (sTop + TX.sign * 1.15) + 'px', left: sLeft + 'px' }, monoCss));
+bAndre.bar.style.background = bCastro.bar.style.background = TOK.amarelo;
+const BLOCKS = [bJE, bSUS, bRemix, bAndre, bCastro];
+const odo = LONG ? JR.odometer(txtL, '15.12.2026', Object.assign({ top: sTop + TX.sign * 2.6, size: TX.date, depth: Math.round(TX.date * .06), ext: TOK.azul },
+  TX.align === 'left' ? { left: TX.left, align: 'left' } : { cx: TX.cx })) : null;
+
+const flash = el(stage, 'div', 'ly', { background: '#fff', opacity: 0 });
+const spk = JR.specks(stage, W, H, 77);
+const grn = JR.grain(stage, W, H);
+
+/* ═════════════ Partículas do drop (canvas) ═════════════ */
+const PARTS = []; { const R = JR.rng(31); for (let i = 0; i < 46; i++) PARTS.push({ a: R() * Math.PI * 2, v: 500 + R() * 1100, s: 5 + R() * 13, life: .7 + R() * 1.4,
+  c: R() < .5 ? TOK.magenta : (R() < .6 ? TOK.branco : TOK.amarelo), g: 120 + R() * 200 }); }
+
+/* ═════════════ Render ═════════════ */
+function placeArt(o, extraS = 1, sx = 1, sy = 1, rot = 0) {
+  const s = o.s * extraS;
+  svg.setAttribute('width', VB.w); svg.setAttribute('height', VB.h);
+  // ponto de ancoragem = centro da cabeça (300,250) no ato 1; base do busto no ato 2
+  let ax, ay, px0, py0;
+  if (o.bottom != null) { ax = 300; ay = 796; px0 = o.cx; py0 = o.bottom; }
+  else { ax = 300; ay = 300; px0 = o.cx; py0 = o.cy - 30 * s; }
+  const ox = ax - VB.x, oy = ay - VB.y;
+  svg.style.transformOrigin = `${ox}px ${oy}px`;
+  svg.style.transform = `translate(${(px0 - ox).toFixed(2)}px, ${(py0 - oy).toFixed(2)}px) rotate(${rot}deg) scale(${(s * sx).toFixed(4)}, ${(s * sy).toFixed(4)})`;
+  return { s, toStage: (x, y) => [px0 + (x - ax) * s, py0 + (y - ay) * s] };
+}
+function render(t) {
+  const fps = CUES.fps, frame = Math.round(t * fps);
+  const tDrop = T(B.drop), act2 = frame >= Math.round(tDrop * fps);
+
+  if (!act2) {
+    /* ── ATO 1: creme, manchas → ilustração ── */
+    bg.style.background = TOK.branco; txtL.style.display = 'none'; world.style.transform = 'none';
+    // overshoot do desenho ao fundir + antecipação antes do drop
+    let es = 1, sx = 1, sy = 1;
+    if (!LONG) { const tm = T(B.merge); if (t >= tm) es = .9 + .1 * el2(prog(t, tm, .9)); }
+    else {
+      // cada grupo que funde dá um "soco" elástico no desenho
+      for (const g of B.groups) { const u = t - (T(g + 2) + .38); if (u >= 0) es += .06 * Math.exp(-u * 5) * Math.cos(u * 18); }
+      if (t >= T(B.alive)) {
+        const bt = (t - CUES.offset) % (4 * BEAT);                       // zoom curto em cada compasso
+        es *= 1 + .045 * Math.exp(-bt * 4);
+        const br = Math.sin((t - CUES.offset) / (2 * BEAT) * Math.PI);    // respiração (2 batidas)
+        sy *= 1 + .012 * br; sx *= 1 - .006 * br;
+      }
+    }
+    const an = prog(t, T(B.antic), tDrop - T(B.antic));
+    if (an > 0) { const k = E('power2.in')(an); sx *= 1 + (LONG ? .08 : .05) * k; sy *= 1 - (LONG ? .1 : .06) * k; }
+    placeArt(LAY.a1, es, sx, sy);
+    // fundo: creme ↔ amarelo pálido nos downbeats (fase viva)
+    if (LONG && t >= T(B.alive)) { const bar = Math.floor((t - CUES.offset) / (4 * BEAT) + 1e-6); bg.style.background = bar % 2 ? '#F6EBBE' : TOK.branco; }
+    // órbitas: manchinhas giram, estalam na batida e renascem; no respiro são sugadas para o centro
+    ORBS.forEach((o, i) => {
+      const t0 = T(B.alive); const vis = t >= t0 - .3;
+      o.e.style.visibility = vis ? 'visible' : 'hidden'; o.frags.forEach(f => f.style.visibility = 'hidden'); if (!vis) return;
+      const suck = p3i(prog(t, T(B.antic), tDrop - T(B.antic)));
+      const a = o.a0 + (t - t0) * .9, rr = o.r * (1 - suck) * (.5 + .5 * E('back.out(1.6)')(prog(t, t0 - .3, .5)));
+      const x = 300 + Math.cos(a) * rr, y = 330 + Math.sin(a) * rr * .85;
+      // estala na batida i (mod 6): cresce, explode em 4 gotas, renasce 1 batida depois
+      const bn = Math.floor((t - CUES.offset) / BEAT + 1e-6), bt = (t - CUES.offset) / BEAT - bn;
+      let sc = 1, popU = -1;
+      if (suck === 0 && t >= t0) { const last = bn - ((bn - i) % 6 + 6) % 6; const since = ((t - CUES.offset) / BEAT - last); if (since < 1) popU = since; }
+      if (popU >= 0) { sc = popU < .12 ? 1 + 4 * popU : 0; if (popU > .5) sc = E('back.out(2)')((popU - .5) * 2);
+        if (popU >= .12 && popU < .7) o.frags.forEach((f, k) => { const u = (popU - .12) / .58, aa = k * Math.PI / 2 + i, d = 30 + 90 * eo(u);
+          f.style.visibility = 'visible'; f.setAttribute('rx', o.s * .5 * (1 - u) + 1.5 * (1 - u)); f.setAttribute('ry', o.s * .3 * (1 - u));
+          f.setAttribute('transform', `translate(${(x + Math.cos(aa) * d).toFixed(1)} ${(y + Math.sin(aa) * d).toFixed(1)}) rotate(${(aa * 57.3).toFixed(1)})`); }); }
+      const st = 1 + 2.4 * suck;
+      o.e.setAttribute('rx', (o.s * sc * st).toFixed(2)); o.e.setAttribute('ry', (o.s * sc / Math.sqrt(st)).toFixed(2));
+      o.e.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${(Math.atan2(y - 330, x - 300) * 57.3).toFixed(1)})`);
+    });
+    // estilo colorido
+    parts.base.setAttribute('fill', TOK.branco); parts.base.setAttribute('stroke', TOK.azulProf);
+    parts.mid.setAttribute('fill', TOK.magenta); parts.dark.setAttribute('fill', TOK.azulProf); parts.hi.setAttribute('fill', TOK.magenta);
+    // manchas
+    for (const s of SEEDS) {
+      const fx = s.x + s.from[0] * 1050, fy = s.y + s.from[1] * 900;   // ponto de partida (fora do desenho)
+      let x = fx, y = fy, vis = t >= s.tPop && t < s.tHit + .12, scl = 0, ang = 0, stretch = 1, smear = null;
+      if (t >= s.tPop) scl = bo(prog(t, s.tPop, .28));
+      // borbulha (wobble) parado antes de voar
+      const wob = t < s.tFly ? Math.sin((t - s.tPop) * 26 + s.r0) * .1 * (1 - prog(t, s.tPop, .5)) : 0;
+      if (t >= s.tFly) {
+        const u = prog(t, s.tFly, s.dFly), e = p3i(u);
+        const pos = uu => { const ee = p3i(uu); return [lerp(fx, s.x, ee) + Math.sin(Math.PI * ee) * s.arc, lerp(fy, s.y, ee) - Math.sin(Math.PI * ee) * s.arc * .4]; };
+        [x, y] = pos(u);
+        const [x0, y0] = pos(Math.max(0, u - (1 / fps) / s.dFly));
+        const vx = x - x0, vy = y - y0, sp = Math.hypot(vx, vy);
+        ang = Math.atan2(vy, vx) * 180 / Math.PI; stretch = 1 + Math.min(2.6, sp / (s.r0 * 1.6));
+        if (sp > s.r0 * 1.2 && u < 1) smear = { x0, y0, x, y, w: s.r0 * .9 };
+      }
+      // impacto: squash perpendicular ao movimento
+      let sq = 0; if (t >= s.tHit) sq = Math.exp(-(t - s.tHit) * 22) * .55;
+      const r = s.r0 * scl;
+      s.blob.style.visibility = vis ? 'visible' : 'hidden';
+      s.blob.setAttribute('rx', r); s.blob.setAttribute('ry', r);
+      const sxB = (t >= s.tHit ? 1 + sq * 1.4 : stretch) * (1 + wob), syB = (t >= s.tHit ? 1 - sq : 1 / Math.sqrt(stretch)) * (1 - wob);
+      s.blob.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${ang.toFixed(1)}) scale(${sxB.toFixed(3)} ${syB.toFixed(3)})`);
+      // smear frame: forma alongada afunilada entre a posição anterior e a atual
+      if (smear) { const { x0, y0 } = smear, a = Math.atan2(y - y0, x - x0), nx = -Math.sin(a), ny = Math.cos(a), w = smear.w;
+        s.smear.setAttribute('d', `M${x0.toFixed(1)} ${y0.toFixed(1)} Q${((x0 + x) / 2 + nx * w).toFixed(1)} ${((y0 + y) / 2 + ny * w).toFixed(1)} ${(x + nx * w).toFixed(1)} ${(y + ny * w).toFixed(1)} L${(x - nx * w).toFixed(1)} ${(y - ny * w).toFixed(1)} Q${((x0 + x) / 2 - nx * w).toFixed(1)} ${((y0 + y) / 2 - ny * w).toFixed(1)} ${x0.toFixed(1)} ${y0.toFixed(1)}Z`);
+        s.smear.style.visibility = 'visible'; }
+      else s.smear.style.visibility = 'hidden';
+      // máscara cresce a partir do ponto de impacto (com overshoot)
+      const g = t >= s.tHit ? E('back.out(1.4)')(prog(t, s.tHit, .34)) : 0;
+      s.mask.setAttribute('cx', s.x); s.mask.setAttribute('cy', s.y); s.mask.setAttribute('r', (s.r * 1.25 * g).toFixed(1));
+    }
+    // spray
+    for (const d of DROPS) { const u = prog(t, d.t0, d.life); const vis = u > 0 && u < 1; d.e.style.visibility = vis ? 'visible' : 'hidden'; if (!vis) continue;
+      const rr = d.r + 220 * eo(u), a = d.a + d.spin * u; const x = 300 + Math.cos(a) * rr, y = 330 + Math.sin(a) * rr * .8;
+      const k = Math.sin(Math.PI * u); d.e.setAttribute('rx', d.s * 2.2 * k); d.e.setAttribute('ry', d.s * k * .8);
+      d.e.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${(a * 57.3 + 90).toFixed(1)})`); }
+    // aura: acende com overshoot e ferve (troca de forma a cada 2 quadros)
+    const ta = T(B.aura), ak = t >= ta ? E('back.out(2)')(prog(t, ta, .3)) : 0;
+    auraG.style.visibility = ak > 0 ? 'visible' : 'hidden';
+    auraG.setAttribute('transform', `translate(300 330) scale(${ak.toFixed(3)} ${(ak * (1 + .04 * Math.sin(t * 20))).toFixed(3)}) translate(-300 -330)`);
+    const bi = Math.floor(frame / 2) % boils.length; boils.forEach((g, i) => g.style.display = i === bi ? '' : 'none');
+    blobsG.style.display = smearG.style.display = '';
+    px.clearRect(0, 0, W, H);
+    flash.style.opacity = 0;
+  } else {
+    /* ── ATO 2: corte seco + inversão ── */
+    const ta = t - tDrop;
+    // frase B (modo longo): A → troca de lado → creme (cores originais + cortes) → volta A
+    const PH = !LONG ? 'A' : (t < T(B.swap) ? 'A' : t < T(B.creme) ? 'S' : t < T(B.back) ? 'C' : 'A');
+    const secStart = !LONG ? tDrop : [tDrop, T(B.swap), T(B.creme), T(B.back), T(B.climax)].filter(x => x <= t + 1e-6).pop();
+    const ts = t - secStart;
+    bg.style.background = PH === 'C' ? TOK.branco : TOK.azulProf; txtL.style.display = '';
+    const punch = 1 + .06 * Math.exp(-ts * 9);
+    const bob = Math.sin(ta * Math.PI * 2 / (BEAT * 4)) * 6;
+    const lay2 = PH === 'S' ? Object.assign({}, LAY.a2, { cx: LAY.swapCx, s: LAY.a2.s * 1.1 }) : LAY.a2;
+    placeArt(Object.assign({}, lay2, { bottom: lay2.bottom + bob }), punch);
+    txtL.style.transform = PH === 'S' ? `translateX(${LAY.swapDx}px)` : 'none';
+    SEEDS.forEach(s => s.mask.setAttribute('r', 2000));
+    blobsG.style.display = 'none'; smearG.style.display = 'none';
+    if (PH === 'C') {
+      // inverte de novo: creme + ilustração colorida com aura fervendo
+      parts.base.setAttribute('fill', TOK.branco); parts.base.setAttribute('stroke', TOK.azulProf);
+      parts.mid.setAttribute('fill', TOK.magenta); parts.dark.setAttribute('fill', TOK.azulProf); parts.hi.setAttribute('fill', TOK.magenta);
+      auraG.style.visibility = 'visible'; auraG.setAttribute('transform', 'translate(300 330) scale(1) translate(-300 -330)');
+      const bi = Math.floor(frame / 2) % boils.length; boils.forEach((g, i) => g.style.display = i === bi ? '' : 'none');
+    } else {
+      auraG.style.visibility = 'hidden';
+      // silhueta: magenta chapado + luzes em branco
+      parts.base.setAttribute('fill', TOK.branco); parts.base.setAttribute('stroke', TOK.magenta);
+      parts.mid.setAttribute('fill', TOK.magenta); parts.dark.setAttribute('fill', TOK.magenta); parts.hi.setAttribute('fill', TOK.azulProf);
+    }
+    const ink = PH === 'C' ? TOK.azulProf : TOK.branco;
+    bRemix.inner.style.color = bAndre.inner.style.color = bCastro.inner.style.color = ink;
+    // câmera: cortes secos a cada 2 batidas na seção creme
+    let wz = 1, wx = 0, wy = 0;
+    if (PH === 'C' && G.frames.length) {
+      const ci = Math.floor((t - T(B.creme)) / (B.cutEvery * BEAT) + 1e-6), u = ((t - T(B.creme)) / (B.cutEvery * BEAT)) - ci;
+      const f = G.frames[ci % G.frames.length];
+      wz = f.z * (1 + .04 * u) * (1 + .03 * Math.exp(-u * 14));
+      wx = clamp(W / 2 - wz * f.x, W - wz * W, 0); wy = clamp(H / 2 - wz * f.y, H - wz * H, 0);
+    }
+    world.style.transform = wz !== 1 ? `translate(${wx.toFixed(2)}px, ${wy.toFixed(2)}px) scale(${wz.toFixed(4)})` : 'none';
+    // partículas (com rastro alongado = smear) + padrão de mini-manchas na seção trocada
+    px.clearRect(0, 0, W, H);
+    if (PH === 'S') {
+      const bt = ((t - CUES.offset) / BEAT) % 1, pul = Math.exp(-bt * 6), sh = Math.floor((t - CUES.offset) / BEAT) % 2;
+      for (let gy = 0; gy * 96 < H + 96; gy++) for (let gx = 0; gx * 96 < W + 96; gx++) {
+        const on = (gx + gy + sh) % 2 === 0; px.globalAlpha = on ? .55 : .25; px.fillStyle = (gx + gy) % 3 === 0 ? TOK.amarelo : TOK.magenta;
+        const r = (on ? 4 + 7 * pul : 3); px.beginPath(); px.ellipse(gx * 96 + 48, gy * 96 + 48, r * (1 + .5 * pul), r, 0, 0, 7); px.fill(); }
+      px.globalAlpha = 1;
+    }
+    const o = lay2, s = o.s;
+    const cx = o.cx, cy = o.bottom - 520 * s;
+    const lastB = (LONG ? B.bursts : [B.drop]).map(T).filter(x => x <= t + 1e-6).pop();
+    const tb = t - lastB;
+    for (const p of PARTS) { const ta = tb; const u = ta / p.life; if (u >= 1) continue;
+      const dist = p.v * (1 - Math.exp(-ta * 3.2)) / 3.2, x = cx + Math.cos(p.a) * dist, y = cy + Math.sin(p.a) * dist + p.g * ta * ta;
+      const v = p.v * Math.exp(-ta * 3.2), len = Math.max(1, v * .02);
+      px.save(); px.translate(x, y); px.rotate(p.a); px.globalAlpha = 1 - u; px.fillStyle = p.c;
+      px.beginPath(); px.ellipse(-len / 2, 0, p.s * (1 - u * .5) + len / 2, p.s * (1 - u * .5) * .7, 0, 0, Math.PI * 2); px.fill(); px.restore(); }
+    // blocos de texto nas batidas: barra entra (3 q) → recolhe revelando o texto (4 q)
+    BLOCKS.forEach((b, i) => { const t0 = T(B.blocks[i]);
+      if (LONG && i === 2) {   // "remix" escrito (revelação contínua, como gesto de mão)
+        const k = E('power1.inOut')(prog(t, t0, 1.1)); b.wrap.style.visibility = k > 0 ? 'visible' : 'hidden'; b.inner.style.visibility = 'visible';
+        b.bar.style.visibility = 'hidden'; b.inner.style.clipPath = `inset(-30% ${(100 - 100 * k).toFixed(2)}% -30% -8%)`; return; }
+      const a = prog(t, t0, 3 / fps), c = prog(t, t0 + 3 / fps, 4 / fps);
+      b.wrap.style.visibility = t >= t0 ? 'visible' : 'hidden';
+      b.inner.style.visibility = c > 0 ? 'visible' : 'hidden';
+      b.bar.style.transformOrigin = c > 0 ? '100% 50%' : '0 50%';
+      b.bar.style.transform = `scaleX(${(c > 0 ? 1 - p3o(c) : eo(a)).toFixed(4)})`;
+      b.bar.style.visibility = c >= 1 ? 'hidden' : 'visible'; });
+    // 2 quadros de flash no drop
+    let fl = 0; for (const tf of (LONG ? [tDrop, T(B.climax)] : [tDrop])) { const fi = frame - Math.round(tf * fps); if (fi === 0) fl = .35; else if (fi === 1) fl = Math.max(fl, .12); }
+    flash.style.opacity = fl;
+    // contador: "15.12" e depois ".2026" (modo longo, clímax)
+    if (odo) odo.cols.forEach((c, i) => {
+      const year = i >= 5, base = T(year ? B.year : B.date);
+      c.win.style.visibility = t >= base ? 'visible' : 'hidden';
+      if (!c.digit) { c.win.style.opacity = eo(prog(t, base + .12, .35)); return; }
+      const order = year ? i - 6 : (i > 2 ? i - 1 : i), t0 = base + order * BEAT * .25, dur = BEAT * 2;
+      const kAt = tt => eo(prog(tt, t0, dur)), k = kAt(t), v = (k - kAt(t - 1 / fps)) * c.steps * 1.25 * TX.date;
+      odo.setCol(i, k, clamp(v * .3, 0, 24));
+      c.win.style.color = ink;
+    });
+  }
+  spk.draw(((t / (BEAT * 4)) % 1), act2 ? .8 : .35);
+  grn.draw(Math.floor(t / BEAT));
+}
+
+window.seek = t => render(t);
+const G = { frames: [] };
+window.ready = (async () => {
+  await JR.fontsReady();
+  if (LONG) { // enquadramentos dos cortes (seção creme): rosto · geral · texto · busto
+    render(T(B.creme) + .01); world.style.transform = 'none';
+    const sr = stage.getBoundingClientRect(), tr = titleRow.getBoundingClientRect();
+    const o = LAY.a2, s = o.s, face = [o.cx + (330 - 300) * s, o.bottom - (796 - 300) * s];
+    G.frames = [{ x: face[0], y: face[1], z: 1.7 }, { x: W / 2, y: H / 2, z: 1 },
+      { x: tr.left - sr.left + tr.width / 2, y: tr.top - sr.top + tr.height * .9, z: 1.45 }, { x: o.cx, y: o.bottom - 420 * s, z: 1.25 }];
+  }
+  render(0); return true; })();
+if (!location.search.includes('render=1')) {
+  window.ready.then(() => { const t0 = performance.now(); const loop = () => { render(((performance.now() - t0) / 1000) % CUES.duration); requestAnimationFrame(loop); }; loop(); });
+}
+})();
+</script>
+</body>
+</html>

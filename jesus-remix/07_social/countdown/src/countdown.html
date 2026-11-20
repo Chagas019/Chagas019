@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>JESUS Remix — Countdown (story 1080×1920, 5 s)</title>
+<!--
+  JESUS Remix · André Castro — story de contagem regressiva.  countdown.html?n=7|5|3|1
+  "FALTAM N DIAS" / "FALTA 1 DIA". O número rola como odômetro, trava no beat com impacto + squash,
+  e a extrusão real (3D) cresce; câmera 3D leve sobre piso reflexivo (tabuleiro ondulado em perspectiva).
+  Tempo em BEATS (CUES): placeholder BPM 120 → troca sozinho por 09_audio/analise/beatmap.json.
+  Safe zone story: 250 px livres no topo e na base.
+-->
+</head>
+<body>
+<div id="stage"></div>
+<script src="../../../06_teaser/src/lib/glyphs.js"></script>
+<script src="../../../06_teaser/src/lib/kit.js"></script>
+<script>
+(() => {
+const { TOK, E, seg, clamp, lerp, wobble, spring, impact } = KIT;
+const Q = new URLSearchParams(location.search);
+const N = Math.max(1, Math.min(99, +(Q.get('n') || 7)));
+const W = 1080, H = 1920, FPS = 30;
+
+// ───────── CUES (único ponto de sincronia) ─────────
+// trecho da música: 1,80 s antes do DROP até 3,20 s depois (5 s). O número rola na frase A,
+// quase para no break (silêncio visual) e TRAVA exatamente no drop.
+const CUES = KIT.cues(K => [K.drop - 1.8, K.drop + 3.2]);
+const LOCK = CUES.k('drop'), BRK = CUES.k('break');
+const bd = Math.round(CUES.idx(LOCK));                 // índice do beat do drop na música
+const B = n => CUES.b(bd - 4 + n);                      // B(4) = drop; B(0) ≈ início do clipe
+window.FPS = FPS; window.DURATION = CUES.duracao;
+
+const stage = document.getElementById('stage');
+Object.assign(stage.style, { width: W + 'px', height: H + 'px' });
+const div = (css, html = '', cls = 'abs') => { const d = document.createElement('div'); d.className = cls; d.style.cssText += css; d.innerHTML = html; stage.appendChild(d); return d; };
+
+// fundo do palco
+const bg = div(`width:${W}px;height:${H}px;background:radial-gradient(70% 45% at 50% 58%, #0B4C93 0%, ${TOK.palco} 55%, ${TOK.palcoFundo} 100%)`);
+const halo = div(`width:${W}px;height:${H}px;background:radial-gradient(42% 22% at 50% 52%, rgba(120,190,255,.38), rgba(3,122,244,0) 70%)`);
+
+// mundo 3D
+const W3 = KIT.world(stage, W, H, { persp: 1500, po: 50, floorW: 2600, floorD: 2400, floorRes: .45 });
+const SIZE = 600, DEPTH = 70;
+const txt = String(N);
+const nw = [...txt].reduce((a, c) => a + KIT.adv(c) * SIZE * .8, 0);
+const num = W3.obj((c, isR) => {
+  const g = document.createElement('div'); g.className = 'p3'; c.appendChild(g);
+  let x = -nw / 2; const ls = [];
+  for (const ch of txt) { const L = KIT.letter3D(g, ch, { size: SIZE, depth: DEPTH, step: 2.5, face: TOK.branco, side: TOK.azulProfundo, refl: isR }); L.box.style.transform = `translateX(${x}px)`; x += L.w; ls.push(L); }
+  // odômetro na face (plano z = +1)
+  const od = KIT.odometer(g, txt, { size: SIZE, color: isR ? KIT.shade(TOK.branco, .55) : TOK.branco, track: 0 });
+  od.wrap.style.transform = `translate3d(${-nw / 2}px,${-KIT.baseline() * SIZE * 1.16}px,1px)`;
+  return { ls, od };
+});
+const faces = () => [num.ra, num.rb].flatMap(r => r.ls.map(L => L.layers[L.layers.length - 1]));
+const sides = r => r.ls.flatMap(L => L.layers.slice(0, -1));
+
+// tipografia 2D
+const plural = N !== 1;
+const top = div(`left:0;width:${W}px;top:530px;text-align:center;font-size:62px;font-weight:400;letter-spacing:.34em`, '', 'abs mono');
+const bot = div(`left:0;width:${W}px;top:1330px;text-align:center;font-size:62px;font-weight:400;letter-spacing:.34em`, '', 'abs mono');
+const wordSpans = (el, s) => { el.innerHTML = [...s].map(c => `<span style="display:inline-block">${c}</span>`).join(''); return [...el.children]; };
+const topL = wordSpans(top, plural ? 'FALTAM' : 'FALTA'), botL = wordSpans(bot, plural ? 'DIAS' : 'DIA');
+const topMB = KIT.blur(top), botMB = KIT.blur(bot);
+
+// lockup da campanha (título aprovado: Dela 0.8×1.16 + extrusão; remix Yellowtail −6°)
+const ext = (n, c) => Array.from({ length: n }, (_, i) => `${((i + 1) * .55).toFixed(2)}px ${i + 1}px 0 ${c}`).join(',');
+const lock = div(`left:0;top:270px;width:${W}px;height:240px`);
+lock.innerHTML = `<div class="dela" style="position:absolute;left:50%;top:0;font-size:150px;color:${TOK.magenta};transform:translateX(-50%) scale(.8,1.16);transform-origin:50% 0;text-shadow:${ext(10, TOK.azulProfundo)}">JESUS</div>
+  <div class="script" style="position:absolute;left:50%;top:96px;font-size:118px;transform:translateX(-40%) rotate(-6deg);text-shadow:${ext(4, 'rgba(10,79,150,.85)')}">remix</div>`;
+const lockJ = lock.children[0], lockR = lock.children[1];
+const date = div(`left:0;width:${W}px;top:1560px;display:flex;justify-content:center;align-items:center;gap:26px;font-size:36px;letter-spacing:.3em`, `<i style="width:80px;height:2px;background:${TOK.branco}"></i><span>15.12.2026</span><i style="width:80px;height:2px;background:${TOK.branco}"></i>`, 'abs mono');
+const rules = [...date.querySelectorAll('i')], dtx = date.querySelector('span');
+
+const flash = div(`width:${W}px;height:${H}px;background:#fff;opacity:0;mix-blend-mode:screen`);
+const vign = div(`width:${W}px;height:${H}px;background:radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(2,14,32,.5) 100%);pointer-events:none`);
+const G = KIT.grain(stage, W, H, .55);
+
+function render(t) {
+  const fr = Math.round(t * FPS);
+  // entrada do palco
+  const inK = E.expoOut(seg(t, 0, B(2)));
+  bg.style.opacity = .35 + .65 * inK;
+  const hit = impact(t, LOCK, FPS);
+  const p = t >= LOCK ? CUES.pulse(t, 8, LOCK) : 0;
+
+  // câmera: inclinação suave + órbita leve + dolly; trava com shake
+  const cm = E.sineInOut(seg(t, 0, 5));
+  W3.set({ cx: W / 2 + hit.sx, cy: 1230 + hit.sy, z: lerp(-260, 40, E.expoOut(seg(t, 0, LOCK + .4))) + 30 * cm, rx: lerp(24, 11, E.expoOut(seg(t, 0, LOCK))) - 2 * (t >= BRK && t < LOCK ? E.sineInOut(seg(t, BRK, LOCK)) : 0), ry: lerp(-24, 12, cm), s: 1 });
+  W3.drawFloor({
+    glow: (.55 + .45 * E.expoOut(seg(t, 0, B(2)))) * (t >= BRK && t < LOCK ? .55 : 1) + .6 * (t >= LOCK ? Math.exp(-(t - LOCK) * 4) : 0) + .15 * p, glowR: 1000, glowZ: 0,
+    checker: { x: -1300, y: -1200, cw: 200, ch: 200, cols: 14, rows: 13, A: 26, B: 14, lv: 3.4, lu: 2.4, ph: t * 1.4, ph2: t * .9, color: 'rgba(3,122,244,.42)', uMin: 0, vMin: 0 },
+  });
+
+  // número: rola de B(1) até travar em LOCK
+  const u0 = B(1);
+  // rolagem: rápida na frase A → arrasta no break (tensão) → encaixa no drop
+  const U = x => x < u0 ? 0 : x < BRK ? .93 * (1 - Math.pow(1 - seg(x, u0, BRK), 2.2)) : x < LOCK ? .93 + .06 * E.sineInOut(seg(x, BRK, LOCK)) : 1;
+  const u = U(t), du = (U(t + 1 / FPS) - U(t - 1 / FPS)) / 2;
+  const locked = t >= LOCK;
+  for (const r of [num.ra, num.rb]) {
+    r.od.set(u, locked ? 0 : du, 3);
+    r.od.wrap.style.visibility = locked ? 'hidden' : 'visible';
+    sides(r).forEach(L => L.style.visibility = 'hidden');
+  }
+  faces().forEach(f => f.style.visibility = locked ? 'visible' : 'hidden');
+  // extrusão cresce na trava (mola)
+  const dk = locked ? clamp(spring(t - LOCK, 3.2, 7)) : 0;
+  for (const r of [num.ra, num.rb]) r.ls.forEach(L => { const n = L.layers.length - 1; L.layers.slice(0, -1).forEach((Ly, i) => Ly.style.visibility = (n - i) <= Math.round(dk * n) ? 'visible' : 'hidden'); });
+  // squash & stretch: rolando = estica (velocidade), trava = esmaga e volta com mola
+  const vel = locked ? 0 : clamp(du * 30, 0, 1);
+  const w = locked ? wobble(t - LOCK, 5.5, 7) : 0;
+  const sy = (1 + .1 * vel - .2 * w) * (1 + .012 * p), sx = (1 - .05 * vel + .14 * w) * (1 + .012 * p);
+  const appear = E.expoOut(seg(t, 0, B(1.2)));
+  num.tf(`translate3d(0,0,${lerp(-500, 0, appear)}px) scale(${sx * hit.scale},${sy * hit.scale})`);
+  num.a.style.opacity = num.b.style.opacity = 1;
+  num.show(true);
+
+  // FALTAM: entra da esquerda com motion blur; DIAS: da direita
+  const tk = E.expoOut(seg(t, B(.5), B(2)));
+  topL.forEach((s, i) => { const k = E.expoOut(seg(t, B(.5) + i * .035, B(.5) + i * .035 + .55)); s.style.transform = `translateX(${(1 - k) * -420}px)`; s.style.opacity = k > 0 ? 1 : 0; });
+  topMB(Math.min(30, (E.expoOut(seg(t + .02, B(.5), B(.5) + .55)) - E.expoOut(seg(t - .02, B(.5), B(.5) + .55))) * 420 * .5), 0);
+  const bA = B(5);
+  botL.forEach((s, i) => { const k = E.expoOut(seg(t, bA + i * .035, bA + i * .035 + .55)); s.style.transform = `translateX(${(1 - k) * 420}px)`; s.style.opacity = k > 0 ? 1 : 0; });
+  botMB(Math.min(30, (E.expoOut(seg(t + .02, bA, bA + .55)) - E.expoOut(seg(t - .02, bA, bA + .55))) * 420 * .5), 0);
+
+  // lockup do título: desce no início, data entra em B(5)
+  const lk = E.expoOut(seg(t, 0, B(1.5)));
+  lock.style.transform = `translateY(${(1 - lk) * -60}px)`; lock.style.opacity = lk;
+  lockR.style.clipPath = `inset(-30% ${100 - 100 * E.power2InOut(seg(t, B(.5), B(2)))}% -30% 0)`;
+  const dk2 = E.expoOut(seg(t, B(7), B(8.5)));
+  rules.forEach(r => r.style.transform = `scaleX(${dk2})`);
+  dtx.style.clipPath = `inset(0 ${100 - 100 * dk2}% 0 0)`;
+
+  flash.style.opacity = hit.flash;
+  G.draw(fr);
+}
+window.seek = render;
+window.ready = (async () => { await KIT.fontsReady(); render(0); return true; })();
+if (!location.search.includes('render=1')) window.ready.then(() => { const t0 = performance.now(); const L = () => { render(((performance.now() - t0) / 1000) % window.DURATION); requestAnimationFrame(L); }; L(); });
+})();
+</script>
+</body>
+</html>

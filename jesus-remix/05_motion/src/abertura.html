@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>JESUS Remix — Motion principal (abertura v2)</title>
+<!--
+  JESUS Remix · André Castro — Motion principal, sincronizado com 09_audio/original/Corte_Jesus.wav (29,54 s).
+  Responsiva: abertura.html?w=1080&h=1080 | ?w=1080&h=1920 | ?w=1920&h=1080 (layouts dedicados, não escala).
+  Determinística: window.seek(t) desenha exatamente o tempo t. window.DURATION / window.FPS.
+  TODO o tempo musical está em CUES (topo do script), em BATIDAS da grade do beatmap.json:
+     t(b) = offset + b · 60/bpm   (133,03 BPM · 1º downbeat 0,087 s · compasso = 4 batidas)
+  Estrutura (ANALISE.md):
+    frase A  b0–b30.6  palco azul profundo, piso reflexivo + glow magenta; esfera quica em cada batida
+                       (squash & stretch), um plano de câmera por compasso, trocado por wipe de borda senoidal
+    respiro  b30.6–b32 câmera para; esfera suspensa
+    DROP     b32       esfera bate no piso e MORPHA no "J"; E S U S entram com motion blur; câmera 3D orbita
+                       a extrusão real (camadas empilhadas)
+    b40                wipe amarelo revela a capa (tabuleiro ondulado + artista); b41 impacto
+    frase B  b44–b56   cortes secos a cada 2 batidas (título / rosto / geral / título em 3D / remix / meio)
+    clímax   b60       ANDRÉ × CASTRO + contador "15.12" → "15.12.2026"
+    cauda    b64       hold final
+-->
+<style>
+@font-face{font-family:"Dela Gothic One";src:url(../../02_identidade/fontes/dela-gothic-one-latin-400-normal.woff2) format("woff2");}
+@font-face{font-family:"Yellowtail";src:url(../../02_identidade/fontes/yellowtail-latin-400-normal.woff2) format("woff2");}
+@font-face{font-family:"Roboto Mono";font-weight:300;src:url(../../02_identidade/fontes/roboto-mono-latin-300-normal.woff2) format("woff2");}
+@font-face{font-family:"Roboto Mono";font-weight:400;src:url(../../02_identidade/fontes/roboto-mono-latin-400-normal.woff2) format("woff2");}
+@font-face{font-family:"Roboto Mono";font-weight:700;src:url(../../02_identidade/fontes/roboto-mono-latin-700-normal.woff2) format("woff2");}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#000}
+#stage{position:relative;overflow:hidden;background:#037AF4}
+.abs{position:absolute}
+.ly{position:absolute;left:0;top:0;width:100%;height:100%}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="goo" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+    <feGaussianBlur id="gooBlur" in="SourceGraphic" stdDeviation="0"/>
+    <feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 24 -10"/>
+  </filter>
+  <filter id="mb1" x="-150%" y="-10%" width="400%" height="120%"><feGaussianBlur stdDeviation="0 0"/></filter>
+  <filter id="mb2" x="-150%" y="-10%" width="400%" height="120%"><feGaussianBlur stdDeviation="0 0"/></filter>
+  <filter id="mb3" x="-150%" y="-10%" width="400%" height="120%"><feGaussianBlur stdDeviation="0 0"/></filter>
+  <filter id="mb4" x="-150%" y="-10%" width="400%" height="120%"><feGaussianBlur stdDeviation="0 0"/></filter>
+</svg>
+<script src="vendor/gsap.min.js"></script>
+<script src="lib/jr.js"></script>
+<script>
+(() => {
+/* ═════════════ CUES — único lugar com tempo musical (fonte: 09_audio/analise/beatmap.json) ═════════════ */
+const CUES = {
+  bpm: 133.03, offset: 0.087, fps: 30, duration: 29.538,   // corte inteiro
+  beats: {
+    fadeIn: 0, drop0: 3,                     // esfera entra; 1º contato na b4 (compasso 2)
+    wipes: [8, 12, 16, 20, 24, 28],          // troca de plano a cada compasso (frase A)
+    breakStart: 30.63,                       // 13,90 s respiro — câmera para
+    drop: 32,                                // 14,52 s DROP — esfera bate e vira "J"
+    letters: [33, 33.5, 34, 34.5],           // E S U S
+    orbit: 33, shine1: 37,
+    cover: 40,                               // wipe amarelo revela a capa
+    impact: 41,                              // impacto do título na capa
+    remix: 42, marks: 56,                    // marca entra depois dos cortes (não corta na safe zone)
+    cuts: [44, 46, 48, 50, 52, 54, 56],      // cortes a cada 2 batidas (frase B)
+    shine2: 57,
+    climax: 60,                              // 27,15 s ANDRÉ × CASTRO + contador
+    year: 62, plat: 63,
+    tail: 64,                                // 28,95 s hold final
+  },
+  pulseEvery: 1,
+};
+const FMT = JR.format(); JR.cuesFromQuery(CUES, FMT.q);
+const BEAT = 60 / CUES.bpm;
+const T = b => CUES.offset + b * BEAT;
+const B = CUES.beats;
+const DURATION = CUES.duration;
+window.FPS = CUES.fps; window.DURATION = DURATION; window.CUES = CUES;
+
+/* ═════════════ Layouts dedicados (grade nativa de cada formato) ═════════════ */
+const CK_SQ = { cell: [122, 124], A: 20, B: 8, lv: 3.4, lu: 2.2 };
+const CK_ST = { cell: [100, 112], A: 16, B: 7, lv: 3.6, lu: 2.0 };
+const CK_WD = { cell: [124, 124], A: 22, B: 9, lv: 3.0, lu: 2.4 };
+const LAYOUTS = {
+  // capa aprovada (04_capa) subida 26 px para caber a data no rodapé
+  square: { k: 1.12, spread: .62,
+    checkers: [{ ...CK_SQ, side: 'L', x: -14, w: 250, ph: .4, ph2: 1.1, uMax: 2 }, { ...CK_SQ, side: 'R', x: 828, w: 270, ph: 2.3, ph2: .2, offset: 1, uMin: 0 }],
+    marks: { cx: 540, cy: 70, size: 48 }, photo: { cx: 532, top: 236, width: 610 },
+    title: { cx: 540, top: 552, size: 198, depth: 14 }, remix: { cx: 560, top: 674, size: 188 },
+    sign: { cx: 540, top: 872, size: 36 }, date: { cx: 540, top: 962, size: 46, depth: 4 } },
+  // story aprovado (07_social) — conteúdo entre 250 e 1670 px (safe zone)
+  story: { k: 1.2, spread: .6,
+    checkers: [{ ...CK_ST, side: 'L', x: -30, w: 170, ph: .9, ph2: .4, uMax: 2 }, { ...CK_ST, side: 'R', x: 910, w: 200, ph: 2.8, ph2: 1.3, offset: 1, uMin: 0 }],
+    marks: { cx: 540, cy: 300, size: 46 }, top: { text: 'lançamento', cx: 540, top: 378, size: 30, track: .32, align: 'center' },
+    photo: { cx: 532, top: 470, width: 730 },
+    title: { cx: 540, top: 860, size: 186, depth: 13 }, remix: { cx: 560, top: 972, size: 176 },
+    rule: { left: 390, top: 1250, w: 300 }, date: { cx: 540, top: 1296, size: 92, depth: 7 },
+    plat: { text: 'nas plataformas digitais', cx: 540, top: 1436, size: 27, track: .16, align: 'center' },
+    sign: { cx: 540, top: 1536, size: 40 } },
+  // wide aprovado (07_social): artista à esquerda, título à direita
+  wide: { k: 1.3, spread: .5,
+    checkers: [{ ...CK_WD, side: 'L', x: -40, w: 330, ph: .6, ph2: .9, uMax: 3 }, { ...CK_WD, side: 'R', x: 1760, w: 220, ph: 2.0, ph2: .1, offset: 1, uMin: 0 }],
+    marks: { cx: 1610, cy: 110, size: 38 }, photo: { cx: 620, top: 1080 - 737, width: 1000, fade: 0 }, photoFromLeft: true,
+    title: { left: 1090, top: 262, size: 178, depth: 13, align: 'left' }, remix: { left: 1290, top: 384, size: 160 },
+    rule: { left: 1096, top: 626, w: 120 }, date: { left: 1092, top: 660, size: 80, depth: 6, align: 'left' },
+    plat: { text: 'lançamento · nas plataformas digitais', left: 1096, top: 770, size: 22, track: .14 },
+    sign: { left: 1096, top: 880, size: 34 } },
+};
+const LY = LAYOUTS[FMT.kind], W = FMT.W, H = FMT.H;
+const { el, clamp, lerp, prog, E, TOK } = JR;
+const eo = E('expo.out'), p3i = E('power3.in'), p3o = E('power3.out'), sio = E('sine.inOut'), p2io = E('power2.inOut'),
+      eio = E('expo.inOut'), p2o = E('power2.out'), p2i = E('power2.in');
+
+/* ═════════════ Montagem ═════════════ */
+const stage = document.getElementById('stage');
+stage.style.width = W + 'px'; stage.style.height = H + 'px';
+const stageBg = el(stage, 'div', 'ly', { background: 'radial-gradient(ellipse 75% 65% at 50% 42%, #037AF4 0%, #0A4F96 62%, #062f5c 100%)' });
+const world = el(stage, 'div', 'ly', { transformOrigin: '0 0' });   // câmera dos cortes da frase B
+const ly = () => el(world, 'div', 'ly', {});
+
+const lyCheck = ly(); const ck = JR.checkers(lyCheck, LY.checkers, W, H);
+const lyArtist = ly(); const ph = JR.photo(lyArtist, LY.photo);
+const lyMarks = ly(); const mk = JR.marks(lyMarks, LY.marks.cx, LY.marks.cy, LY.marks.size);
+const topMono = LY.top ? JR.mono(lyMarks, LY.top.text, LY.top) : null;
+
+// tStage: piso + esfera + título (câmera do palco na frase A; identidade na capa)
+const tStage = ly();
+const titleO = LY.title;
+const floor = el(tStage, 'div', 'abs', {});
+const glow = el(tStage, 'div', 'abs', { pointerEvents: 'none', mixBlendMode: 'screen' });
+const ttl0 = { baselineY: null };
+const ttl = JR.title3D(tStage, 'JESUS', titleO);
+const baseY = ttl.baselineY();
+const refl = JR.reflection(tStage, 'JESUS', titleO, baseY);
+tStage.insertBefore(refl.wrap, ttl.wrap);
+Object.assign(floor.style, { left: -2 * W + 'px', width: 5 * W + 'px', top: baseY + 'px', height: 3 * H + 'px',
+  background: 'linear-gradient(to bottom, rgba(6,47,92,.5) 0%, rgba(4,30,62,.93) 45%)', borderTop: '2px solid rgba(249,249,249,.24)' });
+
+// esfera, sombra, reflexo, anéis, rastro e morph — no espaço local do título (squish)
+const SX = JR.TITLE_SX, SY = JR.TITLE_SY, sq = ttl.squish;
+const R = titleO.size * 0.27;                    // raio visual (px de tela)
+const sphereCss = { left: 0, top: 0, width: (2 * R / SX) + 'px', height: (2 * R / SY) + 'px', borderRadius: '50%',
+  background: 'radial-gradient(circle at 34% 30%, #FFB3FF 0%, #F833F8 38%, #B915C0 100%)', transformOrigin: '50% 100%' };
+const rings = []; for (let i = 0; i < 3; i++) rings.push(el(sq, 'div', 'abs', { left: 0, top: 0, width: (2 * R / SX) + 'px', height: (.5 * R / SY) + 'px',
+  borderRadius: '50%', border: `${3 / SY}px solid rgba(249,249,249,.8)`, transformOrigin: '50% 50%' }));
+const ballShadow = el(sq, 'div', 'abs', { left: 0, top: 0, width: (2.4 * R / SX) + 'px', height: (0.5 * R / SY) + 'px', borderRadius: '50%',
+  background: 'radial-gradient(ellipse, rgba(3,18,40,.6), rgba(3,18,40,0) 70%)' });
+const ballRefl = el(sq, 'div', 'abs', Object.assign({}, sphereCss, { opacity: .26, transformOrigin: '50% 0' }));
+const dots = []; for (let i = 0; i < 16; i++) dots.push(el(sq, 'div', 'abs', { left: 0, top: 0, width: (7 / SX) + 'px', height: (7 / SY) + 'px', borderRadius: '50%', background: TOK.branco }));
+const ghosts = []; for (let i = 0; i < 4; i++) ghosts.push(el(sq, 'div', 'abs', Object.assign({}, sphereCss)));
+const ball = el(sq, 'div', 'abs', Object.assign({}, sphereCss));
+const goo = el(sq, 'div', 'abs', { left: 0, top: 0, filter: 'url(#goo)', width: '100%', height: '100%' });
+const gooBall = el(goo, 'div', 'abs', Object.assign({}, sphereCss, { transformOrigin: '50% 50%' }));
+const gooJ = el(goo, 'div', 'abs', { left: 0, top: 0, color: TOK.magenta, fontFamily: '"Dela Gothic One"', fontSize: titleO.size + 'px', lineHeight: 1, letterSpacing: '-0.01em' }, 'J');
+const gooBlur = document.getElementById('gooBlur');
+const mbBlur = [1, 2, 3, 4].map(i => document.querySelector(`#mb${i} feGaussianBlur`));
+
+// texto da capa
+const lyText = ly(); const rmx = JR.script(lyText, 'remix', LY.remix);
+const lyInfo = ly();
+const sign = JR.signature(lyInfo, LY.sign);
+const rule = LY.rule ? el(lyInfo, 'div', 'abs', { left: LY.rule.left + 'px', top: LY.rule.top + 'px', width: LY.rule.w + 'px', height: '3px', background: TOK.branco, opacity: .9, transformOrigin: '0 50%' }) : null;
+const odo = JR.odometer(lyInfo, '15.12.2026', LY.date);
+const plat = LY.plat ? JR.mono(lyInfo, LY.plat.text, LY.plat) : null;
+
+const flash = el(stage, 'div', 'ly', { background: '#fff', opacity: 0, mixBlendMode: 'screen' });
+const wipeB = el(stage, 'div', 'ly', {}), wipeA = el(stage, 'div', 'ly', {});   // A (cor principal) por cima; B = filete de acento
+const spk = JR.specks(stage, W, H);
+const grn = JR.grain(stage, W, H);
+JR.vignette(stage, W, H);
+
+/* ═════════════ Geometria derivada (após fontes) ═════════════ */
+let G = {};
+function measure() {
+  ttl.measure(); refl.t.measure();
+  const tw = ttl.squish.offsetWidth;
+  const sqLeft = (titleO.align === 'left' ? titleO.left : titleO.cx - tw * SX / 2);
+  const glyphTop = ttl.glyphTopY();
+  const cx = sqLeft + tw * SX / 2, cy = (glyphTop + baseY) / 2;
+  const jw = ttl.letters[0].box.offsetWidth;
+  const jX = sqLeft + jw * SX / 2;                         // centro do J em px de tela (capa)
+  Object.assign(glow.style, { left: (cx - tw * SX) + 'px', top: (baseY - titleO.size * .55) + 'px', width: (tw * SX * 2) + 'px', height: (titleO.size * 1.1) + 'px',
+    background: 'radial-gradient(ellipse 50% 50% at 50% 50%, rgba(248,51,248,.8) 0%, rgba(248,51,248,.28) 38%, rgba(248,51,248,0) 72%)' });
+  const rr = rmx.wrap.getBoundingClientRect(), sr = stage.getBoundingClientRect();
+  const pH = LY.photo.width * JR.PHOTO_AR;
+  G = { tw, sqLeft, cx, cy, jw, jX, glyphTop, yb: (baseY - titleO.top) / SY, jcx: jw / 2, jcy: ((glyphTop + baseY) / 2 - titleO.top) / SY,
+        remix: { x: rr.left - sr.left + rr.width / 2, y: rr.top - sr.top + rr.height / 2 },
+        face: { x: LY.photo.cx + LY.photo.width * .02, y: LY.photo.top + pH * .36 } };
+}
+const toLocalX = X => (X - G.sqLeft) / SX;     // px de tela (tStage) → x local do squish
+
+/* ═════════════ Coreografia da esfera (frase A) — segmentos puros de t ═════════════ */
+let SEG = [], CONTACTS = [];
+function buildBall() {
+  const sp = LY.spread * W / 2, xJ = G.jX, xc = G.cx;
+  const X = xs => xc + xs * sp;
+  const segs = []; const contacts = [];
+  const hTop = H * 1.2;
+  // b3 → b4: queda do topo
+  segs.push({ b0: B.drop0, b1: B.drop0 + 1, x0: X(-.85), x1: X(-.8), type: 'fall', h0: hTop });
+  // b4 … b19: um contato por batida, atravessa o palco e volta
+  const pts = []; for (let i = 0; i <= 15; i++) { const k = i <= 7 ? i / 7 : 1 - (i - 8) / 7; pts.push(lerp(-.8, .8, i <= 7 ? k : k)); }
+  for (let i = 0; i < 15; i++) segs.push({ b0: 4 + i, b1: 5 + i, x0: X(pts[i]), x1: X(pts[i + 1]), type: 'arc', peak: H * (i % 4 === 3 ? .3 : .2) });
+  // b19 → b22: salto grande até o lugar do J
+  segs.push({ b0: 19, b1: 22, x0: X(pts[15]), x1: xJ, type: 'arc', peak: H * .5 });
+  // b22 … b28: quica no lugar
+  for (let b = 22; b < 28; b++) segs.push({ b0: b, b1: b + 1, x0: xJ, x1: xJ, type: 'arc', peak: H * (b % 2 ? .16 : .2) });
+  // b28 … b30.5: meio-tempos, cada vez mais baixos (tensão)
+  const hb = [.12, .1, .085, .07, .055]; for (let i = 0; i < 5; i++) segs.push({ b0: 28 + i * .5, b1: 28.5 + i * .5, x0: xJ, x1: xJ, type: 'arc', peak: H * hb[i] });
+  // respiro: sobe e fica suspensa; bate no DROP
+  segs.push({ b0: 30.5, b1: 31.2, x0: xJ, x1: xJ, type: 'rise', h1: H * .3 });
+  segs.push({ b0: 31.2, b1: 31.7, x0: xJ, x1: xJ, type: 'hold', h1: H * .3 });
+  segs.push({ b0: 31.7, b1: B.drop, x0: xJ, x1: xJ, type: 'slam', h0: H * .3 });
+  segs.forEach(s => { s.t0 = T(s.b0); s.t1 = T(s.b1); });
+  segs.forEach(s => { if (s.type !== 'rise' && s.type !== 'hold') contacts.push(s.t1); });
+  SEG = segs; CONTACTS = contacts.map((t, i) => ({ t, amp: t >= T(B.drop) - .01 ? .42 : (t > T(28) ? .22 : .32) }));
+}
+function ballAt(t) {
+  const s = SEG.find(s => t >= s.t0 && t < s.t1) || (t < SEG[0].t0 ? null : SEG[SEG.length - 1]);
+  if (!s) return null;
+  const u = clamp((t - s.t0) / (s.t1 - s.t0));
+  let h = 0;
+  if (s.type === 'fall') h = s.h0 * (1 - u * u);
+  else if (s.type === 'arc') h = s.peak * 4 * u * (1 - u);
+  else if (s.type === 'rise') h = s.h1 * p3o(u);
+  else if (s.type === 'hold') h = s.h1 + Math.sin(u * Math.PI) * H * .01;
+  else if (s.type === 'slam') h = s.h0 * (1 - p3i(u));
+  if (t >= T(B.drop)) h = 0;
+  const x = lerp(s.x0, s.x1, s.type === 'arc' ? u : sio(u));
+  return { x, h };
+}
+function ballFull(t) {
+  const b = ballAt(t); if (!b) return null;
+  const bp = ballAt(t - 1 / 60) || b;
+  const v = Math.abs(b.h - bp.h) * 60 / H;                 // alturas de tela por segundo
+  let q = 0; for (const c of CONTACTS) q += Math.exp(-Math.pow((t - c.t) / 0.04, 2)) * c.amp;
+  const st = clamp(v * .055, 0, .24);
+  return { x: b.x, h: b.h, sx: (1 + q) * (1 - st * .5), sy: (1 - q * .8) * (1 + st) };
+}
+function placeBall(e, b) {
+  const wL = 2 * R / SX, hL = 2 * R / SY;
+  e.style.transform = `translate(${(toLocalX(b.x) - wL / 2).toFixed(2)}px, ${(G.yb - hL - b.h / SY).toFixed(2)}px) scale(${b.sx.toFixed(4)}, ${b.sy.toFixed(4)})`;
+}
+
+/* ═════════════ Planos de câmera ═════════════ */
+// frase A: um plano por compasso (troca escondida pelo wipe). foco = (x seguindo a esfera, y acima do piso)
+const SHOTS_A = [
+  { b: 0,  k: .78, track: .0,  rot: 0,  lift: .1 },
+  { b: 8,  k: 1.55, track: .8, rot: 0,  lift: .02 },
+  { b: 12, k: 1.0, track: .3,  rot: -3, lift: .08 },
+  { b: 16, k: 1.9, track: 1,   rot: 0,  lift: .0 },
+  { b: 20, k: .9,  track: .2,  rot: 2,  lift: .14 },
+  { b: 24, k: 1.35, track: .6, rot: -2, lift: .06 },
+  { b: 28, k: 1.1, track: .5,  rot: 0,  lift: .06, push: .25 },
+];
+function shotA(t) {
+  let s = SHOTS_A[0]; for (const x of SHOTS_A) if (t >= T(x.b)) s = x;
+  const next = SHOTS_A[SHOTS_A.indexOf(s) + 1]; const tEnd = next ? T(next.b) : T(B.breakStart);
+  const u = clamp((Math.min(t, T(B.breakStart)) - T(s.b)) / (tEnd - T(s.b)));   // câmera para no respiro
+  const bb = ballAt(Math.min(t, T(B.breakStart)));
+  const fx = lerp(G.cx, bb ? bb.x : G.cx, s.track);
+  const k = s.k * (1 + (s.push || .05) * sio(u));
+  return { fx, fy: baseY - H * (s.lift + .12) / s.k, k, rot: s.rot * (1 - .3 * u) };
+}
+// frase B: cortes secos a cada 2 batidas
+function shotsB() {
+  const pick = (x, y, z, extra) => Object.assign({ x, y, z }, extra || {});
+  const mid = { x: (G.face.x + G.cx) / 2, y: (G.face.y + G.cy) / 2 };
+  return [pick(G.cx, G.cy, 1.6), pick(G.face.x, G.face.y, 1.9), pick(W / 2, H / 2, 1, { pulse: 1 }),
+          pick(G.cx, G.cy, 1.3, { orbit: 1 }), pick(G.remix.x, G.remix.y, 1.75), pick(mid.x, mid.y, 1.3)];
+}
+
+/* ═════════════ Wipes (borda senoidal = o tabuleiro) ═════════════ */
+const WIPES = () => B.wipes.map((b, i) => ({ t: T(b), c1: i % 2 ? TOK.magenta : TOK.amarelo, c2: i % 2 ? TOK.amarelo : TOK.magenta, dir: i % 2 ? -1 : 1, din: .2, dout: .26 }))
+  .concat([{ t: T(B.cover), c1: TOK.amarelo, c2: TOK.magenta, dir: 1, din: .32, dout: .4 }]);
+function wipeClip(t, w, lagIn, lagOut) {
+  const A = Math.min(W, H) * .05, off = A * 2.2;
+  const lead = lerp(-off, W + off, eio(prog(t, w.t - w.din - lagIn, w.din)));
+  const trail = lerp(-off, W + off, eio(prog(t, w.t + lagOut, w.dout)));
+  if (lead <= -off + .5 || trail >= W + off - .5) return null;
+  const pts = (x0, ph) => { const a = []; for (let i = 0; i <= 24; i++) { const y = H * i / 24; let x = x0 + A * Math.sin(i / 24 * Math.PI * 3 + ph); if (w.dir < 0) x = W - x; a.push(`${x.toFixed(1)}px ${y.toFixed(1)}px`); } return a; };
+  return `polygon(${pts(trail, .4).concat(pts(lead, .4).reverse()).join(',')})`;
+}
+
+/* ═════════════ Render de t ═════════════ */
+function render(t) {
+  const fps = CUES.fps, frame = Math.round(t * fps);
+  const tDrop = T(B.drop), tCover = T(B.cover), tImp = T(B.impact), tBreak = T(B.breakStart);
+  const cover = t >= tCover;
+  const tMorphEnd = tDrop + .42;
+
+  /* ── visibilidade por ato ── */
+  stageBg.style.opacity = cover ? 0 : 1;
+  floor.style.visibility = glow.style.visibility = cover ? 'hidden' : 'visible';
+  [lyCheck, lyArtist, lyMarks, lyText, lyInfo].forEach(e => e.style.visibility = cover ? 'visible' : 'hidden');
+  const fadeIn = eo(prog(t, 0, 1.2));
+  const breakDim = t >= tBreak && t < tDrop ? .82 + .18 * (1 - p2o(prog(t, tBreak, .4))) : 1;
+  const bright = (.12 + .88 * fadeIn) * breakDim;
+  stage.style.filter = bright < .999 ? `brightness(${bright.toFixed(3)})` : 'none';
+
+  /* ── câmera do palco ── */
+  let rx = 0, ry = 0;
+  if (!cover) {
+    let fx, fy, k, rot = 0, sh = { x: 0, y: 0 };
+    if (t < tDrop) { const s = shotA(t); fx = s.fx; fy = s.fy; k = s.k; rot = s.rot; }
+    else {
+      // DROP: título centralizado; dolly-in + órbita 3D leve até o wipe
+      const u = prog(t, tDrop, tCover - tDrop);
+      fx = G.cx; fy = G.cy; k = LY.k * (1.18 - .2 * eo(prog(t, tDrop, 1.2))) * (1 + .1 * sio(u));
+      const tO = T(B.orbit);
+      const a = p2io(prog(t, tO, 1.6)), b = sio(prog(t, tO + 1.6, tCover - tO - 1.6));
+      ry = lerp(0, -24, a) + lerp(0, 38, b); rx = lerp(0, 13, a) + lerp(0, -6, b);
+      const it = t - tDrop; if (it >= 0 && it < .4) { const kk = Math.exp(-it * 11); sh = { x: 6 * kk * Math.sin(it * 95), y: 5 * kk * Math.cos(it * 120) }; }
+    }
+    const cyS = t < tDrop ? H * .5 : H * .47;
+    tStage.style.transformOrigin = `${fx}px ${fy}px`;
+    tStage.style.transform = `translate(${(W / 2 - fx + sh.x).toFixed(2)}px, ${(cyS - fy + sh.y).toFixed(2)}px) rotate(${rot}deg) scale(${k.toFixed(4)})`;
+  }
+
+  /* ── esfera ── */
+  const showBall = t >= T(B.drop0) && t < tDrop + 1 / fps;
+  const b = showBall ? ballFull(t) : null;
+  ball.style.visibility = ballRefl.style.visibility = ballShadow.style.visibility = b ? 'visible' : 'hidden';
+  if (b) {
+    placeBall(ball, b);
+    const wL = 2 * R / SX;
+    ballRefl.style.transform = `translate(${(toLocalX(b.x) - wL / 2).toFixed(2)}px, ${(G.yb + b.h / SY).toFixed(2)}px) scale(${b.sx.toFixed(4)}, ${(-b.sy).toFixed(4)})`;
+    const shd = clamp(1 - b.h / (H * .5));
+    ballShadow.style.opacity = (.2 + .8 * shd).toFixed(3);
+    ballShadow.style.transform = `translate(${(toLocalX(b.x) - 1.2 * R / SX).toFixed(2)}px, ${(G.yb - .25 * R / SY).toFixed(2)}px) scale(${(.45 + .55 * shd).toFixed(3)})`;
+  }
+  ghosts.forEach((g, i) => { const tg = t - (i + 1) / 60; const gb = showBall && tg >= T(B.drop0) ? ballFull(tg) : null;
+    g.style.visibility = gb ? 'visible' : 'hidden'; if (gb) { placeBall(g, gb); g.style.opacity = (.2 - i * .045).toFixed(3); } });
+  dots.forEach((d, i) => { const td = t - (i + 1) * .045; const db = (t < tBreak && td >= T(B.drop0)) ? ballAt(td) : null;
+    d.style.visibility = db ? 'visible' : 'hidden'; if (!db) return;
+    d.style.opacity = ((1 - i / dots.length) * .5).toFixed(3);
+    d.style.transform = `translate(${(toLocalX(db.x) - 3.5 / SX).toFixed(2)}px, ${(G.yb - (R + db.h) / SY - 3.5 / SY).toFixed(2)}px)`; });
+  // anéis de impacto no piso
+  const recent = CONTACTS.filter(c => t >= c.t && t - c.t < .5).slice(-3);
+  rings.forEach((r, i) => { const c = recent[i]; r.style.visibility = c && !cover ? 'visible' : 'hidden'; if (!c) return;
+    const u = (t - c.t) / .5, bx = ballAt(c.t - .001).x, s = 1 + 2.2 * p3o(u) * (c.amp > .4 ? 1.8 : 1);
+    r.style.opacity = ((1 - u) * .7).toFixed(3);
+    r.style.transform = `translate(${(toLocalX(bx) - R / SX).toFixed(2)}px, ${(G.yb - .25 * R / SY).toFixed(2)}px) scale(${s.toFixed(3)})`; });
+
+  // glow do piso: sobe no início, pulsa nos contatos, apaga no respiro, explode no drop
+  let gl = .45 * eo(prog(t, .3, 2));
+  for (const c of CONTACTS) { const d = t - c.t; if (d >= 0 && d < 2) gl += c.amp * 1.3 * Math.exp(-d * 6); }
+  if (t >= tBreak && t < tDrop) gl *= .35;
+  if (t >= tDrop) gl = .6 + .5 * Math.exp(-(t - tDrop) * 2.5);
+  glow.style.opacity = clamp(gl, 0, 1).toFixed(3);
+
+  /* ── morph esfera → J (metaball) ── */
+  const inMorph = t >= tDrop && t < tMorphEnd;
+  goo.style.visibility = inMorph ? 'visible' : 'hidden';
+  if (inMorph) {
+    const m = prog(t, tDrop, tMorphEnd - tDrop), me = eo(m);
+    const bx = lerp(toLocalX(G.jX), G.jcx, me), byc = lerp(G.yb - R / SY, G.jcy, me);
+    const wL = 2 * R / SX, hL = 2 * R / SY, s = lerp(1, .15, p2i(m));
+    gooBall.style.transform = `translate(${(bx - wL / 2).toFixed(2)}px, ${(byc - hL / 2).toFixed(2)}px) scale(${(s * (1 + .35 * Math.exp(-m * 8))).toFixed(4)}, ${(s * (1 - .3 * Math.exp(-m * 8)) * lerp(1, 1.3, Math.sin(Math.PI * m))).toFixed(4)})`;
+    const js = lerp(.2, 1, E('back.out(1.7)')(prog(m, .1, .9)));
+    gooJ.style.transformOrigin = `${G.jcx}px ${G.jcy}px`; gooJ.style.transform = `scale(${js.toFixed(4)})`;
+    gooJ.style.opacity = prog(m, .05, .15);
+    gooBlur.setAttribute('stdDeviation', (16 * (1 - p2i(prog(m, .5, .5)))).toFixed(2));
+  }
+
+  /* ── letras ── */
+  const LT = ttl.letters, RL = refl.t.letters;
+  LT[0].box.style.visibility = RL[0].box.style.visibility = t >= tMorphEnd ? 'visible' : 'hidden';
+  const X0 = (W * 1.15) / (SX * LY.k);
+  for (let i = 1; i < LT.length; i++) {
+    const t0 = T(B.letters[i - 1]), D = .55;
+    const xAt = tt => tt < t0 ? X0 : X0 * (1 - eo(prog(tt, t0, D)));
+    const x = xAt(t), vx = xAt(t - 1 / fps) - x;
+    const land = t - (t0 + D * .3);
+    const spring = land > 0 ? .1 * Math.exp(-land * 9) * Math.cos(land * 26) : 0;
+    const str = clamp(vx / 240, 0, .45);
+    const vis = t >= t0 || cover;
+    LT[i].box.style.visibility = RL[i].box.style.visibility = vis ? 'visible' : 'hidden';
+    const tr = cover ? 'none' : `translateX(${x.toFixed(2)}px) scale(${((1 + str) * (1 - spring)).toFixed(4)}, ${((1 - str * .35) * (1 + spring)).toFixed(4)})`;
+    LT[i].box.style.transformOrigin = RL[i].box.style.transformOrigin = '50% 100%';
+    LT[i].box.style.transform = RL[i].box.style.transform = tr;
+    const blur = cover ? 0 : clamp(vx * .45, 0, 80);
+    if (blur > .4) mbBlur[i - 1].setAttribute('stdDeviation', `${blur.toFixed(2)} 0`);
+    LT[i].box.style.filter = RL[i].box.style.filter = blur > .4 ? `url(#mb${i})` : 'none';
+  }
+  const dk = cover ? 1 : eo(prog(t, tMorphEnd - .1, .9));
+  ttl.setDepth(dk, 3.2); refl.t.setDepth(dk, 3.2);
+  refl.wrap.style.opacity = cover ? 0 : .34;
+  const s1 = prog(t, T(B.shine1), 1.1), s2 = prog(t, T(B.shine2), 1.1);
+  const shine = s1 > 0 && s1 < 1 ? s1 : (s2 > 0 && s2 < 1 ? s2 : null);
+  ttl.setShine(shine == null ? null : lerp(-.3, 1.3, p2io(shine)));
+
+  /* ── wipes ── */
+  const ws = WIPES(); let a = null, bb2 = null, aw = null;
+  for (const w of ws) { const ca = wipeClip(t, w, 0, .05), cb = wipeClip(t, w, .045, 0); if (ca || cb) { a = ca; bb2 = cb; aw = w; } }
+  wipeB.style.visibility = bb2 ? 'visible' : 'hidden'; wipeA.style.visibility = a ? 'visible' : 'hidden';
+  if (aw) { wipeB.style.background = aw.c2; wipeA.style.background = aw.c1; if (bb2) wipeB.style.clipPath = bb2; if (a) wipeA.style.clipPath = a; }
+
+  /* ── capa (frase B) ── */
+  const push = cover ? prog(t, tCover, DURATION - tCover) : 0;
+  const bt = t >= tImp ? ((t - tImp) % (BEAT * CUES.pulseEvery)) : 99;
+  const climax = t >= T(B.climax) && t < T(B.tail);
+  const pulse = bt < 1 ? Math.exp(-bt * 9) * (climax ? 10 : 6) : 0;
+  const ckIn = eo(prog(t, tCover, 1.1));
+  const wph = 2 * Math.PI * (t - CUES.offset) / (8 * BEAT);   // tabuleiro: 1 ciclo a cada 2 compassos
+  ck.forEach(c => { const s = c.spec.side === 'L' ? -1 : 1;
+    c.wrap.style.transformOrigin = '50% 50%';
+    c.wrap.style.transform = `translateX(${(s * (220 * (1 - ckIn) + pulse)).toFixed(2)}px) scale(${(1 + .018 * push).toFixed(4)})`;
+    if (cover) c.draw(wph, wph * .5); });
+  const ain = eo(prog(t, tCover + .05, 1.3));
+  ph.fx.style.transform = LY.photoFromLeft ? `translateX(${(-90 * (1 - ain)).toFixed(2)}px)` : `translateY(${(46 * (1 - ain)).toFixed(2)}px) scale(${(.96 + .04 * ain).toFixed(4)})`;
+  ph.pos.style.transformOrigin = `${(W / 2 - LY.photo.cx + LY.photo.width / 2)}px ${(H / 2 - LY.photo.top)}px`;
+  ph.pos.style.transform = `scale(${(1 + .0288 * push).toFixed(4)})`;
+  if (cover) {
+    let sx = 0, sy = 0;
+    for (const ti of [tImp, T(B.climax)]) { const it = t - ti; if (it >= 0 && it < .35) { const k = Math.exp(-it * 12); sx += 6 * k * Math.sin(it * 95); sy += 4 * k * Math.cos(it * 120); } }
+    const it = t - tImp, imp = it >= 0 ? 1 + .04 * (1 - p3o(prog(it, 0, .5))) : 1;
+    tStage.style.transformOrigin = lyText.style.transformOrigin = `${W / 2}px ${H / 2}px`;
+    tStage.style.transform = `translate(${sx.toFixed(2)}px, ${sy.toFixed(2)}px) scale(${((1 + .0396 * push) * imp).toFixed(4)})`;
+    lyText.style.transform = `translate(${sx.toFixed(2)}px, ${sy.toFixed(2)}px) scale(${(1 + .0396 * push).toFixed(4)})`;
+  }
+  // cortes da frase B: câmera do mundo
+  let wz = 1, wx = 0, wy = 0;
+  if (cover) {
+    const cuts = B.cuts.map(T), shots = shotsB();
+    const ci = cuts.findIndex((c, i) => t >= c && t < (cuts[i + 1] ?? -1));
+    if (ci >= 0 && ci < shots.length) {
+      const s = shots[ci], u = (t - cuts[ci]) / (cuts[ci + 1] - cuts[ci]);
+      wz = s.z * (1 + .045 * u) * (1 + .03 * Math.exp(-u * 14));          // drift + soco no corte
+      wx = W / 2 - wz * s.x; wy = H / 2 - wz * s.y;
+      wx = clamp(wx, W - wz * W, 0); wy = clamp(wy, H - wz * H, 0);
+      if (s.orbit) { const o = Math.sin(Math.PI * u); rx = 8 * o; ry = lerp(-16, 16, sio(u)); }
+    }
+  }
+  world.style.transform = wz !== 1 ? `translate(${wx.toFixed(2)}px, ${wy.toFixed(2)}px) scale(${wz.toFixed(4)})` : 'none';
+  ttl.setCam(rx, ry); refl.t.setCam(-rx, ry);
+
+  // flashes de 2 quadros: drop, impacto da capa, clímax
+  let fl = 0; for (const ti of [tDrop, tImp, T(B.climax)]) { const fi = frame - Math.round(ti * fps); if (fi === 0) fl = .24; else if (fi === 1) fl = Math.max(fl, .09); }
+  flash.style.opacity = fl;
+
+  /* ── tipografia ── */
+  mk.set(prog(t, T(B.marks), 1.1));
+  if (topMono) { const k = eo(prog(t, T(B.marks) + .25, .9)); topMono.style.opacity = k; topMono.style.letterSpacing = lerp(.6, LY.top.track, k).toFixed(3) + 'em'; }
+  const rk = E('power1.inOut')(prog(t, T(B.remix), 1.15));
+  rmx.inner.style.visibility = rk > 0 ? 'visible' : 'hidden';
+  rmx.inner.style.clipPath = `inset(-30% ${(100 - 100 * rk).toFixed(2)}% -30% -8%)`;
+  sign.rows.forEach((r, i) => { const k = eo(prog(t, T(B.climax) + i * BEAT * .5, .8)); r.style.transform = `translateY(${(105 * (1 - k)).toFixed(2)}%)`; });
+  if (rule) rule.style.transform = `scaleX(${eo(prog(t, T(B.climax), .9)).toFixed(4)})`;
+  if (plat) { const k = eo(prog(t, T(B.plat), .9)); plat.style.opacity = k; plat.style.marginTop = (14 * (1 - k)).toFixed(2) + 'px'; }
+  // contador rolante: "15.12" no clímax, ".2026" dois tempos depois; cada dígito trava num contratempo
+  const tD = T(B.climax), tY = T(B.year);
+  odo.cols.forEach((c, i) => {
+    const year = i >= 5, base = year ? tY : tD;
+    c.win.style.visibility = t >= base ? 'visible' : 'hidden';
+    if (!c.digit) { c.win.style.opacity = eo(prog(t, base + .15, .4)); return; }
+    const order = year ? i - 6 : (i > 2 ? i - 1 : i), t0 = base + order * BEAT * .25, dur = BEAT * 2;
+    const kAt = tt => eo(prog(tt, t0, dur));
+    const k = kAt(t), v = (k - kAt(t - 1 / fps)) * c.steps * 1.25 * LY.date.size;
+    odo.setCol(i, k, clamp(v * .3, 0, 24));
+  });
+
+  spk.draw(((t - CUES.offset) / (8 * BEAT)) % 1, cover ? 1 : .55);
+  grn.draw(Math.floor((t - CUES.offset) / (4 * BEAT)));   // grão troca só no downbeat de cada compasso (bitrate)
+}
+
+window.seek = t => render(t);
+window.ready = (async () => {
+  await JR.fontsReady();
+  measure(); buildBall(); render(0); return true;
+})();
+if (!location.search.includes('render=1')) {
+  window.ready.then(() => { const t0 = performance.now(); const loop = () => { render(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop); }; loop(); });
+}
+})();
+</script>
+</body>
+</html>
