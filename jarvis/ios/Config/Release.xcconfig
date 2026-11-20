@@ -1,0 +1,13 @@
+// Configuração de Release. Sobrescreva em Config/Local.xcconfig (não versionado).
+
+JARVIS_BUNDLE_PREFIX = com.chagas019.jarvis
+JARVIS_APP_GROUP = group.$(JARVIS_BUNDLE_PREFIX)
+
+JARVIS_API_URL = https:/$()/jarvis-api.vercel.app
+SUPABASE_URL = https:/$()/SEU-PROJETO.supabase.co
+SUPABASE_ANON_KEY =
+
+// Nunca use token de desenvolvimento em Release.
+JARVIS_DEV_TOKEN =
+
+#include? "Local.xcconfig"
