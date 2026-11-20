@@ -1,3 +1,4 @@
+import { getVercelOidcToken } from "@vercel/oidc";
 import { AnthropicProvider } from "./anthropic.js";
 import { GeminiProvider } from "./gemini.js";
 import { OpenAiCompatibleProvider } from "./openaiCompatible.js";
@@ -18,6 +19,9 @@ export function buildProviders(env: NodeJS.ProcessEnv, fetchImpl?: typeof fetch)
   }
   if (k("AI_GATEWAY_API_KEY")) {
     out.push(new OpenAiCompatibleProvider({ id: "gateway", apiKey: k("AI_GATEWAY_API_KEY")!, baseUrl: "https://ai-gateway.vercel.sh/v1", fetchImpl }));
+  } else if (env.VERCEL === "1" && env.JARVIS_GATEWAY_OIDC !== "0") {
+    // Rodando na Vercel sem key: autentica no AI Gateway com o token OIDC do próprio projeto (sem segredo armazenado).
+    out.push(new OpenAiCompatibleProvider({ id: "gateway", apiKey: () => getVercelOidcToken(), baseUrl: "https://ai-gateway.vercel.sh/v1", fetchImpl }));
   }
   if (k("GEMINI_API_KEY")) out.push(new GeminiProvider(k("GEMINI_API_KEY")!, fetchImpl));
   return out;

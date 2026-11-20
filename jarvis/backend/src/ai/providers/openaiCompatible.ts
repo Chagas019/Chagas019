@@ -2,7 +2,8 @@ import { ProviderError, kindFromStatus, DEFAULT_TIMEOUT_MS, type LlmMessage, typ
 
 export interface OpenAiCompatOptions {
   id: string;
-  apiKey: string;
+  /** Chave fixa ou função que obtém um token (ex.: OIDC da Vercel). */
+  apiKey: string | (() => Promise<string>);
   baseUrl: string;
   fetchImpl?: typeof fetch;
   /** OpenAI atual usa max_completion_tokens; demais usam max_tokens. */
@@ -75,7 +76,7 @@ export class OpenAiCompatibleProvider implements LlmProvider {
     try {
       res = await this.f(`${this.o.baseUrl.replace(/\/$/, "")}/chat/completions`, {
         method: "POST",
-        headers: { "content-type": "application/json", authorization: `Bearer ${this.o.apiKey}` },
+        headers: { "content-type": "application/json", authorization: `Bearer ${typeof this.o.apiKey === "string" ? this.o.apiKey : await this.o.apiKey()}` },
         body: JSON.stringify(body),
         signal: AbortSignal.timeout(this.o.timeoutMs ?? DEFAULT_TIMEOUT_MS),
       });

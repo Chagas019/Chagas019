@@ -283,3 +283,23 @@ describe("provedores", () => {
     expect(r.usage.cacheReadTokens).toBe(90);
   });
 });
+
+describe("AI Gateway via OIDC da Vercel", () => {
+  it("na Vercel sem key cria o provedor gateway com token dinâmico", async () => {
+    const { buildProviders } = await import("../../src/ai/providers/index.js");
+    expect(buildProviders({ VERCEL: "1" }).map((p) => p.id)).toEqual(["gateway"]);
+    expect(buildProviders({ VERCEL: "1", JARVIS_GATEWAY_OIDC: "0" })).toHaveLength(0);
+    expect(buildProviders({})).toHaveLength(0);
+  });
+  it("token dinâmico vai no header Authorization", async () => {
+    const { OpenAiCompatibleProvider } = await import("../../src/ai/providers/openaiCompatible.js");
+    let auth = "";
+    const fetchImpl = (async (_u: string, init: RequestInit) => {
+      auth = (init.headers as Record<string, string>).authorization;
+      return new Response(JSON.stringify({ choices: [{ message: { content: "oi" }, finish_reason: "stop" }], usage: { prompt_tokens: 1, completion_tokens: 1 } }), { status: 200 });
+    }) as unknown as typeof fetch;
+    const p = new OpenAiCompatibleProvider({ id: "gateway", apiKey: async () => "tok-oidc", baseUrl: "https://ai-gateway.vercel.sh/v1", fetchImpl });
+    await p.chat({ model: "anthropic/claude-haiku-5.5", system: "", messages: [{ role: "user", content: [{ type: "text", text: "oi" }] }], tools: [], maxTokens: 10 });
+    expect(auth).toBe("Bearer tok-oidc");
+  });
+});
