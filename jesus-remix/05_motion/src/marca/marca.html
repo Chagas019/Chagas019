@@ -337,6 +337,10 @@ function render(t) {
   else { show(S7); s7(t); }
   // flash branco de 2 quadros no b1 (linguagem: impacto = flash 2q), decai em 3
   const f1 = (t - c1) * FPS; if (f1 >= -0.01 && f1 < 5) fl = Math.max(fl, f1 < 2 ? 1 : 1 - (f1 - 2) / 3);
+  // saída do wipe: o branco "assenta" em azul-luz (não em cinza) enquanto o estúdio acende
+  const inWipeOut = t >= c13 && t < c13 + .5;
+  flash.style.background = inWipeOut ? `rgb(${Math.round(lerp(150, 255, fl))},${Math.round(lerp(200, 255, fl))},255)` : '#ffffff';
+  S7.style.filter = inWipeOut && fl > .01 ? `brightness(${(1 + 1.4 * fl).toFixed(3)}) saturate(${(1 + .6 * fl).toFixed(3)})` : 'none';
   flash.style.opacity = fl.toFixed(3);
   grn.draw(Math.floor(t * FPS / 2));
 }
