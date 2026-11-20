@@ -237,7 +237,7 @@
     const gb = [...filt.querySelectorAll('feGaussianBlur')];
     return { wrap, cols,
       setCol(i, k, blur) { const c = cols[i]; if (!c.digit) return;
-        c.reel.style.transform = `translateY(${(-(1 - k) * c.steps * CELL).toFixed(4)}em)`;
+        c.reel.style.transform = `translateY(${(-k * c.steps * CELL).toFixed(4)}em)`;
         if (blur > .3) { gb[i].setAttribute('stdDeviation', `0 ${blur.toFixed(2)}`); c.reel.style.filter = `url(#${id}_${i})`; }
         else c.reel.style.filter = 'none'; },
     };

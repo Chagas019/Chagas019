@@ -58,35 +58,41 @@ const wobble = (dt, f = 6, z = 9) => dt < 0 ? 0 : Math.exp(-z * dt) * Math.cos(f
 function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
   t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 
-/* ───────── CUES: placeholder BPM 120 ↔ 09_audio/analise/beatmap.json ─────────
-   O render (render.js) injeta window.__BEATMAP se o JSON existir; ao abrir a cena no navegador
-   tentamos ler o arquivo direto (XHR file:// com --allow-file-access-from-files). Sem JSON → placeholder.
-   def = { bpm, impactoBeat, nBeats }: a estrutura é escrita em BEATS; os tempos saem do grid. */
+/* ───────── CUES: 09_audio/analise/beatmap.json  (fallback: placeholder 120 BPM) ─────────
+   O render injeta window.__BEATMAP; ao abrir no navegador tenta ler o JSON (XHR file://).
+   Tudo é escrito em TEMPO DA MÚSICA: grade de beats (grade_beats) + impactos_chave
+   (entrada, meio_fraseA, break, drop, meio_fraseB, climax, final). Cada peça escolhe o trecho
+   [ini, fim] da música; t do clipe = tempo da música − ini.
+   Placeholder: mesma estrutura em beats (drop = beat 32 etc.) a 120 BPM.                       */
 function readJSON(rel) {
   try { const x = new XMLHttpRequest(); x.open('GET', ROOT + rel, false); x.send(); if (x.status === 0 || x.status === 200) return JSON.parse(x.responseText); } catch (e) {}
   return null;
 }
-function cues(def) {
+function cues(trecho = K => [0, K.dur]) {
   const bm = window.__BEATMAP !== undefined ? window.__BEATMAP : readJSON('09_audio/analise/beatmap.json');
-  let C;
-  if (bm && bm.beats && bm.beats.length > 8) {
-    const spb = 60 / bm.bpm;
-    // trecho: impacto principal do clipe = primeiro impacto detectado da música (ou def.trechoImpacto se escolhido à mão)
-    const alvo = def.trechoImpacto ?? (bm.impactos && bm.impactos.length ? bm.impactos[0] : bm.beats[Math.min(bm.beats.length - 1, def.impactoBeat)]);
-    const iBeat = bm.beats.reduce((bi, b, i) => Math.abs(b - alvo) < Math.abs(bm.beats[bi] - alvo) ? i : bi, 0);
-    const i0 = iBeat - def.impactoBeat;
-    const t0 = i0 >= 0 ? bm.beats[i0] : bm.beats[0] + i0 * spb;
-    const beats = []; for (let n = 0; n <= def.nBeats + 8; n++) { const k = i0 + n; beats.push((k >= 0 && k < bm.beats.length ? bm.beats[k] : t0 + n * spb) - t0); }
-    C = { fonte: 'beatmap.json', bpm: bm.bpm, spb, trechoInicio: +t0.toFixed(3), beats };
+  let grid, spb, keys, dur, fonte, bpm;
+  if (bm && (bm.grade_beats || bm.beats)) {
+    fonte = 'beatmap.json'; spb = bm.periodo_beat || 60 / bm.bpm; bpm = bm.bpm_refinado || bm.bpm;
+    grid = (bm.grade_beats || bm.beats).slice(); dur = bm.duracao;
+    const ik = bm.impactos_chave || {};
+    keys = { entrada: ik.entrada ?? grid[0], meio_fraseA: ik.meio_fraseA ?? grid[16], break: ik.break ?? grid[30] + spb * .6,
+             drop: ik.drop ?? grid[32], meio_fraseB: ik.meio_fraseB ?? grid[48], climax: ik.climax ?? grid[60], final: ik.final ?? grid[64] };
   } else {
-    const spb = 60 / def.bpm; const beats = []; for (let n = 0; n <= def.nBeats + 8; n++) beats.push(n * spb);
-    C = { fonte: 'placeholder', bpm: def.bpm, spb, trechoInicio: 0, beats };
+    fonte = 'placeholder'; spb = .5; bpm = 120; grid = Array.from({ length: 80 }, (_, n) => n * spb);
+    keys = { entrada: 0, meio_fraseA: 16 * spb, break: 30.6 * spb, drop: 32 * spb, meio_fraseB: 48 * spb, climax: 60 * spb, final: 64 * spb };
+    dur = 65.3 * spb;
   }
-  // B(n): tempo do beat n (aceita frações → interpola dentro do beat)
-  C.B = n => { const i = Math.floor(n), f = n - i; const a = C.beats[clamp(i, 0, C.beats.length - 1)], b = C.beats[clamp(i + 1, 0, C.beats.length - 1)]; return a + (b - a) * f; };
-  C.impacto = C.B(def.impactoBeat); C.duracao = C.B(def.nBeats);
-  // pulso de beat: decai a partir do último beat ≥ from
-  C.pulse = (t, from = 0, k = 10) => { let last = -1; for (const b of C.beats) { if (b > t + 1e-6) break; if (b >= C.B(from) - 1e-6) last = b; } return last < 0 ? 0 : Math.exp(-(t - last) * k); };
+  const K = { ...keys, dur, spb };
+  const [ini, fim] = trecho(K);
+  const g0 = grid[0];
+  const songBeat = n => n < 0 ? g0 + n * spb : n < grid.length ? (Number.isInteger(n) ? grid[n] : lerp(songBeat(Math.floor(n)), songBeat(Math.floor(n) + 1), n - Math.floor(n))) : grid[grid.length - 1] + (n - grid.length + 1) * spb;
+  const C = {
+    fonte, bpm, spb, inicio: +ini.toFixed(3), duracao: +(fim - ini).toFixed(3), grid,
+    k: name => keys[name] - ini,                         // tempo do clipe de um impacto-chave
+    b: n => songBeat(n) - ini,                           // tempo do clipe do beat n da música
+    idx: t => { const s = t + ini; let i = 0; while (i < grid.length - 1 && grid[i + 1] <= s) i++; return i + (s - grid[i]) / spb; }, // beat fracionário
+    pulse(t, k = 10, from = -1e9) { const s = t + ini; let last = null; for (const g of grid) { if (g > s + 1e-6) break; if (g - ini >= from - 1e-6) last = g; } return last == null ? 0 : Math.exp(-(s - last) * k); },
+  };
   window.CUES = C; return C;
 }
 
@@ -146,25 +152,30 @@ function drawChecker(ctx, o) {
    Piso = plano y = 0. Reflexo = grupo espelhado scaleY(-1) com os mesmos objetos, visto através
    do piso semitransparente (reflexo real em perspectiva, sem truque 2D).                       */
 function world(parent, W, H, o = {}) {
-  const cam = document.createElement('div'); cam.className = 'abs';
-  Object.assign(cam.style, { width: W + 'px', height: H + 'px', perspective: (o.persp || 1400) + 'px', perspectiveOrigin: `50% ${o.po ?? 42}%` });
-  const wd = document.createElement('div'); wd.className = 'p3'; cam.appendChild(wd);
-  const refl = document.createElement('div'); refl.className = 'p3'; refl.style.transform = 'scaleY(-1)'; wd.appendChild(refl);
-  // piso: canvas desenhado por quadro (glow + tabuleiro opcional), deitado no plano y=0
+  // três câmeras idênticas compostas em ordem 2D: reflexo → piso → objetos.
+  // (com a câmera acima do piso essa ordem é a física correta e evita o sorting 3D instável do Chromium)
+  const mkCam = () => { const cam = document.createElement('div'); cam.className = 'abs';
+    Object.assign(cam.style, { width: W + 'px', height: H + 'px', perspective: (o.persp || 1400) + 'px', perspectiveOrigin: `50% ${o.po ?? 42}%` });
+    const wd = document.createElement('div'); wd.className = 'p3'; cam.appendChild(wd); parent.appendChild(cam); return { cam, wd }; };
+  const R = mkCam(), Fl = mkCam(), Fr = mkCam();
+  const refl = document.createElement('div'); refl.className = 'p3'; refl.style.transform = 'scaleY(-1)'; R.wd.appendChild(refl);
+  R.cam.style.opacity = o.reflOpacity ?? .55;
+  R.cam.style.filter = `blur(${o.reflBlur ?? 2}px)`;
   const FW = o.floorW || 3200, FD = o.floorD || 2600, FR = o.floorRes || 0.5;
   const floor = document.createElement('canvas'); floor.width = FW * FR; floor.height = FD * FR;
   Object.assign(floor.style, { position: 'absolute', left: -FW / 2 + 'px', top: -FD / 2 + 'px', width: FW + 'px', height: FD + 'px', transform: 'rotateX(90deg)', transformOrigin: '50% 50%' });
-  // o canvas fica em z ∈ [-FD/2, FD/2] (frente = +z = perto da câmera)
-  wd.appendChild(floor);
-  const front = document.createElement('div'); front.className = 'p3'; wd.appendChild(front);
-  parent.appendChild(cam);
+  Fl.wd.appendChild(floor);
+  const front = Fr.wd;
   const fctx = floor.getContext('2d');
   const W3 = {
-    cam, wd, refl, front, floor, fctx, FW, FD, FR,
-    // câmera: centro na tela (cx, cy), dolly z, inclinação rx (graus, + = olhando de cima), órbita ry, roll rz
+    cam: Fr.cam, reflCam: R.cam, floorCam: Fl.cam, refl, front, floor, fctx, FW, FD, FR,
     set({ cx = W / 2, cy = H * .62, z = 0, rx = 14, ry = 0, rz = 0, s = 1 } = {}) {
-      wd.style.transform = `translate3d(${cx}px,${cy}px,${z}px) rotateZ(${rz}deg) rotateX(${-rx}deg) rotateY(${ry}deg) scale(${s})`;
+      const tf = `translate3d(${cx}px,${cy}px,${z}px) rotateZ(${rz}deg) rotateX(${-rx}deg) rotateY(${ry}deg) scale(${s})`;
+      R.wd.style.transform = Fl.wd.style.transform = Fr.wd.style.transform = tf;
     },
+    // filtro (motion blur de câmera) aplicado às três camadas
+    filter(f) { Fr.cam.style.filter = Fl.cam.style.filter = f; R.cam.style.filter = (f === 'none' ? '' : f + ' ') + `blur(${o.reflBlur ?? 2}px)`; },
+    show(v) { for (const c of [R, Fl, Fr]) c.cam.style.display = v ? '' : 'none'; },
     // objeto 3D com cópia refletida; build(container, isRefl) cria o conteúdo e devolve o nó
     obj(build) {
       const a = document.createElement('div'); a.className = 'p3'; front.appendChild(a);
@@ -173,7 +184,7 @@ function world(parent, W, H, o = {}) {
       return { a, b, ra, rb, tf(s) { a.style.transform = s; b.style.transform = s; }, show(v) { a.style.display = b.style.display = v ? '' : 'none'; } };
     },
     // piso: fundo translúcido azul + glow + (opcional) tabuleiro em perspectiva
-    drawFloor({ glow = 1, glowX = 0, glowZ = 0, glowR = 900, glowColor = '120,190,255', tint = .78, checker = null, extra = null } = {}) {
+    drawFloor({ glow = 1, glowX = 0, glowZ = 0, glowR = 900, glowColor = '120,190,255', tint = .5, checker = null, extra = null } = {}) {
       const c = fctx, w = floor.width, h = floor.height, k = FR;
       c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, w, h);
       c.setTransform(k, 0, 0, k, FW / 2 * k, FD / 2 * k);            // origem no centro do piso, unidades do mundo
@@ -288,7 +299,7 @@ function odometer(parent, text, { size, color = TOK.branco, sx = .8, sy = 1.16, 
       cols.forEach((c, i) => {
         if (!c.isD) { c.strip.style.transform = `scale(${sx},${sy})`; return; }
         const T = turns + i * .5;                                   // colunas da direita giram mais (odômetro)
-        const v = c.d + 10 + T * 10 * (1 - u);                      // termina exatamente no dígito
+        const v = c.d + 10 + (T * 10 + 3) * (1 - u);                      // termina exatamente no dígito
         const y = -((v % 10) + 10) * H;                              // usa a fita do meio (10..19)
         c.strip.style.transform = `scale(${sx},${sy}) translateY(${y}px)`;
         c.mb(0, Math.min(26, Math.abs(du) * T * 10 * H * sy * .045));
@@ -322,7 +333,7 @@ function impact(t, ti, fps = 30) {
   const it = t - ti; let sx = 0, sy = 0;
   if (it >= 0 && it < .35) { const k = Math.exp(-it * 12); sx = 6 * k * Math.sin(it * 95); sy = 4 * k * Math.cos(it * 120); }
   const fi = Math.round(t * fps) - Math.round(ti * fps);
-  const flash = fi === 0 ? .26 : fi === 1 ? .1 : 0;
+  const flash = fi === 0 ? .2 : fi === 1 ? .08 : 0;
   const scale = it >= 0 ? 1 + .04 * Math.pow(1 - E.power3Out(seg(it, 0, .5)), 1) : 1;
   return { sx, sy, flash, scale };
 }

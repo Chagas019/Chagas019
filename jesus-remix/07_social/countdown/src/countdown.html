@@ -23,10 +23,13 @@ const N = Math.max(1, Math.min(99, +(Q.get('n') || 7)));
 const W = 1080, H = 1920, FPS = 30;
 
 // ───────── CUES (único ponto de sincronia) ─────────
-// estrutura em beats: 0 entrada · 1 começa a rolar · 3 TRAVA (impacto) · 4 "DIAS" · 5 lockup · 10 fim
-const CUES = KIT.cues({ bpm: 120, impactoBeat: 3, nBeats: 10 });
-const B = CUES.B, LOCK = CUES.impacto;
-window.FPS = FPS; window.DURATION = 5;            // story fixo em 5 s (com BPM real o grid se ajusta dentro dele)
+// trecho da música: 1,80 s antes do DROP até 3,20 s depois (5 s). O número rola na frase A,
+// quase para no break (silêncio visual) e TRAVA exatamente no drop.
+const CUES = KIT.cues(K => [K.drop - 1.8, K.drop + 3.2]);
+const LOCK = CUES.k('drop'), BRK = CUES.k('break');
+const bd = Math.round(CUES.idx(LOCK));                 // índice do beat do drop na música
+const B = n => CUES.b(bd - 4 + n);                      // B(4) = drop; B(0) ≈ início do clipe
+window.FPS = FPS; window.DURATION = CUES.duracao;
 
 const stage = document.getElementById('stage');
 Object.assign(stage.style, { width: W + 'px', height: H + 'px' });
@@ -55,7 +58,7 @@ const sides = r => r.ls.flatMap(L => L.layers.slice(0, -1));
 
 // tipografia 2D
 const plural = N !== 1;
-const top = div(`left:0;width:${W}px;top:560px;text-align:center;font-size:62px;font-weight:400;letter-spacing:.34em`, '', 'abs mono');
+const top = div(`left:0;width:${W}px;top:530px;text-align:center;font-size:62px;font-weight:400;letter-spacing:.34em`, '', 'abs mono');
 const bot = div(`left:0;width:${W}px;top:1330px;text-align:center;font-size:62px;font-weight:400;letter-spacing:.34em`, '', 'abs mono');
 const wordSpans = (el, s) => { el.innerHTML = [...s].map(c => `<span style="display:inline-block">${c}</span>`).join(''); return [...el.children]; };
 const topL = wordSpans(top, plural ? 'FALTAM' : 'FALTA'), botL = wordSpans(bot, plural ? 'DIAS' : 'DIA');
@@ -80,20 +83,21 @@ function render(t) {
   const inK = E.expoOut(seg(t, 0, B(2)));
   bg.style.opacity = .35 + .65 * inK;
   const hit = impact(t, LOCK, FPS);
-  const p = CUES.pulse(t, 3, 8);
+  const p = t >= LOCK ? CUES.pulse(t, 8, LOCK) : 0;
 
   // câmera: inclinação suave + órbita leve + dolly; trava com shake
   const cm = E.sineInOut(seg(t, 0, 5));
-  W3.set({ cx: W / 2 + hit.sx, cy: 1230 + hit.sy, z: lerp(-260, 40, E.expoOut(seg(t, 0, LOCK + .4))) + 30 * cm, rx: lerp(24, 11, E.expoOut(seg(t, 0, LOCK))), ry: lerp(-16, 7, cm), s: 1 });
+  W3.set({ cx: W / 2 + hit.sx, cy: 1230 + hit.sy, z: lerp(-260, 40, E.expoOut(seg(t, 0, LOCK + .4))) + 30 * cm, rx: lerp(24, 11, E.expoOut(seg(t, 0, LOCK))) - 2 * (t >= BRK && t < LOCK ? E.sineInOut(seg(t, BRK, LOCK)) : 0), ry: lerp(-24, 12, cm), s: 1 });
   W3.drawFloor({
-    glow: .55 + .45 * E.expoOut(seg(t, 0, B(2))) + .6 * (t >= LOCK ? Math.exp(-(t - LOCK) * 4) : 0) + .15 * p, glowR: 1000, glowZ: 0,
-    checker: { x: -1300, y: -1200, cw: 200, ch: 200, cols: 14, rows: 13, A: 26, B: 14, lv: 3.4, lu: 2.4, ph: t * 1.4, ph2: t * .9, color: 'rgba(234,193,26,.42)', uMin: 0, vMin: 0 },
+    glow: (.55 + .45 * E.expoOut(seg(t, 0, B(2)))) * (t >= BRK && t < LOCK ? .55 : 1) + .6 * (t >= LOCK ? Math.exp(-(t - LOCK) * 4) : 0) + .15 * p, glowR: 1000, glowZ: 0,
+    checker: { x: -1300, y: -1200, cw: 200, ch: 200, cols: 14, rows: 13, A: 26, B: 14, lv: 3.4, lu: 2.4, ph: t * 1.4, ph2: t * .9, color: 'rgba(3,122,244,.42)', uMin: 0, vMin: 0 },
   });
 
   // número: rola de B(1) até travar em LOCK
-  const u0 = B(1), rK = seg(t, u0, LOCK);
-  const ease = x => 1 - Math.pow(1 - x, 3.2);
-  const u = ease(rK), du = (ease(seg(t + 1 / FPS, u0, LOCK)) - ease(seg(t - 1 / FPS, u0, LOCK))) / 2;
+  const u0 = B(1);
+  // rolagem: rápida na frase A → arrasta no break (tensão) → encaixa no drop
+  const U = x => x < u0 ? 0 : x < BRK ? .93 * (1 - Math.pow(1 - seg(x, u0, BRK), 2.2)) : x < LOCK ? .93 + .06 * E.sineInOut(seg(x, BRK, LOCK)) : 1;
+  const u = U(t), du = (U(t + 1 / FPS) - U(t - 1 / FPS)) / 2;
   const locked = t >= LOCK;
   for (const r of [num.ra, num.rb]) {
     r.od.set(u, locked ? 0 : du, 3);
@@ -108,24 +112,24 @@ function render(t) {
   const vel = locked ? 0 : clamp(du * 30, 0, 1);
   const w = locked ? wobble(t - LOCK, 5.5, 7) : 0;
   const sy = (1 + .1 * vel - .2 * w) * (1 + .012 * p), sx = (1 - .05 * vel + .14 * w) * (1 + .012 * p);
-  const appear = E.expoOut(seg(t, B(.5), B(1.5)));
+  const appear = E.expoOut(seg(t, 0, B(1.2)));
   num.tf(`translate3d(0,0,${lerp(-500, 0, appear)}px) scale(${sx * hit.scale},${sy * hit.scale})`);
   num.a.style.opacity = num.b.style.opacity = 1;
-  num.show(t >= B(.5));
+  num.show(true);
 
   // FALTAM: entra da esquerda com motion blur; DIAS: da direita
   const tk = E.expoOut(seg(t, B(.5), B(2)));
   topL.forEach((s, i) => { const k = E.expoOut(seg(t, B(.5) + i * .035, B(.5) + i * .035 + .55)); s.style.transform = `translateX(${(1 - k) * -420}px)`; s.style.opacity = k > 0 ? 1 : 0; });
   topMB(Math.min(30, (E.expoOut(seg(t + .02, B(.5), B(.5) + .55)) - E.expoOut(seg(t - .02, B(.5), B(.5) + .55))) * 420 * .5), 0);
-  const bA = B(4);
+  const bA = B(5);
   botL.forEach((s, i) => { const k = E.expoOut(seg(t, bA + i * .035, bA + i * .035 + .55)); s.style.transform = `translateX(${(1 - k) * 420}px)`; s.style.opacity = k > 0 ? 1 : 0; });
   botMB(Math.min(30, (E.expoOut(seg(t + .02, bA, bA + .55)) - E.expoOut(seg(t - .02, bA, bA + .55))) * 420 * .5), 0);
 
   // lockup do título: desce no início, data entra em B(5)
-  const lk = E.expoOut(seg(t, B(.25), B(1.75)));
+  const lk = E.expoOut(seg(t, 0, B(1.5)));
   lock.style.transform = `translateY(${(1 - lk) * -60}px)`; lock.style.opacity = lk;
-  lockR.style.clipPath = `inset(-30% ${100 - 100 * E.power2InOut(seg(t, B(1), B(2.5)))}% -30% 0)`;
-  const dk2 = E.expoOut(seg(t, B(5), B(6.5)));
+  lockR.style.clipPath = `inset(-30% ${100 - 100 * E.power2InOut(seg(t, B(.5), B(2)))}% -30% 0)`;
+  const dk2 = E.expoOut(seg(t, B(7), B(8.5)));
   rules.forEach(r => r.style.transform = `scaleX(${dk2})`);
   dtx.style.clipPath = `inset(0 ${100 - 100 * dk2}% 0 0)`;
 

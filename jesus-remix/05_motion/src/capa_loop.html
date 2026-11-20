@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>JESUS Remix — Capa animada (loop)</title>
+<!--
+  JESUS Remix · André Castro — Capa animada em LOOP PERFEITO (sem áudio).
+  capa_loop.html?w=1080&h=1080  capa (layout de 04_capa)
+  capa_loop.html?w=1080&h=1920  Spotify Canvas (sem texto pequeno; bloco central longe das bordas/UI)
+  capa_loop.html?w=1920&h=1080  wide (layout de 07_social/posts/wide)
+  Loop = 4 compassos da música (16 batidas a 133,03 BPM = 7,216 s), arredondado para um nº inteiro
+  de quadros (216 q = 7,200 s a 30 fps; desvio de andamento 0,2 %). Todo movimento é periódico com
+  nº inteiro de ciclos no loop → seek(DURATION) ≡ seek(0). window.LOOP = true (o render confere).
+-->
+<style>
+@font-face{font-family:"Dela Gothic One";src:url(../../02_identidade/fontes/dela-gothic-one-latin-400-normal.woff2) format("woff2");}
+@font-face{font-family:"Yellowtail";src:url(../../02_identidade/fontes/yellowtail-latin-400-normal.woff2) format("woff2");}
+@font-face{font-family:"Roboto Mono";font-weight:300;src:url(../../02_identidade/fontes/roboto-mono-latin-300-normal.woff2) format("woff2");}
+@font-face{font-family:"Roboto Mono";font-weight:400;src:url(../../02_identidade/fontes/roboto-mono-latin-400-normal.woff2) format("woff2");}
+@font-face{font-family:"Roboto Mono";font-weight:700;src:url(../../02_identidade/fontes/roboto-mono-latin-700-normal.woff2) format("woff2");}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#000}
+#stage{position:relative;overflow:hidden;background:#037AF4}
+.abs{position:absolute}
+.ly{position:absolute;left:0;top:0;width:100%;height:100%}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script src="vendor/gsap.min.js"></script>
+<script src="lib/jr.js"></script>
+<script>
+(() => {
+/* ═════════════ CUES — tempo musical (09_audio/analise/beatmap.json) ═════════════ */
+const CUES = {
+  bpm: 133.03, offset: 0, fps: 30,
+  loopBeats: 16,            // 4 compassos (Spotify Canvas: 3–8 s)
+  beats: { shine: [2, 10] },// brilho percorre a extrusão (2× por loop)
+  shineBeats: 3,            // duração de cada passada
+  pulseEvery: 4,            // pulso do título a cada compasso
+  cycles: { wave: 2, wave2: 1, breath: 2, cam: 1 },   // ciclos inteiros por loop
+  camY: 6, camX: 2,         // graus: rotateY ±6°, rotateX ±2°
+};
+const FMT = JR.format(); JR.cuesFromQuery(CUES, FMT.q);
+const LOOP = Math.round(CUES.loopBeats * 60 / CUES.bpm * CUES.fps) / CUES.fps;   // nº inteiro de quadros
+const BEAT = LOOP / CUES.loopBeats;
+window.FPS = CUES.fps; window.DURATION = LOOP; window.LOOP = true; window.CUES = CUES;
+
+const CK_SQ = { cell: [122, 124], A: 20, B: 8, lv: 3.4, lu: 2.2 };
+const CK_ST = { cell: [100, 112], A: 16, B: 7, lv: 3.6, lu: 2.0 };
+const CK_WD = { cell: [124, 124], A: 22, B: 9, lv: 3.0, lu: 2.4 };
+const LAYOUTS = {
+  square: { // = 04_capa/capa_1080.png
+    checkers: [{ ...CK_SQ, side: 'L', x: -14, w: 250, ph: .4, ph2: 1.1, uMax: 2 }, { ...CK_SQ, side: 'R', x: 828, w: 270, ph: 2.3, ph2: .2, offset: 1, uMin: 0 }],
+    marks: { cx: 540, cy: 92, size: 50 }, photo: { cx: 532, top: 262, width: 610 },
+    title: { cx: 540, top: 578, size: 198, depth: 14 }, remix: { cx: 560, top: 700, size: 188 }, sign: { cx: 540, top: 915, size: 40 } },
+  story: { // Spotify Canvas: bloco central, nada de texto pequeno, nada perto das bordas
+    checkers: [{ ...CK_ST, side: 'L', x: -30, w: 170, ph: .9, ph2: .4, uMax: 2 }, { ...CK_ST, side: 'R', x: 910, w: 200, ph: 2.8, ph2: 1.3, offset: 1, uMin: 0 }],
+    marks: { cx: 540, cy: 420, size: 54 }, photo: { cx: 532, top: 500, width: 820 },
+    title: { cx: 540, top: 938, size: 200, depth: 14 }, remix: { cx: 560, top: 1062, size: 188 } },
+  wide: { // = 07_social/posts/wide_1920x1080.png
+    checkers: [{ ...CK_WD, side: 'L', x: -40, w: 330, ph: .6, ph2: .9, uMax: 3 }, { ...CK_WD, side: 'R', x: 1760, w: 220, ph: 2.0, ph2: .1, offset: 1, uMin: 0 }],
+    marks: { cx: 1610, cy: 110, size: 38 }, photo: { cx: 620, top: 1080 - 737, width: 1000, fade: 0 },
+    title: { left: 1090, top: 262, size: 178, depth: 13, align: 'left' }, remix: { left: 1290, top: 384, size: 160 },
+    rule: { left: 1096, top: 626, w: 120 }, date: { left: 1092, top: 660, size: 80, depth: 6, align: 'left' },
+    plat: { text: 'lançamento · nas plataformas digitais', left: 1096, top: 770, size: 22, track: .14 },
+    sign: { left: 1096, top: 880, size: 34 } },
+};
+const LY = LAYOUTS[FMT.kind], W = FMT.W, H = FMT.H;
+const { el, clamp, lerp, prog, E, TOK } = JR;
+const TAU = Math.PI * 2, p2io = E('power2.inOut');
+
+/* ═════════════ Montagem ═════════════ */
+const stage = document.getElementById('stage');
+stage.style.width = W + 'px'; stage.style.height = H + 'px';
+const ly = () => el(stage, 'div', 'ly', {});
+const lyCheck = ly(); const ck = JR.checkers(lyCheck, LY.checkers, W, H);
+const lyArtist = ly(); const ph = JR.photo(lyArtist, LY.photo);
+const lyTitle = ly();
+const glow = el(lyTitle, 'div', 'abs', { pointerEvents: 'none', mixBlendMode: 'screen' });
+const ttl = JR.title3D(lyTitle, 'JESUS', LY.title);
+const baseY = ttl.baselineY();
+const refl = JR.reflection(lyTitle, 'JESUS', LY.title, baseY);
+lyTitle.insertBefore(refl.wrap, ttl.wrap); lyTitle.insertBefore(glow, refl.wrap);
+const rmx = JR.script(lyTitle, 'remix', LY.remix);
+const lyInfo = ly();
+JR.marks(lyInfo, LY.marks.cx, LY.marks.cy, LY.marks.size).set(1);
+if (LY.sign) JR.signature(lyInfo, LY.sign);
+if (LY.rule) el(lyInfo, 'div', 'abs', { left: LY.rule.left + 'px', top: LY.rule.top + 'px', width: LY.rule.w + 'px', height: '3px', background: TOK.branco, opacity: .9 });
+if (LY.date) { const o = JR.odometer(lyInfo, '15.12.2026', LY.date); o.cols.forEach((c, i) => o.setCol(i, 1, 0)); }
+if (LY.plat) JR.mono(lyInfo, LY.plat.text, LY.plat);
+const spk = JR.specks(stage, W, H);
+const grn = JR.grain(stage, W, H);
+JR.vignette(stage, W, H);
+
+let G = {};
+function measure() {
+  ttl.measure(); refl.t.measure();
+  const tw = ttl.squish.offsetWidth, SX = JR.TITLE_SX;
+  const sqLeft = LY.title.align === 'left' ? LY.title.left : LY.title.cx - tw * SX / 2;
+  const cx = sqLeft + tw * SX / 2;
+  Object.assign(glow.style, { left: (cx - tw * SX * .75) + 'px', top: (baseY - LY.title.size * .22) + 'px', width: (tw * SX * 1.5) + 'px', height: (LY.title.size * .44) + 'px',
+    background: 'radial-gradient(ellipse 50% 50% at 50% 50%, rgba(248,51,248,.55) 0%, rgba(248,51,248,.18) 45%, rgba(248,51,248,0) 75%)' });
+  G = { cx, cy: (ttl.glyphTopY() + baseY) / 2 };
+  ttl.setDepth(1, 3.2); refl.t.setDepth(1, 3.2);
+  refl.wrap.style.opacity = .34;     // reflexo do título no "piso" (sutil)
+}
+
+/* ═════════════ Render (função periódica de t) ═════════════ */
+function render(t) {
+  const f = ((t % LOOP) + LOOP) % LOOP / LOOP;          // fase 0..1
+  const C = CUES.cycles;
+  // tabuleiro ondulando (fase cheia = nº inteiro de voltas)
+  ck.forEach(c => c.draw(TAU * C.wave * f, TAU * C.wave2 * f));
+  // câmera: rotateY ±6°, rotateX ±2° (órbita), parallax 1 : 1.6 : 2.2
+  const ry = CUES.camY * Math.sin(TAU * C.cam * f), rx = CUES.camX * Math.sin(TAU * 2 * C.cam * f);
+  const pan = -4 * Math.sin(TAU * C.cam * f), panY = 1.5 * Math.sin(TAU * 2 * C.cam * f);
+  lyCheck.style.transform = `translate(${(pan).toFixed(3)}px, ${panY.toFixed(3)}px) scale(1.01)`;
+  // artista: respiração (2 ciclos/loop) + parallax
+  const br = .5 - .5 * Math.cos(TAU * C.breath * f);
+  ph.pos.style.transform = `translate(${(pan * 1.6).toFixed(3)}px, ${(panY * 1.6 - 3 * br).toFixed(3)}px)`;
+  ph.fx.style.transform = `scale(${(1 + .012 * br).toFixed(5)})`;
+  // título: órbita 3D + pulso a cada compasso
+  const bt = (f * CUES.loopBeats) % CUES.pulseEvery;     // em batidas
+  const pulse = .014 * Math.exp(-bt * 3.2);
+  lyTitle.style.transformOrigin = `${G.cx}px ${G.cy}px`;
+  lyTitle.style.transform = `translate(${(pan * 2.2).toFixed(3)}px, ${(panY * 2.2).toFixed(3)}px) scale(${(1 + pulse).toFixed(5)})`;
+  ttl.setCam(rx, ry); refl.t.setCam(-rx, ry);
+  glow.style.opacity = (.55 + .45 * Math.exp(-bt * 2.4)).toFixed(3);
+  // brilho percorrendo a extrusão
+  let band = null;
+  for (const b of CUES.beats.shine) { const k = prog(f * CUES.loopBeats, b, CUES.shineBeats); if (k > 0 && k < 1) band = lerp(-.3, 1.3, p2io(k)); }
+  ttl.setShine(band);
+  // speckle + grão (80 passos por loop, múltiplo de 4 tiles)
+  spk.draw(f, 1);
+  grn.draw(Math.floor(f * 80 + 1e-6));
+}
+
+window.seek = t => render(t);
+window.ready = (async () => { await JR.fontsReady(); measure(); render(0); return true; })();
+if (!location.search.includes('render=1')) {
+  window.ready.then(() => { const t0 = performance.now(); const loop = () => { render(((performance.now() - t0) / 1000) % LOOP); requestAnimationFrame(loop); }; loop(); });
+}
+})();
+</script>
+</body>
+</html>
