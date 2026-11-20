@@ -34,3 +34,9 @@ Regra 60/25/10/5: azul / amarelo / magenta / branco.
 - Tabuleiro ondula em loop contínuo (fase = tempo × BPM/60 quando houver áudio).
 - Impactos: escala 1.00→1.04 + flash de 2 quadros + shake ≤ 6 px. Nunca glitch genérico.
 - Profundidade: 3 camadas (tabuleiro → artista → título) com parallax 1 : 1.6 : 2.2.
+
+## Linguagem de movimento v2 — referência do cliente (`01_referencia/motion_ref`)
+Showreel de motion design: palco com piso reflexivo e glow, câmera 3D inclinada, motion blur direcional,
+squash & stretch, morph de formas, wipes de cor de tela cheia como transição, contador numérico rolando,
+cortes rápidos no beat. Traduzido para a campanha: palco azul profundo, esfera magenta que quica e vira o "J",
+título com extrusão real em câmera 3D, wipes magenta/amarelo/azul, data 15.12.2026 em contador.
