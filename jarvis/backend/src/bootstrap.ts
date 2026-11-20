@@ -19,7 +19,10 @@ export async function createJarvisApp(env: NodeJS.ProcessEnv = process.env): Pro
   const orchestrator = createOrchestrator({ repos, tools, env });
   const plugins = await loadIntegrationPlugins({ repos, config, tools, orchestrator, env });
   const app = await buildApp({ config, repos, orchestrator, plugins, dbKind: config.databaseUrl ? "postgres" : "memory",
-    dbPing: "pool" in repos ? async () => { await (repos as { pool: { query(q: string): Promise<unknown> } }).pool.query("select 1"); } : undefined });
+    dbPing: "pool" in repos ? async () => {
+      try { await (repos as { pool: { query(q: string): Promise<unknown> } }).pool.query("select 1"); }
+      catch (e) { console.warn("dbPing falhou:", (e as { code?: string }).code ?? "", (e as Error).message); throw e; }
+    } : undefined });
   if (!config.databaseUrl) app.log.warn("DATABASE_URL ausente: usando repositórios em memória (dados não persistem).");
   return app;
 }
