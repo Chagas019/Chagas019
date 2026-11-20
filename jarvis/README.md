@@ -29,8 +29,12 @@ npm test
 Observação: o rate limit é em memória por instância; o orçamento de IA é garantido pelo banco.
 
 ## Produção atual
-- API: `https://jarvis-api-chagas7.vercel.app` (Vercel, região gru1). `GET /health` mostra `dbOk`.
-- Banco: schema `jarvis` no Supabase existente, usuário `jarvis_app` restrito a esse schema; TLS verificado com a CA do Supabase.
-- Acesso: token do dono em Vercel → jarvis-api → Settings → Environment Variables → `JARVIS_OWNER_TOKEN`.
-  No iPhone, abra o app e use "Entrar com token de acesso" (fica salvo no Keychain).
-- IA: sem chave, usa o Vercel AI Gateway autenticado pelo OIDC do projeto (crédito do Gateway da sua conta). Para usar outro provedor, cadastre a key (ex.: `ANTHROPIC_API_KEY`) e faça Redeploy.
+- **App (iPhone, sem Apple):** https://jarvis-api-chagas7.vercel.app — no Safari: Compartilhar → "Adicionar à Tela de Início".
+  Entre com o token do dono (Vercel → jarvis-api → Settings → Environment Variables → `JARVIS_OWNER_TOKEN`).
+- **API:** mesmo domínio (`/v1/*`, `/health` mostra `dbOk` e provedores). Região gru1.
+- **IA:** ponte no Floot (`https://jarvis-ai-bridge.floot.app/_api/v1/messages`, projeto "Jarvis AI Bridge"),
+  compatível com a Messages API da Anthropic; Claude Sonnet/Opus 5.5 pelos créditos do Floot. Protegida por chave
+  (só o hash fica no código do Floot; a chave está em `ANTHROPIC_API_KEY` na Vercel, com `ANTHROPIC_BASE_URL`).
+- **Banco:** schema `jarvis` no Supabase existente, usuário `jarvis_app` restrito a esse schema; TLS com a CA do Supabase.
+- **Deploy:** a Vercel baixa o código do GitHub fixado num commit (o repositório ainda não está ligado à Vercel).
+- **App nativo (`ios/`):** compila na CI; instalar exige Apple ID no Xcode (opcional, o app web cobre o uso).
