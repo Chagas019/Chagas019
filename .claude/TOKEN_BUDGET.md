@@ -58,10 +58,10 @@ registrado como 0 e alerta no log.
 | 11:10 | PM | Auditoria de ambiente + catálogo Claude | 7 MCP | ok |
 | 11:12 | 03 Backend (sonnet) | T02 servidor/repos/migration | ~135k tokens | 34 testes ok |
 | 11:12 | 04 AI (sonnet) | T03 provedores/roteador/orquestrador | ~135k tokens | 20 testes ok |
-| 11:12 | 02 iOS (sonnet) | T04 app SwiftUI | em andamento | — |
+| 11:12 | 02 iOS (sonnet) | T04 app SwiftUI | ~206k tokens | CI macOS verde |
 | 11:16 | 05 Integrations (sonnet) | T05 Google | ~130k tokens | 17 testes ok |
 | 11:16 | 06 QA (sonnet) | T07 e2e + revisão | ~169k tokens | 29 e2e + 9 achados |
-| 11:21 | 03 Backend (sonnet) | T09 correções F-01..F-11 | em andamento | — |
+| 11:21 | 03 Backend (sonnet) | T09 correções F-01..F-11 | ~164k tokens | 122/122 com PG real |
 
 **Alerta 85%/100%** (11:21): orçamento de agentes esgotado — nenhuma pesquisa ou agente auxiliar novo nesta sessão; restante feito pelo PM só no caminho crítico (integração, CI, testes).
 Pesquisador (07) não acionado: catálogo de modelos obtido por ferramenta determinística (Vercel MCP).
