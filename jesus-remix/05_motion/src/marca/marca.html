@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>JESUS Remix — Animação de marca (✕)</title>
+<!--
+  JESUS Remix · André Castro — animação de marca (~7,2 s), linguagem da referência 01_referencia/motion_ref3
+  traduzida para a identidade (✕ + globo, Dela comprimida, Roboto Mono, azul/magenta/amarelo).
+  Áudio: Corte_Jesus.wav de 12,716 s (grade_beats) a 19,916 s → 4 compassos, DROP (14,52 s) = b4 local.
+  Determinística: window.seek(t); ?w=&h= escolhe layout dedicado (1080², 1080×1920, 1920×1080).
+  Tempo local em batidas:  t(b) = b · 60/133,03  (b0 = 12,716 s no arquivo)
+    b0–b1   ✕ cromado acende no escuro, luz azul lateral, reflexo magenta
+    b1      flash branco (2 quadros) → ✕ de vidro azul gira de perfil para frente sobre grade em perspectiva
+    b2–b4   close "JESUS" 3D escuro com o desenho vetorial visível (âncoras, alças, contorno, cursor);
+            a câmera atravessa as letras e para no respiro (13,90 s)
+    b4      DROP — corte seco: azul chapado, ✕ + ANDRÉ CASTRO (Roboto Mono)
+    b6–b7   letras recolhem uma a uma para dentro do ✕; b7–b8 ✕ centraliza, gira 90° e respira
+    b8–b12  ✕ se multiplica em grade (✕ / globo alternados) que ondula como o tabuleiro; pulso amarelo por batida
+    b12–b13 ✕ branco gigante expande como wipe
+    b13–fim estúdio azul-profundo: ✕ cromado 3D + "JESUS remix" + 15.12.2026
+-->
+<style>
+@font-face{font-family:"Dela Gothic One";src:url(../../../02_identidade/fontes/dela-gothic-one-latin-400-normal.woff2) format("woff2");}
+@font-face{font-family:"Yellowtail";src:url(../../../02_identidade/fontes/yellowtail-latin-400-normal.woff2) format("woff2");}
+@font-face{font-family:"Roboto Mono";font-weight:300;src:url(../../../02_identidade/fontes/roboto-mono-latin-300-normal.woff2) format("woff2");}
+@font-face{font-family:"Roboto Mono";font-weight:400;src:url(../../../02_identidade/fontes/roboto-mono-latin-400-normal.woff2) format("woff2");}
+@font-face{font-family:"Roboto Mono";font-weight:700;src:url(../../../02_identidade/fontes/roboto-mono-latin-700-normal.woff2) format("woff2");}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#000}
+#stage{position:relative;overflow:hidden;background:#000}
+.abs{position:absolute}
+.ly{position:absolute;left:0;top:0;width:100%;height:100%;overflow:hidden}
+svg{overflow:visible}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<svg id="defs" width="0" height="0" style="position:absolute;left:0;top:0"><defs id="D"></defs></svg>
+<script src="../vendor/gsap.min.js"></script>
+<script src="../lib/jr.js"></script>
+<script src="glifos.js"></script>
+<script>
+(() => {
+/* ═════════════ Tempo (beatmap.json → grade_beats a partir de 12,716 s) ═════════════ */
+const BPM = 133.03, BEAT = 60 / BPM, AUDIO_IN = 12.716;
+const FPS = 30, DURATION = 7.2;                 // 216 quadros
+const B = n => n * BEAT;
+const CUT = n => Math.round(B(n) * FPS) / FPS - 1e-4;   // corte quantizado ao quadro mais próximo da batida
+window.FPS = FPS; window.DURATION = DURATION; window.MARCA = { AUDIO_IN, BPM, DROP_LOCAL: B(4) };
+
+const FMT = JR.format(), W = FMT.W, H = FMT.H, KIND = FMT.kind;
+const U = Math.min(W, H) / 1080, cx = W / 2, cy = H / 2;
+const { el, clamp, lerp, TOK } = JR, NS = JR.NS;
+const ease = n => gsap.parseEase(n);
+const eo = ease('expo.out'), p3i = ease('power3.in'), p3o = ease('power3.out'), p2io = ease('power2.inOut'),
+      p2i = ease('power2.in'), sio = ease('sine.inOut'), eio = ease('expo.inOut');
+const P = (t, t0, d) => clamp((t - t0) / d);
+
+/* ═════════════ Layouts dedicados ═════════════ */
+const LAYOUTS = {
+  square: { s1: 470, s2: 330, word: { font: 1000, k0: .44, k1: .78, f0: .30, f1: .60, fy: .52 },
+    lock: { mark: 112, text: 64, gap: 34 }, grid: { cell: 150 },
+    fin: { x: 540, y: 420, size: 400, title: { cx: 540, top: 744, size: 104 }, remix: { cx: 600, top: 818, size: 74 },
+      date: { cx: 540, top: 990, size: 22 } } },
+  story: { s1: 560, s2: 390, word: { font: 1000, k0: .56, k1: .98, f0: .30, f1: .60, fy: .52 },
+    lock: { mark: 116, text: 62, gap: 32 }, grid: { cell: 150 },
+    fin: { x: 540, y: 780, size: 500, title: { cx: 540, top: 1196, size: 132 }, remix: { cx: 610, top: 1290, size: 94 },
+      date: { cx: 540, top: 1590, size: 26 } } },
+  wide: { s1: 470, s2: 330, word: { font: 1000, k0: .44, k1: .80, f0: .26, f1: .60, fy: .52 },
+    lock: { mark: 132, text: 78, gap: 40 }, grid: { cell: 150 },
+    fin: { x: 700, y: 500, size: 440, title: { left: 1050, top: 392, size: 124 }, remix: { left: 1150, top: 480, size: 88 },
+      date: { left: 1058, top: 650, size: 24 } } },
+};
+const LY = LAYOUTS[KIND];
+
+/* ═════════════ Geometria do ✕ (mesma proporção da marca: traço 0,27 · ponta quadrada) ═════════════ */
+const XL = 122.6, XW = 27;
+function xPts(inset = 0) {
+  const a = XL / 2 - inset, b = XW / 2 - inset, c = Math.SQRT1_2;
+  return [[a, b], [b, b], [b, a], [-b, a], [-b, b], [-a, b], [-a, -b], [-b, -b], [-b, -a], [b, -a], [b, -b], [a, -b]]
+    .map(([x, y]) => [(x - y) * c, (x + y) * c]);
+}
+const xD = (i = 0) => 'M' + xPts(i).map(p => p[0].toFixed(2) + ' ' + p[1].toFixed(2)).join('L') + 'Z';
+const DEFS = document.getElementById('D');
+const addDefs = html => { const g = document.createElementNS(NS, 'g'); g.innerHTML = html; while (g.firstChild) DEFS.appendChild(g.firstChild); };
+const svgEl = (parent, vb, w, h, css, html) => { const s = document.createElementNS(NS, 'svg'); s.setAttribute('viewBox', vb);
+  s.setAttribute('width', w); s.setAttribute('height', h); Object.assign(s.style, { position: 'absolute', left: 0, top: 0 }, css || {});
+  s.innerHTML = html || ''; parent.appendChild(s); return s; };
+const stops = arr => arr.map(([o, c, a]) => `<stop offset="${o}" stop-color="${c}"${a != null ? ` stop-opacity="${a}"` : ''}/>`).join('');
+
+/* Cromado: gradiente de "ambiente refletido" (céu claro / horizonte escuro / chão azul / rebatedor magenta) */
+const CHROME = [[0, '#0b1020'], [.14, '#2b3a5c'], [.27, '#aebfdc'], [.34, '#ffffff'], [.40, '#dfe8f8'], [.47, '#56698f'],
+  [.51, '#0c1222'], [.56, '#123064'], [.64, '#2f86f2'], [.71, '#bfe0ff'], [.76, '#ffffff'], [.82, '#f2b6f4'],
+  [.88, '#9c3aa6'], [.94, '#2a1338'], [1, '#0a0d18']];
+const GLASS = [[0, '#e9f6ff', .92], [.22, '#8fcaff', .78], [.45, '#2f8ef8', .62], [.62, '#037AF4', .70], [.8, '#0a4f96', .82], [1, '#5fb0ff', .9]];
+
+/* ═════════════ ✕ 3D: extrusão em camadas (preserve-3d) + face com chanfro, especular e borda clara ═════════════ */
+let UID = 0;
+function sym3D(parent, o) {
+  const id = 'x' + (UID++), S = o.size * 1.4, VB = '-70 -70 140 140', glass = o.kind === 'glass';
+  const N = o.layers || 30, D = o.size * (o.depth || .17), dz = D / N, bev = o.bevel || 4.2;
+  addDefs(`
+    <linearGradient id="${id}A" gradientUnits="userSpaceOnUse" x1="-60" y1="-60" x2="60" y2="60">${stops(glass ? GLASS : CHROME)}</linearGradient>
+    <linearGradient id="${id}B" gradientUnits="userSpaceOnUse" x1="-60" y1="-60" x2="60" y2="60">${stops(glass ? GLASS : CHROME)}</linearGradient>
+    <linearGradient id="${id}G" gradientUnits="userSpaceOnUse" x1="-60" y1="-60" x2="60" y2="60">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/>
+      <stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="${id}R" gradientUnits="userSpaceOnUse" x1="-55" y1="-55" x2="55" y2="55">
+      ${stops([[0, '#ffffff', 1], [.45, glass ? '#d8efff' : '#b9c8e6', .8], [.7, '#8fc4ff', .95], [1, '#ffffff', 1]])}</linearGradient>
+    ${[0, 1, 2].map(k => `<linearGradient id="${id}E${k}" gradientUnits="userSpaceOnUse" x1="${-60}" y1="0" x2="60" y2="0" gradientTransform="rotate(${o.edgeAngle || 0})">
+      ${stops(glass
+        ? [[0, '#bfe4ff', [.55, .22, .16][k]], [.5, '#2f8ef8', [.42, .16, .12][k]], [1, '#7cc0ff', [.55, .22, .16][k]]]
+        : (o.edge || [[0, '#5aa6ff'], [.22, '#20345a'], [.5, '#0b0f1a'], [.78, '#2a1636'], [1, '#c45ad2']])
+            .map(([of, c]) => [of, shade(c, [1, .62, .38][k])]))}</linearGradient>`).join('')}
+    <filter id="${id}S" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="${glass ? 2.6 : 2.0}" result="b"/>
+      <feSpecularLighting in="b" surfaceScale="${glass ? 4 : 6}" specularConstant="${glass ? .9 : 1.25}" specularExponent="${glass ? 18 : 26}"
+        lighting-color="#ffffff" result="sp"><fePointLight x="-40" y="-60" z="60"/></feSpecularLighting>
+      <feComposite in="sp" in2="SourceAlpha" operator="in" result="sp2"/>
+      <feComposite in="SourceGraphic" in2="sp2" operator="arithmetic" k1="0" k2="1" k3="${glass ? .75 : 1}" k4="0"/>
+    </filter>`);
+  const root = el(parent, 'div', 'abs', { left: '0px', top: '0px', width: S + 'px', height: S + 'px', transformStyle: 'preserve-3d', transformOrigin: '50% 50%' });
+  const layers = [];
+  for (let i = N - 1; i >= 0; i--) {
+    const z = D / 2 - (i + 1) * dz, k = i < 2 ? 0 : (i < N * .55 ? 1 : 2);
+    const fill = i < 2 ? `url(#${id}R)` : `url(#${id}E${k})`;
+    const s = svgEl(root, VB, S, S, { transform: `translateZ(${z.toFixed(2)}px)` }, `<path d="${xD(0)}" fill="${fill}"/>`);
+    layers.push(s);
+  }
+  const face = svgEl(root, VB, S, S, { transform: `translateZ(${(D / 2 + .4).toFixed(2)}px)` }, `
+    <g filter="url(#${id}S)"><path d="${xD(0)}" fill="url(#${id}A)"/><path d="${xD(bev)}" fill="url(#${id}B)"/></g>
+    <path d="${xD(bev)}" fill="url(#${id}G)"/>
+    <path d="${xD(bev)}" fill="none" stroke="${glass ? 'rgba(255,255,255,.55)' : 'rgba(6,10,22,.55)'}" stroke-width=".5"/>
+    <path d="${xD(.35)}" fill="none" stroke="url(#${id}R)" stroke-width=".8"/>`);
+  const gA = document.getElementById(id + 'A'), gB = document.getElementById(id + 'B'), gG = document.getElementById(id + 'G');
+  const light = DEFS.querySelector(`#${id}S fePointLight`);
+  const setGrad = (g, ang, shift) => { const r = ang * Math.PI / 180, c = Math.cos(r) * 62, s = Math.sin(r) * 62, px = -Math.sin(r) * shift, py = Math.cos(r) * shift;
+    g.setAttribute('x1', (-c + px).toFixed(2)); g.setAttribute('y1', (-s + py).toFixed(2)); g.setAttribute('x2', (c + px).toFixed(2)); g.setAttribute('y2', (s + py).toFixed(2)); };
+  const api = { root, face, layers, S,
+    /* refl: rotação do ambiente refletido (graus); glint ∈ [-0.3,1.3] posição do brilho em faixa; lx,ly: luz especular */
+    set({ x, y, rx = 0, ry = 0, rz = 0, sc = 1, refl = 0, glint = null, lx = -40, ly = -60, op = 1 }) {
+      root.style.left = (x - S / 2) + 'px'; root.style.top = (y - S / 2) + 'px';
+      root.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) rotateZ(${rz}deg) scale3d(${sc},${sc},${sc})`;
+      root.style.opacity = op;
+      setGrad(gA, 58 + refl, refl * .25); setGrad(gB, 58 + 180 + refl * 1.3, -refl * .2);
+      light.setAttribute('x', lx); light.setAttribute('y', ly);
+      const st = gG.children;
+      if (glint == null) { for (const s of st) s.setAttribute('stop-opacity', 0); }
+      else { setGrad(gG, 30, 0); const g = glint;
+        st[0].setAttribute('offset', clamp(g - .09)); st[1].setAttribute('offset', clamp(g - .015)); st[1].setAttribute('stop-opacity', .0);
+        st[1].setAttribute('offset', clamp(g - .012)); st[1].setAttribute('stop-opacity', .85);
+        st[2].setAttribute('offset', clamp(g + .012)); st[2].setAttribute('stop-opacity', .85); st[3].setAttribute('offset', clamp(g + .09)); }
+    } };
+  return api;
+}
+function shade(hex, k) { const n = parseInt(hex.slice(1), 16); const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  const f = v => Math.round(clamp(v * k, 0, 255)).toString(16).padStart(2, '0'); return '#' + f(r) + f(g) + f(b); }
+function mixHex(a, b, k) { const A = parseInt(a.slice(1), 16), Bn = parseInt(b.slice(1), 16);
+  const ch = s => [(s >> 16) & 255, (s >> 8) & 255, s & 255]; const x = ch(A), y = ch(Bn);
+  return 'rgb(' + x.map((v, i) => Math.round(lerp(v, y[i], k))).join(',') + ')'; }
+
+/* ═════════════ Montagem ═════════════ */
+const stage = document.getElementById('stage');
+stage.style.width = W + 'px'; stage.style.height = H + 'px';
+const scene = (bg) => el(stage, 'div', 'ly', { background: bg || 'none', display: 'none' });
+
+/* — S1: escuro, luz azul lateral — */
+const S1 = scene('#020308');
+el(S1, 'div', 'ly', { background: `radial-gradient(ellipse 55% 90% at -6% 48%, rgba(3,122,244,.75) 0%, rgba(3,90,200,.28) 38%, rgba(0,0,0,0) 70%)` });
+const s1Rim = el(S1, 'div', 'ly', { background: `radial-gradient(ellipse 40% 70% at 108% 40%, rgba(248,51,248,.28) 0%, rgba(0,0,0,0) 65%)` });
+const s1Glow = el(S1, 'div', 'abs', { left: (cx - 360 * U) + 'px', top: (cy - 360 * U) + 'px', width: 720 * U + 'px', height: 720 * U + 'px',
+  background: 'radial-gradient(circle, rgba(60,150,255,.45) 0%, rgba(3,122,244,.12) 40%, rgba(0,0,0,0) 70%)' });
+const s1Cam = el(S1, 'div', 'ly', { perspective: 1500 * U + 'px', overflow: 'visible' });
+const X1 = sym3D(s1Cam, { size: LY.s1 * U, layers: 34, depth: .2 });
+
+/* — S2: claro, grade em perspectiva, ✕ de vidro — */
+const S2 = scene('linear-gradient(#ffffff 0%, #f6f8fe 45%, #eef2fc 100%)');
+const s2Floor = el(S2, 'div', 'ly', { perspective: 900 * U + 'px', perspectiveOrigin: '50% 30%' });
+const GRID = 150 * U;
+const floor = el(s2Floor, 'div', 'abs', { left: (-1.5 * W) + 'px', top: (H * .52) + 'px', width: 4 * W + 'px', height: 3 * H + 'px',
+  transformOrigin: '50% 0', transform: 'rotateX(76deg)',
+  backgroundImage: `linear-gradient(90deg, rgba(160,150,235,.55) ${2.4 * U}px, transparent ${2.4 * U}px), linear-gradient(0deg, rgba(160,150,235,.55) ${2.4 * U}px, transparent ${2.4 * U}px)`,
+  backgroundSize: `${GRID}px ${GRID}px` });
+const wall = el(S2, 'div', 'abs', { left: 0, top: 0, width: W + 'px', height: H * .52 + 'px',
+  backgroundImage: `linear-gradient(90deg, rgba(170,160,235,.30) ${1.6 * U}px, transparent ${1.6 * U}px), linear-gradient(0deg, rgba(170,160,235,.22) ${1.6 * U}px, transparent ${1.6 * U}px)`,
+  backgroundSize: `${GRID * .9}px ${GRID * .9}px`, maskImage: 'linear-gradient(to bottom, transparent 0%, #000 70%, transparent 100%)', webkitMaskImage: 'linear-gradient(to bottom, transparent 0%, #000 70%, transparent 100%)' });
+el(S2, 'div', 'ly', { background: `linear-gradient(to bottom, rgba(255,255,255,0) 40%, rgba(255,255,255,.9) 52%, rgba(255,255,255,0) 62%)` });
+el(S2, 'div', 'ly', { background: `radial-gradient(ellipse 70% 40% at 50% 100%, rgba(248,51,248,.07), rgba(0,0,0,0) 70%), radial-gradient(ellipse 50% 50% at 0% 50%, rgba(3,122,244,.08), rgba(0,0,0,0) 70%)` });
+const s2Shadow = el(S2, 'div', 'abs', { width: LY.s2 * 1.3 * U + 'px', height: LY.s2 * .22 * U + 'px', borderRadius: '50%',
+  background: 'radial-gradient(ellipse, rgba(3,122,244,.32), rgba(3,122,244,0) 70%)', filter: `blur(${10 * U}px)` });
+const s2Cam = el(S2, 'div', 'ly', { perspective: 1300 * U + 'px', overflow: 'visible' });
+const X2 = sym3D(s2Cam, { size: LY.s2 * U, kind: 'glass', layers: 30, depth: .16, bevel: 6 });
+
+/* — S3: JESUS vetorial em close — */
+const S3 = scene('#030409');
+el(S3, 'div', 'ly', { background: 'radial-gradient(ellipse 60% 80% at 10% 20%, rgba(3,122,244,.22), rgba(0,0,0,0) 65%), radial-gradient(ellipse 50% 60% at 95% 90%, rgba(248,51,248,.10), rgba(0,0,0,0) 65%)' });
+const s3Root = el(S3, 'div', 'ly', { perspective: 1700 * U + 'px', perspectiveOrigin: '50% 50%' });
+const WD = buildWord(s3Root, LY.word);
+const cursor = el(S3, 'div', 'abs', { left: 0, top: 0, width: 40 * U + 'px', height: 52 * U + 'px', filter: `drop-shadow(0 ${3 * U}px ${5 * U}px rgba(0,0,0,.6))` },
+  `<svg viewBox="0 0 20 26" width="${40 * U}" height="${52 * U}"><path d="M1 1 L1 20.5 L5.8 16.3 L9.2 24.2 L12.6 22.7 L9.3 15 L15.6 15 Z" fill="#f4f6fb" stroke="#0b0b14" stroke-width="1.2" stroke-linejoin="round"/></svg>`);
+
+function buildWord(parent, o) {
+  const G = window.GLIFOS, fs = o.font * U, sc = fs / G.upm, SX = .8 * sc, SY = 1.16 * sc;
+  const capTop = 760 * SY, pad = 120 * U;                     // y do topo das maiúsculas (unid. ~ 726 + overshoot)
+  const base = pad + capTop, letters = [];
+  let x = pad;
+  for (const ch of 'JESUS') { const g = G.g[ch]; letters.push({ ch, x, g }); x += g.adv * SX - .01 * fs * .8; }
+  const Ww = x + pad, Hw = base + 40 * SY + pad;
+  const T = (lx, p) => [lx + p[0] * SX, base - p[1] * SY];
+  const fmt = p => p[0].toFixed(1) + ' ' + p[1].toFixed(1);
+  let dAll = ''; const anchors = [], handles = [];
+  letters.forEach((L, li) => { L.contours = L.g.contours.map((c, ci) => {
+    let d = 'M' + fmt(T(L.x, c[0].p[0]));
+    for (const s of c) {
+      const q = s.p.map(p => T(L.x, p));
+      d += s.t === 'L' ? 'L' + fmt(q[1]) : 'C' + fmt(q[1]) + ' ' + fmt(q[2]) + ' ' + fmt(q[3]);
+      anchors.push({ p: q[0], li, ci });
+      if (s.t === 'C') { handles.push({ a: q[0], c: q[1], li, ci }); handles.push({ a: q[3], c: q[2], li, ci }); }
+    }
+    dAll += d + 'Z'; return d + 'Z'; }); });
+  const VB = `0 0 ${Ww.toFixed(1)} ${Hw.toFixed(1)}`;
+  const cam = el(parent, 'div', 'abs', { left: 0, top: 0, width: Ww + 'px', height: Hw + 'px', transformStyle: 'preserve-3d', transformOrigin: '0 0' });
+  addDefs(`<linearGradient id="wF" gradientUnits="userSpaceOnUse" x1="0" y1="${base - capTop}" x2="0" y2="${base}">
+      ${stops([[0, '#4b5161'], [.18, '#262a34'], [.42, '#121319'], [.56, '#07080b'], [.74, '#1b1e27'], [.9, '#3b4252'], [1, '#596277']])}</linearGradient>
+    <linearGradient id="wE" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${Ww}" y2="${Hw * .4}">
+      ${stops([[0, '#1d3866'], [.3, '#0b1222'], [.55, '#06070b'], [.8, '#0e0b16'], [1, '#3a1846']])}</linearGradient>
+    <linearGradient id="wC" gradientUnits="userSpaceOnUse" x1="0" y1="${base - capTop}" x2="0" y2="${base}">
+      ${stops([[0, '#8b97b3'], [.5, '#2a3042'], [1, '#6c7894']])}</linearGradient>
+    <filter id="wS" x="-5%" y="-10%" width="110%" height="120%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="${7 * U}" result="b"/>
+      <feSpecularLighting in="b" surfaceScale="${3}" specularConstant=".9" specularExponent="20" lighting-color="#cfe2ff" result="sp">
+        <fePointLight x="${Ww * .2}" y="${-Hw * .3}" z="${600 * U}"/></feSpecularLighting>
+      <feComposite in="sp" in2="SourceAlpha" operator="in" result="sp2"/>
+      <feComposite in="SourceGraphic" in2="sp2" operator="arithmetic" k1="0" k2="1" k3=".55" k4="0"/></filter>`);
+  const N = 22, depth = capTop * .16, dz = depth / N;
+  for (let i = N - 1; i >= 0; i--) svgEl(cam, VB, Ww, Hw, { transform: `translateZ(${(-(i + 1) * dz).toFixed(2)}px)` },
+    `<path d="${dAll}" fill="${i < 2 ? 'url(#wC)' : 'url(#wE)'}"/>`);
+  const aS = 15 * U / .6, hR = 5.5 * U / .6, sw = 2.2 * U / .6;
+  const sel = letters[2].contours[0];                    // contorno externo do 1º "S" — o cursor desenha este
+  const face = svgEl(cam, VB, Ww, Hw, { transform: 'translateZ(.6px)' }, `
+    <path d="${dAll}" fill="url(#wF)" filter="url(#wS)"/>
+    <path d="${dAll}" fill="none" stroke="#d6deee" stroke-opacity=".9" stroke-width="${sw}"/>
+    <path id="wSel" d="${sel}" fill="none" stroke="#037AF4" stroke-width="${sw * 1.8}" stroke-linecap="round"/>
+    <g id="wH" stroke="#037AF4" stroke-width="${sw * .9}">${handles.map(h => `<g data-li="${h.li}" data-ci="${h.ci}"><line x1="${h.a[0].toFixed(1)}" y1="${h.a[1].toFixed(1)}" x2="${h.c[0].toFixed(1)}" y2="${h.c[1].toFixed(1)}"/><circle cx="${h.c[0].toFixed(1)}" cy="${h.c[1].toFixed(1)}" r="${hR}" fill="#037AF4" stroke="#bfe0ff" stroke-width="${sw * .4}"/></g>`).join('')}</g>
+    <g id="wA">${anchors.map(a => `<rect x="${(a.p[0] - aS / 2).toFixed(1)}" y="${(a.p[1] - aS / 2).toFixed(1)}" width="${aS}" height="${aS}" fill="#1e86f6" stroke="#cfe6ff" stroke-width="${sw * .5}"/>`).join('')}</g>
+    <circle id="wM" r=".5" fill="none"/>`);
+  const selP = face.querySelector('#wSel'), mark = face.querySelector('#wM');
+  const hG = [...face.querySelectorAll('#wH > g')], aR = [...face.querySelectorAll('#wA > rect')];
+  return { cam, Ww, Hw, base, capTop, letters, selP, mark, hG, aR, handles, anchors, sx: SX };
+}
+
+/* — S4/S5: azul chapado, assinatura → grade de ícones — */
+const S4 = scene(TOK.azul);
+el(S4, 'div', 'ly', { background: 'radial-gradient(ellipse 80% 70% at 50% 50%, rgba(255,255,255,.05), rgba(0,0,0,0) 60%, rgba(10,79,150,.20) 100%)' });
+addDefs(`<path id="gx" d="${xD(0)}"/>
+  <g id="gg" fill="none" stroke="currentColor" stroke-width="${100 * .075 * .9}">
+    <circle r="${43}"/><ellipse rx="${19}" ry="${43}"/><line x1="0" y1="-43" x2="0" y2="43"/><line x1="-43" y1="0" x2="43" y2="0"/>
+    <line x1="-38.5" y1="-20" x2="38.5" y2="-20"/><line x1="-38.5" y1="20" x2="38.5" y2="20"/></g>`);
+const gridSvg = svgEl(S4, `0 0 ${W} ${H}`, W, H, {});
+const gridG = document.createElementNS(NS, 'g'); gridSvg.appendChild(gridG);
+const CELL = LY.grid.cell * U, ICON = CELL * .42;      // ícone: ~63 px no quadrado
+const nI = Math.ceil(W / CELL / 2) + 3, nJ = Math.ceil(H / CELL / 2) + 3;
+const icons = [];
+for (let j = -nJ; j <= nJ; j++) for (let i = -nI; i <= nI; i++) {
+  const isX = ((i + j) % 2 + 2) % 2 === 0;
+  const u = document.createElementNS(NS, 'use'); u.setAttribute('href', isX ? '#gx' : '#gg');
+  if (isX) u.setAttribute('fill', TOK.branco); else u.setAttribute('color', TOK.branco);
+  gridG.appendChild(u); icons.push({ u, i, j, isX, ring: Math.max(Math.abs(i), Math.abs(j)), dist: Math.hypot(i, j) });
+}
+const lk = LY.lock, lockWrap = el(S4, 'div', 'abs', { left: 0, top: 0, width: W + 'px', height: H + 'px' });
+const lockText = el(lockWrap, 'div', 'abs', { top: (cy - lk.text * U * .62) + 'px', left: 0, fontFamily: '"Roboto Mono"', fontWeight: 400,
+  fontSize: lk.text * U + 'px', lineHeight: 1.2, letterSpacing: '.06em', color: TOK.branco, whiteSpace: 'nowrap' });
+const LOCK = 'ANDRÉ CASTRO';
+const lockChars = [...LOCK].map(ch => el(lockText, 'span', '', { display: 'inline-block', transformOrigin: '50% 60%' }, ch === ' ' ? '&nbsp;' : ch));
+const lockMark = svgEl(lockWrap, '-60 -60 120 120', lk.mark * U * 1.2, lk.mark * U * 1.2, {}, `<path d="${xD(0)}" fill="${TOK.branco}"/>`);
+
+/* — S6: wipe ✕ branco — */
+const S6 = scene('none');
+const wipeSvg = svgEl(S6, `0 0 ${W} ${H}`, W, H, {});
+addDefs(`<radialGradient id="wipeG" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="60">${stops([[0, '#ffffff'], [.5, '#f4f9ff'], [1, '#cfe6ff']])}</radialGradient>`);
+wipeSvg.innerHTML = `<g id="wpG"><path d="${xD(-6)}" fill="#8fc6ff" opacity=".55" style="filter:blur(${18 * U}px)"/><path d="${xD(0)}" fill="url(#wipeG)" style="filter:blur(${5 * U}px)"/></g>`;
+const wpG = wipeSvg.querySelector('#wpG');
+
+/* — S7: estúdio — */
+const S7 = scene(`radial-gradient(ellipse 120% 90% at 50% 0%, #1b4f8f 0%, ${TOK.azulProf} 16%, #072a55 42%, #030a18 78%, #02060f 100%)`);
+const F = LY.fin;
+const soft = el(S7, 'div', 'abs', { left: (F.x - 520 * U) + 'px', top: (F.y - F.size * U * .5 - 520 * U) + 'px', width: 1040 * U + 'px', height: 360 * U + 'px',
+  borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(235,244,255,.95) 0%, rgba(150,200,255,.45) 35%, rgba(3,122,244,0) 70%)', filter: `blur(${24 * U}px)` });
+const floorY = F.y + F.size * U * .56;
+el(S7, 'div', 'abs', { left: 0, top: floorY + 'px', width: W + 'px', height: (H - floorY) + 'px',
+  background: `linear-gradient(to bottom, rgba(120,180,255,.10) 0%, rgba(2,8,20,.55) 30%, rgba(1,4,10,.9) 100%)` });
+el(S7, 'div', 'abs', { left: (F.x - 700 * U) + 'px', top: (floorY - 1 * U) + 'px', width: 1400 * U + 'px', height: 2 * U + 'px',
+  background: 'linear-gradient(90deg, rgba(160,205,255,0), rgba(160,205,255,.45), rgba(160,205,255,0))' });
+const s7Cam = el(S7, 'div', 'ly', { perspective: 1600 * U + 'px', perspectiveOrigin: `${F.x}px ${F.y}px`, overflow: 'visible' });
+const reflWrap = el(S7, 'div', 'ly', { perspective: 1600 * U + 'px', perspectiveOrigin: `${F.x}px ${F.y}px`, transformOrigin: `50% ${floorY}px`, transform: 'scaleY(-1)',
+  opacity: .26, maskImage: `linear-gradient(to bottom, rgba(0,0,0,0) ${floorY - 150 * U}px, #000 ${floorY}px)`,
+  webkitMaskImage: `linear-gradient(to bottom, rgba(0,0,0,0) ${floorY - 150 * U}px, #000 ${floorY}px)` });
+S7.insertBefore(reflWrap, s7Cam);
+const EDGE_TOP = [[0, '#d7e7ff'], [.25, '#4e78b8'], [.55, '#0d1730'], [.8, '#071022'], [1, '#2a5fae']];
+const X7r = sym3D(reflWrap, { size: F.size * U, layers: 16, depth: .2, edge: EDGE_TOP, edgeAngle: 90 });
+const X7 = sym3D(s7Cam, { size: F.size * U, layers: 34, depth: .2, edge: EDGE_TOP, edgeAngle: 90 });
+// tipografia final
+const txt = el(S7, 'div', 'ly', {});
+const tt = F.title, tAlign = tt.left != null ? 'left' : 'center';
+const titleClip = el(txt, 'div', 'abs', { left: (tAlign === 'center' ? tt.cx - 400 * U : tt.left - 10 * U) + 'px', top: (tt.top - 10 * U) + 'px',
+  width: 800 * U + 'px', height: tt.size * U * 1.3 + 'px', overflow: 'hidden' });
+const nExt = Math.max(2, Math.round(tt.size * U * .07)), ext = [];
+for (let i = 1; i <= nExt; i++) ext.push(`${(i * .55).toFixed(2)}px ${i}px 0 ${TOK.azulProf}`);
+const title = el(titleClip, 'div', 'abs', { left: tAlign === 'center' ? '50%' : 10 * U + 'px', top: 10 * U + 'px',
+  fontFamily: '"Dela Gothic One"', fontSize: tt.size * U + 'px', lineHeight: 1, color: TOK.magenta, letterSpacing: '-0.01em', whiteSpace: 'nowrap',
+  textShadow: ext.join(','), transformOrigin: tAlign === 'center' ? '50% 0' : '0 0' }, 'JESUS');
+const rm = F.remix;
+const remix = JR.script(txt, 'remix', rm.left != null ? { left: rm.left, top: rm.top, size: rm.size * U } : { cx: rm.cx, top: rm.top, size: rm.size * U });
+if (KIND !== 'wide') { remix.wrap.style.left = rm.cx + 'px'; remix.wrap.style.top = rm.top + 'px'; }
+const dt = F.date;
+const date = JR.mono(txt, '15.12.2026', { size: dt.size * U, weight: 300, track: .32, top: dt.top, cx: dt.cx, left: dt.left, align: dt.cx != null ? 'center' : 'left', color: 'rgba(249,249,249,.78)' });
+
+/* — flash + grão — */
+const flash = el(stage, 'div', 'ly', { background: '#ffffff', opacity: 0 });
+const grn = JR.grain(stage, W, H);
+grn.c.style.opacity = .09;
+
+/* ═════════════ Render(t) ═════════════ */
+const ALL = [S1, S2, S3, S4, S6, S7];
+let selLen = 0, anchorLen = null;
+function show(...on) { for (const s of ALL) s.style.display = on.includes(s) ? 'block' : 'none'; }
+
+function render(t) {
+  t = clamp(t, 0, DURATION);
+  const c1 = CUT(1), c2 = CUT(2), DROP = CUT(4), c12 = CUT(12), c13 = CUT(13);
+  let fl = 0;
+  if (t < c1) { show(S1); s1(t); }
+  else if (t < c2) { show(S2); s2(t - c1); }
+  else if (t < DROP) { show(S3); s3(t - c2, DROP - c2); }
+  else if (t < c12) { show(S4); s4(t); }
+  else if (t < c13 + .5) { if (t < c13) { show(S4, S6); s4(t); s6(t); } else { show(S7); s7(t); fl = 1 - eo(P(t, c13, .45)); fl = fl * fl; } }
+  else { show(S7); s7(t); }
+  // flash branco de 2 quadros no b1 (linguagem: impacto = flash 2q), decai em 3
+  const f1 = (t - c1) * FPS; if (f1 >= -0.01 && f1 < 5) fl = Math.max(fl, f1 < 2 ? 1 : 1 - (f1 - 2) / 3);
+  flash.style.opacity = fl.toFixed(3);
+  grn.draw(Math.floor(t * FPS / 2));
+}
+
+/* S1 — ✕ cromado acende */
+function s1(t) {
+  const k = eo(P(t, 0, B(1) * 1.05));
+  const ry = lerp(86, 16, k), rx = lerp(10, 4, k);
+  X1.set({ x: cx, y: cy, rx, ry, rz: lerp(-8, 0, k), sc: lerp(.86, 1, k), refl: lerp(-70, 10, k), lx: lerp(-90, 30, k), ly: lerp(-70, -50, k), glint: lerp(-.2, 1.15, p2io(P(t, .05, .38))) });
+  const on = clamp(t / .12);
+  S1.style.opacity = 1; s1Glow.style.opacity = (.35 + .65 * k) * on; s1Rim.style.opacity = .4 + .6 * k;
+  X1.root.style.filter = `brightness(${(.25 + .75 * on).toFixed(3)})`;
+}
+/* S2 — ✕ de vidro gira de perfil para frente sobre a grade */
+function s2(t) {
+  const k = eo(P(t, 0, .42));
+  const y = cy - 30 * U + lerp(40, 0, k) * U;
+  X2.set({ x: cx, y, rx: lerp(14, 6, k), ry: lerp(89, 0, k), sc: lerp(.92, 1, k), refl: lerp(-30, 0, k), lx: lerp(-80, -30, k), ly: -70 });
+  floor.style.transform = `rotateX(76deg) translateY(${(-t * 220 * U).toFixed(1)}px)`;
+  const sw = LY.s2 * 1.3 * U; Object.assign(s2Shadow.style, { left: (cx - sw / 2) + 'px', top: (H * .52 + LY.s2 * .5 * U) + 'px', opacity: .5 + .5 * k });
+}
+/* S3 — close JESUS + vetor */
+function s3(t, dur) {
+  const o = LY.word, kC = eo(P(t, 0, dur * .82));     // câmera desacelera e para no respiro
+  const k = lerp(o.k0, o.k1, kC), fx = lerp(o.f0, o.f1, kC) * WD.Ww, fy = (WD.base - WD.capTop * o.fy);
+  const ry = lerp(24, -9, kC), rx = lerp(8, -3, kC);
+  WD.cam.style.transform = `translate3d(${cx}px, ${cy}px, 0) scale3d(${k},${k},${k}) rotateY(${ry}deg) rotateX(${rx}deg) translate3d(${-fx}px, ${-fy}px, 0)`;
+  // cursor desenha o contorno do 1º S
+  if (!selLen) { selLen = WD.selP.getTotalLength();
+    anchorLen = WD.anchors.map(a => { if (a.li !== 2 || a.ci !== 0) return -1; let best = 0, bd = 1e9;
+      for (let i = 0; i <= 400; i++) { const q = WD.selP.getPointAtLength(selLen * i / 400); const d = Math.hypot(q.x - a.p[0], q.y - a.p[1]); if (d < bd) { bd = d; best = selLen * i / 400; } } return best; }); }
+  const kd = p2io(P(t, .04, dur * .92)), L = lerp(.02, .74, kd) * selLen;
+  WD.selP.style.strokeDasharray = `${selLen} ${selLen}`; WD.selP.style.strokeDashoffset = (selLen - L).toFixed(1);
+  const q = WD.selP.getPointAtLength(L); WD.mark.setAttribute('cx', q.x); WD.mark.setAttribute('cy', q.y);
+  const r = WD.mark.getBoundingClientRect();
+  cursor.style.transform = `translate(${(r.left + r.width / 2 - 2 * U).toFixed(1)}px, ${(r.top + r.height / 2 - 2 * U).toFixed(1)}px)`;
+  // alças: aparecem quando o cursor passa pela âncora (S selecionado); demais letras só com âncoras
+  WD.hG.forEach((g, i) => { const h = WD.handles[i]; let a = 0;
+    if (h.li === 2 && h.ci === 0) { const ai = WD.anchors.findIndex(A => A.li === 2 && A.ci === 0 && Math.hypot(A.p[0] - h.a[0], A.p[1] - h.a[1]) < 1);
+      const al = ai >= 0 ? anchorLen[ai] : 1e9; a = clamp((L - al + 60 * U) / (90 * U)); }
+    g.style.opacity = a.toFixed(3); });
+  WD.aR.forEach((r2, i) => { const A = WD.anchors[i]; const sel = A.li === 2 && A.ci === 0 && anchorLen[i] <= L + 10;
+    r2.setAttribute('fill', sel ? '#ffffff' : '#1e86f6'); });
+}
+/* S4 — DROP: assinatura ✕ ANDRÉ CASTRO → recolhe → grade */
+let lockW = null;
+function s4(t) {
+  const tl = t - B(4);
+  if (!lockW) lockW = lockChars.map(c => c.getBoundingClientRect().width);
+  const mk = lk.mark * U, gap = lk.gap * U, n = lockChars.length;
+  // impacto do corte: 1.04 → 1 + shake ≤ 6 px decaindo em 6 quadros
+  const imp = 1 - eo(P(tl, 0, .35)), sh = Math.max(0, 1 - tl * FPS / 6);
+  const shx = 6 * U * sh * Math.sin(tl * 97), shy = 4 * U * sh * Math.cos(tl * 83);
+  // recolhimento: o texto desliza letra a letra para DENTRO do ✕ (recortado no centro do ✕), b6 → b7.4;
+  // a assinatura se recentra a cada passo, como na referência
+  const t0 = B(6), span = B(7.4) - B(6), step = span / n;
+  const textW = lockW.reduce((a, b) => a + b, 0);
+  let off = 0, gulp = 0;
+  for (let i = 0; i < n; i++) { const d = lockW[i] + (i === 0 ? gap : 0), k = ease('expo.inOut')(P(t, t0 + i * step, step * 1.15)); off += d * k;
+    const a = t - (t0 + i * step + step * .6); if (a >= 0 && a < .14) gulp = Math.max(gulp, 1 - a / .14); }
+  const allIn = off >= textW + gap - .5;
+  const totalW = mk + gap + textW - off;
+  // ✕ sozinho: gira 90° e encolhe até o ícone central da grade (b7.25 → b8)
+  const kr = p3i(P(t, B(7.25), B(.75)));
+  const mScale = lerp(1, ICON * 1.22 / mk, kr) * (1 + .08 * Math.sin(Math.PI * P(t, B(7.4), B(.45))));
+  const left = cx - totalW / 2;
+  const mx = left + mk / 2, my = cy;
+  const sMark = (1 + .04 * imp) * mScale * (1 + .06 * gulp);
+  const rot = 83 * eo(P(t, B(7.25), B(.75)));
+  const S = lk.mark * U * 1.2;
+  lockMark.style.left = (mx - S / 2) + 'px'; lockMark.style.top = (my - S / 2) + 'px';
+  lockMark.style.transform = `scale(${sMark.toFixed(4)}) rotate(${rot.toFixed(2)}deg)`;
+  lockMark.style.display = t < CUT(8) ? 'block' : 'none';
+  lockWrap.style.transform = `translate(${shx.toFixed(2)}px, ${shy.toFixed(2)}px) scale(${1 + .04 * imp})`; lockWrap.style.transformOrigin = `${cx}px ${cy}px`;
+  const tl0 = left + mk + gap - off;
+  lockText.style.left = tl0.toFixed(2) + 'px';
+  lockText.style.clipPath = `inset(-50% -50% -50% ${(mx - tl0).toFixed(2)}px)`;
+  lockText.style.display = allIn ? 'none' : 'block';
+  // grade
+  const g0 = CUT(8);
+  gridSvg.style.display = t >= g0 ? 'block' : 'none';
+  if (t >= g0) grid(t - g0, t);
+}
+function grid(tl, t) {
+  const zoom = lerp(1.22, .92, eo(P(tl, 0, B(4)))), rot = lerp(-7, 0, eo(P(tl, 0, B(3))));
+  gridG.setAttribute('transform', `translate(${cx} ${cy}) rotate(${rot.toFixed(2)}) scale(${zoom.toFixed(4)})`);
+  const ph = 2 * Math.PI * (t * BPM / 60) / 4, A = CELL * .16, Bv = CELL * .10;
+  const amp = eo(P(tl, .1, B(1.5)));
+  for (const ic of icons) {
+    const { i, j } = ic;
+    const k = ic.ring === 0 ? 1 : eo(P(tl, ic.ring * .028 + (ic.isX ? 0 : .02), .32));   // ícone central = o ✕ da assinatura
+    if (k <= 0) { ic.u.setAttribute('display', 'none'); continue; }
+    ic.u.setAttribute('display', 'inline');
+    const dx = amp * A * Math.sin(2 * Math.PI * j / 3.4 + ph + i * .55), dy = amp * Bv * Math.sin(2 * Math.PI * i / 2.2 + ph * 1.3 + j * .35);
+    // pulso por batida: frente de onda a partir do centro
+    let pulse = 0;
+    for (let b = 8; b <= 12; b++) { const tb = t - B(b); if (tb < 0) continue; const front = tb * 9; const d = ic.dist - front;
+      pulse = Math.max(pulse, Math.exp(-d * d / .7) * Math.exp(-tb * 2.2)); }
+    const s = (ICON / 100) * k * (1 + .22 * pulse) * (ic.isX ? 1 : .95);
+    const r = (ic.isX ? 90 * (1 - k) : 0) + 12 * amp * Math.sin(ph + i * .7 - j * .4);
+    ic.u.setAttribute('transform', `translate(${(i * CELL + dx).toFixed(1)} ${(j * CELL + dy).toFixed(1)}) rotate(${r.toFixed(1)}) scale(${s.toFixed(4)})`);
+    if (ic.isX) ic.u.setAttribute('fill', pulse > .25 ? mixHex(TOK.branco, TOK.amarelo, clamp((pulse - .25) * 2)) : TOK.branco);
+  }
+}
+/* S6 — wipe: ✕ branco gigante */
+function s6(t) {
+  const k = P(t, CUT(12), B(1) * .95), e = p2i(k);
+  const sMax = 1.25 * (W + H) / (Math.SQRT2 * XW);
+  const s = lerp(.9 * U, sMax, e), r = lerp(-38, 0, eo(k));
+  wpG.setAttribute('transform', `translate(${cx} ${cy}) rotate(${r.toFixed(2)}) scale(${s.toFixed(4)})`);
+}
+/* S7 — estúdio: ✕ cromado + JESUS remix + data */
+function s7(t) {
+  const tl = t - CUT(13);
+  const k = eo(P(tl, 0, .9)), drift = sio(P(tl, 0, DURATION - CUT(13)));
+  const ry = lerp(34, 0, k) + lerp(0, -10, drift), rx = lerp(12, 3, k);
+  const sc = lerp(1.28, 1, k);
+  const refl = lerp(-60, 10, k) + lerp(0, 20, drift);
+  const st = { x: F.x, y: F.y, rx, ry, sc, refl, lx: lerp(-60, 20, k), ly: -95, glint: lerp(-.25, 1.25, p2io(P(tl, .35, .8))) };
+  X7.set(st); X7r.set(Object.assign({}, st, { glint: null }));   // reflexo: mesmo objeto, espelhado no piso pelo reflWrap
+  soft.style.opacity = (.55 + .45 * k).toFixed(3);
+  const kt = eo(P(tl, B(.5), .7));
+  title.style.transform = `${tAlign === 'center' ? 'translateX(-50%) ' : ''}translateY(${((1 - kt) * tt.size * U * 1.3).toFixed(1)}px) scale(.8,1.16)`;
+  const kr = eo(P(tl, B(1), .6));
+  remix.inner.style.clipPath = `inset(0 ${((1 - kr) * 100).toFixed(1)}% 0 0)`;
+  remix.wrap.style.opacity = kr > 0 ? 1 : 0;
+  const kd = eo(P(tl, B(1.5), .6));
+  date.style.opacity = kd.toFixed(3); date.style.letterSpacing = lerp(.6, .32, kd).toFixed(3) + 'em';
+}
+
+window.seek = t => render(t);
+window.ready = (async () => {
+  await JR.fontsReady();
+  await document.fonts.load(`300 20px "Roboto Mono"`, '15.12.2026');
+  render(0); render(3); render(0);
+})();
+if (!FMT.q.get('render')) window.ready.then(() => { const t0 = performance.now(); const loop = () => { render(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop); }; loop(); });
+})();
+</script>
+</body>
+</html>
