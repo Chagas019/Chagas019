@@ -67,7 +67,7 @@ function readJSON(rel) {
   return null;
 }
 function cues(def) {
-  const bm = window.__BEATMAP || readJSON('09_audio/analise/beatmap.json');
+  const bm = window.__BEATMAP !== undefined ? window.__BEATMAP : readJSON('09_audio/analise/beatmap.json');
   let C;
   if (bm && bm.beats && bm.beats.length > 8) {
     const spb = 60 / bm.bpm;

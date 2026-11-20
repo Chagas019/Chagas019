@@ -113,11 +113,9 @@
       zk: 0, shineOn: false,
       // define profundidade visível (0..1), escala Z (px por camada)
       setDepth(k, zk) {
-        const n = k * depth; const W = wrap.offsetWidth, Hh = wrap.offsetHeight;
-        const oy = (Hh / 2) / TITLE_SY; const oxW = align === 'center' ? W / 2 : 0;
+        const n = k * depth; const oy = (wrap.offsetHeight / 2) / TITLE_SY;
         for (const Lt of letters) {
           const left = Lt.box.offsetLeft;
-          const ox = (align === 'center' ? (W / 2 - (W - W / TITLE_SX) / 2 * 0) : 0); // ver nota abaixo
           for (const { e, i } of Lt.layers) {
             if (i > n + 0.001) { e.style.visibility = 'hidden'; continue; }
             e.style.visibility = 'visible';
@@ -141,7 +139,7 @@
         }
       },
       setCam(rx, ry, extra) { cam.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) ${extra || ''}`; },
-      measure() { api._tw = squish.offsetWidth; api._pox = squish.offsetWidth / 2; },
+      measure() { api._tw = squish.offsetWidth; api._pox = squish.offsetWidth / 2 / (align === 'center' ? 1 : TITLE_SX); },
       // métrica: y (no espaço do pai) da base do glifo
       baselineY() {
         const c = document.createElement('canvas').getContext('2d'); c.font = `${size}px "Dela Gothic One"`;
@@ -164,7 +162,6 @@
     const flip = el(wrap, 'div', 'abs', { left: 0, top: 0, width: '100%', height: '100%',
       transformOrigin: `50% ${baseY}px`, transform: 'scaleY(-1)' });
     const t = title3D(flip, text, Object.assign({}, o, { depth: Math.round(o.depth * .6) }));
-    const m = `linear-gradient(to top, rgba(0,0,0,.9) 0px, rgba(0,0,0,0) ${o.size * .55}px)`;
     // máscara aplicada no wrap espelhado: começa na linha do piso e some rápido
     const mk = `linear-gradient(to bottom, transparent ${baseY}px, rgba(0,0,0,1) ${baseY}px, transparent ${baseY + o.size * .62}px)`;
     wrap.style.maskImage = mk; wrap.style.webkitMaskImage = mk;
