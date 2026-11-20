@@ -1,0 +1,55 @@
+name: JARVIS — CI
+on:
+  push:
+    paths: ["jarvis/**", ".github/workflows/jarvis.yml"]
+  pull_request:
+    paths: ["jarvis/**", ".github/workflows/jarvis.yml"]
+
+concurrency:
+  group: jarvis-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: jarvis/backend
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env: { POSTGRES_USER: jarvis, POSTGRES_PASSWORD: jarvis, POSTGRES_DB: jarvis_test }
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U jarvis" --health-interval 5s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgres://jarvis:jarvis@localhost:5432/jarvis_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: jarvis/backend/package-lock.json }
+      - run: npm ci
+      - name: Aplicar migrations (sem schema auth do Supabase)
+        run: |
+          psql "$TEST_DATABASE_URL" -c "create schema if not exists auth; create or replace function auth.uid() returns uuid language sql stable as 'select null::uuid';"
+          for f in ../supabase/migrations/*.sql; do psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -f "$f"; done
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  ios:
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: jarvis/ios
+    steps:
+      - uses: actions/checkout@v4
+      - run: brew install xcodegen
+      - name: Testes do JarvisKit
+        run: cd Packages/JarvisKit && swift test
+      - run: xcodegen generate
+      - name: Build do app (simulador, sem assinatura)
+        run: |
+          xcodebuild -project Jarvis.xcodeproj -scheme Jarvis \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO build | tail -n 80
+          exit ${PIPESTATUS[0]}
