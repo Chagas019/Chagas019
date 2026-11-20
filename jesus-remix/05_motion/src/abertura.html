@@ -461,7 +461,7 @@ function render(t) {
   });
 
   spk.draw(((t - CUES.offset) / (8 * BEAT)) % 1, cover ? 1 : .55);
-  grn.draw(Math.floor(t * 10));
+  grn.draw(Math.floor((t - CUES.offset) / (4 * BEAT)));   // grão troca só no downbeat de cada compasso (bitrate)
 }
 
 window.seek = t => render(t);

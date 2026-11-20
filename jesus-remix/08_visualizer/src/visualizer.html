@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>JESUS Remix — Visualizer</title>
+<!--
+  JESUS Remix · André Castro — visualizer reativo ao áudio.  visualizer.html?w=1920&h=1080 | ?w=1080&h=1920
+  Dados: 08_visualizer/data/energia.json (gerado por src/extrair_energia.py a partir de 09_audio/original, 30 fps).
+  Sem o JSON: envelope sintético (placeholder 120 BPM) e duração de preview 8 s.
+  Barras = tabuleiro ondulado (células amarelo/azul) em pé num plano 3D sobre piso reflexivo; a ondulação
+  cresce com a energia (rms), o piso pulsa com o grave (kick), cada coluna é uma banda mel.
+  Artista e título fixos (2D). O tabuleiro nunca fica atrás do rosto (barras limitadas abaixo do título).
+-->
+</head>
+<body>
+<div id="stage"></div>
+<script src="../../06_teaser/src/lib/glyphs.js"></script>
+<script src="../../06_teaser/src/lib/kit.js"></script>
+<script>
+(() => {
+const { TOK, E, seg, clamp, lerp } = KIT;
+const Q = new URLSearchParams(location.search);
+const W = +(Q.get('w') || 1920), H = +(Q.get('h') || 1080), V = H > W;
+const FPS = 30;
+const EN = window.__ENERGIA !== undefined ? window.__ENERGIA : KIT.readJSON('08_visualizer/data/energia.json');
+const C = KIT.cues(K => [0, K.dur]);                       // grade de beats só para a fase da ondulação
+window.FPS = FPS; window.DURATION = EN ? EN.duracao : 8;
+const NB = EN ? EN.bandas : 24;
+// envelope sintético (sem áudio): bumbo a 120 BPM + bandas em senos defasados
+function frame(t) {
+  if (EN) { const i = clamp(Math.floor(t * EN.fps), 0, EN.quadros - 1); return { rms: EN.rms[i], kick: EN.kick[i], on: EN.onset[i], b: EN.b[i] }; }
+  const ph = (t * 2) % 1, kick = Math.exp(-ph * 7), rms = .55 + .25 * kick;
+  return { rms, kick, on: kick, b: Array.from({ length: NB }, (_, k) => clamp(.35 + .3 * Math.sin(t * 3.1 + k * .7) * Math.sin(t * .8 + k * .31) + .35 * kick * Math.exp(-k / 8))) };
+}
+
+const stage = document.getElementById('stage');
+Object.assign(stage.style, { width: W + 'px', height: H + 'px' });
+const div = (css, html = '', cls = 'abs') => { const d = document.createElement('div'); d.className = cls; d.style.cssText += css; d.innerHTML = html; stage.appendChild(d); return d; };
+const ext = (n, c, dx = .55) => Array.from({ length: Math.round(n) }, (_, i) => `${((i + 1) * dx).toFixed(2)}px ${i + 1}px 0 ${c}`).join(',');
+
+div(`width:${W}px;height:${H}px;background:radial-gradient(75% 60% at ${V ? 50 : 70}% ${V ? 70 : 72}%, #0B4C93 0%, ${TOK.palco} 55%, ${TOK.palcoFundo} 100%)`);
+const halo = div(`width:${W}px;height:${H}px;background:radial-gradient(${V ? '60% 18%' : '35% 30%'} at ${V ? 50 : 74}% ${V ? 82 : 80}%, rgba(120,190,255,.4), rgba(3,122,244,0) 70%)`);
+
+// ── mundo 3D: piso + plano das barras ──
+const L = V ? { cx: 540, cy: 1640, BW: 980, BH: 440, z: -60, rx: 9 } : { cx: 1430, cy: 1010, BW: 900, BH: 420, z: -80, rx: 8 };
+const W3 = KIT.world(stage, W, H, { persp: 1500, po: V ? 80 : 75, floorW: 3600, floorD: 2400, floorRes: .4, reflOpacity: .5 });
+const bars = W3.obj((c, isR) => { const cv = document.createElement('canvas'); cv.width = L.BW; cv.height = L.BH;
+  Object.assign(cv.style, { position: 'absolute', left: -L.BW / 2 + 'px', top: -L.BH + 'px' }); if (isR) cv.style.opacity = .85; c.appendChild(cv); return cv; });
+bars.tf(`translate3d(0,0,${L.z}px)`);
+const bx = bars.ra.getContext('2d'), rx = bars.rb.getContext('2d');
+
+function drawBars(t, f) {
+  const cw = L.BW / NB, ch = cw * .82, maxC = Math.floor(L.BH / ch) - 1;
+  const ph = t * C.bpm / 60 * Math.PI * .5, amp = .25 + 1.1 * f.rms;
+  const P = (u, v) => [u * cw + 7 * amp * Math.sin(v * .62 - ph + u * .5), L.BH - v * ch + 5 * amp * Math.sin(u * .9 + ph * .7 + v * .35)];
+  bx.clearRect(0, 0, L.BW, L.BH);
+  for (const pass of [0, 1]) {
+    bx.fillStyle = pass ? TOK.amarelo : TOK.azul; bx.beginPath();
+    for (let u = 0; u < NB; u++) {
+      const lv = Math.pow(clamp((f.b[u] - .1) / .72), 1.1) * (.82 + .3 * f.kick);
+      const cells = lv * maxC;
+      for (let v = 0; v < Math.ceil(cells); v++) {
+        if (((u + v) & 1) !== pass) continue;
+        const top = Math.min(1, cells - v), S = 5, gap = .06;
+        const pts = [];
+        for (let i = 0; i <= S; i++) pts.push(P(u + gap + (1 - 2 * gap) * i / S, v));
+        for (let i = 0; i <= S; i++) pts.push(P(u + 1 - gap - (1 - 2 * gap) * i / S, v + top));
+        pts.forEach((p, i) => i ? bx.lineTo(p[0], p[1]) : bx.moveTo(p[0], p[1])); bx.closePath();
+      }
+    }
+    bx.fill();
+  }
+  rx.clearRect(0, 0, L.BW, L.BH); rx.drawImage(bars.ra, 0, 0);
+}
+
+// ── 2D fixo: artista + título ──
+const photo = document.createElement('img'); photo.src = KIT.PHOTO; photo.className = 'abs'; stage.appendChild(photo);
+const P = V ? { cx: 532, top: 470, w: 730, fade: .16 } : { cx: 560, top: 343, w: 1000, fade: 0 };
+const pm = `linear-gradient(to bottom, #000 ${(1 - P.fade) * 100}%, transparent 100%)`;
+Object.assign(photo.style, { width: P.w + 'px', left: (P.cx - P.w / 2) + 'px', top: P.top + 'px', filter: 'contrast(1.06) saturate(1.04) drop-shadow(0 18px 30px rgba(5,40,90,.45))',
+  maskImage: P.fade ? pm : 'none', webkitMaskImage: P.fade ? pm : 'none' });
+const T = V ? { cx: 540, top: 860, size: 186, depth: 13 } : { left: 1090, top: 222, size: 178, depth: 13 };
+const title = div(`top:${T.top}px;left:${T.cx ?? T.left}px;font-size:${T.size}px;color:${TOK.magenta};text-shadow:${ext(T.depth, TOK.azulProfundo)};transform-origin:${T.cx ? '50% 0' : '0 0'};transform:${T.cx ? 'translateX(-50%) ' : ''}scale(.8,1.16)`, 'JESUS', 'abs dela');
+const Rm = V ? { cx: 560, top: 972, size: 176 } : { left: 1290, top: 344, size: 160 };
+div(`top:${Rm.top}px;left:${Rm.cx ?? Rm.left}px;font-size:${Rm.size}px;text-shadow:${ext(Rm.size * .035, 'rgba(10,79,150,.85)', .6)};padding:0 30px;transform:${Rm.cx ? 'translateX(-50%) ' : ''}rotate(-6deg)`, 'remix', 'abs script');
+const Sg = V ? { cx: 540, top: 300, size: 36 } : { left: 1096, top: 140, size: 30 };
+div(`top:${Sg.top}px;left:${Sg.cx ?? Sg.left}px;font-size:${Sg.size}px;letter-spacing:.08em;font-weight:400;${Sg.cx ? 'transform:translateX(-50%)' : ''}`,
+  `ANDRÉ <span style="font-weight:700;font-size:.62em;vertical-align:.32em">✕</span> CASTRO`, 'abs mono');
+
+div(`width:${W}px;height:${H}px;background:radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 58%, rgba(2,14,32,.45) 100%)`);
+const G = KIT.grain(stage, W, H, .5);
+
+function render(t) {
+  const f = frame(t);
+  const o = E.sineInOut(seg(t, 0, window.DURATION));
+  W3.set({ cx: L.cx, cy: L.cy, z: 20 * f.kick, rx: L.rx, ry: lerp(-7, 7, o), s: 1 });
+  W3.drawFloor({ glow: .55 + .9 * f.kick, glowR: 1000 + 300 * f.rms, glowZ: L.z,
+    checker: { x: -1800, y: -1200, cw: 210, ch: 210, cols: 18, rows: 12, A: 14 + 40 * f.rms, B: 8 + 22 * f.rms, lv: 3.4, lu: 2.4, ph: t * C.bpm / 60 * .5, ph2: t * .8, color: 'rgba(3,122,244,.45)', uMin: 0, vMin: 0 } });
+  halo.style.opacity = .55 + .45 * f.kick;
+  drawBars(t, f);
+  G.draw(Math.round(t * FPS));
+}
+window.seek = render;
+window.ready = (async () => { await KIT.fontsReady(); await new Promise(r => photo.complete ? r() : (photo.onload = r)); render(0); return true; })();
+if (!location.search.includes('render=1')) window.ready.then(() => { const t0 = performance.now(); const Lp = () => { render(((performance.now() - t0) / 1000) % window.DURATION); requestAnimationFrame(Lp); }; Lp(); });
+})();
+</script>
+</body>
+</html>

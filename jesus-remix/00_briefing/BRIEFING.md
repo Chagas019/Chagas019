@@ -5,9 +5,9 @@ Lançamento: **15.12.2026** · Campanha visual + motion
 | Fase | Status |
 |---|---|
 | 1. Estrutura, equipe, identidade, proposta visual | ✅ aprovada (fonte A) |
-| 2. Produção completa (estáticos + motion sem áudio) | 🔄 em produção |
-| 3. Sincronização com a música | ⏳ aguarda arquivo de áudio |
-| 4. QA final + entregas | ⏳ |
+| 2. Produção completa | ✅ |
+| 3. Sincronização com a música | ✅ 133 BPM |
+| 4. QA final + entregas | ✅ 99_entregas (aguarda revisão do cliente) |
 
 ## Regras invioláveis
 - Não inventar letra, trechos ou informações do artista.
