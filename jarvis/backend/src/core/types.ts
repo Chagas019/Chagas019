@@ -208,3 +208,10 @@ export class BudgetExceededError extends Error {
     super(`Orçamento diário de IA atingido (${spentUsd.toFixed(4)} / ${limitUsd} USD)`);
   }
 }
+
+/** Todos os provedores configurados falharam (servidor → 502 provider_unavailable). */
+export class ProvidersFailedError extends Error {
+  constructor(public readonly causes: string[]) {
+    super(`Nenhum provedor respondeu: ${causes.join(" | ")}`);
+  }
+}

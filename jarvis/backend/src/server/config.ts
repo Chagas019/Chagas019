@@ -1,0 +1,69 @@
+import { z } from "zod";
+
+const emptyToUndef = (v: unknown) => (typeof v === "string" && v.trim() === "" ? undefined : v);
+const optStr = z.preprocess(emptyToUndef, z.string().optional());
+
+const EnvSchema = z.object({
+  PORT: z.preprocess(emptyToUndef, z.coerce.number().int().min(1).max(65535).default(8787)),
+  NODE_ENV: z.preprocess(emptyToUndef, z.enum(["development", "test", "production"]).default("development")),
+  DATABASE_URL: optStr,
+  SUPABASE_URL: z.preprocess(emptyToUndef, z.string().url().optional()),
+  SUPABASE_JWT_SECRET: optStr,
+  JARVIS_DEV_TOKEN: optStr,
+  JARVIS_ENCRYPTION_KEY: optStr,
+  AI_DAILY_BUDGET_USD: z.preprocess(emptyToUndef, z.coerce.number().positive().default(1)),
+  CORS_ORIGINS: optStr,
+  RATE_LIMIT_PER_MIN: z.preprocess(emptyToUndef, z.coerce.number().int().min(1).default(60)),
+});
+
+export interface Config {
+  port: number;
+  nodeEnv: "development" | "test" | "production";
+  isProduction: boolean;
+  databaseUrl?: string;
+  supabaseUrl?: string;
+  supabaseJwtSecret?: string;
+  devToken?: string;
+  /** 32 bytes decodificados de JARVIS_ENCRYPTION_KEY. */
+  encryptionKey?: Buffer;
+  dailyBudgetUsd: number;
+  corsOrigins: string[];
+  rateLimitPerMin: number;
+}
+
+/** Lê e valida variáveis de ambiente. Lança Error sem expor valores de segredos. */
+export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
+  const parsed = EnvSchema.safeParse(env);
+  if (!parsed.success) {
+    const fields = parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ");
+    throw new Error(`Configuração inválida: ${fields}`);
+  }
+  const e = parsed.data;
+  const isProduction = e.NODE_ENV === "production";
+
+  let encryptionKey: Buffer | undefined;
+  if (e.JARVIS_ENCRYPTION_KEY) {
+    const buf = Buffer.from(e.JARVIS_ENCRYPTION_KEY, "base64");
+    if (buf.length !== 32) throw new Error("Configuração inválida: JARVIS_ENCRYPTION_KEY deve ter 32 bytes em base64.");
+    encryptionKey = buf;
+  } else if (isProduction) {
+    throw new Error("Configuração inválida: JARVIS_ENCRYPTION_KEY é obrigatória em produção.");
+  }
+  if (isProduction && !e.SUPABASE_URL && !e.SUPABASE_JWT_SECRET) {
+    throw new Error("Configuração inválida: defina SUPABASE_URL e/ou SUPABASE_JWT_SECRET em produção.");
+  }
+
+  return {
+    port: e.PORT,
+    nodeEnv: e.NODE_ENV,
+    isProduction,
+    databaseUrl: e.DATABASE_URL,
+    supabaseUrl: e.SUPABASE_URL,
+    supabaseJwtSecret: e.SUPABASE_JWT_SECRET,
+    devToken: e.JARVIS_DEV_TOKEN,
+    encryptionKey,
+    dailyBudgetUsd: e.AI_DAILY_BUDGET_USD,
+    corsOrigins: (e.CORS_ORIGINS ?? "").split(",").map((s) => s.trim()).filter(Boolean),
+    rateLimitPerMin: e.RATE_LIMIT_PER_MIN,
+  };
+}
