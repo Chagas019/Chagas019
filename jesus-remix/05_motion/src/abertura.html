@@ -10,6 +10,7 @@
   BPM = 120 é PLACEHOLDER até a análise da música real (09_audio/analise/beatmap.json).
 -->
 <style>
+  @font-face { font-family: "Bungee"; src: url("../../02_identidade/fontes/bungee-latin-400-normal.woff2") format("woff2"); }
   @font-face { font-family: "Dela"; src: url("../../02_identidade/fontes/dela-gothic-one-latin-400-normal.woff2") format("woff2"); }
   @font-face { font-family: "Yellowtail"; src: url("../../02_identidade/fontes/yellowtail-latin-400-normal.woff2") format("woff2"); }
   @font-face { font-family: "RMono"; font-weight: 300; src: url("../../02_identidade/fontes/roboto-mono-latin-300-normal.woff2") format("woff2"); }
@@ -25,7 +26,7 @@
   .layer { position: absolute; inset: 0; will-change: transform; }
   #bgDeep { background: radial-gradient(120% 90% at 50% 45%, rgba(3,122,244,0) 40%, rgba(10,79,150,.55) 100%); }
   #bgDark { background: var(--azul-profundo); }
-  #halo { background: radial-gradient(34% 30% at 50% 42%, rgba(120,190,255,.55), rgba(3,122,244,0) 70%); }
+  #halo { background: radial-gradient(34% 30% at 50% 42%, rgba(110,185,255,.28), rgba(3,122,244,0) 70%); }
   svg { position: absolute; inset: 0; overflow: visible; }
 
   /* Marca ✕ + globo */
@@ -33,21 +34,23 @@
 
   /* Artista */
   #artistWrap { position: absolute; left: 540px; top: 0; }
-  #artist { position: absolute; width: 450px; left: -225px; top: 244px; transform-origin: 50% 100%; }
+  #artist { position: absolute; width: 490px; left: -245px; top: 196px; transform-origin: 50% 100%;
+            -webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent 97%); mask-image: linear-gradient(to bottom, #000 74%, transparent 97%); }
 
   /* Título */
-  #titleWrap { position: absolute; left: 0; width: 1080px; top: 530px; height: 200px; transform-origin: 50% 55%; }
+  #titleWrap { position: absolute; left: 0; width: 1080px; top: 500px; height: 200px; transform-origin: 50% 55%; }
   #title { position: absolute; left: 0; right: 0; text-align: center; white-space: nowrap;
-           font-family: "Dela"; color: var(--magenta); line-height: 1; letter-spacing: -0.01em; }
+           font-family: var(--titleFont, "Bungee"); color: var(--magenta); line-height: 1; letter-spacing: -0.02em;
+           transform: scaleY(1.32); transform-origin: 50% 50%; }
   #title span { display: inline-block; transform-origin: 50% 80%; }
 
-  #remixWrap { position: absolute; left: 0; width: 1080px; top: 640px; height: 220px; }
+  #remixWrap { position: absolute; left: 0; width: 1080px; top: 588px; height: 220px; }
   #remix { position: absolute; left: 50%; top: 0; transform: translateX(-46%) rotate(-6deg);
            font-family: "Yellowtail"; color: var(--branco); font-size: 186px; line-height: 1;
            white-space: nowrap; padding: 0 40px; text-shadow: 3px 6px 0 rgba(10,79,150,.85); }
 
   /* Assinatura */
-  #logo { position: absolute; left: 0; right: 0; top: 862px; text-align: center; font-family: "RMono"; font-weight: 300;
+  #logo { position: absolute; left: 0; right: 0; top: 846px; text-align: center; font-family: "RMono"; font-weight: 300;
           color: var(--branco); font-size: 44px; line-height: 1.02; letter-spacing: .06em; }
   #logo .row { display: block; overflow: hidden; height: 46px; }
   #logo .row > span { display: inline-block; }
@@ -223,7 +226,7 @@
 
   function fitTitle() {
     title.style.fontSize = "200px";
-    const w = title.scrollWidth; const target = 690;
+    const w = title.scrollWidth; const target = 790;
     title.style.fontSize = (200 * target / w).toFixed(1) + "px";
     const h = title.getBoundingClientRect().height;
     title.style.top = ((200 - h) / 2) + "px";
@@ -310,7 +313,8 @@
     document.getElementById("titleLayer").style.transform = `translate(${sx}px, ${sy}px) scale(${1 + 0.04 * push})`;
 
     // flash de 2 quadros
-    const f = it >= 0 && it < 1 / FPS ? .42 : (it >= 1 / FPS && it < 2 / FPS ? .18 : 0);
+    const fi = Math.round(t * FPS) - Math.round(IMPACT * FPS);
+    const f = fi === 0 ? .22 : (fi === 1 ? .08 : 0);
     flash.style.opacity = f;
 
     // extrusão do título
@@ -328,8 +332,9 @@
   }
 
   window.seek = (t) => render(t);
+  window.refit = fitTitle;
   window.ready = (async () => {
-    await document.fonts.load('200px "Dela"'); await document.fonts.load('186px "Yellowtail"');
+    await document.fonts.load('200px "Dela"'); await document.fonts.load('200px "Bungee"'); await document.fonts.load('186px "Yellowtail"');
     await document.fonts.load('300 44px "RMono"'); await document.fonts.load('400 30px "RMono"'); await document.fonts.load('700 34px "RMono"');
     await document.fonts.ready;
     const img = document.getElementById("artist"); if (!img.complete) await new Promise(r => img.onload = r);
