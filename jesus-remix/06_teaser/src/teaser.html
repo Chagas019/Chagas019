@@ -90,13 +90,13 @@ function render(t) {
   let flash = 0, black = 0;
   const hit = impact(t, DROP, FPS), hitF = impact(t, FIN, FPS), hitB = impact(t, MFB, FPS);
   const whipK = sh.whip ? (1 - E.expoOut(seg(lt, 0, .3))) : 0;
-  const whipBlur = sh.whip ? Math.abs((E.expoOut(seg(lt + 1 / 60, 0, .3)) - E.expoOut(seg(lt - 1 / 60, 0, .3))) * 30) * 34 : 0;
+  const whipBlur = sh.whip ? Math.abs((E.expoOut(seg(lt + 1 / 60, 0, .3)) - E.expoOut(seg(lt - 1 / 60, 0, .3))) * 30) * 12 : 0;
 
   if (sh.type === 'macro') {
     SC.world(t, { cam: CAM.macro(E.sineInOut(k)), floorGlow: .45 + .6 * E.power2InOut(seg(t, 0, sh.end)) + .25 * C.pulse(t, 6), floorTint: .5 });
     black = 1 - E.power2InOut(seg(t, 0, 1.6));
   } else if (sh.type === 'artist') {
-    SC.artist(t, { f0: sh.f0, f1: sh.f1, z0: sh.z0, z1: sh.z1, k: E.sineInOut(k), light: lerp(sh.l0, sh.l1, k) + .12 * C.pulse(t, 8), whip: whipBlur });
+    SC.artist(t, { f0: sh.f0, f1: sh.f1, z0: sh.z0, z1: sh.z1, k: E.sineInOut(k), light: lerp(sh.l0, sh.l1, k) + .12 * C.pulse(t, 8), whip: whipBlur, shift: (sh.whip || 0) * -300 * whipK });
   } else if (sh.type === 'ball' || sh.type === 'break') {
     const cam = sh.type === 'break' ? { rx: 12, ry: 0, z: lerp(-240, -200, E.sineInOut(k)), cy: H * (fmt === 'story' ? .66 : .72) } : CAM[sh.cam](E.sineInOut(k));
     // câmera segue a esfera (mantém no quadro) — siga suave, sem tremer

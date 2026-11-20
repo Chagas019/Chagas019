@@ -139,7 +139,7 @@ window.makeScene = function (W, H, fmt, CUES) {
     world(t, { cam, whip = 0, floorGlow = 1, ballOn = null, titleOn = false, titleState = null, remixK = 0, remixBlur = 0, floorTint = .5 }) {
       W3.show(true); bg.style.display = halo.style.display = '';
       W3.set({ cx: W / 2, cy: H * (fmt === 'story' ? .6 : .66), s: fs, ...cam });
-      camMB(whip, 0); floorMB(whip, 0);
+      camMB(Math.min(whip, 36), 0); floorMB(Math.min(whip, 36), 0);
       const pulse = CUES.pulse(t, 7);
       let bs = null;
       if (ballOn) bs = ballState(t, ballOn.bounces, ballOn.x0, ballOn.x1);
@@ -177,13 +177,13 @@ window.makeScene = function (W, H, fmt, CUES) {
     },
 
     /* close do artista: focus = ponto da foto (px na imagem 1080×796) no centro do quadro */
-    artist(t, { f0, f1, z0, z1, k, light = 1, whip = 0, bgCk = false }) {
+    artist(t, { f0, f1, z0, z1, k, light = 1, whip = 0, shift = 0, bgCk = false }) {
       art.style.display = '';
       const f = [lerp(f0[0], f1[0], k), lerp(f0[1], f1[1], k)], z = lerp(z0, z1, k) * (fmt === 'wide' ? 1.25 : fmt === 'story' ? 1.35 : 1);
-      artImg.style.transform = `translate(${W / 2 - f[0] * z}px,${H * .46 - f[1] * z}px) scale(${z})`;
+      artImg.style.transform = `translate(${W / 2 - f[0] * z + shift}px,${H * .46 - f[1] * z}px) scale(${z})`;
       artImg.style.filter = `brightness(${.45 + .55 * light}) contrast(1.08) saturate(${.8 + .2 * light})`;
       artLight.style.background = `radial-gradient(45% 40% at ${50 + 10 * Math.sin(t * .6)}% 30%, rgba(160,210,255,${.35 * light}), rgba(0,0,0,0) 70%)`;
-      artMB(whip, 0);
+      artMB(Math.min(whip, 36), 0);
     },
 
     /* layout da capa com estados 0..1 por elemento */

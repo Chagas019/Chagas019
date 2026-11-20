@@ -39,13 +39,13 @@ const readIf = p => fs.existsSync(p) ? fs.readFileSync(p, 'utf8') : null;
   const dur = opt.dur ? +opt.dur : info.dur, fps = info.fps, n = Math.round(fps * dur);
   for (let i = 0; i < n; i++) {
     await page.evaluate(t => window.seek(t), i / fps);
-    await page.screenshot({ path: path.join(FR, `f${String(i).padStart(5, '0')}.png`), clip });
+    await page.screenshot({ path: path.join(FR, `f${String(i).padStart(5, '0')}.jpg`), clip, type: 'jpeg', quality: 96 });
     if (i % 60 === 0) process.stdout.write(`${path.basename(out)} ${i}/${n}\n`);
   }
   await browser.close();
   fs.mkdirSync(path.dirname(out), { recursive: true });
-  execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(fps), '-i', path.join(FR, 'f%05d.png'),
-    '-c:v', 'libx264', '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-r', String(fps),
+  execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(fps), '-i', path.join(FR, 'f%05d.jpg'),
+    '-vf', 'scale=in_range=full:out_range=tv', '-c:v', 'libx264', '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-r', String(fps),
     '-crf', '20', '-maxrate', '12M', '-bufsize', '24M', '-preset', 'slow', '-tune', 'grain', '-movflags', '+faststart', '-an', out], { stdio: 'inherit' });
   fs.rmSync(FR, { recursive: true, force: true });
   console.log('OK', out, n, 'quadros');

@@ -75,7 +75,7 @@ function render(t) {
   let flash = 0, black = 0;
   const hit = impact(t, DROP, FPS), hitF = impact(t, FIN, FPS), hitD = impact(t, b(50), FPS), hitC = impact(t, b(56), FPS);
   const whipK = sh.whip ? (1 - E.expoOut(seg(lt, 0, .3))) : 0;
-  const whipBlur = sh.whip ? Math.abs((E.expoOut(seg(lt + 1 / 60, 0, .3)) - E.expoOut(seg(lt - 1 / 60, 0, .3))) * 30) * 34 : 0;
+  const whipBlur = sh.whip ? Math.abs((E.expoOut(seg(lt + 1 / 60, 0, .3)) - E.expoOut(seg(lt - 1 / 60, 0, .3))) * 30) * 12 : 0;
   const pulse = C.pulse(t, 9);
 
   if (sh.type === 'break') {
@@ -90,7 +90,7 @@ function render(t) {
     SC.world(t, { cam: c, whip: whipBlur, floorGlow: 1 + 1.2 * Math.exp(-Math.max(0, t - DROP) * 3) + .3 * pulse, ballOn: BALL, titleOn: true, titleState, remixK: rk, remixBlur: rv * 10 });
     flash = hit.flash;
   } else if (sh.type === 'artist') {
-    SC.artist(t, { f0: sh.f0, f1: sh.f1, z0: sh.z0, z1: sh.z1, k: E.sineInOut(k), light: 1 + .15 * pulse, whip: whipBlur });
+    SC.artist(t, { f0: sh.f0, f1: sh.f1, z0: sh.z0, z1: sh.z1, k: E.sineInOut(k), light: 1 + .15 * pulse, whip: whipBlur, shift: (sh.whip || 0) * -300 * whipK });
   } else if (sh.type === 'word') {
     const a = sh.t;
     if (sh.word === 'remix') {
