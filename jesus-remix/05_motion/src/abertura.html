@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>JESUS Remix — Abertura (proposta)</title>
+<!--
+  JESUS Remix · André Castro — Teste de motion (fase 1)
+  Cena determinística: timeline GSAP PAUSADA + elementos procedurais em função de t.
+  window.seek(t) posiciona tudo exatamente no tempo t (segundos). window.DURATION = duração.
+  BPM = 120 é PLACEHOLDER até a análise da música real (09_audio/analise/beatmap.json).
+-->
+<style>
+  @font-face { font-family: "Dela"; src: url("../../02_identidade/fontes/dela-gothic-one-latin-400-normal.woff2") format("woff2"); }
+  @font-face { font-family: "Yellowtail"; src: url("../../02_identidade/fontes/yellowtail-latin-400-normal.woff2") format("woff2"); }
+  @font-face { font-family: "RMono"; font-weight: 300; src: url("../../02_identidade/fontes/roboto-mono-latin-300-normal.woff2") format("woff2"); }
+  @font-face { font-family: "RMono"; font-weight: 400; src: url("../../02_identidade/fontes/roboto-mono-latin-400-normal.woff2") format("woff2"); }
+  @font-face { font-family: "RMono"; font-weight: 700; src: url("../../02_identidade/fontes/roboto-mono-latin-700-normal.woff2") format("woff2"); }
+
+  :root {
+    --azul: #037AF4; --azul-profundo: #0A4F96; --amarelo: #EAC11A;
+    --magenta: #F833F8; --branco: #F9F9F9; --tinta: #0B0B14;
+  }
+  html, body { margin: 0; padding: 0; background: #000; }
+  #stage { position: relative; width: 1080px; height: 1080px; overflow: hidden; background: var(--azul); }
+  .layer { position: absolute; inset: 0; will-change: transform; }
+  #bgDeep { background: radial-gradient(120% 90% at 50% 45%, rgba(3,122,244,0) 40%, rgba(10,79,150,.55) 100%); }
+  #bgDark { background: var(--azul-profundo); }
+  #halo { background: radial-gradient(34% 30% at 50% 42%, rgba(120,190,255,.55), rgba(3,122,244,0) 70%); }
+  svg { position: absolute; inset: 0; overflow: visible; }
+
+  /* Marca ✕ + globo */
+  #mark { position: absolute; left: 50%; top: 58px; width: 150px; height: 64px; margin-left: -75px; }
+
+  /* Artista */
+  #artistWrap { position: absolute; left: 540px; top: 0; }
+  #artist { position: absolute; width: 450px; left: -225px; top: 244px; transform-origin: 50% 100%; }
+
+  /* Título */
+  #titleWrap { position: absolute; left: 0; width: 1080px; top: 530px; height: 200px; transform-origin: 50% 55%; }
+  #title { position: absolute; left: 0; right: 0; text-align: center; white-space: nowrap;
+           font-family: "Dela"; color: var(--magenta); line-height: 1; letter-spacing: -0.01em; }
+  #title span { display: inline-block; transform-origin: 50% 80%; }
+
+  #remixWrap { position: absolute; left: 0; width: 1080px; top: 640px; height: 220px; }
+  #remix { position: absolute; left: 50%; top: 0; transform: translateX(-46%) rotate(-6deg);
+           font-family: "Yellowtail"; color: var(--branco); font-size: 186px; line-height: 1;
+           white-space: nowrap; padding: 0 40px; text-shadow: 3px 6px 0 rgba(10,79,150,.85); }
+
+  /* Assinatura */
+  #logo { position: absolute; left: 0; right: 0; top: 862px; text-align: center; font-family: "RMono"; font-weight: 300;
+          color: var(--branco); font-size: 44px; line-height: 1.02; letter-spacing: .06em; }
+  #logo .row { display: block; overflow: hidden; height: 46px; }
+  #logo .row > span { display: inline-block; }
+  #logo .x { font-weight: 700; font-size: 34px; vertical-align: 6px; margin-left: 4px; }
+
+  #date { position: absolute; left: 0; right: 0; top: 988px; display: flex; justify-content: center; align-items: center; gap: 22px;
+          font-family: "RMono"; font-weight: 400; color: var(--branco); font-size: 30px; letter-spacing: .32em; }
+  #date .rule { width: 92px; height: 2px; background: var(--branco); transform-origin: center; }
+  #date .digits { display: flex; padding-left: .32em; }
+  #date .digits span { display: inline-block; overflow: hidden; }
+  #date .digits span i { display: inline-block; font-style: normal; }
+
+  #flash { background: #fff; opacity: 0; mix-blend-mode: screen; }
+  canvas { position: absolute; inset: 0; }
+  #grain { mix-blend-mode: overlay; opacity: .55; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="layer" id="bgDark"></div>
+  <div class="layer" id="bgDeep"></div>
+  <div class="layer" id="halo"></div>
+
+  <!-- Tabuleiro ondulado (gerado por seno a cada quadro) -->
+  <div class="layer" id="checkL"><svg width="1080" height="1080"><path id="pathL" fill="#EAC11A"/></svg></div>
+  <div class="layer" id="checkR"><svg width="1080" height="1080"><path id="pathR" fill="#EAC11A"/></svg></div>
+
+  <canvas class="layer" id="speckBack" width="1080" height="1080"></canvas>
+
+  <!-- Marca -->
+  <svg id="mark" viewBox="0 0 150 64" width="150" height="64">
+    <g id="markX" transform="translate(32 32)">
+      <rect id="x1" x="-28" y="-8" width="56" height="16" rx="1.5" fill="#F9F9F9" transform="rotate(45)"/>
+      <rect id="x2" x="-28" y="-8" width="56" height="16" rx="1.5" fill="#F9F9F9" transform="rotate(-45)"/>
+    </g>
+    <g id="globe" transform="translate(112 32)" fill="none" stroke="#F9F9F9" stroke-width="4" stroke-linecap="round">
+      <circle class="gl" r="27" pathLength="1"/>
+      <ellipse class="gl" rx="12" ry="27" pathLength="1"/>
+      <line class="gl" x1="0" y1="-27" x2="0" y2="27" pathLength="1"/>
+      <line class="gl" x1="-27" y1="0" x2="27" y2="0" pathLength="1"/>
+      <line class="gl" x1="-23" y1="-13" x2="23" y2="-13" pathLength="1"/>
+      <line class="gl" x1="-23" y1="13" x2="23" y2="13" pathLength="1"/>
+    </g>
+  </svg>
+
+  <div class="layer" id="artistLayer"><div id="artistWrap"><img id="artist" src="../../03_assets/foto/artista_recorte.png" alt=""></div></div>
+
+  <div class="layer" id="titleLayer">
+    <div id="titleWrap"><div id="title"><span>J</span><span>E</span><span>S</span><span>U</span><span>S</span></div></div>
+    <div id="remixWrap"><div id="remix">remix</div></div>
+  </div>
+
+  <canvas class="layer" id="particles" width="1080" height="1080"></canvas>
+
+  <div class="layer" id="sign">
+    <div id="logo"><span class="row"><span>ANDRÉ<span class="x">✕</span></span></span><span class="row"><span>CASTRO</span></span></div>
+    <div id="date"><div class="rule"></div><div class="digits"></div><div class="rule"></div></div>
+  </div>
+
+  <div class="layer" id="flash"></div>
+  <canvas class="layer" id="grain" width="1080" height="1080"></canvas>
+</div>
+
+<script src="vendor/gsap.min.js"></script>
+<script>
+(() => {
+  // ───────── Tempo ─────────
+  const FPS = 30;
+  const BPM = 120;                 // PLACEHOLDER — substituir pelo BPM real da música
+  const BEAT = 60 / BPM;           // 0.5 s
+  const DURATION = 10;
+  const IMPACT = 11 * BEAT;        // 5.5 s — batida do impacto do título
+  window.FPS = FPS; window.DURATION = DURATION;
+
+  // ───────── RNG determinístico ─────────
+  function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+  const ease = { expoOut: x => x >= 1 ? 1 : 1 - Math.pow(2, -10 * x), clamp: x => Math.max(0, Math.min(1, x)) };
+
+  // ───────── Data ─────────
+  const DATE = "15.12.2026";
+  const digits = document.querySelector("#date .digits");
+  DATE.split("").forEach(c => { const s = document.createElement("span"); const i = document.createElement("i"); i.textContent = c; s.appendChild(i); digits.appendChild(s); });
+
+  // ───────── Tabuleiro ondulado ─────────
+  const COLS = 2, CW = 124, CH = 104, ROWS = 14;
+  // deslocamento horizontal das colunas (onda principal + harmônico)
+  function dx(y, t, line) {
+    const ph = t * Math.PI * 2;
+    return 18 * Math.sin(y * 0.0062 + ph * 0.22 + line * 0.9) + 7 * Math.sin(y * 0.019 - ph * 0.5 + line * 1.7);
+  }
+  // deslocamento vertical das linhas
+  function dy(x, t, row) { return 9 * Math.sin(x * 0.02 + t * 2.4 + row * 0.8); }
+  // mapeia um ponto da grade (gx, gy) para o plano ondulado
+  function warp(gx, gy, t) {
+    const u = gx / CW, c0 = Math.floor(u), fu = u - c0;
+    const L = (k) => k <= 0 ? -40 : dx(gy, t, k);
+    const ox = L(c0) * (1 - fu) + L(c0 + 1) * fu;
+    const v = gy / CH, r0 = Math.floor(v), fv = v - r0;
+    const oy = dy(gx, t, r0) * (1 - fv) + dy(gx, t, r0 + 1) * fv;
+    return [gx + ox, gy + oy];
+  }
+  function checkerPath(side, t, scrollY) {
+    let d = "";
+    const SEG = 8;
+    const X = (x) => side === "L" ? x : 1080 - x;
+    const rOff = Math.floor(-scrollY / CH);
+    for (let c = 0; c < COLS; c++) {
+      for (let r = -2; r < ROWS; r++) {
+        const rr = r + rOff;
+        if (((c + rr) & 1) !== 0) continue;
+        const y0 = rr * CH, y1 = y0 + CH, xA = c * CW, xB = xA + CW;
+        const g = [];
+        for (let i = 0; i < SEG; i++) g.push([xA + CW * i / SEG, y0]);
+        for (let i = 0; i < SEG; i++) g.push([xB, y0 + CH * i / SEG]);
+        for (let i = 0; i < SEG; i++) g.push([xB - CW * i / SEG, y1]);
+        for (let i = 0; i < SEG; i++) g.push([xA, y1 - CH * i / SEG]);
+        d += "M" + g.map(([gx, gy]) => { const [x, y] = warp(gx, gy, t); return X(x).toFixed(1) + " " + (y + scrollY).toFixed(1); }).join("L") + "Z";
+      }
+    }
+    return d;
+  }
+  const pathL = document.getElementById("pathL"), pathR = document.getElementById("pathR");
+
+  // ───────── Grão (tiles pré-gerados, escolhidos pelo quadro) ─────────
+  const grain = document.getElementById("grain"), gctx = grain.getContext("2d");
+  const tiles = [];
+  for (let k = 0; k < 6; k++) {
+    const cv = document.createElement("canvas"); cv.width = cv.height = 1080;
+    const cx = cv.getContext("2d"); const img = cx.createImageData(1080, 1080); const R = rng(77 + k);
+    for (let i = 0; i < img.data.length; i += 4) { const v = R() * 255 | 0; img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 60; }
+    cx.putImageData(img, 0, 0); tiles.push(cv);
+  }
+
+  // ───────── Speckle de papel (pontinhos brancos, como na capa) ─────────
+  const sp = document.getElementById("speckBack"), sctx = sp.getContext("2d");
+  const specks = []; { const R = rng(9); for (let i = 0; i < 170; i++) specks.push({ x: R() * 1080, y: R() * 1080, r: .6 + R() * 1.8, a: .08 + R() * .28, v: 4 + R() * 10, rot: R() * 6 }); }
+  function drawSpecks(t, alpha) {
+    sctx.clearRect(0, 0, 1080, 1080);
+    for (const s of specks) {
+      const y = (s.y - s.v * t + 1080) % 1080;
+      sctx.globalAlpha = s.a * alpha; sctx.fillStyle = "#F9F9F9";
+      sctx.beginPath(); sctx.ellipse(s.x, y, s.r * 1.6, s.r, s.rot, 0, Math.PI * 2); sctx.fill();
+    }
+  }
+
+  // ───────── Partículas do impacto ─────────
+  const pc = document.getElementById("particles"), pctx = pc.getContext("2d");
+  const parts = []; { const R = rng(31); for (let i = 0; i < 46; i++) { const a = R() * Math.PI * 2; parts.push({ a, sp: 260 + R() * 520, r: 1.5 + R() * 3.5, c: R() < .55 ? "#F9F9F9" : (R() < .5 ? "#F833F8" : "#EAC11A"), life: .55 + R() * .6 }); } }
+  function drawParticles(t) {
+    pctx.clearRect(0, 0, 1080, 1080);
+    const lt = t - IMPACT; if (lt < 0 || lt > 1.3) return;
+    for (const p of parts) {
+      const k = lt / p.life; if (k > 1) continue;
+      const dist = p.sp * (1 - Math.pow(1 - Math.min(1, lt / 0.9), 3)) * .55;
+      const x = 540 + Math.cos(p.a) * (300 * Math.abs(Math.cos(p.a)) + dist);
+      const y = 610 + Math.sin(p.a) * (70 + dist * .6);
+      pctx.globalAlpha = (1 - k) * .9; pctx.fillStyle = p.c;
+      pctx.beginPath(); pctx.arc(x, y, p.r * (1 - k * .5), 0, Math.PI * 2); pctx.fill();
+    }
+  }
+
+  // ───────── Estado animado pela timeline ─────────
+  const S = {
+    bgDark: 1, checkInL: 0, checkInR: 0, checkAmp: 0, speck: 0,
+    depth: 0, impact: 0,
+    remix: 0,
+  };
+
+  const title = document.getElementById("title");
+  const letters = [...title.children];
+  const flash = document.getElementById("flash");
+  const titleWrap = document.getElementById("titleWrap");
+
+  function fitTitle() {
+    title.style.fontSize = "200px";
+    const w = title.scrollWidth; const target = 690;
+    title.style.fontSize = (200 * target / w).toFixed(1) + "px";
+    const h = title.getBoundingClientRect().height;
+    title.style.top = ((200 - h) / 2) + "px";
+  }
+
+  // ───────── Timeline ─────────
+  let tl;
+  function build() {
+    fitTitle();
+    gsap.set("#artist", { opacity: 0, y: 70, scale: .9, filter: "blur(10px)" });
+    gsap.set(letters, { opacity: 0, scale: 2.4, y: -40, filter: "blur(14px)" });
+    gsap.set("#remix", { clipPath: "inset(-20% 100% -20% 0%)" });
+    gsap.set("#logo .row > span", { yPercent: 105 });
+    gsap.set("#date .digits i", { yPercent: 110 });
+    gsap.set("#date .rule", { scaleX: 0 });
+    gsap.set(["#x1", "#x2"], { scaleX: 0, transformOrigin: "50% 50%" });
+    gsap.set("#markX", { rotation: -90, transformOrigin: "32px 32px" });
+    gsap.set(".gl", { strokeDasharray: 1, strokeDashoffset: 1 });
+    gsap.set("#halo", { opacity: 0 });
+
+    tl = gsap.timeline({ paused: true, defaults: { ease: "expo.out" } });
+
+    // 0–1.5 abertura
+    tl.to(S, { bgDark: 0, duration: 1.1, ease: "power2.inOut" }, 0)
+      .to(S, { checkInL: 1, duration: 1.3 }, 0.1)
+      .to(S, { checkInR: 1, duration: 1.3 }, 0.25)
+      .to(S, { checkAmp: 1, duration: 1.4, ease: "power2.out" }, 0.2)
+      .to(S, { speck: 1, duration: 1.2, ease: "none" }, 0.3);
+
+    // 1.5–3 marca ✕ + globo
+    tl.to("#x1", { scaleX: 1, duration: .45 }, 1.5)
+      .to("#x2", { scaleX: 1, duration: .45 }, 1.62)
+      .to("#markX", { rotation: 0, duration: .9 }, 1.5)
+      .to(".gl", { strokeDashoffset: 0, duration: .9, stagger: .07, ease: "power3.out" }, 1.7);
+
+    // 3–4.5 artista
+    tl.to("#halo", { opacity: 1, duration: 1.6, ease: "power2.out" }, 2.9)
+      .to("#artist", { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 1.5 }, 3.0);
+
+    // 4.5–6 JESUS letra a letra + impacto
+    tl.to(letters, { opacity: 1, scale: 1, y: 0, filter: "blur(0px)", duration: .55, stagger: .16, ease: "expo.out" }, 4.5)
+      .to(S, { depth: 1, duration: .6, ease: "back.out(2)" }, IMPACT - 0.1)
+      .fromTo(titleWrap, { scale: 1.04 }, { scale: 1, duration: .5, ease: "power3.out", immediateRender: false }, IMPACT);
+
+    // 6–7.5 "remix" escrito
+    tl.to("#remix", { clipPath: "inset(-20% 0% -20% 0%)", duration: 1.15, ease: "power1.inOut" }, 6.0);
+
+    // 7.5–8.5 ANDRÉ × CASTRO
+    tl.to("#logo .row > span", { yPercent: 0, duration: .8, stagger: .12 }, 7.5);
+
+    // 8.5–10 data
+    tl.to("#date .rule", { scaleX: 1, duration: .9 }, 8.5)
+      .to("#date .digits i", { yPercent: 0, duration: .6, stagger: .045 }, 8.55);
+
+    tl.to({}, { duration: DURATION - tl.duration() });
+  }
+
+  // ───────── Render de um tempo t ─────────
+  function render(t) {
+    tl.seek(Math.min(t, DURATION), false);
+
+    document.getElementById("bgDark").style.opacity = S.bgDark;
+
+    // tabuleiro
+    const amp = S.checkAmp;
+    const tw = t * amp + 0.0001;
+    const scroll = -t * 18;
+    pathL.setAttribute("d", checkerPath("L", tw, scroll));
+    pathR.setAttribute("d", checkerPath("R", tw + 1.3, -scroll - 60));
+    // pulso sutil do tabuleiro nas batidas (só após o impacto)
+    const bt = t >= IMPACT ? (t - IMPACT) % BEAT : 99;
+    const pulse = bt < BEAT ? Math.exp(-bt * 9) * 6 : 0;
+    // câmera / parallax: 3 camadas (1 : 1.6 : 2.2)
+    const push = t / DURATION;
+    const cam = 1 + 0.018 * push;
+    document.getElementById("checkL").style.transform = `translateX(${(-300 * (1 - S.checkInL)) - pulse}px) scale(${cam})`;
+    document.getElementById("checkR").style.transform = `translateX(${(300 * (1 - S.checkInR)) + pulse}px) scale(${cam})`;
+    document.getElementById("artistLayer").style.transform = `translateY(${-6 * push}px) scale(${1 + 0.029 * push})`;
+
+    // shake do impacto (≤ 6 px, decai)
+    const it = t - IMPACT;
+    let sx = 0, sy = 0;
+    if (it >= 0 && it < .35) { const k = Math.exp(-it * 12); sx = 6 * k * Math.sin(it * 95); sy = 4 * k * Math.cos(it * 120); }
+    document.getElementById("titleLayer").style.transform = `translate(${sx}px, ${sy}px) scale(${1 + 0.04 * push})`;
+
+    // flash de 2 quadros
+    const f = it >= 0 && it < 1 / FPS ? .42 : (it >= 1 / FPS && it < 2 / FPS ? .18 : 0);
+    flash.style.opacity = f;
+
+    // extrusão do título
+    const D = Math.max(0, S.depth) * 12;
+    let sh = [];
+    for (let k = 1; k <= Math.round(D); k++) sh.push(`${(k * .55).toFixed(2)}px ${k}px 0 #0A4F96`);
+    if (D > 0) sh.push(`${(D * .55 + 4).toFixed(1)}px ${D + 8}px 14px rgba(5,30,70,.35)`);
+    title.style.textShadow = sh.join(",") || "none";
+
+    drawSpecks(t, S.speck);
+    drawParticles(t);
+
+    gctx.clearRect(0, 0, 1080, 1080);
+    gctx.drawImage(tiles[Math.floor(t * FPS) % tiles.length], 0, 0);
+  }
+
+  window.seek = (t) => render(t);
+  window.ready = (async () => {
+    await document.fonts.load('200px "Dela"'); await document.fonts.load('186px "Yellowtail"');
+    await document.fonts.load('300 44px "RMono"'); await document.fonts.load('400 30px "RMono"'); await document.fonts.load('700 34px "RMono"');
+    await document.fonts.ready;
+    const img = document.getElementById("artist"); if (!img.complete) await new Promise(r => img.onload = r);
+    build(); render(0); return true;
+  })();
+
+  // Pré-visualização em tempo real ao abrir no navegador (desligada no render: ?render=1)
+  if (!location.search.includes("render=1")) {
+    window.ready.then(() => { const t0 = performance.now(); const loop = () => { render(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop); }; loop(); });
+  }
+})();
+</script>
+</body>
+</html>
