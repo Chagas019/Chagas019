@@ -31,6 +31,8 @@ export interface BuildAppOptions {
   /** Plugins extras (ex.: rotas /v1/integrations/**). Têm acesso a app.repos, app.config e app.requireAuth. */
   plugins?: FastifyPluginAsync[];
   dbKind?: "memory" | "postgres";
+  /** Verificação de conectividade do banco usada pelo /health (sem detalhes de erro). */
+  dbPing?: () => Promise<void>;
 }
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -144,6 +146,7 @@ export async function buildApp(opts: BuildAppOptions): Promise<FastifyInstance> 
   // --- Rotas ---
   app.get("/health", async () => ({
     ok: true,
+    dbOk: opts.dbPing ? await Promise.race([opts.dbPing().then(() => true, () => false), new Promise<boolean>((r) => setTimeout(() => r(false), 3000))]) : true,
     version: API_VERSION,
     providers: orchestrator.providers().map((p) => p.id),
     db: opts.dbKind ?? (config.databaseUrl ? "postgres" : "memory"),
