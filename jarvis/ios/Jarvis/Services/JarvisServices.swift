@@ -9,6 +9,8 @@ final class JarvisServices: Sendable {
     let api: APIClient
     /// Token de desenvolvimento (JARVIS_DEV_TOKEN); quando presente, o login é ignorado.
     let devToken: String?
+    /// Token de acesso pessoal colado no app (Keychain).
+    let accessTokenStore: KeychainTokenStore
 
     private init() {
         let apiURL = URL(string: Self.plistString("JarvisAPIURL")) ?? URL(string: "http://localhost:8787")!
@@ -21,10 +23,13 @@ final class JarvisServices: Sendable {
             config: SupabaseConfig(url: supabaseURL, anonKey: anonKey),
             store: KeychainTokenStore()
         )
+        let accessTokenStore = KeychainTokenStore(account: "owner-token")
         self.auth = auth
         self.devToken = devToken
+        self.accessTokenStore = accessTokenStore
         self.api = APIClient(baseURL: apiURL, tokenProvider: {
             if let devToken { return devToken }
+            if let owner = accessTokenStore.load()?.accessToken { return owner }
             return await auth.validAccessToken()
         })
     }

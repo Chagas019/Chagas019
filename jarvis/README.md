@@ -32,5 +32,5 @@ Observação: o rate limit é em memória por instância; o orçamento de IA é 
 - API: `https://jarvis-api-chagas7.vercel.app` (Vercel, região gru1). `GET /health` mostra `dbOk`.
 - Banco: schema `jarvis` no Supabase existente, usuário `jarvis_app` restrito a esse schema; TLS verificado com a CA do Supabase.
 - Acesso: token do dono em Vercel → jarvis-api → Settings → Environment Variables → `JARVIS_OWNER_TOKEN`.
-  No iPhone, coloque-o em `ios/Config/Local.xcconfig` como `JARVIS_DEV_TOKEN = <token>`.
+  No iPhone, abra o app e use "Entrar com token de acesso" (fica salvo no Keychain).
 - IA: sem chave, usa o Vercel AI Gateway autenticado pelo OIDC do projeto (crédito do Gateway da sua conta). Para usar outro provedor, cadastre a key (ex.: `ANTHROPIC_API_KEY`) e faça Redeploy.

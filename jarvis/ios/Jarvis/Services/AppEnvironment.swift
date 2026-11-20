@@ -15,7 +15,13 @@ final class AppEnvironment: ObservableObject {
     init() {
         let services = JarvisServices.shared
         let speaker = SpeechSynthesizerService()
-        let session = SessionViewModel(auth: services.auth, bypass: services.devToken != nil)
+        let api = services.api
+        let session = SessionViewModel(
+            auth: services.auth,
+            bypass: services.devToken != nil,
+            accessTokenStore: services.accessTokenStore,
+            verifyAccess: { _ = try await api.me() }
+        )
         let chat = ChatViewModel(api: services.api)
         let tasks = TasksViewModel(api: services.api)
 

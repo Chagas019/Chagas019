@@ -6,6 +6,8 @@ struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
     @State private var isSignUp = false
+    @State private var useAccessToken = true
+    @State private var accessToken = ""
     @FocusState private var focus: Field?
 
     private enum Field { case email, password }
@@ -73,6 +75,27 @@ struct LoginView: View {
                     withAnimation { isSignUp.toggle() }
                     session.errorMessage = nil
                     session.infoMessage = nil
+                }
+                .font(.subheadline)
+
+                Divider().padding(.vertical, 8)
+
+                DisclosureGroup("Entrar com token de acesso", isExpanded: $useAccessToken) {
+                    VStack(spacing: 12) {
+                        SecureField("Cole o JARVIS_OWNER_TOKEN", text: $accessToken)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .flatCard()
+                        Button {
+                            Task { await session.signIn(accessToken: accessToken) }
+                        } label: {
+                            Text("Entrar com token").fontWeight(.semibold).frame(maxWidth: .infinity, minHeight: 28)
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.large)
+                        .disabled(accessToken.isEmpty || session.isBusy)
+                    }
+                    .padding(.top, 8)
                 }
                 .font(.subheadline)
             }
