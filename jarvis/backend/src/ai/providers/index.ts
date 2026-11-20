@@ -10,7 +10,7 @@ export * from "./types.js";
 export function buildProviders(env: NodeJS.ProcessEnv, fetchImpl?: typeof fetch): LlmProvider[] {
   const out: LlmProvider[] = [];
   const k = (name: string) => (env[name] ?? "").trim() || undefined;
-  if (k("ANTHROPIC_API_KEY")) out.push(new AnthropicProvider(k("ANTHROPIC_API_KEY")!));
+  if (k("ANTHROPIC_API_KEY")) out.push(new AnthropicProvider(k("ANTHROPIC_API_KEY")!, undefined, k("ANTHROPIC_BASE_URL")));
   if (k("OPENAI_API_KEY")) {
     out.push(new OpenAiCompatibleProvider({ id: "openai", apiKey: k("OPENAI_API_KEY")!, baseUrl: "https://api.openai.com/v1", fetchImpl, maxTokensField: "max_completion_tokens" }));
   }

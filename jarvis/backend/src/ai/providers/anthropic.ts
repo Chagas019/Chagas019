@@ -38,8 +38,9 @@ export class AnthropicProvider implements LlmProvider {
   readonly id = "anthropic";
   private readonly client: AnthropicLike;
 
-  constructor(apiKey: string, client?: AnthropicLike) {
-    this.client = client ?? (new Anthropic({ apiKey, maxRetries: 1, timeout: DEFAULT_TIMEOUT_MS }) as unknown as AnthropicLike);
+  /** `baseURL`: endpoint compatível com a Messages API (ex.: ponte de IA hospedada no Floot). */
+  constructor(apiKey: string, client?: AnthropicLike, baseURL?: string) {
+    this.client = client ?? (new Anthropic({ apiKey, maxRetries: 1, timeout: DEFAULT_TIMEOUT_MS, ...(baseURL ? { baseURL } : {}) }) as unknown as AnthropicLike);
   }
 
   async chat(req: LlmRequest): Promise<LlmResponse> {
