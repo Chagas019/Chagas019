@@ -27,3 +27,10 @@ npm test
 4. Coloque a URL publicada em `ios/Config/*.xcconfig` (`JARVIS_API_URL`).
 
 Observação: o rate limit é em memória por instância; o orçamento de IA é garantido pelo banco.
+
+## Produção atual
+- API: `https://jarvis-api-chagas7.vercel.app` (Vercel, região gru1). `GET /health` mostra `dbOk`.
+- Banco: schema `jarvis` no Supabase existente, usuário `jarvis_app` restrito a esse schema; TLS verificado com a CA do Supabase.
+- Acesso: token do dono em Vercel → jarvis-api → Settings → Environment Variables → `JARVIS_OWNER_TOKEN`.
+  No iPhone, coloque-o em `ios/Config/Local.xcconfig` como `JARVIS_DEV_TOKEN = <token>`.
+- IA: cadastre uma chave (ex.: `ANTHROPIC_API_KEY`) nas mesmas variáveis e faça Redeploy.

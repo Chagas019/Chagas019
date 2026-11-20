@@ -3,7 +3,7 @@
 JARVIS_BUNDLE_PREFIX = com.chagas019.jarvis
 JARVIS_APP_GROUP = group.$(JARVIS_BUNDLE_PREFIX)
 
-JARVIS_API_URL = https:/$()/jarvis-api.vercel.app
+JARVIS_API_URL = https:/$()/jarvis-api-chagas7.vercel.app
 SUPABASE_URL = https:/$()/SEU-PROJETO.supabase.co
 SUPABASE_ANON_KEY =
 

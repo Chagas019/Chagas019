@@ -5,7 +5,7 @@ JARVIS_BUNDLE_PREFIX = com.chagas019.jarvis
 JARVIS_APP_GROUP = group.$(JARVIS_BUNDLE_PREFIX)
 
 // Backend local (npm run dev em jarvis/backend). Em iPhone físico use o IP do Mac em Local.xcconfig.
-JARVIS_API_URL = http:/$()/localhost:8787
+JARVIS_API_URL = https:/$()/jarvis-api-chagas7.vercel.app
 
 // Projeto Supabase (Settings > API). A anon key é pública por design, mas não a versionamos aqui.
 SUPABASE_URL = https:/$()/SEU-PROJETO.supabase.co
