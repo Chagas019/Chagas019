@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Jarvis</title>
+  <meta name="theme-color" content="#0b0d14">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Jarvis">
+  <link rel="apple-touch-icon" href="/icons/icon-180.png">
+  <link rel="icon" href="/icons/icon-192.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Login -->
+    <section id="login" class="screen" hidden>
+      <div class="login-card">
+        <img src="/icons/icon-192.png" alt="" class="logo">
+        <h1>Jarvis</h1>
+        <p class="muted">Cole seu token de acesso para entrar.</p>
+        <form id="login-form">
+          <input id="token" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Token de acesso" required>
+          <button type="submit" class="primary">Entrar</button>
+        </form>
+        <p id="login-error" class="error" role="alert"></p>
+      </div>
+    </section>
+
+    <!-- App -->
+    <section id="main" class="screen" hidden>
+      <header class="top">
+        <h2 id="title">Conversa</h2>
+        <button id="speak-toggle" class="icon-btn" aria-pressed="false" title="Ler respostas em voz alta">🔇</button>
+      </header>
+
+      <div id="tab-chat" class="tab">
+        <div id="messages" class="messages" aria-live="polite"></div>
+        <form id="chat-form" class="composer">
+          <button type="button" id="mic" class="icon-btn mic" title="Falar">🎙️</button>
+          <textarea id="input" rows="1" placeholder="Pergunte ao Jarvis…" enterkeyhint="send"></textarea>
+          <button type="submit" id="send" class="primary send" aria-label="Enviar">➤</button>
+        </form>
+      </div>
+
+      <div id="tab-tasks" class="tab" hidden>
+        <form id="task-form" class="row-form">
+          <input id="task-title" placeholder="Nova tarefa" required>
+          <input id="task-due" type="datetime-local" aria-label="Quando">
+          <button class="primary">Adicionar</button>
+        </form>
+        <ul id="tasks" class="list"></ul>
+      </div>
+
+      <div id="tab-memory" class="tab" hidden>
+        <form id="memory-form" class="row-form">
+          <input id="memory-text" placeholder="Algo que o Jarvis deve lembrar" required>
+          <button class="primary">Salvar</button>
+        </form>
+        <ul id="memories" class="list"></ul>
+      </div>
+
+      <div id="tab-settings" class="tab" hidden>
+        <div class="card">
+          <h3>Uso de IA hoje</h3>
+          <p id="usage" class="muted">—</p>
+        </div>
+        <div class="card">
+          <h3>Servidor</h3>
+          <p id="health" class="muted">—</p>
+        </div>
+        <button id="logout" class="danger">Sair</button>
+      </div>
+
+      <nav class="tabbar">
+        <button data-tab="chat" class="active">💬<span>Conversa</span></button>
+        <button data-tab="tasks">✅<span>Tarefas</span></button>
+        <button data-tab="memory">🧠<span>Memória</span></button>
+        <button data-tab="settings">⚙️<span>Ajustes</span></button>
+      </nav>
+    </section>
+  </div>
+  <script src="/app.js" type="module"></script>
+</body>
+</html>

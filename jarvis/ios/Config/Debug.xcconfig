@@ -1,0 +1,17 @@
+// Configuração de Debug. Valores locais/segredos vão em Config/Local.xcconfig (não versionado).
+// Em xcconfig "//" inicia comentário; por isso as URLs usam ":/$()/".
+
+JARVIS_BUNDLE_PREFIX = com.chagas019.jarvis
+JARVIS_APP_GROUP = group.$(JARVIS_BUNDLE_PREFIX)
+
+// Backend local (npm run dev em jarvis/backend). Em iPhone físico use o IP do Mac em Local.xcconfig.
+JARVIS_API_URL = https:/$()/jarvis-api-chagas7.vercel.app
+
+// Projeto Supabase (Settings > API). A anon key é pública por design, mas não a versionamos aqui.
+SUPABASE_URL = https:/$()/SEU-PROJETO.supabase.co
+SUPABASE_ANON_KEY =
+
+// Token de desenvolvimento (JARVIS_DEV_TOKEN do backend). Vazio = login normal via Supabase.
+JARVIS_DEV_TOKEN =
+
+#include? "Local.xcconfig"

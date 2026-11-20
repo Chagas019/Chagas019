@@ -1,0 +1,12 @@
+# Gerados pelo XcodeGen
+Jarvis.xcodeproj/
+Jarvis/Info.plist
+Jarvis/Jarvis.entitlements
+JarvisWidget/Info.plist
+JarvisWidget/JarvisWidget.entitlements
+# Configuração local / segredos
+Config/Local.xcconfig
+.build/
+.swiftpm/
+xcuserdata/
+DerivedData/
