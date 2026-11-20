@@ -12,7 +12,7 @@ TONGUES = [(18, 70, 18, 10), (42, 120, 20, 14), (66, 190, 22, 16), (92, 250, 20,
 
 def flame_pts(R0, scale, var, tongues=TONGUES, n=180):
     pts = []
-    a0, a1 = -10, 190
+    a0, a1 = -28, 208
     for i in range(n + 1):
         a = a0 + (a1 - a0) * i / n
         r = R0
@@ -31,7 +31,7 @@ def flame_pts(R0, scale, var, tongues=TONGUES, n=180):
         aa = math.radians(a - lean * (r - R0) / max(1, R0) * 1.2)
         pts.append((CX + r * math.cos(aa), CY - r * math.sin(aa)))
     # fecha por baixo, atrás da cabeça
-    pts.append((CX + R0 * .55, CY + R0 * .55)); pts.append((CX - R0 * .55, CY + R0 * .55))
+    pts.append((CX + R0 * .45, CY + R0 * .7)); pts.append((CX - R0 * .45, CY + R0 * .7))
     return pts
 
 def catmull(pts):
@@ -47,9 +47,9 @@ def catmull(pts):
 def svg_groups(W=600, H=796):
     out = []
     for v in range(4):
-        outer = catmull(flame_pts(262, 1.0, v, n=90))
+        outer = catmull(flame_pts(250, .82, v, n=90))
         inner_t = [(a, h * .6, w * .85, l) for (a, h, w, l) in TONGUES[1:-1]]
-        inner = catmull(flame_pts(236, 1.0, v + 7, inner_t, n=90))
+        inner = catmull(flame_pts(226, .85, v + 7, inner_t, n=90))
         out.append(f'<g class="boil" id="aura{v}"{"" if v == 0 else " style=\"display:none\""}>'
                    f'<path fill="{MG}" d="{outer}"/><path fill="{AM}" d="{inner}"/></g>')
     return ''.join(out)

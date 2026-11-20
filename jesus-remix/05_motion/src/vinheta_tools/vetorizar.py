@@ -53,13 +53,36 @@ def tones(rgb, mask, q_dark, q_mid):
     for _ in range(3): s = cv2.bilateralFilter(s, 13, 50, 13)
     s = cv2.pyrMeanShiftFiltering(s, 14, 26)
     s = cv2.medianBlur(s, 11)
-    L = cv2.cvtColor(s, cv2.COLOR_RGB2LAB)[..., 0].astype(np.float32)
-    vals = L[mask > 0]
-    t1, t2 = np.quantile(vals, q_dark), np.quantile(vals, q_mid)
-    dark = (L < t1) & (mask > 0)
-    mid = (L < t2) & (mask > 0)
-    light = (L > np.quantile(vals, .985)) & (mask > 0)
-    return dark.astype(np.uint8), mid.astype(np.uint8), light.astype(np.uint8)
+    lab = cv2.cvtColor(s, cv2.COLOR_RGB2LAB).astype(np.float32)
+    L, A, Bb = lab[..., 0], lab[..., 1], lab[..., 2]
+    m = mask > 0
+    # pele: tons quentes e não muito escuros
+    skin = m & (A > 137) & (Bb > 139) & (L > np.quantile(L[m], q_dark))
+    skin = clean(skin, 25, 6000, 5000).astype(bool)
+    # sombras da pele (magenta): metade mais escura da pele
+    ls = L[skin]
+    mid = skin & (L < np.quantile(ls, q_mid))
+    # mãos (abaixo do queixo): só a sombra mais funda, para não virar listras entre os dedos
+    h = L.shape[0]; yy = np.mgrid[0:h, 0:L.shape[1]][0]
+    hands = yy > h * .60
+    mid = np.where(hands, False, mid)
+    # linhas entre os dedos: vales locais de luminância (traço escuro de ilustração)
+    Lr = cv2.cvtColor(cv2.bilateralFilter(rgb, 9, 40, 9), cv2.COLOR_RGB2LAB)[..., 0].astype(np.float32)
+    val = cv2.GaussianBlur(Lr, (0, 0), 3) - cv2.GaussianBlur(Lr, (0, 0), 16)
+    lines = hands & skin & (val < -9)
+    lines = clean(lines.astype(np.uint8), 9, 700, 100).astype(bool)
+    linesF = lines
+    # escuro: tudo que não é pele (cabelo, óculos, barba, camisa)
+    dark = m & (~skin | (L < np.quantile(L[m], q_dark)) | linesF)
+    # destaques (magenta) dentro do escuro: reflexos mais claros (óculos, cachos, camisa)
+    ld = L[dark]
+    hi = dark & (L > np.quantile(ld, .955))
+    # cachos: no cabelo (topo), reflexos médios viram "vírgulas" magenta
+    hair = (yy < h * .36) & dark
+    curls = hair & (Lr - cv2.GaussianBlur(Lr, (0, 0), 10) > 5)
+    curls = clean(curls.astype(np.uint8), 11, 900, 200).astype(bool)
+    hi = hi | curls
+    return dark.astype(np.uint8), mid.astype(np.uint8), hi.astype(np.uint8)
 
 def trace(m, turd=80, alphamax=1.25, tol=.6):
     bm = potrace.Bitmap(~(m.astype(bool)))   # potracer traça os pixels "pretos" (False)
@@ -75,13 +98,13 @@ def trace(m, turd=80, alphamax=1.25, tol=.6):
         d.append('Z')
     return ''.join(d)
 
-def main(out, prev=None, q_dark=.44, q_mid=.66):
+def main(out, q_dark=.36, q_mid=.28):
     rgb, alpha = load()
     base = bust_mask(alpha)
     dark, mid, light = tones(rgb, base, q_dark, q_mid)
-    dark = clean(dark, 15, 900, 700) & base
-    mid = clean(mid | dark, 17, 1200, 900) & base
-    light = clean(light, 9, 250, 100) & base & (1 - mid)
+    dark = clean(dark, 17, 1500, 3000) & base
+    mid = clean(mid, 41, 6000, 4000) & base & (1 - dark)
+    light = clean(light, 25, 2500, 600) & dark
     W, H = (CROP[2] - CROP[0]), (CROP[3] - CROP[1])
     paths = {k: trace(v) for k, v in dict(base=base, mid=mid, dark=dark, shine=light).items()}
     import aura
@@ -93,7 +116,7 @@ def main(out, prev=None, q_dark=.44, q_mid=.66):
     <path id="base" fill="{CR}" stroke="{AZ}" stroke-width="10" stroke-linejoin="round" fill-rule="evenodd" d="{paths['base']}"/>
     <path id="mid" fill="{MG}" fill-rule="evenodd" d="{paths['mid']}"/>
     <path id="dark" fill="{AZ}" fill-rule="evenodd" d="{paths['dark']}"/>
-    <path id="shine" fill="{CR}" fill-rule="evenodd" d="{paths['shine']}"/>
+    <path id="hi" fill="{MG}" fill-rule="evenodd" d="{paths['shine']}"/>
   </g>
 </svg>'''
     open(out, 'w').write(svg)
