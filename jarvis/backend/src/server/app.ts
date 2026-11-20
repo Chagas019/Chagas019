@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import Fastify, { type FastifyInstance, type FastifyPluginAsync, type FastifyReply, type FastifyRequest } from "fastify";
 import { z, ZodError } from "zod";
 import { BudgetExceededError, ProvidersFailedError, type Orchestrator, type Repos } from "../core/types.js";
@@ -154,19 +155,23 @@ export async function buildApp(opts: BuildAppOptions): Promise<FastifyInstance> 
     const body = parse(ChatBody, req.body);
     const userId = uid(req);
     let conversationId: string;
+    let isNew = false;
     if (body.conversationId !== undefined) {
       checkId(body.conversationId, "Conversa");
       const c = await repos.conversations.get(userId, body.conversationId);
       if (!c) throw notFound("Conversa");
       conversationId = c.id;
     } else {
-      conversationId = (await repos.conversations.create(userId, body.message.trim().slice(0, 60) || "Nova conversa")).id;
+      // F-08: a conversa só é criada depois que o orquestrador responde com sucesso (id provisório até lá).
+      conversationId = randomUUID();
+      isNew = true;
     }
-    const history = await repos.messages.list(conversationId, 20);
+    const history = isNew ? [] : await repos.messages.list(conversationId, 20);
     const { pendingAction, ...result } = await orchestrator.handle({
       userId, conversationId, history, message: body.message, mode: body.mode ?? "auto", confirm: body.confirm ?? false,
     });
     if (result.provider === "none") throw new ProviderUnavailableError();
+    if (isNew) conversationId = (await repos.conversations.create(userId, body.message.trim().slice(0, 60) || "Nova conversa")).id;
 
     await repos.messages.add({ conversationId, role: "user", content: body.message });
     await repos.messages.add({
@@ -190,7 +195,13 @@ export async function buildApp(opts: BuildAppOptions): Promise<FastifyInstance> 
     const { limit } = parse(z.object({ limit: limitQ }), req.query);
     checkId(req.params.id, "Conversa");
     if (!(await repos.conversations.get(uid(req), req.params.id))) throw notFound("Conversa");
-    return { items: await repos.messages.list(req.params.id, limit ?? 100) };
+    // F-09: meta.pending (ferramenta + input) é interno e nunca sai para o cliente.
+    const items = (await repos.messages.list(req.params.id, limit ?? 100)).map((m) => {
+      if (!m.meta || !("pending" in m.meta)) return m;
+      const { pending: _pending, ...meta } = m.meta;
+      return { ...m, meta };
+    });
+    return { items };
   });
 
   app.get("/v1/memories", auth, async (req) => {

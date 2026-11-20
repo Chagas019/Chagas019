@@ -40,14 +40,36 @@ export function priceFor(model: string, env: NodeJS.ProcessEnv = process.env): M
   return table[normalizeModelId(model)];
 }
 
+/** Preço mais caro conhecido (tabela + MODEL_PRICES_JSON): fallback conservador para modelos sem preço. */
+export function maxKnownPrice(env: NodeJS.ProcessEnv = process.env): ModelPrice {
+  const all = [...Object.values(DEFAULT_PRICES)];
+  const raw = env.MODEL_PRICES_JSON;
+  if (raw) {
+    try {
+      for (const v of Object.values(JSON.parse(raw) as Record<string, Partial<ModelPrice>>)) all.push({ in: Number(v.in ?? 0), out: Number(v.out ?? 0), cacheRead: Number(v.cacheRead ?? v.in ?? 0) });
+    } catch { /* ignora */ }
+  }
+  return {
+    in: Math.max(...all.map((p) => p.in || 0)),
+    out: Math.max(...all.map((p) => p.out || 0)),
+    cacheRead: Math.max(...all.map((p) => p.cacheRead || 0)),
+  };
+}
+
+/** Custo máximo estimado de uma chamada (reserva de orçamento): entrada estimada + maxTokens de saída, no preço mais caro. */
+export function estimateMaxCost(estInputTokens: number, maxOutputTokens: number, env: NodeJS.ProcessEnv = process.env): number {
+  const p = maxKnownPrice(env);
+  return (estInputTokens * p.in + maxOutputTokens * p.out) / 1_000_000;
+}
+
 export function computeCost(model: string, usage: LlmUsage, env: NodeJS.ProcessEnv = process.env): number {
-  const p = priceFor(model, env);
+  let p = priceFor(model, env);
   if (!p) {
     if (!warned.has(model)) {
       warned.add(model);
-      console.warn(`[jarvis/pricing] sem preço para o modelo "${model}"; custo contabilizado como 0`);
+      console.warn(`[jarvis/pricing] sem preço para o modelo "${model}"; usando o preço mais caro conhecido (conservador)`);
     }
-    return 0;
+    p = maxKnownPrice(env);
   }
   return (usage.inputTokens * p.in + (usage.cacheReadTokens ?? 0) * p.cacheRead + usage.outputTokens * p.out) / 1_000_000;
 }

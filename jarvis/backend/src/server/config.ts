@@ -5,7 +5,8 @@ const optStr = z.preprocess(emptyToUndef, z.string().optional());
 
 const EnvSchema = z.object({
   PORT: z.preprocess(emptyToUndef, z.coerce.number().int().min(1).max(65535).default(8787)),
-  NODE_ENV: z.preprocess(emptyToUndef, z.enum(["development", "test", "production"]).default("development")),
+  NODE_ENV: z.preprocess(emptyToUndef, z.enum(["development", "test", "production"]).optional()),
+  VERCEL: optStr,
   DATABASE_URL: optStr,
   SUPABASE_URL: z.preprocess(emptyToUndef, z.string().url().optional()),
   SUPABASE_JWT_SECRET: optStr,
@@ -20,6 +21,8 @@ export interface Config {
   port: number;
   nodeEnv: "development" | "test" | "production";
   isProduction: boolean;
+  /** Token de dev só vale com NODE_ENV explícito "development" ou "test". */
+  devTokenAllowed: boolean;
   databaseUrl?: string;
   supabaseUrl?: string;
   supabaseJwtSecret?: string;
@@ -39,7 +42,10 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     throw new Error(`Configuração inválida: ${fields}`);
   }
   const e = parsed.data;
-  const isProduction = e.NODE_ENV === "production";
+  // NODE_ENV ausente com sinais de deploy (DATABASE_URL ou VERCEL) => production (fail-closed). Sem sinais => development.
+  const nodeEnv: Config["nodeEnv"] = e.NODE_ENV ?? (e.DATABASE_URL || e.VERCEL ? "production" : "development");
+  const isProduction = nodeEnv === "production";
+  const devTokenAllowed = e.NODE_ENV === "development" || e.NODE_ENV === "test";
 
   let encryptionKey: Buffer | undefined;
   if (e.JARVIS_ENCRYPTION_KEY) {
@@ -55,8 +61,9 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
 
   return {
     port: e.PORT,
-    nodeEnv: e.NODE_ENV,
+    nodeEnv,
     isProduction,
+    devTokenAllowed,
     databaseUrl: e.DATABASE_URL,
     supabaseUrl: e.SUPABASE_URL,
     supabaseJwtSecret: e.SUPABASE_JWT_SECRET,

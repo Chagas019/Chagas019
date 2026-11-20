@@ -2,7 +2,7 @@ import type { Repos, Message, Memory, JarvisTask, UsageRecord, AuditEvent } from
 import type { LlmProvider, LlmRequest, LlmResponse } from "../../src/ai/providers/types.js";
 
 let n = 0;
-const id = () => `id${++n}`;
+const id = () => `00000000-0000-4000-8000-${String(++n).padStart(12, "0")}`;
 const iso = () => new Date().toISOString();
 
 export function memRepos() {
@@ -11,10 +11,11 @@ export function memRepos() {
   const usage: UsageRecord[] = [];
   const audit: AuditEvent[] = [];
   const messages: Message[] = [];
+  const claimed = new Set<string>();
   const state = { spent: undefined as number | undefined };
   const repos = {
     conversations: {} as Repos["conversations"],
-    messages: { add: async (m: any) => { const x = { ...m, id: id(), createdAt: iso() }; messages.push(x); return x; }, list: async () => messages },
+    messages: { add: async (m: any) => { const x = { ...m, id: id(), createdAt: iso() }; messages.push(x); return x; }, list: async () => messages, claimPending: async (_c: string, mid: string) => { if (claimed.has(mid)) return false; claimed.add(mid); return true; } },
     memories: {
       add: async (userId: string, kind: any, content: string) => { const m = { id: id(), userId, kind, content, createdAt: iso() }; memories.push(m); return m; },
       list: async () => memories,

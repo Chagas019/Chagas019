@@ -62,7 +62,7 @@ describe("custos", () => {
   it("sem preço → 0 e warn uma vez; MODEL_PRICES_JSON sobrescreve", () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     const u = { inputTokens: 1_000_000, outputTokens: 0 };
-    expect(computeCost("gpt-x", u, {})).toBe(0);
+    expect(computeCost("gpt-x", u, {})).toBeCloseTo(4); // preço mais caro conhecido (opus: 4/M entrada), nunca 0
     computeCost("gpt-x", u, {});
     expect(warn).toHaveBeenCalledTimes(1);
     expect(computeCost("gpt-x", u, { MODEL_PRICES_JSON: '{"gpt-x":{"in":3,"out":6}}' })).toBeCloseTo(3);
@@ -162,7 +162,9 @@ describe("orquestrador", () => {
     const first = await s.orch.handle(input({ message: "envie email" }));
     expect(ran).toBe(0);
     expect(first.pendingConfirmation?.summary).toContain("send_mail");
-    expect(first.pendingAction).toEqual({ tool: "send_mail", input: { to: "a@b.c" } });
+    expect(first.pendingAction).toMatchObject({ tool: "send_mail", input: { to: "a@b.c" } });
+    expect(first.pendingAction?.id).toBeTruthy();
+    expect(Date.parse(first.pendingAction!.expiresAt!)).toBeGreaterThan(Date.now());
     expect(first.toolCalls[0].status).toBe("pending_confirmation");
     expect(s.audit.at(-1)?.status).toBe("pending_confirmation");
 

@@ -16,13 +16,15 @@ function safeEqual(a: string, b: string): boolean {
  * Cria o verificador de Bearer. Retorna null se inválido (nunca lança).
  * JWT Supabase: HS256 (SUPABASE_JWT_SECRET) ou assimétrico via JWKS remoto (SUPABASE_URL).
  */
-export function createAuthenticator(config: Pick<Config, "supabaseUrl" | "supabaseJwtSecret" | "devToken" | "isProduction">) {
+export function createAuthenticator(config: Pick<Config, "supabaseUrl" | "supabaseJwtSecret" | "devToken" | "isProduction"> & { devTokenAllowed?: boolean }) {
   const secret = config.supabaseJwtSecret ? new TextEncoder().encode(config.supabaseJwtSecret) : undefined;
   let jwks: JWTVerifyGetKey | undefined;
   if (config.supabaseUrl) {
     jwks = createRemoteJWKSet(new URL("/auth/v1/.well-known/jwks.json", config.supabaseUrl));
   }
-  const devEnabled = !!config.devToken && !config.isProduction;
+  // Token de dev só com NODE_ENV explicitamente development/test (devTokenAllowed); nunca em produção.
+  const devEnabled = !!config.devToken && !config.isProduction && (config.devTokenAllowed ?? true);
+  const issuer = config.supabaseUrl ? `${config.supabaseUrl.replace(/\/+$/, "")}/auth/v1` : undefined;
 
   return async function authenticate(authorization: string | undefined): Promise<AuthUser | null> {
     if (!authorization) return null;
@@ -34,7 +36,7 @@ export function createAuthenticator(config: Pick<Config, "supabaseUrl" | "supaba
 
     try {
       const { alg } = decodeProtectedHeader(token);
-      const opts = { audience: "authenticated" as const };
+      const opts = { audience: "authenticated" as const, ...(issuer ? { issuer } : {}) };
       let payload;
       if (alg === "HS256") {
         if (!secret) return null;

@@ -30,12 +30,23 @@ const auditRow = (r: Row): AuditEvent => ({
 const dev = (r: Row): Device => ({ userId: r.user_id, apnsToken: r.apns_token, platform: r.platform, createdAt: iso(r.created_at) });
 
 /**
+ * TLS do banco: verificação de certificado ligada por padrão. Sem TLS apenas para host localhost/127.0.0.1
+ * (hostname parseado da URL, não regex na string). Escape documentado: PGSSL_NO_VERIFY=1 (aceita qualquer certificado).
+ */
+export function sslFor(url: string, env: NodeJS.ProcessEnv = process.env): pg.PoolConfig["ssl"] {
+  let host = "";
+  try { host = new URL(url).hostname.toLowerCase(); } catch { /* URL inválida: trata como remoto (TLS verificado) */ }
+  if (host === "localhost" || host === "127.0.0.1" || host === "[::1]" || host === "::1") return undefined;
+  return { rejectUnauthorized: env.PGSSL_NO_VERIFY !== "1" };
+}
+
+/**
  * Repos Postgres (Supabase, conexão de serviço). SQL sempre parametrizado e filtrado por user_id.
  * Exceção: messages.list/touch operam por conversation_id — o chamador (rotas) valida a posse da conversa antes.
  */
 export function createPostgresRepos(poolOrUrl: pg.Pool | string): Repos & { pool: pg.Pool; close(): Promise<void> } {
   const pool = typeof poolOrUrl === "string"
-    ? new pg.Pool({ connectionString: poolOrUrl, max: 5, ssl: /sslmode=disable|localhost|127\.0\.0\.1/.test(poolOrUrl) ? undefined : { rejectUnauthorized: false } })
+    ? new pg.Pool({ connectionString: poolOrUrl, max: 5, ssl: sslFor(poolOrUrl) })
     : poolOrUrl;
   const q = async (text: string, params: unknown[] = []): Promise<Row[]> => (await pool.query(text, params)).rows;
 
@@ -71,6 +82,13 @@ export function createPostgresRepos(poolOrUrl: pg.Pool | string): Repos & { pool
           [conversationId, lim(limit, 100)],
         );
         return r.map(msg);
+      },
+      async claimPending(conversationId, messageId) {
+        const r = await pool.query(
+          `UPDATE messages SET meta = meta - 'pending' WHERE id = $1 AND conversation_id = $2 AND meta ? 'pending' RETURNING id`,
+          [messageId, conversationId],
+        );
+        return (r.rowCount ?? 0) > 0;
       },
     },
     memories: {

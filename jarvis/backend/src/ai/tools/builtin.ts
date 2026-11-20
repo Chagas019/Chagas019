@@ -88,7 +88,8 @@ export const listTasksTool: Tool = {
   },
 };
 
-const completeIn = z.object({ id: z.string().min(1) });
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const completeIn = z.object({ id: z.string().regex(UUID_RE, "id deve ser um UUID") });
 export const completeTaskTool: Tool = {
   name: "complete_task",
   description: "Marca uma tarefa como concluída pelo id (use list_tasks para achar o id).",

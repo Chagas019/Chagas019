@@ -50,13 +50,13 @@ describe("e2e autenticação", () => {
   });
 
   // ACHADO F-06 (média): NODE_ENV ausente vira "development" => token de dev aceito em deploy mal configurado (fail-open).
-  it.fails("F-06: sem NODE_ENV, token de dev não deve ser aceito", async () => {
+  it("F-06: sem NODE_ENV, token de dev não deve ser aceito", async () => {
     const s = await makeStack({ env: { NODE_ENV: "" } });
     expect((await me(s, DEV)).statusCode).toBe(401);
   });
 
   // ACHADO F-07 (baixa): `iss` não é validado; com SUPABASE_URL deveria exigir `${SUPABASE_URL}/auth/v1`.
-  it.fails("F-07: JWT com issuer estranho é rejeitado quando SUPABASE_URL está configurada", async () => {
+  it("F-07: JWT com issuer estranho é rejeitado quando SUPABASE_URL está configurada", async () => {
     const s = await makeStack({ env: { SUPABASE_URL: "https://proj.supabase.co" } });
     expect((await me(s, await jwt(USER_A, { iss: "https://evil.example/auth/v1" }))).statusCode).toBe(401);
   });

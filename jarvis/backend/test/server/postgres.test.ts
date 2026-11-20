@@ -11,6 +11,11 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)("repos postgres", () => {
       expect(await r.conversations.get(b, c.id)).toBeNull();
       await r.messages.add({ conversationId: c.id, role: "user", content: "oi", meta: { x: 1 } });
       expect((await r.messages.list(c.id))[0]!.meta).toEqual({ x: 1 });
+      const pm = await r.messages.add({ conversationId: c.id, role: "assistant", content: "?", meta: { pending: { tool: "t" }, k: 1 } });
+      const claims = await Promise.all([r.messages.claimPending(c.id, pm.id), r.messages.claimPending(c.id, pm.id)]);
+      expect(claims.filter(Boolean)).toHaveLength(1);
+      expect((await r.messages.list(c.id)).find((x) => x.id === pm.id)!.meta).toEqual({ k: 1 });
+      expect(await r.messages.claimPending("00000000-0000-4000-8000-000000000000", pm.id)).toBe(false);
       await r.memories.add(a, "fact", "Eu gosto de cafés fortes");
       expect(await r.memories.search(a, "café")).toHaveLength(1);
       expect(await r.memories.search(b, "café")).toHaveLength(0);

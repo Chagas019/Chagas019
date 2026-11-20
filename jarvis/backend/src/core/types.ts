@@ -90,6 +90,8 @@ export interface Repos {
   messages: {
     add(m: Omit<Message, "id" | "createdAt">): Promise<Message>;
     list(conversationId: string, limit?: number): Promise<Message[]>;
+    /** Remove `meta.pending` da mensagem de forma atômica; true só para o primeiro chamador (consumo único). */
+    claimPending(conversationId: string, messageId: string): Promise<boolean>;
   };
   memories: {
     add(userId: string, kind: MemoryKind, content: string): Promise<Memory>;
@@ -194,7 +196,7 @@ export interface OrchestratorInput {
 
 export type OrchestratorResult = Omit<ChatResponse, "conversationId"> & {
   /** Ação aguardando confirmação; o servidor grava em meta.pending da mensagem do assistente (não vai ao cliente). */
-  pendingAction?: { tool: string; input: unknown };
+  pendingAction?: { tool: string; input: unknown; id?: string; expiresAt?: string };
 };
 
 export interface Orchestrator {

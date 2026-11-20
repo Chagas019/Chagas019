@@ -56,7 +56,13 @@ export function createMemoryRepos(): Repos {
       /** Últimas `limit` mensagens, em ordem cronológica. */
       async list(conversationId, limit) {
         const all = messages.filter((m) => m.conversationId === conversationId);
-        return all.slice(-lim(limit, 100)).map((m) => ({ ...m }));
+        return all.slice(-lim(limit, 100)).map((m) => ({ ...m, ...(m.meta ? { meta: { ...m.meta } } : {}) }));
+      },
+      claimPending(conversationId, messageId) {
+        const m = messages.find((x) => x.id === messageId && x.conversationId === conversationId);
+        if (!m?.meta || !("pending" in m.meta)) return Promise.resolve(false);
+        delete m.meta.pending;
+        return Promise.resolve(true);
       },
     },
     memories: {

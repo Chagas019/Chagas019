@@ -34,5 +34,6 @@ Tipos: ver `backend/src/core/types.ts` (fonte única). Datas em ISO-8601 UTC.
 - Ferramentas com efeito externo (enviar e-mail, criar/alterar evento) retornam `pendingConfirmation`;
   o app mostra a ação e reenvia `POST /v1/chat { conversationId, message: "confirmo", confirm: true }`.
 - Toda chamada de ferramenta gera `AuditEvent`.
+- Confirmação: `meta.pending = {id, tool, input, expiresAt (5 min)}`; `confirm=true` só executa se `repos.messages.claimPending(conversationId, messageId)` retornar true (atômico, uso único) e a pendência não tiver expirado. Teto de 5 tool calls/iteração e 10/turno.
 - Orçamento diário por usuário: `AI_DAILY_BUDGET_USD` (padrão 1.00). Excedeu → 429 `budget_exceeded`.
 - Sem provedor configurado: `/v1/chat` responde 503 `provider_unavailable` (nunca resposta falsa).

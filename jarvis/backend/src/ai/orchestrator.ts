@@ -3,9 +3,11 @@
  *
  * Contrato: retorna `OrchestratorResult` (ChatResponse sem conversationId + `pendingAction?`).
  * Quando uma ferramenta com sideEffect exige confirmação, `pendingAction = {tool, input}` e o servidor
- * deve gravá-lo em `meta.pending` da mensagem do assistente. Com `confirm=true`, o orquestrador lê
- * `meta.pending` da última mensagem do assistente em `history` e executa a ação sem novo planejamento.
+ * deve gravá-lo em `meta.pending` da mensagem do assistente (inclui `id` e `expiresAt`, TTL 5 min). Com `confirm=true`,
+ * o orquestrador lê `meta.pending` da última mensagem do assistente em `history`, consome-o via
+ * `repos.messages.claimPending` (atômico; só o primeiro executa) e executa a ação sem novo planejamento.
  */
+import { randomUUID } from "node:crypto";
 import {
   BudgetExceededError,
   type ChatMode,
@@ -17,12 +19,15 @@ import {
   type ToolCallSummary,
   type ToolRegistry,
 } from "../core/types.js";
-import { computeCost } from "./pricing.js";
+import { computeCost, estimateMaxCost } from "./pricing.js";
 import type { ContentPart, LlmMessage, LlmToolCall, LlmUsage } from "./providers/types.js";
 import { buildProviders } from "./providers/index.js";
-import { classifyTier, ProviderUnavailableError, Router, type Tier } from "./router.js";
+import { classifyTier, Router, type Tier } from "./router.js";
 
 const MAX_ITERATIONS = 5;
+const MAX_TOOL_CALLS_PER_ITERATION = 5;
+const MAX_TOOL_CALLS_PER_TURN = 10;
+const PENDING_TTL_MS = 5 * 60_000;
 const CONTEXT_TOKEN_LIMIT = 6000;
 const MAX_TOOL_OUTPUT = 4000;
 const MAX_OUTPUT_TOKENS = 1500;
@@ -86,6 +91,21 @@ export function createOrchestrator(opts: { repos: Repos; tools: ToolRegistry; en
   const router = new Router(providers, env);
   const limit = Number(env.AI_DAILY_BUDGET_USD ?? 1) || 1;
 
+  /**
+   * Orçamento (F-02): cada chamada ao modelo reverifica o gasto e reserva em memória, por usuário, o custo máximo estimado
+   * (maxTokens x preço de saída + entrada estimada), liberado ao registrar o custo real. Chamadas do mesmo usuário nesta
+   * instância são serializadas. Entre instâncias (serverless) o limite é APROXIMADO: a reserva não é compartilhada.
+   */
+  const reserved = new Map<string, number>();
+  const locks = new Map<string, Promise<unknown>>();
+  async function withUserLock<T>(userId: string, fn: () => Promise<T>): Promise<T> {
+    const prev = locks.get(userId) ?? Promise.resolve();
+    const run = prev.then(() => fn());
+    const tail = run.catch(() => undefined);
+    locks.set(userId, tail);
+    try { return await run; } finally { if (locks.get(userId) === tail) locks.delete(userId); }
+  }
+
   const none = (): OrchestratorResult => ({ provider: "none", model: "none", reply: "", toolCalls: [], usage: { inputTokens: 0, outputTokens: 0, costUsd: 0 } });
 
   async function audit(userId: string, tool: string, status: ToolCallSummary["status"], detail: Record<string, unknown>) {
@@ -112,9 +132,10 @@ export function createOrchestrator(opts: { repos: Repos; tools: ToolRegistry; en
       await audit(input.userId, tool.name, res.ok ? "ok" : "error", { input: call.input, output: res.output.slice(0, 500) });
       return { summary: { name: tool.name, status: res.ok ? "ok" : "error" }, content: res.output.slice(0, MAX_TOOL_OUTPUT), isError: !res.ok };
     } catch (err) {
-      const msg = (err as Error).message;
-      await audit(input.userId, tool.name, "error", { input: call.input, error: msg });
-      return { summary: { name: tool.name, status: "error" }, content: `Erro na ferramenta: ${msg}`, isError: true };
+      // F-11: detalhe do erro (ex.: mensagem do pg) só no log do servidor; modelo e audit recebem texto genérico.
+      console.error(`[jarvis/orchestrator] falha na ferramenta ${tool.name}:`, (err as Error).name, (err as Error).message);
+      await audit(input.userId, tool.name, "error", { input: call.input, error: "falha interna na ferramenta" });
+      return { summary: { name: tool.name, status: "error" }, content: "Erro ao executar a ferramenta.", isError: true };
     }
   }
 
@@ -124,8 +145,9 @@ export function createOrchestrator(opts: { repos: Repos; tools: ToolRegistry; en
     async handle(input: OrchestratorInput): Promise<OrchestratorResult> {
       if (!providers.length || !router.hasCandidates()) return none();
 
-      const spent = await repos.usage.costSince(input.userId, startOfUtcDay(now()));
-      const tier = applyBudget(classifyTier(input.message, input.mode as ChatMode), spent, limit);
+      const baseTier = classifyTier(input.message, input.mode as ChatMode);
+      // Falha cedo (429) sem chamar provedor; a checagem é repetida antes de cada chamada ao modelo.
+      applyBudget(baseTier, await repos.usage.costSince(input.userId, startOfUtcDay(now())), limit);
 
       const memories = await repos.memories.search(input.userId, input.message, 5);
       const { messages: hist, truncated } = buildHistory(input.history, input.message);
@@ -140,38 +162,55 @@ export function createOrchestrator(opts: { repos: Repos; tools: ToolRegistry; en
       let provider = "none";
       let model = "none";
 
-      // Confirmação: executa a ação pendente direto, sem consultar o modelo antes.
+      // Confirmação: executa a ação pendente direto, sem consultar o modelo antes (consumo único + TTL).
+      let toolCallsTurn = 0;
       if (input.confirm) {
         const lastAssistant = [...input.history].reverse().find((m) => m.role === "assistant");
-        const pending = lastAssistant?.meta?.pending as { tool?: string; input?: unknown } | undefined;
-        if (pending?.tool) {
-          const id = "pending_action";
-          const r = await runTool(input, { id, name: pending.tool, input: pending.input }, true);
-          summaries.push(r.summary);
-          convo.push({ role: "assistant", content: [{ type: "tool_use", id, name: pending.tool, input: pending.input ?? {} }] });
-          convo.push({ role: "user", content: [{ type: "tool_result", toolUseId: id, content: r.content, isError: r.isError }] });
+        const pending = lastAssistant?.meta?.pending as { id?: string; tool?: string; input?: unknown; expiresAt?: string } | undefined;
+        if (lastAssistant && pending?.tool) {
+          const expiresMs = pending.expiresAt ? Date.parse(pending.expiresAt) : NaN;
+          const expired = !(expiresMs > now().getTime()); // sem expiresAt/inválido => expirado (fail-closed)
+          const claimed = await repos.messages.claimPending(input.conversationId, lastAssistant.id);
+          if (!claimed || expired) {
+            await audit(input.userId, pending.tool, "denied", { reason: expired ? "pendência expirada" : "pendência já consumida" });
+          } else {
+            const id = "pending_action";
+            toolCallsTurn++;
+            const r = await runTool(input, { id, name: pending.tool, input: pending.input }, true);
+            summaries.push(r.summary);
+            convo.push({ role: "assistant", content: [{ type: "tool_use", id, name: pending.tool, input: pending.input ?? {} }] });
+            convo.push({ role: "user", content: [{ type: "tool_result", toolUseId: id, content: r.content, isError: r.isError }] });
+          }
         }
       }
 
       let reply = "";
       for (let i = 0; i < MAX_ITERATIONS; i++) {
-        let out;
-        try {
-          out = await router.chat(tier, { system, messages: convo, tools: toolDefs, maxTokens: MAX_OUTPUT_TOKENS });
-        } catch (err) {
-          if (err instanceof ProviderUnavailableError) throw err;
-          throw err;
-        }
-        provider = out.provider;
-        model = out.model;
-        const usage: LlmUsage = out.response.usage;
-        const costUsd = computeCost(model, usage, env);
+        const out = await withUserLock(input.userId, async () => {
+          const spentNow = await repos.usage.costSince(input.userId, startOfUtcDay(now()));
+          const inFlight = reserved.get(input.userId) ?? 0;
+          const callTier = applyBudget(baseTier, spentNow + inFlight, limit); // lança BudgetExceededError (429)
+          const reservation = estimateMaxCost(JSON.stringify({ system, convo, toolDefs }).length / 4, MAX_OUTPUT_TOKENS, env);
+          reserved.set(input.userId, inFlight + reservation);
+          try {
+            const res = await router.chat(callTier, { system, messages: convo, tools: toolDefs, maxTokens: MAX_OUTPUT_TOKENS });
+            const u: LlmUsage = res.response.usage;
+            const cost = computeCost(res.model, u, env);
+            await repos.usage.add({ userId: input.userId, provider: res.provider, model: res.model, inputTokens: u.inputTokens + (u.cacheReadTokens ?? 0), outputTokens: u.outputTokens, costUsd: cost });
+            return { res, cost };
+          } finally {
+            const left = (reserved.get(input.userId) ?? 0) - reservation;
+            if (left > 1e-12) reserved.set(input.userId, left); else reserved.delete(input.userId);
+          }
+        });
+        provider = out.res.provider;
+        model = out.res.model;
+        const usage: LlmUsage = out.res.response.usage;
         total.inputTokens += usage.inputTokens + (usage.cacheReadTokens ?? 0);
         total.outputTokens += usage.outputTokens;
-        total.costUsd += costUsd;
-        await repos.usage.add({ userId: input.userId, provider, model, inputTokens: usage.inputTokens + (usage.cacheReadTokens ?? 0), outputTokens: usage.outputTokens, costUsd });
+        total.costUsd += out.cost;
 
-        const { text, toolCalls } = out.response;
+        const { text, toolCalls } = out.res.response;
         if (text) reply = text;
         if (!toolCalls.length) break;
 
@@ -181,7 +220,17 @@ export function createOrchestrator(opts: { repos: Repos; tools: ToolRegistry; en
         convo.push({ role: "assistant", content: parts });
 
         const results: ContentPart[] = [];
+        let iterCalls = 0;
         for (const c of toolCalls) {
+          // F-04: teto por iteração e por turno; excedentes recebem tool_result de erro sem executar.
+          if (iterCalls >= MAX_TOOL_CALLS_PER_ITERATION || toolCallsTurn >= MAX_TOOL_CALLS_PER_TURN) {
+            await audit(input.userId, c.name, "denied", { reason: "limite de chamadas de ferramenta excedido" });
+            summaries.push({ name: c.name, status: "denied" });
+            results.push({ type: "tool_result", toolUseId: c.id, content: "Limite de chamadas de ferramenta excedido neste turno; chamada não executada.", isError: true });
+            continue;
+          }
+          iterCalls++;
+          toolCallsTurn++;
           const r = await runTool(input, c, false);
           summaries.push(r.summary);
           if (r.pending) {
@@ -191,7 +240,7 @@ export function createOrchestrator(opts: { repos: Repos; tools: ToolRegistry; en
               reply: text || r.pending.summary,
               toolCalls: summaries,
               pendingConfirmation: { summary: r.pending.summary },
-              pendingAction: { tool: c.name, input: c.input },
+              pendingAction: { id: randomUUID(), tool: c.name, input: c.input, expiresAt: new Date(now().getTime() + PENDING_TTL_MS).toISOString() },
               usage: total,
             };
           }

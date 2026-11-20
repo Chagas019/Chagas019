@@ -101,7 +101,7 @@ describe("e2e chat com ferramentas reais + gateway fake", () => {
   });
 
   // ACHADO F-04 (média): sem teto de tool calls por iteração; 1 resposta do modelo pode disparar N escritas.
-  it.fails("F-04: limita a quantidade de tool calls por iteração (<= 10)", async () => {
+  it("F-04: limita a quantidade de tool calls por iteração (<= 10)", async () => {
     const many = Array.from({ length: 30 }, (_, i) => ({ name: "create_task", args: { title: `t${i}` }, id: `c${i}` }));
     const s = await makeStack({ handler: seq(() => completion({ tools: many }), () => completion({ text: "ok" })) });
     await chat(s, DEV, { message: "crie tarefas" });
@@ -109,7 +109,7 @@ describe("e2e chat com ferramentas reais + gateway fake", () => {
   });
 
   // ACHADO F-03 (média): confirmações concorrentes leem a mesma pendência => execução dupla.
-  it.fails("F-03: duas confirmações concorrentes executam a ação apenas uma vez", async () => {
+  it("F-03: duas confirmações concorrentes executam a ação apenas uma vez", async () => {
     const { tool, runs } = sideEffectTool(40);
     const s = await makeStack({
       tools: [tool],
@@ -122,7 +122,7 @@ describe("e2e chat com ferramentas reais + gateway fake", () => {
   });
 
   // ACHADO F-09 (baixa): meta.pending (ferramenta + input) é devolvido por GET /messages, contrariando "nunca enviado ao cliente".
-  it.fails("F-09: GET /messages não expõe meta.pending", async () => {
+  it("F-09: GET /messages não expõe meta.pending", async () => {
     const { tool } = sideEffectTool();
     const s = await makeStack({ tools: [tool], handler: () => completion({ tools: [{ name: "send_email", args: { to: "a@b.com" } }] }) });
     const r = await chat(s, DEV, { message: "envie email" });

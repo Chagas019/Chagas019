@@ -50,7 +50,7 @@ describe("e2e orçamento e provedores", () => {
   });
 
   // ACHADO F-02 (média): o orçamento é lido uma vez no início; requisições concorrentes ultrapassam o limite.
-  it.fails("F-02: orçamento não é contornável por requisições concorrentes", async () => {
+  it("F-02: orçamento não é contornável por requisições concorrentes", async () => {
     const s = await makeStack({
       env: { AI_DAILY_BUDGET_USD: "0.15" },
       handler: async () => { await sleep(20); return completion({ text: "ok", promptTokens: 1_000_000 }); },
@@ -61,7 +61,7 @@ describe("e2e orçamento e provedores", () => {
   });
 
   // ACHADO F-05 (média): modelo sem preço => custo 0 => orçamento desativado silenciosamente (fail-open).
-  it.fails("F-05: modelo sem preço conhecido não pode custar 0 (fail-closed)", async () => {
+  it("F-05: modelo sem preço conhecido não pode custar 0 (fail-closed)", async () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     try {
       const s = await makeStack({ env: { JARVIS_MODEL_FAST: "gateway:acme/modelo-sem-preco" } });
@@ -71,7 +71,7 @@ describe("e2e orçamento e provedores", () => {
   });
 
   // ACHADO F-08 (baixa): conversa é criada antes de o provedor responder; 503/502/429 deixam conversas órfãs vazias.
-  it.fails("F-08: falha de provedor/orçamento não deixa conversa órfã", async () => {
+  it("F-08: falha de provedor/orçamento não deixa conversa órfã", async () => {
     const s = await makeStack({ env: { AI_GATEWAY_API_KEY: "" } });
     await chat(s, DEV, { message: "oi" });
     expect((await call(s.app, DEV, "GET", "/v1/conversations")).body.items).toHaveLength(0);
