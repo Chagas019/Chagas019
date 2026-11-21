@@ -233,7 +233,7 @@ export async function apagarReserva(id) {
 export function validarPedido(p, precos) {
   if (!p || typeof p !== 'object') return { erro: 'Pedido inválido.' };
   if (p.site) return { erro: 'Pedido inválido.' }; // campo-isca contra robôs
-  const b = BARBEIROS[p.barbeiro];
+  const b = Object.hasOwn(BARBEIROS, String(p.barbeiro)) ? BARBEIROS[p.barbeiro] : null;
   if (!b) return { erro: 'Escolha um barbeiro.' };
   const data = String(p.data || '');
   if (!/^\d{4}-\d{2}-\d{2}$/.test(data)) return { erro: 'Escolha o dia.' };
