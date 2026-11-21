@@ -168,7 +168,7 @@ api.get(
     const q = z
       .object({
         state: z.nativeEnum(ProductState).optional(),
-        states: z.string().optional(),
+        states: z.string().transform((v) => v.split(",")).pipe(z.array(z.nativeEnum(ProductState))).optional(),
         category: z.string().optional(),
         search: z.string().optional(),
         page: z.coerce.number().int().min(1).default(1),
@@ -176,7 +176,7 @@ api.get(
         sort: z.enum(["score", "recent", "price"]).default("recent"),
       })
       .parse(req.query);
-    const states = q.states ? (q.states.split(",") as ProductState[]) : q.state ? [q.state] : undefined;
+    const states = q.states ?? (q.state ? [q.state] : undefined);
     const where = {
       ...(states ? { state: { in: states } } : {}),
       ...(q.category ? { category: q.category } : {}),
@@ -253,8 +253,13 @@ api.post(
 api.get(
   "/publications",
   wrap(async (req, res) => {
-    const q = z.object({ status: z.string().optional(), page: z.coerce.number().int().min(1).default(1) }).parse(req.query);
-    const statuses = q.status ? (q.status.split(",") as PublicationStatus[]) : undefined;
+    const q = z
+      .object({
+        status: z.string().transform((v) => v.split(",")).pipe(z.array(z.nativeEnum(PublicationStatus))).optional(),
+        page: z.coerce.number().int().min(1).default(1),
+      })
+      .parse(req.query);
+    const statuses = q.status;
     const where = statuses ? { status: { in: statuses } } : {};
     const [items, total, ready] = await Promise.all([
       prisma.publication.findMany({

@@ -31,7 +31,7 @@ export async function login(email: string, password: string) {
   const ok = await bcrypt.compare(password, user?.passwordHash ?? "$2a$12$invalidinvalidinvalidinvalidinvalidinvalidinvalidinv");
   if (!user || !ok || !user.active) return null;
   await prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
-  const token = jwt.sign({ sub: user.id, role: user.role }, env.JWT_SECRET, { expiresIn: env.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"] });
+  const token = jwt.sign({ sub: user.id, role: user.role }, env.JWT_SECRET, { algorithm: "HS256", expiresIn: env.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"] });
   return { token, user: { id: user.id, email: user.email, name: user.name, role: user.role } };
 }
 
@@ -39,7 +39,7 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
   const h = req.headers.authorization;
   if (!h?.startsWith("Bearer ")) return res.status(401).json({ error: "não autenticado" });
   try {
-    const payload = jwt.verify(h.slice(7), env.JWT_SECRET) as { sub: string };
+    const payload = jwt.verify(h.slice(7), env.JWT_SECRET, { algorithms: ["HS256"] }) as { sub: string };
     const user = await prisma.user.findUnique({ where: { id: payload.sub } });
     if (!user || !user.active) return res.status(401).json({ error: "usuário inválido" });
     req.user = { id: user.id, email: user.email, role: user.role, name: user.name };

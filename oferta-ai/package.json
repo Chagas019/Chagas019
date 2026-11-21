@@ -12,5 +12,9 @@
     "test": "npm test -w apps/api",
     "typecheck": "npm run typecheck -w apps/api && npm run typecheck -w apps/web"
   },
-  "engines": { "node": ">=20" }
+  "engines": { "node": ">=20" },
+  "overrides": {
+    "next": { "postcss": "^8.5.33" },
+    "effect": "^3.22.5"
+  }
 }

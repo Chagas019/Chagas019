@@ -45,7 +45,14 @@ export function createApp() {
     if (err instanceof ZodError) return res.status(400).json({ error: "dados inválidos", issues: err.issues });
     if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") return res.status(404).json({ error: "não encontrado" });
     logger.error({ err }, "erro não tratado");
-    res.status(500).json({ error: err instanceof Error ? err.message : "erro interno" });
+    // Erros do Prisma/banco podem expor detalhes internos (schema, consultas, conexão): nunca devolva a mensagem.
+    const internal =
+      err instanceof Prisma.PrismaClientKnownRequestError ||
+      err instanceof Prisma.PrismaClientUnknownRequestError ||
+      err instanceof Prisma.PrismaClientValidationError ||
+      err instanceof Prisma.PrismaClientInitializationError ||
+      err instanceof Prisma.PrismaClientRustPanicError;
+    res.status(500).json({ error: !internal && err instanceof Error ? err.message : "erro interno" });
   });
   return app;
 }
