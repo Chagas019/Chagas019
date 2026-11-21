@@ -30,6 +30,8 @@ O `npm run setup` pode ser executado quantas vezes você quiser. Ele não duplic
 
 A fonte dos dados é `src/data/` e a gravação no banco é feita por `src/seed.js`, de forma idempotente (chave: `slug`). Se a definição de um cargo mudar no código, o registro é atualizado na próxima inicialização. O modelo escolhido por você, o estado e o histórico são preservados.
 
+> **Nota (2026-11-21):** os módulos de `src/data/` (`employees.js`, `taskTypes.js`, `workflows.js`, `org.js`, `routines.js`) nunca chegaram ao repositório por causa de uma regra do `.gitignore` (`data/`, já corrigida para `/data/`) e se perderam. Eles foram reconstruídos em 2026-11-21 a partir dos testes, do código que os usa e desta documentação. O proprietário deve revisar os nomes dos funcionários e as instruções de cada cargo, que podem diferir dos originais.
+
 ## Como uma tarefa é executada (`src/engine.js`)
 
 1. **Valida** se o funcionário pode executar aquele tipo de tarefa. Diretores podem assumir tarefas *simples* do próprio departamento.
