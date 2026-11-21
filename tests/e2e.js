@@ -31,6 +31,16 @@ function mockClaude({ can, id = "u_teste", rejeitaEscrita = false, sample = null
   })();`;
 }
 
+// Espera a rolagem suave terminar (scrollY estável por 3 leituras), até 5 s.
+async function rolagemParada(p) {
+  let ant = -1, igual = 0;
+  for (let i = 0; i < 50 && igual < 3; i++) {
+    await p.waitForTimeout(100);
+    const y = await p.evaluate(() => scrollY);
+    igual = y === ant ? igual + 1 : 0; ant = y;
+  }
+}
+
 async function pagina(browser, { largura = 1280, mock = null, hash = "" } = {}) {
   const ctx = await browser.newContext({ viewport: { width: largura, height: 900 } });
   if (mock) await ctx.addInitScript(mock);
@@ -268,7 +278,7 @@ const fechar = async p => { if (await aberto(p)) await p.click("#modal [data-clo
   console.log("9. Formação e seções para rolar");
   {
     const p = await pagina(browser);
-    await p.click(".nav [data-action=formacao]"); await p.waitForTimeout(900);
+    await p.click(".nav [data-action=formacao]"); await rolagemParada(p);
     const topo = await p.$eval("#formacao", e => e.getBoundingClientRect().top);
     check(topo >= -5 && topo < 200, "menu Formação rola até a formação", String(topo));
     check(await p.getAttribute(".nav [data-action=formacao]", "aria-current") === "true", "menu marca Formação ao rolar");
