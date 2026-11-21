@@ -71,6 +71,31 @@ const path = require('node:path');
       await page.keyboard.press('Escape');
       await page.getByRole('heading', { name: 'Wallpapers', level: 1 }).waitFor();
     });
+    await step('link malformado não quebra o app', async () => {
+      await page.goto(URL + '#/busca/%E0');
+      await page.locator('input[type=search]').waitFor();
+    });
+    await step('folha de download fecha ao voltar e teclado segue funcionando', async () => {
+      await page.goto(URL + '#/w/nature-03');
+      await page.waitForSelector('.detail canvas.is-ready');
+      await page.click('[data-testid=download]');
+      await page.goBack();
+      assert.equal(await page.locator('.sheet-backdrop').count(), 0);
+      await page.goto(URL + '#/w/nature-03');
+      await page.waitForSelector('.detail canvas.is-ready');
+      await page.keyboard.press('ArrowRight');
+      assert.doesNotMatch(page.url(), /nature-03$/);
+    });
+    await step('foco fica preso no detalhe', async () => {
+      for (let i = 0; i < 12; i++) await page.keyboard.press('Tab');
+      assert.ok(await page.evaluate(() => document.querySelector('.detail').contains(document.activeElement)));
+      await page.keyboard.press('Escape');
+    });
+    await step('servidor só entrega arquivos do app', async () => {
+      for (const p of ['package.json', 'README.md', 'test/e2e.cjs', '..%2FREADME.md']) {
+        assert.equal((await page.request.get(URL + p)).status(), 403, p);
+      }
+    });
     await step('funciona offline (service worker)', async () => {
       await page.goto(URL);
       await page.evaluate(() => navigator.serviceWorker.ready);

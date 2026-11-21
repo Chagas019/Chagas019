@@ -1,6 +1,6 @@
 // Service worker: guarda o app para funcionar offline. As artes são geradas no
 // aparelho, então não há imagens para baixar da rede.
-const VERSION = 'aura-v1';
+const VERSION = 'aura-v2';
 const SHELL = [
   './', 'index.html', 'css/app.css', 'js/app.js', 'js/art.js', 'js/catalog.js', 'js/prng.js', 'js/store.js',
   'icon.svg', 'manifest.webmanifest',

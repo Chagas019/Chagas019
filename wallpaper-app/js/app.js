@@ -121,7 +121,7 @@ function go(hash) {
 }
 
 function parseRoute() {
-  const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean).map(decodeURIComponent);
+  const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean).map((part) => { try { return decodeURIComponent(part); } catch { return part; } });
   return { name: parts[0] || '', arg: parts[1] || '' };
 }
 
@@ -135,6 +135,10 @@ function render() {
   if (name === 'w' && BY_ID.has(arg)) return renderDetail(BY_ID.get(arg));
   if (name === 'c' && (CATEGORY_BY_ID.has(arg) || arg === 'favoritos')) return renderHome(arg);
   return renderHome('all');
+}
+
+function announce(text) {
+  document.title = text ? `${text} · Aura Wallpapers` : 'Aura Wallpapers';
 }
 
 function mount(...nodes) {
@@ -169,6 +173,7 @@ function renderOnboarding() {
         h('span', { text: 'Escolha sua vibe' })),
       h('button', { class: 'btn-primary', type: 'button', onclick: start, 'data-testid': 'explore' }, 'Explorar wallpapers')));
   mount(screen);
+  announce('');
   requestAnimationFrame(paint);
   let t;
   const onResize = () => { clearTimeout(t); t = setTimeout(paint, 150); };
@@ -251,6 +256,7 @@ function renderHome(active) {
       grid(list)];
   }
   mount(header('Wallpapers'), h('main', { class: 'main view-enter' }, content));
+  announce(active === 'all' ? 'Wallpapers' : active === 'favoritos' ? 'Favoritos' : CATEGORY_BY_ID.get(active).title);
   document.body.append(chips(active));
   window.scrollTo(0, scrollMemory.get(location.hash) || 0);
   const onScroll = () => scrollMemory.set(location.hash, window.scrollY);
@@ -267,6 +273,7 @@ function renderSearch(initial) {
   });
   input.value = initial || '';
   const update = () => {
+    if (parseRoute().name !== 'busca') return;
     const q = input.value.trim();
     history.replaceState(null, '', q ? `#/busca/${encodeURIComponent(q)}` : '#/busca');
     if (!q) {
@@ -283,14 +290,16 @@ function renderSearch(initial) {
   };
   let t;
   input.addEventListener('input', () => { clearTimeout(t); t = setTimeout(update, 120); });
-  input.addEventListener('keydown', (e) => { if (e.key === 'Escape') history.length > 1 ? history.back() : go('#/'); });
+  input.addEventListener('keydown', (e) => { if (e.key === 'Escape') go(lastHome); });
   mount(
     h('header', { class: 'header' },
       h('button', { class: 'icon-btn', type: 'button', 'aria-label': 'Voltar', onclick: () => go('#/') }, icon('back')),
       h('label', { class: 'search' }, icon('search'), input)),
     h('main', { class: 'main view-enter' }, results));
+  announce('Busca');
   update();
   input.focus();
+  cleanup = () => clearTimeout(t);
 }
 
 /* ---------- Tela 3: detalhe ---------- */
@@ -393,8 +402,11 @@ function renderDetail(item) {
   document.querySelector('.chips')?.remove();
   document.querySelector('.detail')?.remove();
   if (!app.firstChild) renderHomeBehind();
+  const opener = document.activeElement;
+  announce(item.name);
   document.body.append(root);
   document.body.style.overflow = 'hidden';
+  app.inert = true;
   root.querySelector('[data-testid="download"]').focus({ preventScroll: true });
 
   requestAnimationFrame(() => {
@@ -403,10 +415,16 @@ function renderDetail(item) {
     renderToCanvas(item, r.width * dpr, r.height * dpr, canvas);
     canvas.classList.add('is-ready');
   });
+  const trap = (e) => trapFocus(e, document.querySelector('.sheet') || root);
+  document.addEventListener('keydown', trap);
   cleanup = () => {
     document.removeEventListener('keydown', onKey);
+    document.removeEventListener('keydown', trap);
+    closeOpenSheet?.();
     root.remove();
     document.body.style.overflow = '';
+    app.inert = false;
+    if (opener?.isConnected) opener.focus({ preventScroll: true });
   };
 }
 
@@ -422,6 +440,18 @@ function renderHomeBehind() {
   cleanup?.();
   cleanup = keep;
 }
+
+function trapFocus(e, container) {
+  if (e.key !== 'Tab' || !container) return;
+  const items = [...container.querySelectorAll('button:not([disabled]), [href], input')].filter((el) => el.offsetParent !== null);
+  if (!items.length) return;
+  const first = items[0], last = items[items.length - 1];
+  if (!container.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+  else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+}
+
+let closeOpenSheet = null;
 
 /* ---------- Download e compartilhamento ---------- */
 function renderBlob(item, w, hgt, type = 'image/png') {
@@ -452,7 +482,14 @@ function openSheet(item) {
     { label: '4K', w: 2160, h: 4680 },
   ];
   const back = h('div', { class: 'sheet-backdrop', role: 'presentation' });
-  const closeSheet = () => { back.remove(); document.removeEventListener('keydown', onKey); };
+  const returnTo = document.activeElement;
+  const closeSheet = () => {
+    back.remove();
+    document.removeEventListener('keydown', onKey);
+    closeOpenSheet = null;
+    if (returnTo?.isConnected) returnTo.focus({ preventScroll: true });
+  };
+  closeOpenSheet = closeSheet;
   const onKey = (e) => { if (e.key === 'Escape') closeSheet(); };
   document.addEventListener('keydown', onKey);
   back.addEventListener('click', (e) => { if (e.target === back) closeSheet(); });

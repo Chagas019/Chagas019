@@ -30,7 +30,7 @@ npm test             # testes unitários (gerador, catálogo, busca)
 npm run test:e2e     # ponta a ponta no Chromium emulando um iPhone (requer Playwright)
 ```
 
-O teste ponta a ponta cobre: boas-vindas só na primeira visita, galeria com 120 itens, filtros, detalhe, navegação, download do PNG (confere 1080×2340 no cabeçalho do arquivo), favoritos após recarregar, busca, link direto, modo offline, ausência de rolagem horizontal e de erros no console.
+O teste ponta a ponta (14 cenários) cobre: link malformado, foco preso no detalhe, servidor que só entrega arquivos do app, boas-vindas só na primeira visita, galeria com 120 itens, filtros, detalhe, navegação, download do PNG (confere 1080×2340 no cabeçalho do arquivo), favoritos após recarregar, busca, link direto, modo offline, ausência de rolagem horizontal e de erros no console.
 
 ## Publicar
 
