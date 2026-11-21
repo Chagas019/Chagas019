@@ -1,0 +1,13 @@
+{
+  "name": "aura-wallpapers",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PWA de wallpapers com arte procedural, download em alta resolução e uso offline.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test test/unit.test.mjs",
+    "test:e2e": "node test/e2e.cjs"
+  },
+  "engines": { "node": ">=18" }
+}

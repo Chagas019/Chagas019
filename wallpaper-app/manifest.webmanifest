@@ -1,0 +1,15 @@
+{
+  "name": "Aura Wallpapers",
+  "short_name": "Aura",
+  "description": "Descubra wallpapers que deixam seu celular com a sua cara.",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ececec",
+  "theme_color": "#ececec",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
