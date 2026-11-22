@@ -113,6 +113,7 @@ final class CameraEngine: NSObject, ObservableObject {
         if session.canAddOutput(videoOutput) {
             videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
             videoOutput.alwaysDiscardsLateVideoFrames = true
+            videoOutput.deliversPreviewSizedOutputBuffers = true   // análise leve: quadros do tamanho da prévia
             videoOutput.setSampleBufferDelegate(analyzer, queue: analyzer.queue)
             session.addOutput(videoOutput)
         }
