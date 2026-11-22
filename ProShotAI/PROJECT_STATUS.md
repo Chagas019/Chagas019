@@ -7,5 +7,5 @@
 | Ferramentas pro (histograma, peaking, zebra, nível, fotômetro, lux, lupa, grades, EXIF) | ✅ |
 | Processamento (pipeline CI, RAW, perfis, presets, curva, não destrutivo, exportação máx.) | ✅ |
 | UI premium escura | ✅ |
-| CI macOS: build de dispositivo + testes unitários | ver Actions `proshot-ai.yml` |
+| CI macOS 15 / Xcode 16: build Release para iPhone ✅ · 15/15 testes unitários ✅ (simulador iPhone 16 Pro) | ✅ |
 | Teste em iPhone físico | ⏳ depende do usuário (sem aparelho no ambiente) |
