@@ -83,7 +83,7 @@ final class ImageProcessorTests: XCTestCase {
 
     private func average(_ img: CIImage) -> (Float, Float, Float) {
         var px = [Float](repeating: 0, count: 4)
-        let avg = img.applyingFilter("CIAreaAverage", [kCIInputExtentKey: CIVector(cgRect: img.extent)])
+        let avg = img.applyingFilter("CIAreaAverage", parameters: [kCIInputExtentKey: CIVector(cgRect: img.extent)])
         ImageProcessor.context.render(avg, toBitmap: &px, rowBytes: 16, bounds: CGRect(x: 0, y: 0, width: 1, height: 1),
                                       format: .RGBAf, colorSpace: CGColorSpace(name: CGColorSpace.sRGB))
         return (px[0], px[1], px[2])

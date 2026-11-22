@@ -112,15 +112,15 @@ final class FrameAnalyzer: NSObject, ObservableObject, AVCaptureVideoDataOutputS
 
         if zebraEnabled {
             let mask = image
-                .applyingFilter("CIColorControls", [kCIInputSaturationKey: 0])
-                .applyingFilter("CIColorThreshold", ["inputThreshold": zebraThreshold])
+                .applyingFilter("CIColorControls", parameters: [kCIInputSaturationKey: 0])
+                .applyingFilter("CIColorThreshold", parameters: ["inputThreshold": zebraThreshold])
                 .applyingFilter("CIMaskToAlpha")
             if let stripes = CIFilter(name: "CIStripesGenerator", parameters: [
                 "inputColor0": CIColor(red: 1, green: 1, blue: 1, alpha: 0.85),
                 "inputColor1": CIColor(red: 0, green: 0, blue: 0, alpha: 0),
                 "inputWidth": 5,
             ])?.outputImage?.transformed(by: CGAffineTransform(rotationAngle: .pi / 4)).cropped(to: extent) {
-                let zebra = stripes.applyingFilter("CIBlendWithAlphaMask", [
+                let zebra = stripes.applyingFilter("CIBlendWithAlphaMask", parameters: [
                     kCIInputBackgroundImageKey: CIImage.empty(),
                     kCIInputMaskImageKey: mask,
                 ])
@@ -130,12 +130,12 @@ final class FrameAnalyzer: NSObject, ObservableObject, AVCaptureVideoDataOutputS
 
         if peakingEnabled {
             let mask = image
-                .applyingFilter("CIColorControls", [kCIInputSaturationKey: 0])
-                .applyingFilter("CIEdges", [kCIInputIntensityKey: 6])
-                .applyingFilter("CIColorThreshold", ["inputThreshold": peakingSensitivity])
+                .applyingFilter("CIColorControls", parameters: [kCIInputSaturationKey: 0])
+                .applyingFilter("CIEdges", parameters: [kCIInputIntensityKey: 6])
+                .applyingFilter("CIColorThreshold", parameters: ["inputThreshold": peakingSensitivity])
                 .applyingFilter("CIMaskToAlpha")
             let color = CIImage(color: CIColor(red: 1, green: 0.1, blue: 0.15)).cropped(to: extent)
-            let peaking = color.applyingFilter("CIBlendWithAlphaMask", [
+            let peaking = color.applyingFilter("CIBlendWithAlphaMask", parameters: [
                 kCIInputBackgroundImageKey: CIImage.empty(),
                 kCIInputMaskImageKey: mask,
             ])

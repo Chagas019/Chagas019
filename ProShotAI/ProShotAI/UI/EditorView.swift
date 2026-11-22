@@ -269,7 +269,7 @@ private struct PresetThumb: View {
             thumb = await withCheckedContinuation { cont in
                 DispatchQueue.global(qos: .utility).async {
                     let ci = CIImage(cgImage: base)
-                    let small = ci.applyingFilter("CILanczosScaleTransform", [kCIInputScaleKey: 160 / max(ci.extent.width, 1)])
+                    let small = ci.applyingFilter("CILanczosScaleTransform", parameters: [kCIInputScaleKey: 160 / max(ci.extent.width, 1)])
                     cont.resume(returning: ImageProcessor.render(ImageProcessor.apply(s, to: small, isRAW: false)))
                 }
             }

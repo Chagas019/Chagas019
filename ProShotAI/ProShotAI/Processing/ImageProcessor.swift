@@ -30,7 +30,7 @@ final class EditSource {
             rawFilter = raw
             processed = nil
             isRAW = true
-            properties = raw.properties
+            properties = (raw.properties as? [String: Any]) ?? [:]
         } else if let img = CIImage(data: data, options: [.applyOrientationProperty: true]) {
             rawFilter = nil
             processed = img
@@ -53,7 +53,7 @@ final class EditSource {
         }
         guard let img = processed else { return nil }
         guard scale < 0.999 else { return img }
-        return img.applyingFilter("CILanczosScaleTransform", [kCIInputScaleKey: scale, kCIInputAspectRatioKey: 1])
+        return img.applyingFilter("CILanczosScaleTransform", parameters: [kCIInputScaleKey: scale, kCIInputAspectRatioKey: 1])
     }
 
     var fullSize: CGSize {
@@ -71,24 +71,24 @@ enum ImageProcessor {
         let extent = input.extent
 
         if !isRAW, s.noiseReduction > 0 {
-            img = img.applyingFilter("CINoiseReduction", ["inputNoiseLevel": 0.005 + s.noiseReduction * 0.04, "inputSharpness": 0.4])
+            img = img.applyingFilter("CINoiseReduction", parameters: ["inputNoiseLevel": 0.005 + s.noiseReduction * 0.04, "inputSharpness": 0.4])
         }
         if !isRAW, s.exposure != 0 {
-            img = img.applyingFilter("CIExposureAdjust", [kCIInputEVKey: s.exposure])
+            img = img.applyingFilter("CIExposureAdjust", parameters: [kCIInputEVKey: s.exposure])
         }
 
         var temp = s.temperature, tint = s.tint
         if s.profile == .portrait { temp += 0.06 }
         if temp != 0 || tint != 0 {
             // neutro 6500K; valores positivos esquentam a imagem
-            img = img.applyingFilter("CITemperatureAndTint", [
+            img = img.applyingFilter("CITemperatureAndTint", parameters: [
                 "inputNeutral": CIVector(x: 6500, y: 0),
                 "inputTargetNeutral": CIVector(x: 6500 - temp * 3000, y: tint * 60),
             ])
         }
 
         if s.highlights != 0 || s.shadows != 0 {
-            img = img.applyingFilter("CIHighlightShadowAdjust", [
+            img = img.applyingFilter("CIHighlightShadowAdjust", parameters: [
                 "inputHighlightAmount": 1 + min(0, s.highlights),
                 "inputShadowAmount": s.shadows,
                 kCIInputRadiusKey: 0,
@@ -97,7 +97,7 @@ enum ImageProcessor {
 
         if !s.curve.isLinear {
             let p = s.curve.points
-            img = img.applyingFilter("CIToneCurve", [
+            img = img.applyingFilter("CIToneCurve", parameters: [
                 "inputPoint0": CIVector(x: 0, y: p[0]),
                 "inputPoint1": CIVector(x: 0.25, y: p[1]),
                 "inputPoint2": CIVector(x: 0.5, y: p[2]),
@@ -118,17 +118,17 @@ enum ImageProcessor {
         case .cinematic: saturation *= 0.85; contrast *= 1.06
         case .monochrome: saturation = 0
         }
-        img = img.applyingFilter("CIColorControls", [
+        img = img.applyingFilter("CIColorControls", parameters: [
             kCIInputContrastKey: contrast,
             kCIInputSaturationKey: max(0, saturation),
             kCIInputBrightnessKey: 0,
         ])
         if vibrance != 0, s.profile != .monochrome {
-            img = img.applyingFilter("CIVibrance", ["inputAmount": vibrance])
+            img = img.applyingFilter("CIVibrance", parameters: ["inputAmount": vibrance])
         }
         if s.profile == .cinematic {
             // split-toning: sombras azul-petróleo, realces âmbar
-            img = img.applyingFilter("CIColorMatrix", [
+            img = img.applyingFilter("CIColorMatrix", parameters: [
                 "inputRVector": CIVector(x: 1.02, y: 0, z: 0, w: 0),
                 "inputGVector": CIVector(x: 0, y: 1, z: 0, w: 0),
                 "inputBVector": CIVector(x: 0, y: 0, z: 0.96, w: 0),
@@ -137,9 +137,9 @@ enum ImageProcessor {
         }
 
         if !isRAW, s.sharpness > 0 {
-            img = img.applyingFilter("CISharpenLuminance", [kCIInputSharpnessKey: s.sharpness * 1.2, kCIInputRadiusKey: 1.6])
+            img = img.applyingFilter("CISharpenLuminance", parameters: [kCIInputSharpnessKey: s.sharpness * 1.2, kCIInputRadiusKey: 1.6])
         } else if isRAW, s.sharpness > 0.5 {
-            img = img.applyingFilter("CISharpenLuminance", [kCIInputSharpnessKey: (s.sharpness - 0.5) * 0.8, kCIInputRadiusKey: 1.2])
+            img = img.applyingFilter("CISharpenLuminance", parameters: [kCIInputSharpnessKey: (s.sharpness - 0.5) * 0.8, kCIInputRadiusKey: 1.2])
         }
         return img.cropped(to: extent)
     }
