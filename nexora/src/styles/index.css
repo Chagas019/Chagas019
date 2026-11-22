@@ -1,0 +1,121 @@
+@import '@fontsource-variable/inter-tight';
+@import '@fontsource/instrument-serif/400.css';
+@import '@fontsource/instrument-serif/400-italic.css';
+@import '@fontsource-variable/jetbrains-mono';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------- Tokens semânticos ---------- */
+@layer base {
+  :root {
+    --bg: 8 10 15;        /* #080A0F */
+    --fg: 245 247 251;    /* #F5F7FB */
+    --muted: 165 173 189; /* #A5ADBD */
+    --card: 13 20 36;     /* #0D1424 */
+    --line: 255 255 255;
+    --line-alpha: 0.09;
+    --header-h: 72px;
+    color-scheme: dark;
+  }
+  /* Seções claras: trocam os tokens, os componentes não mudam */
+  .theme-light {
+    --bg: 245 247 251;
+    --fg: 8 10 15;
+    --muted: 82 91 110;
+    --card: 255 255 255;
+    --line: 8 10 15;
+    --line-alpha: 0.1;
+    color-scheme: light;
+  }
+
+  .theme-dark {
+    --bg: 8 10 15; --fg: 245 247 251; --muted: 165 173 189; --card: 13 20 36; --line: 255 255 255; --line-alpha: 0.09;
+    color-scheme: dark;
+  }
+
+  html { -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--header-h) + 16px); }
+  body {
+    @apply bg-bg font-sans text-fg antialiased;
+    font-feature-settings: 'ss01', 'cv11';
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: #3478f6; color: #fff; }
+  :focus-visible { outline: 2px solid #3478f6; outline-offset: 3px; border-radius: 4px; }
+  img, video, canvas { max-width: 100%; }
+  h1, h2, h3, h4 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+}
+
+@layer components {
+  .hairline { border-color: rgb(var(--line) / var(--line-alpha)); }
+  .eyebrow { @apply font-mono text-eyebrow uppercase text-muted; }
+  .serif-accent { @apply font-serif font-normal italic tracking-normal; }
+  .section { @apply py-section; }
+  .surface { @apply rounded-lg border bg-card hairline; }
+
+  /* Botões */
+  .btn {
+    @apply inline-flex min-h-[44px] select-none items-center justify-center gap-2 rounded px-5 text-sm font-medium tracking-tight transition duration-300 ease-arch disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-primary { @apply btn bg-signal text-white hover:bg-signal-deep active:scale-[0.98]; }
+  .btn-light { @apply btn bg-paper text-ink hover:bg-white active:scale-[0.98]; }
+  .btn-ghost { @apply btn border bg-transparent text-fg hairline hover:bg-fg/[0.06]; }
+  .btn-icon { @apply inline-flex h-11 w-11 items-center justify-center rounded border bg-card/60 text-fg backdrop-blur transition hairline hover:bg-fg/10; }
+
+  /* Formulários */
+  .field-label { @apply mb-1.5 block text-xs font-medium text-muted; }
+  .field {
+    @apply block min-h-[44px] w-full rounded border bg-card px-3.5 text-[15px] text-fg placeholder:text-muted/70 transition hairline focus:border-signal focus:outline-none focus:ring-2 focus:ring-signal/30;
+  }
+  .field[aria-invalid='true'] { @apply border-danger ring-danger/30; }
+  textarea.field { @apply py-3; }
+  select.field {
+    @apply appearance-none bg-no-repeat pr-10;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23A5ADBD' stroke-width='1.6' viewBox='0 0 12 12'%3E%3Cpath d='m3 4.5 3 3 3-3'/%3E%3C/svg%3E");
+    background-position: right 0.9rem center;
+  }
+  .field-error { @apply mt-1.5 text-xs text-danger; }
+
+  .chip { @apply inline-flex items-center gap-1.5 rounded-sm border px-2 py-1 font-mono text-[10.5px] uppercase tracking-[0.12em] hairline; }
+
+  /* Grade de "papel milimetrado" usada nas áreas técnicas */
+  .blueprint-grid {
+    background-image:
+      linear-gradient(rgb(var(--line) / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--line) / 0.05) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .skeleton {
+    @apply rounded bg-fg/[0.06];
+    background-image: linear-gradient(90deg, transparent, rgb(var(--line) / 0.06), transparent);
+    background-size: 400px 100%;
+    background-repeat: no-repeat;
+    animation: shimmer 1.6s linear infinite;
+  }
+}
+
+/* ---------- View Transitions (navegação entre páginas) ---------- */
+@supports (view-transition-name: none) {
+  ::view-transition-old(root) { animation: 260ms cubic-bezier(0.4, 0, 1, 1) both vt-out; }
+  ::view-transition-new(root) { animation: 520ms cubic-bezier(0.22, 1, 0.36, 1) both vt-in; }
+  ::view-transition-group(*) { animation-duration: 620ms; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+  @keyframes vt-out { to { opacity: 0; transform: translateY(-8px); } }
+  @keyframes vt-in { from { opacity: 0; transform: translateY(14px); } }
+}
+
+/* Movimento reduzido: pelo sistema ou pelo botão "Reduzir efeitos" (data-motion="reduced") */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
+html[data-motion='reduced'] *, html[data-motion='reduced'] *::before, html[data-motion='reduced'] *::after {
+  animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important;
+}
+html[data-motion='reduced']::view-transition-group(*),
+html[data-motion='reduced']::view-transition-old(*),
+html[data-motion='reduced']::view-transition-new(*) { animation: none !important; }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
