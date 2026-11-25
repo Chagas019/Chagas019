@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Museum Ecclesiae — Museu digital da Igreja Católica</title>
+<meta name="description" content="Museu digital dedicado à história, à arte, à cultura e ao patrimônio da Igreja Católica.">
+<meta name="theme-color" content="#efe6d8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='16' fill='%232a1d16'/%3E%3Cpath d='M16 7v18M10 13h12' stroke='%23efe6d8' stroke-width='2.4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..900,0..100,0..1;1,9..144,400..700,0..100,0..1&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="home">
+<a class="skip" href="#content">Pular para o conteúdo</a>
+<header id="site-header"></header>
+<main id="content" tabindex="-1">
+  <section class="stage" id="stage" aria-label="Apresentação do museu"><div class="stage-sticky"></div></section>
+
+  <section class="section"><div class="wrap manifesto">
+    <h2 class="display reveal">Um museu<br>sem <span class="terra">paredes</span></h2>
+    <div class="reveal">
+      <p>Museum Ecclesiae reúne, em um só percurso, obras de arte sacra, a vida dos santos e os acontecimentos que formaram a Igreja ao longo de dois milênios.</p>
+      <p class="credit">Cada peça traz autoria, data, local de guarda e a fonte da imagem. Nenhuma informação sem referência.</p>
+    </div>
+  </div></section>
+
+  <section class="section" style="padding-top:0" aria-labelledby="featured-h"><h2 class="sr-only" id="featured-h">Exposição em destaque</h2><div class="wrap feature" id="featured"></div></section>
+
+  <section class="section" aria-labelledby="col-h"><div class="wrap">
+    <div class="strip-head reveal"><div><p class="kicker">Acervo</p><h2 class="display" id="col-h">Coleções</h2></div><a class="pill" href="arte-sacra.html">Ver todo o acervo</a></div>
+    <ul class="index-list" id="collections"></ul>
+  </div></section>
+
+  <section class="section" aria-labelledby="hl-h">
+    <div class="wrap strip-head reveal"><div><p class="kicker">Destaques artísticos</p><h2 class="display" id="hl-h">Obras-<span class="terra">primas</span></h2></div>
+      <div class="strip-ctrl"><button class="circle" data-strip="-1" aria-label="Rolar para a esquerda"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M14 8H2M7 3 2 8l5 5"/></svg></button><button class="circle" data-strip="1" aria-label="Rolar para a direita"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 8h12M9 3l5 5-5 5"/></svg></button></div></div>
+    <div class="strip" id="strip"></div>
+  </section>
+
+  <section class="section" aria-labelledby="hist-h"><div class="wrap">
+    <div class="strip-head reveal"><div><p class="kicker">Destaques históricos</p><h2 class="display" id="hist-h">Vinte <span class="terra">séculos</span></h2></div><a class="pill" href="historia.html">Linha do tempo completa</a></div>
+    <div class="years reveal" id="years"></div>
+  </div></section>
+</main>
+<footer id="site-footer"></footer>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
