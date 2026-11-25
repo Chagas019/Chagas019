@@ -138,12 +138,13 @@
     if (!LB.el) lbBuild();
     LB.list = list; LB.i = i || 0; LB.last = document.activeElement;
     LB.el.hidden = false; lbRender();
-    requestAnimationFrame(function () { LB.el.classList.add("open"); $(".lb-close", LB.el).focus(); });
+    void LB.el.offsetWidth; // força o layout para a transição de entrada
+    LB.el.classList.add("open"); $(".lb-close", LB.el).focus();
     document.body.style.overflow = "hidden";
   }
   function lbClose() {
     LB.el.classList.remove("open"); document.body.style.overflow = "";
-    setTimeout(function () { LB.el.hidden = true; }, 400);
+    setTimeout(function () { if (!LB.el.classList.contains("open")) LB.el.hidden = true; }, 400);
     if (LB.last && LB.last.focus) LB.last.focus();
   }
   function lbGo(d) { LB.i = (LB.i + d + LB.list.length) % LB.list.length; lbRender(); }
@@ -290,7 +291,7 @@
      ========================================================= */
   function exposicoes() {
     var id = param("e"), root = $("#content");
-    var ex = id && D.exhibitions.filter(function (x) { return x.id === id; })[0];
+    var ex = id && D.exhibitions.filter(function (x) { return x.id === id && arts(x.artworks).length; })[0];
     if (!ex) {
       if (id) history.replaceState(null, "", "exposicoes.html");
       root.innerHTML =

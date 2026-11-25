@@ -64,7 +64,7 @@ const ok = (c, m) => { if (c) oks++; else { fails++; console.log("FALHA:", m); }
     ok(await pg.locator(".lightbox.open").count() === 1, "lightbox não abre"); await pg.keyboard.press("ArrowRight");
     ok((await pg.locator(".lb-info .kicker").textContent()).startsWith("2 /"), "lightbox não avança");
     await pg.keyboard.press("Escape"); await pg.waitForTimeout(450); ok(await pg.locator(".lightbox.open").count() === 0, "lightbox não fecha");
-    await pg.goto(base + "exposicoes.html?e=" + D.exhibitions[0].id);
+    await pg.goto(base + "exposicoes.html?e=" + D.exhibitions.find(e => e.artworks.every(i => ids.has(i)) && e.artworks.length > 2).id);
     const t1 = await pg.locator("#v-piece h2").textContent(); await pg.click("#v-next"); await pg.waitForTimeout(400);
     ok(t1 !== await pg.locator("#v-piece h2").textContent(), "exposição: próxima não muda"); ok(/&p=2/.test(pg.url()), "exposição: URL não atualiza");
     await pg.click("#v-prev"); await pg.waitForTimeout(400); ok(t1 === await pg.locator("#v-piece h2").textContent(), "exposição: anterior falhou");
