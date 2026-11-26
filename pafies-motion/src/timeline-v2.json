@@ -1,0 +1,1376 @@
+{
+ "$comment": "FONTE ÚNICA DE TEMPO da V2 (docs/04-briefing-v2.md). Frames absolutos a 30 fps, 120 BPM (beat=15 f). Lido por src/timeline-v2.ts e scripts/gerar_trilha.py --timeline src/timeline-v2.json. Cortes secos (overlapIn 0).",
+ "version": 2,
+ "fps": 30,
+ "bpm": 120,
+ "beatFrames": 15,
+ "barFrames": 60,
+ "beatsPerBar": 4,
+ "durationInFrames": 720,
+ "width": 1920,
+ "height": 1080,
+ "scenes": [
+  {
+   "id": "V1",
+   "name": "E aí",
+   "from": 0,
+   "to": 119,
+   "durationInFrames": 120,
+   "overlapIn": 0,
+   "section": "intro",
+   "bg": "#FF6A13",
+   "text": "E AÍ,"
+  },
+  {
+   "id": "V2",
+   "name": "Preparados",
+   "from": 120,
+   "to": 299,
+   "durationInFrames": 180,
+   "overlapIn": 0,
+   "section": "groove",
+   "bg": "#1F5BFF",
+   "text": "ESTÃO PREPARADOS"
+  },
+  {
+   "id": "V3",
+   "name": "10ª gincana",
+   "from": 300,
+   "to": 479,
+   "durationInFrames": 180,
+   "overlapIn": 0,
+   "section": "build",
+   "bg": "#FF6A13",
+   "text": "PARA A 10ª GINCANA?"
+  },
+  {
+   "id": "V4",
+   "name": "Tá chegando",
+   "from": 480,
+   "to": 599,
+   "durationInFrames": 120,
+   "overlapIn": 0,
+   "section": "drop",
+   "bg": "#2EC4D6",
+   "text": "TÁ CHEGANDO, HEIN?"
+  },
+  {
+   "id": "V5",
+   "name": "Selo",
+   "from": 600,
+   "to": 719,
+   "durationInFrames": 120,
+   "overlapIn": 0,
+   "section": "finale",
+   "bg": "#0B1A4A",
+   "text": ""
+  }
+ ],
+ "sections": [
+  {
+   "id": "intro",
+   "from": 0,
+   "to": 119,
+   "bars": [
+    1,
+    2
+   ]
+  },
+  {
+   "id": "groove",
+   "from": 120,
+   "to": 329,
+   "bars": [
+    3,
+    6
+   ]
+  },
+  {
+   "id": "build",
+   "from": 330,
+   "to": 389,
+   "bars": [
+    6,
+    7
+   ]
+  },
+  {
+   "id": "drop",
+   "from": 390,
+   "to": 599,
+   "bars": [
+    7,
+    10
+   ]
+  },
+  {
+   "id": "finale",
+   "from": 600,
+   "to": 719,
+   "bars": [
+    11,
+    12
+   ]
+  }
+ ],
+ "backgrounds": [
+  {
+   "frame": 0,
+   "color": "#FF6A13"
+  },
+  {
+   "frame": 120,
+   "color": "#1F5BFF"
+  },
+  {
+   "frame": 300,
+   "color": "#22E04A",
+   "note": "verde chapado do GIF do cliente (corrida do Corredor)"
+  },
+  {
+   "frame": 390,
+   "color": "#0B1A4A"
+  },
+  {
+   "frame": 480,
+   "color": "#FF7A00",
+   "note": "close extremo do respingo (forma enche a tela)"
+  },
+  {
+   "frame": 492,
+   "color": "#2EC4D6"
+  },
+  {
+   "frame": 600,
+   "color": "#0B1A4A"
+  }
+ ],
+ "music": {
+  "style": "v2",
+  "key": "D major",
+  "progression": [
+   "D",
+   "A",
+   "Bm",
+   "G"
+  ],
+  "finalChord": {
+   "frame": 660,
+   "chord": "Dadd9"
+  },
+  "brass": "stabs de metais sintéticos nos impactos (cues 'stab', note=acorde)",
+  "loudness": {
+   "lufs": -14.0,
+   "truePeakDb": -1.0
+  }
+ },
+ "groups": {
+  "IMPACTS": [
+   30,
+   45,
+   120,
+   225,
+   300,
+   390,
+   405,
+   480,
+   540,
+   600,
+   660
+  ],
+  "CUTS": [
+   120,
+   300,
+   390,
+   480,
+   600
+  ],
+  "WHOOSHES": [
+   2,
+   470
+  ],
+  "RISERS": [
+   [
+    330,
+    386
+   ]
+  ],
+  "SILENCE": [
+   [
+    386,
+    389
+   ]
+  ],
+  "DROP": 390,
+  "FINAL_HIT": 660,
+  "TYPE_BEATS": [
+   495.0,
+   498.75,
+   502.5,
+   506.25,
+   510.0,
+   513.75,
+   517.5,
+   521.25,
+   525.0,
+   528.75,
+   532.5
+  ],
+  "TEXT": {
+   "E AÍ,": 45,
+   "ESTÃO PREPARADOS": 225,
+   "PARA A": 330,
+   "10ª": 390,
+   "GINCANA?": 405,
+   "TÁ CHEGANDO,": 495,
+   "HEIN?": 540,
+   "SELO": 600
+  }
+ },
+ "cues": [
+  {
+   "frame": 0,
+   "type": "kick",
+   "intensity": 0.5
+  },
+  {
+   "frame": 2,
+   "type": "whoosh",
+   "intensity": 0.55,
+   "duration": 18,
+   "label": "linha branca corta a diagonal"
+  },
+  {
+   "frame": 7.5,
+   "type": "hat",
+   "intensity": 0.22
+  },
+  {
+   "frame": 22.5,
+   "type": "hat",
+   "intensity": 0.22
+  },
+  {
+   "frame": 30,
+   "type": "impact",
+   "intensity": 0.75,
+   "peak": true,
+   "label": "personagem explode em respingos"
+  },
+  {
+   "frame": 30,
+   "type": "kick",
+   "intensity": 0.6
+  },
+  {
+   "frame": 30,
+   "type": "stab",
+   "intensity": 0.75,
+   "note": "D"
+  },
+  {
+   "frame": 37.5,
+   "type": "hat",
+   "intensity": 0.22
+  },
+  {
+   "frame": 45,
+   "type": "impact",
+   "intensity": 0.8,
+   "peak": true,
+   "label": "E AÍ, (pop-word)"
+  },
+  {
+   "frame": 45,
+   "type": "stab",
+   "intensity": 0.8,
+   "note": "D"
+  },
+  {
+   "frame": 52.5,
+   "type": "hat",
+   "intensity": 0.22
+  },
+  {
+   "frame": 60,
+   "type": "kick",
+   "intensity": 0.55
+  },
+  {
+   "frame": 67.5,
+   "type": "hat",
+   "intensity": 0.3
+  },
+  {
+   "frame": 75,
+   "type": "clap",
+   "intensity": 0.45
+  },
+  {
+   "frame": 82.5,
+   "type": "hat",
+   "intensity": 0.3
+  },
+  {
+   "frame": 90,
+   "type": "kick",
+   "intensity": 0.6
+  },
+  {
+   "frame": 90,
+   "type": "reverse_cymbal_start",
+   "intensity": 0.7,
+   "end": 120
+  },
+  {
+   "frame": 97.5,
+   "type": "hat",
+   "intensity": 0.3
+  },
+  {
+   "frame": 105,
+   "type": "clap",
+   "intensity": 0.55
+  },
+  {
+   "frame": 112.5,
+   "type": "hat",
+   "intensity": 0.3
+  },
+  {
+   "frame": 120,
+   "type": "crash",
+   "intensity": 0.8
+  },
+  {
+   "frame": 120,
+   "type": "cut",
+   "intensity": 1.0,
+   "peak": true,
+   "label": "CORTE → azul elétrico · anel"
+  },
+  {
+   "frame": 120,
+   "type": "impact",
+   "intensity": 0.9,
+   "peak": true,
+   "label": "CORTE → azul elétrico · anel"
+  },
+  {
+   "frame": 120,
+   "type": "kick",
+   "intensity": 1.0
+  },
+  {
+   "frame": 120,
+   "type": "reverse_cymbal_end"
+  },
+  {
+   "frame": 120,
+   "type": "stab",
+   "intensity": 0.9,
+   "note": "D"
+  },
+  {
+   "frame": 127.5,
+   "type": "hat",
+   "intensity": 0.45
+  },
+  {
+   "frame": 135,
+   "type": "clap",
+   "intensity": 0.9
+  },
+  {
+   "frame": 135,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 135,
+   "type": "snare",
+   "intensity": 0.8
+  },
+  {
+   "frame": 142.5,
+   "type": "hat",
+   "intensity": 0.45
+  },
+  {
+   "frame": 150,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 157.5,
+   "type": "hat",
+   "intensity": 0.45
+  },
+  {
+   "frame": 165,
+   "type": "clap",
+   "intensity": 0.9
+  },
+  {
+   "frame": 165,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 165,
+   "type": "snare",
+   "intensity": 0.8
+  },
+  {
+   "frame": 172.5,
+   "type": "hat",
+   "intensity": 0.45
+  },
+  {
+   "frame": 180,
+   "type": "kick",
+   "intensity": 1.0
+  },
+  {
+   "frame": 187.5,
+   "type": "hat",
+   "intensity": 0.45
+  },
+  {
+   "frame": 195,
+   "type": "clap",
+   "intensity": 0.9
+  },
+  {
+   "frame": 195,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 195,
+   "type": "snare",
+   "intensity": 0.8
+  },
+  {
+   "frame": 202.5,
+   "type": "hat",
+   "intensity": 0.45
+  },
+  {
+   "frame": 210,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 217.5,
+   "type": "hat",
+   "intensity": 0.45
+  },
+  {
+   "frame": 225,
+   "type": "clap",
+   "intensity": 0.9
+  },
+  {
+   "frame": 225,
+   "type": "impact",
+   "intensity": 0.75,
+   "peak": true,
+   "label": "anel trava de frente"
+  },
+  {
+   "frame": 225,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 225,
+   "type": "snare",
+   "intensity": 0.8
+  },
+  {
+   "frame": 225,
+   "type": "stab",
+   "intensity": 0.75,
+   "note": "Bm"
+  },
+  {
+   "frame": 228.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 232.5,
+   "type": "hat",
+   "intensity": 0.45
+  },
+  {
+   "frame": 236.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 240,
+   "type": "kick",
+   "intensity": 1.0
+  },
+  {
+   "frame": 243.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 247.5,
+   "type": "hat",
+   "intensity": 0.45
+  },
+  {
+   "frame": 251.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 255,
+   "type": "clap",
+   "intensity": 0.9
+  },
+  {
+   "frame": 255,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 255,
+   "type": "snare",
+   "intensity": 0.8
+  },
+  {
+   "frame": 258.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 262.5,
+   "type": "hat",
+   "intensity": 0.45
+  },
+  {
+   "frame": 266.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 270,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 273.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 277.5,
+   "type": "hat",
+   "intensity": 0.45
+  },
+  {
+   "frame": 281.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 285,
+   "type": "clap",
+   "intensity": 0.9
+  },
+  {
+   "frame": 285,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 285,
+   "type": "snare",
+   "intensity": 0.8
+  },
+  {
+   "frame": 288.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 292.5,
+   "type": "hat",
+   "intensity": 0.45
+  },
+  {
+   "frame": 296.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 300,
+   "type": "crash",
+   "intensity": 0.6
+  },
+  {
+   "frame": 300,
+   "type": "cut",
+   "intensity": 1.0,
+   "peak": true,
+   "label": "CORTE → laranja · corrida"
+  },
+  {
+   "frame": 300,
+   "type": "impact",
+   "intensity": 0.9,
+   "peak": true,
+   "label": "CORTE → laranja · corrida"
+  },
+  {
+   "frame": 300,
+   "type": "kick",
+   "intensity": 1.0
+  },
+  {
+   "frame": 300,
+   "type": "stab",
+   "intensity": 0.9,
+   "note": "G"
+  },
+  {
+   "frame": 303.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 307.5,
+   "type": "hat",
+   "intensity": 0.45
+  },
+  {
+   "frame": 311.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 315,
+   "type": "clap",
+   "intensity": 0.9
+  },
+  {
+   "frame": 315,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 315,
+   "type": "snare",
+   "intensity": 0.8
+  },
+  {
+   "frame": 318.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 322.5,
+   "type": "hat",
+   "intensity": 0.45
+  },
+  {
+   "frame": 326.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 330,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 330,
+   "type": "riser_start",
+   "intensity": 1.0,
+   "end": 386,
+   "label": "riser → drop"
+  },
+  {
+   "frame": 333.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 337.5,
+   "type": "hat",
+   "intensity": 0.45
+  },
+  {
+   "frame": 341.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 345,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 345,
+   "type": "snare_roll_start",
+   "intensity": 0.9,
+   "end": 386
+  },
+  {
+   "frame": 348.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 352.5,
+   "type": "hat",
+   "intensity": 0.45
+  },
+  {
+   "frame": 356.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 360,
+   "type": "kick",
+   "intensity": 1.0
+  },
+  {
+   "frame": 375,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 386,
+   "type": "riser_end"
+  },
+  {
+   "frame": 386,
+   "type": "silence_start",
+   "end": 389,
+   "label": "silêncio seco 4 f"
+  },
+  {
+   "frame": 386,
+   "type": "snare_roll_end"
+  },
+  {
+   "frame": 390,
+   "type": "boom",
+   "intensity": 1.0
+  },
+  {
+   "frame": 390,
+   "type": "crash",
+   "intensity": 1.0
+  },
+  {
+   "frame": 390,
+   "type": "cut",
+   "intensity": 1.0,
+   "peak": true,
+   "label": "CORTE → marinho · 10ª (impacto máx)"
+  },
+  {
+   "frame": 390,
+   "type": "drop",
+   "intensity": 1.0,
+   "peak": true,
+   "label": "DROP"
+  },
+  {
+   "frame": 390,
+   "type": "impact",
+   "intensity": 1.0,
+   "peak": true,
+   "label": "CORTE → marinho · 10ª (impacto máx)"
+  },
+  {
+   "frame": 390,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 390,
+   "type": "silence_end"
+  },
+  {
+   "frame": 390,
+   "type": "stab",
+   "intensity": 1.0,
+   "note": "D"
+  },
+  {
+   "frame": 393.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 397.5,
+   "type": "open_hat",
+   "intensity": 0.55
+  },
+  {
+   "frame": 401.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 405,
+   "type": "clap",
+   "intensity": 0.9
+  },
+  {
+   "frame": 405,
+   "type": "impact",
+   "intensity": 0.9,
+   "peak": true,
+   "label": "GINCANA? slam"
+  },
+  {
+   "frame": 405,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 405,
+   "type": "snare",
+   "intensity": 0.8
+  },
+  {
+   "frame": 405,
+   "type": "stab",
+   "intensity": 0.9,
+   "note": "A"
+  },
+  {
+   "frame": 408.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 412.5,
+   "type": "open_hat",
+   "intensity": 0.55
+  },
+  {
+   "frame": 416.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 420,
+   "type": "kick",
+   "intensity": 1.0
+  },
+  {
+   "frame": 423.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 427.5,
+   "type": "open_hat",
+   "intensity": 0.55
+  },
+  {
+   "frame": 431.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 435,
+   "type": "clap",
+   "intensity": 0.9
+  },
+  {
+   "frame": 435,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 435,
+   "type": "snare",
+   "intensity": 0.8
+  },
+  {
+   "frame": 438.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 442.5,
+   "type": "open_hat",
+   "intensity": 0.55
+  },
+  {
+   "frame": 446.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 450,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 453.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 457.5,
+   "type": "open_hat",
+   "intensity": 0.55
+  },
+  {
+   "frame": 461.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 465,
+   "type": "clap",
+   "intensity": 0.9
+  },
+  {
+   "frame": 465,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 465,
+   "type": "snare",
+   "intensity": 0.8
+  },
+  {
+   "frame": 468.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 470,
+   "type": "whoosh",
+   "intensity": 1.0,
+   "duration": 20,
+   "label": "zoom brutal de dentro do respingo"
+  },
+  {
+   "frame": 472.5,
+   "type": "open_hat",
+   "intensity": 0.55
+  },
+  {
+   "frame": 476.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 480,
+   "type": "cut",
+   "intensity": 1.0,
+   "peak": true,
+   "label": "whoosh/zoom (extremeZoomOut)"
+  },
+  {
+   "frame": 480,
+   "type": "impact",
+   "intensity": 0.9,
+   "peak": true,
+   "label": "whoosh/zoom (extremeZoomOut)"
+  },
+  {
+   "frame": 480,
+   "type": "kick",
+   "intensity": 1.0
+  },
+  {
+   "frame": 480,
+   "type": "stab",
+   "intensity": 0.9,
+   "note": "Bm"
+  },
+  {
+   "frame": 483.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 487.5,
+   "type": "open_hat",
+   "intensity": 0.55
+  },
+  {
+   "frame": 491.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 495,
+   "type": "clap",
+   "intensity": 0.9
+  },
+  {
+   "frame": 495,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 495,
+   "type": "snare",
+   "intensity": 0.8
+  },
+  {
+   "frame": 495.0,
+   "type": "tick",
+   "intensity": 0.55,
+   "label": "letra 1"
+  },
+  {
+   "frame": 498.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 498.75,
+   "type": "tick",
+   "intensity": 0.55,
+   "label": "letra 2"
+  },
+  {
+   "frame": 502.5,
+   "type": "open_hat",
+   "intensity": 0.55
+  },
+  {
+   "frame": 502.5,
+   "type": "tick",
+   "intensity": 0.55,
+   "label": "letra 3"
+  },
+  {
+   "frame": 506.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 506.25,
+   "type": "tick",
+   "intensity": 0.55,
+   "label": "letra 4"
+  },
+  {
+   "frame": 510,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 510.0,
+   "type": "tick",
+   "intensity": 0.55,
+   "label": "letra 5"
+  },
+  {
+   "frame": 513.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 513.75,
+   "type": "tick",
+   "intensity": 0.55,
+   "label": "letra 6"
+  },
+  {
+   "frame": 517.5,
+   "type": "open_hat",
+   "intensity": 0.55
+  },
+  {
+   "frame": 517.5,
+   "type": "tick",
+   "intensity": 0.55,
+   "label": "letra 7"
+  },
+  {
+   "frame": 521.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 521.25,
+   "type": "tick",
+   "intensity": 0.55,
+   "label": "letra 8"
+  },
+  {
+   "frame": 525,
+   "type": "clap",
+   "intensity": 0.9
+  },
+  {
+   "frame": 525,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 525,
+   "type": "snare",
+   "intensity": 0.8
+  },
+  {
+   "frame": 525.0,
+   "type": "tick",
+   "intensity": 0.55,
+   "label": "letra 9"
+  },
+  {
+   "frame": 528.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 528.75,
+   "type": "tick",
+   "intensity": 0.55,
+   "label": "letra 10"
+  },
+  {
+   "frame": 532.5,
+   "type": "open_hat",
+   "intensity": 0.55
+  },
+  {
+   "frame": 532.5,
+   "type": "tick",
+   "intensity": 0.55,
+   "label": "letra 11"
+  },
+  {
+   "frame": 536.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 540,
+   "type": "impact",
+   "intensity": 0.85,
+   "peak": true,
+   "label": "HEIN? overshoot"
+  },
+  {
+   "frame": 540,
+   "type": "kick",
+   "intensity": 1.0
+  },
+  {
+   "frame": 540,
+   "type": "stab",
+   "intensity": 0.85,
+   "note": "G"
+  },
+  {
+   "frame": 543.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 547.5,
+   "type": "open_hat",
+   "intensity": 0.55
+  },
+  {
+   "frame": 551.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 555,
+   "type": "clap",
+   "intensity": 0.9
+  },
+  {
+   "frame": 555,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 555,
+   "type": "snare",
+   "intensity": 0.8
+  },
+  {
+   "frame": 558.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 562.5,
+   "type": "open_hat",
+   "intensity": 0.55
+  },
+  {
+   "frame": 566.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 570,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 573.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 577.5,
+   "type": "open_hat",
+   "intensity": 0.55
+  },
+  {
+   "frame": 581.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 585,
+   "type": "clap",
+   "intensity": 0.9
+  },
+  {
+   "frame": 585,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 585,
+   "type": "snare",
+   "intensity": 0.8
+  },
+  {
+   "frame": 588.75,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 592.5,
+   "type": "open_hat",
+   "intensity": 0.55
+  },
+  {
+   "frame": 596.25,
+   "type": "hat",
+   "intensity": 0.25
+  },
+  {
+   "frame": 600,
+   "type": "crash",
+   "intensity": 0.8
+  },
+  {
+   "frame": 600,
+   "type": "cut",
+   "intensity": 1.0,
+   "peak": true,
+   "label": "CORTE → marinho · selo"
+  },
+  {
+   "frame": 600,
+   "type": "impact",
+   "intensity": 0.9,
+   "peak": true,
+   "label": "CORTE → marinho · selo"
+  },
+  {
+   "frame": 600,
+   "type": "kick",
+   "intensity": 1.0
+  },
+  {
+   "frame": 600,
+   "type": "stab",
+   "intensity": 0.9,
+   "note": "D"
+  },
+  {
+   "frame": 607.5,
+   "type": "hat",
+   "intensity": 0.35
+  },
+  {
+   "frame": 615,
+   "type": "clap",
+   "intensity": 0.9
+  },
+  {
+   "frame": 615,
+   "type": "snare",
+   "intensity": 0.8
+  },
+  {
+   "frame": 622.5,
+   "type": "hat",
+   "intensity": 0.35
+  },
+  {
+   "frame": 630,
+   "type": "kick",
+   "intensity": 0.85
+  },
+  {
+   "frame": 637.5,
+   "type": "hat",
+   "intensity": 0.35
+  },
+  {
+   "frame": 650,
+   "type": "snare",
+   "intensity": 0.5
+  },
+  {
+   "frame": 652.5,
+   "type": "snare",
+   "intensity": 0.62
+  },
+  {
+   "frame": 655,
+   "type": "snare",
+   "intensity": 0.74
+  },
+  {
+   "frame": 657.5,
+   "type": "snare",
+   "intensity": 0.86
+  },
+  {
+   "frame": 660,
+   "type": "final_hit",
+   "intensity": 1.0,
+   "peak": true,
+   "label": "hit final"
+  },
+  {
+   "frame": 660,
+   "type": "stab",
+   "intensity": 1.0,
+   "note": "D"
+  },
+  {
+   "frame": 690,
+   "type": "fade_start"
+  },
+  {
+   "frame": 719,
+   "type": "fade_end"
+  }
+ ]
+}
