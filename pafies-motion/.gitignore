@@ -5,3 +5,5 @@ out/frames/
 out/qa/
 out/teste*.mp4
 out/*.mp3
+out/ref-frames*/
+out/*.png
