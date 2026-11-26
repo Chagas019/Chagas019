@@ -1,11 +1,11 @@
 /**
  * V3 "PARA A 10ª GINCANA?" (300–479).
- * 300–389 laranja chapado: câmera baixa (ref 2) — personagem correndo em loop, on twos, com
- *   pinceladas de velocidade radiais (tons do laranja + brancas/azuis). "PARA A" sobe em 330.
+ * 300–389 verde chapado (fiel ao GIF do cliente): câmera baixa — o Corredor (personagem do cliente)
+ *   em loop, com pinceladas de velocidade radiais (tons do verde + brancas). "PARA A" sobe em 330.
  *   386–389 silêncio: tudo congela (hold) antes do drop.
  * 390 corte seco p/ marinho: "10ª" GIGANTE em ouro bate (impacto máx) + respingos laranja;
  *   "PARA A" fica em cima, pequeno; 405 "GINCANA?" slam branco. Frase inteira legível 405–479.
- *   440–476 (vertical): o personagem atravessa correndo pela linha embaixo, deixando gotas.
+ *   436–476 (vertical): o Corredor atravessa pela linha embaixo, com pinceladas atrás.
  */
 import React from 'react';
 import { AbsoluteFill, useVideoConfig } from 'remotion';
@@ -13,19 +13,19 @@ import {
   BG_V2,
   INK_V2,
   LinhaBranca,
-  PERSONAGEM_CORES,
-  PersonagemLiquido,
   PinceladasVelocidade,
   Splash,
   TONE_V2,
   linhaReta,
-  runCycle,
 } from '../design/v2';
 import { FONT_CONDENSED, FONT_DISPLAY } from '../design/fonts';
 import { EXPO_OUT, GELATINA, KineticText, mix, prog, springAt, squashAt, useHoldPose } from '../motion';
 import { useLayout } from '../layout';
 import { TEXT_V2 } from '../content-v2';
-import { Cam, Flat, at, hardShadow, useV2Frame, type SceneV2Props } from './shared';
+import { Cam, Corredor, Flat, at, hardShadow, useV2Frame, type SceneV2Props } from './shared';
+
+/** Verde chapado do GIF do cliente — só nesta cena (corrida), com pinceladas em tons do próprio verde. */
+const GREEN = { bg: '#22E04A', light: '#5CF27A', dark: '#14C23C', deep: '#0FA532' } as const;
 
 const DROP = 390;
 const GINC = 405;
@@ -43,25 +43,24 @@ export const V3DezGincana: React.FC<SceneV2Props> = ({ layout }) => {
   const rel = (abs: number) => abs - 300;
 
   if (f < DROP) {
-    // ───────────── corrida em câmera baixa
-    const runT = Math.floor(((hp - 300) / 16) * 8) / 8; // 8 poses por passada, passada = 16 f
-    const center = isV ? { x: W * 0.5, y: H * 0.74 } : { x: W * 0.34, y: H * 0.8 };
-    const size = isV ? 820 : 620;
-    const bob = (hp % 8 < 4 ? -1 : 1) * 6;
-    const push = mix(0.92, 1.06, prog(fz, 300, 386));
+    // ───────────── corrida em câmera baixa (fiel ao GIF do cliente: verde chapado + pinceladas)
+    const center = isV ? { x: W * 0.5, y: H * 0.6 } : { x: W * 0.36, y: H * 0.52 };
+    const h = isV ? 1400 : 1080;
+    const push = mix(0.94, 1.08, prog(fz, 300, 386));
+    const bob = Math.floor(fz / 3) % 2 === 0 ? 0 : -10;
     return (
       <AbsoluteFill style={{ overflow: 'hidden' }}>
-        <Flat frame={f} color={BG_V2.orange} />
+        <Flat frame={f} color={GREEN.bg} />
         <PinceladasVelocidade
           width={W}
           height={H}
           center={center}
           progress={(hp - 300) / 24}
           seed={seed}
-          count={70}
-          maxWidth={isV ? 150 : 140}
-          innerRadius={160}
-          colors={[TONE_V2.strokeOnOrangeLight, TONE_V2.strokeOnOrangeDark, '#FF9A52', TONE_V2.strokeOnOrangeDark]}
+          count={72}
+          maxWidth={isV ? 160 : 150}
+          innerRadius={140}
+          colors={[GREEN.light, GREEN.dark, GREEN.light, GREEN.deep]}
         />
         <PinceladasVelocidade
           width={W}
@@ -69,27 +68,22 @@ export const V3DezGincana: React.FC<SceneV2Props> = ({ layout }) => {
           center={center}
           progress={(hp - 300) / 18 + 0.37}
           seed={seed + 50}
-          count={16}
-          maxWidth={46}
-          innerRadius={380}
-          colors={[INK_V2.white, INK_V2.blue, INK_V2.white]}
+          count={14}
+          maxWidth={40}
+          innerRadius={420}
+          colors={[INK_V2.white, GREEN.light, INK_V2.white]}
         />
         <Cam frame={fz} impacts={[300]} amp={12} scale={push} originX={center.x} originY={center.y}>
-          <div style={{ position: 'absolute', left: 0, top: bob }}>
-            <PersonagemLiquido
-              size={size}
-              pose={runCycle(runT)}
-              lowAngle={1}
-              seed={seed}
-              drips={1}
-              colors={{ ...PERSONAGEM_CORES.sobreLaranja, ground: null }}
-              x={center.x + (isV ? -40 : 0)}
-              y={center.y + size * 0.28}
-            />
-          </div>
+          <Corredor
+            x={center.x + (isV ? 60 : 0)}
+            y={(isV ? H * 0.98 : H * 1.04) + bob}
+            height={h}
+            frame={fz}
+            framesPerPose={3}
+          />
         </Cam>
         {/* "PARA A" sobe em 330 (canto alto, fora do corpo) */}
-        <div style={at(isV ? cx : W * 0.72, isV ? 380 : 260)}>
+        <div style={at(isV ? cx : W * 0.76, isV ? 330 : 250)}>
           <KineticText
             text={TEXT_V2.paraA}
             mode="rise"
@@ -98,8 +92,8 @@ export const V3DezGincana: React.FC<SceneV2Props> = ({ layout }) => {
             fontFamily={FONT_CONDENSED}
             fontWeight={400}
             fontSize={isV ? 230 : 250}
-            color={INK_V2.white}
-            shadow={hardShadow(TONE_V2.orangeDeep, 10)}
+            color={INK_V2.navy}
+            shadow={hardShadow(INK_V2.white, 10)}
             letterSpacing="0.02em"
             seed="v3-para"
           />
@@ -121,7 +115,6 @@ export const V3DezGincana: React.FC<SceneV2Props> = ({ layout }) => {
   // personagem atravessa embaixo (440–476)
   const runP = prog(f, 436, 476);
   const runX = mix(-260, W + 260, runP);
-  const runT = Math.floor(((hp - 436) / 14) * 8) / 8;
   const lineE = prog(f, GINC + 2, GINC + 14, EXPO_OUT);
   const lineY = isV ? 1660 : 1000;
 
@@ -130,15 +123,20 @@ export const V3DezGincana: React.FC<SceneV2Props> = ({ layout }) => {
       <Flat frame={f} color={BG_V2.navy} />
       <Cam frame={f} impacts={[DROP, GINC]} amp={isV ? 26 : 22} dur={8}>
         {isV && f >= 436 && f < 478 && (
-          <PersonagemLiquido
-            size={isV ? 300 : 260}
-            pose={runCycle(runT)}
-            seed={seed}
-            drips={1}
-            colors={PERSONAGEM_CORES.sobreMarinho}
-            x={runX}
-            y={lineY + 40 - (runX / W) * 80}
-          />
+          <>
+            <PinceladasVelocidade
+              width={W}
+              height={H}
+              center={{ x: runX, y: lineY - 200 }}
+              progress={(f - 436) / 16}
+              seed={seed}
+              count={40}
+              maxWidth={70}
+              innerRadius={260}
+              colors={[TONE_V2.strokeOnNavyLight, '#1C3480']}
+            />
+            <Corredor x={runX} y={lineY + 40 - (runX / W) * 80} height={420} framesPerPose={2} />
+          </>
         )}
         {/* respingos laranja/ouro saindo de trás do 10ª */}
         {f < DROP + 34 && (

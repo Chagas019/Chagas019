@@ -1,9 +1,11 @@
 /**
  * V4 "TÁ CHEGANDO, HEIN?" (480–599).
  * 480: close EXTREMO dentro de um respingo (laranja/azul enche a tela) → zoom-out brutal (ref 1)
- *   revela o fundo turquesa chapado (492) com o personagem nascendo da poça.
+ *   revela o fundo turquesa chapado com a poça do respingo no chão.
  * 495–533 "TÁ CHEGANDO," entra letra a letra (type-beat, TYPE_BEATS_V2); 540 "HEIN?" pula com
- * overshoot e balança. O personagem aponta para o texto (520) e pula no "HEIN?" (548–578).
+ * overshoot e balança. No "HEIN?" o Corredor (personagem do cliente) ATRAVESSA a tela (528–568),
+ * pisa na poça exatamente em 540 (splash) com pinceladas de velocidade atrás; passa POR TRÁS do
+ * texto para não tirar a leitura.
  */
 import React from 'react';
 import { AbsoluteFill } from 'remotion';
@@ -11,22 +13,19 @@ import {
   BG_V2,
   INK_V2,
   LinhaBranca,
-  PERSONAGEM_CORES,
-  PersonagemLiquido,
+  PinceladasVelocidade,
+  Splash,
+  TONE_V2,
   blobPath,
   dropPath,
-  jumpPose,
-  lerpPose,
   linhaDiagonalArco,
-  pointPose,
   rng,
-  type PoseLiquida,
 } from '../design/v2';
 import { FONT_CONDENSED, FONT_DISPLAY } from '../design/fonts';
-import { EXPO_OUT, KineticText, TYPE_BEATS_V2, extremeZoomOutStyle, mix, prog, useHoldPose } from '../motion';
+import { EXPO_OUT, KineticText, TYPE_BEATS_V2, extremeZoomOutStyle, mix, prog } from '../motion';
 import { useLayout } from '../layout';
 import { TEXT_V2 } from '../content-v2';
-import { Cam, Flat, at, hardShadow, useV2Frame, type SceneV2Props } from './shared';
+import { Cam, Corredor, Flat, at, hardShadow, useV2Frame, type SceneV2Props } from './shared';
 
 const FROM = 480;
 const HEIN = 540;
@@ -69,29 +68,21 @@ export const V4Chegando: React.FC<SceneV2Props> = ({ layout }) => {
   const f = useV2Frame('V4');
   const L = useLayout(layout);
   const { W, H, isV, cx } = L;
-  const hp = useHoldPose(f, 12);
   const seed = Math.floor(f / 2);
   const rel = (abs: number) => abs - FROM;
   const beats = TYPE_BEATS_V2.map(rel);
 
   const ground = isV ? 1700 : 950;
   const charX = isV ? 300 : 330;
-  const size = isV ? 480 : 470;
   const pocaK = isV ? 1.15 : 1;
+  const pocaX = charX + 40 * pocaK;
 
-  // personagem: nasce da poça (494–512), aponta (516–534), pula no HEIN? (546–578), aponta de novo
-  let pose: PoseLiquida;
-  let melt = 0;
-  if (f < 512) {
-    melt = 1 - prog(hp, 494, 512, EXPO_OUT);
-    pose = jumpPose(0.88 + 0.12 * prog(hp, 500, 512));
-  } else if (f < 544) {
-    pose = lerpPose(jumpPose(1), pointPose(prog(hp, 516, 532)), prog(hp, 512, 518));
-  } else if (f < 580) {
-    pose = jumpPose(prog(hp, 544, 580));
-  } else {
-    pose = lerpPose(jumpPose(1), pointPose(prog(hp, 582, 594)), prog(hp, 580, 584));
-  }
+  // Corredor atravessa: pisa na poça em HEIN (540)
+  const speed = isV ? 58 : 78;
+  const runX = pocaX + (f - HEIN) * speed;
+  const runH = isV ? 900 : 820;
+  const running = runX > -runH && runX < W + runH;
+  const runY = (isV ? H + 60 : H + 70) + (Math.floor(f / 3) % 2 ? -8 : 0);
 
   // zoom-out de dentro do respingo: foco num ponto laranja da poça
   const focus = { x: charX + 60 * pocaK, y: ground - 4 };
@@ -112,16 +103,32 @@ export const V4Chegando: React.FC<SceneV2Props> = ({ layout }) => {
         <Flat frame={f} color={BG_V2.turquoise} />
         <Cam frame={f} impacts={[HEIN]} amp={16}>
           <LinhaBranca d={lineD} start={prog(f, 560, 590)} end={prog(f, 536, 560, EXPO_OUT)} thickness={8} width={W} height={H} />
-          <Poca x={charX + 40 * pocaK} y={ground} k={pocaK * mix(1, 0.75, prog(f, 494, 520))} seed={7} />
-          {f >= 494 && (
-            <PersonagemLiquido
-              size={size}
-              pose={pose}
-              melt={melt}
-              seed={seed}
-              colors={PERSONAGEM_CORES.sobreTurquesa}
-              x={charX}
+          <Poca x={pocaX} y={ground} k={pocaK * mix(1, 0.75, prog(f, 494, 520))} seed={7} />
+          {running && (
+            <>
+              <PinceladasVelocidade
+                width={W}
+                height={H}
+                center={{ x: runX, y: runY - runH * 0.5 }}
+                progress={(f - 520) / 14}
+                seed={seed}
+                count={48}
+                maxWidth={isV ? 110 : 100}
+                innerRadius={runH * 0.35}
+                colors={[TONE_V2.strokeOnTurquoiseLight, TONE_V2.groundOnTurquoise, TONE_V2.strokeOnTurquoiseLight]}
+              />
+              <Corredor x={runX} y={runY} height={runH} framesPerPose={2} />
+            </>
+          )}
+          {f >= HEIN && f < HEIN + 24 && (
+            <Splash
+              progress={prog(f, HEIN, HEIN + 24)}
+              seed={9}
+              x={pocaX}
               y={ground}
+              scale={isV ? 2.6 : 2.4}
+              count={30}
+              colors={{ main: INK_V2.blue, second: INK_V2.orange, lines: INK_V2.white }}
             />
           )}
           {isV ? (

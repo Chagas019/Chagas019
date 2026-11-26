@@ -4,8 +4,8 @@
  */
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame } from 'remotion';
-import { SCENE_V2, bgAt, shake, type SceneIdV2 } from '../motion';
-import type { LayoutMode } from '../layout';
+import { SCENE_V2, bgAt, shake, type SceneIdV2 } from '../../motion';
+import type { LayoutMode } from '../../layout';
 
 export type SceneV2Props = { layout?: LayoutMode };
 

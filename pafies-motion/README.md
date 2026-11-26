@@ -6,6 +6,42 @@ Filme de 38 s (1140 frames, 30 fps) em **Remotion 4.0.242 + React 18 + TypeScrip
 Documentos-fonte: `docs/01-direcao-criativa.md` (paleta, fontes, movimento) e
 `docs/02-storyboard.md` (cenas, frames, cue sheet, regras da vertical, checklist de QA).
 
+## V2 — Teaser (produto principal)
+
+A V1 (acima) foi reprovada pelo estilo; a **V2** segue a linguagem das referências e o roteiro novo
+(`docs/04-briefing-v2.md`): **24 s · 720 frames · 30 fps · 120 BPM**, trilha `public/trilha-v2.wav`.
+
+- Composições: **`PafiesTeaser`** (1920×1080) e **`PafiesTeaserVertical`** (1080×1920, recomposta),
+  no topo do Studio. Cenas isoladas em `CenasV2/` (`V1-EAi` … `V5-Selo`, + `-V`). A V1 ficou em `V1/`.
+- Roteiro (somente em `src/content-v2.ts`): "E AÍ," · "ESTÃO PREPARADOS" · "PARA A" + "10ª" (ouro
+  gigante) + "GINCANA?" · "TÁ CHEGANDO," + "HEIN?" · selo GINCANA / Solidária / PAFIES / 10ª EDIÇÃO.
+- Estilo: fundos **chapados** (sem degradê/vinheta/grão), cortes secos de cor no beat (`bgAt`,
+  `src/timeline-v2.json`), linha branca condutora, respingos (`Splash`), pinceladas de velocidade,
+  anel tipográfico 3D (`AnelFrase`), zoom-out extremo de dentro de um respingo.
+- **Personagem do cliente**: `src/scenes-v2/shared/Corredor.tsx` mostra, FIEL, os 5 recortes do GIF
+  dele (`public/corredor/f00…f04.png`, gerados por `scripts/recortar_personagem.py`) em ciclo de
+  corrida (3 f/pose ≈ 10 poses/s). Nunca é redesenhado; a ação vem de câmera/posição/escala e das
+  pinceladas atrás dele. (O `PersonagemLiquido` continua em `src/design/v2/` só para a prancha.)
+
+| Cena | Frames | Fundo | Ação |
+|---|---|---|---|
+| V1 "E AÍ," | 0–119 | laranja | linha corta a tela; Corredor entra com zoom e pisa no f30 (splash azul + pinceladas); "E AÍ," pop no f45, treme nos beats; sai correndo |
+| V2 "PREPARADOS" | 120–299 | azul elétrico | anel 3D tumbling nos 3 eixos → trava de frente legível 225–276; linha em arco |
+| V3 "10ª GINCANA" | 300–479 | verde do GIF → marinho (390) | corrida em câmera baixa sobre pinceladas; "PARA A" 330; silêncio 386–389 congela; "10ª" ouro bate no 390, "GINCANA?" no 405 |
+| V4 "TÁ CHEGANDO" | 480–599 | close no respingo → turquesa | zoom-out extremo; "TÁ CHEGANDO," letra a letra (495–533); "HEIN?" no 540 com o Corredor atravessando e pisando na poça |
+| V5 Selo | 600–719 | marinho | linha desenha o círculo → selo dourado; coração, pessoas, lockup; hit final 660 e hold |
+
+```bash
+npm run render:teaser            # out/pafies-teaser-v2.mp4 (+ remux do áudio com trilha-v2.wav)
+npm run render:teaser:vertical   # out/pafies-teaser-v2-vertical.mp4
+# teste rápido em baixa
+npx remotion render src/index.ts PafiesTeaser out/teaser-test-025.mp4 --scale=0.25 --pixel-format=yuv420p
+# QA visual
+node scripts/qa-stills.mjs PafiesTeaser 30,60,240,390,430,540,670 0.5 h
+```
+
+`scripts/remux-audio.sh` aceita o WAV como 2º argumento (padrão `public/trilha.wav`, V1).
+
 ## Estrutura
 
 ```
