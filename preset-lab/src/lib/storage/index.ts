@@ -109,6 +109,7 @@ class LocalStorage implements FileStorage {
 }
 
 class SupabaseStorage implements FileStorage {
+  private demo = new LocalStorage();
   async createSignedUpload(target: "private" | "media", storagePath: string) {
     const bucket = target === "private" ? PRIVATE_BUCKET : MEDIA_BUCKET;
     const { data, error } = await createAdminClient().storage.from(bucket).createSignedUploadUrl(storagePath);
@@ -127,6 +128,8 @@ class SupabaseStorage implements FileStorage {
     return createAdminClient().storage.from(MEDIA_BUCKET).getPublicUrl(storagePath).data.publicUrl;
   }
   async signedDownloadUrl(storagePath: string, fileName: string, ttlSeconds: number) {
+    // presets de demonstração vêm versionados com o app (private-files/demo) e saem pelo mesmo link assinado
+    if (storagePath.startsWith("demo/")) return this.demo.signedDownloadUrl(storagePath, fileName, ttlSeconds);
     const { data, error } = await createAdminClient().storage.from(PRIVATE_BUCKET).createSignedUrl(storagePath, ttlSeconds, { download: fileName });
     if (error || !data) throw new Error("Não foi possível gerar o link de download.");
     return data.signedUrl;

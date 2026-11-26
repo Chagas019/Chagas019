@@ -20,7 +20,9 @@ const nextConfig: NextConfig = {
     remotePatterns: supabaseHost ? [{ protocol: "https", hostname: supabaseHost, pathname: "/storage/v1/object/public/**" }] : [],
   },
   // arquivos privados de demonstração nunca vão para o bundle público
-  outputFileTracingExcludes: { "*": ["./private-files/**", "./.data/**"] },
+  outputFileTracingExcludes: { "*": ["./.data/**"] },
+  // presets de demonstração acompanham só a rota que os entrega (nunca ficam públicos em /public)
+  outputFileTracingIncludes: { "/api/files/[token]": ["./private-files/demo/**"] },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

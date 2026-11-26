@@ -23,7 +23,7 @@ psql "$DATABASE_URL" -f supabase/seed.sql        # ou cole no SQL Editor
 # arquivos de preset para o bucket privado
 SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... npm run seed:supabase-files
 ```
-Tudo fica marcado com `is_demo = true`. Para remover depois: `delete from products where is_demo; delete from collections where is_demo; delete from inspiration_posts where is_demo;`.
+Os presets de demonstração (`storage_path` começando com `demo/`) também são entregues pelo próprio app, a partir de `private-files/demo`, com o mesmo link assinado de 60 s — o upload acima é opcional. Tudo fica marcado com `is_demo = true`. Para remover depois: `delete from products where is_demo; delete from collections where is_demo; delete from inspiration_posts where is_demo;`.
 
 ## 4. Auth
 **Authentication → URL Configuration**
