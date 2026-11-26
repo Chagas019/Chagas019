@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contagem PAFIES 2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root { --azul: #4682c4; --tinta: #7b7f80; --tinta-suave: #8f9196; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: var(--azul); }
+  body { display: grid; place-items: center; overflow: hidden; }
+
+  /* Palco com a proporção exata da imagem original (600 × 450) */
+  .palco {
+    position: relative;
+    width: min(100vw, 133.333vh);
+    aspect-ratio: 4 / 3;
+    container-type: inline-size;
+  }
+  .palco img { display: block; width: 100%; height: 100%; }
+
+  /* Região onde ficavam "LATER" e "quartz" — sem fundo, só texto */
+  .placa {
+    position: absolute;
+    left: 49.6%; top: 19.3%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center;
+    font-family: "Oswald", "Bebas Neue", sans-serif;
+    color: var(--tinta);
+    text-align: center; white-space: nowrap;
+    pointer-events: none;
+    animation: surgir 1.2s ease-out both;
+  }
+  .dias {
+    font-weight: 300;
+    font-size: 8.4cqw;
+    line-height: .95;
+    letter-spacing: -.01em;
+    transform: scaleX(.82);
+    display: flex; gap: .18em; align-items: baseline;
+  }
+  .dias b { font-weight: 400; display: inline-block; }
+  .dias b.tique { animation: tique .6s ease-out; }
+  .para {
+    margin-top: .55cqw;
+    font-weight: 300;
+    font-size: 1.32cqw;
+    letter-spacing: .14em;
+    color: var(--tinta-suave);
+  }
+  .evento {
+    margin-top: .25cqw;
+    font-weight: 400;
+    font-size: 2.35cqw;
+    letter-spacing: .2em;
+    padding-left: .2em;
+  }
+  .relogio {
+    margin-top: .45cqw;
+    font-weight: 300;
+    font-size: 1.15cqw;
+    letter-spacing: .18em;
+    color: var(--tinta-suave);
+    font-variant-numeric: tabular-nums;
+    opacity: .9;
+  }
+  .relogio span { animation: pulso 1s steps(1) infinite; }
+
+  @keyframes surgir { from { opacity: 0; transform: translate(-50%, 4%); } to { opacity: 1; transform: translate(-50%, 0); } }
+  @keyframes tique { from { opacity: .3; transform: translateY(-8%); } to { opacity: 1; transform: none; } }
+  @keyframes pulso { 50% { opacity: .35; } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+</head>
+<body>
+  <main class="palco">
+    <img src="relogio.gif" alt="Relógio com personagem sentado anunciando a contagem para a Gincana Solidária PAFIES 2027">
+    <div class="placa" aria-live="polite">
+      <div class="dias"><b id="dias">57</b><span id="rotulo">DIAS</span></div>
+      <div class="para">PARA A GINCANA SOLIDÁRIA</div>
+      <div class="evento">PAFIES 2027</div>
+      <div class="relogio" id="hms">00<span>:</span>00<span>:</span>00</div>
+    </div>
+  </main>
+
+<script>
+  // Data oficial: 22 de janeiro de 2027 (00:00, horário local).
+  // Em 26/11/2026 o contador mostra 57 dias (diferença de datas no calendário).
+  const ALVO = new Date(2027, 0, 22, 0, 0, 0);
+  const elDias = document.getElementById('dias');
+  const elRotulo = document.getElementById('rotulo');
+  const elHms = document.getElementById('hms');
+  const p = n => String(n).padStart(2, '0');
+  let ultimo = null;
+
+  function atualizar() {
+    const agora = new Date();
+    const resta = ALVO - agora;
+    if (resta <= 0) {
+      elDias.textContent = 'É HOJE';
+      elRotulo.textContent = '';
+      elHms.textContent = '';
+      return;
+    }
+    // Dias de calendário até a data (começa em 57 no dia 26/11/2026)
+    const hoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
+    const dias = Math.round((ALVO - hoje) / 864e5);
+    // Horas/minutos/segundos restantes do dia de hoje
+    const meiaNoite = new Date(hoje); meiaNoite.setDate(hoje.getDate() + 1);
+    const s = Math.floor((meiaNoite - agora) / 1000);
+    const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), seg = s % 60;
+
+    if (dias !== ultimo) {
+      elDias.textContent = dias;
+      elDias.classList.remove('tique'); void elDias.offsetWidth; elDias.classList.add('tique');
+      elRotulo.textContent = dias === 1 ? 'DIA' : 'DIAS';
+      ultimo = dias;
+    }
+    elHms.innerHTML = `${p(h)}H <span>·</span> ${p(m)}MIN <span>·</span> ${p(seg)}S`;
+  }
+  atualizar();
+  setInterval(atualizar, 1000);
+</script>
+</body>
+</html>
