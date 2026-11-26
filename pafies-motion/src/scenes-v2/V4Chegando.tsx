@@ -90,10 +90,10 @@ export const V4Chegando: React.FC<SceneV2Props> = ({ layout }) => {
 
   // texto
   const textX = isV ? cx : 1180;
-  const chegY = isV ? 500 : 330;
-  const heinY = isV ? 880 : 690;
+  const chegY = isV ? 660 : 330;
+  const heinY = isV ? 1060 : 690;
   const lineD = isV
-    ? linhaDiagonalArco(-40, 1180, cx + 200, 900, 300, 220)
+    ? linhaDiagonalArco(-40, 1360, cx + 200, 1080, 300, 220)
     : linhaDiagonalArco(-40, 520, 1580, 600, 260, 220);
 
   return (
