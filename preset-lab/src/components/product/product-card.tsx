@@ -38,7 +38,7 @@ export function ProductCard({ product, index, categoryName, favorite, loggedIn, 
             <AccessBadge product={product} />
             {owned && <Badge tone="ok">Na biblioteca</Badge>}
           </div>
-          {typeof index === "number" && <span className="lab-label absolute right-14 top-4 text-bone/70">Nº {String(index + 1).padStart(3, "0")}</span>}
+          {typeof index === "number" && <span className="lab-label absolute right-14 top-4 hidden text-bone/70 sm:inline">Nº {String(index + 1).padStart(3, "0")}</span>}
           <div className="absolute bottom-3 left-3 flex gap-1" aria-hidden>
             {product.palette.slice(0, 4).map((c) => (
               <span key={c} className="size-3.5 rounded-full ring-1 ring-ink/40" style={{ background: c }} />

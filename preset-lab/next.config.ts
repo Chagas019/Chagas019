@@ -11,6 +11,10 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // permite rodar vários servidores de desenvolvimento lado a lado (ex.: testes E2E)
+  distDir: process.env.NEXT_DIST_DIR || ".next",
+  // uploads do Admin Studio no modo local passam pelo servidor; no Supabase vão direto para o Storage
+  experimental: { serverActions: { bodySizeLimit: "4mb" } },
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: supabaseHost ? [{ protocol: "https", hostname: supabaseHost, pathname: "/storage/v1/object/public/**" }] : [],

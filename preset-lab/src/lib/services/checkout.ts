@@ -50,7 +50,7 @@ export async function startCheckout(user: SessionUser, target: CheckoutTarget): 
   } else {
     const plan = PLANS[target.plan];
     if (!plan) throw new CheckoutError("not_found", "Plano não encontrado.");
-    if (await r.getActiveSubscription(user.id)) throw new CheckoutError("already_subscribed", "Sua assinatura Premium Club já está ativa.");
+    // com assinatura ativa, a compra funciona como renovação (o período é somado no servidor)
     kind = "subscription";
     title = plan.name;
     items = [{ product_id: null, collection_id: null, plan: plan.id, title: plan.name, unit_price_cents: plan.price_cents }];

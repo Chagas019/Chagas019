@@ -66,6 +66,7 @@ declare
   pur public.purchases%rowtype;
   item record;
   inserted int;
+  base_end timestamptz;
 begin
   insert into public.payment_events (provider, event_id, event_type, payload)
   values (p_provider, p_event_id, 'payment.approved', coalesce(p_payload, '{}'))
@@ -92,11 +93,15 @@ begin
    where id = p_purchase_id;
 
   if pur.kind = 'subscription' then
+    -- período pré-pago; renovar soma ao fim do período vigente
+    select greatest(now(), coalesce(max(current_period_end), now())) into base_end
+      from public.subscriptions
+     where user_id = pur.user_id and status in ('active', 'past_due');
     for item in select plan from public.purchase_items where purchase_id = p_purchase_id and plan is not null loop
       insert into public.subscriptions (user_id, plan, status, current_period_end, provider, provider_subscription_id, is_simulated)
       values (
         pur.user_id, item.plan, 'active',
-        now() + case when item.plan = 'premium_yearly' then interval '1 year' else interval '1 month' end,
+        base_end + case when item.plan = 'premium_yearly' then interval '1 year' else interval '1 month' end,
         pur.provider, 'purchase:' || pur.id::text, pur.is_simulated
       )
       on conflict (provider, provider_subscription_id) do update

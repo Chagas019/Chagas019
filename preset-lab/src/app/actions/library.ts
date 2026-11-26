@@ -70,12 +70,3 @@ export async function updateProfileAction(_: ActionState, form: FormData): Promi
   revalidatePath("/", "layout");
   return { ok: true, message: "Perfil atualizado." };
 }
-
-export async function setAutoRenewAction(form: FormData) {
-  const user = await getCurrentUser();
-  if (!user) redirect("/entrar?next=/lab/assinatura");
-  const id = String(form.get("subscriptionId") ?? "");
-  if (uuidSchema.safeParse(id).success) await repo().setSubscriptionCancelAtPeriodEnd(user.id, id, form.get("cancel") === "1");
-  revalidatePath("/lab/assinatura");
-  redirect("/lab/assinatura");
-}

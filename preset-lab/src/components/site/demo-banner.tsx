@@ -7,7 +7,7 @@ export function DemoBanner() {
   const devPay = config.payments === "dev";
   if (!local && !devPay) return null;
   return (
-    <div role="note" className="bg-signal text-signal-ink">
+    <div role="note" className="border-b border-signal/40 bg-bone text-ink">
       <div className="container-lab flex flex-wrap items-center justify-center gap-x-3 gap-y-1 py-1.5 text-center text-xs font-medium">
         <span className="lab-label">Modo demonstração</span>
         <span>

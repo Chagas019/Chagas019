@@ -93,6 +93,11 @@ select public.fulfill_purchase('22222222-2222-2222-2222-222222222222', 'pay-2', 
 insert into public.purchases (id, user_id, kind, total_cents, provider, status) values ('33333333-3333-3333-3333-333333333333', '00000000-0000-0000-0000-00000000000b', 'subscription', 1990, 'mercadopago', 'pending');
 insert into public.purchase_items (purchase_id, plan, title, unit_price_cents) values ('33333333-3333-3333-3333-333333333333', 'premium_monthly', 'Premium Club mensal', 1990);
 select public.fulfill_purchase('33333333-3333-3333-3333-333333333333', 'pay-3', 'evt-4', 'mercadopago', '{}');
+-- renovação soma ao período vigente
+insert into public.purchases (id, user_id, kind, total_cents, provider, status) values ('44444444-4444-4444-4444-444444444444', '00000000-0000-0000-0000-00000000000b', 'subscription', 1990, 'mercadopago', 'pending');
+insert into public.purchase_items (purchase_id, plan, title, unit_price_cents) values ('44444444-4444-4444-4444-444444444444', 'premium_monthly', 'Premium Club mensal', 1990);
+select public.fulfill_purchase('44444444-4444-4444-4444-444444444444', 'pay-4', 'evt-5', 'mercadopago', '{}');
+select pg_temp.assert((select max(current_period_end) from public.subscriptions where user_id = '00000000-0000-0000-0000-00000000000b') > now() + interval '55 days', 'renovação soma ao período atual');
 reset role;
 
 select pg_temp.assert(public.can_access_product('00000000-0000-0000-0000-00000000000a', (select id from public.products where slug = 'neon-noir')), 'premium liberado após compra');
@@ -123,7 +128,7 @@ set role authenticated;
 select pg_temp.as_user('00000000-0000-0000-0000-0000000000ad');
 select pg_temp.assert(exists (select 1 from public.products where slug = 'rascunho-secreto'), 'admin vê rascunhos');
 select pg_temp.assert((select count(*) from public.product_files) = 24, 'admin lê arquivos');
-select pg_temp.assert((public.admin_dashboard_stats() ->> 'paid_orders')::int = 3, 'estatísticas contam pedidos pagos');
+select pg_temp.assert((public.admin_dashboard_stats() ->> 'paid_orders')::int = 4, 'estatísticas contam pedidos pagos');
 update public.products set price_cents = 3490 where slug = 'neon-noir';
 select pg_temp.assert((select price_cents from public.products where slug = 'neon-noir') = 3490, 'admin edita produto');
 do $$ begin

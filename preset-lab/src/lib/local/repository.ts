@@ -139,9 +139,11 @@ export class LocalRepository implements Repository {
       p.paid_at = now();
       p.provider_payment_id = args.providerPaymentId;
       if (p.kind === "subscription") {
+        // período pré-pago; renovar soma ao fim do período vigente
+        const base = Math.max(Date.now(), ...db.subscriptions.filter((s) => s.user_id === p.user_id && isActiveSub(s)).map((s) => Date.parse(s.current_period_end!)));
         for (const it of p.items) {
           if (!it.plan) continue;
-          const end = new Date();
+          const end = new Date(base);
           if (it.plan === "premium_yearly") end.setFullYear(end.getFullYear() + 1);
           else end.setMonth(end.getMonth() + 1);
           const ref = `purchase:${p.id}`;

@@ -20,6 +20,15 @@ export interface FileStorage {
   uploadPrivate(storagePath: string, data: Buffer, contentType: string): Promise<void>;
   removePrivate(storagePath: string): Promise<void>;
   uploadMedia(storagePath: string, data: Buffer, contentType: string): Promise<string>;
+  /**
+   * Upload direto do navegador (evita o limite de corpo das funções serverless).
+   * Supabase: URL de upload assinada (uso único). Local: o navegador envia para /api/admin/upload.
+   */
+  createSignedUpload(target: "private" | "media", storagePath: string): Promise<{ kind: "supabase"; signedUrl: string; path: string; publicUrl?: string } | { kind: "local"; path: string }>;
+  /** Confere se um objeto existe e devolve o tamanho em bytes (null = não existe). */
+  statObject(target: "private" | "media", storagePath: string): Promise<number | null>;
+  /** URL pública de uma mídia já enviada. */
+  mediaUrl(storagePath: string): string;
 }
 
 // ------------------------------------------------------------------ tokens locais
@@ -61,6 +70,21 @@ export function localPrivatePath(storagePath: string) {
 export const localMediaDir = () => path.join(dataDir(), "media");
 
 class LocalStorage implements FileStorage {
+  async createSignedUpload(_target: "private" | "media", storagePath: string) {
+    return { kind: "local" as const, path: storagePath };
+  }
+  async statObject(target: "private" | "media", storagePath: string) {
+    const full = target === "private" ? localPrivatePath(storagePath) : resolveSafe(localMediaDir(), storagePath);
+    if (!full) return null;
+    try {
+      return (await fs.stat(full)).size;
+    } catch {
+      return null;
+    }
+  }
+  mediaUrl(storagePath: string) {
+    return `/api/media/${storagePath}`;
+  }
   async signedDownloadUrl(storagePath: string, fileName: string, ttlSeconds: number) {
     return `/api/files/${createLocalFileToken({ path: storagePath, name: fileName, exp: Date.now() + ttlSeconds * 1000 })}`;
   }
@@ -85,6 +109,23 @@ class LocalStorage implements FileStorage {
 }
 
 class SupabaseStorage implements FileStorage {
+  async createSignedUpload(target: "private" | "media", storagePath: string) {
+    const bucket = target === "private" ? PRIVATE_BUCKET : MEDIA_BUCKET;
+    const { data, error } = await createAdminClient().storage.from(bucket).createSignedUploadUrl(storagePath);
+    if (error || !data) throw new Error("Não foi possível preparar o upload.");
+    return { kind: "supabase" as const, signedUrl: data.signedUrl, path: data.path, publicUrl: target === "media" ? this.mediaUrl(storagePath) : undefined };
+  }
+  async statObject(target: "private" | "media", storagePath: string) {
+    const bucket = target === "private" ? PRIVATE_BUCKET : MEDIA_BUCKET;
+    const dir = storagePath.split("/").slice(0, -1).join("/");
+    const name = storagePath.split("/").pop()!;
+    const { data } = await createAdminClient().storage.from(bucket).list(dir, { search: name, limit: 10 });
+    const obj = data?.find((o) => o.name === name);
+    return obj ? Number((obj.metadata as { size?: number } | null)?.size ?? 0) : null;
+  }
+  mediaUrl(storagePath: string) {
+    return createAdminClient().storage.from(MEDIA_BUCKET).getPublicUrl(storagePath).data.publicUrl;
+  }
   async signedDownloadUrl(storagePath: string, fileName: string, ttlSeconds: number) {
     const { data, error } = await createAdminClient().storage.from(PRIVATE_BUCKET).createSignedUrl(storagePath, ttlSeconds, { download: fileName });
     if (error || !data) throw new Error("Não foi possível gerar o link de download.");

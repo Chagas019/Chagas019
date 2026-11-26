@@ -11,12 +11,14 @@
     "build": "next build",
     "start": "next start -p 3000",
     "typecheck": "tsc --noEmit",
-    "lint": "next lint",
     "test": "vitest run",
     "test:e2e": "playwright test --trace off",
     "test:sql": "bash scripts/test-migrations.sh",
     "assets:generate": "node scripts/generate-assets.mjs",
-    "admin:promote": "node scripts/promote-admin.mjs"
+    "admin:promote": "node scripts/promote-admin.mjs",
+    "test:all": "npm run typecheck && npm test && npm run test:sql && npm run test:e2e",
+    "seed:supabase-files": "node scripts/seed-supabase.mjs",
+    "db:seed-sql": "node scripts/build-seed-sql.mjs > supabase/seed.sql"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.5.0",
