@@ -25,7 +25,7 @@
   /* Região onde ficavam "LATER" e "quartz" — sem fundo, só texto */
   .placa {
     position: absolute;
-    left: 49.6%; top: 19.3%;
+    left: 49.6%; top: 16.6%;
     transform: translateX(-50%);
     display: flex; flex-direction: column; align-items: center;
     font-family: "Oswald", "Bebas Neue", sans-serif;
@@ -44,6 +44,21 @@
   }
   .dias b { font-weight: 400; display: inline-block; }
   .dias b.tique { animation: tique .6s ease-out; }
+  .faltam {
+    font-weight: 300;
+    font-size: 1.5cqw;
+    letter-spacing: .32em;
+    padding-left: .32em;
+    color: var(--tinta-suave);
+    margin-bottom: .1cqw;
+  }
+  .edicao {
+    margin-top: .3cqw;
+    font-weight: 300;
+    font-size: 1.32cqw;
+    letter-spacing: .14em;
+    color: var(--tinta-suave);
+  }
   .para {
     margin-top: .55cqw;
     font-weight: 300;
@@ -54,8 +69,8 @@
   .evento {
     margin-top: .25cqw;
     font-weight: 400;
-    font-size: 2.35cqw;
-    letter-spacing: .2em;
+    font-size: 2.1cqw;
+    letter-spacing: .12em;
     padding-left: .2em;
   }
   .relogio {
@@ -77,11 +92,13 @@
 </head>
 <body>
   <main class="palco">
-    <img src="relogio.gif" alt="Relógio com personagem sentado anunciando a contagem para a Gincana Solidária PAFIES 2027">
+    <img src="relogio.gif" alt="Relógio com personagem sentado anunciando a contagem para o início das provas da Gincana Solidária, 10ª edição">
     <div class="placa" aria-live="polite">
+      <div class="faltam" id="faltam">FALTAM</div>
       <div class="dias"><b id="dias">57</b><span id="rotulo">DIAS</span></div>
-      <div class="para">PARA A GINCANA SOLIDÁRIA</div>
-      <div class="evento">PAFIES 2027</div>
+      <div class="para">PARA O INÍCIO DAS PROVAS DA</div>
+      <div class="evento">GINCANA SOLIDÁRIA</div>
+      <div class="edicao">10ª EDIÇÃO · PAFIES 2027</div>
       <div class="relogio" id="hms">00<span>:</span>00<span>:</span>00</div>
     </div>
   </main>
@@ -92,6 +109,7 @@
   const ALVO = new Date(2027, 0, 22, 0, 0, 0);
   const elDias = document.getElementById('dias');
   const elRotulo = document.getElementById('rotulo');
+  const elFaltam = document.getElementById('faltam');
   const elHms = document.getElementById('hms');
   const p = n => String(n).padStart(2, '0');
   let ultimo = null;
@@ -102,6 +120,7 @@
     if (resta <= 0) {
       elDias.textContent = 'É HOJE';
       elRotulo.textContent = '';
+      elFaltam.textContent = '';
       elHms.textContent = '';
       return;
     }
@@ -117,6 +136,7 @@
       elDias.textContent = dias;
       elDias.classList.remove('tique'); void elDias.offsetWidth; elDias.classList.add('tique');
       elRotulo.textContent = dias === 1 ? 'DIA' : 'DIAS';
+      elFaltam.textContent = dias === 1 ? 'FALTA' : 'FALTAM';
       ultimo = dias;
     }
     elHms.innerHTML = `${p(h)}H <span>·</span> ${p(m)}MIN <span>·</span> ${p(seg)}S`;
