@@ -1,6 +1,6 @@
 # Chagas019 — projetos
 
-Repositório com cinco projetos independentes. Cada pasta tem seu próprio README com detalhes.
+Repositório com seis projetos independentes. Cada pasta tem seu próprio README com detalhes.
 
 | Projeto | Pasta | O que é | Stack | Testes |
 |---|---|---|---|---|
@@ -8,6 +8,7 @@ Repositório com cinco projetos independentes. Cada pasta tem seu próprio READM
 | **OFERTA AI** | [`oferta-ai/`](oferta-ai/README.md) | Multiagente que garimpa ofertas da Shopee e publica no WhatsApp/Telegram | Next.js 15 + Fastify + Prisma/PostgreSQL + Redis | `npm test` |
 | **SOCIAL AI** | [`social-ai/`](social-ai/README.md) | Agência autônoma para Instagram (perfil católico pronto) | TypeScript + SQLite + React (Vite) + ffmpeg | `npm test` |
 | **Virtual Office AI** | [`virtual-office-ai/`](virtual-office-ai/README.md) | Agência de marketing com 31 funcionários de IA | Node 22 (SQLite nativo) + SDK Anthropic | `npm test` |
+| **PRESET LAB** | [`preset-lab/`](preset-lab/README.md) | Marketplace de presets fotográficos: grátis, premium, Premium Club e Admin Studio | Next.js 15 + Supabase (RLS) + Mercado Pago | `npm run test:all` |
 | **Brabo Club** | `brabo-club/` | Site de barbearia com agendamento e painel do dono | HTML estático + funções serverless (Vercel) | workflow `conferir-brabo.yml` |
 
 Requisitos gerais: **Node 22.13+**, `bash`, `python3`. Os testes de navegador usam Playwright com Chromium.
