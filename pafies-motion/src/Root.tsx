@@ -9,6 +9,7 @@ import { PafiesFilme } from './compositions/PafiesFilme';
 import { SceneStandalone } from './compositions/SceneStandalone';
 import { SCENE_COMPOSITION_IDS } from './scenes';
 import { DesignBoard } from './design/Preview';
+import { DesignBoardV2 } from './design/v2/DesignBoardV2';
 
 const H = { width: 1920, height: 1080 } as const;
 const V = { width: 1080, height: 1920 } as const;
@@ -41,6 +42,7 @@ export const RemotionRoot: React.FC = () => (
     </Folder>
     <Folder name="Design">
       <Composition id="DesignBoard" component={DesignBoard} durationInFrames={1} fps={FPS} {...H} />
+      <Composition id="DesignBoardV2" component={DesignBoardV2} durationInFrames={1} fps={FPS} width={2400} height={2400} />
     </Folder>
   </>
 );
