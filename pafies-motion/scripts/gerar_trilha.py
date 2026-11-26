@@ -10,7 +10,14 @@ Lê src/timeline.json (fonte única: fps, bpm, duração, cue sheet) e sintetiza
 Mix: reverb por convolução (IR sintética), sidechain no pad, loudness ~ -14 LUFS (BS.1770 simplificado),
 limitador soft-clip, pico ≤ -1 dBFS. Saída: WAV 48 kHz estéreo 16-bit.
 
-Uso: python3 scripts/gerar_trilha.py [--out public/trilha.wav] [--preview out/trilha-preview.mp3]
+Uso (V1, comportamento padrão inalterado):
+  python3 scripts/gerar_trilha.py [--out public/trilha.wav] [--preview out/trilha-preview.mp3]
+Uso (V2 — estilo escolhido por music.style == "v2" no JSON):
+  python3 scripts/gerar_trilha.py --timeline src/timeline-v2.json --out public/trilha-v2.wav
+  (preview padrão: out/<nome-do-wav>-preview.mp3 → out/trilha-v2-preview.mp3)
+V2: convocação de gincana — four-on-the-floor, claps no 2 e 4, hats em semicolcheias, baixo sincopado,
+skank de acordes no contratempo, stabs de metais sintéticos nos impactos, riser 330–386 + silêncio seco
+386–389, drop em 390, hit final 660 com cauda até 719. Loudness iterativo → −14 LUFS, true peak ≤ −1 dBTP.
 """
 import argparse
 import json
@@ -26,8 +33,21 @@ SR = 48000
 RNG = np.random.default_rng(1010)  # determinístico
 
 # ───────────────────────────── timeline ─────────────────────────────
-with open(os.path.join(ROOT, "src", "timeline.json"), encoding="utf-8") as fh:
+DEFAULT_TIMELINE = os.path.join(ROOT, "src", "timeline.json")
+
+
+def _early_timeline_arg():
+    ap = argparse.ArgumentParser(add_help=False)
+    ap.add_argument("--timeline", default=DEFAULT_TIMELINE)
+    a, _ = ap.parse_known_args()
+    p = a.timeline
+    return os.path.abspath(p if os.path.isabs(p) or os.path.exists(p) else os.path.join(ROOT, p))
+
+
+TL_PATH = _early_timeline_arg()
+with open(TL_PATH, encoding="utf-8") as fh:
     TL = json.load(fh)
+STYLE = TL.get("music", {}).get("style", "v1")
 FPS = TL["fps"]
 BPM = TL["bpm"]
 NFR = TL["durationInFrames"]
@@ -568,9 +588,21 @@ def true_peak(x, os_factor=4):
 # ───────────────────────────── montagem ─────────────────────────────
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default=os.path.join(ROOT, "public", "trilha.wav"))
-    ap.add_argument("--preview", default=os.path.join(ROOT, "out", "trilha-preview.mp3"))
+    ap.add_argument("--timeline", default=DEFAULT_TIMELINE, help="JSON de timeline (default src/timeline.json = V1)")
+    ap.add_argument("--out", default=None, help="WAV de saída (V1: public/trilha.wav · V2: public/trilha-v2.wav)")
+    ap.add_argument("--preview", default=None, help="MP3 de preview ('' desliga)")
     args = ap.parse_args()
+    if STYLE == "v2":
+        if args.out is None:
+            args.out = os.path.join(ROOT, "public", "trilha-v2.wav")
+        if args.preview is None:
+            stem = os.path.splitext(os.path.basename(args.out))[0]
+            args.preview = os.path.join(ROOT, "out", f"{stem}-preview.mp3")
+        return main_v2(args)
+    if args.out is None:
+        args.out = os.path.join(ROOT, "public", "trilha.wav")
+    if args.preview is None:
+        args.preview = os.path.join(ROOT, "out", "trilha-preview.mp3")
 
     drums = Bus()   # bateria (room curto)
     fx = Bus()      # risers, whooshes, impactos (hall)
@@ -748,6 +780,369 @@ def main():
     if args.preview and shutil.which("ffmpeg"):
         os.makedirs(os.path.dirname(args.preview), exist_ok=True)
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", args.out, "-codec:a", "libmp3lame", "-b:a", "192k", args.preview], check=True)
+        print(f"✓ {args.preview}")
+
+
+# ═════════════════════════════ V2 — convocação de gincana ═════════════════════════════
+# Tudo abaixo só roda com music.style == "v2" (src/timeline-v2.json). A V1 não passa por aqui.
+CHORDS_V2 = {
+    "D": {"root": "D2", "stab": ["D4", "F#4", "A4", "D5"], "brass": ["A3", "D4", "F#4", "A4", "D5"]},
+    "A": {"root": "A1", "stab": ["C#4", "E4", "A4", "C#5"], "brass": ["A3", "C#4", "E4", "A4", "C#5"]},
+    "Bm": {"root": "B1", "stab": ["D4", "F#4", "B4", "D5"], "brass": ["B3", "D4", "F#4", "B4", "D5"]},
+    "G": {"root": "G1", "stab": ["D4", "G4", "B4", "D5"], "brass": ["G3", "B3", "D4", "G4", "B4"]},
+    "Dadd9": {"root": "D1", "stab": ["D4", "E4", "F#4", "A4"], "brass": ["D3", "A3", "D4", "E4", "F#4", "A4", "D5"]},
+}
+
+
+def v2_section(fr):
+    for s in TL["sections"]:
+        if s["from"] <= fr <= s["to"] + 0.999:
+            return s["id"]
+    return TL["sections"][-1]["id"]
+
+
+def v2_chord(fr):
+    if fr >= TL["music"]["finalChord"]["frame"]:
+        return "Dadd9"
+    prog_ = TL["music"]["progression"]
+    return prog_[int(fr // TL["barFrames"]) % len(prog_)]
+
+
+def v2_silent(fr):
+    return any(c["frame"] <= fr <= c["end"] + 0.999 for c in cues("silence_start"))
+
+
+def v2_kick(intensity=1.0):
+    """kick de pista: corpo 160→48 Hz + click + leve saturação (mais punch que a V1)."""
+    k = kick(1.0, f0=165, f1=48, sweep=0.06, dec=0.22)
+    n = len(k)
+    nc = int(0.006 * SR)
+    c = np.zeros(n)
+    c[:nc] = np.sin(2 * np.pi * 1800 * t_axis(nc)) * np.linspace(1, 0, nc) ** 2
+    return np.tanh((k + c * 0.35) * 1.3) / np.tanh(1.3) * intensity
+
+
+def v2_clap(intensity=1.0):
+    return clap(intensity) * 1.15
+
+
+def v2_open_hat(intensity=1.0):
+    n = int(0.3 * SR)
+    x = fft_filter(RNG.standard_normal(n), hp(7000, 3)) * env_ad(n, 0.0005, 0.11)
+    return x * intensity
+
+
+def v2_tick(intensity=1.0, semis=0.0):
+    n = int(0.1 * SR)
+    t = t_axis(n)
+    f = 1318.5 * 2 ** (semis / 12)  # E6 subindo por letra
+    x = np.sin(2 * np.pi * f * t) * env_ad(n, 0.0005, 0.03) + 0.35 * np.sin(4 * np.pi * f * t) * env_ad(n, 0.0005, 0.012)
+    return x * intensity
+
+
+_brass_cache = {}
+
+
+def v2_brass(chord, dur=0.42, intensity=1.0, bright=1.0):
+    """metais sintéticos: saws detunados por nota, scoop de afinação (−80 cents → 0 em 35 ms),
+    filtro que abre rápido e fecha (envelope de brilho), leve vibrato. Retorna estéreo."""
+    key_ = (chord, round(dur, 3), round(bright, 2))
+    if key_ not in _brass_cache:
+        n = int((dur + 0.25) * SR)
+        t = t_axis(n)
+        notes = CHORDS_V2[chord]["brass"]
+        out = np.zeros((n, 2))
+        scoop = 2 ** ((-0.8 * np.exp(-t / 0.012)) / 12)
+        vib = 1 + 0.003 * np.sin(2 * np.pi * 5.5 * t) * np.clip((t - 0.15) / 0.2, 0, 1)
+        for j, nt in enumerate(notes):
+            f = hz(nt)
+            pan = -0.6 + 1.2 * j / max(1, len(notes) - 1)
+            for det in (-9, 0, 9):
+                ff = f * 2 ** (det / 1200) * scoop * vib
+                ph = np.cumsum(ff) / SR + RNG.uniform()
+                ph = ph % 1.0
+                s_ = 2 * ph - 1
+                out += pan_st(s_, pan * 0.8) * (0.33 / len(notes))
+        D = dur
+
+        def g(T, F):
+            Tc = np.maximum(T, 0)
+            fc = 500 + 4200 * bright * (1 - np.exp(-Tc / 0.018)) * np.exp(-Tc / max(0.12, D * 0.5)) + 700
+            return 1 / np.sqrt(1 + (F / fc) ** 4) * (1 / np.sqrt(1 + (120 / np.maximum(F, 1)) ** 4))
+
+        for c_ in range(2):
+            out[:, c_] = stft_filter(out[:, c_], g, nfft=1024, hop=256)
+        e = np.minimum(1, t / 0.008) * np.clip((D - t) / 0.08 + 1, 0, 1) * (0.7 + 0.3 * np.exp(-t / 0.15))
+        out *= e[:, None]
+        out = np.tanh(out * 2.2) / np.tanh(2.2)
+        _brass_cache[key_] = out
+    return _brass_cache[key_] * intensity
+
+
+_skank_cache = {}
+
+
+def v2_skank(chord, intensity=1.0, bright=2600):
+    """stab curto de acorde (saw) no contratempo — o "pulo" da convocação."""
+    key_ = (chord, bright)
+    if key_ not in _skank_cache:
+        n = int(0.22 * SR)
+        t = t_axis(n)
+        notes = CHORDS_V2[chord]["stab"]
+        out = np.zeros((n, 2))
+        for j, nt in enumerate(notes):
+            f = hz(nt)
+            for det, p in ((-6, -0.5), (6, 0.5)):
+                out += pan_st(saw(f * 2 ** (det / 1200), n, RNG.uniform()), p) * (0.5 / len(notes))
+        for c_ in range(2):
+            out[:, c_] = fft_filter(out[:, c_], lambda F: lp(bright, 2)(F) * hp(250, 2)(F))
+        out *= (np.minimum(1, t / 0.003) * np.exp(-t / 0.06))[:, None]
+        _skank_cache[key_] = out
+    return _skank_cache[key_] * intensity
+
+
+_bass_cache = {}
+
+
+def v2_bass_note(f, length):
+    key_ = (round(f, 2), round(length, 3))
+    if key_ not in _bass_cache:
+        n = int((length + 0.03) * SR)
+        t = t_axis(n)
+        x = saw(f, n) * 0.55 + np.sin(2 * np.pi * f * t) * 0.9 + np.sin(np.pi * f * t) * 0.0
+        x = stft_filter(x, lambda T, F: 1 / np.sqrt(1 + (F / (180 + 1400 * np.exp(-np.maximum(T, 0) / 0.05))) ** 4),
+                        nfft=1024, hop=256)
+        x = np.tanh(1.6 * x) / np.tanh(1.6)
+        e = np.minimum(1, t / 0.004) * np.clip((length - t) / 0.025 + 1, 0, 1)
+        _bass_cache[key_] = x * e
+    return _bass_cache[key_]
+
+
+# baixo sincopado em semicolcheias: (passo 0..15, oitava, duração em semicolcheias)
+BASS_PATTERN_V2 = [(0, 1, 2), (3, 1, 1), (6, 2, 1), (8, 1, 2), (10, 1, 1), (11, 2, 1), (14, 1, 1), (15, 1.5, 1)]
+
+
+def v2_build_bass():
+    bus = Bus()
+    six_f = TL["beatFrames"] / 4  # 3,75 f
+    for bar in range(int(np.ceil(TL["durationInFrames"] / TL["barFrames"]))):
+        b0 = bar * TL["barFrames"]
+        sec = v2_section(b0)
+        ch = v2_chord(b0)
+        root = hz(CHORDS_V2[ch]["root"])
+        if sec == "intro":
+            # contido: só notas longas no 1 de cada compasso, a partir do 2º compasso
+            if bar == 1:
+                for k, step in enumerate((0, 6, 8, 14)):
+                    bus.add(f2s(b0 + step * six_f), v2_bass_note(root, f2s(six_f * 1.6)), 0.3 + 0.05 * k)
+            continue
+        if ch == "Dadd9":
+            fr0 = TL["music"]["finalChord"]["frame"]
+            bus.add(f2s(fr0), v2_bass_note(hz("D1"), DUR - f2s(fr0) - 0.05), 0.55)
+            continue
+        for step, mult, ln in BASS_PATTERN_V2:
+            fr = b0 + step * six_f
+            if sec == "finale" and fr >= TL["groups"]["FINAL_HIT"]:
+                continue
+            if sec == "finale" and step not in (0, 8, 14):
+                continue
+            if v2_silent(fr) or v2_silent(fr + ln * six_f):
+                continue
+            if sec == "build" and fr >= 360:  # bass sai para o rolo de caixa respirar
+                continue
+            bus.add(f2s(fr), v2_bass_note(root * mult, f2s(six_f * ln) * 0.85), 0.4 if step in (0, 8) else 0.33)
+    return bus.out()
+
+
+def v2_build_skank():
+    bus = Bus()
+    for f in np.arange(0, TL["durationInFrames"], TL["beatFrames"]):
+        fr = f + TL["beatFrames"] / 2
+        sec = v2_section(fr)
+        if v2_silent(fr) or fr >= TL["groups"]["FINAL_HIT"]:
+            continue
+        ch = v2_chord(fr)
+        if sec == "intro":
+            if fr < 60:
+                continue
+            bus.add(f2s(fr), v2_skank(ch, 1.0, 900), 0.22)  # filtrado = contido
+        elif sec == "build":
+            if fr >= 375:
+                continue
+            u = (fr - 330) / 60
+            bus.add(f2s(fr), v2_skank(ch, 1.0, int(1500 + 2500 * u)), 0.24)
+        elif sec == "finale":
+            bus.add(f2s(fr), v2_skank(ch, 1.0, 2000), 0.18)
+        else:
+            bus.add(f2s(fr), v2_skank(ch, 1.0, 3400 if sec == "drop" else 2600), 0.27 if sec == "drop" else 0.24,
+                    pan=0.0)
+    return bus.out()
+
+
+def v2_build_riff():
+    """riff de metais curto no drop (resposta aos stabs) — semicolcheias no fim de compassos alternados."""
+    bus = Bus()
+    six_f = TL["beatFrames"] / 4
+    for bar in range(7, 10):  # compassos do drop (390 já tem stab)
+        b0 = bar * TL["barFrames"]
+        if b0 < 390:
+            continue
+        ch = v2_chord(b0)
+        for k, step in enumerate((10, 12, 14)):
+            fr = b0 + step * six_f
+            bus.add(f2s(fr), v2_brass(ch, 0.12, 1.0, 0.8), 0.16 + 0.03 * k)
+    return bus.out()
+
+
+def v2_fit_loudness(mix, target=-14.0, tp_max=-1.0):
+    """ganho iterativo + limiter até o LUFS integrado cair em target ±0,15, com true peak ≤ tp_max."""
+    g_db = target - lufs(mix)
+    out = mix
+    gr = 0.0
+    for _ in range(8):
+        out, gr = limiter(mix * 10 ** (g_db / 20), tp_max - 0.6)
+        tp = 20 * np.log10(true_peak(out))
+        if tp > tp_max - 0.05:
+            out = out * 10 ** ((tp_max - 0.1 - tp) / 20)
+        L = lufs(out)
+        if abs(L - target) < 0.15:
+            break
+        g_db += target - L
+    return out, g_db, gr
+
+
+def main_v2(args):
+    drums = Bus()
+    fx = Bus()
+    tonal = Bus()
+    dry_sub = Bus()
+    brass = Bus()
+    tick_i = 0
+    for c in CUES:
+        fr = c["frame"]
+        t = f2s(fr)
+        it = c.get("intensity", 1.0)
+        ty = c["type"]
+        if ty == "kick":
+            dry_sub.add(t, v2_kick(it), 0.62)
+        elif ty == "snare":
+            drums.add(t, snare(it), 0.34, pan=0.04)
+        elif ty == "clap":
+            drums.add(t, v2_clap(it), 0.42, pan=-0.04)
+        elif ty == "hat":
+            drums.add(t, hat(it, 0.025), 0.3, pan=0.28 if (fr % 7.5) < 3 else -0.22)
+        elif ty == "open_hat":
+            drums.add(t, v2_open_hat(it), 0.22, pan=0.3)
+        elif ty == "tick":
+            tonal.add(t, v2_tick(it, semis=[0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17][tick_i % 11]), 0.2, pan=-0.15 + 0.03 * tick_i)
+            tick_i += 1
+        elif ty == "crash":
+            fx.add(t, crash(it), 0.24, pan=0.12)
+        elif ty == "impact":
+            dry_sub.add(t, impact(it), 0.5 if fr != TL["groups"]["DROP"] else 0.64)
+            nb = int(0.4 * SR)
+            fx.add(t, fft_filter(RNG.standard_normal(nb), bp(1200, 0.5)) * env_ad(nb, 0.0004, 0.12), 0.22 * it)
+        elif ty == "boom":
+            dry_sub.add(t, sub_boom(it, 1.4), 0.4)
+        elif ty == "stab":
+            ch = c.get("note", v2_chord(fr))
+            final = c["frame"] >= TL["groups"]["FINAL_HIT"]
+            ln = (DUR - t) if final else (0.55 if fr == TL["groups"]["DROP"] else 0.32)
+            brass.add(t, v2_brass("Dadd9" if final else ch, ln, 1.0, 1.0), 0.5 * (0.6 + 0.4 * it))
+        elif ty == "final_hit":
+            dry_sub.add(t, impact(1.0), 0.62)
+            dry_sub.add(t, sub_boom(1.0, 1.8), 0.3)
+            fx.add(t, crash(1.0), 0.3)
+            tonal.add(t, chime(hz("D6"), 1.0, 2.0), 0.14, pan=-0.3)
+            tonal.add(t + 0.06, chime(hz("A6"), 0.7, 2.0), 0.09, pan=0.3)
+        elif ty == "riser_start":
+            dur = f2s(c["end"] - fr)
+            r = riser(dur, it)
+            fx.add(t, np.stack([r, np.roll(r, 140)], axis=1) * 0.5, 0.36)
+        elif ty == "whoosh":
+            dfr = c.get("duration", 10)
+            d = max(0.3, f2s(dfr) + 0.15)
+            peak = t + f2s(dfr) * 0.4  # pico 2 f antes do impacto (470+8 = 478) → o hit de 480 corta limpo
+            fx.add(peak - 0.62 * d, whoosh(d, it), 0.34)
+        elif ty == "snare_roll_start":
+            t_end = f2s(c["end"])
+            six = BEAT_S / 4
+            k = 0
+            tt = t
+            while tt < t_end - 1e-6:
+                u = (tt - t) / (t_end - t)
+                drums.add(tt, snare(0.3 + 0.7 * u**1.5), 0.3, pan=(0.12 if k % 2 else -0.12))
+                if u > 0.55 and tt + six / 2 < t_end:
+                    drums.add(tt + six / 2, snare(0.25 + 0.6 * u**2), 0.24)
+                tt += six
+                k += 1
+        elif ty == "reverse_cymbal_start":
+            dur = f2s(c["end"] - fr)
+            fx.add(t, pan_st(reverse_cymbal(dur, it), 0.0), 0.28)
+
+    print("· V2: baixo sincopado, skank, riff de metais …")
+    bass = v2_build_bass()
+    skank = v2_build_skank()
+    riff = v2_build_riff()
+
+    duck = duck_env([c["frame"] for c in CUES if c["type"] in ("kick", "impact", "final_hit")], 5.0, 0.09)
+    skank *= duck[:, None]
+    bass *= (0.35 + 0.65 * duck)[:, None]
+
+    print("· V2: reverb / delay / mix …")
+    hall = make_ir(2.2, 0.6, 3200)
+    room = make_ir(0.7, 0.14, 6000)
+    tonal_d = delay(tonal.out(), BEAT_S * 0.75, fb=0.3, mix=0.2)
+    brass_o = brass.out() + riff
+    drums_o = drums.out()
+    fx_o = fx.out()
+    sub_o = dry_sub.out()
+    send_hall = brass_o * 0.22 + fx_o * 0.3 + tonal_d * 0.35 + skank * 0.15 + drums_o * 0.06
+    send_room = drums_o * 0.3
+    wet = convolve(send_hall, hall) * 0.45 + convolve(send_room, room) * 0.4
+    mix = bass * 0.9 + skank * 1.0 + brass_o * 1.1 + drums_o * 1.15 + fx_o * 1.0 + tonal_d * 1.2 + sub_o * 1.0 + wet
+
+    shelf = lambda f: hp(28, 2)(f) * (1 - (1 - 10 ** (-2 / 20)) / (1 + (f / 70) ** 2))
+    mix = np.stack([fft_filter(mix[:, c], shelf) for c in range(2)], axis=1)
+    mix[: int(0.005 * SR)] *= np.linspace(0, 1, int(0.005 * SR))[:, None]
+
+    # fade final (cauda do hit até 719) e silêncio seco ANTES da medição de loudness
+    def post(x):
+        x = x.copy()
+        for c in cues("fade_start"):
+            a = f2i(c["frame"])
+            x[a:N] *= (np.linspace(1, 0, N - a) ** 1.4)[:, None]
+        for c in cues("silence_start"):
+            a = f2i(c["frame"])
+            b = f2i(c["end"] + 1)  # 386..389 inclusivo → zera até o início do frame 390
+            r = int(0.002 * SR)
+            x[a - r : a] *= np.linspace(1, 0, r)[:, None]
+            x[a:b] = 0.0
+        return x
+
+    mix = post(mix)
+    mix, gain_db, gr = v2_fit_loudness(mix, TL["music"].get("loudness", {}).get("lufs", -14.0),
+                                       TL["music"].get("loudness", {}).get("truePeakDb", -1.0))
+    mix = post(mix)  # garante zeros exatos e fade após o limiter
+
+    L1 = lufs(mix)
+    pk_db = 20 * np.log10(np.abs(mix).max())
+    tp_db = 20 * np.log10(true_peak(mix))
+    rms_db = 20 * np.log10(np.sqrt(np.mean(mix**2)))
+    os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
+    pcm = np.clip(np.round(mix * 32767), -32768, 32767).astype("<i2")
+    with wave.open(args.out, "wb") as w:
+        w.setnchannels(2)
+        w.setsampwidth(2)
+        w.setframerate(SR)
+        w.writeframes(pcm.tobytes())
+    print(f"✓ {args.out}")
+    print(f"  duração {len(mix)/SR:.3f}s · pico {pk_db:.2f} dBFS · RMS {rms_db:.2f} dBFS · true-peak {tp_db:.2f} dBTP · "
+          f"{L1:.2f} LUFS · ganho {gain_db:+.1f} dB · GR máx limiter {gr:.1f} dB")
+    if args.preview and shutil.which("ffmpeg"):
+        os.makedirs(os.path.dirname(os.path.abspath(args.preview)), exist_ok=True)
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", args.out, "-codec:a", "libmp3lame", "-b:a", "192k",
+                        args.preview], check=True)
         print(f"✓ {args.preview}")
 
 

@@ -26,9 +26,17 @@
  *                                              de raio holeRadius·escala), ou seja, nasce de dentro do 0.
  *  - liquidWipe({direction, waves, amplitude, color})  frente de onda orgânica atravessa; faixa líquida (`color`) na borda.
  *  - ribbonWipe({angle, bandWidth})            faixa laranja (gradRibbon) diagonal varre a tela; a cena nova fica atrás dela.
+ *  - hardCut({angle, color, coverage})         (V2) CORTE SECO de cor no beat com 1–2 frames de "smear" branco (riscos
+ *                                              de velocidade cobrindo o quadro). Use linearTiming({durationInFrames: 2}):
+ *                                              frame 0 = cena velha + smear forte; frame 1 = cena nova + smear leve.
+ *                                              Fora do TransitionSeries: <CutSmear frame cutFrame /> + hardCutState().
+ *  - extremeZoomOut({x, y, fromScale})        (V2, ref 1) a cena que ENTRA começa em close extremo de uma forma no ponto
+ *                                              (x,y) ocupando a tela (escala `fromScale`, default 30) e abre para o plano
+ *                                              (escala em espaço log + EXPO_OUT, blur de velocidade). A cena que sai é cortada seco.
+ *                                              Fora do TransitionSeries: extremeZoomOutStyle(frame, start, dur, opts).
  */
 import React, { useId } from 'react';
-import { AbsoluteFill, useVideoConfig } from 'remotion';
+import { AbsoluteFill, random, useVideoConfig } from 'remotion';
 import type {
   TransitionPresentation,
   TransitionPresentationComponentProps,
@@ -408,3 +416,194 @@ export function TransitionWrap<P extends Record<string, unknown>>({
 /** Atalho: progresso linear de uma transição em frames absolutos. */
 export const transitionProgress = (frame: number, from: number, durationInFrames: number) =>
   prog(frame, from, from + durationInFrames);
+
+// ─────────────────────────────── hardCut (V2) ──────────────────────────────
+export type HardCutProps = {
+  /** ângulo dos riscos do smear em graus (0 = horizontal; default -18, diagonal da linha branca). */
+  angle?: number;
+  /** cor do smear (default branco). */
+  color?: string;
+  /** fração do quadro coberta no frame mais forte (default 0.7). */
+  coverage?: number;
+  seed?: string;
+};
+
+/** Estado de um corte seco no frame absoluto: `after` = já é a cena nova; `smear` 1→0 nos `smearFrames` após o corte. */
+export const hardCutState = (frame: number, cutFrame: number, smearFrames = 2) => {
+  const d = frame - cutFrame;
+  const after = d >= 0;
+  const smear = d >= 0 && d < smearFrames ? 1 - d / Math.max(1, smearFrames) : 0;
+  return { after, smear: Math.max(0, smear) };
+};
+
+/** Overlay de "smear" branco: riscos horizontais (rotacionados) de espessura aleatória determinística. */
+export const SmearOverlay: React.FC<{ intensity: number } & HardCutProps & { frameSeed?: number }> = ({
+  intensity,
+  angle = -18,
+  color = C.white,
+  coverage = 0.7,
+  seed = 'smear',
+  frameSeed = 0,
+}) => {
+  const { width, height } = useVideoConfig();
+  if (intensity <= 0.001) return null;
+  const diag = Math.hypot(width, height);
+  const n = 22;
+  const bars: React.ReactNode[] = [];
+  let y = -diag / 2;
+  const rowH = diag / n;
+  for (let i = 0; i < n; i++) {
+    const r = random(`${seed}-${frameSeed}-${i}`);
+    const on = r < coverage * intensity + 0.05;
+    if (on) {
+      const h = rowH * (0.25 + 0.95 * random(`${seed}-h-${frameSeed}-${i}`)) * (0.5 + 0.5 * intensity);
+      const x0 = (random(`${seed}-x-${frameSeed}-${i}`) - 0.5) * diag * 0.6;
+      const w = diag * (0.5 + 0.8 * random(`${seed}-w-${frameSeed}-${i}`));
+      bars.push(
+        <div
+          key={i}
+          style={{
+            position: 'absolute',
+            left: x0 - w / 2 + diag / 2,
+            top: y + diag / 2,
+            width: w,
+            height: h,
+            borderRadius: h,
+            background: color,
+            opacity: 0.6 + 0.4 * intensity,
+          }}
+        />,
+      );
+    }
+    y += rowH;
+  }
+  return (
+    <AbsoluteFill style={{ pointerEvents: 'none', overflow: 'hidden' }}>
+      <div
+        style={{
+          position: 'absolute',
+          left: (width - diag) / 2,
+          top: (height - diag) / 2,
+          width: diag,
+          height: diag,
+          transform: `rotate(${angle}deg)`,
+        }}
+      >
+        {bars}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+/**
+ * Smear de corte seco em frames ABSOLUTOS (fora do TransitionSeries). Renderize POR CIMA das cenas:
+ *   const { after } = hardCutState(frame, 120);  bg = after ? '#1F5BFF' : '#FF6A13';
+ *   <CutSmear frame={frame} cutFrame={120} />
+ */
+export const CutSmear: React.FC<{ frame: number; cutFrame: number; smearFrames?: number } & HardCutProps> = ({
+  frame,
+  cutFrame,
+  smearFrames = 2,
+  ...rest
+}) => {
+  const { smear } = hardCutState(frame, cutFrame, smearFrames);
+  return <SmearOverlay intensity={smear} frameSeed={frame - cutFrame} {...rest} />;
+};
+
+const HardCutComponent: React.FC<TransitionPresentationComponentProps<HardCutProps>> = ({
+  children,
+  presentationDirection,
+  presentationProgress,
+  presentationDurationInFrames,
+  passedProps,
+}) => {
+  const p = Math.min(1, Math.max(0, presentationProgress));
+  const dur = Math.max(1, presentationDurationInFrames);
+  const f = Math.round(p * dur);
+  const cutAt = Math.max(1, Math.floor(dur / 2)); // 2 f → corta no 2º frame
+  const showNew = f >= cutAt;
+  if (presentationDirection === 'exiting') {
+    return <AbsoluteFill style={{ opacity: showNew ? 0 : 1 }}>{children}</AbsoluteFill>;
+  }
+  const intensity = p >= 1 ? 0 : 1 - f / dur;
+  return (
+    <AbsoluteFill>
+      <AbsoluteFill style={{ opacity: showNew ? 1 : 0 }}>{children}</AbsoluteFill>
+      <SmearOverlay intensity={intensity} frameSeed={f} {...passedProps} />
+    </AbsoluteFill>
+  );
+};
+
+export const hardCut = (props: HardCutProps = {}): TransitionPresentation<HardCutProps> => ({
+  component: HardCutComponent,
+  props,
+});
+
+// ─────────────────────────── extremeZoomOut (V2) ───────────────────────────
+export type ExtremeZoomOutProps = {
+  /** ponto focal (px da composição) — o detalhe da forma que enche a tela no início. default centro. */
+  x?: number;
+  y?: number;
+  /** escala inicial (close extremo). default 30. */
+  fromScale?: number;
+  /** blur máximo de velocidade em px (default 14). */
+  blur?: number;
+  /** rotação inicial em graus (default 0) — "parafusa" levemente ao abrir. */
+  rotate?: number;
+};
+
+/** Transform do zoom-out extremo para t linear 0..1 (escala interpolada em espaço LOG + EXPO_OUT). */
+export const extremeZoomOutAt = (t: number, opts: ExtremeZoomOutProps & { width: number; height: number }) => {
+  const { width, height, x = width / 2, y = height / 2, fromScale = 30, blur = 14, rotate = 0 } = opts;
+  const u = Math.min(1, Math.max(0, t));
+  const e = EXPO_OUT(u);
+  const scale = Math.exp(Math.log(fromScale) * (1 - e));
+  // velocidade (derivada numérica) → blur
+  const e2 = EXPO_OUT(Math.min(1, u + 0.02));
+  const v = Math.abs(Math.log(fromScale) * (e2 - e)) / 0.02 / Math.log(Math.max(fromScale, 1.0001));
+  const b = u >= 1 ? 0 : Math.min(blur, blur * v * 0.25);
+  return {
+    transform: `rotate(${rotate * (1 - e)}deg) scale(${scale})`,
+    transformOrigin: `${x}px ${y}px`,
+    filter: b > 0.3 ? `blur(${b.toFixed(2)}px)` : undefined,
+    scale,
+  };
+};
+
+/**
+ * Estilo pronto (frames absolutos) para envolver o PLANO que abre:
+ *   <AbsoluteFill style={extremeZoomOutStyle(frame, 480, 14, { x: 960, y: 620, fromScale: 40, width, height })}>…</AbsoluteFill>
+ */
+export const extremeZoomOutStyle = (
+  frame: number,
+  start: number,
+  durationInFrames: number,
+  opts: ExtremeZoomOutProps & { width: number; height: number },
+): React.CSSProperties => {
+  const r = extremeZoomOutAt(prog(frame, start, start + durationInFrames), opts);
+  return { transform: r.transform, transformOrigin: r.transformOrigin, filter: r.filter };
+};
+
+const ExtremeZoomOutComponent: React.FC<TransitionPresentationComponentProps<ExtremeZoomOutProps>> = ({
+  children,
+  presentationDirection,
+  presentationProgress,
+  passedProps,
+}) => {
+  const { width, height } = useVideoConfig();
+  if (presentationDirection === 'exiting') {
+    // corte seco: a cena que sai some no 1º frame da transição (a nova cobre tudo)
+    return <AbsoluteFill style={{ opacity: presentationProgress > 0 ? 0 : 1 }}>{children}</AbsoluteFill>;
+  }
+  const r = extremeZoomOutAt(presentationProgress, { ...passedProps, width, height });
+  return (
+    <AbsoluteFill style={{ transform: r.transform, transformOrigin: r.transformOrigin, filter: r.filter }}>
+      {children}
+    </AbsoluteFill>
+  );
+};
+
+export const extremeZoomOut = (props: ExtremeZoomOutProps = {}): TransitionPresentation<ExtremeZoomOutProps> => ({
+  component: ExtremeZoomOutComponent,
+  props,
+});

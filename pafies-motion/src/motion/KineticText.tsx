@@ -11,6 +11,13 @@
  *                    acontece nos `slamFrames` anteriores (default 6). Ideal para sincronizar com cue.
  *  - 'wipe'          revelação por máscara diagonal (opcionalmente com faixa `wipeBand` na borda).
  *  - 'scatter-out'   texto já presente; em startFrame explode (cada letra voa p/ fora, gira, some).
+ *  - 'pop-word'      (V2) a PALAVRA INTEIRA bate como um bloco: estica na aproximação (`popFrames`, default 4),
+ *                    startFrame = frame do POUSO (squash elástico GELATINA) e depois TREME em cada beat
+ *                    (`beats` = frames relativos, ou `beatEvery` a partir do pouso): pulso de escala +
+ *                    tremor on twos por letra (`tremor` px). Ideal para "E AÍ," / "HEIN?".
+ *  - 'type-beat'     (V2) letras entram UMA POR BEAT com salto (hop + squash no pouso). Tempo de cada letra:
+ *                    `beats` (frames relativos, um por letra NÃO-espaço) ou startFrame + i·`step`
+ *                    (default 7.5 = meio beat a 120 BPM/30 fps). Espaços não consomem beat.
  *
  * Saída (`exitFrame` + `exit`): 'scatter' | 'up' | 'down' | 'suck' | 'whip-up' | 'none'.
  * Saídas são mais rápidas que entradas (default 7 f, EXPO_IN).
@@ -23,10 +30,10 @@
 import React from 'react';
 import { useCurrentFrame, useVideoConfig, random } from 'remotion';
 import { EXPO_IN, EXPO_OUT, FLUID, WHIP } from './easings';
-import { POP, type SpringCfg, springAt, squashAt } from './springs';
+import { GELATINA, POP, type SpringCfg, springAt, squashAt } from './springs';
 import { prog, mix, wiggle } from './hooks';
 
-export type KineticMode = 'rise' | 'stagger-scale' | 'slam' | 'wipe' | 'scatter-out';
+export type KineticMode = 'rise' | 'stagger-scale' | 'slam' | 'wipe' | 'scatter-out' | 'pop-word' | 'type-beat';
 export type KineticExit = 'scatter' | 'up' | 'down' | 'suck' | 'whip-up' | 'none';
 export type StaggerFrom = 'start' | 'end' | 'center' | 'edges' | 'random';
 
@@ -44,6 +51,20 @@ export type KineticTextProps = {
   /** 'slam': escala inicial (default 2.4). */
   slamScale?: number;
   spring?: SpringCfg;
+  /** 'pop-word' / 'type-beat': frames (RELATIVOS à Sequence) dos beats. pop-word: tremores; type-beat: 1 por letra. */
+  beats?: number[];
+  /** 'pop-word': se `beats` não for dado, treme a cada N frames após o pouso (default 15 = 1 beat; 0 desliga). */
+  beatEvery?: number;
+  /** 'pop-word': frames de aproximação esticada antes do pouso (default 4). */
+  popFrames?: number;
+  /** 'pop-word': amplitude do tremor por letra em px (default fontSize·0.02). */
+  tremor?: number;
+  /** 'pop-word': pulso de escala em cada beat (default 0.08). */
+  beatScale?: number;
+  /** 'type-beat': frames entre letras quando `beats` não é dado (default 7.5). */
+  step?: number;
+  /** 'type-beat': altura do salto em fração do fontSize (default 0.35). */
+  hop?: number;
   fontFamily?: string;
   fontSize?: number;
   fontWeight?: number | string;
@@ -106,6 +127,13 @@ export const KineticText: React.FC<KineticTextProps> = ({
   slamFrames = 6,
   slamScale = 2.4,
   spring: springCfg = POP,
+  beats,
+  beatEvery = 15,
+  popFrames = 4,
+  tremor,
+  beatScale = 0.08,
+  step = 7.5,
+  hop = 0.35,
   fontFamily,
   fontSize = 200,
   fontWeight = 900,
@@ -143,7 +171,7 @@ export const KineticText: React.FC<KineticTextProps> = ({
     if (frame > endAll) return null;
   }
   // antes de começar (exceto scatter-out, que já está presente)
-  const preRoll = mode === 'slam' ? slamFrames : 0;
+  const preRoll = mode === 'slam' ? slamFrames : mode === 'pop-word' ? popFrames : 0;
   if (!isScatterMode && frame < startFrame - preRoll) return null;
 
   // micro-vida do bloco
@@ -159,6 +187,55 @@ export const KineticText: React.FC<KineticTextProps> = ({
     const top = wipeP * (100 + wipeSlant);
     const bottom = top - wipeSlant;
     clipPath = `polygon(-5% -20%, ${top}% -20%, ${bottom}% 120%, -5% 120%)`;
+  }
+
+  // ── pop-word: transform do BLOCO (estica → squash elástico → pulso/tremor nos beats)
+  let popTransform = '';
+  let beatEnv = 0; // 0..1 envoltória do último beat (para tremor por letra)
+  let lastBeat = -1;
+  if (mode === 'pop-word') {
+    const d = frame - startFrame;
+    let bx = 1;
+    let by = 1;
+    let bty = 0;
+    let brot = 0;
+    if (d < 0) {
+      // aproximação esticada (stretch vertical), vindo de baixo/pequena
+      const t = EXPO_IN(prog(d, -popFrames, 0));
+      const s = mix(0.15, 1, t);
+      bx = s * mix(0.7, 0.92, t);
+      by = s * mix(1.5, 1.22, t);
+      bty = mix(fontSize * 0.5, 0, t);
+      brot = mix(-8, 0, t);
+    } else {
+      const jelly = springAt(d, fps, 0, GELATINA);
+      // squash forte no pouso, volta elástica (overshoot inverso da GELATINA)
+      bx = 1 + 0.3 * (1 - jelly);
+      by = 1 - 0.32 * (1 - jelly);
+      const beatList = beats ?? (beatEvery > 0 ? Array.from({ length: 64 }, (_, k) => startFrame + (k + 1) * beatEvery) : []);
+      for (const b of beatList) if (b <= frame && b > startFrame) lastBeat = b;
+      if (lastBeat >= 0) {
+        const db = frame - lastBeat;
+        beatEnv = Math.exp(-db / 3.5);
+        const kick = springAt(db, fps, 0, GELATINA);
+        bx *= 1 + beatScale * (1 - kick) * 1.1;
+        by *= 1 + beatScale * (1 - kick) * 0.7;
+        brot = (random(`${seed}-br-${lastBeat}`) - 0.5) * 6 * beatEnv;
+      }
+    }
+    popTransform = `translateY(${bty}px) rotate(${brot}deg) scale(${bx}, ${by})`;
+  }
+  // ── type-beat: frame (relativo) de entrada de cada letra não-espaço
+  const typeFrames: number[] = [];
+  if (mode === 'type-beat') {
+    let k = 0;
+    for (const ch of chars) {
+      if (ch.trim() === '') typeFrames.push(NaN);
+      else {
+        typeFrames.push(beats?.[k] ?? startFrame + k * step);
+        k++;
+      }
+    }
   }
 
   const shadowCss = shadow === false ? undefined : shadow;
@@ -214,6 +291,34 @@ export const KineticText: React.FC<KineticTextProps> = ({
     } else if (mode === 'wipe') {
       const t = prog(local, 0, duration, EXPO_OUT);
       tx = mix(-fontSize * 0.12, 0, t);
+    } else if (mode === 'pop-word') {
+      // tremor por letra no beat, on twos (textura de animação tradicional)
+      if (beatEnv > 0.02) {
+        const ft = Math.floor(frame / 2);
+        const amp = (tremor ?? fontSize * 0.02) * beatEnv;
+        tx = (random(`${seed}-tx-${i}-${ft}`) - 0.5) * 2 * amp;
+        ty = (random(`${seed}-ty-${i}-${ft}`) - 0.5) * 2 * amp;
+        rot = (random(`${seed}-tr-${i}-${ft}`) - 0.5) * 8 * beatEnv;
+      }
+    } else if (mode === 'type-beat') {
+      const tf = typeFrames[i];
+      if (!Number.isNaN(tf)) {
+        const l = frame - tf;
+        const hopF = 5; // salto dura 5 f, pousa com squash
+        if (l < 0) op = 0;
+        else if (l < hopF) {
+          const u = l / hopF;
+          ty = -Math.sin(Math.PI * u) * fontSize * hop + (1 - u) * fontSize * 0.25;
+          const s = mix(0.35, 1, EXPO_OUT(Math.min(1, u * 1.6)));
+          sx = s * mix(0.85, 1, u);
+          sy = s * mix(1.25, 1, u); // stretch subindo
+          rot = (random(`${seed}-hr-${i}`) - 0.5) * 18 * (1 - u);
+        } else {
+          const sq = squashAt(l, fps, hopF, 0.6, GELATINA);
+          sx = sq.scaleX;
+          sy = sq.scaleY;
+        }
+      }
     }
 
     // saída
@@ -265,7 +370,7 @@ export const KineticText: React.FC<KineticTextProps> = ({
         style={{
           display: 'inline-block',
           transform: `translate(${tx}px, calc(${yPct}% + ${ty}px)) rotate(${rot}deg) scale(${sx}, ${sy})`,
-          transformOrigin: mode === 'slam' ? '50% 90%' : '50% 75%',
+          transformOrigin: mode === 'slam' || mode === 'type-beat' ? '50% 90%' : '50% 75%',
           opacity: op,
           whiteSpace: 'pre',
           width: isSpace ? '0.32em' : undefined,
@@ -309,7 +414,17 @@ export const KineticText: React.FC<KineticTextProps> = ({
         ...style,
       }}
     >
-      <div style={{ display: 'inline-flex', clipPath, WebkitClipPath: clipPath }}>{letters}</div>
+      <div
+        style={{
+          display: 'inline-flex',
+          clipPath,
+          WebkitClipPath: clipPath,
+          transform: popTransform || undefined,
+          transformOrigin: '50% 85%',
+        }}
+      >
+        {letters}
+      </div>
       {mode === 'wipe' && wipeBand && wipeP > 0 && wipeP < 1 ? (
         <div
           style={{

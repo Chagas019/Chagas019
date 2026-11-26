@@ -132,3 +132,20 @@ export const breathe = (frame: number, period = 60, phase = 0): number =>
 
 /** Velocidade normalizada (derivada numérica) de uma função de progresso — para motion blur simulado. */
 export const velocity = (fn: (f: number) => number, frame: number): number => fn(frame + 0.5) - fn(frame - 0.5);
+
+/**
+ * Animação de personagem "on twos/threes" (V2): segura cada pose por fps/fpsPose frames.
+ * fpsPose=12 sobre 30 fps → poses alternando 3,2,3,2… frames (5 frames = 2 poses), como animação tradicional.
+ * fpsPose=15 → on twos exatos; fpsPose=10 → on threes.
+ * Retorna o frame "congelado" (1º frame da pose atual) — passe-o no lugar de `frame` para interpolar/spring/noise.
+ *   const f = useHoldPose(frame, 12);  const legAngle = Math.sin(f * 0.6) * 40;
+ */
+export const useHoldPose = (frame: number, fpsPose = 12, fps = 30): number => {
+  if (fpsPose >= fps) return frame;
+  const idx = Math.floor((frame * fpsPose) / fps + 1e-9);
+  return Math.ceil((idx * fps) / fpsPose - 1e-9);
+};
+export const holdPose = useHoldPose;
+/** Índice da pose (0,1,2…) — útil como seed de "boil" (tremido de traço que muda a cada pose). */
+export const poseIndex = (frame: number, fpsPose = 12, fps = 30): number =>
+  Math.floor((frame * fpsPose) / fps + 1e-9);
