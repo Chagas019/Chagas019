@@ -618,31 +618,41 @@ export const PersonagemLiquido: React.FC<PersonagemLiquidoProps> = ({
     0.05,
     10,
   )}`;
-  // cabelo líquido: uma "onda" que escorre para trás
+  // cabelo líquido: calota no topo/atrás da cabeça (recortada pela cabeça — sem "aba" na frente,
+  // que lia como boné/gorro) + mecha que escorre para trás. Rosto: olho(s) e nariz discretos.
   const hairDir = trail != null ? (trail + 180) * D2R : (180 + 25) * D2R;
-  const hairHead = add(headC, hUp, 9 * hk);
-  const headInside = [
-    {
-      d: dropPath(
-        { x: hairHead.x + Math.cos(hairDir) * -6 * hk, y: hairHead.y + Math.sin(hairDir) * -6 * hk },
-        11 * hk,
-        hairDir + Math.PI,
-        26 * hk,
-        0.15,
-      ),
-      fill: c.splash,
-    },
+  const fwd: P = { x: -hUp.y, y: hUp.x }; // frente da cabeça (perpendicular ao "para cima")
+  const backK = 1 - turn * 0.8; // de frente, o cabelo fica centrado no topo
+  const hairC = add(add(headC, hUp, 10.5 * hk), fwd, -6 * hk * backK);
+  const headInside: Array<{ d: string; fill: string }> = [
+    { d: blobPath(hairC, (12.5 + 3 * turn) * hk, 8.5 * hk, Math.atan2(fwd.y, fwd.x) - 0.25 * backK, seed * 2 + 41, 0.12, 9), fill: c.splash },
   ];
   const headPart: Part = { key: "head", d: headD, fill: c.body, shade: c.shade, light: 6 * hk, inside: headInside };
-  // franja: ponta do cabelo saindo da cabeça
+  // rosto (por cima da cabeça): nariz em perfil + olho(s) marinho
+  const faceEls: React.ReactNode[] = [];
+  if (m < 0.5) {
+    const eyeY = -1.5 * hk;
+    if (turn < 0.65) {
+      const nose = add(add(headC, fwd, 13.2 * hk), hUp, -1 * hk);
+      faceEls.push(<circle key="nose" cx={nose.x} cy={nose.y} r={3.6 * hk} fill={c.body} />);
+      const eye = add(add(headC, fwd, 7.5 * hk), hUp, -eyeY);
+      faceEls.push(<ellipse key="eyeR" cx={eye.x} cy={eye.y} rx={1.7 * hk} ry={2.6 * hk} fill={INK_V2.navy} />);
+    } else {
+      for (const sgn of [-1, 1]) {
+        const eye = add(add(headC, fwd, (sgn * 5.2 + 1.5) * hk), hUp, -eyeY);
+        faceEls.push(<ellipse key={`eye${sgn}`} cx={eye.x} cy={eye.y} rx={1.7 * hk} ry={2.6 * hk} fill={INK_V2.navy} />);
+      }
+    }
+  }
+  // mecha: ponta do cabelo saindo para trás da cabeça
   const hairTip = (
     <path
       key="hair"
       d={dropPath(
-        { x: headC.x + Math.cos(hairDir) * 15 * hk + hUp.x * 6 * hk, y: headC.y + Math.sin(hairDir) * 15 * hk + hUp.y * 6 * hk },
-        5.5 * hk,
+        { x: headC.x + Math.cos(hairDir) * 13 * hk + hUp.x * 7 * hk, y: headC.y + Math.sin(hairDir) * 13 * hk + hUp.y * 7 * hk },
+        5 * hk,
         hairDir,
-        (24 + 14 * (trail != null ? 1 : 0)) * hk,
+        (16 + 12 * (trail != null ? 1 : 0)) * hk,
         0.35,
       )}
       fill={c.splash}
@@ -659,7 +669,8 @@ export const PersonagemLiquido: React.FC<PersonagemLiquidoProps> = ({
     sashTail = (
       <g key="sash">
         <path d={capsulePath(startP, 6.5, tipP, 3.5, 0.3)} fill={c.sash} />
-        <path d={dropPath({ x: tipP.x + Math.cos(back) * 8, y: tipP.y + Math.sin(back) * 8 + 2 }, 2.4, back, 8)} fill={c.sash} />
+        {/* ponta arredondada (antes era uma gota pontuda) */}
+        <path d={blobPath({ x: tipP.x + Math.cos(back) * 3, y: tipP.y + Math.sin(back) * 3 + 1 }, 4.6, 3.4, back, seed + 77, 0.12, 7)} fill={c.sash} />
       </g>
     );
   }
@@ -727,6 +738,7 @@ export const PersonagemLiquido: React.FC<PersonagemLiquidoProps> = ({
             <ShadedPart key={p.key} part={p} id={`${uid}-${p.key}`} />
           ))}
           {hairTip}
+          {faceEls}
           {front}
         </g>
         {meltLayer}
