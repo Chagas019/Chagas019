@@ -1,0 +1,29 @@
+{
+  "name": "pafies-motion",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Motion Design — Gincana Solidária PAFIES 10ª edição",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "audio": "python3 scripts/gerar_trilha.py",
+    "still": "remotion still src/index.ts PafiesMain out/still.png --frame=60",
+    "render": "remotion render src/index.ts PafiesMain out/pafies-10-edicao.mp4 --codec=h264 --crf=18",
+    "render:vertical": "remotion render src/index.ts PafiesVertical out/pafies-10-edicao-vertical.mp4 --codec=h264 --crf=18",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.242",
+    "@remotion/google-fonts": "4.0.242",
+    "@remotion/paths": "4.0.242",
+    "@remotion/shapes": "4.0.242",
+    "@remotion/transitions": "4.0.242",
+    "@remotion/noise": "4.0.242",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.242"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.12",
+    "typescript": "5.6.3"
+  }
+}
