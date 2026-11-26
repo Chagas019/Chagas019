@@ -32,6 +32,7 @@
     color: var(--tinta);
     text-align: center; white-space: nowrap;
     pointer-events: none;
+    transform-origin: 50% 0;
     animation: surgir 1.2s ease-out both;
   }
   .dias {
@@ -87,6 +88,30 @@
   @keyframes surgir { from { opacity: 0; transform: translate(-50%, 4%); } to { opacity: 1; transform: translate(-50%, 0); } }
   @keyframes tique { from { opacity: .3; transform: translateY(-8%); } to { opacity: 1; transform: none; } }
   @keyframes pulso { 50% { opacity: .35; } }
+
+  /* Tic-tac: a placa balança de leve a cada segundo */
+  .placa.tic { animation: tic .9s ease-out; }
+  .placa.tac { animation: tac .9s ease-out; }
+  @keyframes tic { 0% { transform: translateX(-50%) rotate(.9deg); } 100% { transform: translateX(-50%) rotate(0); } }
+  @keyframes tac { 0% { transform: translateX(-50%) rotate(-.9deg); } 100% { transform: translateX(-50%) rotate(0); } }
+
+  .som {
+    position: fixed;
+    right: calc(14px + env(safe-area-inset-right, 0px));
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.45);
+    background: rgba(255,255,255,.14);
+    color: #fff; cursor: pointer;
+    display: grid; place-items: center;
+    transition: background .2s;
+  }
+  .som:hover { background: rgba(255,255,255,.26); }
+  .som:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  .som svg { width: 20px; height: 20px; }
+  .som .onda { opacity: 0; transition: opacity .2s; }
+  .som[aria-pressed="true"] .onda { opacity: 1; }
+  .som[aria-pressed="true"] .mudo { opacity: 0; }
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
 </style>
 </head>
@@ -101,6 +126,14 @@
       <div class="edicao">10ª EDIÇÃO · PAFIES 2027</div>
     </div>
   </main>
+
+  <button class="som" id="som" type="button" aria-pressed="false" aria-label="Ligar som de tic-tac">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="none"/>
+      <path class="onda" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>
+      <path class="mudo" d="M16 9.5l5 5M21 9.5l-5 5"/>
+    </svg>
+  </button>
 
 <script>
   // Data oficial: 22 de janeiro de 2027 (00:00, horário local).
@@ -135,6 +168,47 @@
   }
   atualizar();
   setInterval(atualizar, 30000);
+
+  // ===== Tic-tac =====
+  const placa = document.querySelector('.placa');
+  const botao = document.getElementById('som');
+  const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let ctx = null, somLigado = false, lado = 0;
+
+  function clique(agudo) {
+    if (!ctx) return;
+    const t = ctx.currentTime;
+    // ruído curto filtrado = "tic" de engrenagem
+    const dur = 0.035;
+    const buf = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * dur), ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 6);
+    const src = ctx.createBufferSource(); src.buffer = buf;
+    const filtro = ctx.createBiquadFilter(); filtro.type = 'bandpass';
+    filtro.frequency.value = agudo ? 3800 : 2600; filtro.Q.value = 6;
+    const ganho = ctx.createGain(); ganho.gain.value = 0.55;
+    src.connect(filtro).connect(ganho).connect(ctx.destination);
+    src.start(t);
+  }
+
+  function batida() {
+    lado = 1 - lado;
+    if (!calmo) {
+      placa.classList.remove('tic', 'tac'); void placa.offsetWidth;
+      placa.classList.add(lado ? 'tic' : 'tac');
+    }
+    if (somLigado) clique(lado === 1);
+  }
+  // sincroniza a batida com a virada de cada segundo
+  setTimeout(() => { batida(); setInterval(batida, 1000); }, 1000 - (Date.now() % 1000));
+
+  botao.addEventListener('click', () => {
+    if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; } }
+    somLigado = !somLigado;
+    if (somLigado && ctx.state === 'suspended') ctx.resume();
+    botao.setAttribute('aria-pressed', String(somLigado));
+    botao.setAttribute('aria-label', somLigado ? 'Desligar som de tic-tac' : 'Ligar som de tic-tac');
+  });
 </script>
 </body>
 </html>
