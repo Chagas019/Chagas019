@@ -1,0 +1,429 @@
+{
+  "$comment": "FONTE ÚNICA DE TEMPO (docs/02-storyboard.md). Frames absolutos a 30 fps. Lido por src/timeline.ts e scripts/gerar_trilha.py.",
+  "fps": 30,
+  "bpm": 120,
+  "beatFrames": 15,
+  "barFrames": 60,
+  "beatsPerBar": 4,
+  "durationInFrames": 1140,
+  "width": 1920,
+  "height": 1080,
+  "scenes": [
+    {
+      "id": "S01",
+      "name": "A Faísca",
+      "from": 0,
+      "to": 239,
+      "durationInFrames": 240,
+      "overlapIn": 0,
+      "section": "intro"
+    },
+    {
+      "id": "S02",
+      "name": "Gotas que se Encontram",
+      "from": 225,
+      "to": 479,
+      "durationInFrames": 255,
+      "overlapIn": 15,
+      "section": "build"
+    },
+    {
+      "id": "S03",
+      "name": "Energia em Revezamento",
+      "from": 465,
+      "to": 719,
+      "durationInFrames": 255,
+      "overlapIn": 15,
+      "section": "drop1"
+    },
+    {
+      "id": "S04",
+      "name": "O Anel Solidário",
+      "from": 705,
+      "to": 839,
+      "durationInFrames": 135,
+      "overlapIn": 15,
+      "section": "break"
+    },
+    {
+      "id": "S05",
+      "name": "Dez",
+      "from": 828,
+      "to": 959,
+      "durationInFrames": 132,
+      "overlapIn": 12,
+      "section": "drop2"
+    },
+    {
+      "id": "S06",
+      "name": "O Encontro (Selo)",
+      "from": 945,
+      "to": 1139,
+      "durationInFrames": 195,
+      "overlapIn": 15,
+      "section": "finale"
+    }
+  ],
+  "sections": [
+    {
+      "id": "intro",
+      "from": 0,
+      "to": 239,
+      "bars": [
+        1,
+        4
+      ]
+    },
+    {
+      "id": "build",
+      "from": 240,
+      "to": 479,
+      "bars": [
+        5,
+        8
+      ]
+    },
+    {
+      "id": "drop1",
+      "from": 480,
+      "to": 719,
+      "bars": [
+        9,
+        12
+      ]
+    },
+    {
+      "id": "break",
+      "from": 720,
+      "to": 839,
+      "bars": [
+        13,
+        14
+      ]
+    },
+    {
+      "id": "drop2",
+      "from": 840,
+      "to": 959,
+      "bars": [
+        15,
+        16
+      ]
+    },
+    {
+      "id": "finale",
+      "from": 960,
+      "to": 1139,
+      "bars": [
+        17,
+        19
+      ]
+    }
+  ],
+  "music": {
+    "key": "D major",
+    "progression": [
+      "Bm",
+      "G",
+      "D",
+      "A"
+    ],
+    "finalChord": {
+      "bar": 19,
+      "frame": 1080,
+      "chord": "Dadd9"
+    },
+    "padFilterHz": [
+      [
+        0,
+        400
+      ],
+      [
+        240,
+        1200
+      ],
+      [
+        479,
+        1800
+      ],
+      [
+        480,
+        2600
+      ],
+      [
+        719,
+        2600
+      ],
+      [
+        720,
+        900
+      ],
+      [
+        835,
+        1400
+      ],
+      [
+        840,
+        2800
+      ],
+      [
+        959,
+        2800
+      ],
+      [
+        960,
+        2000
+      ],
+      [
+        1080,
+        3200
+      ],
+      [
+        1139,
+        1500
+      ]
+    ]
+  },
+  "groups": {
+    "IMPACTS": [
+      240,
+      480,
+      540,
+      600,
+      840,
+      900,
+      960,
+      1020,
+      1080
+    ],
+    "WHOOSHES": [
+      88,
+      228,
+      470,
+      705,
+      892,
+      930
+    ],
+    "RISERS": [
+      [
+        180,
+        240
+      ],
+      [
+        420,
+        480
+      ],
+      [
+        780,
+        836
+      ],
+      [
+        930,
+        960
+      ]
+    ],
+    "HEARTBEATS": [
+      15,
+      60,
+      120,
+      180,
+      720,
+      780
+    ],
+    "PLUCKS": [
+      300,
+      315,
+      330,
+      345,
+      360,
+      375,
+      390
+    ],
+    "TICKS": [
+      120,
+      150,
+      180,
+      660,
+      675,
+      690,
+      870,
+      1065,
+      1072
+    ],
+    "BLOOPS": [
+      420,
+      990
+    ],
+    "CHIMES": [
+      750,
+      780,
+      1020
+    ],
+    "SILENCE": [
+      [
+        836,
+        839
+      ]
+    ],
+    "FINAL_HIT": 1080
+  },
+  "cues": [
+    {"frame": 15, "type": "heartbeat", "intensity": 0.55, "peak": true, "label": "faísca surge"},
+    {"frame": 60, "type": "heartbeat", "intensity": 1.0, "peak": true},
+    {"frame": 67, "type": "heartbeat2", "intensity": 0.7},
+    {"frame": 88, "type": "whoosh", "intensity": 0.8, "duration": 10, "label": "faísca dispara"},
+    {"frame": 120, "type": "heartbeat", "intensity": 1.0, "peak": true},
+    {"frame": 120, "type": "tick", "intensity": 0.6, "peak": true, "label": "UNIR"},
+    {"frame": 127, "type": "heartbeat2", "intensity": 0.7},
+    {"frame": 150, "type": "tick", "intensity": 0.6, "peak": true, "label": "CUIDAR"},
+    {"frame": 180, "type": "heartbeat", "intensity": 1.0, "peak": true},
+    {"frame": 180, "type": "riser_start", "intensity": 0.6, "id": "riser1", "end": 240},
+    {"frame": 180, "type": "tick", "intensity": 0.6, "peak": true, "label": "COMPARTILHAR"},
+    {"frame": 187, "type": "heartbeat2", "intensity": 0.7},
+    {"frame": 228, "type": "whoosh", "intensity": 0.8, "duration": 12, "label": "espiral vira gota"},
+    {"frame": 240, "type": "impact", "intensity": 0.45, "peak": true, "label": "gota estala"},
+    {"frame": 240, "type": "kick", "intensity": 1.0},
+    {"frame": 240, "type": "riser_end", "intensity": 0.6, "id": "riser1"},
+    {"frame": 247.5, "type": "hat", "intensity": 0.55},
+    {"frame": 262.5, "type": "hat", "intensity": 0.55},
+    {"frame": 270, "type": "kick", "intensity": 1.0},
+    {"frame": 277.5, "type": "hat", "intensity": 0.55},
+    {"frame": 292.5, "type": "hat", "intensity": 0.55},
+    {"frame": 300, "type": "kick", "intensity": 1.0},
+    {"frame": 300, "type": "pluck", "intensity": 0.9, "note": "F#4", "peak": true, "label": "G"},
+    {"frame": 307.5, "type": "hat", "intensity": 0.55},
+    {"frame": 315, "type": "pluck", "intensity": 0.9, "note": "A4", "peak": true, "label": "I"},
+    {"frame": 322.5, "type": "hat", "intensity": 0.55},
+    {"frame": 330, "type": "kick", "intensity": 1.0},
+    {"frame": 330, "type": "pluck", "intensity": 0.9, "note": "B4", "peak": true, "label": "N"},
+    {"frame": 337.5, "type": "hat", "intensity": 0.55},
+    {"frame": 345, "type": "pluck", "intensity": 0.9, "note": "D5", "peak": true, "label": "C"},
+    {"frame": 352.5, "type": "hat", "intensity": 0.55},
+    {"frame": 360, "type": "kick", "intensity": 1.0},
+    {"frame": 360, "type": "pluck", "intensity": 0.9, "note": "E5", "peak": true, "label": "A"},
+    {"frame": 367.5, "type": "hat", "intensity": 0.55},
+    {"frame": 375, "type": "pluck", "intensity": 0.9, "note": "F#5", "peak": true, "label": "N"},
+    {"frame": 382.5, "type": "hat", "intensity": 0.55},
+    {"frame": 390, "type": "kick", "intensity": 1.0},
+    {"frame": 390, "type": "pluck", "intensity": 0.9, "note": "A5", "peak": true, "label": "A"},
+    {"frame": 397.5, "type": "hat", "intensity": 0.55},
+    {"frame": 412.5, "type": "hat", "intensity": 0.55},
+    {"frame": 420, "type": "bloop", "intensity": 1.0, "peak": true, "label": "coração fecha"},
+    {"frame": 420, "type": "kick", "intensity": 1.0},
+    {"frame": 420, "type": "riser_start", "intensity": 0.8, "id": "riser2", "end": 480},
+    {"frame": 427.5, "type": "hat", "intensity": 0.55},
+    {"frame": 442.5, "type": "hat", "intensity": 0.55},
+    {"frame": 450, "type": "kick", "intensity": 1.0},
+    {"frame": 450, "type": "snare_roll_start", "intensity": 0.2, "end": 480},
+    {"frame": 457.5, "type": "hat", "intensity": 0.55},
+    {"frame": 470, "type": "whoosh", "intensity": 0.8, "duration": 10, "label": "mergulho no reflexo"},
+    {"frame": 472.5, "type": "hat", "intensity": 0.55},
+    {"frame": 480, "type": "crash", "intensity": 1.0},
+    {"frame": 480, "type": "impact", "intensity": 0.85, "peak": true, "label": "ENERGIA"},
+    {"frame": 480, "type": "kick", "intensity": 1.0},
+    {"frame": 480, "type": "riser_end", "intensity": 0.8, "id": "riser2"},
+    {"frame": 480, "type": "snare_roll_end", "intensity": 1.0},
+    {"frame": 487.5, "type": "hat", "intensity": 0.7},
+    {"frame": 495, "type": "kick", "intensity": 1.0},
+    {"frame": 495, "type": "snare", "intensity": 0.9},
+    {"frame": 502.5, "type": "hat", "intensity": 0.7},
+    {"frame": 510, "type": "kick", "intensity": 1.0},
+    {"frame": 517.5, "type": "hat", "intensity": 0.7},
+    {"frame": 525, "type": "kick", "intensity": 1.0},
+    {"frame": 525, "type": "snare", "intensity": 0.9},
+    {"frame": 532.5, "type": "hat", "intensity": 0.7},
+    {"frame": 540, "type": "hit", "intensity": 0.8, "peak": true, "label": "JUNTOS"},
+    {"frame": 540, "type": "kick", "intensity": 1.0},
+    {"frame": 547.5, "type": "hat", "intensity": 0.7},
+    {"frame": 555, "type": "kick", "intensity": 1.0},
+    {"frame": 555, "type": "snare", "intensity": 0.9},
+    {"frame": 562.5, "type": "hat", "intensity": 0.7},
+    {"frame": 570, "type": "kick", "intensity": 1.0},
+    {"frame": 577.5, "type": "hat", "intensity": 0.7},
+    {"frame": 585, "type": "kick", "intensity": 1.0},
+    {"frame": 585, "type": "snare", "intensity": 0.9},
+    {"frame": 592.5, "type": "hat", "intensity": 0.7},
+    {"frame": 600, "type": "crash", "intensity": 1.0},
+    {"frame": 600, "type": "impact", "intensity": 0.95, "peak": true, "label": "revezamento"},
+    {"frame": 600, "type": "kick", "intensity": 1.0},
+    {"frame": 607.5, "type": "hat", "intensity": 0.7},
+    {"frame": 615, "type": "kick", "intensity": 1.0},
+    {"frame": 615, "type": "snare", "intensity": 0.9},
+    {"frame": 622.5, "type": "hat", "intensity": 0.7},
+    {"frame": 630, "type": "kick", "intensity": 1.0},
+    {"frame": 637.5, "type": "hat", "intensity": 0.7},
+    {"frame": 645, "type": "kick", "intensity": 1.0},
+    {"frame": 645, "type": "snare", "intensity": 0.9},
+    {"frame": 652.5, "type": "hat", "intensity": 0.7},
+    {"frame": 660, "type": "kick", "intensity": 1.0},
+    {"frame": 660, "type": "tick", "intensity": 0.8, "peak": true, "label": "UNIR"},
+    {"frame": 667.5, "type": "hat", "intensity": 0.7},
+    {"frame": 675, "type": "kick", "intensity": 1.0},
+    {"frame": 675, "type": "snare", "intensity": 0.9},
+    {"frame": 675, "type": "tick", "intensity": 0.8, "peak": true, "label": "CUIDAR"},
+    {"frame": 682.5, "type": "hat", "intensity": 0.7},
+    {"frame": 690, "type": "kick", "intensity": 1.0},
+    {"frame": 690, "type": "tick", "intensity": 0.8, "peak": true, "label": "COMPARTILHAR"},
+    {"frame": 697.5, "type": "hat", "intensity": 0.7},
+    {"frame": 705, "type": "kick", "intensity": 1.0},
+    {"frame": 705, "type": "snare", "intensity": 0.9},
+    {"frame": 705, "type": "whoosh", "intensity": 1.0, "duration": 15, "label": "whip-pan"},
+    {"frame": 712.5, "type": "hat", "intensity": 0.7},
+    {"frame": 720, "type": "heartbeat", "intensity": 1.0, "peak": true},
+    {"frame": 727, "type": "heartbeat2", "intensity": 0.7},
+    {"frame": 750, "type": "chime", "intensity": 0.8, "peak": true, "label": "write-on Solidária", "note": "A5"},
+    {"frame": 780, "type": "chime", "intensity": 0.9, "peak": true, "label": "sparkles", "note": "D6"},
+    {"frame": 780, "type": "heartbeat", "intensity": 1.0, "peak": true},
+    {"frame": 780, "type": "riser_start", "intensity": 1.0, "id": "riser3", "end": 836},
+    {"frame": 787, "type": "heartbeat2", "intensity": 0.7},
+    {"frame": 810, "type": "reverse_cymbal_start", "intensity": 0.8, "end": 836},
+    {"frame": 836, "type": "reverse_cymbal_end", "intensity": 0.8},
+    {"frame": 836, "type": "riser_end", "intensity": 1.0, "id": "riser3"},
+    {"frame": 836, "type": "silence_start", "end": 840, "label": "congelamento"},
+    {"frame": 840, "type": "boom", "intensity": 1.0},
+    {"frame": 840, "type": "crash", "intensity": 1.0},
+    {"frame": 840, "type": "impact", "intensity": 1.0, "peak": true, "label": "10ª"},
+    {"frame": 840, "type": "kick", "intensity": 1.0},
+    {"frame": 840, "type": "silence_end"},
+    {"frame": 847.5, "type": "hat", "intensity": 0.7},
+    {"frame": 855, "type": "kick", "intensity": 1.0},
+    {"frame": 855, "type": "snare", "intensity": 0.9},
+    {"frame": 862.5, "type": "hat", "intensity": 0.7},
+    {"frame": 870, "type": "kick", "intensity": 1.0},
+    {"frame": 870, "type": "tick", "intensity": 0.6, "peak": true, "label": "EDIÇÃO"},
+    {"frame": 877.5, "type": "hat", "intensity": 0.7},
+    {"frame": 885, "type": "kick", "intensity": 1.0},
+    {"frame": 885, "type": "snare", "intensity": 0.9},
+    {"frame": 892, "type": "whoosh", "intensity": 0.8, "duration": 8, "label": "antecipação do giro"},
+    {"frame": 892.5, "type": "hat", "intensity": 0.7},
+    {"frame": 900, "type": "hit", "intensity": 0.85, "peak": true, "label": "giro 360 do 10ª"},
+    {"frame": 900, "type": "kick", "intensity": 1.0},
+    {"frame": 907.5, "type": "hat", "intensity": 0.7},
+    {"frame": 915, "type": "kick", "intensity": 1.0},
+    {"frame": 915, "type": "snare", "intensity": 0.9},
+    {"frame": 922.5, "type": "hat", "intensity": 0.7},
+    {"frame": 930, "type": "kick", "intensity": 1.0},
+    {"frame": 930, "type": "riser_start", "intensity": 0.7, "id": "riser4", "end": 960},
+    {"frame": 930, "type": "whoosh", "intensity": 1.0, "duration": 30, "label": "mergulho no 0"},
+    {"frame": 937.5, "type": "hat", "intensity": 0.7},
+    {"frame": 945, "type": "kick", "intensity": 1.0},
+    {"frame": 945, "type": "snare", "intensity": 0.9},
+    {"frame": 952.5, "type": "hat", "intensity": 0.7},
+    {"frame": 960, "type": "impact", "intensity": 0.5, "peak": true, "label": "selo se fecha"},
+    {"frame": 960, "type": "kick", "intensity": 0.85},
+    {"frame": 960, "type": "riser_end", "intensity": 0.7, "id": "riser4"},
+    {"frame": 990, "type": "bloop", "intensity": 1.0, "peak": true, "label": "coração assenta"},
+    {"frame": 990, "type": "kick", "intensity": 0.85},
+    {"frame": 1020, "type": "chime", "intensity": 1.0, "peak": true, "label": "O ENCONTRO", "note": "F#6"},
+    {"frame": 1020, "type": "clap", "intensity": 1.0, "peak": true, "label": "O ENCONTRO"},
+    {"frame": 1020, "type": "kick", "intensity": 0.85},
+    {"frame": 1035, "type": "snare", "intensity": 1.0, "peak": true, "label": "GINCANA (selo)"},
+    {"frame": 1050, "type": "kick", "intensity": 0.85},
+    {"frame": 1065, "type": "tick", "intensity": 0.6, "peak": true, "label": "PAFIES"},
+    {"frame": 1072, "type": "tick", "intensity": 0.6, "peak": true, "label": "10ª EDIÇÃO"},
+    {"frame": 1080, "type": "crash", "intensity": 1.0},
+    {"frame": 1080, "type": "final_hit", "intensity": 1.0, "peak": true, "label": "stamp do selo"},
+    {"frame": 1120, "type": "fade_start", "end": 1139},
+    {"frame": 1139, "type": "fade_end"}
+  ]
+}
