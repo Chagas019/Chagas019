@@ -40,7 +40,7 @@ if a.modelo:
             input=f["texto"].encode())
 
 # 2. tratamento de locução (por fala)
-chain = ("silenceremove=start_periods=1:start_threshold=-45dB,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse,"
+chain = ("silenceremove=start_periods=1:start_threshold=-45dB,"
          "highpass=f=90,"
          "equalizer=f=220:t=q:w=1:g=2.5,"          # corpo
          "equalizer=f=3200:t=q:w=1.2:g=4,"         # presença

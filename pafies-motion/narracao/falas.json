@@ -1,11 +1,11 @@
 {
-  "$comment": "Falas do narrador do teaser V2. frame = início da fala (30 fps). Para regenerar: python3 scripts/gerar_narracao.py --modelo <pt_BR-cadu-medium.onnx>. Modelo: https://huggingface.co/rhasspy/piper-voices (pt/pt_BR/cadu/medium).",
-  "voz": "pt_BR-cadu-medium (Piper)",
+  "$comment": "Falas do narrador do teaser V2 (voz expressiva Bark, pt_speaker_0). frame = início da fala (30 fps). Texto idêntico ao roteiro; risadas são só som. A versão anterior (Piper) está em falas-piper.json / brutos-piper/.",
+  "voz": "Bark (suno/bark) v2/pt_speaker_0 — takes escolhidos por reconhecimento de fala",
   "falas": [
-    {"id": "01-e-ai",       "texto": "E aí!",                      "frame": 38,  "length": 0.9},
-    {"id": "02-preparados", "texto": "Estão preparados?",           "frame": 188, "length": 0.9},
-    {"id": "03-decima",     "texto": "Para a décima gincana?",      "frame": 374, "length": 0.9},
-    {"id": "04-chegando",   "texto": "Tá chegando, hein?",          "frame": 508, "length": 0.9},
-    {"id": "05-assinatura", "texto": "Gincana Solidária, Pafies!",  "frame": 634, "length": 0.92}
+    {"id": "01-e-ai",       "texto": "E aí! [risada]",               "frame": 38},
+    {"id": "02-preparados", "texto": "Estão preparados?!",            "frame": 186},
+    {"id": "03-decima",     "texto": "Para a décima gincana?!",       "frame": 372},
+    {"id": "04-chegando",   "texto": "Tá chegando, hein?! [risada]",  "frame": 506},
+    {"id": "05-assinatura", "texto": "Gincana Solidária... PAFIES!",  "frame": 627}
   ]
 }
