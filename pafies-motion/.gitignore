@@ -7,3 +7,5 @@ out/teste*.mp4
 out/*.mp3
 out/ref-frames*/
 out/*.png
+out/kt/
+out/teaser-test*.mp4
