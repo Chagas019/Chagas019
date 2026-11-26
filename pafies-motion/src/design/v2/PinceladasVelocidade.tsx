@@ -67,12 +67,12 @@ export const PinceladasVelocidade: React.FC<PinceladasVelocidadeProps> = ({
   progress = 0,
   seed = 0,
   center,
-  count = 34,
+  count = 64,
   color = TONE_V2.strokeOnOrangeLight,
   colors,
   opacity = 1,
   innerRadius = 120,
-  maxWidth = 90,
+  maxWidth = 120,
   speed = 1,
   arc,
   width = 1920,
@@ -89,14 +89,14 @@ export const PinceladasVelocidade: React.FC<PinceladasVelocidadeProps> = ({
     const base = arc
       ? ((arc[0] + ((arc[1] - arc[0]) * (i + S() * 0.8)) / count) * Math.PI) / 180
       : ((i + S() * 0.85) / count) * Math.PI * 2;
-    const len = diag * (0.28 + S() * 0.45);
+    const len = diag * (0.45 + S() * 0.5);
     const w = maxWidth * (0.25 + S() * 0.75);
     const phase0 = S();
     const spd = speed * (S() > 0.5 ? 1 : 2);
     // jitter "on twos" (forma da borda)
     const J = rng(seed * 101 + i);
     const phase = (((phase0 + progress * spd) % 1) + 1) % 1;
-    const r0 = innerRadius + phase * diag * 0.75;
+    const r0 = innerRadius + phase * diag * 0.42;
     const r1 = r0 + len;
     const ang = base + (J() - 0.5) * 0.015;
     const fill = palette[i % palette.length];

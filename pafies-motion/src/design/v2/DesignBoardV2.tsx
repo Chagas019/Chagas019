@@ -61,18 +61,18 @@ export const DesignBoardV2: React.FC = () => {
       <Panel x={1200} y={1160} w={1200} h={760} bg={BG_V2.electric}>
         <Label>ANELFRASE</Label>
         <div style={{ position: "absolute", left: 40, top: 40 }}>
-          <AnelFrase text="ESTÃO PREPARADOS ✦ " radius={230} bandHeight={120} rotateX={-24} rotateY={-28} rotateZ={-18} />
+          <AnelFrase text="ESTÃO PREPARADOS ✦ " radius={210} bandHeight={150} rotateX={-48} rotateY={-35} rotateZ={-28} />
         </div>
         <div style={{ position: "absolute", left: 620, top: 80 }}>
-          <AnelFrase text="ESTÃO PREPARADOS ✦ " radius={210} bandHeight={110} rotateX={-10} rotateY={0} rotateZ={0} />
+          <AnelFrase text="ESTÃO PREPARADOS ✦ " radius={220} bandHeight={140} rotateX={-14} rotateY={0} rotateZ={0} />
         </div>
       </Panel>
       {/* linha 4 — splash e linha branca */}
       <Panel x={0} y={1930} w={1190} h={470} bg={BG_V2.orange}>
         <Label>SPLASH 0.08 / 0.25 / 0.5</Label>
-        <Splash progress={0.08} seed={1} x={200} y={380} />
-        <Splash progress={0.25} seed={1} x={590} y={380} />
-        <Splash progress={0.5} seed={1} x={980} y={380} />
+        <Splash scale={1.2} progress={0.08} seed={1} x={200} y={380} />
+        <Splash scale={1.2} progress={0.25} seed={1} x={590} y={380} />
+        <Splash scale={1.2} progress={0.5} seed={1} x={980} y={380} />
       </Panel>
       <Panel x={1200} y={1930} w={1200} h={470} bg={BG_V2.orange}>
         <Label>LINHABRANCA</Label>

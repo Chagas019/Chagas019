@@ -142,7 +142,7 @@ export const AnelFrase: React.FC<AnelFraseProps> = ({
     boxSizing: "border-box",
     overflow: "visible",
   };
-  const pad = 1.2; // sobreposição p/ esconder frestas entre células
+  const pad = 2; // sobreposição p/ esconder frestas entre células
 
   return (
     <div style={{ position: "relative", width: W, height: H, perspective, ...style }}>

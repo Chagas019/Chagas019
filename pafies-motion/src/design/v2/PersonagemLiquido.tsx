@@ -399,8 +399,8 @@ export const PersonagemLiquido: React.FC<PersonagemLiquidoProps> = ({
   const meltW = 1 + 0.7 * m;
   const near = (side: "L" | "R") => (side === "R" ? 1 + 0.16 * la : 1 - 0.06 * la);
 
-  const THIGH = 46 * legK;
-  const SHIN = 44 * legK;
+  const THIGH = 50 * legK;
+  const SHIN = 47 * legK;
   const ANKLE_H = 8 * footK;
   const standHip = THIGH + SHIN + ANKLE_H;
 
@@ -416,7 +416,7 @@ export const PersonagemLiquido: React.FC<PersonagemLiquidoProps> = ({
 
   const up: P = { x: Math.sin(lean * D2R), y: -Math.cos(lean * D2R) };
   const side: P = { x: Math.cos(lean * D2R), y: Math.sin(lean * D2R) }; // "direita" do tronco
-  const TORSO = 60 * torsoK;
+  const TORSO = 52 * torsoK;
   const chest = add(pelvis, up, TORSO);
   const torsoWide = 1 + 0.38 * turn;
 
@@ -642,8 +642,8 @@ export const PersonagemLiquido: React.FC<PersonagemLiquidoProps> = ({
         { x: headC.x + Math.cos(hairDir) * 15 * hk + hUp.x * 6 * hk, y: headC.y + Math.sin(hairDir) * 15 * hk + hUp.y * 6 * hk },
         5.5 * hk,
         hairDir,
-        (18 + 10 * (trail != null ? 1 : 0)) * hk,
-        0.25,
+        (24 + 14 * (trail != null ? 1 : 0)) * hk,
+        0.35,
       )}
       fill={c.splash}
     />
@@ -655,10 +655,10 @@ export const PersonagemLiquido: React.FC<PersonagemLiquidoProps> = ({
     const bandC = add(tPelvis, up, 9);
     const back = trail != null ? (trail + 180) * D2R : Math.PI * 0.8;
     const startP = add(bandC, side, -(rPelvis * torsoWide * 0.8));
-    const tipP = { x: startP.x + Math.cos(back) * 34, y: startP.y + Math.sin(back) * 34 + 10 };
+    const tipP = { x: startP.x + Math.cos(back) * 20, y: startP.y + Math.sin(back) * 20 + 7 };
     sashTail = (
       <g key="sash">
-        <path d={capsulePath(startP, 6, tipP, 2, -0.1)} fill={c.sashShade} />
+        <path d={capsulePath(startP, 6.5, tipP, 3.5, 0.3)} fill={c.sash} />
         <path d={dropPath({ x: tipP.x + Math.cos(back) * 8, y: tipP.y + Math.sin(back) * 8 + 2 }, 2.4, back, 8)} fill={c.sash} />
       </g>
     );

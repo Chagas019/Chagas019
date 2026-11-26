@@ -81,7 +81,7 @@ export const Splash: React.FC<SplashProps> = ({
           x2={sx * r1}
           y2={sy * r1}
           stroke={c.lines}
-          strokeWidth={1.6}
+          strokeWidth={2.2}
           strokeLinecap="round"
           opacity={fade}
         />,
@@ -118,11 +118,11 @@ export const Splash: React.FC<SplashProps> = ({
       const a = Math.PI * (0.05 + (0.9 * i) / (n - 1)) + (Rc() - 0.5) * 0.15; // arco de trás
       const bx = Math.cos(a) * rx;
       const by = -Math.sin(a) * rx * 0.2;
-      const h = (34 + Rc() * 46) * rise;
+      const h = (44 + Rc() * 60) * rise;
       if (h < 2) continue;
       const tilt = Math.cos(a) * 0.55;
       const ang = -Math.PI / 2 + tilt;
-      const r = 4 + Rc() * 4;
+      const r = 6 + Rc() * 6;
       const tip: P = { x: bx + Math.cos(ang) * h, y: by + Math.sin(ang) * h };
       els.push(<path key={`c${i}`} d={dropPath(tip, r * (0.6 + 0.4 * rise), ang, h + 4, (Rc() - 0.5) * 0.3)} fill={i % 3 === 1 ? c.second : c.main} />);
       // gotinha que se desprende do topo
@@ -153,7 +153,7 @@ export const Splash: React.FC<SplashProps> = ({
     const velx = vx;
     const vely = vy + g * T;
     const sp = Math.hypot(velx, vely);
-    const r0 = 2.5 + Rn() * 8;
+    const r0 = 4 + Rn() * 11;
     const r = r0 * (1 - Math.pow(t, 2.2)) * (0.6 + 0.4 * easeOutCubic(t * 6));
     if (r < 0.4) continue;
     const len = r * (1.4 + (sp / 120) * (1 - t * 0.6) * 1.8);
