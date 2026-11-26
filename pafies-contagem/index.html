@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contagem PAFIES 2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root { --azul: #4682c4; --tinta: #7b7f80; --tinta-suave: #8f9196; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: var(--azul); }
+  body { display: grid; place-items: center; overflow: hidden; }
+
+  /* Palco com a proporção exata da imagem original (600 × 450) */
+  .palco {
+    position: relative;
+    width: min(100vw, 133.333vh);
+    aspect-ratio: 4 / 3;
+    container-type: inline-size;
+  }
+  .palco img { display: block; width: 100%; height: 100%; }
+
+  /* Região onde ficavam "LATER" e "quartz" — sem fundo, só texto */
+  .placa {
+    position: absolute;
+    left: 49.6%; top: 16.6%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center;
+    font-family: "Oswald", "Bebas Neue", sans-serif;
+    color: var(--tinta);
+    text-align: center; white-space: nowrap;
+    pointer-events: none;
+    transform-origin: 50% 0;
+    animation: surgir 1.2s ease-out both;
+  }
+  .dias {
+    font-weight: 300;
+    font-size: 8.4cqw;
+    line-height: .95;
+    letter-spacing: -.01em;
+    transform: scaleX(.82);
+    display: flex; gap: .18em; align-items: baseline;
+  }
+  .dias b { font-weight: 400; display: inline-block; }
+  .dias b.tique { animation: tique .6s ease-out; }
+  .faltam {
+    font-weight: 300;
+    font-size: 1.5cqw;
+    letter-spacing: .32em;
+    padding-left: .32em;
+    color: var(--tinta-suave);
+    margin-bottom: .1cqw;
+  }
+  .edicao {
+    margin-top: .3cqw;
+    font-weight: 300;
+    font-size: 1.32cqw;
+    letter-spacing: .14em;
+    color: var(--tinta-suave);
+  }
+  .para {
+    margin-top: .55cqw;
+    font-weight: 300;
+    font-size: 1.32cqw;
+    letter-spacing: .14em;
+    color: var(--tinta-suave);
+  }
+  .evento {
+    margin-top: .25cqw;
+    font-weight: 400;
+    font-size: 2.1cqw;
+    letter-spacing: .12em;
+    padding-left: .2em;
+  }
+  .relogio {
+    margin-top: .45cqw;
+    font-weight: 300;
+    font-size: 1.15cqw;
+    letter-spacing: .18em;
+    color: var(--tinta-suave);
+    font-variant-numeric: tabular-nums;
+    opacity: .9;
+  }
+  .relogio span { animation: pulso 1s steps(1) infinite; }
+
+  @keyframes surgir { from { opacity: 0; transform: translate(-50%, 4%); } to { opacity: 1; transform: translate(-50%, 0); } }
+  @keyframes tique { from { opacity: .3; transform: translateY(-8%); } to { opacity: 1; transform: none; } }
+  @keyframes pulso { 50% { opacity: .35; } }
+
+  /* Tic-tac: a placa balança de leve a cada segundo */
+  .placa.tic { animation: tic .9s ease-out; }
+  .placa.tac { animation: tac .9s ease-out; }
+  @keyframes tic { 0% { transform: translateX(-50%) rotate(.9deg); } 100% { transform: translateX(-50%) rotate(0); } }
+  @keyframes tac { 0% { transform: translateX(-50%) rotate(-.9deg); } 100% { transform: translateX(-50%) rotate(0); } }
+
+  .som {
+    position: fixed;
+    right: calc(14px + env(safe-area-inset-right, 0px));
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.45);
+    background: rgba(255,255,255,.14);
+    color: #fff; cursor: pointer;
+    display: grid; place-items: center;
+    transition: background .2s;
+  }
+  .som:hover { background: rgba(255,255,255,.26); }
+  .som:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  .som svg { width: 20px; height: 20px; }
+  .som .onda { opacity: 0; transition: opacity .2s; }
+  .som[aria-pressed="true"] .onda { opacity: 1; }
+  .som[aria-pressed="true"] .mudo { opacity: 0; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+</head>
+<body>
+  <main class="palco">
+    <img src="relogio.gif" alt="Relógio com personagem sentado anunciando a contagem para o início das provas da Gincana Solidária, 10ª edição">
+    <div class="placa" aria-live="polite">
+      <div class="faltam" id="faltam">FALTAM</div>
+      <div class="dias"><b id="dias">57</b><span id="rotulo">DIAS</span></div>
+      <div class="para">PARA O INÍCIO DAS PROVAS DA</div>
+      <div class="evento">GINCANA SOLIDÁRIA</div>
+      <div class="edicao">10ª EDIÇÃO · PAFIES 2027</div>
+    </div>
+  </main>
+
+  <button class="som" id="som" type="button" aria-pressed="false" aria-label="Ligar som de tic-tac">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="none"/>
+      <path class="onda" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>
+      <path class="mudo" d="M16 9.5l5 5M21 9.5l-5 5"/>
+    </svg>
+  </button>
+
+<script>
+  // Data oficial: 22 de janeiro de 2027 (00:00, horário local).
+  // Em 26/11/2026 o contador mostra 57 dias (diferença de datas no calendário).
+  const ALVO = new Date(2027, 0, 22, 0, 0, 0);
+  const elDias = document.getElementById('dias');
+  const elRotulo = document.getElementById('rotulo');
+  const elFaltam = document.getElementById('faltam');
+  const p = n => String(n).padStart(2, '0');
+  let ultimo = null;
+
+  function atualizar() {
+    const agora = new Date();
+    const resta = ALVO - agora;
+    if (resta <= 0) {
+      elDias.textContent = 'É HOJE';
+      elRotulo.textContent = '';
+      elFaltam.textContent = '';
+      return;
+    }
+    // Dias de calendário até a data (começa em 57 no dia 26/11/2026)
+    const hoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
+    const dias = Math.round((ALVO - hoje) / 864e5);
+
+    if (dias !== ultimo) {
+      elDias.textContent = dias;
+      elDias.classList.remove('tique'); void elDias.offsetWidth; elDias.classList.add('tique');
+      elRotulo.textContent = dias === 1 ? 'DIA' : 'DIAS';
+      elFaltam.textContent = dias === 1 ? 'FALTA' : 'FALTAM';
+      ultimo = dias;
+    }
+  }
+  atualizar();
+  setInterval(atualizar, 30000);
+
+  // ===== Tic-tac =====
+  const placa = document.querySelector('.placa');
+  const botao = document.getElementById('som');
+  const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let somLigado = false, lado = 0;
+  const audio = new Audio('tictac.wav');
+  audio.loop = true; audio.preload = 'auto'; audio.volume = 1;
+
+  function batida() {
+    lado = 1 - lado;
+    if (!calmo) {
+      placa.classList.remove('tic', 'tac'); void placa.offsetWidth;
+      placa.classList.add(lado ? 'tic' : 'tac');
+    }
+  }
+  // sincroniza a batida com a virada de cada segundo
+  setTimeout(() => { batida(); setInterval(batida, 1000); }, 1000 - (Date.now() % 1000));
+
+  botao.addEventListener('click', () => {
+    somLigado = !somLigado;
+    if (somLigado) {
+      // começa no "tic" alinhado à virada do segundo
+      audio.currentTime = (Date.now() % 2000) / 1000;
+      const tocar = audio.play();
+      if (tocar && tocar.catch) tocar.catch(() => { somLigado = false; marcar(); });
+    } else {
+      audio.pause();
+    }
+    marcar();
+  });
+  function marcar() {
+    botao.setAttribute('aria-pressed', String(somLigado));
+    botao.setAttribute('aria-label', somLigado ? 'Desligar som de tic-tac' : 'Ligar som de tic-tac');
+  }
+</script>
+</body>
+</html>
