@@ -99,7 +99,6 @@
       <div class="para">PARA O INÍCIO DAS PROVAS DA</div>
       <div class="evento">GINCANA SOLIDÁRIA</div>
       <div class="edicao">10ª EDIÇÃO · PAFIES 2027</div>
-      <div class="relogio" id="hms">00<span>:</span>00<span>:</span>00</div>
     </div>
   </main>
 
@@ -110,7 +109,6 @@
   const elDias = document.getElementById('dias');
   const elRotulo = document.getElementById('rotulo');
   const elFaltam = document.getElementById('faltam');
-  const elHms = document.getElementById('hms');
   const p = n => String(n).padStart(2, '0');
   let ultimo = null;
 
@@ -121,16 +119,11 @@
       elDias.textContent = 'É HOJE';
       elRotulo.textContent = '';
       elFaltam.textContent = '';
-      elHms.textContent = '';
       return;
     }
     // Dias de calendário até a data (começa em 57 no dia 26/11/2026)
     const hoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
     const dias = Math.round((ALVO - hoje) / 864e5);
-    // Horas/minutos/segundos restantes do dia de hoje
-    const meiaNoite = new Date(hoje); meiaNoite.setDate(hoje.getDate() + 1);
-    const s = Math.floor((meiaNoite - agora) / 1000);
-    const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), seg = s % 60;
 
     if (dias !== ultimo) {
       elDias.textContent = dias;
@@ -139,10 +132,9 @@
       elFaltam.textContent = dias === 1 ? 'FALTA' : 'FALTAM';
       ultimo = dias;
     }
-    elHms.innerHTML = `${p(h)}H <span>·</span> ${p(m)}MIN <span>·</span> ${p(seg)}S`;
   }
   atualizar();
-  setInterval(atualizar, 1000);
+  setInterval(atualizar, 30000);
 </script>
 </body>
 </html>
