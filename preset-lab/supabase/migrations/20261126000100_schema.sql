@@ -266,7 +266,7 @@ create table public.rate_limits (
 -- gatilhos
 -- ============================================================================
 create or replace function public.touch_updated_at() returns trigger
-language plpgsql as $$
+language plpgsql set search_path = public as $$
 begin
   new.updated_at := now();
   return new;
@@ -279,7 +279,7 @@ create trigger subscriptions_touch before update on public.subscriptions for eac
 
 -- published_at automático ao publicar
 create or replace function public.products_set_published_at() returns trigger
-language plpgsql as $$
+language plpgsql set search_path = public as $$
 begin
   if new.status = 'published' and new.published_at is null then
     new.published_at := now();

@@ -11,6 +11,8 @@ import "server-only";
  * PAYMENTS_PROVIDER:
  *  - "mercadopago": checkout real (exige MP_ACCESS_TOKEN e MP_WEBHOOK_SECRET).
  *  - "dev": checkout SIMULADO de desenvolvimento, claramente identificado. Bloqueado em produção.
+ *  - "disabled" (automático em produção sem MP_ACCESS_TOKEN): catálogo, contas e gratuitos
+ *    funcionam; compras mostram que os pagamentos ainda não foram ativados.
  */
 
 const isProd = process.env.NODE_ENV === "production";
@@ -21,10 +23,12 @@ function backend(): "supabase" | "local" {
   return process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? "supabase" : "local";
 }
 
-function paymentsProvider(): "mercadopago" | "dev" {
+function paymentsProvider(): "mercadopago" | "dev" | "disabled" {
   const explicit = process.env.PAYMENTS_PROVIDER;
   if (explicit === "mercadopago" || explicit === "dev") return explicit;
-  return process.env.MP_ACCESS_TOKEN ? "mercadopago" : "dev";
+  if (process.env.MP_ACCESS_TOKEN) return "mercadopago";
+  // produção sem credenciais: a loja funciona, mas a venda fica desativada (nunca simulada)
+  return isProd && process.env.ALLOW_LOCAL_DEMO !== "true" ? "disabled" : "dev";
 }
 
 export const config = {
@@ -78,9 +82,8 @@ export function assertSafeConfig() {
   if (config.payments === "dev" && !config.allowLocalDemo) {
     throw new Error("O checkout simulado (PAYMENTS_PROVIDER=dev) não é permitido em produção. Configure o Mercado Pago.");
   }
-  if (config.backend === "supabase" && !config.supabaseServiceKey) {
-    throw new Error("SUPABASE_SERVICE_ROLE_KEY ausente.");
-  }
+  // sem SUPABASE_SERVICE_ROLE_KEY o catálogo funciona; downloads/compras falham com mensagem
+  // (createAdminClient lança erro) até a chave ser configurada.
 }
 
 export const isDemoMode = () => config.backend === "local" || config.payments === "dev";

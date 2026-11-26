@@ -5,6 +5,15 @@ import { config } from "@/lib/config";
 export function DemoBanner() {
   const local = config.backend === "local";
   const devPay = config.payments === "dev";
+  if (config.payments === "disabled") {
+    return (
+      <div role="note" className="border-b border-signal/40 bg-bone text-ink">
+        <p className="container-lab py-1.5 text-center text-xs font-medium">
+          <span className="lab-label mr-2">Pré-lançamento</span>Catálogo de demonstração · compras ainda não ativadas
+        </p>
+      </div>
+    );
+  }
   if (!local && !devPay) return null;
   return (
     <div role="note" className="border-b border-signal/40 bg-bone text-ink">

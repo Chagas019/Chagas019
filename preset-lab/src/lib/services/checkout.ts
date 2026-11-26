@@ -23,6 +23,7 @@ export type CheckoutTarget = { type: "product"; id: string } | { type: "collecti
  */
 export async function startCheckout(user: SessionUser, target: CheckoutTarget): Promise<{ redirectUrl: string; purchase: Purchase }> {
   const r = repo();
+  if (config.payments === "disabled") throw new CheckoutError("provider", "Os pagamentos desta loja ainda não foram ativados. Volte em breve!");
   if (!(await r.rateLimit(`checkout:${user.id}`, 60, 10))) throw new CheckoutError("rate_limited", "Muitas tentativas. Aguarde um minuto.");
 
   let kind: PurchaseKind;
@@ -57,7 +58,7 @@ export async function startCheckout(user: SessionUser, target: CheckoutTarget): 
   }
 
   // reaproveita uma compra pendente idêntica (evita pedidos duplicados por clique duplo)
-  const provider = config.payments;
+  const provider = config.payments as "mercadopago" | "dev";
   const recent = (await r.listPurchases(user.id)).find(
     (p) =>
       p.status === "pending" &&
