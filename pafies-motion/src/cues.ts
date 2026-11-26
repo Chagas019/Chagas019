@@ -111,7 +111,7 @@ export const S05 = {
   edicao: TK_EDICAO, // 870 ★
   spinAntic: WH_GIRO, // 892–899
   spin: HIT_GIRO, // 900 ★
-  spinDur: 14,
+  spinDur: 18, // QA: 14 → 18 f com easing que arranca no hit (ver S05Dez SPIN_EASE)
   edicaoOut: HIT_GIRO + BEAT, // 915–929
   dive: RISER_ZERO[0], // 930–959 mergulho no "0" (= WH_ZERO)
   diveEnd: RISER_ZERO[1], // 960

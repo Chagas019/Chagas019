@@ -72,7 +72,10 @@ acompanha automaticamente (as cenas leem os mesmos frames via `src/cues.ts`).
 npx remotion render src/index.ts PafiesMain out/pafies-10-edicao.mp4 --codec=h264 --crf=18
 # vertical (final)
 npx remotion render src/index.ts PafiesVertical out/pafies-10-edicao-vertical.mp4 --codec=h264 --crf=18
-# (atalhos: npm run render  /  npm run render:vertical)
+# (atalhos: npm run render  /  npm run render:vertical — já incluem o passo abaixo)
+# OBRIGATÓRIO após o render: realinha o áudio AAC (o render o deixa ~43 ms atrasado)
+bash scripts/remux-audio.sh out/pafies-10-edicao.mp4
+bash scripts/remux-audio.sh out/pafies-10-edicao-vertical.mp4
 
 # teste rápido em baixa resolução
 npx remotion render src/index.ts PafiesMain out/teste-baixa.mp4 --scale=0.25 --codec=h264   # (0.33 dá largura ímpar e o h264 recusa)

@@ -5,7 +5,7 @@
  * câmera mergulha no miolo dele (930–959) — a S06 nasce de dentro do "0".
  */
 import React from 'react';
-import { AbsoluteFill, useVideoConfig } from 'remotion';
+import { AbsoluteFill, Easing, useVideoConfig } from 'remotion';
 import { COLORS, GRADIENTS, TRACKING } from '../design/tokens';
 import { FONT_DISPLAY, FONT_SANS } from '../design/fonts';
 import { Sparkle, SpeedLines } from '../design/elements';
@@ -41,6 +41,8 @@ const ZERO_Y_FIX = 0.005;
 /** Distância do centro do "0" até o centro óptico de "10ª" (o "1" é mais largo que o "ª"). */
 const GROUP_SHIFT = 0.085;
 const DEPTH_LAYERS = 6;
+/** QA: giro arranca NO hit (900) e desacelera — o SNAP simétrico só girava em 904–910 (pico 7 f depois do hit). */
+const SPIN_EASE = Easing.bezier(0.25, 0.55, 0.3, 1);
 
 const SUNBURST_SLICES = 24;
 const SUNBURST_DEG_PER_FRAME = 10 / 30; // 10°/s
@@ -125,9 +127,9 @@ export const S05Dez: React.FC<SceneProps> = ({ layout }) => {
   const kick = useBeatPulse(f, 'kick', { decay: 10 });
   const scale = mix(3, 1, land) * (1 + 0.03 * kick);
 
-  // antecipação (892–899) e giro 360° SNAP (900–914)
+  // antecipação (892–899) e giro 360° (900–918): começa no hit, desacelera (SPIN_EASE)
   const antic = prog(f, S05.spinAntic, S05.spin, EXPO_OUT);
-  const spinT = prog(f, S05.spin, S05.spin + S05.spinDur, SNAP);
+  const spinT = prog(f, S05.spin, S05.spin + S05.spinDur, SPIN_EASE);
   const spin = -20 * antic * (1 - spinT) + 360 * spinT;
   const depth = Math.min(1, Math.abs(Math.sin((spin * Math.PI) / 180)) * 3);
 
