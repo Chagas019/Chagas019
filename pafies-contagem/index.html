@@ -173,23 +173,9 @@
   const placa = document.querySelector('.placa');
   const botao = document.getElementById('som');
   const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let ctx = null, somLigado = false, lado = 0;
-
-  function clique(agudo) {
-    if (!ctx) return;
-    const t = ctx.currentTime;
-    // ruído curto filtrado = "tic" de engrenagem
-    const dur = 0.035;
-    const buf = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * dur), ctx.sampleRate);
-    const d = buf.getChannelData(0);
-    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 6);
-    const src = ctx.createBufferSource(); src.buffer = buf;
-    const filtro = ctx.createBiquadFilter(); filtro.type = 'bandpass';
-    filtro.frequency.value = agudo ? 3800 : 2600; filtro.Q.value = 6;
-    const ganho = ctx.createGain(); ganho.gain.value = 0.55;
-    src.connect(filtro).connect(ganho).connect(ctx.destination);
-    src.start(t);
-  }
+  let somLigado = false, lado = 0;
+  const audio = new Audio('tictac.wav');
+  audio.loop = true; audio.preload = 'auto'; audio.volume = 1;
 
   function batida() {
     lado = 1 - lado;
@@ -197,18 +183,26 @@
       placa.classList.remove('tic', 'tac'); void placa.offsetWidth;
       placa.classList.add(lado ? 'tic' : 'tac');
     }
-    if (somLigado) clique(lado === 1);
   }
   // sincroniza a batida com a virada de cada segundo
   setTimeout(() => { batida(); setInterval(batida, 1000); }, 1000 - (Date.now() % 1000));
 
   botao.addEventListener('click', () => {
-    if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; } }
     somLigado = !somLigado;
-    if (somLigado && ctx.state === 'suspended') ctx.resume();
+    if (somLigado) {
+      // começa no "tic" alinhado à virada do segundo
+      audio.currentTime = (Date.now() % 2000) / 1000;
+      const tocar = audio.play();
+      if (tocar && tocar.catch) tocar.catch(() => { somLigado = false; marcar(); });
+    } else {
+      audio.pause();
+    }
+    marcar();
+  });
+  function marcar() {
     botao.setAttribute('aria-pressed', String(somLigado));
     botao.setAttribute('aria-label', somLigado ? 'Desligar som de tic-tac' : 'Ligar som de tic-tac');
-  });
+  }
 </script>
 </body>
 </html>
