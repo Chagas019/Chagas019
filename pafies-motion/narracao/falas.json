@@ -1,0 +1,11 @@
+{
+  "$comment": "Falas do narrador do teaser V2. frame = início da fala (30 fps). Para regenerar: python3 scripts/gerar_narracao.py --modelo <pt_BR-cadu-medium.onnx>. Modelo: https://huggingface.co/rhasspy/piper-voices (pt/pt_BR/cadu/medium).",
+  "voz": "pt_BR-cadu-medium (Piper)",
+  "falas": [
+    {"id": "01-e-ai",       "texto": "E aí!",                      "frame": 38,  "length": 0.9},
+    {"id": "02-preparados", "texto": "Estão preparados?",           "frame": 188, "length": 0.9},
+    {"id": "03-decima",     "texto": "Para a décima gincana?",      "frame": 374, "length": 0.9},
+    {"id": "04-chegando",   "texto": "Tá chegando, hein?",          "frame": 508, "length": 0.9},
+    {"id": "05-assinatura", "texto": "Gincana Solidária, Pafies!",  "frame": 634, "length": 0.92}
+  ]
+}

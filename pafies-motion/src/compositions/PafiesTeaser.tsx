@@ -1,5 +1,5 @@
 /**
- * PafiesTeaser — V2 (produto principal): 720 f · 30 fps · trilha-v2.wav.
+ * PafiesTeaser — V2 (produto principal): 720 f · 30 fps · trilha-v2-narrada.wav (música + narração).
  * Cenas V2 em <Sequence> com cortes SECOS (overlapIn 0) + smear branco de 2 f nos cortes de cor.
  * Horizontal 1920×1080 (PafiesTeaser) e vertical recomposto 1080×1920 (PafiesTeaserVertical).
  */
@@ -29,7 +29,7 @@ export const PafiesTeaser: React.FC<PafiesTeaserProps> = ({ layout }) => {
       {SMEAR_CUTS.map((c) => (
         <CutSmear key={c} frame={frame} cutFrame={c} smearFrames={2} angle={-18} coverage={0.3} />
       ))}
-      <Audio src={staticFile('trilha-v2.wav')} />
+      <Audio src={staticFile('trilha-v2-narrada.wav')} />
     </AbsoluteFill>
   );
 };

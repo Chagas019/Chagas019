@@ -147,3 +147,14 @@ python3 scripts/qa-sheet.py out/qa/prancha.png out/qa/qa-120.png out/qa/qa-480.p
 - Transições motivadas (sem crossfade): íris da gota (S01→S02), mergulho no reflexo + íris do branco
   (S02→S03), whip-pan com a fita sobrevivente (S03→S04), colapso em faísca (S04→S05), mergulho no "0"
   com `zoomDive` (S05→S06).
+
+## Narração (V2)
+
+A trilha do teaser é `public/trilha-v2-narrada.wav` = música (`trilha-v2.wav`) + voz de narrador.
+
+- Falas e momentos de entrada: `narracao/falas.json` (texto + frame a 30 fps).
+- Voz: Piper `pt_BR-cadu-medium` (offline). Baixe o modelo em huggingface.co/rhasspy/piper-voices (`pt/pt_BR/cadu/medium`, arquivos `.onnx` e `.onnx.json`) e instale `pip install piper-tts`.
+- Regenerar voz + mix: `python3 scripts/gerar_narracao.py --modelo caminho/pt_BR-cadu-medium.onnx`
+- Só remixar (ajustar volume/ducking): `python3 scripts/gerar_narracao.py --voz-db 3 --duck-db -11`
+- Para trocar por uma voz gravada ou do ElevenLabs: substitua os WAVs em `narracao/brutos/` (mesmos nomes) e rode o script sem `--modelo`.
+- Depois: `npm run render:teaser` e `npm run render:teaser:vertical` (ou apenas troque o áudio de um MP4 pronto com `bash scripts/remux-audio.sh out/arquivo.mp4 public/trilha-v2-narrada.wav`).
