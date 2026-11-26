@@ -1,0 +1,29 @@
+{
+  "verified": true,
+  "verifiedHow": "websearch",
+  "site": "Bíblia Católica Online (bibliacatolica.com.br)",
+  "translation": "Bíblia Ave Maria",
+  "note": "Todos os URLs confirmados usam o prefixo /en/ (idioma da interface do site); o texto bíblico é o da Ave Maria em português. Os Salmos seguem a numeração hebraica (Salmos/23 = 'O Senhor é meu pastor'). Variante sem /en/ não foi confirmada. Só os slugs abaixo foram vistos em URLs reais; os demais livros não foram confirmados.",
+  "pattern": "https://www.bibliacatolica.com.br/en/biblia-ave-maria/{slug}/{chapter}/",
+  "versePattern": "https://www.bibliacatolica.com.br/en/biblia-ave-maria/{slug}/{chapter}/{verse}/",
+  "examples": [
+    {"ref": "Lc 15", "url": "https://www.bibliacatolica.com.br/en/biblia-ave-maria/sao-lucas/15/"},
+    {"ref": "Mt 5", "url": "https://www.bibliacatolica.com.br/en/biblia-ave-maria/sao-mateus/5/"},
+    {"ref": "Jo 3", "url": "https://www.bibliacatolica.com.br/en/biblia-ave-maria/sao-joao/3/"},
+    {"ref": "Gn 1", "url": "https://www.bibliacatolica.com.br/en/biblia-ave-maria/genesis/1/"},
+    {"ref": "Sl 114", "url": "https://www.bibliacatolica.com.br/en/biblia-ave-maria/salmos/114/"},
+    {"ref": "Is 53", "url": "https://www.bibliacatolica.com.br/en/biblia-ave-maria/isaias/53/"},
+    {"ref": "Rm 8", "url": "https://www.bibliacatolica.com.br/en/biblia-ave-maria/romanos/8"},
+    {"ref": "1Jo 3", "url": "https://www.bibliacatolica.com.br/en/biblia-ave-maria/i-sao-joao/3/"}
+  ],
+  "slugs": {
+    "Gn": "genesis",
+    "Sl": "salmos",
+    "Is": "isaias",
+    "Mt": "sao-mateus",
+    "Lc": "sao-lucas",
+    "Jo": "sao-joao",
+    "Rm": "romanos",
+    "1Jo": "i-sao-joao"
+  }
+}
